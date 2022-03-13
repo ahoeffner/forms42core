@@ -28,7 +28,7 @@ export class Form
         this.page$ = page;
     }
 
-    public page() : Element
+    public getPage() : Element
     {
         return(this.page$);
     }

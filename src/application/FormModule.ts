@@ -92,6 +92,6 @@ export class FormsModule
             throw "Component mapped to '"+path+"' is not a form";
 
         let form:Form = new comp();
-        this.root.appendChild(form.page());
+        this.root.appendChild(form.getPage());
     }
 }

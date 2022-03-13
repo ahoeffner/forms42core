@@ -1,4 +1,4 @@
-import { Class } from "../Class";
+import { Class } from "../types/Class";
 
 export interface Component
 {
@@ -20,4 +20,13 @@ export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
     }
 
     return(define);
+}
+
+
+export class FormsModule
+{
+    constructor(root:Element)
+    {
+
+    }
 }

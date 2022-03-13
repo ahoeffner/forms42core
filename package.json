@@ -6,7 +6,7 @@
   "main": "index.js",
   "types": "public-api.d.ts",
   "scripts": {
-    "build": "tsc && cp public-api.d.ts package.json dist && cp -R mods dist"
+    "build": "cp private-api.ts index.ts && cat public-api.d.ts >> index.ts && tsc && cp public-api.d.ts package.json dist && cp -R mods dist"
   },
   "keywords": [
     "Database",

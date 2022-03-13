@@ -68,7 +68,7 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
         this.root = doc.querySelector('forms');
-        this.window = document.createElement('template');
+        this.window = document.createElement("div");
         this.root.appendChild(this.window);
     }
 
@@ -76,7 +76,7 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
         this.root = doc.querySelector('.forms');
-        this.window = document.createElement('template');
+        this.window = document.createElement("div");
         this.root.appendChild(this.window);
     }
 
@@ -93,5 +93,36 @@ export class FormsModule
 
         let form:Form = new comp();
         this.root.appendChild(form.getPage());
+    }
+
+    public callform(path:string,instance?:string) : void
+    {
+        path = path.toLowerCase();
+        let comp:Class<any> = FormsModule.components.get(path);
+
+        if (comp == null)
+            throw "No components mapped to path '"+path+"'";
+
+        if (!(comp.prototype instanceof Form))
+            throw "Component mapped to '"+path+"' is not a form";
+
+        let form:Form = new comp();
+        let window:Element = this.createWindowElement(form.getPage());
+        this.window.appendChild(window);
+    }
+
+    public createWindowElement(component:Element) : Element
+    {
+        let content:HTMLDivElement = document.createElement("div");
+        content.style.cssText = "";
+        content.style.position = "absolute";
+        content.style.border = "2px solid red";
+        content.style.width = "400px";
+        content.style.height = "400px";
+        content.style.top = "100px";
+        content.style.left = "100px";
+        content.setAttribute("draggable","true");
+        content.appendChild(component);
+        return(content);
     }
 }

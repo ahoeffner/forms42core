@@ -1,3 +1,4 @@
+import { Window } from "./Window";
 import { Form } from "../forms/Form";
 import { Class } from "../types/Class";
 import { Application } from "./Application";
@@ -107,22 +108,20 @@ export class FormsModule
             throw "Component mapped to '"+path+"' is not a form";
 
         let form:Form = new comp();
-        let window:Element = this.createWindowElement(form.getPage());
-        this.window.appendChild(window);
-    }
+        let window:Window = new Window(form.getPage());
 
-    public createWindowElement(component:Element) : Element
-    {
-        let content:HTMLDivElement = document.createElement("div");
-        content.style.cssText = "";
-        content.style.position = "absolute";
-        content.style.border = "2px solid red";
-        content.style.width = "400px";
-        content.style.height = "400px";
-        content.style.top = "100px";
-        content.style.left = "100px";
-        content.setAttribute("draggable","true");
-        content.appendChild(component);
-        return(content);
+        this.window.appendChild(window.getPage());
+
+        /*
+        setTimeout(() => {
+            console.log("block");
+            window.block();
+        },5000);
+
+        setTimeout(() => {
+            console.log("unblock");
+            window.unblock();
+        },10000);
+        */
     }
 }

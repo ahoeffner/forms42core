@@ -1,13 +1,41 @@
 export class Window
 {
-    public style:string =
+    public page:string =
     `
-        resize: both;
-        overflow: auto;
-        position: absolute;
-        width: fit-content;
-        height: fit-content;
-        border: 1px solid black;
+    <head>
+        <style>
+            .window-handle
+            {
+                resize: both;
+                overflow:hidden;
+                position: absolute;
+            }
+
+            .window-page-content
+            {
+                top: 0;
+                left: 0;
+                position: relative;
+                width: fit-content;
+                height: fit-content;
+            }
+
+            .window-modal-block
+            {
+                top: 0;
+                left: 0;
+                width: 0;
+                height: 0;
+                position: absolute;
+            }
+        </style>
+    </head>
+
+    <div class="window-handle">
+        <div class="window-modal-block"></div>
+        <div class="window-page-content"></div>
+    </div>
+
     `
     public classes:string = "window";
 }

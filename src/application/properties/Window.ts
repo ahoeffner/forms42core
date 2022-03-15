@@ -29,9 +29,9 @@ export class Window
         }
     </style>
 
-    <div class="window-handle">
-        <div class="window-modal-block"></div>
-        <div class="window-page-content"></div>
+    <div name="window" class="window-handle">
+        <div name="modal" class="window-modal-block"></div>
+        <div name="page" class="window-page-content"></div>
     </div>
 
     `

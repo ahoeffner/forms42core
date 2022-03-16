@@ -10,11 +10,13 @@
  * accompanied this code).
  */
 
+import { Window } from '../application/interfaces/Window';
 import { WindowComponent } from "../application/WindowComponent";
 
 class State
 {
     page:Element = null;
+    window:Window = null;
     navigable:boolean = true;
 }
 
@@ -37,6 +39,16 @@ export class Form implements WindowComponent
         this.state.navigable = navigable;
     }
 
+    public getPage() : Element
+    {
+        return(this.state.page);
+    }
+
+    public setWindow(window:Window): void
+    {
+        this.state.window = window;
+    }
+
     public setPage(page:string|Element)
     {
         if (typeof page === 'string')
@@ -47,13 +59,14 @@ export class Form implements WindowComponent
         this.state.page = page;
     }
 
-    public getPage() : Element
+    public closeWindow() : void
     {
-        return(this.state.page);
+        this.state.window.dismiss();
     }
 
     public close() : boolean
     {
+        this.closeWindow();
         return(true);
     }
 }

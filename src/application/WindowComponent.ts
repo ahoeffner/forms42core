@@ -10,8 +10,11 @@
  * accompanied this code).
  */
 
+import { Window } from './interfaces/Window';
+
 export interface WindowComponent
 {
     close() : boolean;
     getPage() : string|Element;
+    setWindow(window:Window) : void;
 }

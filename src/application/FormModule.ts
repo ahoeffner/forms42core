@@ -84,6 +84,11 @@ export class FormsModule
         return(this.state.root);
     }
 
+    public setRootElement(root:Element) : void
+    {
+        this.state.root = root;
+    }
+
     public getApplication() : Application
     {
         return(this.state.appl);

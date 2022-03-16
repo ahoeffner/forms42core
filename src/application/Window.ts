@@ -79,7 +79,12 @@ export class Window implements WindowDefinition, EventListenerObject
         this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 
-    public close(): boolean
+    public dismiss() : void
+    {
+        this.window.remove();
+    }
+
+    public close() : boolean
     {
         if (this.component.close())
         {

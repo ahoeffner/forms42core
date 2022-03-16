@@ -4,6 +4,7 @@ export interface Window
 {
     block() : void;
     unblock() : void;
+    dismiss() : void;
     close() : boolean;
     getPage() : Element;
     getDepth() : number;

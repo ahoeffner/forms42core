@@ -28,9 +28,9 @@ export class Application
 {
     private state:State = new State();
 
-    constructor()
+    constructor(module:FormsModule)
     {
-        this.state.module = FormsModule.get();
+        this.state.module = module;
     }
 
     public showform(path:string) : void

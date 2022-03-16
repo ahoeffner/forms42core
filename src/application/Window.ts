@@ -1,13 +1,25 @@
+/*
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3 only, as
+ * published by the Free Software Foundation.
+
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
+ */
+
 import { Properties } from "./Properties";
 
-export class Window
+export class Window implements EventListenerObject
 {
-    private layer:number = 2;
+    private active:Element = null;
     private modal:HTMLDivElement = null;
     private window:HTMLDivElement = null;
     private content:HTMLDivElement = null;
 
-    constructor(component:Element)
+    constructor(component:Element,layer:number)
     {
         let layout:string = Properties.window.page;
         let template:HTMLTemplateElement = document.createElement("template");
@@ -26,6 +38,9 @@ export class Window
         this.window.style.cssText = Properties.window.windowStyle;
         this.content.style.cssText = Properties.window.contentStyle;
 
+        this.content.style.zIndex = (2*layer)+"";
+        this.modal.style.zIndex = (2*layer + 1)+"";
+
         this.content.appendChild(component);
         this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
@@ -33,15 +48,18 @@ export class Window
     public block() : void
     {
         this.window.style.resize = "none";
+        this.active = document.activeElement;
         this.modal.style.width = this.window.offsetWidth+"px";
         this.modal.style.height = this.window.offsetHeight+"px";
-}
+        if (this.active instanceof HTMLElement) this.active.blur();
+    }
 
     public unblock() : void
     {
         this.modal.style.width = "0";
         this.modal.style.height = "0";
         this.window.style.resize = "both";
+        if (this.active instanceof HTMLElement) this.active.focus();
     }
 
     public getPage() : Element
@@ -56,20 +74,27 @@ export class Window
 
     private move = false;
     private mouse = {x: 0, y: 0};
-    private draglsnr:lsnr = new lsnr(this,"drag");
-    private dragendlsnr:lsnr = new lsnr(this,"dragend");
 
     private dragstart(event:any) : void
     {
-        console.log("dragstart");
+        if (event.target != this.content)
+            return;
 
-        //if (event.clientY - this.window.offsetTop >= 24)
-        //    return;
+        let corner =
+        {
+            x: +this.window.offsetLeft + +this.window.offsetWidth,
+            y: +this.window.offsetTop + +this.window.offsetHeight
+        }
+
+        let pos = {x: +event.clientX, y: +event.clientY};
+
+        if (corner.x - pos.x < 16 && corner.y - pos.y < 16)
+            return;
 
         this.move = true;
 
-        document.addEventListener('mousemove',this.draglsnr);
-        document.addEventListener('mouseup',this.dragendlsnr);
+        document.addEventListener('mouseup',this);
+        document.addEventListener('mousemove',this);
 
         this.mouse = {x: event.clientX, y: event.clientY};
     }
@@ -79,6 +104,7 @@ export class Window
         if (this.move)
         {
             event.preventDefault();
+
             var offX = event.clientX - this.mouse.x;
             var offY = event.clientY - this.mouse.y;
 
@@ -90,7 +116,6 @@ export class Window
 
             this.window.style.top = posY + "px";
             this.window.style.left = posX + "px";
-            console.log("X: "+this.window.offsetLeft+" : "+this.window.offsetTop+" "+this.window.style.top)
 
             this.mouse = {x: event.clientX, y: event.clientY};
         }
@@ -99,14 +124,13 @@ export class Window
     private dragend(event:any) : void
     {
         this.move = false;
-        document.removeEventListener('mousemove',this.draglsnr);
-        document.removeEventListener('mouseup',this.dragendlsnr);
+        document.removeEventListener('mouseup',this);
+        document.removeEventListener('mousemove',this);
     }
-}
 
-
-class lsnr implements EventListenerObject
-{
-    constructor(private win:Window, private func:string) {}
-    handleEvent(event: Event): void {this.win[this.func](event)}
+    public handleEvent(event:Event) : void
+    {
+        if (event.type == "mouseup") this.dragend(event);
+        if (event.type == "mousemove") this.drag(event);
+    }
 }

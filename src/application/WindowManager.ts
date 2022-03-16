@@ -10,7 +10,11 @@
  * accompanied this code).
  */
 
-export class Application
+class Stack
 {
 
+}
+
+export class WindowManager
+{
 }

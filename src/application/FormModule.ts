@@ -124,6 +124,7 @@ export class FormsModule
 
         this.window.appendChild(window.getPage());
 
+        /*
         setTimeout(() => {
             console.log("block");
             window.block();
@@ -133,5 +134,6 @@ export class FormsModule
             console.log("unblock");
             window.unblock();
         },10000);
+        */
     }
 }

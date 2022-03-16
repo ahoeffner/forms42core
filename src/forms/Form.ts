@@ -10,10 +10,15 @@
  * accompanied this code).
  */
 
+class State
+{
+    public page:Element = null;
+    public navigable:boolean = true;
+}
+
 export class Form
 {
-    private page$:Element = null;
-    private navigable$:boolean = true;
+    private state:State = new State();
 
     constructor(page?:string)
     {
@@ -22,12 +27,12 @@ export class Form
 
     public get navigable() : boolean
     {
-        return(this.navigable$);
+        return(this.state.navigable);
     }
 
     public set navigable(navigable:boolean)
     {
-        this.navigable$ = navigable;
+        this.state.navigable = navigable;
     }
 
     public setPage(page:string|Element)
@@ -37,11 +42,11 @@ export class Form
             let template:HTMLTemplateElement = document.createElement('template');
             template.innerHTML = page; page = template.content.getRootNode() as Element;
         }
-        this.page$ = page;
+        this.state.page = page;
     }
 
     public getPage() : Element
     {
-        return(this.page$);
+        return(this.state.page);
     }
 }

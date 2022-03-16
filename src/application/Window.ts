@@ -11,16 +11,44 @@
  */
 
 import { Properties } from "./Properties";
+import { WindowComponent } from "./WindowComponent";
+import { Window as WindowDefinition } from "./interfaces/Window";
 
-export class Window implements EventListenerObject
+export class Window implements WindowDefinition, EventListenerObject
 {
+    private depth:number = 0;
     private active:Element = null;
     private modal:HTMLDivElement = null;
     private window:HTMLDivElement = null;
     private content:HTMLDivElement = null;
+    private component:WindowComponent = null;
 
-    constructor(component:Element,layer:number)
+    public getDepth(): number
     {
+        return(this.depth);
+    }
+
+    public setDepth(depth:number) : void
+    {
+        this.depth = depth;
+
+        if (this.content != null && this.modal != null)
+        {
+            this.content.style.zIndex = (2*depth)+"";
+            this.modal.style.zIndex = (2*depth + 1)+"";
+        }
+    }
+
+    public getComponent(): WindowComponent
+    {
+        return(this.component);
+    }
+
+    public setComponent(component:WindowComponent) : void
+    {
+        this.component = component;
+        let page = component.getPage();
+
         let layout:string = Properties.window.page;
         let template:HTMLTemplateElement = document.createElement("template");
 
@@ -38,10 +66,16 @@ export class Window implements EventListenerObject
         this.window.style.cssText = Properties.window.windowStyle;
         this.content.style.cssText = Properties.window.contentStyle;
 
-        this.content.style.zIndex = (2*layer)+"";
-        this.modal.style.zIndex = (2*layer + 1)+"";
+        this.content.style.zIndex = (2*this.depth)+"";
+        this.modal.style.zIndex = (2*this.depth + 1)+"";
 
-        this.content.appendChild(component);
+        if (typeof page === 'string')
+        {
+            template.innerHTML = page as string;
+            page = template.content.getRootNode() as Element;
+        }
+
+        this.content.appendChild(page);
         this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 

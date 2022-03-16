@@ -10,13 +10,15 @@
  * accompanied this code).
  */
 
+import { WindowComponent } from "../application/WindowComponent";
+
 class State
 {
     public page:Element = null;
     public navigable:boolean = true;
 }
 
-export class Form
+export class Form implements WindowComponent
 {
     private state:State = new State();
 
@@ -37,7 +39,7 @@ export class Form
 
     public setPage(page:string|Element)
     {
-        if (!(page instanceof Element))
+        if (typeof page === 'string')
         {
             let template:HTMLTemplateElement = document.createElement('template');
             template.innerHTML = page; page = template.content.getRootNode() as Element;
@@ -48,5 +50,10 @@ export class Form
     public getPage() : Element
     {
         return(this.state.page);
+    }
+
+    public close() : boolean
+    {
+        return(true);
     }
 }

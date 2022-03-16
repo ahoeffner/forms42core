@@ -21,18 +21,22 @@ export interface Component
     class:Class<any>;
 }
 
+function isComponent(object: any): object is Component
+{
+    return('path' in object && 'class' in object);
+}
+
 
 export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
 {
-    function define(comp:Class<any>)
+    function define(_comp_:Class<any>)
     {
         components.forEach(element =>
         {
             let path:string = null;
             let clazz:Class<any> = null;
-            let comp:boolean = (element['path'] != null);
 
-            if (comp)
+            if (isComponent(element))
             {
                 clazz = (element as Component).class;
                 path = (element as Component).path.toLowerCase();
@@ -120,8 +124,9 @@ export class FormsModule
             throw "Component mapped to '"+path+"' is not a form";
 
         let form:Form = new comp();
-        let window:Window = new Window(form.getPage(),0);
+        let window:Window = new Window();
 
+        window.setComponent(form);
         this.window.appendChild(window.getPage());
 
         /*

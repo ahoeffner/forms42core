@@ -10,11 +10,38 @@
  * accompanied this code).
  */
 
+import { Window } from "./interfaces/Window";
+
 class Stack
 {
+    stack:Stack[] = [];
+    window:Window = null;
 
+    add(window:Window) : void
+    {
+
+    }
 }
 
 export class WindowManager
 {
+    private root:Stack = new Stack();
+
+    private stack:Map<Window,Stack> =
+        new Map<Window,Stack>();
+
+    public add(caller:Window, window:Window) : void
+    {
+        let stack:Stack = this.stack.get(caller);;
+
+        if (caller == null)
+            stack = this.root;
+
+        stack.add(window);
+    }
+
+    public remove(window:Window) : void
+    {
+
+    }
 }

@@ -14,8 +14,8 @@ import { WindowComponent } from "../application/WindowComponent";
 
 class State
 {
-    public page:Element = null;
-    public navigable:boolean = true;
+    page:Element = null;
+    navigable:boolean = true;
 }
 
 export class Form implements WindowComponent

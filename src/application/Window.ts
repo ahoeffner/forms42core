@@ -49,7 +49,7 @@ export class Window implements WindowDefinition, EventListenerObject
         this.component = component;
         let page = component.getPage();
 
-        let layout:string = Properties.window.page;
+        let layout:string = Properties.Window.page;
         let template:HTMLTemplateElement = document.createElement("template");
 
         template.innerHTML = layout;
@@ -58,13 +58,13 @@ export class Window implements WindowDefinition, EventListenerObject
         this.window = template.content.querySelector("[name=window]");
         this.content = template.content.querySelector("[name=content]");
 
-        this.modal.classList.value = Properties.window.modalClasses;
-        this.window.classList.value = Properties.window.windowClasses;
-        this.content.classList.value = Properties.window.contentClasses;
+        this.modal.classList.value = Properties.Window.modalClasses;
+        this.window.classList.value = Properties.Window.windowClasses;
+        this.content.classList.value = Properties.Window.contentClasses;
 
-        this.modal.style.cssText = Properties.window.modalStyle;
-        this.window.style.cssText = Properties.window.windowStyle;
-        this.content.style.cssText = Properties.window.contentStyle;
+        this.modal.style.cssText = Properties.Window.modalStyle;
+        this.window.style.cssText = Properties.Window.windowStyle;
+        this.content.style.cssText = Properties.Window.contentStyle;
 
         this.content.style.zIndex = (2*this.depth)+"";
         this.modal.style.zIndex = (2*this.depth + 1)+"";
@@ -77,6 +77,17 @@ export class Window implements WindowDefinition, EventListenerObject
 
         this.content.appendChild(page);
         this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
+    }
+
+    public close(): boolean
+    {
+        if (this.component.close())
+        {
+            this.window.remove();
+            return(true);
+        }
+
+        return(false);
     }
 
     public block() : void

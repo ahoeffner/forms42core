@@ -10,10 +10,13 @@
  * accompanied this code).
  */
 
-import { Window } from "./Window";
 import { Form } from "../forms/Form";
 import { Class } from "../types/Class";
+import { Properties } from "./Properties";
 import { Application } from "./Application";
+import { Window } from "./interfaces/Window";
+import { WindowManager } from "./WindowManager";
+import { ComponentFactory } from "./interfaces/ComponentFactory";
 
 export interface Component
 {
@@ -47,7 +50,7 @@ export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
                 path = (element as Class<any>).name.toLowerCase();
             }
 
-            FormsModule["components"].set(path,clazz);
+            State.components.set(path,clazz);
         });
     }
 
@@ -55,17 +58,20 @@ export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
 }
 
 
+class State
+{
+    root:Element;
+    appl:Application;
+
+    static components:Map<string,Class<any>> =
+        new Map<string,Class<any>>();
+}
+
+
 export class FormsModule
 {
-    private root:Element;
-    private window:Element;
-    private application$:Application;
-
+    private state:State = new State();
     private static instance:FormsModule;
-
-    private static components:Map<string,Class<any>> =
-        new Map<string,Class<any>>();
-
 
     public static get() : FormsModule
     {
@@ -74,33 +80,47 @@ export class FormsModule
         return(FormsModule.instance);
     }
 
-
     constructor()
     {
         FormsModule.instance = this;
-        this.application$ = new Application();
+        this.state.appl = new Application();
+    }
+
+    public getRootElement() : Element
+    {
+        return(this.state.root);
+    }
+
+    public getComponent(path:string) : Class<any>
+    {
+        return(State.components.get(path));
+    }
+
+    public getApplication() : Application
+    {
+        return(this.state.appl);
     }
 
     public parseByTags(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
-        this.root = doc.querySelector('forms');
-        this.window = document.createElement("div");
-        this.root.appendChild(this.window);
+        this.state.root = doc.querySelector('forms');
     }
 
     public parseByClasses(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
-        this.root = doc.querySelector('.forms');
-        this.window = document.createElement("div");
-        this.root.appendChild(this.window);
+        this.state.root = doc.querySelector('.forms');
     }
 
-    public showform(path:string,instance?:string) : void
+    /*
+    public showform(path:string) : void
     {
         path = path.toLowerCase();
         let comp:Class<any> = FormsModule.components.get(path);
+
+        let factory:ComponentFactory = Properties.FactoryImpl;
+        let winimpl:Class<Window> = Properties.WindowImplClass;
 
         if (comp == null)
             throw "No components mapped to path '"+path+"'";
@@ -108,37 +128,17 @@ export class FormsModule
         if (!(comp.prototype instanceof Form))
             throw "Component mapped to '"+path+"' is not a form";
 
-        let form:Form = new comp();
-        this.root.appendChild(form.getPage());
-    }
-
-    public callform(path:string,instance?:string) : void
-    {
-        path = path.toLowerCase();
-        let comp:Class<any> = FormsModule.components.get(path);
-
-        if (comp == null)
-            throw "No components mapped to path '"+path+"'";
-
-        if (!(comp.prototype instanceof Form))
-            throw "Component mapped to '"+path+"' is not a form";
-
-        let form:Form = new comp();
-        let window:Window = new Window();
+        let window:Window = new winimpl();
+        let form:Form = factory.createForm(comp);
 
         window.setComponent(form);
-        this.window.appendChild(window.getPage());
+        this.state.winmgr.add(null,window);
+        this.state.root.appendChild(window.getPage());
 
-        /*
         setTimeout(() => {
-            console.log("block");
-            window.block();
+            console.log("close");
+            window.close();
         },5000);
-
-        setTimeout(() => {
-            console.log("unblock");
-            window.unblock();
-        },10000);
-        */
     }
+        */
 }

@@ -10,7 +10,54 @@
  * accompanied this code).
  */
 
+import { Form } from "../forms/Form";
+import { Class } from "../types/Class";
+import { Properties } from "./Properties";
+import { FormsModule } from "./FormModule";
+import { Window } from "./interfaces/Window";
+import { WindowManager } from "./WindowManager";
+import { ComponentFactory } from "./interfaces/ComponentFactory";
+
+class State
+{
+    module:FormsModule;
+    winmgr:WindowManager = new WindowManager();
+}
+
 export class Application
 {
+    private state:State = new State();
+
+    constructor()
+    {
+        this.state.module = FormsModule.get();
+    }
+
+    public showform(path:string) : void
+    {
+        path = path.toLowerCase();
+        let comp:Class<any> = this.state.module.getComponent(path);
+
+        let factory:ComponentFactory = Properties.FactoryImpl;
+        let winimpl:Class<Window> = Properties.WindowImplClass;
+
+        if (comp == null)
+            throw "No components mapped to path '"+path+"'";
+
+        if (!(comp.prototype instanceof Form))
+            throw "Component mapped to '"+path+"' is not a form";
+
+        let window:Window = new winimpl();
+        let form:Form = factory.createForm(comp);
+
+        window.setComponent(form);
+        this.state.winmgr.add(null,window);
+        this.state.module.getRootElement().appendChild(window.getPage());
+
+        setTimeout(() => {
+            console.log("close");
+            window.close();
+        },5000);
+    }
 
 }

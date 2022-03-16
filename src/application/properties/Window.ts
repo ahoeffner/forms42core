@@ -46,7 +46,6 @@ export class Window
         height: fit-content;
     `
 
-
     public modalClasses:string = "modal";
     public windowClasses:string = "window";
     public contentClasses:string = "content";

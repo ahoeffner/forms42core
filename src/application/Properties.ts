@@ -10,9 +10,18 @@
  * accompanied this code).
  */
 
-import { Window } from './properties/Window'
+import { Class } from "../types/Class";
+
+import { Window as WindowImpl } from "./Window";
+import { Window as WindowType } from "./interfaces/Window";
+import { Window as WinProperties } from './properties/Window'
+
+import { ComponentFactory } from './interfaces/ComponentFactory';
+import { ComponentFactory as FactoryImpl } from './ComponentFactory';
 
 export class Properties
 {
-    public static window:Window = new Window();
+    public static Window:WinProperties = new WinProperties();
+    public static WindowImplClass:Class<WindowType> = WindowImpl;
+    public static FactoryImpl:ComponentFactory = new FactoryImpl();
 }

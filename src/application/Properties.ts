@@ -19,9 +19,33 @@ import { Window as WinProperties } from './properties/Window'
 import { ComponentFactory } from './interfaces/ComponentFactory';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory';
 
+export enum Tag
+{
+    Root,
+    Data,
+    Menu,
+    Calendar,
+    ListOfValues
+}
+
 export class Properties
 {
+    public static parseTags:boolean = true;
+    public static parseEvents:boolean = true;
+    public static parseClasses:boolean = false;
+
     public static Window:WinProperties = new WinProperties();
     public static WindowImplClass:Class<WindowType> = WindowImpl;
     public static FactoryImpl:ComponentFactory = new FactoryImpl();
+
+    public static TagLibrary:Map<string,Tag> = new Map
+    (
+        [
+            ["data",Tag.Data],
+            ["menu",Tag.Menu],
+            ["forms",Tag.Root],
+            ["calendar",Tag.Calendar],
+            ["listofvalues",Tag.ListOfValues]
+        ]
+    );
 }

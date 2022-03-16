@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Parser } from '../tags/Parser';
 import { Window } from '../application/interfaces/Window';
 import { WindowComponent } from "../application/WindowComponent";
 
@@ -56,6 +57,14 @@ export class Form implements WindowComponent
             let template:HTMLTemplateElement = document.createElement('template');
             template.innerHTML = page; page = template.content.getRootNode() as Element;
         }
+
+        let parser:Parser = new Parser(page);
+
+        parser.events.forEach((event,element) =>
+        {
+            console.log("event: "+event[0]+" function: "+event[1]);
+        });
+
         this.state.page = page;
     }
 

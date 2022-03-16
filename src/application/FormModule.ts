@@ -10,8 +10,10 @@
  * accompanied this code).
  */
 
+import { Parser } from "../tags/Parser";
 import { Class } from "../types/Class";
 import { Application } from "./Application";
+import { Tag } from "./Properties";
 
 export interface Component
 {
@@ -99,15 +101,16 @@ export class FormsModule
         return(State.components.get(path));
     }
 
-    public parseByTags(doc?:Element) : void
+    public parseIndexPage(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
-        this.state.root = doc.querySelector('forms');
-    }
 
-    public parseByClasses(doc?:Element) : void
-    {
-        if (doc == null) doc = document.body;
-        this.state.root = doc.querySelector('.forms');
-    }
+        let parser:Parser = new Parser(doc);
+        let roots:Element[] = parser.tags.get(Tag.Root);
+
+        if (roots.length != 1)
+            throw "Index page has "+roots.length+" roots";
+
+        this.state.root = roots[0];
+        }
 }

@@ -17,8 +17,11 @@ export class Parser
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[]> = new Map<Element,string[]>();
 
-    public parse(doc:Element) : void
+    constructor(doc:Element)
     {
+        if (!Properties.parseTags && !Properties.parseClasses && !Properties.parseEvents)
+            return;
+            
         let list:NodeListOf<Element> = doc.querySelectorAll("*");
 
         for (let it = 0; it < list.length; it++)

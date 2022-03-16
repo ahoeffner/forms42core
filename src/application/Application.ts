@@ -50,14 +50,10 @@ export class Application
         let window:Window = new winimpl();
         let form:Form = factory.createForm(comp);
 
+        form.setWindow(window);
         window.setComponent(form);
         this.state.winmgr.add(null,window);
         this.state.module.getRootElement().appendChild(window.getPage());
-
-        setTimeout(() => {
-            console.log("close");
-            window.close();
-        },5000);
     }
 
 }

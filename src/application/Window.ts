@@ -5,29 +5,28 @@ export class Window
     private layer:number = 2;
     private modal:HTMLDivElement = null;
     private window:HTMLDivElement = null;
-    private container:HTMLDivElement = null;
+    private content:HTMLDivElement = null;
 
     constructor(component:Element)
     {
-        let classes:string = null;
         let layout:string = Properties.window.page;
         let template:HTMLTemplateElement = document.createElement("template");
 
         template.innerHTML = layout;
+
         this.modal = template.content.querySelector("[name=modal]");
         this.window = template.content.querySelector("[name=window]");
-        this.container = template.content.querySelector("[name=page]");
+        this.content = template.content.querySelector("[name=content]");
 
-        classes = this.modal.classList.value;
-        this.modal.classList.value = classes + " "+Properties.window.windowClasses;
+        this.modal.classList.value = Properties.window.modalClasses;
+        this.window.classList.value = Properties.window.windowClasses;
+        this.content.classList.value = Properties.window.contentClasses;
 
-        classes = this.window.classList.value;
-        this.window.classList.value = classes + " "+Properties.window.windowClasses;
+        this.modal.style.cssText = Properties.window.modalStyle;
+        this.window.style.cssText = Properties.window.windowStyle;
+        this.content.style.cssText = Properties.window.contentStyle;
 
-        classes = this.container.classList.value;
-        this.container.classList.value = classes + " "+Properties.window.windowClasses;
-
-        this.container.appendChild(component);
+        this.content.appendChild(component);
         this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 
@@ -57,6 +56,8 @@ export class Window
 
     private move = false;
     private mouse = {x: 0, y: 0};
+    private draglsnr:lsnr = new lsnr(this,"drag");
+    private dragendlsnr:lsnr = new lsnr(this,"dragend");
 
     private dragstart(event:any) : void
     {
@@ -67,13 +68,13 @@ export class Window
 
         this.move = true;
 
-        document.addEventListener('mousemove',(event) => {this.drag(event)});
-        document.addEventListener('mouseup',(event) => {this.dragend(event)});
+        document.addEventListener('mousemove',this.draglsnr);
+        document.addEventListener('mouseup',this.dragendlsnr);
 
         this.mouse = {x: event.clientX, y: event.clientY};
     }
 
-    private drag(event:any) : void
+    public drag(event:any) : void
     {
         if (this.move)
         {
@@ -98,8 +99,14 @@ export class Window
     private dragend(event:any) : void
     {
         this.move = false;
-        console.log("remove");
-        document.removeEventListener('mousemove',this.drag);
-        document.removeEventListener('mouseup',this.dragend);
+        document.removeEventListener('mousemove',this.draglsnr);
+        document.removeEventListener('mouseup',this.dragendlsnr);
     }
+}
+
+
+class lsnr implements EventListenerObject
+{
+    constructor(private win:Window, private func:string) {}
+    handleEvent(event: Event): void {this.win[this.func](event)}
 }

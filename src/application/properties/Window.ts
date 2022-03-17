@@ -49,4 +49,5 @@ export class Window
     public modalClasses:string = "modal";
     public windowClasses:string = "window";
     public contentClasses:string = "content";
+    public handleClass:string = "window-handle";
 }

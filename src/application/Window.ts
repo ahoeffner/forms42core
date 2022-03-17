@@ -117,7 +117,10 @@ export class Window implements WindowDefinition, EventListenerObject
     private dragstart(event:any) : void
     {
         if (event.target != this.content && event.target != this.window)
-            return;
+        {
+            if (!event.target.classList.contains(Properties.Window.handleClass))
+                return;
+        }
 
         let corner =
         {

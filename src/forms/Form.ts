@@ -10,16 +10,22 @@
  * accompanied this code).
  */
 
+import { Class } from '../types/Class';
 import { Parser } from '../tags/Parser';
-import { DynamicCall } from '../application/DynamicCall';
+import { DynamicCall } from '../utils/DynamicCall';
+import { FormsModule } from '../application/FormModule';
 import { Window } from '../application/interfaces/Window';
+import { Properties, Tag } from '../application/Properties';
 import { WindowComponent } from "../application/WindowComponent";
+import { ComponentFactory } from '../application/interfaces/ComponentFactory';
+import { Include } from '../tags/Include';
 
 class State
 {
     page:Element = null;
     navigable:boolean = true;
     handler:EventHandler = null;
+    module:FormsModule = FormsModule.get();
 }
 
 class EventHandler implements EventListenerObject
@@ -93,6 +99,40 @@ export class Form implements WindowComponent
         }
 
         let parser:Parser = new Parser(page);
+        let factory:ComponentFactory = Properties.FactoryImpl;
+
+        parser.tags.get(Tag.Include).forEach((element) =>
+        {
+            let fragment:Parser = new Parser(element);
+
+            let src:string = element.getAttribute("src");
+            let impl:Class<any> = this.state.module.getComponent(src);
+
+            if (impl == null)
+                throw "No include class mapped tp "+src;
+
+            let replace:Element = null;
+            let incl:Include = factory.createInclude(impl);
+
+            if (typeof incl.content === 'string')
+            {
+                let template:HTMLTemplateElement = document.createElement('template');
+                template.innerHTML = incl.content; replace = template.content.getRootNode() as Element;
+            }
+            else replace = incl.content;
+
+            element.replaceWith(replace);
+
+            fragment.events.forEach((event,element) =>
+            {
+                for (let i = 0; i < event.length; i++)
+                {
+                    let func:DynamicCall = new DynamicCall(event[i][1]);
+                    let ename:string = this.state.handler.addEvent(element,event[i][0],func);
+                    element.addEventListener(ename,this.state.handler);
+                }
+            });
+        });
 
         parser.events.forEach((event,element) =>
         {

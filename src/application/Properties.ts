@@ -24,6 +24,7 @@ export enum Tag
     Root,
     Data,
     Menu,
+    Include,
     Calendar,
     ListOfValues
 }
@@ -44,6 +45,7 @@ export class Properties
             ["data",Tag.Data],
             ["menu",Tag.Menu],
             ["forms",Tag.Root],
+            ["include",Tag.Include],
             ["calendar",Tag.Calendar],
             ["listofvalues",Tag.ListOfValues]
         ]

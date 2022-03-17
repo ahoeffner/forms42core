@@ -35,15 +35,17 @@ export class Window
         resize: both;
         overflow:hidden;
         position: absolute;
+        width: fit-content;
+        height: fit-content;
     `
 
     public contentStyle:string =
     `
         top: 0;
         left: 0;
+        width: 100%;
+        height: 100%;
         position: relative;
-        width: fit-content;
-        height: fit-content;
     `
 
     public modalClasses:string = "modal";

@@ -11,16 +11,53 @@
  */
 
 import { Parser } from '../tags/Parser';
+import { DynamicCall } from '../application/DynamicCall';
 import { Window } from '../application/interfaces/Window';
 import { WindowComponent } from "../application/WindowComponent";
-import { DynamicCall } from '../application/DynamicCall';
 
 class State
 {
     page:Element = null;
     window:Window = null;
     navigable:boolean = true;
+    handler:EventHandler = null;
 }
+
+class EventHandler implements EventListenerObject
+{
+    private events:Map<Element,Map<string,DynamicCall>> =
+        new Map<Element,Map<string,DynamicCall>>();
+
+    constructor(private form:Form) {};
+
+    public addEvent(element:Element,event:string,handler:DynamicCall) :string
+    {
+        event = event.substring(2); // get rid of "on" prefix
+        let events:Map<string,DynamicCall> = this.events.get(element);
+
+        if (events == null)
+        {
+            events = new Map<string,DynamicCall>();
+            this.events.set(element,events);
+        }
+
+        events.set(event,handler);
+        return(event);
+    }
+
+    public getEvent(element:Element,event:string) : DynamicCall
+    {
+        let events:Map<string,DynamicCall> = this.events.get(element);
+        return(events.get(event));
+    }
+
+    public handleEvent(event:Event): void
+    {
+        let handler:DynamicCall = this.getEvent(event.target as Element,event.type);
+        this.form[handler.method].apply(null,handler.args);
+    }
+}
+
 
 export class Form implements WindowComponent
 {
@@ -28,7 +65,8 @@ export class Form implements WindowComponent
 
     constructor(page?:string)
     {
-        this.setPage(page);
+        this.state.handler = new EventHandler(this);
+        if (page != null) this.setPage(page);
     }
 
     public get navigable() : boolean
@@ -66,7 +104,8 @@ export class Form implements WindowComponent
             for (let i = 0; i < event.length; i++)
             {
                 let func:DynamicCall = new DynamicCall(event[i][1]);
-                this[func.method].apply(null,func.args);
+                let ename:string = this.state.handler.addEvent(element,event[i][0],func);
+                element.addEventListener(ename,this.state.handler);
             }
         });
 

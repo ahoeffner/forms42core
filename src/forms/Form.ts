@@ -12,13 +12,13 @@
 
 import { Class } from '../types/Class';
 import { Parser } from '../tags/Parser';
+import { Include } from '../tags/Include';
 import { DynamicCall } from '../utils/DynamicCall';
 import { FormsModule } from '../application/FormModule';
 import { Window } from '../application/interfaces/Window';
 import { Properties, Tag } from '../application/Properties';
 import { WindowComponent } from "../application/WindowComponent";
 import { ComponentFactory } from '../application/interfaces/ComponentFactory';
-import { Include } from '../tags/Include';
 
 class State
 {
@@ -59,13 +59,16 @@ class EventHandler implements EventListenerObject
     public handleEvent(event:Event): void
     {
         let handler:DynamicCall = this.getEvent(event.target as Element,event.type);
-        this.form[handler.method].apply(null,handler.args);
+        this.form[handler.method].apply(this.form,handler.args);
     }
 }
 
 
 export class Form implements WindowComponent
 {
+    static seq:number = 0;
+    public id:number = ++Form.seq;
+
     public window:Window = null;
     private state:State = new State();
 
@@ -92,6 +95,7 @@ export class Form implements WindowComponent
 
     public setPage(page:string|Element)
     {
+        console.log("parse form "+this.id);
         if (typeof page === 'string')
         {
             let template:HTMLTemplateElement = document.createElement('template');
@@ -103,8 +107,6 @@ export class Form implements WindowComponent
 
         parser.tags.get(Tag.Include).forEach((element) =>
         {
-            let fragment:Parser = new Parser(element);
-
             let src:string = element.getAttribute("src");
             let impl:Class<any> = this.state.module.getComponent(src);
 
@@ -117,11 +119,13 @@ export class Form implements WindowComponent
             if (typeof incl.content === 'string')
             {
                 let template:HTMLTemplateElement = document.createElement('template');
-                template.innerHTML = incl.content; replace = template.content.getRootNode() as Element;
+                template.innerHTML = incl.content; replace = template.content.getRootNode().firstChild as Element;
             }
             else replace = incl.content;
 
             element.replaceWith(replace);
+
+            let fragment:Parser = new Parser(replace);
 
             fragment.events.forEach((event,element) =>
             {
@@ -149,6 +153,7 @@ export class Form implements WindowComponent
 
     public close() : boolean
     {
+        console.log("close window: "+this)
         this.window.close();
         return(true);
     }

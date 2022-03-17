@@ -13,6 +13,7 @@
 import { Parser } from '../tags/Parser';
 import { Window } from '../application/interfaces/Window';
 import { WindowComponent } from "../application/WindowComponent";
+import { DynamicCall } from '../application/DynamicCall';
 
 class State
 {
@@ -62,7 +63,11 @@ export class Form implements WindowComponent
 
         parser.events.forEach((event,element) =>
         {
-            console.log("event: "+event[0]+" function: "+event[1]);
+            for (let i = 0; i < event.length; i++)
+            {
+                let func:DynamicCall = new DynamicCall(event[i][1]);
+                this[func.method].apply(null,func.args);
+            }
         });
 
         this.state.page = page;

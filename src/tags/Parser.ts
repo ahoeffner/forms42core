@@ -15,13 +15,13 @@ import { Properties, Tag } from '../application/Properties';
 export class Parser
 {
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
-    public events:Map<Element,string[]> = new Map<Element,string[]>();
+    public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
     constructor(doc:Element)
     {
         if (!Properties.parseTags && !Properties.parseClasses && !Properties.parseEvents)
             return;
-            
+
         let list:NodeListOf<Element> = doc.querySelectorAll("*");
 
         for (let it = 0; it < list.length; it++)
@@ -99,8 +99,16 @@ export class Parser
 
             if (evtype && handle)
             {
+                let events:string[][] = this.events.get(element);
+
+                if (events == null)
+                {
+                    events = [];
+                    this.events.set(element,events);
+                }
+
+                events.push([attrname[an],attrvalue]);
                 element.removeAttribute(attrname[an]);
-                this.events.set(element,[attrname[an],attrvalue]);
             }
         }
     }

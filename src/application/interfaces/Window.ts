@@ -2,10 +2,9 @@ import { WindowComponent } from "../WindowComponent";
 
 export interface Window
 {
+    close() : void;
     block() : void;
     unblock() : void;
-    dismiss() : void;
-    close() : boolean;
     getPage() : Element;
     getDepth() : number;
     setDepth(depth:number) : void;

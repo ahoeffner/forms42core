@@ -14,7 +14,7 @@ import { Window } from './interfaces/Window';
 
 export interface WindowComponent
 {
+    window:Window;
     close() : boolean;
     getPage() : string|Element;
-    setWindow(window:Window) : void;
 }

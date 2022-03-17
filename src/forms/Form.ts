@@ -18,7 +18,6 @@ import { WindowComponent } from "../application/WindowComponent";
 class State
 {
     page:Element = null;
-    window:Window = null;
     navigable:boolean = true;
     handler:EventHandler = null;
 }
@@ -61,6 +60,7 @@ class EventHandler implements EventListenerObject
 
 export class Form implements WindowComponent
 {
+    public window:Window = null;
     private state:State = new State();
 
     constructor(page?:string)
@@ -82,11 +82,6 @@ export class Form implements WindowComponent
     public getPage() : Element
     {
         return(this.state.page);
-    }
-
-    public setWindow(window:Window): void
-    {
-        this.state.window = window;
     }
 
     public setPage(page:string|Element)
@@ -112,14 +107,9 @@ export class Form implements WindowComponent
         this.state.page = page;
     }
 
-    public closeWindow() : void
-    {
-        this.state.window.dismiss();
-    }
-
     public close() : boolean
     {
-        this.closeWindow();
+        this.window.close();
         return(true);
     }
 }

@@ -50,7 +50,7 @@ export class Application
         let window:Window = new winimpl();
         let form:Form = factory.createForm(comp);
 
-        form.setWindow(window);
+        form.window = window;
         window.setComponent(form);
         this.state.winmgr.add(null,window);
         this.state.module.getRootElement().appendChild(window.getPage());

@@ -56,7 +56,7 @@ class EventHandler implements EventListenerObject
     public handleEvent(event:Event): void
     {
         let handler:DynamicCall = this.getEvent(event.target as Element,event.type);
-        this.form[handler.method].apply(this.form,handler.args);
+        this.form[handler.method](this.form,handler.args);
     }
 }
 

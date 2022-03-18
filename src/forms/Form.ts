@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
-import { Parser } from '../tags/Parser';
-import { DynamicCall } from '../utils/DynamicCall';
-import { FormsModule } from '../application/FormsModule';
-import { Window } from '../application/interfaces/Window';
-import { WindowComponent } from "../application/WindowComponent";
+import { Parser } from '../tags/Parser.js';
+import { DynamicCall } from '../utils/DynamicCall.js';
+import { FormsModule } from '../application/FormsModule.js';
+import { Window } from '../application/interfaces/Window.js';
+import { WindowComponent } from "../application/WindowComponent.js";
 
 
 class State

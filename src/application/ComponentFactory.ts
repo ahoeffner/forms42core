@@ -1,7 +1,7 @@
-import { Form } from "../forms/Form";
-import { Class } from "../types/Class";
-import { Include } from "../tags/Include";
-import { ComponentFactory as Factory } from "./interfaces/ComponentFactory";
+import { Form } from "../forms/Form.js";
+import { Class } from "../types/Class.js";
+import { Include } from "../tags/Include.js";
+import { ComponentFactory as Factory } from "./interfaces/ComponentFactory.js";
 
 export class ComponentFactory implements Factory
 {

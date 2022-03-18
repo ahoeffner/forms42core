@@ -10,14 +10,14 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class";
+import { Class } from "../types/Class.js";
 
-import { Window as WindowImpl } from "./Window";
-import { Window as WindowType } from "./interfaces/Window";
-import { Window as WinProperties } from './properties/Window'
+import { Window as WindowImpl } from "./Window.js";
+import { Window as WindowType } from "./interfaces/Window.js";
+import { Window as WinProperties } from './properties/Window.js'
 
-import { ComponentFactory } from './interfaces/ComponentFactory';
-import { ComponentFactory as FactoryImpl } from './ComponentFactory';
+import { ComponentFactory } from './interfaces/ComponentFactory.js';
+import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
 export enum Tag
 {

@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Window } from "./interfaces/Window";
+import { Window } from "./interfaces/Window.js";
 
 class Stack
 {

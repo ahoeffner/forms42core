@@ -2,7 +2,7 @@
   "name": "forms42core",
   "version": "2.1.1",
   "description": "Forms42 core api",
-  "type": "commonjs",
+  "type": "module",
   "main": "index.js",
   "types": "public-api.d.ts",
   "scripts": {

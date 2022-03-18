@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { Properties } from "./Properties";
-import { WindowComponent } from "./WindowComponent";
-import { Window as WindowDefinition } from "./interfaces/Window";
+import { Properties } from "./Properties.js";
+import { WindowComponent } from "./WindowComponent.js";
+import { Window as WindowDefinition } from "./interfaces/Window.js";
 
 export class Window implements WindowDefinition, EventListenerObject
 {

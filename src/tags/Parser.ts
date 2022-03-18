@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
-import { Class } from '../types/Class';
-import { Include } from '../tags/Include';
-import { FormsModule } from '../application/FormsModule';
-import { Properties, Tag } from '../application/Properties';
-import { ComponentFactory } from '../application/interfaces/ComponentFactory';
+import { Class } from '../types/Class.js';
+import { Include } from '../tags/Include.js';
+import { FormsModule } from '../application/FormsModule.js';
+import { Properties, Tag } from '../application/Properties.js';
+import { ComponentFactory } from '../application/interfaces/ComponentFactory.js';
 
 
 export class Parser

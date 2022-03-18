@@ -13,7 +13,7 @@
 import { Form } from "../forms/Form";
 import { Class } from "../types/Class";
 import { Properties } from "./Properties";
-import { FormsModule } from "./FormModule";
+import { FormsModule } from "./FormsModule";
 import { Window } from "./interfaces/Window";
 import { WindowManager } from "./WindowManager";
 import { ComponentFactory } from "./interfaces/ComponentFactory";

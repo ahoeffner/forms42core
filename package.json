@@ -3,10 +3,10 @@
   "version": "2.1.1",
   "description": "Forms42 core api",
   "type": "commonjs",
-  "main": "main.js",
+  "main": "index.js",
   "types": "public-api.d.ts",
   "scripts": {
-    "build": "cp private-api.ts main.ts && cat public-api.d.ts >> main.ts && tsc && cp public-api.d.ts package.json dist && cp -R mods dist"
+    "build": "cp version.ts index.ts && cat public-api.d.ts >> index.ts && tsc && cp public-api.d.ts package.json dist && cp -R mods dist"
   },
   "keywords": [
     "Database",

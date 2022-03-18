@@ -12,7 +12,7 @@
 
 import { Class } from '../types/Class';
 import { Include } from '../tags/Include';
-import { FormsModule } from '../application/FormModule';
+import { FormsModule } from '../application/FormsModule';
 import { Properties, Tag } from '../application/Properties';
 import { ComponentFactory } from '../application/interfaces/ComponentFactory';
 

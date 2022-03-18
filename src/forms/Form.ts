@@ -12,7 +12,7 @@
 
 import { Parser } from '../tags/Parser';
 import { DynamicCall } from '../utils/DynamicCall';
-import { FormsModule } from '../application/FormModule';
+import { FormsModule } from '../application/FormsModule';
 import { Window } from '../application/interfaces/Window';
 import { WindowComponent } from "../application/WindowComponent";
 
@@ -63,9 +63,6 @@ class EventHandler implements EventListenerObject
 
 export class Form implements WindowComponent
 {
-    static seq:number = 0;
-    public id:number = ++Form.seq;
-
     public window:Window = null;
     private state:State = new State();
 

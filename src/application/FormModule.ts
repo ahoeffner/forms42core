@@ -109,10 +109,7 @@ export class FormsModule
         let parser:Parser = new Parser(doc);
         let roots:Element[] = parser.tags.get(Tag.Root);
 
-        if (roots.length > 1)
-            throw "Index page has "+roots.length+" roots";
-
-        if (roots.length == 1)
+        if (roots.length >= 1)
             this.state.root = roots[0];
     }
 }

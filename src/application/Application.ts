@@ -33,10 +33,11 @@ export class Application
         this.state.module = module;
     }
 
-    public showform(path:string) : void
+    public showform(path:string, parent?:Element) : void
     {
         path = path.toLowerCase();
         let comp:Class<any> = this.state.module.getComponent(path);
+        if (parent == null) parent = this.state.module.getRootElement();
 
         let factory:ComponentFactory = Properties.FactoryImpl;
         let winimpl:Class<Window> = Properties.WindowImplClass;
@@ -53,7 +54,7 @@ export class Application
         form.window = window;
         window.setComponent(form);
         this.state.winmgr.add(null,window);
-        this.state.module.getRootElement().appendChild(window.getPage());
+        parent.appendChild(window.getPage());
     }
 
 }

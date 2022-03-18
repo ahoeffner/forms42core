@@ -1,4 +1,4 @@
-import { WindowComponent } from "../WindowComponent.js";
+import { WindowComponent } from '../WindowComponent.js';
 
 export interface Window
 {

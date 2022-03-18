@@ -14,7 +14,7 @@ import { Parser } from '../tags/Parser.js';
 import { DynamicCall } from '../utils/DynamicCall.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Window } from '../application/interfaces/Window.js';
-import { WindowComponent } from "../application/WindowComponent.js";
+import { WindowComponent } from '../application/WindowComponent.js';
 
 
 class State

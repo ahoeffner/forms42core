@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Tag } from "./Properties.js";
-import { Class } from "../types/Class.js";
-import { Parser } from "../tags/Parser.js";
-import { Application } from "./Application.js";
+import { Tag } from './Properties.js';
+import { Class } from '../types/Class.js';
+import { Parser } from '../tags/Parser.js';
+import { Application } from './Application.js';
 
 export interface Component
 {

@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class.js";
+import { Class } from '../types/Class.js';
 
-import { Window as WindowImpl } from "./Window.js";
-import { Window as WindowType } from "./interfaces/Window.js";
+import { Window as WindowImpl } from './Window.js';
+import { Window as WindowType } from './interfaces/Window.js';
 import { Window as WinProperties } from './properties/Window.js'
 
 import { ComponentFactory } from './interfaces/ComponentFactory.js';

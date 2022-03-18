@@ -10,13 +10,13 @@
  * accompanied this code).
  */
 
-import { Form } from "../forms/Form.js";
-import { Class } from "../types/Class.js";
-import { Properties } from "./Properties.js";
-import { FormsModule } from "./FormsModule.js";
-import { Window } from "./interfaces/Window.js";
-import { WindowManager } from "./WindowManager.js";
-import { ComponentFactory } from "./interfaces/ComponentFactory.js";
+import { Form } from '../forms/Form.js';
+import { Class } from '../types/Class.js';
+import { Properties } from './Properties.js';
+import { FormsModule } from './FormsModule.js';
+import { Window } from './interfaces/Window.js';
+import { WindowManager } from './WindowManager.js';
+import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 class State
 {

@@ -10,15 +10,12 @@
  * accompanied this code).
  */
 
-import { Class } from '../types/Class';
 import { Parser } from '../tags/Parser';
-import { Include } from '../tags/Include';
 import { DynamicCall } from '../utils/DynamicCall';
 import { FormsModule } from '../application/FormModule';
 import { Window } from '../application/interfaces/Window';
-import { Properties, Tag } from '../application/Properties';
 import { WindowComponent } from "../application/WindowComponent";
-import { ComponentFactory } from '../application/interfaces/ComponentFactory';
+
 
 class State
 {
@@ -95,7 +92,6 @@ export class Form implements WindowComponent
 
     public setPage(page:string|Element)
     {
-        console.log("parse form "+this.id);
         if (typeof page === 'string')
         {
             let template:HTMLTemplateElement = document.createElement('template');
@@ -103,40 +99,6 @@ export class Form implements WindowComponent
         }
 
         let parser:Parser = new Parser(page);
-        let factory:ComponentFactory = Properties.FactoryImpl;
-
-        parser.tags.get(Tag.Include).forEach((element) =>
-        {
-            let src:string = element.getAttribute("src");
-            let impl:Class<any> = this.state.module.getComponent(src);
-
-            if (impl == null)
-                throw "No include class mapped tp "+src;
-
-            let replace:Element = null;
-            let incl:Include = factory.createInclude(impl);
-
-            if (typeof incl.content === 'string')
-            {
-                let template:HTMLTemplateElement = document.createElement('template');
-                template.innerHTML = incl.content; replace = template.content.getRootNode().firstChild as Element;
-            }
-            else replace = incl.content;
-
-            element.replaceWith(replace);
-
-            let fragment:Parser = new Parser(replace);
-
-            fragment.events.forEach((event,element) =>
-            {
-                for (let i = 0; i < event.length; i++)
-                {
-                    let func:DynamicCall = new DynamicCall(event[i][1]);
-                    let ename:string = this.state.handler.addEvent(element,event[i][0],func);
-                    element.addEventListener(ename,this.state.handler);
-                }
-            });
-        });
 
         parser.events.forEach((event,element) =>
         {
@@ -153,7 +115,6 @@ export class Form implements WindowComponent
 
     public close() : boolean
     {
-        console.log("close window: "+this)
         this.window.close();
         return(true);
     }

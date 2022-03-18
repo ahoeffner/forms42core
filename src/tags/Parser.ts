@@ -10,10 +10,16 @@
  * accompanied this code).
  */
 
+import { Class } from '../types/Class';
+import { Include } from '../tags/Include';
+import { FormsModule } from '../application/FormModule';
 import { Properties, Tag } from '../application/Properties';
+import { ComponentFactory } from '../application/interfaces/ComponentFactory';
+
 
 export class Parser
 {
+    private module:FormsModule = FormsModule.get();
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
@@ -22,19 +28,26 @@ export class Parser
         if (!Properties.parseTags && !Properties.parseClasses && !Properties.parseEvents)
             return;
 
+        this.parse(doc);
+    }
+
+    private parse(doc:Element) : void
+    {
         let list:NodeListOf<Element> = doc.querySelectorAll("*");
 
         for (let it = 0; it < list.length; it++)
         {
             let element:Element = list.item(it);
 
-            this.addByTag(element);
-            this.addByClass(element);
+            let tincl:boolean = this.addByTag(element);
+            let cincl:boolean = this.addByClass(element);
+
             this.addEvents(element);
+            if (tincl || cincl) this.include(element);
         }
     }
 
-    private addByTag(element:Element) : void
+    private addByTag(element:Element) : boolean
     {
         if (!Properties.parseTags) return;
         let name:string = element.nodeName.toLowerCase();
@@ -53,14 +66,17 @@ export class Parser
             if (bucket.indexOf(element) == -1)
                 bucket.push(element);
         }
+
+        return(tag == Tag.Include);
     }
 
-    private addByClass(element:Element) : void
+    private addByClass(element:Element) : boolean
     {
         if (!Properties.parseClasses) return;
         let list:string = element.getAttribute("class");
 
         if (list == null) return;
+        let include:boolean = false;
         let classes:string[] = list.trim().split(" ");
 
         for (let i = 0; i < classes.length; i++)
@@ -70,6 +86,7 @@ export class Parser
 
             if (tag != null)
             {
+                if (tag == Tag.Include) include = true;
                 let bucket:Element[] = this.tags.get(tag);
 
                 if (bucket == null)
@@ -111,5 +128,32 @@ export class Parser
                 element.removeAttribute(attrname[an]);
             }
         }
+    }
+
+    private include(element:Element) : void
+    {
+        let src:string = element.getAttribute("src");
+        let impl:Class<any> = this.module.getComponent(src);
+        let factory:ComponentFactory = Properties.FactoryImpl;
+
+        if (impl == null)
+            throw "No include class mapped tp "+src;
+
+        let replace:Element = null;
+        let incl:Include = factory.createInclude(impl);
+
+        if (typeof incl.content === 'string')
+        {
+            let template:HTMLTemplateElement = document.createElement('template');
+            template.innerHTML = incl.content; replace = template.content.getRootNode() as Element;
+        }
+        else replace = incl.content;
+
+        let fragment:Parser = new Parser(replace);
+
+        fragment.events.forEach((event,element) =>
+            {this.events.set(element,event);});
+
+        element.replaceWith(replace);
     }
 }

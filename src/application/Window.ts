@@ -147,14 +147,14 @@ export class Window implements WindowDefinition, EventListenerObject
         {
             event.preventDefault();
 
-            var offX = event.clientX - this.mouse.x;
-            var offY = event.clientY - this.mouse.y;
+            let offX:number = event.clientX - this.mouse.x;
+            let offY:number = event.clientY - this.mouse.y;
 
-            var elemY = this.window.offsetTop;
-            var elemX = this.window.offsetLeft;
+            let elemY:number = this.window.offsetTop;
+            let elemX:number = this.window.offsetLeft;
 
-            var posX = elemX + offX;
-            var posY = elemY + offY;
+            let posX:number = elemX + offX;
+            let posY:number = elemY + offY;
 
             this.window.style.top = posY + "px";
             this.window.style.left = posX + "px";

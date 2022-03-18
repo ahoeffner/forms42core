@@ -23,6 +23,7 @@ export interface Component
 
 function isComponent(object: any): object is Component
 {
+    console.log('ddd');
     return('path' in object && 'class' in object);
 }
 

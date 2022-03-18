@@ -6,6 +6,6 @@ import { ComponentFactory as Factory } from "./interfaces/ComponentFactory.js";
 export class ComponentFactory implements Factory
 {
     createBean(bean:Class<any>) : any {return(new bean())}
-    createForm(form:Class<Form>) : Form {return(new form())};
+    createForm(form:Class<Form>) : Form {return(new form())}
     createInclude(incl:Class<any>) : Include {return(new incl())}
 }

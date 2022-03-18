@@ -18,6 +18,7 @@ class Stack
     window:Window = null;
 
     add(window:Window) : void
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     {
 
     }
@@ -32,7 +33,7 @@ export class WindowManager
 
     public add(caller:Window, window:Window) : void
     {
-        let stack:Stack = this.stack.get(caller);;
+        let stack:Stack = this.stack.get(caller);
 
         if (caller == null)
             stack = this.root;
@@ -41,6 +42,7 @@ export class WindowManager
     }
 
     public remove(window:Window) : void
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     {
 
     }

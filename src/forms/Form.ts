@@ -30,7 +30,7 @@ class EventHandler implements EventListenerObject
     private events:Map<Element,Map<string,DynamicCall>> =
         new Map<Element,Map<string,DynamicCall>>();
 
-    constructor(private form:Form) {};
+    constructor(private form:Form) {}
 
     public addEvent(element:Element,event:string,handler:DynamicCall) :string
     {

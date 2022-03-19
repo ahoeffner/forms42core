@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
-import { Window } from './interfaces/Window.js';
+import { Canvas } from './interfaces/Canvas.js';
 
-export interface WindowComponent
+export interface CanvasComponent
 {
-    window:Window;
+    canvas:Canvas;
     close() : boolean;
     getPage() : string|Element;
 }

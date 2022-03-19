@@ -134,7 +134,7 @@ export class Parser
     {
         let src:string = element.getAttribute("src");
         let impl:Class<any> = this.module.getComponent(src);
-        let factory:ComponentFactory = Properties.FactoryImpl;
+        let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
         if (impl == null)
             throw "No include class mapped tp "+src;

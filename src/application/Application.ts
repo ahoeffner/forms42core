@@ -14,14 +14,12 @@ import { Form } from '../forms/Form.js';
 import { Class } from '../types/Class.js';
 import { Properties } from './Properties.js';
 import { FormsModule } from './FormsModule.js';
-import { Window } from './interfaces/Window.js';
-import { WindowManager } from './WindowManager.js';
+import { Canvas } from './interfaces/Canvas.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 class State
 {
     module:FormsModule;
-    winmgr:WindowManager = new WindowManager();
 }
 
 export class Application
@@ -39,8 +37,8 @@ export class Application
         let comp:Class<any> = this.state.module.getComponent(path);
         if (parent == null) parent = this.state.module.getRootElement();
 
-        let factory:ComponentFactory = Properties.FactoryImpl;
-        let winimpl:Class<Window> = Properties.WindowImplClass;
+        let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
+        let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
         if (comp == null)
             throw "No components mapped to path '"+path+"'";
@@ -48,13 +46,12 @@ export class Application
         if (!(comp.prototype instanceof Form))
             throw "Component mapped to '"+path+"' is not a form";
 
-        let window:Window = new winimpl();
+        let canvas:Canvas = new canvasimpl();
         let form:Form = factory.createForm(comp);
 
-        form.window = window;
-        window.setComponent(form);
-        this.state.winmgr.add(null,window);
-        parent.appendChild(window.getPage());
+        form.canvas = canvas;
+        canvas.setComponent(form);
+        parent.appendChild(canvas.getPage());
     }
 
 }

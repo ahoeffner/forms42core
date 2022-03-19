@@ -12,9 +12,9 @@
 
 import { Class } from '../types/Class.js';
 
-import { Window as WindowImpl } from './Window.js';
-import { Window as WindowType } from './interfaces/Window.js';
-import { Window as WinProperties } from './properties/Window.js'
+import { Canvas as CanvasImpl } from './Canvas.js';
+import { Canvas as CanvasType } from './interfaces/Canvas.js';
+import { Canvas as CanvasProperties } from './properties/Canvas.js'
 
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
@@ -35,9 +35,8 @@ export class Properties
     public static parseEvents:boolean = true;
     public static parseClasses:boolean = false;
 
-    public static Window:WinProperties = new WinProperties();
-    public static WindowImplClass:Class<WindowType> = WindowImpl;
-    public static FactoryImpl:ComponentFactory = new FactoryImpl();
+    public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
+    public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
 
     public static TagLibrary:Map<string,Tag> = new Map
     (
@@ -50,4 +49,6 @@ export class Properties
             ["listofvalues",Tag.ListOfValues]
         ]
     );
+
+    public static CanvasProperties:CanvasProperties = new CanvasProperties();
 }

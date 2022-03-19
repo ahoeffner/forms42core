@@ -13,8 +13,8 @@
 import { Parser } from '../tags/Parser.js';
 import { DynamicCall } from '../utils/DynamicCall.js';
 import { FormsModule } from '../application/FormsModule.js';
-import { Window } from '../application/interfaces/Window.js';
-import { WindowComponent } from '../application/WindowComponent.js';
+import { Canvas } from '../application/interfaces/Canvas.js';
+import { CanvasComponent } from '../application/CanvasComponent.js';
 
 
 class State
@@ -61,9 +61,9 @@ class EventHandler implements EventListenerObject
 }
 
 
-export class Form implements WindowComponent
+export class Form implements CanvasComponent
 {
-    public window:Window = null;
+    public canvas:Canvas = null;
     private state:State = new State();
 
     constructor(page?:string)
@@ -112,7 +112,7 @@ export class Form implements WindowComponent
 
     public close() : boolean
     {
-        this.window.close();
+        this.canvas.close();
         return(true);
     }
 }

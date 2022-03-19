@@ -11,17 +11,17 @@
  */
 
 import { Properties } from './Properties.js';
-import { WindowComponent } from './WindowComponent.js';
-import { Window as WindowDefinition } from './interfaces/Window.js';
+import { CanvasComponent } from './CanvasComponent.js';
+import { Canvas as CanvasDefinition } from './interfaces/Canvas.js';
 
-export class Window implements WindowDefinition, EventListenerObject
+export class Canvas implements CanvasDefinition, EventListenerObject
 {
     private depth:number = 0;
     private active:Element = null;
     private modal:HTMLDivElement = null;
-    private window:HTMLDivElement = null;
+    private canvas:HTMLDivElement = null;
     private content:HTMLDivElement = null;
-    private component:WindowComponent = null;
+    private component:CanvasComponent = null;
 
     public getDepth(): number
     {
@@ -39,32 +39,32 @@ export class Window implements WindowDefinition, EventListenerObject
         }
     }
 
-    public getComponent(): WindowComponent
+    public getComponent(): CanvasComponent
     {
         return(this.component);
     }
 
-    public setComponent(component:WindowComponent) : void
+    public setComponent(component:CanvasComponent) : void
     {
         this.component = component;
         let page = component.getPage();
 
-        let layout:string = Properties.Window.page;
+        let layout:string = Properties.CanvasProperties.page;
         let template:HTMLTemplateElement = document.createElement("template");
 
         template.innerHTML = layout;
 
         this.modal = template.content.querySelector("[name=modal]");
-        this.window = template.content.querySelector("[name=window]");
+        this.canvas = template.content.querySelector("[name=canvas]");
         this.content = template.content.querySelector("[name=content]");
 
-        this.modal.classList.value = Properties.Window.modalClasses;
-        this.window.classList.value = Properties.Window.windowClasses;
-        this.content.classList.value = Properties.Window.contentClasses;
+        this.modal.classList.value = Properties.CanvasProperties.ModalClasses;
+        this.canvas.classList.value = Properties.CanvasProperties.CanvasClasses;
+        this.content.classList.value = Properties.CanvasProperties.ContentClasses;
 
-        this.modal.style.cssText = Properties.Window.modalStyle;
-        this.window.style.cssText = Properties.Window.windowStyle;
-        this.content.style.cssText = Properties.Window.contentStyle;
+        this.modal.style.cssText = Properties.CanvasProperties.ModalStyle;
+        this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
+        this.content.style.cssText = Properties.CanvasProperties.ContentStyle;
 
         this.content.style.zIndex = (2*this.depth)+"";
         this.modal.style.zIndex = (2*this.depth + 1)+"";
@@ -76,20 +76,20 @@ export class Window implements WindowDefinition, EventListenerObject
         }
 
         this.content.appendChild(page);
-        this.window.addEventListener("mousedown",(event) => {this.dragstart(event)});
+        this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 
     public close() : void
     {
-        this.window.remove();
+        this.canvas.remove();
     }
 
     public block() : void
     {
-        this.window.style.resize = "none";
+        this.canvas.style.resize = "none";
         this.active = document.activeElement;
-        this.modal.style.width = this.window.offsetWidth+"px";
-        this.modal.style.height = this.window.offsetHeight+"px";
+        this.modal.style.width = this.canvas.offsetWidth+"px";
+        this.modal.style.height = this.canvas.offsetHeight+"px";
         if (this.active instanceof HTMLElement) this.active.blur();
     }
 
@@ -97,13 +97,13 @@ export class Window implements WindowDefinition, EventListenerObject
     {
         this.modal.style.width = "0";
         this.modal.style.height = "0";
-        this.window.style.resize = "both";
+        this.canvas.style.resize = "both";
         if (this.active instanceof HTMLElement) this.active.focus();
     }
 
     public getPage() : Element
     {
-        return(this.window);
+        return(this.canvas);
     }
 
 
@@ -116,16 +116,16 @@ export class Window implements WindowDefinition, EventListenerObject
 
     private dragstart(event:any) : void
     {
-        if (event.target != this.content && event.target != this.window)
+        if (event.target != this.content && event.target != this.canvas)
         {
-            if (!event.target.classList.contains(Properties.Window.handleClass))
+            if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
                 return;
         }
 
         let corner =
         {
-            x: +this.window.offsetLeft + +this.window.offsetWidth,
-            y: +this.window.offsetTop + +this.window.offsetHeight
+            x: +this.canvas.offsetLeft + +this.canvas.offsetWidth,
+            y: +this.canvas.offsetTop + +this.canvas.offsetHeight
         }
 
         let pos = {x: +event.clientX, y: +event.clientY};
@@ -150,14 +150,14 @@ export class Window implements WindowDefinition, EventListenerObject
             let offX:number = event.clientX - this.mouse.x;
             let offY:number = event.clientY - this.mouse.y;
 
-            let elemY:number = this.window.offsetTop;
-            let elemX:number = this.window.offsetLeft;
+            let elemY:number = this.canvas.offsetTop;
+            let elemX:number = this.canvas.offsetLeft;
 
             let posX:number = elemX + offX;
             let posY:number = elemY + offY;
 
-            this.window.style.top = posY + "px";
-            this.window.style.left = posX + "px";
+            this.canvas.style.top = posY + "px";
+            this.canvas.style.left = posX + "px";
 
             this.mouse = {x: event.clientX, y: event.clientY};
         }

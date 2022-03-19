@@ -10,18 +10,18 @@
  * accompanied this code).
  */
 
-export class Window
+export class Canvas
 {
     public page:string =
     `
-    <div name="window">
+    <div name="canvas">
         <div name="modal"></div>
         <div name="content"></div>
     </div>
 
     `
 
-    public modalStyle:string =
+    public ModalStyle:string =
     `
         top: 0;
         left: 0;
@@ -30,7 +30,7 @@ export class Window
         position: absolute;
     `
 
-    public windowStyle:string =
+    public CanvasStyle:string =
     `
         resize: both;
         overflow:hidden;
@@ -39,7 +39,7 @@ export class Window
         height: fit-content;
     `
 
-    public contentStyle:string =
+    public ContentStyle:string =
     `
         top: 0;
         left: 0;
@@ -48,8 +48,8 @@ export class Window
         position: relative;
     `
 
-    public modalClasses:string = "modal";
-    public windowClasses:string = "window";
-    public contentClasses:string = "content";
-    public handleClass:string = "window-handle";
+    public ModalClasses:string = "modal";
+    public CanvasClasses:string = "canvas";
+    public ContentClasses:string = "content";
+    public CanvasHandleClass:string = "canvas-handle";
 }

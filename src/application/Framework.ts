@@ -24,7 +24,7 @@ interface parsed
 }
 
 
-export class FrameWork
+export class Framework
 {
     private component:any = null;
     private module:FormsModule = FormsModule.get();
@@ -33,9 +33,9 @@ export class FrameWork
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
-    public static parse(component:any, doc:Element) : FrameWork
+    public static parse(component:any, doc:Element) : Framework
     {
-        return(new FrameWork(component,doc));
+        return(new Framework(component,doc));
     }
 
     private constructor(component:any, doc:Element)
@@ -202,7 +202,7 @@ export class FrameWork
         }
         else replace = incl.content;
 
-        let fragment:FrameWork = new FrameWork(this.component,replace);
+        let fragment:Framework = new Framework(this.component,replace);
 
         fragment.events.forEach((event,element) =>
             {this.events.set(element,event);});
@@ -343,7 +343,13 @@ class EventHandler implements EventListenerObject
         {
             try
             {
-                this.component[invoke.method](this.component,invoke.args);
+                console.log("args: "+invoke.args.length+" "+invoke.args);
+                switch(invoke.args.length)
+                {
+                    case 0: this.component[invoke.method](); break;
+                    case 1: this.component[invoke.method](invoke.args[0]); break;
+                    default: this.component[invoke.method](...invoke.args);
+                }
             }
             catch (error)
             {

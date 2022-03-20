@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { FrameWork } from '../application/Framework.js';
+import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
@@ -58,7 +58,7 @@ export class Form implements CanvasComponent
             template.innerHTML = page; page = template.content.getRootNode() as Element;
         }
 
-        FrameWork.parse(this,page);
+        Framework.parse(this,page);
         this.state.page = page;
     }
 

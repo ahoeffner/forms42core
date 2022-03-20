@@ -12,7 +12,7 @@
 
 import { Tag } from './Properties.js';
 import { Class } from '../types/Class.js';
-import { FrameWork as Framework } from './Framework.js';
+import { Framework } from './Framework.js';
 import { Application } from './Application.js';
 
 export interface Component

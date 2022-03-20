@@ -14,6 +14,7 @@ import { Tag } from './Properties.js';
 import { Class } from '../types/Class.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
+import { stat } from 'fs';
 
 export interface Component
 {
@@ -58,6 +59,7 @@ class State
 {
     root:Element;
     appl:Application;
+    framework:Framework;
 
     static components:Map<string,Class<any>> =
         new Map<string,Class<any>>();
@@ -97,6 +99,12 @@ export class FormsModule
         return(this.state.appl);
     }
 
+    public addComponent(clazz:Class<any>, path?:string) : void
+    {
+        if (path == null) path = clazz.name.toLowerCase();
+        State.components.set(path,clazz);
+    }
+
     public getComponent(path:string) : Class<any>
     {
         return(State.components.get(path));
@@ -105,11 +113,8 @@ export class FormsModule
     public parseIndexPage(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
-        let parser:Framework = Framework.parse(this,doc);
-
-        let roots:Element[] = parser.tags.get(Tag.Root);
-
-        if (roots.length >= 1)
-            this.state.root = roots[0];
+        this.state.framework = Framework.parse(this,doc);
+        let roots:Element[] = this.state.framework.tags.get(Tag.Root);
+        if (roots.length >= 1) this.state.root = roots[0];
     }
 }

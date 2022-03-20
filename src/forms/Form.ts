@@ -11,7 +11,6 @@
  */
 
 import { DOMParser } from '../application/DOMParser.js';
-import { DynamicCall } from '../utils/DynamicCall.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
@@ -21,44 +20,9 @@ class State
 {
     page:Element = null;
     navigable:boolean = true;
-    handler:EventHandler = null;
     module:FormsModule = FormsModule.get();
 }
 
-class EventHandler implements EventListenerObject
-{
-    private events:Map<Element,Map<string,DynamicCall>> =
-        new Map<Element,Map<string,DynamicCall>>();
-
-    constructor(private form:Form) {}
-
-    public addEvent(element:Element,event:string,handler:DynamicCall) :string
-    {
-        event = event.substring(2); // get rid of "on" prefix
-        let events:Map<string,DynamicCall> = this.events.get(element);
-
-        if (events == null)
-        {
-            events = new Map<string,DynamicCall>();
-            this.events.set(element,events);
-        }
-
-        events.set(event,handler);
-        return(event);
-    }
-
-    public getEvent(element:Element,event:string) : DynamicCall
-    {
-        let events:Map<string,DynamicCall> = this.events.get(element);
-        return(events.get(event));
-    }
-
-    public handleEvent(event:Event): void
-    {
-        let handler:DynamicCall = this.getEvent(event.target as Element,event.type);
-        this.form[handler.method](this.form,handler.args);
-    }
-}
 
 
 export class Form implements CanvasComponent
@@ -68,7 +32,6 @@ export class Form implements CanvasComponent
 
     constructor(page?:string)
     {
-        this.state.handler = new EventHandler(this);
         if (page != null) this.setPage(page);
     }
 
@@ -95,18 +58,7 @@ export class Form implements CanvasComponent
             template.innerHTML = page; page = template.content.getRootNode() as Element;
         }
 
-        let parser:DOMParser = new DOMParser(page);
-
-        parser.events.forEach((event,element) =>
-        {
-            for (let i = 0; i < event.length; i++)
-            {
-                let func:DynamicCall = new DynamicCall(event[i][1]);
-                let ename:string = this.state.handler.addEvent(element,event[i][0],func);
-                element.addEventListener(ename,this.state.handler);
-            }
-        });
-
+        DOMParser.parse(this,page);
         this.state.page = page;
     }
 

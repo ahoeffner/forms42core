@@ -106,7 +106,7 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
 
-        let parser:DOMParser = new DOMParser(doc);
+        let parser:DOMParser = new DOMParser(this,doc);
         let roots:Element[] = parser.tags.get(Tag.Root);
 
         if (roots.length >= 1)

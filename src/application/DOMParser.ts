@@ -17,21 +17,39 @@ import { Implementation, Properties, Tag } from './Properties.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 
+interface parsed
+{
+    element:Element;
+    include:boolean;
+}
+
+
 export class DOMParser
 {
+    private component:any = null;
     private module:FormsModule = FormsModule.get();
+
+    public eventhandler:EventHandler = null;
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
-    constructor(doc:Element)
+    public static parse(component:any, doc:Element) : DOMParser
     {
+        return(new DOMParser(component,doc));
+    }
+
+    constructor(component:any, doc:Element)
+    {
+        this.component = component;
+        this.eventhandler = new EventHandler(component);
+
         if (!Properties.parseTags && !Properties.parseClasses && !Properties.parseEvents)
             return;
 
-        this.parse(doc);
+        this.parseAll(doc);
     }
 
-    private parse(doc:Element) : void
+    private parseAll(doc:Element) : void
     {
         let list:NodeListOf<Element> = doc.querySelectorAll("*");
 
@@ -39,16 +57,38 @@ export class DOMParser
         {
             let element:Element = list.item(it);
 
-            let tincl:boolean = this.addByTag(element);
-            let cincl:boolean = this.addByClass(element);
+            let tres:parsed = this.addByTag(element);
+            let cres:parsed = this.addByClass(element);
 
-            if (tincl || cincl) this.include(element);
+            this.addEvents(element);
+
+            if (tres.include || cres.include)
+                this.include(element);
+        }
+
+        if (this.component != null)
+        {
+            this.events.forEach((event,element) =>
+            {
+                for (let i = 0; i < event.length; i++)
+                {
+                    let func:DynamicCall = new DynamicCall(event[i][1]);
+                    let ename:string = this.eventhandler.addEvent(element,event[i][0],func);
+                    element.addEventListener(ename,this.eventhandler);
+                }
+            });
         }
     }
 
-    private addByTag(element:Element) : boolean
+    private addByTag(element:Element) : parsed
     {
-        if (!Properties.parseTags) return(false);
+        let retval:parsed =
+        {
+            include: false,
+            element: element
+        };
+
+        if (!Properties.parseTags) return(retval);
         let name:string = element.nodeName.toLowerCase();
         let impl:Implementation = Properties.TagLibrary.get(name);
 
@@ -66,17 +106,24 @@ export class DOMParser
             if (bucket.indexOf(element) == -1)
                 bucket.push(element);
 
-            this.addEvents(element);
-            return(impl.tag == Tag.Include);
+            retval.element = element;
+            retval.include = (impl.tag == Tag.Include);
+
+            return(retval);
         }
 
-        this.addEvents(element);
-        return(false);
+        return(retval);
     }
 
-    private addByClass(element:Element) : boolean
+    private addByClass(element:Element) : parsed
     {
-        if (!Properties.parseClasses) return(false);
+        let retval:parsed =
+        {
+            include: false,
+            element: element
+        };
+
+        if (!Properties.parseClasses) return(retval);
         let list:string = element.getAttribute("class");
 
         if (list == null) return;
@@ -90,8 +137,8 @@ export class DOMParser
 
             if (impl != null)
             {
-                if (impl.tag == Tag.Include) include = true;
                 let bucket:Element[] = this.tags.get(impl.tag);
+                if (impl.tag == Tag.Include) retval.include = true;
 
                 if (bucket == null)
                 {
@@ -104,8 +151,7 @@ export class DOMParser
             }
         }
 
-        this.addEvents(element);
-        return(include);
+        return(retval);
     }
 
     private addEvents(element:Element) : void
@@ -156,14 +202,13 @@ export class DOMParser
         }
         else replace = incl.content;
 
-        let fragment:DOMParser = new DOMParser(replace);
+        let fragment:DOMParser = new DOMParser(this.component,replace);
 
         fragment.events.forEach((event,element) =>
             {this.events.set(element,event);});
 
         element.replaceWith(replace);
     }
-
 
     private replace(element:Element, impl:Implementation) : Element
     {
@@ -178,5 +223,132 @@ export class DOMParser
 
         element.replaceWith(replace);
         return(replace);
+    }
+}
+
+
+export class DynamicCall
+{
+    public method:string;
+    public args:string[] = [];
+
+    constructor(signature:string)
+    {
+        this.parse(signature);
+    }
+
+    private parse(signature:string) : void
+    {
+        if (signature.startsWith("this."))
+            signature = signature.substring(5);
+
+        let pos1:number = signature.indexOf("(");
+        let pos2:number = signature.indexOf(")");
+
+        this.method = signature.substring(0,pos1);
+        let arglist:string = signature.substring(pos1+1,pos2).trim();
+
+        let n:number = 0;
+        let arg:string = "";
+        let quote:string = null;
+
+        for(let i=0; i < arglist.length; i++)
+        {
+            let c:string = arglist.charAt(i);
+
+            if (c == "," && quote == null)
+            {
+                if (arg.length > 0)
+                {
+                    this.args.push(arg);
+                    n++;
+                    arg = "";
+                }
+
+                continue;
+            }
+
+            if (c == "'" || c == '"')
+            {
+                if (quote != null && c == quote)
+                {
+                    n++;
+                    quote = null;
+                    continue;
+                }
+
+                else
+
+                if (quote == null)
+                {
+                    quote = c;
+                    continue;
+                }
+            }
+
+            arg += c;
+        }
+
+        if (this.args.length < n)
+            this.args.push(arg);
+    }
+}
+
+
+class EventHandler implements EventListenerObject
+{
+    private events:Map<Element,Map<string,DynamicCall>> =
+        new Map<Element,Map<string,DynamicCall>>();
+
+    constructor(private component:any) {}
+
+    public addEvent(element:Element,event:string,handler:DynamicCall) : string
+    {
+        event = event.substring(2); // get rid of "on" prefix
+        let events:Map<string,DynamicCall> = this.events.get(element);
+
+        if (events == null)
+        {
+            events = new Map<string,DynamicCall>();
+            this.events.set(element,events);
+        }
+
+        events.set(event,handler);
+        return(event);
+    }
+
+    public getEvent(element:Element,event:string) : DynamicCall
+    {
+        let events:Map<string,DynamicCall> = this.events.get(element);
+        if (events == null) return(null);
+        return(events.get(event));
+    }
+
+    public handleEvent(event:Event): void
+    {
+        let elem:Element = event.target as Element;
+        let invoke:DynamicCall = this.getEvent(elem,event.type);
+
+        if (invoke == null)
+        {
+
+            while (invoke == null && elem.parentElement != null)
+            {
+                elem = elem.parentElement;
+                invoke = this.getEvent(elem,event.type);
+            }
+        }
+
+        if (invoke != null)
+        {
+            try
+            {
+                this.component[invoke.method](this.component,invoke.args);
+            }
+            catch (error)
+            {
+                console.error("Failed to invoke method: '"+invoke.method+"' on component: "+this.component.constructor.name);
+            }
+        }
     }
 }

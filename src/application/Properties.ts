@@ -29,6 +29,12 @@ export enum Tag
     ListOfValues
 }
 
+export interface Implementation
+{
+    tag:Tag,
+    element:string;
+}
+
 export class Properties
 {
     public static parseTags:boolean = true;
@@ -38,15 +44,15 @@ export class Properties
     public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
     public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
 
-    public static TagLibrary:Map<string,Tag> = new Map
+    public static TagLibrary:Map<string,Implementation> = new Map
     (
         [
-            ["data",Tag.Data],
-            ["menu",Tag.Menu],
-            ["forms",Tag.Root],
-            ["include",Tag.Include],
-            ["calendar",Tag.Calendar],
-            ["listofvalues",Tag.ListOfValues]
+            ["menu",{tag: Tag.Menu, element: "div"}],
+            ["data",{tag: Tag.Data, element: "span"}],
+            ["forms",{tag: Tag.Root, element: "div"}],
+            ["include",{tag: Tag.Include, element: null}],
+            ["calendar",{tag: Tag.Calendar, element: "div"}],
+            ["listofvalues",{tag: Tag.ListOfValues, element: "div"}]
         ]
     );
 

@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Parser } from '../tags/Parser.js';
+import { DOMParser } from '../application/DOMParser.js';
 import { DynamicCall } from '../utils/DynamicCall.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
@@ -95,7 +95,7 @@ export class Form implements CanvasComponent
             template.innerHTML = page; page = template.content.getRootNode() as Element;
         }
 
-        let parser:Parser = new Parser(page);
+        let parser:DOMParser = new DOMParser(page);
 
         parser.events.forEach((event,element) =>
         {

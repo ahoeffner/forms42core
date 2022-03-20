@@ -12,7 +12,7 @@
 
 import { Tag } from './Properties.js';
 import { Class } from '../types/Class.js';
-import { Parser } from '../tags/Parser.js';
+import { DOMParser } from './DOMParser.js';
 import { Application } from './Application.js';
 
 export interface Component
@@ -106,16 +106,8 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
 
-        let parser:Parser = new Parser(doc);
+        let parser:DOMParser = new DOMParser(doc);
         let roots:Element[] = parser.tags.get(Tag.Root);
-
-        for (let i = 0; i < roots.length; i++)
-        {
-            let div:Element = document.createElement("div");
-            div.setAttribute("name","forms-area");
-            roots[i].replaceWith(div);
-            roots[i] = div;
-        }
 
         if (roots.length >= 1)
             this.state.root = roots[0];

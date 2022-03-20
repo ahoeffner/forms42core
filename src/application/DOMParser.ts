@@ -12,12 +12,12 @@
 
 import { Class } from '../types/Class.js';
 import { Include } from '../tags/Include.js';
-import { FormsModule } from '../application/FormsModule.js';
-import { Properties, Tag } from '../application/Properties.js';
-import { ComponentFactory } from '../application/interfaces/ComponentFactory.js';
+import { FormsModule } from './FormsModule.js';
+import { Implementation, Properties, Tag } from './Properties.js';
+import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 
-export class Parser
+export class DOMParser
 {
     private module:FormsModule = FormsModule.get();
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
@@ -42,37 +42,41 @@ export class Parser
             let tincl:boolean = this.addByTag(element);
             let cincl:boolean = this.addByClass(element);
 
-            this.addEvents(element);
             if (tincl || cincl) this.include(element);
         }
     }
 
     private addByTag(element:Element) : boolean
     {
-        if (!Properties.parseTags) return;
+        if (!Properties.parseTags) return(false);
         let name:string = element.nodeName.toLowerCase();
-        let tag:Tag = Properties.TagLibrary.get(name);
+        let impl:Implementation = Properties.TagLibrary.get(name);
 
-        if (tag != null)
+        if (impl != null)
         {
-            let bucket:Element[] = this.tags.get(tag);
+            element = this.replace(element,impl);
+            let bucket:Element[] = this.tags.get(impl.tag);
 
             if (bucket == null)
             {
                 bucket = [];
-                this.tags.set(tag,bucket);
+                this.tags.set(impl.tag,bucket);
             }
 
             if (bucket.indexOf(element) == -1)
                 bucket.push(element);
+
+            this.addEvents(element);
+            return(impl.tag == Tag.Include);
         }
 
-        return(tag == Tag.Include);
+        this.addEvents(element);
+        return(false);
     }
 
     private addByClass(element:Element) : boolean
     {
-        if (!Properties.parseClasses) return;
+        if (!Properties.parseClasses) return(false);
         let list:string = element.getAttribute("class");
 
         if (list == null) return;
@@ -82,36 +86,39 @@ export class Parser
         for (let i = 0; i < classes.length; i++)
         {
             let name:string = classes[i];
-            let tag:Tag = Properties.TagLibrary.get(name);
+            let impl:Implementation = Properties.TagLibrary.get(name);
 
-            if (tag != null)
+            if (impl != null)
             {
-                if (tag == Tag.Include) include = true;
-                let bucket:Element[] = this.tags.get(tag);
+                if (impl.tag == Tag.Include) include = true;
+                let bucket:Element[] = this.tags.get(impl.tag);
 
                 if (bucket == null)
                 {
                     bucket = [];
-                    this.tags.set(tag,bucket);
+                    this.tags.set(impl.tag,bucket);
                 }
 
                 if (bucket.indexOf(element) == -1)
                     bucket.push(element);
             }
         }
+
+        this.addEvents(element);
+        return(include);
     }
 
     private addEvents(element:Element) : void
     {
         if (!Properties.parseEvents) return;
-        let attrname:string[] = element.getAttributeNames();
+        let attrnames:string[] = element.getAttributeNames();
 
-        for (let an = 0; an < attrname.length; an++)
+        for (let an = 0; an < attrnames.length; an++)
         {
-            let attrvalue:string = element.getAttribute(attrname[an]);
+            let attrvalue:string = element.getAttribute(attrnames[an]);
             if (attrvalue != null) attrvalue = attrvalue.trim();
 
-            let evtype:boolean = attrname[an].startsWith("on");
+            let evtype:boolean = attrnames[an].startsWith("on");
             let handle:boolean = attrvalue != null && attrvalue.startsWith("this.");
 
             if (evtype && handle)
@@ -124,8 +131,8 @@ export class Parser
                     this.events.set(element,events);
                 }
 
-                events.push([attrname[an],attrvalue]);
-                element.removeAttribute(attrname[an]);
+                events.push([attrnames[an],attrvalue]);
+                element.removeAttribute(attrnames[an]);
             }
         }
     }
@@ -142,18 +149,34 @@ export class Parser
         let replace:Element = null;
         let incl:Include = factory.createInclude(impl);
 
-        if (typeof incl.content === 'string')
+        if (typeof incl.content === "string")
         {
             let template:HTMLTemplateElement = document.createElement('template');
             template.innerHTML = incl.content; replace = template.content.getRootNode() as Element;
         }
         else replace = incl.content;
 
-        let fragment:Parser = new Parser(replace);
+        let fragment:DOMParser = new DOMParser(replace);
 
         fragment.events.forEach((event,element) =>
             {this.events.set(element,event);});
 
         element.replaceWith(replace);
+    }
+
+
+    private replace(element:Element, impl:Implementation) : Element
+    {
+        if (impl.element == null) return(element);
+        let attrnames:string[] = element.getAttributeNames();
+        let replace:Element = document.createElement(impl.element);
+
+        replace.setAttribute("name",Tag[impl.tag].toLowerCase());
+
+        for (let an = 0; an < attrnames.length; an++)
+            replace.setAttribute(attrnames[an],element.getAttribute(attrnames[an]));
+
+        element.replaceWith(replace);
+        return(replace);
     }
 }

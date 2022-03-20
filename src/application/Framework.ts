@@ -343,7 +343,6 @@ class EventHandler implements EventListenerObject
         {
             try
             {
-                console.log("args: "+invoke.args.length+" "+invoke.args);
                 switch(invoke.args.length)
                 {
                     case 0: this.component[invoke.method](); break;

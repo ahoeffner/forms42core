@@ -109,6 +109,14 @@ export class FormsModule
         let parser:Parser = new Parser(doc);
         let roots:Element[] = parser.tags.get(Tag.Root);
 
+        for (let i = 0; i < roots.length; i++)
+        {
+            let div:Element = document.createElement("div");
+            div.setAttribute("name","forms-area");
+            roots[i].replaceWith(div);
+            roots[i] = div;
+        }
+
         if (roots.length >= 1)
             this.state.root = roots[0];
     }

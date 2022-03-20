@@ -12,7 +12,7 @@
 
 import { Tag } from './Properties.js';
 import { Class } from '../types/Class.js';
-import { DOMParser } from './DOMParser.js';
+import { FrameWork as Framework } from './Framework.js';
 import { Application } from './Application.js';
 
 export interface Component
@@ -105,8 +105,8 @@ export class FormsModule
     public parseIndexPage(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
+        let parser:Framework = Framework.parse(this,doc);
 
-        let parser:DOMParser = new DOMParser(this,doc);
         let roots:Element[] = parser.tags.get(Tag.Root);
 
         if (roots.length >= 1)

@@ -24,7 +24,7 @@ interface parsed
 }
 
 
-export class DOMParser
+export class FrameWork
 {
     private component:any = null;
     private module:FormsModule = FormsModule.get();
@@ -33,12 +33,12 @@ export class DOMParser
     public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
-    public static parse(component:any, doc:Element) : DOMParser
+    public static parse(component:any, doc:Element) : FrameWork
     {
-        return(new DOMParser(component,doc));
+        return(new FrameWork(component,doc));
     }
 
-    constructor(component:any, doc:Element)
+    private constructor(component:any, doc:Element)
     {
         this.component = component;
         this.eventhandler = new EventHandler(component);
@@ -202,7 +202,7 @@ export class DOMParser
         }
         else replace = incl.content;
 
-        let fragment:DOMParser = new DOMParser(this.component,replace);
+        let fragment:FrameWork = new FrameWork(this.component,replace);
 
         fragment.events.forEach((event,element) =>
             {this.events.set(element,event);});

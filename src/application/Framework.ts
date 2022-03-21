@@ -115,7 +115,10 @@ export class Framework
                     }
 
                     this.parseDoc(replace);
-                    this.setTag(tag,replace);
+
+                    if (replace instanceof Element)
+                        this.setTag(tag,replace);
+
                     element.replaceWith(replace);
                 }
 

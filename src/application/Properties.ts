@@ -36,8 +36,7 @@ export class Properties
 
     public static getTagLibrary() : Map<string,Class<Tag>>
     {
-        return
-        (
+        return(
             new Map
             (
                 [
@@ -45,8 +44,7 @@ export class Properties
                     ["include",Include],
                     [Properties.root,Root]
                 ]
-            )
-        )
+            ));
     }
 
     /*

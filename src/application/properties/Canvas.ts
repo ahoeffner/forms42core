@@ -27,14 +27,14 @@ export class Canvas
         left: 0;
         width: 0;
         height: 0;
-        position: absolute;
+        position: sticky;
     `
 
     public CanvasStyle:string =
     `
         resize: both;
         overflow:hidden;
-        position: absolute;
+        position: sticky;
         width: fit-content;
         height: fit-content;
     `

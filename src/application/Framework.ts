@@ -11,27 +11,38 @@
  */
 
 import { Class } from '../types/Class.js';
-import { Include } from '../tags/Include.js';
-import { FormsModule } from './FormsModule.js';
-import { Implementation, Properties, Tag } from './Properties.js';
+import { Properties } from './Properties.js';
+import { CustomTag } from '../tags/CustomTag.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
-
-
-interface parsed
-{
-    element:Element;
-    include:boolean;
-}
 
 
 export class Framework
 {
     private component:any = null;
-    private module:FormsModule = FormsModule.get();
+    private static taglib:Map<string,CustomTag> = null;
 
     public eventhandler:EventHandler = null;
-    public tags:Map<Tag,Element[]> = new Map<Tag,Element[]>();
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
+
+    private static initTaglib() : void
+    {
+        if (Framework.taglib == null)
+        {
+            Framework.taglib = new Map<string,CustomTag>();
+            Properties.TagLibrary.forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
+        }
+    }
+
+    public static addTag(tag:string,clazz:Class<CustomTag>) : void
+    {
+        Framework.initTaglib();
+        tag = tag.toLowerCase();
+
+        let factory:ComponentFactory = Properties.FactoryImplementationClass;
+        let impl:CustomTag = factory.createBean(clazz);
+
+        Framework.taglib.set(tag,impl);
+    }
 
     public static parse(component:any, doc:Element) : Framework
     {
@@ -40,123 +51,68 @@ export class Framework
 
     private constructor(component:any, doc:Element)
     {
+        Framework.initTaglib();
+
         this.component = component;
         this.eventhandler = new EventHandler(component);
 
-        if (!Properties.parseTags && !Properties.parseClasses && !Properties.parseEvents)
+        if (!Properties.parseTags && !Properties.parseEvents)
             return;
 
-        this.parseAll(doc);
+        this.parseDoc(doc);
+        this.applyEvents();
     }
 
-    private parseAll(doc:Element) : void
+    private parseDoc(doc:Element) : void
     {
-        let list:NodeListOf<Element> = doc.querySelectorAll("*");
+        if (doc == null) return;
 
-        for (let it = 0; it < list.length; it++)
+        for (let i = 0; i < doc.childNodes.length; i++)
         {
-            let element:Element = list.item(it);
+            let node:Node = doc.children.item(i);
+            if (!(node instanceof Element)) continue;
 
-            let tres:parsed = this.addByTag(element);
-            let cres:parsed = this.addByClass(element);
-
-            this.addEvents(element);
-
-            if (tres.include || cres.include)
-                this.include(element);
-        }
-
-        if (this.component != null)
-        {
-            this.events.forEach((event,element) =>
-            {
-                for (let i = 0; i < event.length; i++)
-                {
-                    let func:DynamicCall = new DynamicCall(event[i][1]);
-                    let ename:string = this.eventhandler.addEvent(element,event[i][0],func);
-                    element.addEventListener(ename,this.eventhandler);
-                }
-            });
-        }
-    }
-
-    private addByTag(element:Element) : parsed
-    {
-        let retval:parsed =
-        {
-            include: false,
-            element: element
-        };
-
-        if (!Properties.parseTags) return(retval);
-        let name:string = element.nodeName.toLowerCase();
-        let impl:Implementation = Properties.TagLibrary.get(name);
-
-        if (impl != null)
-        {
-            element = this.replace(element,impl);
-            let bucket:Element[] = this.tags.get(impl.tag);
-
-            if (bucket == null)
-            {
-                bucket = [];
-                this.tags.set(impl.tag,bucket);
-            }
-
-            if (bucket.indexOf(element) == -1)
-                bucket.push(element);
-
-            retval.element = element;
-            retval.include = (impl.tag == Tag.Include);
-
-            return(retval);
-        }
-
-        return(retval);
-    }
-
-    private addByClass(element:Element) : parsed
-    {
-        let retval:parsed =
-        {
-            include: false,
-            element: element
-        };
-
-        if (!Properties.parseClasses) return(retval);
-        let list:string = element.getAttribute("class");
-
-        if (list == null) return;
-        let include:boolean = false;
-        let classes:string[] = list.trim().split(" ");
-
-        for (let i = 0; i < classes.length; i++)
-        {
-            let name:string = classes[i];
-            let impl:Implementation = Properties.TagLibrary.get(name);
+            let element:Element = node;
+            let tag:string = element.nodeName.toLowerCase();
+            let impl:CustomTag = Framework.taglib.get(tag);
 
             if (impl != null)
             {
-                let bucket:Element[] = this.tags.get(impl.tag);
-                if (impl.tag == Tag.Include) retval.include = true;
+                let replace:Element|string = impl.parse(element);
 
-                if (bucket == null)
+                if (replace == null)
                 {
-                    bucket = [];
-                    this.tags.set(impl.tag,bucket);
+                    element.remove();
+                    element = null;
                 }
+                else
+                {
+                    if (typeof replace === "string")
+                    {
+                        let template:HTMLTemplateElement = document.createElement('template');
+                        template.innerHTML = replace; replace = template.content.getRootNode() as Element;
+                    }
 
-                if (bucket.indexOf(element) == -1)
-                    bucket.push(element);
+                    this.parseDoc(replace);
+                    element.replaceWith(replace);
+
+                    element = replace;
+                }
+            }
+
+            if (!(element instanceof DocumentFragment))
+            {
+                this.addEvents(element);
+                this.parseDoc(element);
             }
         }
-
-        return(retval);
     }
 
     private addEvents(element:Element) : void
     {
+        if (element == null) return;
         if (!Properties.parseEvents) return;
+
         let attrnames:string[] = element.getAttributeNames();
 
         for (let an = 0; an < attrnames.length; an++)
@@ -183,46 +139,20 @@ export class Framework
         }
     }
 
-    private include(element:Element) : void
+    private applyEvents() : void
     {
-        let src:string = element.getAttribute("src");
-        let impl:Class<any> = this.module.getComponent(src);
-        let factory:ComponentFactory = Properties.FactoryImplementationClass;
-
-        if (impl == null)
-            throw "No include class mapped tp "+src;
-
-        let replace:Element = null;
-        let incl:Include = factory.createInclude(impl);
-
-        if (typeof incl.content === "string")
+        if (Properties.parseEvents && this.component != null)
         {
-            let template:HTMLTemplateElement = document.createElement('template');
-            template.innerHTML = incl.content; replace = template.content.getRootNode() as Element;
+            this.events.forEach((event,element) =>
+            {
+                for (let i = 0; i < event.length; i++)
+                {
+                    let func:DynamicCall = new DynamicCall(event[i][1]);
+                    let ename:string = this.eventhandler.addEvent(element,event[i][0],func);
+                    element.addEventListener(ename,this.eventhandler);
+                }
+            });
         }
-        else replace = incl.content;
-
-        let fragment:Framework = new Framework(this.component,replace);
-
-        fragment.events.forEach((event,element) =>
-            {this.events.set(element,event);});
-
-        element.replaceWith(replace);
-    }
-
-    private replace(element:Element, impl:Implementation) : Element
-    {
-        if (impl.element == null) return(element);
-        let attrnames:string[] = element.getAttributeNames();
-        let replace:Element = document.createElement(impl.element);
-
-        replace.setAttribute("name",Tag[impl.tag].toLowerCase());
-
-        for (let an = 0; an < attrnames.length; an++)
-            replace.setAttribute(attrnames[an],element.getAttribute(attrnames[an]));
-
-        element.replaceWith(replace);
-        return(replace);
     }
 }
 

@@ -10,7 +10,15 @@
  * accompanied this code).
  */
 
-export interface CustomTag
+import { Tag } from "./Tag.js";
+import { Framework } from "../application/Framework.js";
+
+export class Root implements Tag
 {
-    parse(element:Element) : Element|string|null;
+    public parse(element: Element): string|Element
+    {
+        let tag:Element = document.createElement("div");
+        Framework.copyAttributes(element,tag);
+        return(tag);
+    }
 }

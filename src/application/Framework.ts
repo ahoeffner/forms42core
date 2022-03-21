@@ -10,16 +10,17 @@
  * accompanied this code).
  */
 
+import { Tag } from '../tags/Tag.js';
 import { Class } from '../types/Class.js';
 import { Properties } from './Properties.js';
-import { CustomTag } from '../tags/CustomTag.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 
 export class Framework
 {
     private component:any = null;
-    private static taglib:Map<string,CustomTag> = null;
+    private static taglib:Map<string,Tag> = null;
+    private tags:Map<string,Element[]> = new Map<string,Element[]>();
 
     public eventhandler:EventHandler = null;
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
@@ -28,18 +29,18 @@ export class Framework
     {
         if (Framework.taglib == null)
         {
-            Framework.taglib = new Map<string,CustomTag>();
-            Properties.TagLibrary.forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
+            Framework.taglib = new Map<string,Tag>();
+            Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
         }
     }
 
-    public static addTag(tag:string,clazz:Class<CustomTag>) : void
+    public static addTag(tag:string,clazz:Class<Tag>) : void
     {
         Framework.initTaglib();
         tag = tag.toLowerCase();
 
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
-        let impl:CustomTag = factory.createBean(clazz);
+        let impl:Tag = factory.createBean(clazz);
 
         Framework.taglib.set(tag,impl);
     }
@@ -47,6 +48,15 @@ export class Framework
     public static parse(component:any, doc:Element) : Framework
     {
         return(new Framework(component,doc));
+    }
+
+    public static copyAttributes(fr:Element,to:Element) : void
+    {
+        if (fr == null || to == null) return;
+        let attrnames:string[] = fr.getAttributeNames();
+
+        for (let an = 0; an < attrnames.length; an++)
+            to.setAttribute(attrnames[an],fr.getAttribute(attrnames[an]));
     }
 
     private constructor(component:any, doc:Element)
@@ -63,6 +73,14 @@ export class Framework
         this.applyEvents();
     }
 
+    public getTag(tag:string) : Element[]
+    {
+        tag = tag.toLowerCase();
+        let elements:Element[] = this.tags.get(tag);
+        if (elements == null) elements = [];
+        return(elements);
+    }
+
     private parseDoc(doc:Element) : void
     {
         if (doc == null) return;
@@ -72,9 +90,12 @@ export class Framework
             let node:Node = doc.children.item(i);
             if (!(node instanceof Element)) continue;
 
+            let impl:Tag = null;
             let element:Element = node;
             let tag:string = element.nodeName.toLowerCase();
-            let impl:CustomTag = Framework.taglib.get(tag);
+
+            if (Properties.parseTags)
+                impl = Framework.taglib.get(tag);
 
             if (impl != null)
             {
@@ -94,17 +115,15 @@ export class Framework
                     }
 
                     this.parseDoc(replace);
+                    this.setTag(tag,replace);
                     element.replaceWith(replace);
-
-                    element = replace;
                 }
+
+                continue;
             }
 
-            if (!(element instanceof DocumentFragment))
-            {
-                this.addEvents(element);
-                this.parseDoc(element);
-            }
+            this.addEvents(element);
+            this.parseDoc(element);
         }
     }
 
@@ -153,6 +172,19 @@ export class Framework
                 }
             });
         }
+    }
+
+    private setTag(tag:string,element:Element) : void
+    {
+        let elements:Element[] = this.tags.get(tag);
+
+        if (elements == null)
+        {
+            elements = [];
+            this.tags.set(tag,elements);
+        }
+
+        elements.push(element);
     }
 }
 

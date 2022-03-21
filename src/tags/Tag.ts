@@ -10,15 +10,7 @@
  * accompanied this code).
  */
 
-import { Tag } from "./Tag.js";
-import { Framework } from "../application/Framework.js";
-
-export class Menu implements Tag
+export interface Tag
 {
-    public parse(element: Element): string|Element
-    {
-        let tag:Element = document.createElement("div");
-        Framework.copyAttributes(element,tag);
-        return(tag);
-    }
+    parse(element:Element) : Element|string|null;
 }

@@ -11,14 +11,14 @@
  */
 
 import { Class } from "../types/Class.js";
-import { CustomTag } from "./CustomTag.js";
+import { Tag } from "./Tag.js";
 import { Properties } from "../application/Properties.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { HTMLFragment } from "../application/HTMLFragment.js";
 import { ComponentFactory } from "../application/ComponentFactory.js";
 
 
-export class Include implements CustomTag
+export class Include implements Tag
 {
     public parse(element: Element): string|Element
     {

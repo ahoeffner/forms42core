@@ -20,8 +20,9 @@ import { Canvas as CanvasProperties } from './properties/Canvas.js'
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
+import { Tag } from '../tags/Tag.js';
+import { Root } from '../tags/Root.js';
 import { Menu } from '../tags/Menu.js';
-import { CustomTag } from '../tags/CustomTag.js';
 
 
 export class Properties
@@ -29,16 +30,24 @@ export class Properties
     public static parseTags:boolean = true;
     public static parseEvents:boolean = true;
 
+    public static root:string = "forms";
     public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
     public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
 
-    public static TagLibrary:Map<string,Class<CustomTag>> = new Map
-    (
-        [
-            ["menu",Menu],
-            ["include",Include]
-        ]
-    );
+    public static getTagLibrary() : Map<string,Class<Tag>>
+    {
+        return
+        (
+            new Map
+            (
+                [
+                    ["menu",Menu],
+                    ["include",Include],
+                    [Properties.root,Root]
+                ]
+            )
+        )
+    }
 
     /*
             ["menu",{tag: Tag.Menu, element: "div"}],

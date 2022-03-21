@@ -13,6 +13,7 @@
 import { Class } from '../types/Class.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
+import { Properties } from './Properties.js';
 
 export interface Component
 {
@@ -112,7 +113,9 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
         this.state.framework = Framework.parse(this,doc);
-        //let roots:Element[] = this.state.framework.tags.get(Tag.Root);
-        //if (roots.length >= 1) this.state.root = roots[0];
+        let roots:Element[] = this.state.framework.getTag(Properties.root);
+
+        if (roots.length >= 1)
+            this.state.root = roots[0];
     }
 }

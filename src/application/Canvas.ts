@@ -12,7 +12,8 @@
 
 import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
-import { Canvas as CanvasDefinition } from './interfaces/Canvas.js';
+import { Canvas as CanvasDefinition, Frame } from './interfaces/Canvas.js';
+
 
 export class Canvas implements CanvasDefinition, EventListenerObject
 {
@@ -99,6 +100,39 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.modal.style.height = "0";
         this.canvas.style.resize = "both";
         if (this.active instanceof HTMLElement) this.active.focus();
+    }
+
+    public getFrame() : Frame
+    {
+        return({
+            y: this.canvas.offsetTop + "px",
+            x: this.canvas.offsetLeft + "px",
+            width: this.canvas.offsetWidth + "px",
+            height: this.canvas.offsetHeight + "px"
+        });
+    }
+
+    public getParentFrame() : Frame
+    {
+        return({
+            y: this.canvas.parentElement.offsetTop + "px",
+            x: this.canvas.parentElement.offsetLeft + "px",
+            width: this.canvas.parentElement.offsetWidth + "px",
+            height: this.canvas.parentElement.offsetHeight + "px"
+        });
+    }
+
+    public setFrame(frame:Frame) : void
+    {
+        if (typeof frame.x === "number") frame.x = frame.x + "px";
+        if (typeof frame.y === "number") frame.y = frame.y + "px";
+        if (typeof frame.width === "number") frame.width = frame.width + "px";
+        if (typeof frame.height === "number") frame.height = frame.height + "px";
+
+        this.canvas.style.top = frame.y;
+        this.canvas.style.left = frame.x;
+        this.canvas.style.width = frame.width;
+        this.canvas.style.height = frame.height;
     }
 
     public getPage() : Element

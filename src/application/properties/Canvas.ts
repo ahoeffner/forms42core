@@ -27,7 +27,7 @@ export class Canvas
         left: 0;
         width: 0;
         height: 0;
-        position: sticky;
+        position: absolute;
     `
 
     public CanvasStyle:string =

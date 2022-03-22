@@ -198,7 +198,7 @@ export class Framework
 
 export class DynamicCall
 {
-    public method:string;
+    public method:string[];
     public args:string[] = [];
 
     constructor(signature:string)
@@ -214,8 +214,10 @@ export class DynamicCall
         let pos1:number = signature.indexOf("(");
         let pos2:number = signature.indexOf(")");
 
-        this.method = signature.substring(0,pos1);
+        this.method = signature.substring(0,pos1).split(".");
         let arglist:string = signature.substring(pos1+1,pos2).trim();
+
+        console.log("method: '"+this.method[0]+"' "+this.method.length);
 
         let n:number = 0;
         let arg:string = "";
@@ -261,6 +263,31 @@ export class DynamicCall
         if (this.args.length < n)
             this.args.push(arg);
     }
+
+    public invoke(component:any) : void
+    {
+        let method = component[this.method[0]];
+
+        for(let i = 1; i < this.method.length; i++)
+            method = method[this.method[i]];
+
+        console.log(method);
+
+        try
+        {
+            switch(this.args.length)
+            {
+                case 0: method(); break;
+                case 1: method(this.args[0]); break;
+                default: method(...this.args);
+            }
+        }
+        catch (error)
+        {
+            console.log(error);
+            throw "@Framework: Failed to invoke method: '"+this.method+"' on component: "+component.constructor.name;
+        }
+    }
 }
 
 
@@ -296,33 +323,18 @@ class EventHandler implements EventListenerObject
     public handleEvent(event:Event): void
     {
         let elem:Element = event.target as Element;
-        let invoke:DynamicCall = this.getEvent(elem,event.type);
+        let method:DynamicCall = this.getEvent(elem,event.type);
 
-        if (invoke == null)
+        if (method == null)
         {
-
-            while (invoke == null && elem.parentElement != null)
+            while (method == null && elem.parentElement != document.body.parentElement)
             {
                 elem = elem.parentElement;
-                invoke = this.getEvent(elem,event.type);
+                method = this.getEvent(elem,event.type);
             }
         }
 
-        if (invoke != null)
-        {
-            try
-            {
-                switch(invoke.args.length)
-                {
-                    case 0: this.component[invoke.method](); break;
-                    case 1: this.component[invoke.method](invoke.args[0]); break;
-                    default: this.component[invoke.method](...invoke.args);
-                }
-            }
-            catch (error)
-            {
-                console.error("Failed to invoke method: '"+invoke.method+"' on component: "+this.component.constructor.name);
-            }
-        }
+        if (method != null) method.invoke(this.component);
+        else throw "@Framework: Cannot find "+event.type+" on this or parent any elements";
     }
 }

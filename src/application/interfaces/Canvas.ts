@@ -1,6 +1,6 @@
 import { CanvasComponent } from '../CanvasComponent.js';
 
-export interface Frame
+export interface View
 {
     x       : string|number;
     y       : string|number;
@@ -17,9 +17,9 @@ export interface Canvas
 
     getPage() : Element;
 
-    getFrame() : Frame;
-    getParentFrame() : Frame;
-    setFrame(frame:Frame) : void;
+    getView() : View;
+    getParentView() : View;
+    setView(view:View) : void;
 
     getDepth() : number;
     setDepth(depth:number) : void;

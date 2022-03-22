@@ -12,7 +12,7 @@
 
 import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
-import { Canvas as CanvasDefinition, Frame } from './interfaces/Canvas.js';
+import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 
 export class Canvas implements CanvasDefinition, EventListenerObject
@@ -102,27 +102,27 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         if (this.active instanceof HTMLElement) this.active.focus();
     }
 
-    public getFrame() : Frame
+    public getView() : View
     {
         return({
-            y: this.canvas.offsetTop + "px",
-            x: this.canvas.offsetLeft + "px",
-            width: this.canvas.offsetWidth + "px",
-            height: this.canvas.offsetHeight + "px"
+            y: this.canvas.offsetTop,
+            x: this.canvas.offsetLeft,
+            width: this.canvas.offsetWidth,
+            height: this.canvas.offsetHeight
         });
     }
 
-    public getParentFrame() : Frame
+    public getParentView() : View
     {
         return({
-            y: this.canvas.parentElement.offsetTop + "px",
-            x: this.canvas.parentElement.offsetLeft + "px",
-            width: this.canvas.parentElement.offsetWidth + "px",
-            height: this.canvas.parentElement.offsetHeight + "px"
+            y: this.canvas.parentElement.offsetTop,
+            x: this.canvas.parentElement.offsetLeft,
+            width: this.canvas.parentElement.offsetWidth,
+            height: this.canvas.parentElement.offsetHeight
         });
     }
 
-    public setFrame(frame:Frame) : void
+    public setView(frame:View) : void
     {
         if (typeof frame.x === "number") frame.x = frame.x + "px";
         if (typeof frame.y === "number") frame.y = frame.y + "px";

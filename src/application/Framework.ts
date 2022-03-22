@@ -267,7 +267,12 @@ export class DynamicCall
     public invoke(component:any) : void
     {
         for(let i = 0; i < this.path.length; i++)
+        {
+            if (!component[this.path[i]])
+                throw "@Framework: Could not locate: '"+this.path[i]+"' on component: "+component.constructor.name;
+
             component = component[this.path[i]];
+        }
 
         try
         {
@@ -280,7 +285,6 @@ export class DynamicCall
         }
         catch (error)
         {
-            console.log(error);
             throw "@Framework: Failed to invoke method: '"+this.method+"' on component: "+component.constructor.name;
         }
     }

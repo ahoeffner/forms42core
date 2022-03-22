@@ -19,18 +19,18 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 {
     private zindex$:number = 0;
     private active:Element = null;
-    private content:Element = null;
+    private content:HTMLElement = null;
     private modal:HTMLDivElement = null;
     private canvas:HTMLDivElement = null;
     private container:HTMLDivElement = null;
     private component:CanvasComponent = null;
 
-    public getElement() : Element
+    public getElement() : HTMLElement
     {
         return(this.canvas);
     }
 
-    public getContent() : Element
+    public getContent() : HTMLElement
     {
         return(this.content);
     }
@@ -40,15 +40,16 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         return(this.component);
     }
 
-    public getElementById(id:string) : Element
+    public getElementById(id:string) : HTMLElement
     {
         return(this.content.querySelector("#"+id));
     }
 
-    public getElementByName(name:string) : Element[]
+    public getElementByName(name:string) : HTMLElement[]
     {
-        let elements:Element[] = [];
-        let list:NodeListOf<Element> = this.content.querySelectorAll("[name='"+name+"']");
+        let elements:HTMLElement[] = [];
+        let list:NodeListOf<HTMLElement> = this.content.querySelectorAll("[name='"+name+"']");
+
         list.forEach((element) => {elements.push(element)});
         return(elements);
     }
@@ -87,7 +88,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
         root.appendChild(page);
         this.container.appendChild(root);
-        this.content = this.container.firstChild as Element;
+        this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 
@@ -99,7 +100,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     public block() : void
     {
         this.canvas.style.resize = "none";
-        this.active = document.activeElement;
+        this.active = document.activeElement as Element;
         this.modal.style.width = this.canvas.offsetWidth+"px";
         this.modal.style.height = this.canvas.offsetHeight+"px";
         if (this.active instanceof HTMLElement) this.active.blur();

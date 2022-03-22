@@ -15,8 +15,8 @@ export interface Canvas
     block() : void;
     unblock() : void;
 
-    getElement() : Element;
-    getContent() : Element;
+    getElement() : HTMLElement;
+    getContent() : HTMLElement;
 
     getView() : View;
     getParentView() : View;
@@ -25,6 +25,6 @@ export interface Canvas
     getComponent() : CanvasComponent;
     setComponent(component:CanvasComponent) : void;
 
-    getElementById(id:string) : Element;
-    getElementByName(name:string) : Element[];
+    getElementById(id:string) : HTMLElement;
+    getElementByName(name:string) : HTMLElement[];
 }

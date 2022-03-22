@@ -11,9 +11,10 @@
  */
 
 import { Class } from '../types/Class.js';
+import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
-import { Application } from './Application.js';
 import { Properties } from './Properties.js';
+import { Application } from './Application.js';
 
 export interface Component
 {
@@ -47,6 +48,7 @@ export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
             }
 
             State.components.set(path,clazz);
+            Logger.log(Type.classloader,"Loading class: "+clazz.name+" into position: "+path);
         });
     }
 
@@ -106,7 +108,7 @@ export class FormsModule
 
     public getComponent(path:string) : Class<any>
     {
-        return(State.components.get(path));
+        return(State.components.get(path.toLowerCase()));
     }
 
     public parseIndexPage(doc?:Element) : void

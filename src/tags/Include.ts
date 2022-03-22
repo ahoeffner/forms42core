@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class.js";
 import { Tag } from "./Tag.js";
+import { Class } from "../types/Class.js";
 import { Properties } from "../application/Properties.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { HTMLFragment } from "../application/HTMLFragment.js";
@@ -28,7 +28,7 @@ export class Include implements Tag
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
         if (impl == null)
-            throw "No include class mapped tp "+src;
+            throw "@Include: No class mapped tp "+src;
 
         let incl:HTMLFragment = factory.createFragment(impl);
         return(incl.content);

@@ -41,10 +41,10 @@ export class Application
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
         if (comp == null)
-            throw "No components mapped to path '"+path+"'";
+            throw "@Application: No components mapped to path '"+path+"'";
 
         if (!(comp.prototype instanceof Form))
-            throw "Component mapped to '"+path+"' is not a form";
+            throw "@Application: Component mapped to '"+path+"' is not a form";
 
         let canvas:Canvas = new canvasimpl();
         let form:Form = factory.createForm(comp);

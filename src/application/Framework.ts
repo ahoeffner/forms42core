@@ -12,6 +12,7 @@
 
 import { Tag } from '../tags/Tag.js';
 import { Class } from '../types/Class.js';
+import { Logger, Type } from './Logger.js';
 import { Properties } from './Properties.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
@@ -100,6 +101,7 @@ export class Framework
             if (impl != null)
             {
                 let replace:Element|string = impl.parse(element);
+                Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
                 if (replace == null)
                 {
@@ -157,6 +159,8 @@ export class Framework
 
                 events.push([attrnames[an],attrvalue]);
                 element.removeAttribute(attrnames[an]);
+
+                Logger.log(Type.eventparser,"Add event: '"+attrvalue+"' for: "+attrnames[an]);
             }
         }
     }

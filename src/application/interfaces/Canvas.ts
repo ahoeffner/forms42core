@@ -15,15 +15,16 @@ export interface Canvas
     block() : void;
     unblock() : void;
 
-    getPage() : Element;
+    getElement() : Element;
+    getContent() : Element;
 
     getView() : View;
     getParentView() : View;
     setView(view:View) : void;
 
-    getDepth() : number;
-    setDepth(depth:number) : void;
-
     getComponent() : CanvasComponent;
     setComponent(component:CanvasComponent) : void;
+
+    getElementById(id:string) : Element;
+    getElementByName(name:string) : Element[];
 }

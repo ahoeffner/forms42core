@@ -17,27 +17,22 @@ import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 export class Canvas implements CanvasDefinition, EventListenerObject
 {
-    private depth:number = 0;
+    private zindex$:number = 0;
     private active:Element = null;
+    private content:Element = null;
     private modal:HTMLDivElement = null;
     private canvas:HTMLDivElement = null;
-    private content:HTMLDivElement = null;
+    private container:HTMLDivElement = null;
     private component:CanvasComponent = null;
 
-    public getDepth(): number
+    public getElement() : Element
     {
-        return(this.depth);
+        return(this.canvas);
     }
 
-    public setDepth(depth:number) : void
+    public getContent() : Element
     {
-        this.depth = depth;
-
-        if (this.content != null && this.modal != null)
-        {
-            this.content.style.zIndex = (2*depth)+"";
-            this.modal.style.zIndex = (2*depth + 1)+"";
-        }
+        return(this.content);
     }
 
     public getComponent(): CanvasComponent
@@ -45,10 +40,24 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         return(this.component);
     }
 
+    public getElementById(id:string) : Element
+    {
+        return(this.content.querySelector("#"+id));
+    }
+
+    public getElementByName(name:string) : Element[]
+    {
+        let elements:Element[] = [];
+        let list:NodeListOf<Element> = this.content.querySelectorAll("[name='"+name+"']");
+        list.forEach((element) => {elements.push(element)});
+        return(elements);
+    }
+
     public setComponent(component:CanvasComponent) : void
     {
         this.component = component;
         let page = component.getPage();
+        let root:HTMLDivElement = document.createElement("div");
 
         let layout:string = Properties.CanvasProperties.page;
         let template:HTMLTemplateElement = document.createElement("template");
@@ -57,18 +66,18 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
         this.modal = template.content.querySelector("[name=modal]");
         this.canvas = template.content.querySelector("[name=canvas]");
-        this.content = template.content.querySelector("[name=content]");
+        this.container = template.content.querySelector("[name=content]");
 
         this.modal.classList.value = Properties.CanvasProperties.ModalClasses;
         this.canvas.classList.value = Properties.CanvasProperties.CanvasClasses;
-        this.content.classList.value = Properties.CanvasProperties.ContentClasses;
+        this.container.classList.value = Properties.CanvasProperties.ContentClasses;
 
         this.modal.style.cssText = Properties.CanvasProperties.ModalStyle;
         this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
-        this.content.style.cssText = Properties.CanvasProperties.ContentStyle;
+        this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
 
-        this.content.style.zIndex = (2*this.depth)+"";
-        this.modal.style.zIndex = (2*this.depth + 1)+"";
+        this.container.style.zIndex = (2*this.zindex$)+"";
+        this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 
         if (typeof page === 'string')
         {
@@ -76,7 +85,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
             page = template.content.getRootNode() as Element;
         }
 
-        this.content.appendChild(page);
+        root.appendChild(page);
+        this.container.appendChild(root);
+        this.content = this.container.firstChild as Element;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
     }
 
@@ -135,11 +146,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.canvas.style.height = frame.height;
     }
 
-    public getPage() : Element
-    {
-        return(this.canvas);
-    }
-
 
     /*
      * Drag code
@@ -150,7 +156,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     private dragstart(event:any) : void
     {
-        if (event.target != this.content && event.target != this.canvas)
+        if (event.target != this.container && event.target != this.canvas)
         {
             if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
                 return;

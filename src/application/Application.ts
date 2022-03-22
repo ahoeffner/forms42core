@@ -51,7 +51,7 @@ export class Application
 
         form.canvas = canvas;
         canvas.setComponent(form);
-        parent.appendChild(canvas.getPage());
+        parent.appendChild(canvas.getElement());
     }
 
 }

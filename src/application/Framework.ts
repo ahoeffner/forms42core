@@ -198,7 +198,8 @@ export class Framework
 
 export class DynamicCall
 {
-    public method:string[];
+    public path:string[];
+    public method:string;
     public args:string[] = [];
 
     constructor(signature:string)
@@ -214,14 +215,13 @@ export class DynamicCall
         let pos1:number = signature.indexOf("(");
         let pos2:number = signature.indexOf(")");
 
-        this.method = signature.substring(0,pos1).split(".");
+        this.path = signature.substring(0,pos1).split(".");
         let arglist:string = signature.substring(pos1+1,pos2).trim();
-
-        console.log("method: '"+this.method[0]+"' "+this.method.length);
 
         let n:number = 0;
         let arg:string = "";
         let quote:string = null;
+        this.method = this.path.pop();
 
         for(let i=0; i < arglist.length; i++)
         {
@@ -266,20 +266,16 @@ export class DynamicCall
 
     public invoke(component:any) : void
     {
-        let method = component[this.method[0]];
-
-        for(let i = 1; i < this.method.length; i++)
-            method = method[this.method[i]];
-
-        console.log(method);
+        for(let i = 0; i < this.path.length; i++)
+            component = component[this.path[i]];
 
         try
         {
             switch(this.args.length)
             {
-                case 0: method(); break;
-                case 1: method(this.args[0]); break;
-                default: method(...this.args);
+                case 0: component[this.method](); break;
+                case 1: component[this.method](this.args[0]); break;
+                default: component[this.method](...this.args);
             }
         }
         catch (error)

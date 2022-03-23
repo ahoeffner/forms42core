@@ -10,10 +10,16 @@ export interface View
 
 export interface Canvas
 {
+    moveable:boolean;
+    resizable:boolean;
+
     close() : void;
 
     block() : void;
     unblock() : void;
+
+    remove() : void;
+    restore() : void;
 
     getElement() : HTMLElement;
     getContent() : HTMLElement;

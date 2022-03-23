@@ -17,6 +17,9 @@ import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 export class Canvas implements CanvasDefinition, EventListenerObject
 {
+    private moveable$:boolean;
+    private resizable$:boolean;
+    private parent:HTMLElement;
     private zindex$:number = 0;
     private active:Element = null;
     private content:HTMLElement = null;
@@ -25,9 +28,45 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     private container:HTMLDivElement = null;
     private component:CanvasComponent = null;
 
+    public get moveable() : boolean
+    {
+        return(this.moveable$);
+    }
+
+    public get resizable() : boolean
+    {
+        return(this.resizable$);
+    }
+
+    public set moveable(flag:boolean)
+    {
+        this.moveable$ = flag;
+    }
+
+    public set resizable(flag:boolean)
+    {
+        this.resizable$ = flag;
+        if (flag) this.canvas.style.resize = "both";
+        else      this.canvas.style.resize = "none";
+    }
+
     public close() : void
     {
         this.canvas.remove();
+    }
+
+    public remove() : void
+    {
+        if (this.parent != null) return;
+        this.parent = this.canvas.parentElement;
+        this.canvas.remove();
+    }
+
+    public restore() : void
+    {
+        if (this.parent == null) return;
+        this.parent.appendChild(this.canvas);
+        this.parent = null;
     }
 
     public getElement() : HTMLElement
@@ -96,8 +135,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
 
-        if (!component.resizable)
-            this.canvas.style.resize = "none";
+        this.moveable$ = component.moveable;
+        this.resizable$ = component.resizable;
+        if (!this.resizable) this.canvas.style.resize = "none";
     }
 
     public block() : void
@@ -113,7 +153,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     {
         this.modal.style.width = "0";
         this.modal.style.height = "0";
-        this.canvas.style.resize = "both";
+        if (this.resizable) this.canvas.style.resize = "both";
         if (this.active instanceof HTMLElement) this.active.focus();
     }
 
@@ -160,9 +200,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     private dragstart(event:any) : void
     {
-        if (!this.component.moveable)
-            return;
-
+        if (!this.moveable) return;
         if (event.target != this.container && event.target != this.canvas)
         {
             if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))

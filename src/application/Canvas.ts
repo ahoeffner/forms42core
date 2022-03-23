@@ -171,7 +171,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
         let pos = {x: +event.clientX, y: +event.clientY};
 
-        if (corner.x - pos.x < 16 && corner.y - pos.y < 16)
+        if (corner.x - pos.x < 24 && corner.y - pos.y < 24)
             return;
 
         this.move = true;

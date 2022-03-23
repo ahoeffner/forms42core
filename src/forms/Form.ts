@@ -19,7 +19,9 @@ import { CanvasComponent } from '../application/CanvasComponent.js';
 class State
 {
     page:Element = null;
+    moveable:boolean = true;
     navigable:boolean = true;
+    resizable:boolean = true;
     module:FormsModule = FormsModule.get();
 }
 

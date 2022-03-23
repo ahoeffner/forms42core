@@ -95,6 +95,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.container.appendChild(root);
         this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
+
+        if (!component.resizable)
+            this.canvas.style.resize = "none";
     }
 
     public block() : void
@@ -157,6 +160,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     private dragstart(event:any) : void
     {
+        if (!this.component.moveable)
+            return;
+
         if (event.target != this.container && event.target != this.canvas)
         {
             if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))

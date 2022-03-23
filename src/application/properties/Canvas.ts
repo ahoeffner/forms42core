@@ -33,8 +33,8 @@ export class Canvas
     public CanvasStyle:string =
     `
         resize: both;
-        overflow:hidden;
-        position: sticky;
+        overflow: hidden;
+        position: relative;
         width: fit-content;
         height: fit-content;
     `
@@ -50,6 +50,6 @@ export class Canvas
 
     public ModalClasses:string = "modal";
     public CanvasClasses:string = "canvas";
-    public ContentClasses:string = "content";
+    public ContentClasses:string = "canvas-content";
     public CanvasHandleClass:string = "canvas-handle";
 }

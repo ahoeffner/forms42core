@@ -179,15 +179,20 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     public setView(frame:View) : void
     {
-        if (typeof frame.x === "number") frame.x = frame.x + "px";
-        if (typeof frame.y === "number") frame.y = frame.y + "px";
-        if (typeof frame.width === "number") frame.width = frame.width + "px";
-        if (typeof frame.height === "number") frame.height = frame.height + "px";
+        let x:string|number = frame.x;
+        let y:string|number = frame.y;
+        let width:string|number = frame.width;
+        let height:string|number = frame.height;
 
-        this.canvas.style.top = frame.y;
-        this.canvas.style.left = frame.x;
-        this.canvas.style.width = frame.width;
-        this.canvas.style.height = frame.height;
+        if (typeof x === "number") x = x + "px";
+        if (typeof y === "number") y = y + "px";
+        if (typeof width === "number") width = width + "px";
+        if (typeof height === "number") height = height + "px";
+
+        this.canvas.style.top = y;
+        this.canvas.style.left = x;
+        this.canvas.style.width = width;
+        this.canvas.style.height = height;
     }
 
 
@@ -197,21 +202,24 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     private move = false;
     private mouse = {x: 0, y: 0};
+    private boundary = {x: 0, y: 0, w: 0, h: 0};
+
 
     private dragstart(event:any) : void
     {
         if (!this.moveable) return;
-        if (event.target != this.container && event.target != this.canvas)
-        {
-            if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
-                return;
-        }
+
+        if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
+            return;
 
         let corner =
         {
             x: +this.canvas.offsetLeft + +this.canvas.offsetWidth,
             y: +this.canvas.offsetTop + +this.canvas.offsetHeight
         }
+
+        let parent:HTMLElement = this.canvas.parentElement;
+        this.boundary = {x: parent.offsetLeft, y: parent.offsetTop, w: parent.offsetWidth, h: parent.offsetHeight};
 
         let pos = {x: +event.clientX, y: +event.clientY};
 
@@ -238,8 +246,17 @@ export class Canvas implements CanvasDefinition, EventListenerObject
             let elemY:number = this.canvas.offsetTop;
             let elemX:number = this.canvas.offsetLeft;
 
-            let posX:number = elemX + offX;
-            let posY:number = elemY + offY;
+            let posX:number = elemX + offX - this.boundary.x;
+            let posY:number = elemY + offY - this.boundary.y;
+
+            if (posX < 0) posX = 0;
+            if (posY < 0) posY = 0;
+
+            if (posX + this.canvas.offsetWidth > this.boundary.w)
+                posX = this.boundary.w - this.canvas.offsetWidth;
+
+            if (posY + this.canvas.offsetHeight > this.boundary.h)
+                posY = this.boundary.h - this.canvas.offsetHeight;
 
             this.canvas.style.top = posY + "px";
             this.canvas.style.left = posX + "px";

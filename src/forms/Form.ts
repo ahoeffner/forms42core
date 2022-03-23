@@ -18,7 +18,7 @@ import { CanvasComponent } from '../application/CanvasComponent.js';
 
 class State
 {
-    page:Element = null;
+    page:HTMLElement = null;
     module:FormsModule = FormsModule.get();
 }
 
@@ -37,17 +37,17 @@ export class Form implements CanvasComponent
         if (page != null) this.setPage(page);
     }
 
-    public getPage() : Element
+    public getPage() : HTMLElement
     {
         return(this.state.page);
     }
 
-    public setPage(page:string|Element)
+    public setPage(page:string|HTMLElement)
     {
         if (typeof page === 'string')
         {
             let template:HTMLTemplateElement = document.createElement('template');
-            template.innerHTML = page; page = template.content.getRootNode() as Element;
+            template.innerHTML = page; page = template.content.getRootNode() as HTMLElement;
         }
 
         Framework.parse(this,page);

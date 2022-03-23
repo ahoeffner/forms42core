@@ -25,6 +25,11 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     private container:HTMLDivElement = null;
     private component:CanvasComponent = null;
 
+    public close() : void
+    {
+        this.canvas.remove();
+    }
+
     public getElement() : HTMLElement
     {
         return(this.canvas);
@@ -90,11 +95,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.container.appendChild(root);
         this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
-    }
-
-    public close() : void
-    {
-        this.canvas.remove();
     }
 
     public block() : void

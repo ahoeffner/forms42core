@@ -19,9 +19,6 @@ import { CanvasComponent } from '../application/CanvasComponent.js';
 class State
 {
     page:Element = null;
-    moveable:boolean = true;
-    navigable:boolean = true;
-    resizable:boolean = true;
     module:FormsModule = FormsModule.get();
 }
 
@@ -30,21 +27,14 @@ class State
 export class Form implements CanvasComponent
 {
     public canvas:Canvas = null;
+    public moveable:boolean = true;
+    public navigable:boolean = true;
+    public resizable:boolean = true;
     private state:State = new State();
 
     constructor(page?:string)
     {
         if (page != null) this.setPage(page);
-    }
-
-    public get navigable() : boolean
-    {
-        return(this.state.navigable);
-    }
-
-    public set navigable(navigable:boolean)
-    {
-        this.state.navigable = navigable;
     }
 
     public getPage() : Element

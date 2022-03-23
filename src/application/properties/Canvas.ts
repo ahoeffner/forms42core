@@ -34,7 +34,7 @@ export class Canvas
     `
         resize: both;
         overflow: hidden;
-        position: relative;
+        position: absolute;
         width: fit-content;
         height: fit-content;
     `

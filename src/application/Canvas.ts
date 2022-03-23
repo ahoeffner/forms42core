@@ -101,8 +101,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     public setComponent(component:CanvasComponent) : void
     {
         this.component = component;
-        let page = component.getPage();
-        let root:HTMLDivElement = document.createElement("div");
+        let page = component.getLayout();
 
         let layout:string = Properties.CanvasProperties.page;
         let template:HTMLTemplateElement = document.createElement("template");
@@ -128,10 +127,12 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         {
             template.innerHTML = page as string;
             page = template.content.getRootNode() as Element;
+            let root:HTMLDivElement = document.createElement("div");
+            root.appendChild(page);
+            page = root;
         }
 
-        root.appendChild(page);
-        this.container.appendChild(root);
+        this.container.appendChild(page);
         this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
 
@@ -245,18 +246,20 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
             let elemY:number = this.canvas.offsetTop;
             let elemX:number = this.canvas.offsetLeft;
+            let elemW:number = this.canvas.offsetWidth;
+            let elemH:number = this.canvas.offsetHeight;
 
-            let posX:number = elemX + offX - this.boundary.x;
-            let posY:number = elemY + offY - this.boundary.y;
+            let posX:number = elemX + offX;
+            let posY:number = elemY + offY;
 
-            if (posX < 0) posX = 0;
-            if (posY < 0) posY = 0;
+            let maxX:number = this.boundary.x + this.boundary.w - elemW;
+            let maxY:number = this.boundary.y + this.boundary.h - elemH;
 
-            if (posX + this.canvas.offsetWidth > this.boundary.w)
-                posX = this.boundary.w - this.canvas.offsetWidth;
+            if (posX > maxX) posX = maxX;
+            if (posY > maxY) posY = maxY;
 
-            if (posY + this.canvas.offsetHeight > this.boundary.h)
-                posY = this.boundary.h - this.canvas.offsetHeight;
+            if (posX < this.boundary.x) posX = this.boundary.x;
+            if (posY < this.boundary.y) posY = this.boundary.y;
 
             this.canvas.style.top = posY + "px";
             this.canvas.style.left = posX + "px";
@@ -265,7 +268,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         }
     }
 
-    private dragend(event:any) : void
+    private dragend() : void
     {
         this.move = false;
         document.removeEventListener('mouseup',this);
@@ -274,7 +277,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     public handleEvent(event:Event) : void
     {
-        if (event.type == "mouseup") this.dragend(event);
+        if (event.type == "mouseup") this.dragend();
         if (event.type == "mousemove") this.drag(event);
     }
 }

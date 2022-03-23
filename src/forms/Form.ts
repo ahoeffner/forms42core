@@ -34,15 +34,15 @@ export class Form implements CanvasComponent
 
     constructor(page?:string)
     {
-        if (page != null) this.setPage(page);
+        if (page != null) this.setLayout(page);
     }
 
-    public getPage() : HTMLElement
+    public getLayout() : HTMLElement
     {
         return(this.state.page);
     }
 
-    public setPage(page:string|HTMLElement)
+    public setLayout(page:string|HTMLElement)
     {
         if (typeof page === 'string')
         {

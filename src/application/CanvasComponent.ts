@@ -19,7 +19,7 @@ export interface CanvasComponent
     moveable:boolean;
     navigable:boolean;
     resizable:boolean;
-    
+
     close() : boolean;
-    getPage() : string|Element;
+    getLayout() : string|Element;
 }

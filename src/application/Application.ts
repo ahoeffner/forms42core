@@ -52,7 +52,7 @@ export class Application
         form.canvas = canvas;
         canvas.setComponent(form);
         parent.appendChild(canvas.getElement());
-        canvas.initialize();
+        canvas.oninit();
     }
 
 }

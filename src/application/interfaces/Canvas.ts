@@ -14,7 +14,7 @@ export interface Canvas
     resizable:boolean;
 
     close() : void;
-    initialize() : void;
+    oninit() : void;
 
     block() : void;
     unblock() : void;

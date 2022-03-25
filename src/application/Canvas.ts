@@ -17,8 +17,6 @@ import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 export class Canvas implements CanvasDefinition, EventListenerObject
 {
-    private static sequence:number = 0;
-
     private moveable$:boolean;
     private resizable$:boolean;
     private parent:HTMLElement;
@@ -143,21 +141,10 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         if (!this.resizable) this.canvas.style.resize = "none";
     }
 
-    public initialize(): void
+    public oninit(): void
     {
-        if (this.moveable$)
-        {
-            let px:number = 8;
-            Canvas.sequence = ++Canvas.sequence % 8;
-            let parent:HTMLElement = this.canvas.parentElement;
-            let posY:number = +parent.offsetTop + (+Canvas.sequence + 1)*px;
-            let posX:number = +parent.offsetLeft + (+Canvas.sequence + 1)*px;
-
-            console.log("seq: "+Canvas.sequence)
-
-            this.canvas.style.top = posY + "px";
-            this.canvas.style.left = posX + "px";
-        }
+        if (this.component["oninit"])
+            this.component["oninit"]();
     }
 
     public block() : void

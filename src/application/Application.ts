@@ -40,6 +40,9 @@ export class Application
         let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
+        if (parent == null)
+            throw "@Application: Nowhere to place form '"+path+"'";
+
         if (comp == null)
             throw "@Application: No components mapped to path '"+path+"'";
 

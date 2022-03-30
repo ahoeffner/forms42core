@@ -1,4 +1,5 @@
 export { Form } from './src/forms/Form.js';
+export { Class } from './src/types/Class.js';
 export { Logger } from './src/application/Logger.js';
 export { Properties } from './src/application/Properties.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';

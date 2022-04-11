@@ -141,12 +141,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         if (!this.resizable) this.canvas.style.resize = "none";
     }
 
-    public oninit(): void
-    {
-        if (this.component["oninit"])
-            this.component["oninit"]();
-    }
-
     public block() : void
     {
         this.canvas.style.resize = "none";

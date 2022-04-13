@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { EventFilter } from "./EventFilter";
-import { EventListener } from "./EventListener";
+import { EventFilter } from "./EventFilter.js";
+import { EventListener } from "./EventListener.js";
 
 
 export enum EventType
@@ -70,10 +70,12 @@ export class Event
 
 export class Events
 {
-	private static listeners:EventListener[];
+	private static listeners:EventListener[] = [];
 
-	public static addListener(listener:EventListener) : void
+	public static addListener(clazz:any,method:string,filter:EventFilter|EventFilter[]) : void
 	{
+		let listener:EventListener = new EventListener(clazz,method,filter);
+
 		if (listener.filters != null)
 		{
 			for (let i = 0; i < listener.filters.length; i++)
@@ -120,15 +122,16 @@ export class Events
 		}
 	}
 
+	// Source and Field is interchangeable
 	private static match(event:Event, filter:EventFilter) : boolean
 	{
-		if (event.source instanceof EventSource)
-		{
-			if (filter.source == null) return(true);
-			return(filter.source == event.source.source);
-		}
+		let fsource:string = filter.source;
+		if (fsource == null) fsource = filter.field;
 
-		if (filter.field != event.source["field"]) return(false);
+		let esource:string = event.source["source"];
+		if (esource == null) esource = event.source["field"];
+
+		if (fsource != esource) return(false);
 		if (filter.block != event.source["block"]) return(false);
 	}
 }

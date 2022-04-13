@@ -14,7 +14,14 @@ import { EventFilter } from "./EventFilter";
 
 export class EventListener
 {
-	handler:any;
-	method:string;
 	filters:EventFilter[];
+
+	constructor(public clazz:any, public method:string, public filter:EventFilter|EventFilter[])
+	{
+		if (!Array.isArray(filter))
+		{
+			this.filters = [];
+			this.filters.push(filter);
+		}
+	}
 }

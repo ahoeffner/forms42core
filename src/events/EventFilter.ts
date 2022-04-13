@@ -10,15 +10,14 @@
  * accompanied this code).
  */
 
+import { EventType } from "./Events";
 
-
-/*
- * filter type Window, Key, Field, Datasource
- * filter key-enter, new-window, post-query
- *  + source field, object, ...
- */
 export interface EventFilter
 {
-	method:string;
-	claim(event:Event) : boolean;
+	type:EventType;
+	source?:string;
+
+	key?:any;
+	field?:string;
+	block?:string;
 }

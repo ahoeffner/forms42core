@@ -12,7 +12,7 @@
 
 import { EventFilter } from "./EventFilter";
 
-export interface EventListener
+export class EventListener
 {
 	handler:any;
 	method:string;

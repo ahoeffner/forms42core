@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { EventFilter } from "./EventFilter";
+import { EventFilter } from "./EventFilter.js";
 
 export class EventListener
 {

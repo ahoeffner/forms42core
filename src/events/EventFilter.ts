@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { EventType } from "./Events";
+import { EventType } from "./EventType.js";
 
 export interface EventFilter
 {

@@ -10,37 +10,11 @@
  * accompanied this code).
  */
 
+import { EventType } from "./EventType.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
 
 
-export enum EventType
-{
-	Key,
-    Lock,
-	NewForm,
-	Connect,
-	Disconnect,
-    MouseClick,
-    MouseDoubleClick,
-    PreField,
-    PostField,
-    PostChange,
-    PreviousField,
-    NextField,
-    PreviousBlock,
-    NextBlock,
-    KeyEnterQuery,
-    KeyExecuteQuery,
-    WhenValidateField,
-    WhenValidateRecord,
-    OnNewRecord,
-    PreQuery,
-    PostQuery,
-    PreInsert,
-    PreUpdate,
-    PreDelete
-}
 
 export class EventSource
 {
@@ -133,5 +107,7 @@ export class Events
 
 		if (fsource != esource) return(false);
 		if (filter.block != event.source["block"]) return(false);
+
+		return(true);
 	}
 }

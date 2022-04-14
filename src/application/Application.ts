@@ -57,6 +57,6 @@ export class Application
         form.canvas = canvas;
         canvas.setComponent(form);
         parent.appendChild(canvas.getElement());
-		Events.raise(new Event(EventType.NewForm,form.constructor.name));
+		Events.raise(Event.newFormEvent(EventType.NewForm,form));
     }
 }

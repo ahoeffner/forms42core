@@ -10,14 +10,19 @@
  * accompanied this code).
  */
 
+import { Form } from "../forms/Form.js";
 import { EventFilter } from "./EventFilter.js";
 
 export class EventListener
 {
-	filters:EventFilter[];
+	public method:string;
+	public filters:EventFilter[];
 
-	constructor(public clazz:any, public method:string, public filter:EventFilter|EventFilter[])
+	constructor(public form:Form, public clazz:any, method:Function|string, public filter:EventFilter|EventFilter[])
 	{
+		if (typeof method === "string") this.method = method;
+		else							this.method = method.name;
+
 		if (!Array.isArray(filter))
 		{
 			this.filters = [];

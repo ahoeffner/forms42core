@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { Events } from '../events/Events.js';
+import { EventFilter } from '../events/EventFilter.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
@@ -59,4 +61,9 @@ export class Form implements CanvasComponent
         this.canvas.close();
         return(true);
     }
+
+	public addEventListener(method:Function|string, filter:EventFilter|EventFilter[]) : void
+	{
+		Events.addListener(this,this,method,filter);
+	}
 }

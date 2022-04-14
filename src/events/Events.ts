@@ -10,34 +10,40 @@
  * accompanied this code).
  */
 
+import { Form } from "../forms/Form.js";
 import { EventType } from "./EventType.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
 
 
 
-export class EventSource
-{
-	constructor(public source:string) {}
-}
-
-export class FieldEventSource
-{
-	constructor(public field:string, public block:string) {}
-}
-
 export class KeyEventSource
 {
-	constructor(public key:any, public field:string, public block:string) {}
+	constructor(public key:any, public field:string, public block:string, public record:number, public form:Form) {}
 }
 
 
 export class Event
 {
-	constructor(public type:EventType, public source:string|EventSource|FieldEventSource|KeyEventSource)
+	public static newFormEvent(type:EventType, form:Form) : Event
 	{
-		if (typeof source === "string")
-			source = new EventSource(source);
+		return(new Event(type,form));
+	}
+
+	public static newFieldEvent(type:EventType, form:Form, field?:string, block?:string, record?:number) : Event
+	{
+		return(new Event(type,form,field,block,record));
+	}
+
+	public static newKeyEvent(type:EventType, form:Form, key:any, field?:string, block?:string, record?:number) : Event
+	{
+		return(new Event(type,form,field,block,record,key));
+	}
+
+
+	private constructor(public type:EventType, public form:Form, public field?:string, public block?:string, public record?:number, public key?:any)
+	{
+		if (record == null) record = 0;
 	}
 }
 
@@ -46,9 +52,9 @@ export class Events
 {
 	private static listeners:EventListener[] = [];
 
-	public static addListener(clazz:any,method:string,filter:EventFilter|EventFilter[]) : void
+	public static addListener(form:Form, clazz:any, method:Function|string, filter:EventFilter|EventFilter[]) : void
 	{
-		let listener:EventListener = new EventListener(clazz,method,filter);
+		let listener:EventListener = new EventListener(form,clazz,method,filter);
 
 		if (listener.filters != null)
 		{
@@ -57,7 +63,6 @@ export class Events
 				let filter:EventFilter = listener.filters[i];
 				if (filter.field != null) filter.field = filter.field.toLowerCase();
 				if (filter.block != null) filter.block = filter.block.toLowerCase();
-				if (filter.source != null) filter.source = filter.source.toLowerCase();
 			}
 		}
 
@@ -66,22 +71,21 @@ export class Events
 
 	public static raise(event:Event) : void
 	{
-		if (event.source instanceof EventSource)
-		{
-			if (event.source.source != null)
-				event.source.source = event.source.source.toLowerCase();
-		}
-		else
-		{
-			if (event.source["field"] != null)
-				event.source["field"] = event.source["field"].toLowerCase();
-		}
+		if (event.field != null)
+			event.field = event.field.toLowerCase();
+
+		if (event.block != null)
+			event.block = event.block.toLowerCase();
 
 		for (let i = 0; i < Events.listeners.length; i++)
 		{
 			let done:boolean = false;
+
 			for(let f = 0; f < Events.listeners[i].filters.length && !done; f++)
 			{
+				if (Events.listeners[i].form != null && Events.listeners[i].form != event.form)
+					continue;
+
 				let filter:EventFilter = Events.listeners[i].filters[f];
 
 				if (event.type == filter.type)
@@ -99,15 +103,8 @@ export class Events
 	// Source and Field is interchangeable
 	private static match(event:Event, filter:EventFilter) : boolean
 	{
-		let fsource:string = filter.source;
-		if (fsource == null) fsource = filter.field;
-
-		let esource:string = event.source["source"];
-		if (esource == null) esource = event.source["field"];
-
-		if (fsource != esource) return(false);
-		if (filter.block != event.source["block"]) return(false);
-
+		if (filter.field != event.field) return(false);
+		if (filter.block != event.block) return(false);
 		return(true);
 	}
 }

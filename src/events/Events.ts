@@ -30,18 +30,18 @@ export class Event
 		return(new Event(type,form));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, field?:string, block?:string, record?:number) : Event
+	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string, record?:number) : Event
 	{
-		return(new Event(type,form,field,block,record));
+		return(new Event(type,form,block,field,record));
 	}
 
-	public static newKeyEvent(type:EventType, form:Form, key:any, field?:string, block?:string, record?:number) : Event
+	public static newKeyEvent(type:EventType, form:Form, key:any, block?:string, field?:string, record?:number) : Event
 	{
-		return(new Event(type,form,field,block,record,key));
+		return(new Event(type,form,block,field,record,key));
 	}
 
 
-	private constructor(public type:EventType, public form:Form, public field?:string, public block?:string, public record?:number, public key?:any)
+	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public record?:number, public key?:any)
 	{
 		if (record == null) record = 0;
 	}

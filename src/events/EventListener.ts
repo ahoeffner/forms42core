@@ -16,17 +16,11 @@ import { EventFilter } from "./EventFilter.js";
 export class EventListener
 {
 	public method:string;
-	public filters:EventFilter[];
+	public filters:EventFilter;
 
-	constructor(public form:Form, public clazz:any, method:Function|string, public filter:EventFilter|EventFilter[])
+	constructor(public id:object, public form:Form, public clazz:any, method:Function|string, public filter:EventFilter)
 	{
 		if (typeof method === "string") this.method = method;
 		else							this.method = method.name;
-
-		if (!Array.isArray(filter))
-		{
-			this.filters = [];
-			this.filters.push(filter);
-		}
 	}
 }

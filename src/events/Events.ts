@@ -50,61 +50,143 @@ export class Event
 
 export class Events
 {
-	private static listeners:EventListener[] = [];
+	private static applisteners:EventListener[] = [];
+	private static frmlisteners:EventListener[] = [];
+	private static blklisteners:EventListener[] = [];
+	private static fldlisteners:EventListener[] = [];
 
-	public static addListener(form:Form, clazz:any, method:Function|string, filter:EventFilter|EventFilter[]) : void
+	public static addListener(form:Form, clazz:any, method:Function|string, filter:EventFilter|EventFilter[]) : object
 	{
-		let listener:EventListener = new EventListener(form,clazz,method,filter);
+		let id:object = new Object();
+		let listeners:EventListener[] = [];
 
-		if (listener.filters != null)
+		if (filter == null)
 		{
-			for (let i = 0; i < listener.filters.length; i++)
-			{
-				let filter:EventFilter = listener.filters[i];
-				if (filter.field != null) filter.field = filter.field.toLowerCase();
-				if (filter.block != null) filter.block = filter.block.toLowerCase();
-			}
+			listeners.push(new EventListener(id,form,clazz,method,filter as EventFilter));
+		}
+		else if (!Array.isArray(filter))
+		{
+			listeners.push(new EventListener(id,form,clazz,method,filter as EventFilter));
+		}
+		else
+		{
+			filter.forEach((f) => {listeners.push(new EventListener(id,form,clazz,method,f));})
 		}
 
-		Events.listeners.push(listener);
+		listeners.forEach((lsnr) =>
+		{
+			let type:number = 0;
+			if (lsnr.form != null) type = 1;
+
+			if (lsnr.filter != null)
+			{
+				if (lsnr.filter.field != null) lsnr.filter.field = lsnr.filter.field.toLowerCase();
+				if (lsnr.filter.block != null) lsnr.filter.block = lsnr.filter.block.toLowerCase();
+
+				if (lsnr.filter.block != null) type = 2;
+				if (lsnr.filter.field != null) type = 3;
+			}
+
+			switch(type)
+			{
+				case 0: Events.applisteners.push(lsnr); break;
+				case 1: Events.frmlisteners.push(lsnr); break;
+				case 2: Events.blklisteners.push(lsnr); break;
+				case 3: Events.fldlisteners.push(lsnr); break;
+			}
+		});
+
+		return(id);
 	}
 
-	public static raise(event:Event) : void
+
+	public static async raise(event:Event) : Promise<boolean>
 	{
+		let retval:boolean = true;
+
 		if (event.field != null)
 			event.field = event.field.toLowerCase();
 
 		if (event.block != null)
 			event.block = event.block.toLowerCase();
 
-		for (let i = 0; i < Events.listeners.length; i++)
+		let done:Set<object> = new Set<object>();
+
+		// Field Listeners
+		for (let i = 0; i < Events.fldlisteners.length; i++)
 		{
-			let done:boolean = false;
+			let lsnr:EventListener = Events.fldlisteners[i];
 
-			for(let f = 0; f < Events.listeners[i].filters.length && !done; f++)
+			if (done.has(lsnr.id))
+				continue;
+
+			if (Events.match(event,lsnr))
 			{
-				if (Events.listeners[i].form != null && Events.listeners[i].form != event.form)
-					continue;
-
-				let filter:EventFilter = Events.listeners[i].filters[f];
-
-				if (event.type == filter.type)
-				{
-					if (Events.match(event,filter))
-					{
-						done = true;
-						console.log("match");
-					}
-				}
+				console.log("field match");
+				done.add(lsnr.id);
 			}
 		}
+
+		// Block Listeners
+		for (let i = 0; i < Events.blklisteners.length; i++)
+		{
+			let lsnr:EventListener = Events.blklisteners[i];
+
+			if (done.has(lsnr.id))
+				continue;
+
+			if (Events.match(event,lsnr))
+			{
+				console.log("block match");
+				done.add(lsnr.id);
+			}
+		}
+
+		// Form Listeners
+		for (let i = 0; i < Events.frmlisteners.length; i++)
+		{
+			let lsnr:EventListener = Events.frmlisteners[i];
+
+			if (done.has(lsnr.id))
+				continue;
+
+			if (Events.match(event,lsnr))
+			{
+				console.log("form match");
+				done.add(lsnr.id);
+			}
+		}
+
+		// App Listeners
+		for (let i = 0; i < Events.applisteners.length; i++)
+		{
+			let lsnr:EventListener = Events.applisteners[i];
+
+			if (done.has(lsnr.id))
+				continue;
+
+			if (Events.match(event,lsnr))
+			{
+				console.log("app match");
+				done.add(lsnr.id);
+			}
+		}
+
+		return(retval);
 	}
 
 	// Source and Field is interchangeable
-	private static match(event:Event, filter:EventFilter) : boolean
+	private static match(event:Event, lsnr:EventListener) : boolean
 	{
-		if (filter.field != event.field) return(false);
-		if (filter.block != event.block) return(false);
+		if (lsnr.form != null && lsnr.form != event.form)
+			return(false);
+
+		if (lsnr.filter != null)
+		{
+			if (lsnr.filter.block != null && lsnr.filter.block != event.block) return(false);
+			if (lsnr.filter.field != null && lsnr.filter.field != event.field) return(false);
+		}
+
 		return(true);
 	}
 }

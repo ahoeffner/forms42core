@@ -10,6 +10,7 @@ export interface View
 
 export interface Canvas
 {
+	zindex:number;
     moveable:boolean;
     resizable:boolean;
 

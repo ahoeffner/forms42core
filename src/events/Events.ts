@@ -50,10 +50,11 @@ export class Event
 
 export class Events
 {
-	private static applisteners:EventListener[] = [];
-	private static frmlisteners:EventListener[] = [];
-	private static blklisteners:EventListener[] = [];
-	private static fldlisteners:EventListener[] = [];
+	private static listeners:EventListener[] = [];
+	private static applisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
+	private static frmlisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
+	private static blklisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
+	private static fldlisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
 
 	public static addListener(form:Form, clazz:any, method:Function|string, filter:EventFilter|EventFilter[]) : object
 	{
@@ -75,34 +76,82 @@ export class Events
 
 		listeners.forEach((lsnr) =>
 		{
-			let type:number = 0;
-			if (lsnr.form != null) type = 1;
+			let ltype:number = 0;
+			if (lsnr.form != null) ltype = 1;
 
 			if (lsnr.filter != null)
 			{
 				if (lsnr.filter.field != null) lsnr.filter.field = lsnr.filter.field.toLowerCase();
 				if (lsnr.filter.block != null) lsnr.filter.block = lsnr.filter.block.toLowerCase();
 
-				if (lsnr.filter.block != null) type = 2;
-				if (lsnr.filter.field != null) type = 3;
-			}
+				if (lsnr.filter.block != null) ltype = 2;
+				if (lsnr.filter.field != null) ltype = 3;
 
-			switch(type)
-			{
-				case 0: Events.applisteners.push(lsnr); break;
-				case 1: Events.frmlisteners.push(lsnr); break;
-				case 2: Events.blklisteners.push(lsnr); break;
-				case 3: Events.fldlisteners.push(lsnr); break;
+				switch(ltype)
+				{
+					case 0: Events.add(lsnr.filter.type,lsnr,Events.applisteners); break;
+					case 1: Events.add(lsnr.filter.type,lsnr,Events.frmlisteners); break;
+					case 2: Events.add(lsnr.filter.type,lsnr,Events.blklisteners); break;
+					case 3: Events.add(lsnr.filter.type,lsnr,Events.fldlisteners); break;
+				}
 			}
+			else Events.listeners.push(lsnr);
 		});
 
 		return(id);
 	}
 
 
+	public removeListener(id:object) : void
+	{
+		let map:Map<EventType,EventListener[]> = null;
+
+		for (let i = 0; i < Events.listeners.length; i++)
+		{
+			let lsnr:EventListener = Events.listeners[i];
+
+			if (lsnr.id == id)
+			{
+				delete Events.listeners[i];
+				break;
+			}
+		}
+
+		for (let m = 0; m < 4; m++)
+		{
+			switch(m)
+			{
+				case 0: map = Events.fldlisteners; break;
+				case 1: map = Events.blklisteners; break;
+				case 2: map = Events.frmlisteners; break;
+				case 3: map = Events.applisteners; break;
+			}
+
+			for(let key of map.keys())
+			{
+				let listeners:EventListener[] = map.get(key);
+
+				for (let i = 0; listeners != null &&  i < listeners.length; i++)
+				{
+					if (listeners[i].id == id)
+					{
+						delete listeners[i];
+						map.set(key,listeners);
+
+						if (listeners.length == 0)
+							map.delete(key);
+
+						break;
+					}
+				}
+			}
+		}
+	}
+
+
 	public static async raise(event:Event) : Promise<boolean>
 	{
-		let retval:boolean = true;
+		let listeners:EventListener[] = null;
 
 		if (event.field != null)
 			event.field = event.field.toLowerCase();
@@ -113,69 +162,100 @@ export class Events
 		let done:Set<object> = new Set<object>();
 
 		// Field Listeners
-		for (let i = 0; i < Events.fldlisteners.length; i++)
+		listeners = Events.fldlisteners.get(event.type);
+		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.fldlisteners[i];
+			let lsnr:EventListener = listeners[i];
 
 			if (done.has(lsnr.id))
 				continue;
 
 			if (Events.match(event,lsnr))
 			{
-				console.log("field match");
 				done.add(lsnr.id);
+
+				if (!Events.execute(lsnr,event))
+					return(false);
 			}
 		}
 
 		// Block Listeners
-		for (let i = 0; i < Events.blklisteners.length; i++)
+		listeners = Events.blklisteners.get(event.type);
+		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.blklisteners[i];
+			let lsnr:EventListener = listeners[i];
 
 			if (done.has(lsnr.id))
 				continue;
 
 			if (Events.match(event,lsnr))
 			{
-				console.log("block match");
 				done.add(lsnr.id);
+
+				if (!Events.execute(lsnr,event))
+					return(false);
 			}
 		}
 
 		// Form Listeners
-		for (let i = 0; i < Events.frmlisteners.length; i++)
+		listeners = Events.frmlisteners.get(event.type);
+		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.frmlisteners[i];
+			let lsnr:EventListener = listeners[i];
 
 			if (done.has(lsnr.id))
 				continue;
 
 			if (Events.match(event,lsnr))
 			{
-				console.log("form match");
 				done.add(lsnr.id);
+
+				if (!Events.execute(lsnr,event))
+					return(false);
 			}
 		}
 
 		// App Listeners
-		for (let i = 0; i < Events.applisteners.length; i++)
+		listeners = Events.applisteners.get(event.type);
+		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.applisteners[i];
+			let lsnr:EventListener = listeners[i];
 
 			if (done.has(lsnr.id))
 				continue;
 
 			if (Events.match(event,lsnr))
 			{
-				console.log("app match");
 				done.add(lsnr.id);
+
+				if (!Events.execute(lsnr,event))
+					return(false);
 			}
 		}
 
-		return(retval);
+		for (let i = 0; i < Events.listeners.length; i++)
+		{
+			let lsnr:EventListener = Events.listeners[i];
+			if (!done.has(lsnr))
+			{
+				done.add(lsnr.id);
+
+				if (!Events.execute(lsnr,event))
+					return(false);
+			}
+		}
+
+		return(true);
 	}
 
-	// Source and Field is interchangeable
+
+	private static async execute(lsnr:EventListener, event:Event) : Promise<boolean>
+	{
+		let response:boolean = await lsnr.clazz[lsnr.method](event);
+		return(response);
+	}
+
+
 	private static match(event:Event, lsnr:EventListener) : boolean
 	{
 		if (lsnr.form != null && lsnr.form != event.form)
@@ -188,5 +268,19 @@ export class Events
 		}
 
 		return(true);
+	}
+
+
+	private static add(type:EventType, lsnr:EventListener, map:Map<EventType,EventListener[]>) : void
+	{
+		let listeners:EventListener[] = map.get(type);
+
+		if (listeners == null)
+		{
+			listeners = [];
+			map.set(type,listeners);
+		}
+
+		listeners.push(lsnr);
 	}
 }

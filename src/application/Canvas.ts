@@ -50,6 +50,19 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         else      this.canvas.style.resize = "none";
     }
 
+	public get zindex() : number
+	{
+		return(this.zindex$);
+	}
+
+	public set zindex(zindex:number)
+	{
+		this.zindex$ = zindex;
+		this.canvas.style.zIndex = (2*this.zindex$)+"";
+        //this.container.style.zIndex = (2*this.zindex$)+"";
+        this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
+	}
+
     public close() : void
     {
         this.canvas.remove();

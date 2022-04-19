@@ -1,0 +1,64 @@
+/*
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 3 only, as
+ * published by the Free Software Foundation.
+
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
+ */
+
+import { MenuData } from './interfaces/MenuData.js';
+import { MenuEntry } from './interfaces/MenuEntry.js';
+import { Menu as BaseMenu } from './interfaces/Menu.js'
+
+
+import { StaticMenuData } from './StaticMenuData.js';
+import { Denmark } from './Denmark.js';
+
+
+export class Menu implements BaseMenu
+{
+	private data:MenuData = null;
+    private status:Map<string,boolean> = new Map<string,boolean>();
+
+	public setMenuData(data:MenuData) : void
+	{
+		this.data = data;
+		this.data = new StaticMenuData(new Denmark().data());
+	}
+
+	public show(target:HTMLElement): void
+	{
+		null;
+	}
+
+	public toggle(path:string) : void
+	{
+		let entries:MenuEntry[] = this.data.getEntries(path);
+
+		let open:boolean = this.status.get(path);
+		this.status.clear();
+	}
+
+    private split(path:string) : string[]
+    {
+        let road:string = "/";
+        let parts:string[] = [];
+        let split:string[] = path.trim().split("/");
+
+        parts.push("/");
+        split.forEach((elem) =>
+        {
+            if (elem.length > 0)
+            {
+                road += elem + "/";
+                parts.push(road);
+            }
+        });
+
+        return(parts);
+    }
+}

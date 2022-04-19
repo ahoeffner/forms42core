@@ -16,7 +16,7 @@ import { StaticMenuEntry } from "./interfaces/StaticMenuEntry.js";
 
 export class StaticMenuData implements MenuData
 {
-	private menu:Map<string,StaticMenuEntry>;
+	private menu:Map<string,StaticMenuEntry> = new Map<string,StaticMenuEntry>();
 
 	constructor(public entries:StaticMenuEntry)
 	{

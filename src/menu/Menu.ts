@@ -12,16 +12,16 @@
 
 import { MenuData } from './interfaces/MenuData.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
-import { Menu as BaseMenu } from './interfaces/Menu.js'
 
 
 import { StaticMenuData } from './StaticMenuData.js';
 import { Denmark } from './Denmark.js';
 
 
-export class Menu implements BaseMenu
+export class Menu
 {
 	private data:MenuData = null;
+	private target:HTMLElement = null;
     private status:Map<string,boolean> = new Map<string,boolean>();
 
 	public setMenuData(data:MenuData) : void
@@ -30,7 +30,12 @@ export class Menu implements BaseMenu
 		this.data = new StaticMenuData(new Denmark().data());
 	}
 
-	public show(target:HTMLElement): void
+	public setTarget(target:HTMLElement) : void
+	{
+		this.target = target;
+	}
+
+	public show() : void
 	{
 		null;
 	}

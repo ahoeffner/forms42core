@@ -11,11 +11,9 @@
  */
 
 import { MenuData } from './interfaces/MenuData.js';
-import { MenuEntry } from './interfaces/MenuEntry.js';
-
-
 import { StaticMenuData } from './StaticMenuData.js';
-import { Denmark } from './Denmark.js';
+import { MenuEntry } from './interfaces/MenuEntry.js';
+import { StaticMenuEntry } from './interfaces/StaticMenuEntry.js';
 
 
 export class Menu
@@ -24,10 +22,10 @@ export class Menu
 	private target:HTMLElement = null;
     private status:Map<string,boolean> = new Map<string,boolean>();
 
-	public setMenuData(data:MenuData) : void
+	public setMenuData(data:MenuData|StaticMenuEntry) : void
 	{
-		this.data = data;
-		this.data = new StaticMenuData(new Denmark().data());
+		if (data["getEntries"]) this.data = data as MenuData;
+		else this.data = new StaticMenuData(data as StaticMenuEntry);
 	}
 
 	public setTarget(target:HTMLElement) : void

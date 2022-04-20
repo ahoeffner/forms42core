@@ -16,16 +16,25 @@ import { StaticMenuEntry } from "./interfaces/StaticMenuEntry.js";
 
 export abstract class StaticMenu implements Menu
 {
+	private root:StaticMenuEntry = null;
 	private menu:Map<string,StaticMenuEntry> = new Map<string,StaticMenuEntry>();
 
 	constructor(public entries:StaticMenuEntry)
 	{
-		this.index("/",entries);
+		this.root = entries;
+		this.index("/"+this.root.id,entries);
+	}
+
+	public getRoot() : MenuEntry
+	{
+		return(this.root);
 	}
 
 	public getEntries(path:string) : MenuEntry[]
 	{
-		return(this.menu.get(path).entries);
+		let entry:StaticMenuEntry = this.menu.get(path);
+		if (entry != null) return(entry.entries);
+		return(null);
 	}
 
 	abstract execute(path:string) : Promise<boolean>;

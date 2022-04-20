@@ -14,6 +14,7 @@ import { MenuEntry } from "./MenuEntry.js";
 
 export interface Menu
 {
+	getRoot() : MenuEntry;
 	getEntries(path:string) : MenuEntry[];
 	execute(path:string) : Promise<boolean>;
 }

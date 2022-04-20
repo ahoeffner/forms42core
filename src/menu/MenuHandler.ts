@@ -31,7 +31,7 @@ export class MenuHandler implements EventListenerObject
 	public show() : void
 	{
 		this.classes = this.link;
-		this.target.innerHTML = this.showEntry(this.menu.getEntries("/"));
+		this.target.innerHTML = this.showEntry([this.menu.getRoot()]);
 		let entries:NodeList = this.target.querySelectorAll("."+this.link);
 
 		entries.forEach((link) =>
@@ -59,9 +59,11 @@ export class MenuHandler implements EventListenerObject
 		if (path == null) path = "/";
 		if (path.length > 1) path += "/";
 
-		for (let i = 0; i < entries.length; i++)
+		for (let i = 0; entries != null && i < entries.length; i++)
 		{
-			page += "<a class='"+this.classes+"' path='"+path+entries[i].id+"'>"+entries[i].text+"</a>";
+			let npath:string = path+entries[i].id;
+			page += "<a class='"+this.classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
+			page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
 
 		return(page);
@@ -71,7 +73,6 @@ export class MenuHandler implements EventListenerObject
 	{
 		let elem:HTMLAnchorElement = link.target as HTMLAnchorElement;
 		let close:boolean = await this.menu.execute(elem.getAttribute("path"));
-		console.log("returned "+close);
 	}
 
     private split(path:string) : string[]

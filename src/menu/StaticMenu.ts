@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
-import { MenuData } from "./interfaces/MenuData.js";
+import { Menu } from "./interfaces/Menu.js";
 import { MenuEntry } from "./interfaces/MenuEntry.js";
 import { StaticMenuEntry } from "./interfaces/StaticMenuEntry.js";
 
-export class StaticMenuData implements MenuData
+export abstract class StaticMenu implements Menu
 {
 	private menu:Map<string,StaticMenuEntry> = new Map<string,StaticMenuEntry>();
 
@@ -28,10 +28,11 @@ export class StaticMenuData implements MenuData
 		return(this.menu.get(path).entries);
 	}
 
+	abstract execute(path:string) : Promise<boolean>;
+
 	public index(path:string, entry:StaticMenuEntry) : void
 	{
 		this.menu.set(path,entry);
-		console.log("index <"+path+">");
 
 		for (let i = 0; entry.entries != null && i < entry.entries.length; i++)
 		{

@@ -12,7 +12,8 @@ export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';
 export { Component, ModuleDefinition, FormsModule } from './src/application/FormsModule.js';
 
-export { Menu } from './src/menu/Menu.js';
-export { MenuData } from './src/menu/interfaces/MenuData';
-export { MenuEntry } from './src/menu/interfaces/MenuEntry';
-export { StaticMenuEntry } from './src/menu/interfaces/StaticMenuEntry';
+export { Menu } from './src/menu/interfaces/Menu.js';
+export { StaticMenu } from './src/menu/StaticMenu.js';
+export { MenuHandler } from './src/menu/MenuHandler.js';
+export { MenuEntry } from './src/menu/interfaces/MenuEntry.js';
+export { StaticMenuEntry } from './src/menu/interfaces/StaticMenuEntry.js';

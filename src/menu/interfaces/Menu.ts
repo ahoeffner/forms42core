@@ -12,7 +12,8 @@
 
 import { MenuEntry } from "./MenuEntry.js";
 
-export interface MenuData
+export interface Menu
 {
 	getEntries(path:string) : MenuEntry[];
+	execute(path:string) : Promise<boolean>;
 }

@@ -12,32 +12,47 @@
 
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
+import { MenuOptions } from './interfaces/MenuOptions.js';
 
 
 export class MenuHandler implements EventListenerObject
 {
 	private menu:Menu = null;
-	private classes:string = null;
+	private menucls:string = null;
+	private linkcls:string = null;
 	private target:HTMLElement = null;
-	private link:string = "menu-entry";
+	private options:MenuOptions = null;
     private status:Map<string,boolean> = new Map<string,boolean>();
 
-	constructor(menu:Menu, target:HTMLElement)
+	constructor(menu:Menu, target:HTMLElement, options?:MenuOptions)
 	{
 		this.menu = menu;
 		this.target = target;
+		this.options = options;
+		if (options == null) this.options = {}
+
+		if (this.options.classes == null) this.options.classes = {};
+		if (this.options.skiproot == null) this.options.skiproot = false;
+		if (this.options.singlepath == null) this.options.singlepath = true;
+		if (this.options.classes.common == null) this.options.classes.common = "";
+		if (this.options.classes.menuitem == null) this.options.classes.menuitem = "menu-item";
+		if (this.options.classes.linkitem == null) this.options.classes.linkitem = "link-item";
+
+		this.menucls = (this.options.classes.common + " " + this.options.classes.menuitem).trim();
+		this.linkcls = (this.options.classes.common + " " + this.options.classes.linkitem).trim();
 	}
 
 	public show() : void
 	{
-		this.classes = this.link;
-		this.target.innerHTML = this.showEntry([this.menu.getRoot()]);
-		let entries:NodeList = this.target.querySelectorAll("."+this.link);
+		let start:MenuEntry[] = [this.menu.getRoot()];
 
-		entries.forEach((link) =>
-		{
-			link.addEventListener("click",this);
-		});
+		if (this.options.skiproot)
+			start = this.menu.getEntries("/"+start[0].id);
+
+		this.target.innerHTML = this.showEntry(start);
+
+		let entries:NodeList = this.target.querySelectorAll("a");
+		entries.forEach((link) => {link.addEventListener("click",this);});
 	}
 
 	public hide() : void
@@ -61,8 +76,14 @@ export class MenuHandler implements EventListenerObject
 
 		for (let i = 0; entries != null && i < entries.length; i++)
 		{
+			if (entries[i].disabled != null && entries[i].disabled)
+				continue;
+
+			let classes:string = this.menucls;
+			if (entries[i].command) classes = this.linkcls;
+
 			let npath:string = path+entries[i].id;
-			page += "<a class='"+this.classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
+			page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
 			page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
 

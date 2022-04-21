@@ -10,10 +10,15 @@
  * accompanied this code).
  */
 
-export interface MenuEntry
+export interface MenuOptions
 {
-	id:any;
-    text:string;
-    disabled?:boolean;
-    command?:string;
+	skiproot?:boolean;
+	singlepath?:boolean;
+
+	classes?:
+	{
+		common?:string;
+		menuitem?:string;
+		linkitem?:string;
+	}
 }

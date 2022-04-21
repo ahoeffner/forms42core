@@ -22,7 +22,7 @@ export class MenuHandler implements EventListenerObject
 	private linkcls:string = null;
 	private target:HTMLElement = null;
 	private options:MenuOptions = null;
-    private status:Map<string,boolean> = new Map<string,boolean>();
+    private open:Set<string> = new Set<string>();
 
 	constructor(menu:Menu, target:HTMLElement, options?:MenuOptions)
 	{
@@ -62,10 +62,31 @@ export class MenuHandler implements EventListenerObject
 
 	public toggle(path:string) : void
 	{
-		let entries:MenuEntry[] = this.menu.getEntries(path);
+		let open:boolean = this.open.has(path);
 
-		let open:boolean = this.status.get(path);
-		this.status.clear();
+		if (this.options.singlepath)
+		{
+			this.open.clear();
+
+			let opath:string = "";
+			let mpath:string[] = this.split(path);
+
+			for (let i = 0; i < mpath.length; i++)
+			{
+				opath += "/" + mpath[i];
+				this.open.add(opath);
+			}
+
+			if (!open)
+				this.open.delete(path);
+		}
+		else
+		{
+			if (!open) this.open.add(path);
+			else	   this.open.delete(path);
+		}
+
+		this.show();
 	}
 
 	private showEntry(entries:MenuEntry[], path?:string, page?:string) : string
@@ -83,6 +104,10 @@ export class MenuHandler implements EventListenerObject
 			if (entries[i].command) classes = this.linkcls;
 
 			let npath:string = path+entries[i].id;
+
+			if (!this.open.has(npath))
+				continue;
+
 			page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
 			page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
@@ -102,7 +127,6 @@ export class MenuHandler implements EventListenerObject
         let parts:string[] = [];
         let split:string[] = path.trim().split("/");
 
-        parts.push("/");
         split.forEach((elem) =>
         {
             if (elem.length > 0)

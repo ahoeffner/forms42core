@@ -63,6 +63,7 @@ export class MenuHandler implements EventListenerObject
 	public toggle(path:string) : void
 	{
 		let open:boolean = this.open.has(path);
+		console.log("toggle path: "+path+" open: "+open);
 
 		if (this.options.singlepath)
 		{
@@ -74,10 +75,11 @@ export class MenuHandler implements EventListenerObject
 			for (let i = 0; i < mpath.length; i++)
 			{
 				opath += "/" + mpath[i];
+				console.log("open <"+opath+">")
 				this.open.add(opath);
 			}
 
-			if (!open)
+			if (open)
 				this.open.delete(path);
 		}
 		else
@@ -104,12 +106,12 @@ export class MenuHandler implements EventListenerObject
 			if (entries[i].command) classes = this.linkcls;
 
 			let npath:string = path+entries[i].id;
-
-			if (!this.open.has(npath))
-				continue;
-
 			page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
-			page = this.showEntry(this.menu.getEntries(npath),npath,page);
+
+			console.log("show <"+npath+"> open: "+this.open.has(npath))
+
+			if (this.open.has(npath))
+				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
 
 		return(page);
@@ -118,22 +120,21 @@ export class MenuHandler implements EventListenerObject
 	public async handleEvent(link:Event)
 	{
 		let elem:HTMLAnchorElement = link.target as HTMLAnchorElement;
-		let close:boolean = await this.menu.execute(elem.getAttribute("path"));
+		let path:string = elem.getAttribute("path");
+
+		if (!elem.hasAttribute("command")) this.toggle(path);
+		else if (await this.menu.execute(path)) this.hide();
 	}
 
     private split(path:string) : string[]
     {
-        let road:string = "/";
         let parts:string[] = [];
         let split:string[] = path.trim().split("/");
 
         split.forEach((elem) =>
         {
-            if (elem.length > 0)
-            {
-                road += elem + "/";
-                parts.push(road);
-            }
+			elem = elem.trim();
+            if (elem.length > 0) parts.push(elem);
         });
 
         return(parts);

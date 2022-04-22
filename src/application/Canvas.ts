@@ -59,7 +59,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	{
 		this.zindex$ = zindex;
 		this.canvas.style.zIndex = (2*this.zindex$)+"";
-        //this.container.style.zIndex = (2*this.zindex$)+"";
         this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 	}
 

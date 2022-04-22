@@ -11,7 +11,6 @@
  */
 
 import { Events } from '../events/Events.js';
-import { EventType } from '../events/EventType.js';
 import { EventFilter } from '../events/EventFilter.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';

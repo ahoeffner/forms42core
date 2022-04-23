@@ -19,5 +19,4 @@ export class FieldTypes
 	private static map:Map<string,Class<FieldImplementation>> =
 		new Map<string,Class<FieldImplementation>>();
 
-	
 }

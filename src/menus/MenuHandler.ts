@@ -110,7 +110,7 @@ export class MenuHandler implements EventListenerObject
 
 			console.log("show <"+npath+"> open: "+this.open.has(npath))
 
-			if (this.open.has(npath))
+			//if (this.open.has(npath))
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
 

@@ -18,7 +18,7 @@ export class Field
 	constructor(placeholder:HTMLElement)
 	{
 		let ftype:string = placeholder.getAttribute("type");
-		let impl:Class<any> = FieldTypes.map.get(ftype);
+		//let impl:Class<any> = FieldTypes.map.get(ftype);
 
 		//let impl:HTMLElement = document.createElement("div");
 		//impl.innerHTML = "A new Field";

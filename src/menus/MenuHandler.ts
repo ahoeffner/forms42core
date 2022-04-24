@@ -49,7 +49,7 @@ export class MenuHandler implements EventListenerObject
 		if (this.options.skiproot)
 			start = this.menu.getEntries("/"+start[0].id);
 
-		this.target.innerHTML = "xxxxxxxxx xxxxxxxxx xxxxxxx<br>"+this.showEntry(start);
+		this.target.innerHTML = this.showEntry(start);
 
 		let entries:NodeList = this.target.querySelectorAll("a");
 		entries.forEach((link) => {link.addEventListener("click",this);});

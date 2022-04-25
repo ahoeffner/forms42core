@@ -30,13 +30,16 @@ export interface FieldImplementation
     removeAttribute(attr:string) : void;
     setAttribute(attr:string, value:string) : void;
 
+    getProperties() : any;
+    setProperties(properties:any) : void;
+
     getAttributes() : Map<string,any>;
     setAttributes(properties:Map<string,any>) : void;
 
     getValidValues() : Set<any> | Map<any, any>
     setValidValues(values:Set<any>|Map<any,any>) : void;
 
-    enable(flag:boolean) : void;
+    enabled(flag:boolean) : void;
     readonly(flag:boolean) : void;
 
 	setError(flag:boolean) : void;

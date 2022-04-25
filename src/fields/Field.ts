@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class";
-import { FieldTypes } from "./FieldType";
+import { Class } from "../types/Class.js";
+import { FieldTypes } from "./FieldType.js";
 
 export class Field
 {

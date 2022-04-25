@@ -16,7 +16,16 @@ import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 export class FieldTypes
 {
-	private static map:Map<string,Class<FieldImplementation>> =
-		new Map<string,Class<FieldImplementation>>();
+	private static exceptions:Map<string,Class<FieldImplementation>> =
+		FieldTypes.init();
 
+
+	private static init() : Map<string,Class<FieldImplementation>>
+	{
+		let map:Map<string,Class<FieldImplementation>> =
+			new Map<string,Class<FieldImplementation>>();
+
+		map.set("dropdown",null);
+		return(map);
+	}
 }

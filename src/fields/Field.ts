@@ -23,6 +23,12 @@ export class Field
 		let ftype:string = placeholder.getAttribute("type");
 		let impl:Class<FieldImplementation> = FieldTypes.get(ftype);
 		this.impl = new impl(this);
+
+		let attrs:Map<string,any> = new Map<string,any>();
+		let an:string[] = placeholder.getAttributeNames();
+		an.forEach((name) => {attrs.set(name,placeholder.getAttribute(name))});
+
+		this.impl.setAttributes(attrs);
 	}
 
 	public getImplementation() : FieldImplementation

@@ -12,16 +12,21 @@
 
 import { Class } from "../types/Class.js";
 import { FieldTypes } from "./FieldType.js";
+import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 export class Field
 {
+	private impl:FieldImplementation = null;
+
 	constructor(placeholder:HTMLElement)
 	{
 		let ftype:string = placeholder.getAttribute("type");
-		//let impl:Class<any> = FieldTypes.map.get(ftype);
+		let impl:Class<FieldImplementation> = FieldTypes.get(ftype);
+		this.impl = new impl(this);
+	}
 
-		//let impl:HTMLElement = document.createElement("div");
-		//impl.innerHTML = "A new Field";
-		//placeholder.replaceWith(impl);
+	public getImplementation() : FieldImplementation
+	{
+		return(this.impl);
 	}
 }

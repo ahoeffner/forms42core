@@ -15,9 +15,9 @@ import { Framework } from "../application/Framework.js";
 
 export class Root implements Tag
 {
-    public parse(element: Element): string|Element
+    public parse(element:HTMLElement): string|HTMLElement
     {
-        let tag:Element = document.createElement("div");
+        let tag:HTMLElement = document.createElement("div");
         Framework.copyAttributes(element,tag);
         return(tag);
     }

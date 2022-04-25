@@ -11,14 +11,17 @@
  */
 
 import { Tag } from "./Tag.js";
+import { Field as Impl } from "../fields/Field.js";
 import { Framework } from "../application/Framework.js";
+import { FieldImplementation } from "../fields/interfaces/FieldImplementation.js";
 
-export class Menu implements Tag
+export class Field implements Tag
 {
-    public parse(element: Element): string|Element
+    public parse(element:HTMLElement) : string|HTMLElement
     {
-        let tag:Element = document.createElement("div");
-        Framework.copyAttributes(element,tag);
-        return(tag);
+		let impl:Impl = new Impl(element);
+		let field:FieldImplementation = impl.getImplementation();
+        Framework.copyAttributes(element,field.getElement());
+        return(field.getElement());
     }
 }

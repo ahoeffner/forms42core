@@ -20,7 +20,7 @@ import { ComponentFactory } from "../application/ComponentFactory.js";
 
 export class Include implements Tag
 {
-    public parse(element: Element): string|Element
+    public parse(element:HTMLElement) : string|HTMLElement
     {
         let module:FormsModule = FormsModule.get();
         let src:string = element.getAttribute("src");
@@ -31,6 +31,6 @@ export class Include implements Tag
             throw "@Include: No class mapped tp "+src;
 
         let incl:HTMLFragment = factory.createFragment(impl);
-        return(incl.content);
+        return(incl.content as HTMLElement);
     }
 }

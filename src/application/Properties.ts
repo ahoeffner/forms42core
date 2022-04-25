@@ -22,7 +22,7 @@ import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
 import { Tag } from '../tags/Tag.js';
 import { Root } from '../tags/Root.js';
-import { Menu } from '../tags/Menu.js';
+import { Field } from '../tags/Field.js';
 
 
 export class Properties
@@ -40,7 +40,7 @@ export class Properties
             new Map
             (
                 [
-                    ["menu",Menu],
+                    ["field",Field],
                     ["include",Include],
                     [Properties.root,Root]
                 ]

@@ -21,7 +21,7 @@ export class Framework
 {
     private component:any = null;
     private static taglib:Map<string,Tag> = null;
-    private tags:Map<string,Element[]> = new Map<string,Element[]>();
+    private tags:Map<string,HTMLElement[]> = new Map<string,HTMLElement[]>();
 
     public eventhandler:EventHandler = null;
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
@@ -118,7 +118,7 @@ export class Framework
 
                     this.parseDoc(replace);
 
-                    if (replace instanceof Element)
+                    if (replace instanceof HTMLElement)
                         this.setTag(tag,replace);
 
                     element.replaceWith(replace);
@@ -181,9 +181,9 @@ export class Framework
         }
     }
 
-    private setTag(tag:string,element:Element) : void
+    private setTag(tag:string,element:HTMLElement) : void
     {
-        let elements:Element[] = this.tags.get(tag);
+        let elements:HTMLElement[] = this.tags.get(tag);
 
         if (elements == null)
         {

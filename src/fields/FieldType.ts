@@ -11,6 +11,7 @@
  */
 
 import { Class } from "../types/Class.js";
+import { Input } from "./implementations/Input.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 
@@ -27,5 +28,13 @@ export class FieldTypes
 
 		map.set("dropdown",null);
 		return(map);
+	}
+
+	public static get(type:string) : Class<FieldImplementation>
+	{
+		if (type == null) return(Input);
+		let impl:Class<FieldImplementation> = FieldTypes.exceptions.get(type.toLowerCase());
+		if (impl == null) impl = Input;
+		return(impl);
 	}
 }

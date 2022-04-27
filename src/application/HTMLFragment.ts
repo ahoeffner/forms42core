@@ -1,4 +1,4 @@
-export interface HTMLFragment
+export class HTMLFragment
 {
     content:string|Element;
 }

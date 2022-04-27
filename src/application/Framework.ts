@@ -144,10 +144,13 @@ export class Framework
             let attrvalue:string = element.getAttribute(attrnames[an]);
             if (attrvalue != null) attrvalue = attrvalue.trim();
 
-            let evtype:boolean = attrnames[an].startsWith("on");
-            let handle:boolean = attrvalue != null && attrvalue.startsWith("this.");
+			if (!attrnames[an].startsWith("$"))
+				continue;
 
-            if (evtype && handle)
+			attrnames[an] = attrnames[an].substring(1);
+			let handle:boolean = attrvalue != null && attrvalue.startsWith("this.");
+
+            if (handle)
             {
                 let events:string[][] = this.events.get(element);
 

@@ -111,7 +111,7 @@ export class FormsModule
         return(State.components.get(path.toLowerCase()));
     }
 
-    public parseIndexPage(doc?:Element) : void
+    public parse(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
         this.state.framework = Framework.parse(this,doc);

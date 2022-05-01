@@ -271,7 +271,11 @@ export class DynamicCall
         for(let i = 0; i < this.path.length; i++)
         {
             if (!component[this.path[i]])
-                throw "@Framework: Could not locate: '"+this.path[i]+"' on component: "+component.constructor.name;
+			{
+				let problem:string = "is null";
+				if (!(this.path[i] in component)) problem = "does not exists";
+                throw "@Framework: Attribute : '"+this.path[i]+"' on component: '"+component.constructor.name+"' "+problem;
+			}
 
             component = component[this.path[i]];
         }

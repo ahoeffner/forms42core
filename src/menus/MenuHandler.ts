@@ -18,6 +18,7 @@ import { MenuOptions } from './interfaces/MenuOptions.js';
 export class MenuHandler implements EventListenerObject
 {
 	private menu:Menu = null;
+	private levcls:string = null;
 	private menucls:string = null;
 	private linkcls:string = null;
 	private target:HTMLElement = null;
@@ -37,7 +38,9 @@ export class MenuHandler implements EventListenerObject
 		if (this.options.classes.common == null) this.options.classes.common = "";
 		if (this.options.classes.menuitem == null) this.options.classes.menuitem = "menu-item";
 		if (this.options.classes.linkitem == null) this.options.classes.linkitem = "link-item";
+		if (this.options.classes.container == null) this.options.classes.container = "menu-items";
 
+		this.levcls = (this.options.classes.common + " " + this.options.classes.container).trim();
 		this.menucls = (this.options.classes.common + " " + this.options.classes.menuitem).trim();
 		this.linkcls = (this.options.classes.common + " " + this.options.classes.linkitem).trim();
 	}
@@ -63,7 +66,6 @@ export class MenuHandler implements EventListenerObject
 	public toggle(path:string) : void
 	{
 		let open:boolean = this.open.has(path);
-		console.log("toggle path: "+path+" open: "+open);
 
 		if (this.options.singlepath)
 		{
@@ -75,7 +77,6 @@ export class MenuHandler implements EventListenerObject
 			for (let i = 0; i < mpath.length; i++)
 			{
 				opath += "/" + mpath[i];
-				console.log("open <"+opath+">")
 				this.open.add(opath);
 			}
 
@@ -96,8 +97,23 @@ export class MenuHandler implements EventListenerObject
 		if (page == null) page = "";
 		if (path == null) path = "/";
 		if (path.length > 1) path += "/";
+		if (entries == null) return(page);
 
-		for (let i = 0; entries != null && i < entries.length; i++)
+		let empty:boolean = true;
+
+		for (let i = 0; i < entries.length; i++)
+		{
+			if (!entries[i].disabled)
+			{
+				empty = false;
+				break;
+			}
+		}
+
+		if (empty) return(page);
+
+		page += "<div class='"+this.levcls+"'>";
+		for (let i = 0; i < entries.length; i++)
 		{
 			if (entries[i].disabled != null && entries[i].disabled)
 				continue;
@@ -108,11 +124,10 @@ export class MenuHandler implements EventListenerObject
 			let npath:string = path+entries[i].id;
 			page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
 
-			console.log("show <"+npath+"> open: "+this.open.has(npath))
-
 			if (this.open.has(npath))
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 		}
+		page += "</div>";
 
 		return(page);
 	}

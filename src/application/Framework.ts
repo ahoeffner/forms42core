@@ -67,7 +67,7 @@ export class Framework
         this.component = component;
         this.eventhandler = new EventHandler(component);
 
-        if (!Properties.parseTags && !Properties.parseEvents)
+        if (!Properties.ParseTags && !Properties.ParseEvents)
             return;
 
         this.parseDoc(doc);
@@ -95,7 +95,7 @@ export class Framework
             let element:Element = node;
             let tag:string = element.nodeName.toLowerCase();
 
-            if (Properties.parseTags)
+            if (Properties.ParseTags)
                 impl = Framework.taglib.get(tag);
 
             if (impl != null)
@@ -135,7 +135,7 @@ export class Framework
     private addEvents(element:Element) : void
     {
         if (element == null) return;
-        if (!Properties.parseEvents) return;
+        if (!Properties.ParseEvents) return;
 
         let attrnames:string[] = element.getAttributeNames();
 
@@ -144,13 +144,12 @@ export class Framework
             let attrvalue:string = element.getAttribute(attrnames[an]);
             if (attrvalue != null) attrvalue = attrvalue.trim();
 
-			if (!attrnames[an].startsWith("$"))
+			if (!attrnames[an].startsWith(Properties.EventPrefix))
 				continue;
 
-			attrnames[an] = attrnames[an].substring(1);
-			let handle:boolean = attrvalue != null && attrvalue.startsWith("this.");
+			attrnames[an] = attrnames[an].substring(Properties.EventPrefix.length);
 
-            if (handle)
+            if (attrvalue != null)
             {
                 let events:string[][] = this.events.get(element);
 
@@ -170,7 +169,7 @@ export class Framework
 
     private applyEvents() : void
     {
-        if (Properties.parseEvents && this.component != null)
+        if (Properties.ParseEvents && this.component != null)
         {
             this.events.forEach((event,element) =>
             {

@@ -27,10 +27,11 @@ import { Field } from '../tags/Field.js';
 
 export class Properties
 {
-    public static parseTags:boolean = true;
-    public static parseEvents:boolean = true;
+    public static RootTag:string = "forms";
+    public static EventPrefix:string = "$";
+    public static ParseTags:boolean = true;
+    public static ParseEvents:boolean = true;
 
-    public static root:string = "forms";
     public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
     public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
 
@@ -42,16 +43,12 @@ export class Properties
                 [
                     ["field",Field],
                     ["include",Include],
-                    [Properties.root,Root]
+                    [Properties.RootTag,Root]
                 ]
             ));
     }
 
     /*
-            ["menu",{tag: Tag.Menu, element: "div"}],
-            ["data",{tag: Tag.Data, element: "span"}],
-            ["forms",{tag: Tag.Root, element: "div"}],
-            ["include",{tag: Tag.Include, element: null}],
             ["calendar",{tag: Tag.Calendar, element: "div"}],
             ["listofvalues",{tag: Tag.ListOfValues, element: "div"}]
 

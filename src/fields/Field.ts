@@ -16,6 +16,8 @@ import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 export class Field
 {
+	private row$:number = null;
+	private name$:string = null;
 	private impl:FieldImplementation = null;
 
 	constructor(placeholder:HTMLElement)
@@ -28,7 +30,27 @@ export class Field
 		let an:string[] = placeholder.getAttributeNames();
 		an.forEach((name) => {attrs.set(name,placeholder.getAttribute(name))});
 
+		this.row$ = attrs.get("row");
+		this.name$ = attrs.get("name");
+
+		if (this.name$ == null)
+			this.name$ = "";
+
+		if (this.row$ == null || this.row$ < 0)
+			this.row$ = -1;
+
+		this.name$ = this.name$.toLowerCase();
 		this.impl.setAttributes(attrs);
+	}
+
+	public get row() : number
+	{
+		return(this.row$);
+	}
+
+	public get name() : string
+	{
+		return(this.name$);
 	}
 
 	public getImplementation() : FieldImplementation

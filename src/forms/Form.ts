@@ -36,7 +36,8 @@ export class Form implements CanvasComponent
 
     constructor(page?:string)
     {
-        if (page != null) this.setLayout(page);
+        if (page != null)
+			this.setLayout(page);
     }
 
     public getLayout() : HTMLElement

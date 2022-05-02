@@ -22,8 +22,8 @@ export class Field
 
 	constructor(placeholder:HTMLElement)
 	{
-		let ftype:string = placeholder.getAttribute("type");
-		let impl:Class<FieldImplementation> = FieldTypes.get(ftype);
+		let type:string = placeholder.getAttribute("type");
+		let impl:Class<FieldImplementation> = FieldTypes.get(type);
 		this.impl = new impl(this);
 
 		let attrs:Map<string,any> = new Map<string,any>();

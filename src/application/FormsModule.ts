@@ -81,7 +81,6 @@ export class FormsModule
     constructor()
     {
         FormsModule.instance = this;
-        this.state.root = document.body;
         this.state.appl = new Application(this);
     }
 
@@ -117,7 +116,7 @@ export class FormsModule
         this.state.framework = Framework.parse(this,doc);
         let roots:Element[] = this.state.framework.getTag(Properties.RootTag);
 
-        if (roots.length >= 1)
+        if (roots.length >= 1 && this.state.root == null)
             this.state.root = roots[0];
     }
 }

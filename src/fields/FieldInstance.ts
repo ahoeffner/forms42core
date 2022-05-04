@@ -10,35 +10,80 @@
  * accompanied this code).
  */
 
-import { Field } from "./Field";
+import { Field } from "./Field.js";
 
 class Row
 {
-	private groups:Map<string,Field[]> = new Map<string,Field[]>();
+	private fields:Map<string,Field[]> = new Map<string,Field[]>();
+	private groups:Map<string,Map<string,Field[]>> = new Map<string,Map<string,Field[]>>();
 
 	public add(field:Field) : void
 	{
-		let fields:Field[] = this.groups.get(field.name);
+		this.fields = null;
+		let ids:Map<string,Field[]> = this.groups.get(field.name);
+
+		if (ids == null)
+		{
+			ids = new Map<string,Field[]>();
+			this.groups.set(field.name,ids);
+		}
+
+		let fields:Field[] = ids.get(field.id);
 
 		if (fields == null)
 		{
 			fields = [];
-			this.groups.set(field.name,fields);
+			ids.set(field.id,fields);
 		}
 
 		fields.push(field);
 	}
 
-	public get(name:string) : Field[]
+	public get(name:string,id:string) : Field[]
 	{
-		let fields:Field[] = this.groups.get(name.toLowerCase());
-		if (fields == null) return([]);
+		let fields:Field[] = [];
+
+		let ids:Map<string,Field[]> = this.groups.get(name.toLowerCase());
+		if (ids == null) return([]);
+
+		if (id != null)
+		{
+			fields = ids.get(id);
+
+			if (fields == null)
+				fields = [];
+
+			return(fields);
+		}
+
+		ids.forEach((flds:Field[]) =>
+		{flds.forEach((fld) => {fields.push(fld)});});
+
 		return(fields);
 	}
 
 	public getAll() : Map<string,Field[]>
 	{
-		return(this.groups);
+		if (this.fields != null)
+			return(this.fields);
+
+		this.fields = new Map<string,Field[]>();
+		this.groups.forEach((ids:Map<string,Field[]>,name:string) =>
+		{
+			let flds:Field[] = [];
+
+			ids.forEach((flds:Field[]) =>
+			{
+				flds.forEach((fld:Field) =>
+				{
+					flds.push(fld);
+				});
+			});
+
+			this.fields.set(name,flds);
+		});
+
+		return(this.fields);
 	}
 }
 
@@ -61,11 +106,11 @@ export class FieldInstance
 		bucket.add(field);
 	}
 
-	public static get(row:number, name:string) : Field[]
+	public static get(row:number,name:string,id?:string) : Field[]
 	{
 		let bucket:Row = FieldInstance.instances.get(row);
 		if (bucket == null) return([]);
-		return(bucket.get(name));
+		return(bucket.get(name,id));
 	}
 
 	public static getAll(row:number) : Map<string,Field[]>

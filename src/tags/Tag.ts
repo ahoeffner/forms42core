@@ -12,5 +12,5 @@
 
 export interface Tag
 {
-    parse(element:Element) : Element|string|null;
+    parse(component:any, tag:HTMLElement) : HTMLElement|string|null;
 }

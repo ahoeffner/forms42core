@@ -15,10 +15,10 @@ import { Framework } from "../application/Framework.js";
 
 export class Root implements Tag
 {
-    public parse(element:HTMLElement): string|HTMLElement
+    public parse(_component:any, tag:HTMLElement): string|HTMLElement
     {
-        let tag:HTMLElement = document.createElement("div");
-        Framework.copyAttributes(element,tag);
-        return(tag);
+        let root:HTMLElement = document.createElement("div");
+        Framework.copyAttributes(tag,root);
+        return(root);
     }
 }

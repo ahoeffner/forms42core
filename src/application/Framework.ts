@@ -89,10 +89,10 @@ export class Framework
         for (let i = 0; i < doc.childNodes.length; i++)
         {
             let node:Node = doc.children.item(i);
-            if (!(node instanceof Element)) continue;
+            if (!(node instanceof HTMLElement)) continue;
 
             let impl:Tag = null;
-            let element:Element = node;
+            let element:HTMLElement = node;
             let tag:string = element.nodeName.toLowerCase();
 
             if (Properties.ParseTags)
@@ -100,7 +100,7 @@ export class Framework
 
             if (impl != null)
             {
-                let replace:Element|string = impl.parse(element);
+                let replace:HTMLElement|string = impl.parse(this.component,element);
                 Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
                 if (replace == null)
@@ -113,7 +113,7 @@ export class Framework
                     if (typeof replace === "string")
                     {
                         let template:HTMLTemplateElement = document.createElement('template');
-                        template.innerHTML = replace; replace = template.content.getRootNode() as Element;
+                        template.innerHTML = replace; replace = template.content.getRootNode() as HTMLElement;
                     }
 
                     this.parseDoc(replace);

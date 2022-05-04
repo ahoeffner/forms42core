@@ -12,16 +12,12 @@
 
 import { Tag } from "./Tag.js";
 import { Field as Impl } from "../fields/Field.js";
-import { Framework } from "../application/Framework.js";
-import { FieldImplementation } from "../fields/interfaces/FieldImplementation.js";
 
 export class Field implements Tag
 {
-    public parse(element:HTMLElement) : string|HTMLElement
+    public parse(component:any, tag:HTMLElement) : string|HTMLElement
     {
-		let impl:Impl = new Impl(element);
-		let field:FieldImplementation = impl.getImplementation();
-        Framework.copyAttributes(element,field.getElement());
-        return(field.getElement());
+		let impl:Impl = new Impl(component,tag);
+        return(impl.element);
     }
 }

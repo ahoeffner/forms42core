@@ -20,10 +20,11 @@ import { ComponentFactory } from "../application/ComponentFactory.js";
 
 export class Include implements Tag
 {
-    public parse(element:HTMLElement) : string|HTMLElement
+    public parse(_component:any, tag:HTMLElement) : string|HTMLElement
     {
         let module:FormsModule = FormsModule.get();
-        let src:string = element.getAttribute("src");
+
+        let src:string = tag.getAttribute("src");
         let impl:Class<any> = module.getComponent(src);
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
 

@@ -12,35 +12,56 @@
 
 import { Class } from "../types/Class.js";
 import { FieldTypes } from "./FieldType.js";
+import { FieldProperties } from "./FieldProperties.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 export class Field
 {
+	private id$:string = null;
 	private row$:number = null;
 	private name$:string = null;
+	private block$:string = null;
+	private component$:any = null;
+	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
 
-	constructor(placeholder:HTMLElement)
+	constructor(component:any,element:HTMLElement)
 	{
-		let type:string = placeholder.getAttribute("type");
-		let impl:Class<FieldImplementation> = FieldTypes.get(type);
-		this.impl = new impl(this);
+		this.component$ = component;
+		let type:string = element.getAttribute("type");
 
-		let attrs:Map<string,any> = new Map<string,any>();
-		let an:string[] = placeholder.getAttributeNames();
-		an.forEach((name) => {attrs.set(name,placeholder.getAttribute(name))});
+		this.id$ = element.getAttribute("id");
+		this.row$ = +element.getAttribute("row");
+		this.name$ = element.getAttribute("name");
 
-		this.row$ = attrs.get("row");
-		this.name$ = attrs.get("name");
+		if (this.id$ == null)
+			this.id$ = "";
 
 		if (this.name$ == null)
 			this.name$ = "";
 
+		if (this.block$ == null)
+			this.block$ = "";
+
 		if (this.row$ == null || this.row$ < 0)
 			this.row$ = -1;
 
+		this.id$ = this.id$.toLowerCase();
 		this.name$ = this.name$.toLowerCase();
-		this.impl.setAttributes(attrs);
+		this.block$ = this.block$.toLowerCase();
+
+		let props:FieldProperties = FieldProperties.get(component,this.block$,this.name$,this.id$);
+		props.initialize(element);
+
+		let impl:Class<FieldImplementation> = FieldTypes.get(type);
+		this.impl = new impl(this);
+
+		this.element$ = this.impl.getElement();
+	}
+
+	public get id() : string
+	{
+		return(this.id$);
 	}
 
 	public get row() : number
@@ -53,8 +74,18 @@ export class Field
 		return(this.name$);
 	}
 
-	public getImplementation() : FieldImplementation
+	public get block() : string
 	{
-		return(this.impl);
+		return(this.block$);
+	}
+
+	public get component() : any
+	{
+		return(this.component$);
+	}
+
+	public get element() : HTMLElement
+	{
+		return(this.element$);
 	}
 }

@@ -63,9 +63,9 @@ export class FieldInstance
 		this.properties$ = FieldProperties.get(component,this.block$,this.name$,this.id$);
 		this.properties$.initialize(element);
 
-		let impl:Class<FieldImplementation> = FieldTypes.get(this.type$);
+		let clazz:Class<FieldImplementation> = FieldTypes.get(this.type$);
 
-		this.impl = new impl();
+		this.impl = new clazz();
 		this.impl.initialize(this);
 
 		FieldInstances.add(component,this);

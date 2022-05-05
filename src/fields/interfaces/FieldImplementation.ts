@@ -10,8 +10,13 @@
  * accompanied this code).
  */
 
+import { FieldInstance } from "../FieldInstance";
+
 export interface FieldImplementation
 {
+	getFieldInstance() : FieldInstance;
+	initialize(instance:FieldInstance) : void;
+
     getValue() : any;
     validate() : boolean;
     setValue(value:any) : void;

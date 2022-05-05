@@ -11,13 +11,13 @@
  */
 
 import { Tag } from "./Tag.js";
-import { Field as Impl } from "../fields/Field.js";
+import { FieldInstance } from "../fields/FieldInstance.js";
 
 export class Field implements Tag
 {
     public parse(component:any, tag:HTMLElement) : string|HTMLElement
     {
-		let impl:Impl = new Impl(component,tag);
-        return(impl.element);
+		let field:FieldInstance = new FieldInstance(component,tag);
+        return(field.element);
     }
 }

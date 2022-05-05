@@ -13,6 +13,7 @@
 import { Field } from "../Field.js";
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
+import { FieldInstance } from "../FieldInstance.js";
 import { BrowserEventParser } from "../BrowserEventParser.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
@@ -23,18 +24,32 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	private parent:Field = null;
 	private pattern:Pattern = null;
     private placeholder:string = null;
+	private instance:FieldInstance = null;
 
 	private element:HTMLInputElement = null;
     private event:BrowserEventParser = new BrowserEventParser();
 
-	constructor(field:Field)
+	constructor()
 	{
 		super();
-		this.parent = field;
+	}
+
+	public initialize(instance: FieldInstance): void
+	{
+		this.instance = instance;
+		this.parent = instance.field;
 		this.element = document.createElement("input");
 
-		this.addEvents(this.element);
 		super.setImplementation(this);
+
+		this.addEvents(this.element);
+		this.setClasses(instance.properties.getClasses());
+		this.setAttributes(instance.properties.getAttributes());
+	}
+
+	public getFieldInstance() : FieldInstance
+	{
+		return(this.instance);
 	}
 
     public getValue() : any
@@ -69,19 +84,15 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
     public override setAttributes(attributes: Map<string, any>): void
     {
-        let type:string = "text";
         let pattern:string = null;
+        let type:string = this.instance.type;
 
         super.setAttributes(attributes);
 
         attributes.forEach((value,attr) =>
         {
-            if (attr == "type") type = value;
             if (attr == "x-pattern") pattern = value;
             if (attr == "x-placeholder") this.placeholder = value;
-
-            if (attr != "type" && attr.startsWith("x-"))
-                this.element.setAttribute(attr,value);
         });
 
         if (type == "x-int")

@@ -63,7 +63,15 @@ export class Common
 
     public setAttributes(attributes: Map<string, any>): void
     {
-        this.attributes = attributes;
+		let id:string = this.field.getFieldInstance().id;
+		let name:string = this.field.getFieldInstance().name;
+		let block:string = this.field.getFieldInstance().block;
+
+		if (id.length > 0) this.setAttribute("id",id);
+		if (name.length > 0) this.setAttribute("name",name);
+		if (block.length > 0) this.setAttribute("block",block);
+
+		this.attributes = attributes;
     }
 
     public getValidValues() : Set<any> | Map<any, any>
@@ -99,12 +107,14 @@ export class Common
 
     public setStyle(style: string) : void
     {
-        this.field.getElement().style.cssText = style;
+		if (style != null)
+			this.field.getElement().style.cssText = style;
     }
 
     public setClass(clazz:string) : void
     {
-        this.field.getElement().classList.add(clazz);
+		if (clazz != null)
+			this.field.getElement().classList.add(clazz);
     }
 
     public removeClass(clazz:string) : void
@@ -119,18 +129,7 @@ export class Common
 
     public setClasses(classes: string) : void
     {
-        this.field.getElement().classList.value = classes;
-    }
-
-    public detach() : void
-    {
-        this.field.getElement().remove();
-        if (this.body != null) this.body.remove();
-    }
-
-    public attach(parent:HTMLElement) : void
-    {
-        parent.appendChild(this.field.getElement());
-        if (this.body != null) parent.appendChild(this.body);
+		if (classes != null)
+			this.field.getElement().classList.value = classes;
     }
 }

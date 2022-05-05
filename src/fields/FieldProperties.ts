@@ -36,6 +36,27 @@ export class FieldProperties
 				this.attrs.set(name,element.getAttribute(name));
 		});
 	}
+
+	public getClasses() : string
+	{
+		if (this.classes.length == 0)
+			return(null);
+
+		let classes:string = null;
+		for(let i = 0; i < this.classes.length; i++)
+		{
+			if (classes == null) classes = "";
+			else 				 classes += ",";
+			classes += this.classes[i];
+		}
+
+		return(classes);
+	}
+
+	public getAttributes() : Map<string,string>
+	{
+		return(this.attrs);
+	}
 }
 
 

@@ -14,6 +14,7 @@ export interface MenuOptions
 {
 	skiproot?:boolean;
 	singlepath?:boolean;
+	openOnHoover?:boolean;
 
 	classes?:
 	{

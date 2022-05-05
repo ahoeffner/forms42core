@@ -97,32 +97,24 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         });
 
         if (type == "x-int")
-        {
-            type = "text";
             this.int = true;
-        }
 
         if (type == "x-dec")
-        {
-            type = "text";
             this.dec = true;
-        }
 
         if (type == "x-date")
-        {
-            type = "text";
             this.pattern = new Pattern("{##} - {##} - {####}");
-        }
 
         if (type == "x-fixed")
         {
-            type = "text";
-
             if (pattern == null)
                 console.error("x-pattern not specified for x-fixed field");
 
             this.pattern = new Pattern(pattern);
         }
+
+		if (type.startsWith("x-"))
+			type = "text";
 
         this.element.setAttribute("type",type);
     }

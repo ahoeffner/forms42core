@@ -57,6 +57,11 @@ export class FieldProperties
 	{
 		return(this.attrs);
 	}
+
+	public hasClass(clazz:string) : boolean
+	{
+		return(this.classes.includes(clazz));
+	}
 }
 
 

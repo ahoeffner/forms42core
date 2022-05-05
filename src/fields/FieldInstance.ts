@@ -208,10 +208,53 @@ class Row
 		fields.push(field);
 	}
 
-	public get(name:string) : FieldInstance[]
+
+	public getAll() : FieldInstance[]
+	{
+		let fields:FieldInstance[] = [];
+
+		this.groups.forEach((flds) =>
+		{fields.push(...flds)});
+
+		return(fields);
+	}
+
+
+	public getByName(name:string, id?:string) : FieldInstance[]
 	{
 		let fields:FieldInstance[] = this.groups.get(name.toLowerCase());
 		if (fields == null) return([]);
+
+		if (id != null)
+		{
+			id = id.toLowerCase();
+			let ids:FieldInstance[] = [];
+			fields.forEach((fld) =>
+			{
+				if (fld.id == id)
+					ids.push(fld);
+			});
+
+			fields = ids;
+		}
+
 		return(fields);
+	}
+
+
+	public getByClass(name:string, clazz:string) : FieldInstance[]
+	{
+		let fields:FieldInstance[] = this.groups.get(name.toLowerCase());
+		if (fields == null) return([]);
+
+		let classes:FieldInstance[] = [];
+
+		fields.forEach((fld) =>
+		{
+			if (fld.properties.hasClass(clazz))
+				classes.push(fld);
+		});
+
+		return(classes);
 	}
 }

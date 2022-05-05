@@ -23,6 +23,7 @@ import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 import { Tag } from '../tags/Tag.js';
 import { Root } from '../tags/Root.js';
 import { Field } from '../tags/Field.js';
+import { Foreach } from '../tags/Foreach.js';
 
 
 export class Properties
@@ -43,6 +44,7 @@ export class Properties
                 [
                     ["field",Field],
                     ["include",Include],
+                    ["foreach",Foreach],
                     [Properties.RootTag,Root]
                 ]
             ));

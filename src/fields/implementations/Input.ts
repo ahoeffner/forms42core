@@ -91,6 +91,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         attributes.forEach((value,attr) =>
         {
+			this.element.setAttribute(attr,value);
             if (attr == "x-pattern") pattern = value;
             if (attr == "x-placeholder") this.placeholder = value;
         });

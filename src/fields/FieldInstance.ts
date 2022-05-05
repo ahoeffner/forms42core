@@ -38,6 +38,7 @@ export class FieldInstance
 		this.row$ = +element.getAttribute("row");
 		this.name$ = element.getAttribute("name");
 		this.type$ = element.getAttribute("type");
+		this.block$ = element.getAttribute("block");
 
 		if (this.id$ == null)
 			this.id$ = "";

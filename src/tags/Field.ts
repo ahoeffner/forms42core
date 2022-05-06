@@ -15,7 +15,7 @@ import { FieldInstance } from "../fields/FieldInstance.js";
 
 export class Field implements Tag
 {
-    public parse(component:any, tag:HTMLElement) : string|HTMLElement
+    public parse(component:any, tag:HTMLElement, _attr:string) : string|HTMLElement
     {
 		let field:FieldInstance = new FieldInstance(component,tag);
         return(field.element);

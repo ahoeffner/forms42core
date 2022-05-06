@@ -20,30 +20,45 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 export class Framework
 {
     private component:any = null;
-    private static taglib:Map<string,Tag> = null;
+    private static taglib:Map<string,Tag> = Framework.initTaglib();
+    private static attrlib:Map<string,Tag> = Framework.initAttrlib();
     private tags:Map<string,HTMLElement[]> = new Map<string,HTMLElement[]>();
 
     public eventhandler:EventHandler = null;
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
-    private static initTaglib() : void
+    private static initTaglib() : Map<string,Tag>
     {
-        if (Framework.taglib == null)
-        {
-            Framework.taglib = new Map<string,Tag>();
-            Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
-        }
+		Framework.taglib = new Map<string,Tag>();
+		Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
+		return(Framework.taglib);
+    }
+
+    private static initAttrlib() : Map<string,Tag>
+    {
+		Framework.attrlib = new Map<string,Tag>();
+		Properties.getAttributeLibrary().forEach((clazz,tag) => {Framework.addAttr(tag,clazz);});
+		return(Framework.attrlib);
     }
 
     public static addTag(tag:string,clazz:Class<Tag>) : void
     {
-        Framework.initTaglib();
         tag = tag.toLowerCase();
 
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
         let impl:Tag = factory.createBean(clazz);
 
         Framework.taglib.set(tag,impl);
+    }
+
+    public static addAttr(tag:string,clazz:Class<Tag>) : void
+    {
+        tag = tag.toLowerCase();
+
+        let factory:ComponentFactory = Properties.FactoryImplementationClass;
+        let impl:Tag = factory.createBean(clazz);
+
+        Framework.attrlib.set(tag,impl);
     }
 
     public static parse(component:any, doc:Element) : Framework
@@ -62,8 +77,6 @@ export class Framework
 
     private constructor(component:any, doc:Element)
     {
-        Framework.initTaglib();
-
         this.component = component;
         this.eventhandler = new EventHandler(component);
 
@@ -92,15 +105,26 @@ export class Framework
             if (!(node instanceof HTMLElement)) continue;
 
             let impl:Tag = null;
+			let attr:string = null;
             let element:HTMLElement = node;
             let tag:string = element.nodeName.toLowerCase();
 
             if (Properties.ParseTags)
+			{
                 impl = Framework.taglib.get(tag);
+
+				let attrnames:string[] = element.getAttributeNames();
+
+				for (let an = 0; impl == null && an < attrnames.length; an++)
+				{
+					impl = Framework.attrlib.get(attrnames[an]);
+					if (impl != null) attr = attrnames[an];
+				}
+			}
 
             if (impl != null)
             {
-                let replace:HTMLElement|string = impl.parse(this.component,element);
+                let replace:HTMLElement|string = impl.parse(this.component,element,attr);
                 Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
                 if (replace == null)

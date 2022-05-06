@@ -15,20 +15,9 @@ import { Tag } from "./Tag.js";
 
 export class Foreach implements Tag
 {
-    public parse(_component:any, tag:HTMLElement): string|HTMLElement
+    public parse(_component:any, tag:HTMLElement, attr:string): string|HTMLElement
     {
-		let expr:string = null;
-        let block:HTMLElement = document.createElement("div");
-        let attrnames:string[] = tag.getAttributeNames();
-
-        for (let an = 0; an < attrnames.length; an++)
-		{
-			if (attrnames[an].toLowerCase() == "expr") expr = tag.getAttribute(attrnames[an]);
-            else block.setAttribute(attrnames[an],tag.getAttribute(attrnames[an]));
-		}
-
-		if (expr == null)
-			throw "@Foreach: missing expr attribute";
+		let expr:string = tag.getAttribute(attr);
 
 		expr = expr.trim();
 		let pos:number = expr.indexOf(" ");
@@ -92,7 +81,9 @@ export class Foreach implements Tag
 			ncontent += str;
 		}
 
-		block.innerHTML = ncontent;
-		return(block);
+		tag.innerHTML = ncontent;
+		tag.removeAttribute(attr);
+
+		return(tag);
     }
 }

@@ -44,8 +44,18 @@ export class Properties
                 [
                     ["field",Field],
                     ["include",Include],
-                    ["foreach",Foreach],
                     [Properties.RootTag,Root]
+                ]
+            ));
+    }
+
+    public static getAttributeLibrary() : Map<string,Class<Tag>>
+    {
+        return(
+            new Map
+            (
+                [
+                    ["for",Foreach]
                 ]
             ));
     }

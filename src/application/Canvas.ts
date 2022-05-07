@@ -138,9 +138,8 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         if (typeof page === 'string')
         {
             template.innerHTML = page as string;
-            page = template.content.getRootNode() as Element;
             let root:HTMLDivElement = document.createElement("div");
-            root.appendChild(page);
+            root.appendChild(template.content.getRootNode());
             page = root;
         }
 

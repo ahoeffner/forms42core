@@ -20,9 +20,9 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 export class Framework
 {
     private component:any = null;
+	private root:HTMLElement = null;
     private static taglib:Map<string,Tag> = Framework.initTaglib();
     private static attrlib:Map<string,Tag> = Framework.initAttrlib();
-    private tags:Map<string,HTMLElement[]> = new Map<string,HTMLElement[]>();
 
     public eventhandler:EventHandler = null;
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
@@ -30,14 +30,14 @@ export class Framework
     private static initTaglib() : Map<string,Tag>
     {
 		Framework.taglib = new Map<string,Tag>();
-		Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag,clazz);});
+		Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag.toLowerCase(),clazz);});
 		return(Framework.taglib);
     }
 
     private static initAttrlib() : Map<string,Tag>
     {
 		Framework.attrlib = new Map<string,Tag>();
-		Properties.getAttributeLibrary().forEach((clazz,tag) => {Framework.addAttr(tag,clazz);});
+		Properties.getAttributeLibrary().forEach((clazz,tag) => {Framework.addAttr(tag.toLowerCase(),clazz);});
 		return(Framework.attrlib);
     }
 
@@ -87,12 +87,9 @@ export class Framework
         this.applyEvents();
     }
 
-    public getTag(tag:string) : Element[]
+    public getRoot() : HTMLElement
     {
-        tag = tag.toLowerCase();
-        let elements:Element[] = this.tags.get(tag);
-        if (elements == null) elements = [];
-        return(elements);
+        return(this.root);
     }
 
     private parseDoc(doc:Element) : void
@@ -101,12 +98,11 @@ export class Framework
 
         for (let i = 0; i < doc.childNodes.length; i++)
         {
-            let node:Node = doc.children.item(i);
-            if (!(node instanceof HTMLElement)) continue;
+            let element:Node = doc.children.item(i);
+            if (!(element instanceof HTMLElement)) continue;
 
             let impl:Tag = null;
 			let attr:string = null;
-            let element:HTMLElement = node;
             let tag:string = element.nodeName.toLowerCase();
 
             if (Properties.ParseTags)
@@ -137,32 +133,27 @@ export class Framework
                     if (typeof replace === "string")
                     {
                         let template:HTMLTemplateElement = document.createElement('template');
-                        template.innerHTML = replace; replace = template.content.getRootNode() as HTMLElement;
+						template.innerHTML = replace;
+
+						let root:HTMLDivElement = document.createElement("div");
+						root.appendChild(template.content.getRootNode());
+
+						replace = root;
                     }
 
 					if (!Array.isArray(replace))
 						replace = [replace];
 
-					for(let r=replace.length-1; r >= 0; r--)
-					{
-						// Wrong
-						if (replace instanceof HTMLElement)
-							this.setTag(tag,replace[r]);
+					for(let r=0; r < replace.length; r++)
+						replace[r] = doc.insertBefore(replace[r],element);
 
-						if (r == replace.length-1) doc.replaceChild(replace[r],element);
-						else 					   doc.insertBefore(replace[+r+1],replace[r]);
+					element.remove();
 
-						if (replace.length > 1)
-							console.log("tag r="+r+" "+replace[r].innerHTML);
-					}
+					if (tag == Properties.RootTag)
+						this.root = replace[0];
 
 					for(let r=0; r < replace.length; r++)
-					{
-						if (replace[r] instanceof HTMLElement)
-							this.setTag(tag,replace[r]);
-
 						this.parseDoc(replace[r]);
-					}
                 }
 
                 continue;
@@ -222,19 +213,6 @@ export class Framework
                 }
             });
         }
-    }
-
-    private setTag(tag:string,element:HTMLElement) : void
-    {
-        let elements:HTMLElement[] = this.tags.get(tag);
-
-        if (elements == null)
-        {
-            elements = [];
-            this.tags.set(tag,elements);
-        }
-
-        elements.push(element);
     }
 }
 

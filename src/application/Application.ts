@@ -33,7 +33,7 @@ export class Application
         this.state.module = module;
     }
 
-    public showform(path:string, parent?:Element) : void
+    public showform(path:string, parent?:HTMLElement) : void
     {
         path = path.toLowerCase();
         let comp:Class<any> = this.state.module.getComponent(path);

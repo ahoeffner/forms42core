@@ -58,7 +58,7 @@ export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
 
 class State
 {
-    root:Element;
+    root:HTMLElement;
     appl:Application;
     framework:Framework;
 
@@ -84,12 +84,12 @@ export class FormsModule
         this.state.appl = new Application(this);
     }
 
-    public getRootElement() : Element
+    public getRootElement() : HTMLElement
     {
         return(this.state.root);
     }
 
-    public setRootElement(root:Element) : void
+    public setRootElement(root:HTMLElement) : void
     {
         this.state.root = root;
     }
@@ -114,9 +114,12 @@ export class FormsModule
     {
         if (doc == null) doc = document.body;
         this.state.framework = Framework.parse(this,doc);
-        let roots:Element[] = this.state.framework.getTag(Properties.RootTag);
+        let root:HTMLElement = this.state.framework.getRoot();
 
-        if (roots.length >= 1 && this.state.root == null)
-            this.state.root = roots[0];
+        if (this.state.root == null)
+            this.state.root = root;
+
+		if (this.state.root == null)
+            this.state.root = document.body;
     }
 }

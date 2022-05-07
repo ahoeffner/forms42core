@@ -132,13 +132,9 @@ export class Framework
                 {
                     if (typeof replace === "string")
                     {
-                        let template:HTMLTemplateElement = document.createElement('template');
+                        let template:HTMLDivElement = document.createElement('div');
 						template.innerHTML = replace;
-
-						let root:HTMLDivElement = document.createElement("div");
-						root.appendChild(template.content.getRootNode());
-
-						replace = root;
+						replace = template;
                     }
 
 					if (!Array.isArray(replace))

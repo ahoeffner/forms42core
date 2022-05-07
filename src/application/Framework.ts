@@ -124,7 +124,7 @@ export class Framework
 
             if (impl != null)
             {
-                let replace:HTMLElement|string = impl.parse(this.component,element,attr);
+                let replace:HTMLElement|HTMLElement[]|string = impl.parse(this.component,element,attr);
                 Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
                 if (replace == null)
@@ -140,12 +140,29 @@ export class Framework
                         template.innerHTML = replace; replace = template.content.getRootNode() as HTMLElement;
                     }
 
-                    this.parseDoc(replace);
+					if (!Array.isArray(replace))
+						replace = [replace];
 
-                    if (replace instanceof HTMLElement)
-                        this.setTag(tag,replace);
+					for(let r=replace.length-1; r >= 0; r--)
+					{
+						// Wrong
+						if (replace instanceof HTMLElement)
+							this.setTag(tag,replace[r]);
 
-                    element.replaceWith(replace);
+						if (r == replace.length-1) doc.replaceChild(replace[r],element);
+						else 					   doc.insertBefore(replace[+r+1],replace[r]);
+
+						if (replace.length > 1)
+							console.log("tag r="+r+" "+replace[r].innerHTML);
+					}
+
+					for(let r=0; r < replace.length; r++)
+					{
+						if (replace[r] instanceof HTMLElement)
+							this.setTag(tag,replace[r]);
+
+						this.parseDoc(replace[r]);
+					}
                 }
 
                 continue;

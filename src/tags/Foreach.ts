@@ -15,11 +15,13 @@ import { Tag } from "./Tag.js";
 
 export class Foreach implements Tag
 {
-    public parse(_component:any, tag:HTMLElement, attr:string): string|HTMLElement
+    public parse(_component:any, tag:HTMLElement, attr:string) : HTMLElement[]
     {
+		let tags:HTMLElement[] = [];
 		let expr:string = tag.getAttribute(attr);
 
 		expr = expr.trim();
+		tag.removeAttribute(attr);
 		let pos:number = expr.indexOf(" ");
 
 		if (pos <= 0)
@@ -42,7 +44,6 @@ export class Foreach implements Tag
 		if (isNaN(+range[0]) || isNaN(+range[1]))
 			throw "@Foreach: illegal expr "+expr+". Syntax: <var> in <n1>..<n2>";
 
-		let ncontent:string = "";
 		let replace:number[] = [];
 		let content:string = tag.innerHTML;
 		if (!index.startsWith("$")) index = "$"+index;
@@ -68,6 +69,7 @@ export class Foreach implements Tag
 		{
 			pos = 0;
 			let str:string = "";
+			let elem:HTMLElement = tag.cloneNode() as HTMLElement;
 
 			for(let r=0; r < replace.length; r++)
 			{
@@ -78,12 +80,10 @@ export class Foreach implements Tag
 			if (pos < content.length)
 				str += content.substring(pos);
 
-			ncontent += str;
+			tags.push(elem);
+			elem.innerHTML = str;
 		}
 
-		tag.innerHTML = ncontent;
-		tag.removeAttribute(attr);
-
-		return(tag);
+		return(tags);
     }
 }

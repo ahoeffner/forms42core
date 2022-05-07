@@ -20,7 +20,7 @@ import { ComponentFactory } from "../application/ComponentFactory.js";
 
 export class Include implements Tag
 {
-    public parse(_component:any, tag:HTMLElement, _attr:string) : string|HTMLElement
+    public parse(_component:any, tag:HTMLElement, _attr:string) : HTMLElement
     {
         let module:FormsModule = FormsModule.get();
 

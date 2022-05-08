@@ -66,6 +66,26 @@ export class Framework
         return(new Framework(component,doc));
     }
 
+	public static trim(element:HTMLElement) : HTMLElement
+	{
+		let remove:number[] = [];
+
+		for(let i=0; i < element.childNodes.length; i++)
+		{
+			let node:Node = element.childNodes.item(i);
+			if (node.nodeType == Node.TEXT_NODE && node.textContent.trim() == "")
+				remove.unshift(i);
+		}
+
+		for(let i=0; i < remove.length; i++)
+			element.childNodes.item(remove[i]).remove();
+
+		if (element.childNodes.length == 1)
+			element = element.childNodes.item(0) as HTMLElement;
+
+		return(element);
+	}
+
     public static copyAttributes(fr:Element,to:Element) : void
     {
         if (fr == null || to == null) return;
@@ -141,7 +161,7 @@ export class Framework
                     {
                         let template:HTMLDivElement = document.createElement('div');
 						template.innerHTML = replace;
-						replace = template;
+						replace = Framework.trim(template);
                     }
 
 					if (!Array.isArray(replace))

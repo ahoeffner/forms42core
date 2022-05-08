@@ -13,6 +13,7 @@
 import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
 import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
+import { Framework } from './Framework.js';
 
 
 export class Canvas implements CanvasDefinition, EventListenerObject
@@ -137,10 +138,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
         if (typeof page === 'string')
         {
-            template.innerHTML = page as string;
             let root:HTMLDivElement = document.createElement("div");
 			root.innerHTML = page;
-            page = root;
+            page = Framework.trim(root);
         }
 
         this.container.appendChild(page);

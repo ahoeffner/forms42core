@@ -51,8 +51,8 @@ export class Form implements CanvasComponent
         {
             let template:HTMLDivElement = document.createElement('div');
             template.innerHTML = page;
-			page = template;
-        }
+			page = Framework.trim(template);
+		}
 
         Framework.parse(this,page);
         this.state.page = page;

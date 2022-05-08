@@ -29,7 +29,8 @@ import { Foreach } from '../tags/Foreach.js';
 export class Properties
 {
     public static RootTag:string = "forms";
-    public static EventPrefix:string = "$";
+    public static AttributePrefix:string = "$";
+	
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
 

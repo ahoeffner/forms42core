@@ -95,6 +95,7 @@ export class Framework
     private parseDoc(doc:Element) : void
     {
         if (doc == null) return;
+		let prefix:string = Properties.AttributePrefix;
 
         for (let i = 0; i < doc.childNodes.length; i++)
         {
@@ -113,8 +114,14 @@ export class Framework
 
 				for (let an = 0; impl == null && an < attrnames.length; an++)
 				{
-					impl = Framework.attrlib.get(attrnames[an]);
-					if (impl != null) attr = attrnames[an];
+					if (attrnames[an].startsWith(prefix))
+					{
+						let atrnm:string = attrnames[an].substring(prefix.length);
+
+						atrnm = atrnm.toLowerCase();
+						impl = Framework.attrlib.get(atrnm);
+						if (impl != null) attr = atrnm;
+					}
 				}
 			}
 
@@ -164,6 +171,7 @@ export class Framework
     {
         if (element == null) return;
         if (!Properties.ParseEvents) return;
+		let prefix:string = Properties.AttributePrefix;
 
         let attrnames:string[] = element.getAttributeNames();
 
@@ -172,10 +180,11 @@ export class Framework
             let attrvalue:string = element.getAttribute(attrnames[an]);
             if (attrvalue != null) attrvalue = attrvalue.trim();
 
-			if (!attrnames[an].startsWith(Properties.EventPrefix))
+			if (!attrnames[an].startsWith(prefix))
 				continue;
 
-			attrnames[an] = attrnames[an].substring(Properties.EventPrefix.length);
+			attrnames[an] = attrnames[an].substring(prefix.length);
+			attrnames[an] = attrnames[an].toLowerCase();
 
             if (attrvalue != null)
             {

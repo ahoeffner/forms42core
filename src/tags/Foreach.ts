@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Properties } from "../application/Properties.js";
 import { Tag } from "./Tag.js";
 
 
@@ -18,7 +19,11 @@ export class Foreach implements Tag
     public parse(_component:any, tag:HTMLElement, attr:string) : HTMLElement[]
     {
 		let tags:HTMLElement[] = [];
+		attr = Properties.AttributePrefix+attr;
 		let expr:string = tag.getAttribute(attr);
+
+		if (expr == null)
+			throw "@Foreach: cannot locate attribute "+attr;
 
 		expr = expr.trim();
 		tag.removeAttribute(attr);

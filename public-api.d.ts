@@ -1,4 +1,5 @@
 export { Form } from './src/public/Form.js';
+export { Block } from './src/public/Block.js';
 
 export { Event } from './src/view/events/Events.js';
 export { EventType } from './src/view/events/EventType.js';

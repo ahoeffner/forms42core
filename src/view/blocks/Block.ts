@@ -11,38 +11,23 @@
  */
 
 import { Row } from "./Row.js";
-import { Form } from "../../public/Form.js";
 
 
 export class Block
 {
-	private static map:Map<Form,Map<string,Block>> =
-		new Map<Form,Map<string,Block>>();
-
+	private name$:string = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
 
 
-	public static get(form:Form, block:string, create:boolean) : Block
+	constructor(name:string)
 	{
-		block = block.toLowerCase();
-		let blkmap:Map<string,Block> = Block.map.get(form);
+		if (name == null) name = "";
+		this.name$ = name.toLowerCase();
+	}
 
-		if (blkmap == null)
-		{
-			if (!create) return(null);
-			blkmap = new Map<string,Block>();
-			Block.map.set(form,blkmap);
-		}
-
-		let blk:Block = blkmap.get(block);
-
-		if (blk == null && create)
-		{
-			blk = new Block();
-			blkmap.set(block,blk);
-		}
-
-		return(blk);
+	public get name() : string
+	{
+		return(this.name$);
 	}
 
 	public getRow(row:number, create:boolean) : Row

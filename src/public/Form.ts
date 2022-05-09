@@ -11,6 +11,7 @@
  */
 
 import { Events } from '../view/events/Events.js';
+import { Form as View } from '../view/forms/Form.js';
 import { Form as Model } from '../model/forms/Form.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
@@ -49,8 +50,14 @@ export class Form implements CanvasComponent
 
     public setLayout(page:string|HTMLElement)
     {
+		let replace:boolean = false;
+
 		if (this.state.page != null)
-			throw "@Form: Replace layout not implemented";
+		{
+			replace = true;
+			View.clear(this);
+			this.canvas.remove();
+		}
 
         if (typeof page === 'string')
         {
@@ -61,6 +68,9 @@ export class Form implements CanvasComponent
 
         Framework.parse(this,page);
         this.state.page = page;
+
+		if (replace)
+			this.canvas.setComponent(this);
     }
 
     public close() : boolean

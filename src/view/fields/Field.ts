@@ -11,16 +11,24 @@
  */
 
 import { Row } from "../blocks/Row.js";
+import { Form } from "../forms/Form.js";
 import { Block } from "../blocks/Block.js";
-import { Form } from "../../public/Form.js";
 import { FieldInstance } from "./FieldInstance.js";
+import { Form as Interface } from "../../public/Form.js";
 
 export class Field
 {
-	public static get(form:Form, block:string, rownum:number, field:string, create:boolean) : Field
+	public static get(form:Interface, block:string, rownum:number, field:string, create:boolean) : Field
 	{
-		let blk:Block = Block.get(form,block,create);
+		let frm:Form = Form.get(form,create);
+		if (frm == null) return(null);
+
+		let blk:Block = frm.get(block,create);
+		if (blk == null) return(null);
+
 		let row:Row = blk.getRow(rownum,create);
+		if (row == null) return(null);
+
 		return(row.getField(field,create));
 	}
 

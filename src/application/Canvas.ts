@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
+import { Framework } from './Framework.js';
 import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
 import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
-import { Framework } from './Framework.js';
 
 
 export class Canvas implements CanvasDefinition, EventListenerObject

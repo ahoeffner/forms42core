@@ -12,6 +12,7 @@
 
 import { Block } from '../blocks/Block.js';
 import { Form as Interface} from '../../public/Form.js';
+import { Logger, Type } from '../../application/Logger.js';
 
 export class Form
 {
@@ -31,10 +32,12 @@ export class Form
 	{
 		this.parent = parent;
 		Form.bindings.set(parent,this);
+		Logger.log(Type.formbinding,"Create form: "+this.parent.constructor.name);
 	}
 
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to form: "+this.parent.constructor.name);
 	}
 }

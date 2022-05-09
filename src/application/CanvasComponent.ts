@@ -21,5 +21,5 @@ export interface CanvasComponent
     resizable:boolean;
 
     close() : boolean;
-    getView() : string|Element;
+    getView() : string|HTMLElement;
 }

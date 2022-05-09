@@ -111,6 +111,21 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         return(elements);
     }
 
+	public refresh() : void
+	{
+		this.container.innerHTML = "";
+        let page = this.component.getView();
+
+		if (typeof page === 'string')
+        {
+            let root:HTMLDivElement = document.createElement("div");
+			root.innerHTML = page;
+            page = Framework.trim(root);
+        }
+
+        this.container.appendChild(page);
+	}
+
     public setComponent(component:CanvasComponent) : void
     {
         this.component = component;

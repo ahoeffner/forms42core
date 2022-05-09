@@ -19,8 +19,9 @@ export interface Canvas
     block() : void;
     unblock() : void;
 
-    remove() : void;
+	remove() : void;
     restore() : void;
+	refresh() : void;
 
     getElement() : HTMLElement;
     getContent() : HTMLElement;

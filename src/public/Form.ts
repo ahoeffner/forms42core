@@ -56,7 +56,6 @@ export class Form implements CanvasComponent
 		{
 			replace = true;
 			View.clear(this);
-			this.canvas.remove();
 		}
 
         if (typeof page === 'string')
@@ -70,7 +69,7 @@ export class Form implements CanvasComponent
         this.state.page = page;
 
 		if (replace)
-			this.canvas.setComponent(this);
+			this.canvas.refresh();
     }
 
     public close() : boolean

@@ -16,22 +16,29 @@ import { Logger, Type } from '../../application/Logger.js';
 
 export class Form
 {
-	private static bindings:Map<Interface,Form> =
+	private static models:Map<Interface,Form> =
 		new Map<Interface,Form>();
-
-	public static getModel(form:Interface) : Form
-	{
-		return(Form.bindings.get(form));
-	}
 
 	private parent:Interface = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
+	public static create(form:Interface) : Form
+	{
+		let frm:Form = Form.models.get(form);
 
-	constructor(parent:Interface)
+		if (frm == null)
+		{
+			frm = new Form(form);
+			Form.models.set(form,frm);
+		}
+
+		return(frm);
+	}
+
+	private constructor(parent:Interface)
 	{
 		this.parent = parent;
-		Form.bindings.set(parent,this);
+		Form.models.set(parent,this);
 		Logger.log(Type.formbinding,"Create form: "+this.parent.constructor.name);
 	}
 

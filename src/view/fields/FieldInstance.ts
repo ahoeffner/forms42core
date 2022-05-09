@@ -61,7 +61,7 @@ export class FieldInstance
 		this.type$ = this.type$.toLowerCase();
 		this.block$ = this.block$.toLowerCase();
 		this.properties$ = new FieldProperties(element);
-		this.field$ = Field.get(form,this.block$,this.row$,this.name$,true);
+		this.field$ = Field.create(form,this.block$,this.row$,this.name$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(this.type$);
 

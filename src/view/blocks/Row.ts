@@ -11,13 +11,20 @@
  */
 
 import { Field } from "../fields/Field.js";
+import { FieldInstance } from "../fields/FieldInstance.js";
 
 
 export class Row
 {
+	public rownum:number = null;
 	private fields:Map<string,Field> = new Map<string,Field>();
 
-	public add(field:Field) : void
+	constructor(rownum:number)
+	{
+		this.rownum = rownum;
+	}
+
+	public addField(field:Field) : void
 	{
 		let fld:Field = this.fields.get(field.name);
 
@@ -28,62 +35,70 @@ export class Row
 		}
 	}
 
-	public getField(name:string, create:boolean) : Field
+	public getField(name:string) : Field
 	{
-		name = name.toLowerCase();
-		let field:Field = this.fields.get(name);
-		if (field == null && create) field = new Field(name);
-		return(field);
+		return(this.fields.get(name.toLowerCase()));
 	}
 
-/*
-	public getAll() : Field[]
+	public getFields() : Field[]
 	{
 		let fields:Field[] = [];
 
-		this.groups.forEach((flds) =>
-		{fields.push(...flds)});
+		this.fields.forEach((fld) =>
+		{fields.push(fld)});
 
 		return(fields);
 	}
 
-
-	public getByName(name:string, id?:string) : FieldInstance[]
+	public getFieldInstances() : FieldInstance[]
 	{
-		let fields:FieldInstance[] = this.groups.get(name.toLowerCase());
-		if (fields == null) return([]);
+		let instances:FieldInstance[] = [];
 
-		if (id != null)
+		this.getFields().forEach((field) =>
+		{instances.push(...field.getInstances());});
+
+		return(instances);
+	}
+
+	public getInstancesByName(name:string, id?:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+		let field:Field = this.getField(name);
+
+		if (field != null)
 		{
-			id = id.toLowerCase();
-			let ids:FieldInstance[] = [];
-			fields.forEach((fld) =>
+			if (id == null)
 			{
-				if (fld.id == id)
-					ids.push(fld);
-			});
-
-			fields = ids;
+				instances.push(...field.getInstances());
+			}
+			else
+			{
+				id = id.toLowerCase();
+				field.getInstances().forEach((inst) =>
+				{
+					if (inst.id == id)
+						instances.push(inst);
+				});
+			}
 		}
 
-		return(fields);
+		return(instances);
 	}
 
-
-	public getByClass(name:string, clazz:string) : FieldInstance[]
+	public getInstancesByClass(name:string, clazz:string) : FieldInstance[]
 	{
-		let fields:FieldInstance[] = this.groups.get(name.toLowerCase());
-		if (fields == null) return([]);
+		let instances:FieldInstance[] = [];
+		let field:Field = this.getField(name);
 
-		let classes:FieldInstance[] = [];
-
-		fields.forEach((fld) =>
+		if (field != null)
 		{
-			if (fld.properties.hasClass(clazz))
-				classes.push(fld);
-		});
+			field.getInstances().forEach((inst) =>
+			{
+				if (inst.properties.hasClass(clazz))
+					instances.push(inst);
+			});
+		}
 
-		return(classes);
+		return(instances);
 	}
-	*/
 }

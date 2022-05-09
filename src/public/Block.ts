@@ -22,7 +22,7 @@ export class Block
 	{
 		if (name == null) name = "";
 		this.name$ = name.toLowerCase();
-		new Model(Forms.getModel(form),this);
+		Model.create(Forms.create(form),this);
 	}
 
 	public get name() : string

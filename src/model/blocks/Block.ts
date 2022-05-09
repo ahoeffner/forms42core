@@ -11,37 +11,58 @@
  */
 
 import { Form } from "../forms/Form.js";
-import { Block as Interface} from '../../public/Block';
+import { Block as View } from '../../view/blocks/Block.js';
+import { Block as Interface } from '../../public/Block.js';
 
 
 export class Block
 {
-	private static map:Map<Form,Map<string,Block>> =
+	private static models:Map<Form,Map<string,Block>> =
 		new Map<Form,Map<string,Block>>();
 
-	public static get(form:Form, block:string) : Block
+	public static create(form:Form, block:Interface|View) : Block
 	{
-		let blkmap:Map<string,Block> = Block.map.get(form);
+		let blkmap:Map<string,Block> = Block.models.get(form);
 
-		if (blkmap == null) return(null);
-		let blk:Block = blkmap.get(block);
+		if (blkmap == null)
+		{
+			blkmap = new Map<string,Block>();
+			Block.models.set(form,blkmap);
+		}
 
+		let blk:Block = blkmap.get(block.name);
+
+		if (blk == null)
+		{
+			blk = new Block(form,block.name);
+			blkmap.set(block.name,blk);
+		}
+
+		blk.link(block);
 		return(blk);
 	}
 
 	private form:Form = null;
-	private parent:Interface = null;
+	private view:View = null;
+	private name$:string = null;
+	private intf:Interface = null;
 
-
-	constructor(form:Form, parent:Interface)
+	private constructor(form:Form, name:string)
 	{
 		this.form = form;
-		this.parent = parent;
+		this.name$ = name;
 		this.form.addBlock(this);
 	}
 
 	public get name() : string
 	{
-		return(this.parent.name);
+		return(this.name$);
+	}
+
+	public link(block:Interface|View) : void
+	{
+		console.log("link "+block.constructor.name);
+		if (block instanceof View) this.view = block;
+		else					   this.intf = block;
 	}
 }

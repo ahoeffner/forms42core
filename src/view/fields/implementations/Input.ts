@@ -17,6 +17,7 @@ import { FieldInstance } from "../FieldInstance.js";
 import { BrowserEventParser } from "../BrowserEventParser.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
+
 export class Input extends Common implements FieldImplementation, EventListenerObject
 {
     private int:boolean = false;

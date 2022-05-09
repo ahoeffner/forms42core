@@ -11,6 +11,9 @@
  */
 
 import { Row } from "./Row.js";
+import { Form as Interface } from '../../public/Form.js';
+import { Form as Forms } from '../../model/forms/Form.js';
+import { Block as Model } from '../../model/blocks/Block.js';
 
 
 export class Block
@@ -19,10 +22,11 @@ export class Block
 	private rows:Map<number,Row> = new Map<number,Row>();
 
 
-	constructor(name:string)
+	constructor(form:Interface,name:string)
 	{
 		if (name == null) name = "";
 		this.name$ = name.toLowerCase();
+		Model.create(Forms.create(form),this);
 	}
 
 	public get name() : string
@@ -30,16 +34,13 @@ export class Block
 		return(this.name$);
 	}
 
-	public getRow(row:number, create:boolean) : Row
+	public addRow(row:Row) : void
 	{
-		let rec:Row = this.rows.get(row);
+		this.rows.set(row.rownum,row);
+	}
 
-		if (rec == null)
-		{
-			rec = new Row();
-			if (create) this.rows.set(row,rec);
-		}
-
-		return(rec);
+	public getRow(rownum:number) : Row
+	{
+		return(this.rows.get(rownum));
 	}
 }

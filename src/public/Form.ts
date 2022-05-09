@@ -40,7 +40,7 @@ export class Form implements CanvasComponent
         if (page != null)
 			this.setView(page);
 
-		new Model(this);
+		Model.create(this);
     }
 
     public getView() : HTMLElement

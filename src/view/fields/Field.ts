@@ -16,24 +16,43 @@ import { Block } from "../blocks/Block.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 
+
 export class Field
 {
-	public static get(form:Interface, block:string, rownum:number, field:string, create:boolean) : Field
-	{
-		let frm:Form = Form.get(form,create);
-		if (frm == null) return(null);
-
-		let blk:Block = frm.get(block,create);
-		if (blk == null) return(null);
-
-		let row:Row = blk.getRow(rownum,create);
-		if (row == null) return(null);
-
-		return(row.getField(field,create));
-	}
-
 	private name$:string = null;
 	private instances:FieldInstance[] = [];
+
+	public static create(form:Interface, block:string, rownum:number, field:string) : Field
+	{
+		let frm:Form = Form.create(form);
+		if (frm == null) return(null);
+
+		let blk:Block = frm.get(block);
+
+		if (blk == null)
+		{
+			blk = new Block(form,block);
+			frm.addBlock(blk);
+		}
+
+		let row:Row = blk.getRow(rownum);
+
+		if (row == null)
+		{
+			row = new Row(rownum);
+			blk.addRow(row);
+		}
+
+		let fld:Field = row.getField(field);
+
+		if (fld == null)
+		{
+			fld = new Field(field);
+			row.addField(fld);
+		}
+
+		return(fld);
+	}
 
 	constructor(name:string)
 	{
@@ -48,5 +67,10 @@ export class Field
 	public add(instance:FieldInstance) : void
 	{
 		this.instances.push(instance);
+	}
+
+	public getInstances() : FieldInstance[]
+	{
+		return(this.instances);
 	}
 }

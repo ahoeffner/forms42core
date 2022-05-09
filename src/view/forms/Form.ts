@@ -15,18 +15,22 @@ import { Form as Interface } from '../../public/Form.js';
 
 export class Form
 {
-	private static viewmap:Map<Interface,Form> = new Map<Interface,Form>();
+	private blocks:Map<string,Block> =
+		new Map<string,Block>();
+
+	private static viewmap:Map<Interface,Form> =
+		new Map<Interface,Form>();
 
 	public static clear(form:Interface) : void
 	{
 		Form.viewmap.delete(form);
 	}
 
-	public static get(form:Interface, create:boolean) : Form
+	public static create(form:Interface) : Form
 	{
 		let frm:Form = Form.viewmap.get(form);
 
-		if (frm == null && create)
+		if (frm == null)
 		{
 			frm = new Form();
 			Form.viewmap.set(form,frm);
@@ -35,20 +39,13 @@ export class Form
 		return(frm);
 	}
 
-	private blocks:Map<string,Block> =
-		new Map<string,Block>();
-
-	public get(name:string, create:boolean) : Block
+	public get(name:string) : Block
 	{
-		name = name.toLowerCase();
-		let block:Block = this.blocks.get(name)
+		return(this.blocks.get(name.toLowerCase()));
+	}
 
-		if (block == null && create)
-		{
-			block = new Block(name);
-			this.blocks.set(block.name,block);
-		}
-
-		return(block);
+	public addBlock(block:Block) : void
+	{
+		this.blocks.set(block.name,block);
 	}
 }

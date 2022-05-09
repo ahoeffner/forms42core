@@ -41,6 +41,7 @@
 
 import { Pattern as PatternType, Section, Validity } from "./interfaces/Pattern.js";
 
+
 export class Pattern implements PatternType
 {
     private pos:number = 0;

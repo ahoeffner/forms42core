@@ -38,17 +38,17 @@ export class Form implements CanvasComponent
     constructor(page?:string|HTMLElement)
     {
         if (page != null)
-			this.setLayout(page);
+			this.setView(page);
 
 		new Model(this);
     }
 
-    public getLayout() : HTMLElement
+    public getView() : HTMLElement
     {
         return(this.state.page);
     }
 
-    public setLayout(page:string|HTMLElement)
+    public setView(page:string|HTMLElement)
     {
 		let replace:boolean = false;
 

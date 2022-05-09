@@ -114,7 +114,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     public setComponent(component:CanvasComponent) : void
     {
         this.component = component;
-        let page = component.getLayout();
+        let page = component.getView();
 
         let layout:string = Properties.CanvasProperties.page;
         let template:HTMLTemplateElement = document.createElement("template");

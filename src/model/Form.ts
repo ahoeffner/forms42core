@@ -10,42 +10,41 @@
  * accompanied this code).
  */
 
-import { Block } from '../blocks/Block.js';
-import { Form as Interface } from '../../public/Form.js';
+import { Block } from './Block.js';
+import { Form as Interface} from '../public/Form.js';
+import { Logger, Type } from '../application/Logger.js';
 
 export class Form
 {
-	private blocks:Map<string,Block> =
-		new Map<string,Block>();
-
-	private static viewmap:Map<Interface,Form> =
+	private static models:Map<Interface,Form> =
 		new Map<Interface,Form>();
 
-	public static clear(form:Interface) : void
-	{
-		Form.viewmap.delete(form);
-	}
+	private parent:Interface = null;
+	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	public static create(form:Interface) : Form
 	{
-		let frm:Form = Form.viewmap.get(form);
+		let frm:Form = Form.models.get(form);
 
 		if (frm == null)
 		{
-			frm = new Form();
-			Form.viewmap.set(form,frm);
+			frm = new Form(form);
+			Form.models.set(form,frm);
 		}
 
 		return(frm);
 	}
 
-	public get(name:string) : Block
+	private constructor(parent:Interface)
 	{
-		return(this.blocks.get(name.toLowerCase()));
+		this.parent = parent;
+		Form.models.set(parent,this);
+		Logger.log(Type.formbinding,"Create form: "+this.parent.constructor.name);
 	}
 
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to form: "+this.parent.constructor.name);
 	}
 }

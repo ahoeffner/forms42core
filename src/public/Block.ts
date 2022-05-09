@@ -11,8 +11,8 @@
  */
 
 import { Form } from './Form.js';
-import { Form as Forms } from '../model/forms/Form.js';
-import { Block as Model } from '../model/blocks/Block.js';
+import { Form as Forms } from '../model/Form.js';
+import { Block as Model } from '../model/Block.js';
 
 export class Block
 {

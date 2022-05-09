@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
+import { Form as View } from '../view/Form.js';
+import { Form as Model } from '../model/Form.js';
 import { Events } from '../view/events/Events.js';
-import { Form as View } from '../view/forms/Form.js';
-import { Form as Model } from '../model/forms/Form.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { EventFilter } from '../view/events/EventFilter.js';

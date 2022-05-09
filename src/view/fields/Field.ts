@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { Row } from "../blocks/Row.js";
-import { Form } from "../forms/Form.js";
-import { Block } from "../blocks/Block.js";
+import { Row } from "../Row.js";
+import { Form } from "../Form.js";
+import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 

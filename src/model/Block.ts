@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { Form } from "../forms/Form.js";
-import { Block as View } from '../../view/blocks/Block.js';
-import { Block as Interface } from '../../public/Block.js';
+import { Form } from "./Form.js";
+import { Block as View } from '../view/Block.js';
+import { Block as Interface } from '../public/Block.js';
 
 
 export class Block

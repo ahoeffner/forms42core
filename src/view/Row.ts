@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Field } from "../fields/Field.js";
-import { FieldInstance } from "../fields/FieldInstance.js";
+import { Field } from "./fields/Field.js";
+import { FieldInstance } from "./fields/FieldInstance.js";
 
 
 export class Row

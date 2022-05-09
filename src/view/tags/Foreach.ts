@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Properties } from "../application/Properties.js";
 import { Tag } from "./Tag.js";
+import { Properties } from "../../application/Properties.js";
 
 
 export class Foreach implements Tag

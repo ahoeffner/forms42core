@@ -10,15 +10,23 @@
  * accompanied this code).
  */
 
-import { Tag } from "./Tag.js";
-import { Framework } from "../application/Framework.js";
+import { Form } from './Form.js';
+import { Form as Forms } from '../model/forms/Form.js';
+import { Block as Model } from '../model/blocks/Block.js';
 
-export class Root implements Tag
+export class Block
 {
-    public parse(_component:any, tag:HTMLElement, _attr:string) : HTMLElement
-    {
-        let root:HTMLElement = document.createElement("div");
-        Framework.copyAttributes(tag,root);
-        return(root);
-    }
+	private name$:string = null;
+
+	constructor(form:Form, name:string)
+	{
+		if (name == null) name = "";
+		this.name$ = name.toLowerCase();
+		new Model(Forms.getModel(form),this);
+	}
+
+	public get name() : string
+	{
+		return(this.name$);
+	}
 }

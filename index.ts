@@ -1,10 +1,10 @@
 const version = "2.1.1";
 console.log("Version "+version);
-export { Form } from './src/forms/Form.js';
+export { Form } from './src/public/Form.js';
 
-export { Event } from './src/events/Events.js';
-export { EventType } from './src/events/EventType.js';
-export { EventFilter } from './src/events/EventFilter.js';
+export { Event } from './src/view/events/Events.js';
+export { EventType } from './src/view/events/EventType.js';
+export { EventFilter } from './src/view/events/EventFilter.js';
 
 export { Class } from './src/types/Class.js';
 export { Logger } from './src/application/Logger.js';
@@ -14,8 +14,8 @@ export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';
 export { Component, ModuleDefinition, FormsModule } from './src/application/FormsModule.js';
 
-export { Menu } from './src/menus/interfaces/Menu.js';
-export { StaticMenu } from './src/menus/StaticMenu.js';
-export { MenuHandler } from './src/menus/MenuHandler.js';
-export { MenuEntry } from './src/menus/interfaces/MenuEntry.js';
-export { StaticMenuEntry } from './src/menus/interfaces/StaticMenuEntry.js';
+export { Menu } from './src/view/menus/interfaces/Menu.js';
+export { StaticMenu } from './src/view/menus/StaticMenu.js';
+export { MenuHandler } from './src/view/menus/MenuHandler.js';
+export { MenuEntry } from './src/view/menus/interfaces/MenuEntry.js';
+export { StaticMenuEntry } from './src/view/menus/interfaces/StaticMenuEntry.js';

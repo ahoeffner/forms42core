@@ -10,17 +10,15 @@
  * accompanied this code).
  */
 
-import { Form } from "../forms/Form.js";
-import { EventFilter } from "./EventFilter.js";
+import { Tag } from "./Tag.js";
+import { Framework } from "../../application/Framework.js";
 
-export class EventListener
+export class Root implements Tag
 {
-	public method:string;
-	public filters:EventFilter;
-
-	constructor(public id:object, public form:Form, public clazz:any, method:Function|string, public filter:EventFilter)
-	{
-		if (typeof method === "string") this.method = method;
-		else							this.method = method.name;
-	}
+    public parse(_component:any, tag:HTMLElement, _attr:string) : HTMLElement
+    {
+        let root:HTMLElement = document.createElement("div");
+        Framework.copyAttributes(tag,root);
+        return(root);
+    }
 }

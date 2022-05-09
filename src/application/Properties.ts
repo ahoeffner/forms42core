@@ -11,7 +11,7 @@
  */
 
 import { Class } from '../types/Class.js';
-import { Include } from '../tags/Include.js';
+import { Include } from '../view/tags/Include.js';
 
 import { Canvas as CanvasImpl } from './Canvas.js';
 import { Canvas as CanvasType } from './interfaces/Canvas.js';
@@ -20,17 +20,17 @@ import { Canvas as CanvasProperties } from './properties/Canvas.js'
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
-import { Tag } from '../tags/Tag.js';
-import { Root } from '../tags/Root.js';
-import { Field } from '../tags/Field.js';
-import { Foreach } from '../tags/Foreach.js';
+import { Tag } from '../view/tags/Tag.js';
+import { Root } from '../view/tags/Root.js';
+import { Field } from '../view/tags/Field.js';
+import { Foreach } from '../view/tags/Foreach.js';
 
 
 export class Properties
 {
     public static RootTag:string = "forms";
     public static AttributePrefix:string = "$";
-	
+
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
 

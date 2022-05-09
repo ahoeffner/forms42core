@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class.js";
+import { Class } from "../../types/Class.js";
 import { Input } from "./implementations/Input.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 

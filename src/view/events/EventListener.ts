@@ -10,9 +10,17 @@
  * accompanied this code).
  */
 
-import { FieldInstances } from "./FieldInstance.js";
-import { FieldProperties } from "./FieldProperties.js";
+import { Form } from "../../public/Form.js";
+import { EventFilter } from "./EventFilter.js";
 
-export class Field
+export class EventListener
 {
+	public method:string;
+	public filters:EventFilter;
+
+	constructor(public id:object, public form:Form, public clazz:any, method:Function|string, public filter:EventFilter)
+	{
+		if (typeof method === "string") this.method = method;
+		else							this.method = method.name;
+	}
 }

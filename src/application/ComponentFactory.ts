@@ -1,4 +1,4 @@
-import { Form } from '../forms/Form.js';
+import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
 import { HTMLFragment } from './HTMLFragment.js';
 import { ComponentFactory as Factory } from './interfaces/ComponentFactory.js';

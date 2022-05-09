@@ -10,10 +10,11 @@
  * accompanied this code).
  */
 
-import { Events } from '../events/Events.js';
-import { EventFilter } from '../events/EventFilter.js';
+import { Events } from '../view/events/Events.js';
+import { Form as Model } from '../model/forms/Form.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
+import { EventFilter } from '../view/events/EventFilter.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 
@@ -25,7 +26,6 @@ class State
 }
 
 
-
 export class Form implements CanvasComponent
 {
     public canvas:Canvas = null;
@@ -34,10 +34,12 @@ export class Form implements CanvasComponent
     public resizable:boolean = true;
     private state:State = new State();
 
-    constructor(page?:string)
+    constructor(page?:string|HTMLElement)
     {
         if (page != null)
 			this.setLayout(page);
+
+		new Model(this);
     }
 
     public getLayout() : HTMLElement
@@ -47,6 +49,9 @@ export class Form implements CanvasComponent
 
     public setLayout(page:string|HTMLElement)
     {
+		if (this.state.page != null)
+			throw "@Form: Replace layout not implemented";
+
         if (typeof page === 'string')
         {
             let template:HTMLDivElement = document.createElement('div');

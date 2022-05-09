@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Form } from "../forms/Form.js";
+import { Form } from "../../public/Form.js";
 import { EventType } from "./EventType.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";

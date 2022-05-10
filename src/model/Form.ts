@@ -14,6 +14,7 @@ import { Block } from './Block.js';
 import { Form as Interface} from '../public/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 
+
 export class Form
 {
 	private static models:Map<Interface,Form> =
@@ -21,6 +22,20 @@ export class Form
 
 	private parent:Interface = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
+
+	public static clear(intf:Interface) : void
+	{
+		let remove:string[] = [];
+		let form:Form = Form.models.get(intf);
+
+		form.blocks.forEach((blk) =>
+		{
+			if (blk.isLinked()) blk.removeLink();
+			else 				remove.push(blk.name);
+		});
+
+		remove.forEach((name) => {form.blocks.delete(name)});
+	}
 
 	public static create(form:Interface) : Form
 	{
@@ -40,6 +55,11 @@ export class Form
 		this.parent = parent;
 		Form.models.set(parent,this);
 		Logger.log(Type.formbinding,"Create form: "+this.parent.constructor.name);
+	}
+
+	public getBlock(name:string) : Block
+	{
+		return(this.blocks.get(name));
 	}
 
 	public addBlock(block:Block) : void

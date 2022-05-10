@@ -56,6 +56,7 @@ export class Form implements CanvasComponent
 		{
 			replace = true;
 			View.clear(this);
+			Model.clear(this);
 		}
 
         if (typeof page === 'string')

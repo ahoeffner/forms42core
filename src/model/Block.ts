@@ -17,26 +17,12 @@ import { Block as Interface } from '../public/Block.js';
 
 export class Block
 {
-	private static models:Map<Form,Map<string,Block>> =
-		new Map<Form,Map<string,Block>>();
-
 	public static create(form:Form, block:Interface|View) : Block
 	{
-		let blkmap:Map<string,Block> = Block.models.get(form);
-
-		if (blkmap == null)
-		{
-			blkmap = new Map<string,Block>();
-			Block.models.set(form,blkmap);
-		}
-
-		let blk:Block = blkmap.get(block.name);
+		let blk:Block = form.getBlock(block.name);
 
 		if (blk == null)
-		{
 			blk = new Block(form,block.name);
-			blkmap.set(block.name,blk);
-		}
 
 		blk.link(block);
 		return(blk);
@@ -61,8 +47,17 @@ export class Block
 
 	public link(block:Interface|View) : void
 	{
-		console.log("link "+block.constructor.name);
 		if (block instanceof View) this.view = block;
 		else					   this.intf = block;
+	}
+
+	public isLinked() : boolean
+	{
+		return(this.intf != null);
+	}
+
+	public removeLink() : void
+	{
+		this.view = null;
 	}
 }

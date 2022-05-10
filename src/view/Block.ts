@@ -21,7 +21,6 @@ export class Block
 	private name$:string = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
 
-
 	constructor(form:Interface,name:string)
 	{
 		if (name == null) name = "";

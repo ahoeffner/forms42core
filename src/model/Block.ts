@@ -56,7 +56,7 @@ export class Block
 		return(this.intf != null);
 	}
 
-	public removeLink() : void
+	public clearViewLink() : void
 	{
 		this.view = null;
 	}

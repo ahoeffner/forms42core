@@ -30,7 +30,7 @@ export class Form
 
 		form.blocks.forEach((blk) =>
 		{
-			if (blk.isLinked()) blk.removeLink();
+			if (blk.isLinked()) blk.clearViewLink();
 			else 				remove.push(blk.name);
 		});
 

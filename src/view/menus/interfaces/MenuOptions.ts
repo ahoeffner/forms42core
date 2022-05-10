@@ -18,6 +18,7 @@ export interface MenuOptions
 
 	classes?:
 	{
+		open?:string;
 		common?:string;
 		menuitem?:string;
 		linkitem?:string;

@@ -36,6 +36,7 @@ export class MenuHandler implements EventListenerObject
 		if (this.options.skiproot == null) this.options.skiproot = false;
 		if (this.options.singlepath == null) this.options.singlepath = true;
 		if (this.options.classes.common == null) this.options.classes.common = "";
+		if (this.options.classes.open == null) this.options.classes.open = "menu-open";
 		if (this.options.classes.menuitem == null) this.options.classes.menuitem = "menu-item";
 		if (this.options.classes.linkitem == null) this.options.classes.linkitem = "link-item";
 		if (this.options.classes.container == null) this.options.classes.container = "menu-items";
@@ -122,10 +123,18 @@ export class MenuHandler implements EventListenerObject
 			if (entries[i].command) classes = this.linkcls;
 
 			let npath:string = path+entries[i].id;
-			page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
 
 			if (this.open.has(npath))
+			{
+				classes += " "+this.options.classes.open;
+				page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
+			}
+			else
+			{
+				page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
+			}
+
 		}
 		page += "</div>";
 

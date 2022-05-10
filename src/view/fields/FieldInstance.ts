@@ -15,6 +15,7 @@ import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { FieldProperties } from "./FieldProperties.js";
+import { BrowserEventParser as Event} from "./BrowserEventParser.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 
@@ -115,5 +116,10 @@ export class FieldInstance
 	public get element() : HTMLElement
 	{
 		return(this.element$);
+	}
+
+	public handleEvent(event:Event, value:any) : void
+	{
+		this.field.handleEvent(this,event,value);
 	}
 }

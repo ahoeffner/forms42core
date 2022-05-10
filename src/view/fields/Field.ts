@@ -15,6 +15,7 @@ import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
+import { BrowserEventParser as Event} from "./BrowserEventParser.js";
 
 
 export class Field
@@ -72,5 +73,10 @@ export class Field
 	public getInstances() : FieldInstance[]
 	{
 		return(this.instances);
+	}
+
+	public handleEvent(inst:FieldInstance, event:Event, value:any) : void
+	{
+		console.log(inst.name+"["+inst.row+"] "+event.type+" "+value);
 	}
 }

@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Field } from "../Field.js";
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { FieldInstance } from "../FieldInstance.js";
@@ -22,7 +21,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 {
     private int:boolean = false;
     private dec:boolean = false;
-	private parent:Field = null;
 	private pattern:Pattern = null;
     private placeholder:string = null;
 	private instance:FieldInstance = null;
@@ -38,7 +36,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	public initialize(instance: FieldInstance): void
 	{
 		this.instance = instance;
-		this.parent = instance.field;
 		this.element = document.createElement("input");
 
 		super.setImplementation(this);
@@ -129,24 +126,27 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         if (this.pattern != null)
         {
+			buble = true;
             if (!this.xfixed())
                 return;
         }
 
         if (this.event.type == "blur")
         {
+			buble = true;
             if (this.placeholder != null)
                 this.removeAttribute("placeholder");
         }
 
         if (this.event.type == "change")
         {
+			buble = true;
             this.validate();
-            console.log("change "+this.getValue());
         }
 
         if (this.event.type == "focus")
         {
+			buble = true;
             if (this.placeholder != null)
                 this.setAttribute("placeholder",this.placeholder);
         }
@@ -177,27 +177,23 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.ignore)
             return;
 
-        if (this.event.onScrollUp)
-            console.log("scrollup : "+this.getValue());
+		if (this.event.type.startsWith("mouse"))
+			buble = true;
+
+		if (this.event.onScrollUp)
+			buble = true;
 
         if (this.event.onScrollDown)
-            console.log("scrolldown : "+this.getValue());
-
-        if (this.event.onCtrlKeyUp)
-            console.log("released : "+this.event.ctrlkey+" "+this.getValue());
+			buble = true;
 
         if (this.event.onCtrlKeyDown)
-            console.log("pressed : "+this.event.ctrlkey+" "+this.getValue());
+			buble = true;
 
         if (this.event.onFuncKey)
-            console.log("FuncKey : "+this.event.funckey+" "+this.getValue());
+			buble = true;
 
         if (buble)
-        {
-            //let handler:EventHandler = this.getEventHandler();
-            //let event:Event = {type: this.event.event.type, event: event};
-            //handler(event);
-        }
+			this.instance.handleEvent(this.event,this.getValue());
     }
 
     private xint() : boolean

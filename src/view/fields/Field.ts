@@ -77,6 +77,7 @@ export class Field
 
 	public handleEvent(inst:FieldInstance, event:Event, value:any) : void
 	{
-		console.log(inst.name+"["+inst.row+"] "+event.type+" "+value);
+		if (event.type == "blur") console.log("blur");
+		if (event.type == "change") console.log("change");
 	}
 }

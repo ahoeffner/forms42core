@@ -78,7 +78,7 @@ export class BrowserEventParser
 
     public get isKeyEvent() : boolean
     {
-        return(this.event.type.startsWith("key"));
+        return(this.event.type.startsWith("key") && this.event.key != null);
     }
 
     public get isPrintableKey() : boolean

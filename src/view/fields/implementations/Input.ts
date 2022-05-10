@@ -65,7 +65,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	public validate() : boolean
 	{
-        throw new Error("Method not implemented.");
+		return(true);
+        //throw new Error("Method not implemented.");
     }
 
 	public getElement(): HTMLElement

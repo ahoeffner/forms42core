@@ -26,13 +26,7 @@ export class Row
 
 	public addField(field:Field) : void
 	{
-		let fld:Field = this.fields.get(field.name);
-
-		if (fld == null)
-		{
-			fld = new Field(field.name);
-			this.fields.set(field.name,fld);
-		}
+		this.fields.set(field.name,field);
 	}
 
 	public getField(name:string) : Field

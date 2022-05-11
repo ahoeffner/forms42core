@@ -52,7 +52,12 @@ export class Form implements CanvasComponent
     {
 		let replace:boolean = false;
 
-		if (this.state.page != null)
+		if (this.state.page == null)
+		{
+			View.create(this);
+			Model.create(this);
+		}
+		else
 		{
 			replace = true;
 			View.clear(this);

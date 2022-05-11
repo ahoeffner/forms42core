@@ -11,25 +11,30 @@
  */
 
 import { Form } from "./Form.js";
-import { Block as View } from '../view/Block.js';
+import { Form as ViewForm } from "../view/Form.js";
+import { Block as ViewBlock } from '../view/Block.js';
 import { Block as Interface } from '../public/Block.js';
 
 
 export class Block
 {
-	public static create(form:Form, block:Interface|View) : Block
+	public static create(form:Form|ViewForm, block:Interface|ViewBlock) : Block
 	{
+		if (form instanceof ViewForm)
+			form = Form.create(form.parent);
+
 		let blk:Block = form.getBlock(block.name);
 
 		if (blk == null)
 			blk = new Block(form,block.name);
 
-		blk.link(block);
+		if (block instanceof Interface)
+			blk.link(block);
+
 		return(blk);
 	}
 
 	private form:Form = null;
-	private view:View = null;
 	private name$:string = null;
 	private intf:Interface = null;
 
@@ -45,19 +50,13 @@ export class Block
 		return(this.name$);
 	}
 
-	public link(block:Interface|View) : void
+	public link(block:Interface) : void
 	{
-		if (block instanceof View) this.view = block;
-		else					   this.intf = block;
+		this.intf = block;
 	}
 
 	public isLinked() : boolean
 	{
 		return(this.intf != null);
-	}
-
-	public clearViewLink() : void
-	{
-		this.view = null;
 	}
 }

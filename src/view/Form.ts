@@ -12,34 +12,53 @@
 
 import { Block } from './Block.js';
 import { Form as Interface } from '../public/Form.js';
+import { Logger, Type } from '../application/Logger.js';
 
 export class Form
 {
+	private static views:Map<Interface,Form> =
+		new Map<Interface,Form>();
+
+	private parent$:Interface = null;
+
 	private blocks:Map<string,Block> =
 		new Map<string,Block>();
 
 	private static viewmap:Map<Interface,Form> =
 		new Map<Interface,Form>();
 
-	public static clear(form:Interface) : void
+	public static clear(parent:Interface) : void
 	{
-		Form.viewmap.delete(form);
+		Form.viewmap.delete(parent);
+		Form.create(parent);
 	}
 
-	public static create(form:Interface) : Form
+	public static create(parent:Interface) : Form
 	{
-		let frm:Form = Form.viewmap.get(form);
+		let frm:Form = Form.viewmap.get(parent);
 
 		if (frm == null)
 		{
-			frm = new Form();
-			Form.viewmap.set(form,frm);
+			frm = new Form(parent);
+			Form.viewmap.set(parent,frm);
 		}
 
 		return(frm);
 	}
 
-	public get(name:string) : Block
+	constructor(parent:Interface)
+	{
+		this.parent$ = parent;
+		Form.views.set(parent,this);
+		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.constructor.name);
+	}
+
+	public get parent() : Interface
+	{
+		return(this.parent$);
+	}
+
+	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name.toLowerCase()));
 	}
@@ -47,5 +66,6 @@ export class Form
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
 	}
 }

@@ -15,12 +15,14 @@ import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
-import { BrowserEventParser as Event} from "./BrowserEventParser.js";
+import { BrowserEvent as Event} from "./BrowserEvent.js";
 
 
 export class Field
 {
+	private row$:Row = null;
 	private name$:string = null;
+	private block$:Block = null;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, rownum:number, field:string) : Field
@@ -28,7 +30,7 @@ export class Field
 		let frm:Form = Form.create(form);
 		if (frm == null) return(null);
 
-		let blk:Block = frm.get(block);
+		let blk:Block = frm.getBlock(block);
 
 		if (blk == null)
 		{
@@ -40,7 +42,7 @@ export class Field
 
 		if (row == null)
 		{
-			row = new Row(rownum);
+			row = new Row(blk,rownum);
 			blk.addRow(row);
 		}
 
@@ -48,21 +50,33 @@ export class Field
 
 		if (fld == null)
 		{
-			fld = new Field(field);
+			fld = new Field(blk,row,field);
 			row.addField(fld);
 		}
 
 		return(fld);
 	}
 
-	constructor(name:string)
+	constructor(block:Block, row:Row, name:string)
 	{
+		this.row$ = row;
 		this.name$ = name;
+		this.block$ = block;
+	}
+
+	public get row() : Row
+	{
+		return(this.row$);
 	}
 
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public get block() : Block
+	{
+		return(this.block$);
 	}
 
 	public add(instance:FieldInstance) : void

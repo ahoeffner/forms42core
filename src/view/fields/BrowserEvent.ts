@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-export class BrowserEventParser
+export class BrowserEvent
 {
     private event$:any;
 

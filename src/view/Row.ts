@@ -10,18 +10,26 @@
  * accompanied this code).
  */
 
+import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 
 
 export class Row
 {
+	private block$:Block = null;
 	public rownum:number = null;
 	private fields:Map<string,Field> = new Map<string,Field>();
 
-	constructor(rownum:number)
+	constructor(block:Block, rownum:number)
 	{
+		this.block$ = block;
 		this.rownum = rownum;
+	}
+
+	public get block() : Block
+	{
+		return(this.block$);
 	}
 
 	public addField(field:Field) : void

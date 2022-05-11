@@ -20,41 +20,46 @@ export class Form
 	private static models:Map<Interface,Form> =
 		new Map<Interface,Form>();
 
-	private parent:Interface = null;
-	private blocks:Map<string,Block> = new Map<string,Block>();
-
-	public static clear(intf:Interface) : void
+	public static clear(parent:Interface) : void
 	{
 		let remove:string[] = [];
-		let form:Form = Form.models.get(intf);
+		let form:Form = Form.models.get(parent);
 
 		form.blocks.forEach((blk) =>
 		{
-			if (blk.isLinked()) blk.clearViewLink();
-			else 				remove.push(blk.name);
+			if (!blk.isLinked())
+				remove.push(blk.name);
 		});
 
 		remove.forEach((name) => {form.blocks.delete(name)});
 	}
 
-	public static create(form:Interface) : Form
+	public static create(parent:Interface) : Form
 	{
-		let frm:Form = Form.models.get(form);
+		let frm:Form = Form.models.get(parent);
 
 		if (frm == null)
 		{
-			frm = new Form(form);
-			Form.models.set(form,frm);
+			frm = new Form(parent);
+			Form.models.set(parent,frm);
 		}
 
 		return(frm);
 	}
 
+	private parent$:Interface = null;
+	private blocks:Map<string,Block> = new Map<string,Block>();
+
 	private constructor(parent:Interface)
 	{
-		this.parent = parent;
+		this.parent$ = parent;
 		Form.models.set(parent,this);
-		Logger.log(Type.formbinding,"Create form: "+this.parent.constructor.name);
+		Logger.log(Type.formbinding,"Create modelform: "+this.parent$.constructor.name);
+	}
+
+	public get parent() : Interface
+	{
+		return(this.parent$);
 	}
 
 	public getBlock(name:string) : Block
@@ -65,6 +70,6 @@ export class Form
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to form: "+this.parent.constructor.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent$.constructor.name);
 	}
 }

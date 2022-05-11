@@ -11,21 +11,23 @@
  */
 
 import { Row } from "./Row.js";
-import { Form as Forms } from '../model/Form.js';
+import { Form } from "./Form.js";
 import { Block as Model } from '../model/Block.js';
 import { Form as Interface } from '../public/Form.js';
 
 
 export class Block
 {
+	private form:Form = null;
 	private name$:string = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
 
 	constructor(form:Interface,name:string)
 	{
 		if (name == null) name = "";
+		this.form = Form.create(form);
 		this.name$ = name.toLowerCase();
-		Model.create(Forms.create(form),this);
+		Model.create(Form.create(form),this);
 	}
 
 	public get name() : string

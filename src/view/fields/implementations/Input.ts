@@ -12,8 +12,8 @@
 
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
+import { BrowserEvent } from "../BrowserEvent.js";
 import { FieldInstance } from "../FieldInstance.js";
-import { BrowserEventParser } from "../BrowserEventParser.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 
@@ -26,7 +26,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	private instance:FieldInstance = null;
 
 	private element:HTMLInputElement = null;
-    private event:BrowserEventParser = new BrowserEventParser();
+    private event:BrowserEvent = new BrowserEvent();
 
 	constructor()
 	{

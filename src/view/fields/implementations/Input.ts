@@ -373,8 +373,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                     let fld:number[] = this.pattern.getFieldArea(pos);
 
                     // toggle field selection
-                    if (sel[1] - sel[0] <= 1) pos = fld[0];
-                    else                      fld = [pos,pos];
+                    if (sel[1] - sel[0] < 1) pos = fld[0];
+                    else                     fld = [pos,pos];
 
                     this.setSelection(fld);
                     this.pattern.setPosition(this.pattern.findPosition(pos));
@@ -473,10 +473,11 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			setTimeout(() =>
 			{
-				this.pattern.setValue(this.getStringValue());
-				console.log("paste: <"+this.getStringValue()+"> <"+this.pattern.getValue()+">")
+				pos = this.pattern.setValue(this.getStringValue());
 				this.setValue(this.pattern.getValue());
-			},0);
+                this.setPosition(this.pattern.next(true,pos));
+			},1);
+
 			return(true);
 		}
 
@@ -549,6 +550,12 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			if (val.includes(".") || val.includes(".")) return(false);
 		}
 
+		if (this.xfixed)
+		{
+			this.pattern.setValue(this.getStringValue());
+			this.setValue(this.pattern.getValue());
+		}
+
 		return(true);
 	}
 
@@ -568,7 +575,10 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     private setPosition(pos:number) : void
     {
         if (pos < 0) pos = 0;
-        this.element.setSelectionRange(pos,pos);
+		let sel:number[] = [pos,pos];
+
+		if (pos == 0) sel[1] = 1;
+        this.element.setSelectionRange(sel[0],sel[1]);
     }
 
     private setSelection(sel:number[]) : void
@@ -576,8 +586,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (sel[0] < 0) sel[0] = 0;
         if (sel[1] < sel[0]) sel[1] = sel[0];
 
-        this.element.selectionStart = sel[0];
-        this.element.selectionEnd = sel[1]+1;
+		this.element.selectionStart = sel[0];
+		this.element.selectionEnd = sel[1]+1;
     }
 
     private clearSelection(pos:number) : void

@@ -184,16 +184,15 @@ export class Pattern implements PatternType
         return(token.type != 'f');
     }
 
-    public setValue(value:any) : void
+    public setValue(value:string) : number
     {
-        if (value == null)
-        {
-            value = this.placeholder$;
+		this.value = this.placeholder$;
+
+		if (value == null)
             return;
-        }
 
         let pos:number = 0;
-        let fmt:string = "";
+		value = value.trim();
 
         for(let i = 0; i < this.plen && pos < value.length; i++)
         {
@@ -201,22 +200,19 @@ export class Pattern implements PatternType
             let p = this.placeholder$.charAt(i);
             let token:Token = this.tokens.get(i);
 
-            if (token.type != 'f')
+            if (token.type == 'f')
             {
-                fmt += p;
-                if (c == p) pos++;
+                if (c == p)
+					pos++;
             }
             else
             {
-                pos++;
-                fmt += p;
+				if (this.setCharacter(i,c))
+					pos++;
             }
         }
 
-        for (let i = value.length; i < this.plen; i++)
-            fmt += this.placeholder$.charAt(i);
-
-        this.value = fmt;
+		return(pos);
     }
 
     public setPosition(pos:number) : boolean

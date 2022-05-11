@@ -28,7 +28,7 @@ export interface Pattern
     setPattern(pattern:string) : void;
 
     getValue() : string;
-    setValue(value:any) : void;
+    setValue(value:any) : number;
 
     validate(fld?:number) : boolean;
     isValid(pos:number, c:string) : Validity

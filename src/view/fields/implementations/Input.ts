@@ -472,7 +472,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 this.setSelection([pos,pos]);
             }
 
-            return(false);
+            return(true);
         }
 
 		if (this.event.undo || this.event.paste)
@@ -507,7 +507,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 this.setSelection([pos,pos]);
             }
 
-            return(false);
+            return(true);
         }
 
         if (this.event.key == "ArrowLeft")

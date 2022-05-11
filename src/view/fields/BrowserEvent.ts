@@ -21,9 +21,14 @@ export class BrowserEvent
     public key:string = null;
     public ctrlkey:string = null;
     public funckey:string = null;
-    public focus:boolean = false;
+
+    public undo:boolean = false;
+    public copy:boolean = false;
+    public paste:boolean = false;
+	public focus:boolean = false;
     public ignore:boolean = false;
     public prevent:boolean = false;
+    public modified:boolean = false;
     public mousedown:boolean = false;
     public mouseinit:boolean = false;
     public mousemark:boolean = false;
@@ -60,9 +65,13 @@ export class BrowserEvent
         this.alt = false;
         this.meta = false;
         this.ctrl = false;
+        this.undo = false;
+        this.copy = false;
+        this.paste = false;
         this.shift = false;
         this.ignore = false;
         this.prevent = false;
+        this.modified = false;
         this.mouseinit = false;
         this.printable$ = false;
 
@@ -149,6 +158,9 @@ export class BrowserEvent
 
     private KeyEvent() : void
     {
+        this.undo = false;
+        this.copy = false;
+        this.paste = false;
         this.printable$ = false;
 
         switch(this.event.type)
@@ -225,7 +237,11 @@ export class BrowserEvent
                         case 'z': break;
                         default : this.prevent = true;
                     }
-                }
+
+					if (this.key == 'c') this.copy = true;
+					if (this.key == 'z') this.undo = true;
+					if (this.key == 'v') this.paste = true;
+				}
 
                 if (this.key == "Alt") this.alt = true;
                 if (this.key == "Meta") this.meta = true;

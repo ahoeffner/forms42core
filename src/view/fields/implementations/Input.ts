@@ -119,12 +119,13 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         this.element.setAttribute("type",type);
     }
 
+	private before:string = "";
     public handleEvent(event:Event) : void
     {
         let buble:boolean = false;
         this.event.setEvent(event);
+		this.event.modified = false;
         let pos:number = this.getPosition();
-
 
         if (this.pattern != null)
         {
@@ -196,6 +197,21 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         if (this.event.onFuncKey)
 			buble = true;
+
+		if (event.type == "change")
+		{
+			if (!this.validateInput())
+				this.setElementValue(null);
+		}
+
+		let after:string = this.getStringValue();
+
+		if (this.before != after)
+		{
+			buble = true;
+			this.before = after;
+			this.event.modified = true;
+		}
 
         if (buble)
 			this.instance.handleEvent(this.event);
@@ -453,6 +469,14 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             return(false);
         }
 
+		if (this.event.undo || this.event.paste)
+		{
+			console.log("paste")
+			this.pattern.setValue(this.getStringValue());
+			this.setValue(this.pattern.getValue());
+			return(true);
+		}
+
         if (this.event.printable)
         {
             let sel:number[] = this.getSelection();
@@ -505,6 +529,25 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         return(true);
     }
+
+	private validateInput() : boolean
+	{
+		if (this.dec)
+		{
+			if (isNaN(this.getStringValue()))
+				return(false);
+		}
+
+		if (this.int)
+		{
+			let val:string = this.getStringValue();
+
+			if (isNaN(+val)) return(false);
+			if (val.includes(".") || val.includes(".")) return(false);
+		}
+
+		return(true);
+	}
 
     private getPosition() : number
     {

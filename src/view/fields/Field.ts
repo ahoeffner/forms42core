@@ -123,7 +123,7 @@ export class Field
 			}
 		}
 
-		if (event.isPrintableKey)
+		if (event.modified)
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());

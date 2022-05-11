@@ -36,8 +36,14 @@ export class FieldInstance
 	{
 		this.form$ = form;
 
+		let row:string = element.getAttribute("row");
+
+		if (row == null) row = "-1";
+		else if (isNaN(+row)) throw "@FieldInstance: row: '"+row+"' is not a number";
+
+		this.row$ = +row;
+
 		this.id$ = element.getAttribute("id");
-		this.row$ = +element.getAttribute("row");
 		this.name$ = element.getAttribute("name");
 		this.type$ = element.getAttribute("type");
 		this.block$ = element.getAttribute("block");
@@ -83,6 +89,11 @@ export class FieldInstance
 		return(this.row$);
 	}
 
+	public set row(row:number)
+	{
+		this.row$ = row;
+	}
+
 	public get form() : Form
 	{
 		return(this.form$);
@@ -118,8 +129,28 @@ export class FieldInstance
 		return(this.element$);
 	}
 
-	public handleEvent(event:Event, value:any) : void
+	public getValue() : any
 	{
-		this.field.handleEvent(this,event,value);
+		return(this.impl.getValue());
+	}
+
+	public getStringValue() : string
+	{
+		return(this.impl.getStringValue());
+	}
+
+	public setValue(value:any) : boolean
+	{
+		return(this.impl.setValue(value));
+	}
+
+	public validate() : boolean
+	{
+		return(this.impl.validate());
+	}
+
+	public handleEvent(event:Event) : void
+	{
+		this.field.handleEvent(this,event);
 	}
 }

@@ -57,10 +57,11 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         return(str);
     }
 
-    public setValue(value: any) : void
+    public setValue(value:any) : boolean
     {
         if (value == null) value = "";
         this.element.value = value;
+		return(true);
     }
 
 	public validate() : boolean
@@ -178,6 +179,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.ignore)
             return;
 
+		if (this.event.isPrintableKey)
+			buble = true;
+
 		if (this.event.type.startsWith("mouse"))
 			buble = true;
 
@@ -194,7 +198,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			buble = true;
 
         if (buble)
-			this.instance.handleEvent(this.event,this.getValue());
+			this.instance.handleEvent(this.event);
     }
 
     private xint() : boolean

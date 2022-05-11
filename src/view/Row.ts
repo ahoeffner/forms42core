@@ -18,18 +18,37 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 export class Row
 {
 	private block$:Block = null;
-	public rownum:number = null;
+	private rownum$:number = null;
 	private fields:Map<string,Field> = new Map<string,Field>();
 
 	constructor(block:Block, rownum:number)
 	{
 		this.block$ = block;
-		this.rownum = rownum;
+		this.rownum$ = rownum;
 	}
 
 	public get block() : Block
 	{
 		return(this.block$);
+	}
+
+	public get rownum() : number
+	{
+		return(this.rownum$);
+	}
+
+	public set rownum(rownum:number)
+	{
+		if (rownum == this.rownum$)
+			return;
+
+		this.rownum$ = rownum;
+
+		this.getFields().forEach((fld) =>
+		{
+			fld.getInstances().forEach((inst) =>
+			{inst.row = rownum;})
+		});
 	}
 
 	public addField(field:Field) : void
@@ -60,6 +79,11 @@ export class Row
 		{instances.push(...field.getInstances());});
 
 		return(instances);
+	}
+
+	public distribute(field:Field, value:string) : void
+	{
+		this.fields.get(field.name)?.distribute(null,value);
 	}
 
 	public getInstancesByName(name:string, id?:string) : FieldInstance[]

@@ -19,7 +19,8 @@ export interface FieldImplementation
 
     getValue() : any;
     validate() : boolean;
-    setValue(value:any) : void;
+    getStringValue() : string;
+    setValue(value:any) : boolean;
 
     getElement() : HTMLElement;
 

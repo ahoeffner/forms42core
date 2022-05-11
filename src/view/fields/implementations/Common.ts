@@ -41,6 +41,17 @@ export class Common
         return(this.properties);
     }
 
+    public getStringValue() : any
+    {
+        let str:string = "";
+		let element:HTMLElement = this.field.getElement();
+
+		if (element instanceof HTMLInputElement)
+			str = element.value.trim();
+
+        return(str);
+    }
+
     public setProperties(properties: any) : void
 	{
         this.properties = properties;

@@ -21,8 +21,10 @@ import { BrowserEvent as Event} from "./BrowserEvent.js";
 export class Field
 {
 	private row$:Row = null;
+	private value$:any = null;
 	private name$:string = null;
 	private block$:Block = null;
+	private valid$:boolean = true;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, rownum:number, field:string) : Field
@@ -89,9 +91,58 @@ export class Field
 		return(this.instances);
 	}
 
-	public handleEvent(inst:FieldInstance, event:Event, value:any) : void
+	public setValue(value:any) : boolean
 	{
-		if (event.type == "blur") console.log("blur");
-		if (event.type == "change") console.log("change");
+		return(this.distribute(null,value));
+	}
+
+	public getValue() : any
+	{
+		return(this.instances[0].getValue());
+	}
+
+	public getStringValue() : string
+	{
+		return(this.instances[0].getStringValue());
+	}
+
+	public handleEvent(inst:FieldInstance, event:Event) : void
+	{
+		if (event.type == "focus")
+		{
+			this.block.setCurrentRow(this.row.rownum);
+			this.value$ = this.instances[0].getValue();
+		}
+
+		if (event.type == "change" || event.type == "blur")
+		{
+			if (this.value$ != this.instances[0].getValue())
+			{
+				this.valid$ = this.instances[0].validate();
+				this.value$ = this.instances[0].getValue();
+			}
+		}
+
+		if (event.isPrintableKey)
+		{
+			this.distribute(inst,inst.getStringValue());
+			this.block.distribute(this,inst.getStringValue());
+		}
+	}
+
+	public distribute(inst:FieldInstance, value:string) : boolean
+	{
+		let errors:boolean = false;
+
+		this.instances.forEach((fi) =>
+		{
+			if (fi != inst)
+			{
+				if (!fi.setValue(value))
+					errors = true;
+			}
+		});
+
+		return(errors);
 	}
 }

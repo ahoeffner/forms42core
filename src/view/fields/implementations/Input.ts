@@ -471,9 +471,12 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		if (this.event.undo || this.event.paste)
 		{
-			console.log("paste")
-			this.pattern.setValue(this.getStringValue());
-			this.setValue(this.pattern.getValue());
+			setTimeout(() =>
+			{
+				this.pattern.setValue(this.getStringValue());
+				console.log("paste: <"+this.getStringValue()+"> <"+this.pattern.getValue()+">")
+				this.setValue(this.pattern.getValue());
+			},0);
 			return(true);
 		}
 

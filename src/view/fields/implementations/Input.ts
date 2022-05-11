@@ -200,8 +200,14 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		if (event.type == "change")
 		{
-			if (!this.validateInput())
-				this.setElementValue(null);
+			let val:string = this.getStringValue();
+			console.log("validate "+this.instance.name+" "+this.pattern+" val: "+val)
+
+			if (val.length > 0)
+			{
+				if (!this.validateInput(val))
+					console.log("failed"); //this.setValue(null);
+			}
 		}
 
 		let after:string = this.getStringValue();
@@ -534,26 +540,25 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         return(true);
     }
 
-	private validateInput() : boolean
+	private validateInput(val:string) : boolean
 	{
+		console.log("<"+val+"> "+this.pattern)
 		if (this.dec)
 		{
-			if (isNaN(this.getStringValue()))
+			if (isNaN(+val))
 				return(false);
 		}
 
 		if (this.int)
 		{
-			let val:string = this.getStringValue();
-
 			if (isNaN(+val)) return(false);
 			if (val.includes(".") || val.includes(".")) return(false);
 		}
 
-		if (this.xfixed)
+		if (this.pattern != null)
 		{
-			this.pattern.setValue(this.getStringValue());
-			this.setValue(this.pattern.getValue());
+			//this.pattern.setValue(val);
+			//this.setValue(this.pattern.getValue());
 		}
 
 		return(true);

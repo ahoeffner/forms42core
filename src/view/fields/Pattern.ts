@@ -187,6 +187,7 @@ export class Pattern implements PatternType
     public setValue(value:string) : number
     {
 		this.value = this.placeholder$;
+		console.log("setValue('"+value+"')")
 
 		if (value == null)
             return;

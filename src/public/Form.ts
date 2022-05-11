@@ -40,7 +40,7 @@ export class Form implements CanvasComponent
         if (page != null)
 			this.setView(page);
 
-		Model.create(this);
+		Model.getForm(this);
     }
 
     public getView() : HTMLElement
@@ -54,8 +54,8 @@ export class Form implements CanvasComponent
 
 		if (this.state.page == null)
 		{
-			View.create(this);
-			Model.create(this);
+			View.getForm(this);
+			Model.getForm(this);
 		}
 		else
 		{
@@ -76,6 +76,9 @@ export class Form implements CanvasComponent
 
 		if (replace)
 			this.canvas.refresh();
+
+		View.finalize(this);
+		Model.finalize(this);
     }
 
     public close() : boolean

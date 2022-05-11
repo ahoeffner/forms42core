@@ -21,7 +21,7 @@ export class Block
 	public static create(form:Form|ViewForm, block:Interface|ViewBlock) : Block
 	{
 		if (form instanceof ViewForm)
-			form = Form.create(form.parent);
+			form = Form.getForm(form.parent);
 
 		let blk:Block = form.getBlock(block.name);
 
@@ -37,6 +37,7 @@ export class Block
 	private form:Form = null;
 	private name$:string = null;
 	private intf:Interface = null;
+	private view$:ViewBlock = null;
 
 	private constructor(form:Form, name:string)
 	{
@@ -53,6 +54,16 @@ export class Block
 	public link(block:Interface) : void
 	{
 		this.intf = block;
+	}
+
+	public linkView() : void
+	{
+		this.view$ = ViewForm.getForm(this.form.parent).getBlock(this.name);
+	}
+
+	public unlinkView() : void
+	{
+		this.view$ = null;
 	}
 
 	public isLinked() : boolean

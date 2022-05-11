@@ -12,22 +12,24 @@
 
 import { Row } from "./Row.js";
 import { Form } from "./Form.js";
-import { Block as Model } from '../model/Block.js';
+import { Form as ModelForm } from '../model/Form.js';
 import { Form as Interface } from '../public/Form.js';
+import { Block as ModelBlock } from '../model/Block.js';
 
 
 export class Block
 {
 	private form:Form = null;
 	private name$:string = null;
+	private model$:ModelBlock = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
 
 	constructor(form:Interface,name:string)
 	{
 		if (name == null) name = "";
-		this.form = Form.create(form);
+		this.form = Form.getForm(form);
 		this.name$ = name.toLowerCase();
-		Model.create(Form.create(form),this);
+		ModelBlock.create(Form.getForm(form),this);
 	}
 
 	public get name() : string
@@ -43,5 +45,15 @@ export class Block
 	public getRow(rownum:number) : Row
 	{
 		return(this.rows.get(rownum));
+	}
+
+	public linkModel() : void
+	{
+		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);
+	}
+
+	public finalize() : void
+	{
+		console.log("finalize");
 	}
 }

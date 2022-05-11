@@ -27,7 +27,7 @@ export class Field
 
 	public static create(form:Interface, block:string, rownum:number, field:string) : Field
 	{
-		let frm:Form = Form.create(form);
+		let frm:Form = Form.getForm(form);
 		if (frm == null) return(null);
 
 		let blk:Block = frm.getBlock(block);

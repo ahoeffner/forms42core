@@ -11,7 +11,8 @@
  */
 
 import { Block } from './Block.js';
-import { Form as Interface} from '../public/Form.js';
+import { Form as View } from '../view/Form.js';
+import { Form as Interface } from '../public/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 
 
@@ -25,6 +26,8 @@ export class Form
 		let remove:string[] = [];
 		let form:Form = Form.models.get(parent);
 
+		form.unlinkViews();
+
 		form.blocks.forEach((blk) =>
 		{
 			if (!blk.isLinked())
@@ -34,19 +37,22 @@ export class Form
 		remove.forEach((name) => {form.blocks.delete(name)});
 	}
 
-	public static create(parent:Interface) : Form
+	public static getForm(parent:Interface) : Form
 	{
 		let frm:Form = Form.models.get(parent);
 
 		if (frm == null)
-		{
 			frm = new Form(parent);
-			Form.models.set(parent,frm);
-		}
 
 		return(frm);
 	}
 
+	public static finalize(parent:Interface) : void
+	{
+		Form.models.get(parent).linkViews();
+	}
+
+	private view$:View = null;
 	private parent$:Interface = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
@@ -71,5 +77,17 @@ export class Form
 	{
 		this.blocks.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent$.constructor.name);
+	}
+
+	private linkViews() : void
+	{
+		this.view$ = View.getForm(this.parent);
+		this.blocks.forEach((blk) => {blk.linkView()})
+	}
+
+	private unlinkViews() : void
+	{
+		this.view$ = View.getForm(this.parent);
+		this.blocks.forEach((blk) => {blk.unlinkView()})
 	}
 }

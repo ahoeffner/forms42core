@@ -11,6 +11,7 @@
  */
 
 import { Block } from './Block.js';
+import { Form as Model } from '../model/Form.js';
 import { Form as Interface } from '../public/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 
@@ -19,34 +20,34 @@ export class Form
 	private static views:Map<Interface,Form> =
 		new Map<Interface,Form>();
 
-	private parent$:Interface = null;
-
-	private blocks:Map<string,Block> =
-		new Map<string,Block>();
-
-	private static viewmap:Map<Interface,Form> =
-		new Map<Interface,Form>();
-
 	public static clear(parent:Interface) : void
 	{
-		Form.viewmap.delete(parent);
-		Form.create(parent);
+		Form.views.delete(parent);
+		Form.getForm(parent);
 	}
 
-	public static create(parent:Interface) : Form
+	public static getForm(parent:Interface) : Form
 	{
-		let frm:Form = Form.viewmap.get(parent);
+		let frm:Form = Form.views.get(parent);
 
 		if (frm == null)
-		{
 			frm = new Form(parent);
-			Form.viewmap.set(parent,frm);
-		}
 
 		return(frm);
 	}
 
-	constructor(parent:Interface)
+	public static finalize(parent:Interface) : void
+	{
+		let form:Form = Form.views.get(parent);
+		form.blocks.forEach((blk) => {blk.finalize();});
+		form.linkModels();
+	}
+
+	private model$:Model = null;
+	private parent$:Interface = null;
+	private blocks:Map<string,Block> = new Map<string,Block>();
+
+	private constructor(parent:Interface)
 	{
 		this.parent$ = parent;
 		Form.views.set(parent,this);
@@ -67,5 +68,11 @@ export class Form
 	{
 		this.blocks.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
+	}
+
+	private linkModels() : void
+	{
+		this.model$ = Model.getForm(this.parent);
+		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 }

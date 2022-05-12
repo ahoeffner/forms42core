@@ -184,8 +184,9 @@ export class Pattern implements PatternType
         return(token.type != 'f');
     }
 
-    public setValue(value:string) : number
+    public setValue(value:string) : boolean
     {
+		let valid:boolean = true;
 		this.value = this.placeholder$;
 
 		if (value == null)
@@ -207,12 +208,15 @@ export class Pattern implements PatternType
             }
             else
             {
-				if (this.setCharacter(i,c))
-					pos++;
+				if (this.setCharacter(i,c)) pos++;
+				else valid = false;
             }
         }
 
-		return(pos);
+		if (pos != value.length)
+			valid = false;
+
+		return(valid);
     }
 
     public setPosition(pos:number) : boolean

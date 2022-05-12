@@ -460,11 +460,10 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			setTimeout(() =>
 			{
-				pos = this.pattern.setValue(this.getStringValue());
+				this.pattern.setValue(this.getStringValue());
 				this.setValue(this.pattern.getValue());
                 this.setPosition(this.pattern.next(true,pos));
-			},1);
-
+			},0);
 			return(true);
 		}
 
@@ -543,9 +542,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		if (this.pattern != null)
 		{
-			this.pattern.setValue(val);
-			if (!this.pattern.validate()) return(false);
+			let valid:boolean = this.pattern.setValue(val);
 			this.setStringValue(this.pattern.getValue());
+			return(valid);
 		}
 
 		return(true);

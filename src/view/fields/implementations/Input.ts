@@ -61,9 +61,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     {
         if (value == null) value = "";
         this.element.value = value;
-		console.log(this.instance.name+"["+this.instance.row+"] = "+value);
-		this.validateInput(value);
-		return(true);
+		return(this.validateInput(value));
     }
 
 	public validate() : boolean
@@ -545,30 +543,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		if (this.pattern != null)
 		{
-			let error:boolean = false;
-			let empty:boolean = this.pattern.isNull();
-
-			if (empty && val.length > 0)
-			{
-				this.pattern.setValue(val);
-				empty = this.pattern.isNull();
-				if (!empty) this.setStringValue(this.pattern.getValue());
-			}
-
-			if (!this.pattern.validate())
-			{
-				empty = true;
-				error = true;
-				this.pattern.setValue(null);
-			}
-
-            if (empty)
-            {
-				this.setStringValue(null);
-				this.pattern.setPosition(0);
-            }
-
-			return(error);
+			this.pattern.setValue(val);
+			if (!this.pattern.validate()) return(false);
+			this.setStringValue(this.pattern.getValue());
 		}
 
 		return(true);

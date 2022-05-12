@@ -96,20 +96,6 @@ export class Pattern implements PatternType
         return(this.placeholder$);
     }
 
-    public validate(fld?:number) : boolean
-    {
-        if (fld != null)
-        {
-            for (let i = 0; i < this.fields.length; i++)
-            {
-                if (!this.fields[i].validate())
-                    return(false);
-            }
-            return(true);
-        }
-        return(true);
-    }
-
     public setPattern(pattern:string) : void
     {
         let pos:number = 0;
@@ -212,6 +198,8 @@ export class Pattern implements PatternType
 				else valid = false;
             }
         }
+
+		this.fields.forEach((fld) => {fld.init()});
 
 		if (pos != value.length)
 			valid = false;
@@ -369,12 +357,6 @@ export class Pattern implements PatternType
         {
             let curr:Field = this.findField(fr);
             if (curr != null) this.fldno = curr.fn;
-
-            this.fields.forEach((fld) =>
-            {
-                if (fld.pos() > fr)
-                    fld.validate();
-            });
         }
 
         return(this.value);
@@ -484,11 +466,7 @@ export class Pattern implements PatternType
         let curr:Field = this.findField(this.pos);
 
         if (curr.fn != this.fldno)
-        {
-            let last:Field = this.fields[this.fldno];
-            last.validate();
             this.fldno = curr.fn;
-        }
     }
 
     private getstring(fr:number,to:number) : string
@@ -642,20 +620,6 @@ class Field implements Section
     public init() : void
     {
         this.value$ = this.getValue();
-    }
-
-
-    public validate() : boolean
-    {
-        let nval:string = this.getValue();
-
-        if (this.value$ != nval)
-        {
-            this.value$ = nval;
-            this.pattern.validate(this.fn);
-        }
-
-        return(true);
     }
 }
 

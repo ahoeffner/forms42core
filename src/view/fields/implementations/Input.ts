@@ -61,6 +61,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     {
         if (value == null) value = "";
         this.element.value = value;
+		console.log(this.instance.name+"["+this.instance.row+"] = "+value);
+		this.validateInput(value);
 		return(true);
     }
 
@@ -76,7 +78,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	}
 
 	// Bypasses validation
-    public setElementValue(value: any) : void
+    public setStringValue(value:string) : void
     {
         if (value == null) value = "";
         this.element.value = value;
@@ -141,12 +143,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 this.removeAttribute("placeholder");
         }
 
-        if (this.event.type == "change")
-        {
-			buble = true;
-            this.validate();
-        }
-
         if (this.event.type == "focus")
         {
 			buble = true;
@@ -180,6 +176,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.ignore)
             return;
 
+		if (event.type == "change")
+			buble = true;
+
 		if (this.event.isPrintableKey)
 			buble = true;
 
@@ -197,18 +196,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         if (this.event.onFuncKey)
 			buble = true;
-
-		if (event.type == "change")
-		{
-			let val:string = this.getStringValue();
-			console.log("validate "+this.instance.name+" "+this.pattern+" val: "+val)
-
-			if (val.length > 0)
-			{
-				if (!this.validateInput(val))
-					console.log("failed"); //this.setValue(null);
-			}
-		}
 
 		let after:string = this.getStringValue();
 
@@ -242,13 +229,16 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
 
-                    this.setElementValue(b + this.event.key + a);
+                    this.setStringValue(b + this.event.key + a);
                     this.setPosition(++pos);
                 }
             }
 
             return(false);
         }
+
+		if (this.event.type == "blur" || this.event.type == "change")
+			this.validateInput(this.getStringValue());
 
         return(true);
     }
@@ -280,13 +270,16 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
 
-                    this.setElementValue(b + this.event.key + a);
+                    this.setStringValue(b + this.event.key + a);
                     this.setPosition(++pos);
                 }
             }
 
             return(false);
         }
+
+		if (this.event.type == "blur" || this.event.type == "change")
+			this.validateInput(this.getStringValue());
 
         return(true);
     }
@@ -325,7 +318,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             pos = this.pattern.findPosition(0);
 
             if (this.getValue() == null)
-                this.setElementValue(this.pattern.getValue());
+                this.setStringValue(this.pattern.getValue());
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
@@ -335,22 +328,12 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         if (this.event.type == "blur" || this.event.type == "change")
         {
-            let valid:boolean = this.pattern.validate();
-
-            if (this.pattern.isNull())
-            {
-                this.setElementValue(null);
-                this.pattern.setPosition(0);
-            }
-
-            this.setError(!valid);
-            if (!valid) setTimeout(() => {this.element.focus();},1);
-
+			this.validateInput(this.getStringValue());
             return(true);
         }
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
-            this.setElementValue(null);
+            this.setStringValue(null);
 
         if (this.event.type == "mouseup")
         {
@@ -458,7 +441,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 }
 
                 pos = sel[0];
-                this.setElementValue(this.pattern.delete(sel[0],sel[1]));
+                this.setStringValue(this.pattern.delete(sel[0],sel[1]));
 
                 if (sel[1] == sel[0] + 1)
                     pos = this.pattern.prev(true);
@@ -495,7 +478,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             {
                 pos = sel[0];
                 this.pattern.delete(sel[0],sel[1]);
-                this.setElementValue(this.pattern.getValue());
+                this.setStringValue(this.pattern.getValue());
                 pos = this.pattern.findPosition(sel[0]);
                 this.setSelection([pos,pos]);
             }
@@ -503,7 +486,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             if (this.pattern.setCharacter(pos,this.event.key))
             {
                 pos = this.pattern.next(true,pos);
-                this.setElementValue(this.pattern.getValue());
+                this.setStringValue(this.pattern.getValue());
                 this.setSelection([pos,pos]);
             }
 
@@ -542,23 +525,50 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	private validateInput(val:string) : boolean
 	{
-		console.log("<"+val+"> "+this.pattern)
 		if (this.dec)
 		{
 			if (isNaN(+val))
+			{
+				this.setStringValue(null);
 				return(false);
+			}
 		}
 
 		if (this.int)
 		{
-			if (isNaN(+val)) return(false);
-			if (val.includes(".") || val.includes(".")) return(false);
+			if (isNaN(+val) || val.includes(".") || val.includes("."))
+			{
+				this.setStringValue(null);
+				return(false);
+			}
 		}
 
 		if (this.pattern != null)
 		{
-			//this.pattern.setValue(val);
-			//this.setValue(this.pattern.getValue());
+			let error:boolean = false;
+			let empty:boolean = this.pattern.isNull();
+
+			if (empty && val.length > 0)
+			{
+				this.pattern.setValue(val);
+				empty = this.pattern.isNull();
+				if (!empty) this.setStringValue(this.pattern.getValue());
+			}
+
+			if (!this.pattern.validate())
+			{
+				empty = true;
+				error = true;
+				this.pattern.setValue(null);
+			}
+
+            if (empty)
+            {
+				this.setStringValue(null);
+				this.pattern.setPosition(0);
+            }
+
+			return(error);
 		}
 
 		return(true);

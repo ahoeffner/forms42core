@@ -114,7 +114,7 @@ export class Field
 			this.value$ = this.instances[0].getValue();
 		}
 
-		if (event.type == "change" || event.type == "blur")
+		if (event.type == "change")
 		{
 			if (this.value$ != this.instances[0].getValue())
 			{

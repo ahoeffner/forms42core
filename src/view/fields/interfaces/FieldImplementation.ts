@@ -18,7 +18,6 @@ export interface FieldImplementation
 	initialize(instance:FieldInstance) : void;
 
     getValue() : any;
-    validate() : boolean;
     getStringValue() : string;
     setValue(value:any) : boolean;
 

@@ -144,9 +144,9 @@ export class FieldInstance
 		return(this.impl.setValue(value));
 	}
 
-	public validate() : boolean
+	public setError(flag:boolean) : void
 	{
-		return(this.impl.validate());
+		this.impl.setError(flag);
 	}
 
 	public handleEvent(event:Event) : void

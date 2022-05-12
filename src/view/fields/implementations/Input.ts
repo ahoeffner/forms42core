@@ -53,6 +53,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public getValue() : any
     {
         let str:string = this.element.value.trim();
+		console.log("getValue "+this.instance.name+"["+this.instance.row+"] = "+str)
         if (str.length == 0) return(null);
         return(str);
     }
@@ -62,12 +63,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (value == null) value = "";
         this.element.value = value;
 		return(this.validateInput(value));
-    }
-
-	public validate() : boolean
-	{
-		return(true);
-        //throw new Error("Method not implemented.");
     }
 
 	public getElement(): HTMLElement
@@ -201,6 +196,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			buble = true;
 			this.before = after;
+			this.setError(false);
 			this.event.modified = true;
 		}
 
@@ -315,7 +311,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         {
             pos = this.pattern.findPosition(0);
 
-            if (this.getValue() == null)
+            if (this.getStringValue().length == 0)
                 this.setStringValue(this.pattern.getValue());
 
             this.setPosition(pos);

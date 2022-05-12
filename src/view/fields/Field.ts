@@ -14,17 +14,18 @@ import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
+import { EventType } from "../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "./BrowserEvent.js";
+import { Event as FormEvent, Events } from "../events/Events.js";
 
 
 export class Field
 {
 	private row$:Row = null;
-	private value$:any = null;
 	private name$:string = null;
 	private block$:Block = null;
-	private valid$:boolean = true;
+	private form$:Interface = null;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, rownum:number, field:string) : Field
@@ -52,17 +53,18 @@ export class Field
 
 		if (fld == null)
 		{
-			fld = new Field(blk,row,field);
+			fld = new Field(form,blk,row,field);
 			row.addField(fld);
 		}
 
 		return(fld);
 	}
 
-	constructor(block:Block, row:Row, name:string)
+	constructor(form:Interface, block:Block, row:Row, name:string)
 	{
 		this.row$ = row;
 		this.name$ = name;
+		this.form$ = form;
 		this.block$ = block;
 	}
 
@@ -111,16 +113,12 @@ export class Field
 		if (event.type == "focus")
 		{
 			this.block.setCurrentRow(this.row.rownum);
-			this.value$ = this.instances[0].getValue();
 		}
 
 		if (event.type == "change")
 		{
-			if (this.value$ != this.instances[0].getValue())
-			{
-				this.valid$ = this.instances[0].validate();
-				this.value$ = this.instances[0].getValue();
-			}
+			if (!Events.raise(this.getEvent(EventType.WhenValidateField)))
+				inst.setError(true);
 		}
 
 		if (event.modified)
@@ -144,5 +142,10 @@ export class Field
 		});
 
 		return(errors);
+	}
+
+	private getEvent(type:EventType) : FormEvent
+	{
+		return(FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name,this.row.rownum));
 	}
 }

@@ -72,7 +72,11 @@ export class Block
 
 		let last:Row = this.getRow(this.currfld.row);
 
-		console.log("row "+last.rownum+" valid: "+last.validated)
+		if (!last.validated)
+		{
+			this.currfld.focus();
+			return(false);
+		}
 
 		move = await this.mdlblk.change_record(this.currfld.row-inst.row);
 

@@ -182,7 +182,7 @@ export class Events
 			{
 				done.add(lsnr.id);
 
-				if (!Events.execute(lsnr,event))
+				if (!(await Events.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -200,7 +200,7 @@ export class Events
 			{
 				done.add(lsnr.id);
 
-				if (!Events.execute(lsnr,event))
+				if (!(await Events.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -218,7 +218,7 @@ export class Events
 			{
 				done.add(lsnr.id);
 
-				if (!Events.execute(lsnr,event))
+				if (!(await Events.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -236,7 +236,7 @@ export class Events
 			{
 				done.add(lsnr.id);
 
-				if (!Events.execute(lsnr,event))
+				if (!(await Events.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -248,7 +248,7 @@ export class Events
 			{
 				done.add(lsnr.id);
 
-				if (!Events.execute(lsnr,event))
+				if (!(await Events.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -260,6 +260,7 @@ export class Events
 	private static async execute(lsnr:EventListener, event:Event) : Promise<boolean>
 	{
 		let response:boolean = await lsnr.clazz[lsnr.method](event);
+		if (response == null) response = true;
 		return(response);
 	}
 

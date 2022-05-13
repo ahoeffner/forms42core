@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { EventType } from "../events/EventType";
+import { EventType } from "../events/EventType.js";
 import { Events, Event } from "../events/Events.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';

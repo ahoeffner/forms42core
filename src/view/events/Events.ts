@@ -30,20 +30,28 @@ export class Event
 		return(new Event(type,form));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string, record?:number) : Event
+	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string) : Event
 	{
-		return(new Event(type,form,block,field,record));
+		return(new Event(type,form,block,field));
 	}
 
-	public static newKeyEvent(type:EventType, form:Form, key:any, block?:string, field?:string, record?:number) : Event
+	public static newKeyEvent(type:EventType, form:Form, key:any, block?:string, field?:string) : Event
 	{
-		return(new Event(type,form,block,field,record,key));
+		return(new Event(type,form,block,field,key));
 	}
 
 
-	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public record?:number, public key?:any)
+	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public key?:any)
 	{
-		if (record == null) record = 0;
+	}
+
+	public toString() : string
+	{
+		let str:string = EventType[this.type];
+		if (this.block != null) str += " block: "+this.block;
+		if (this.field != null) str += " field: "+this.field;
+		if (this.key != null) str += " key: "+this.key;
+		return(str);
 	}
 }
 
@@ -56,14 +64,14 @@ export class Events
 	private static blklisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
 	private static fldlisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
 
-	public static addListener(form:Form, clazz:any, method:Function|string, filter:EventFilter|EventFilter[]) : object
+	public static addListener(form:Form, clazz:any, method:Function|string, filter?:EventFilter|EventFilter[]) : object
 	{
 		let id:object = new Object();
 		let listeners:EventListener[] = [];
 
 		if (filter == null)
 		{
-			listeners.push(new EventListener(id,form,clazz,method,filter as EventFilter));
+			listeners.push(new EventListener(id,form,clazz,method,null));
 		}
 		else if (!Array.isArray(filter))
 		{
@@ -102,7 +110,7 @@ export class Events
 	}
 
 
-	public removeListener(id:object) : void
+	public static removeListener(id:object) : void
 	{
 		let map:Map<EventType,EventListener[]> = null;
 

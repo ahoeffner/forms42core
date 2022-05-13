@@ -41,7 +41,20 @@ export class Common
         return(this.properties);
     }
 
-    public getStringValue() : any
+	// Bypasses validation
+	public setStringValue(value:string) : void
+    {
+        if (value == null) value = "";
+		let element:HTMLElement = this.field.getElement();
+
+		if (element instanceof HTMLInputElement)
+			element.value = value.trim();
+
+		this.setError(false);
+	}
+
+	// Bypasses validation
+    public getStringValue() : string
     {
         let str:string = "";
 		let element:HTMLElement = this.field.getElement();

@@ -87,7 +87,7 @@ export class Form implements CanvasComponent
         return(true);
     }
 
-	public addEventListener(method:Function|string, filter:EventFilter|EventFilter[]) : void
+	public addEventListener(method:Function|string, filter?:EventFilter|EventFilter[]) : void
 	{
 		Events.addListener(this,this,method,filter);
 	}

@@ -70,13 +70,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		return(this.element);
 	}
 
-	// Bypasses validation
-    public setStringValue(value:string) : void
-    {
-        if (value == null) value = "";
-        this.element.value = value;
-    }
-
     public override setAttributes(attributes: Map<string, any>): void
     {
         let pattern:string = null;

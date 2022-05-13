@@ -16,14 +16,15 @@ import { Field } from "./fields/Field.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Form as Interface } from '../public/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { FieldInstance } from "./fields/FieldInstance.js";
 
 
 export class Block
 {
-	private curr:number = 0;
 	private form:Form = null;
 	private name$:string = null;
-	private model$:ModelBlock = null;
+	private mdlblk:ModelBlock = null;
+	private currfld:FieldInstance = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
 
 	constructor(form:Interface,name:string)
@@ -39,19 +40,33 @@ export class Block
 		return(this.name$);
 	}
 
-	public setCurrentRow(row:number) : void
+	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>
 	{
-		if (row == -1 || row == this.curr)
-			return;
+		if (this.currfld == null)
+		{
+			this.currfld = inst;
+			return(true);
+		}
 
-		this.curr = row;
+		if (inst.row == -1 || inst.row == this.currfld.row)
+		{
+			this.currfld = inst;
+			return;
+		}
+
+		let move:boolean = await this.mdlblk.move(this.currfld.row-inst.row);
+		if (!move) this.currfld.focus();
+
+		this.currfld = inst;
 		let current:Row = this.rows.get(-1);
 
 		if (current != null)
 		{
-			this.rows.get(this.curr).getFields().forEach((fld) =>
+			this.rows.get(this.currfld.row).getFields().forEach((fld) =>
 			{current.distribute(fld,fld.getStringValue());});
 		}
+
+		return(move);
 	}
 
 	public addRow(row:Row) : void
@@ -66,7 +81,7 @@ export class Block
 
 	public linkModel() : void
 	{
-		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);
+		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
 	}
 
 	public finalize() : void
@@ -101,6 +116,6 @@ export class Block
 		let r:number = field.row.rownum;
 
 		if (r >= 0)	this.getRow(-1)?.distribute(field,value);
-		else		this.getRow(this.curr)?.distribute(field,value);
+		else		this.getRow(this.currfld.row)?.distribute(field,value);
 	}
 }

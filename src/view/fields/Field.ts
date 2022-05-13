@@ -108,16 +108,22 @@ export class Field
 		return(this.instances[0].getStringValue());
 	}
 
-	public handleEvent(inst:FieldInstance, event:Event) : void
+	public async handleEvent(inst:FieldInstance, event:Event)
 	{
 		if (event.type == "focus")
 		{
-			this.block.setCurrentRow(this.row.rownum);
+			if (await this.block.setCurrentRow(inst))
+				await this.fire(EventType.PreField);
+		}
+
+		if (event.type == "blur")
+		{
+			await this.fire(EventType.PostField);
 		}
 
 		if (event.type == "change")
 		{
-			if (!Events.raise(this.getEvent(EventType.WhenValidateField)))
+			if (!await this.fire(EventType.PostChange))
 				inst.setError(true);
 		}
 
@@ -144,8 +150,9 @@ export class Field
 		return(errors);
 	}
 
-	private getEvent(type:EventType) : FormEvent
+	private async fire(type:EventType) : Promise<boolean>
 	{
-		return(FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name,this.row.rownum));
+		let event:FormEvent = FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name)
+		return(Events.raise(event));
 	}
 }

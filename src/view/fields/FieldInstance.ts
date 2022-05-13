@@ -144,6 +144,11 @@ export class FieldInstance
 		return(this.impl.setValue(value));
 	}
 
+	public focus() : void
+	{
+		setTimeout(() => {this.impl.getElement().focus();},1);
+	}
+
 	public setError(flag:boolean) : void
 	{
 		this.impl.setError(flag);

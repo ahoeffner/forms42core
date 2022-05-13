@@ -350,8 +350,8 @@ class EventHandler implements EventListenerObject
 
     public addEvent(element:Element,event:string,handler:DynamicCall) : string
     {
+        if (event.startsWith("on")) event = event.substring(2);
         let events:Map<string,DynamicCall> = this.events.get(element);
-        if (event.toLowerCase().startsWith("on")) event = event.substring(2);
 
         if (events == null)
         {

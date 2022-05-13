@@ -61,7 +61,7 @@ export class Form
 
 	public getBlock(name:string) : Block
 	{
-		return(this.blocks.get(name.toLowerCase()));
+		return(this.blocks.get(name));
 	}
 
 	public addBlock(block:Block) : void

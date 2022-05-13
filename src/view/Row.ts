@@ -58,7 +58,7 @@ export class Row
 
 	public getField(name:string) : Field
 	{
-		return(this.fields.get(name.toLowerCase()));
+		return(this.fields.get(name));
 	}
 
 	public getFields() : Field[]
@@ -99,7 +99,6 @@ export class Row
 			}
 			else
 			{
-				id = id.toLowerCase();
 				field.getInstances().forEach((inst) =>
 				{
 					if (inst.id == id)

@@ -29,9 +29,11 @@ export class Block
 
 	constructor(form:Interface,name:string)
 	{
-		if (name == null) name = "";
+		if (name == null)
+			name = "";
+
+		this.name$ = name;
 		this.form = Form.getForm(form);
-		this.name$ = name.toLowerCase();
 		ModelBlock.create(Form.getForm(form),this);
 	}
 

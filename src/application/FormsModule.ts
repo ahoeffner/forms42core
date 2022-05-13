@@ -13,7 +13,6 @@
 import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
-import { Properties } from './Properties.js';
 import { Application } from './Application.js';
 
 export interface Component

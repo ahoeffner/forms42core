@@ -33,7 +33,7 @@ export class FieldTypes
 	public static get(type:string) : Class<FieldImplementation>
 	{
 		if (type == null) return(Input);
-		let impl:Class<FieldImplementation> = FieldTypes.exceptions.get(type.toLowerCase());
+		let impl:Class<FieldImplementation> = FieldTypes.exceptions.get(type);
 		if (impl == null) impl = Input;
 		return(impl);
 	}

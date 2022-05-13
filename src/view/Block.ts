@@ -22,6 +22,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 export class Block
 {
 	private form:Form = null;
+	private currrow:number = 0;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
 	private currfld:FieldInstance = null;
@@ -62,6 +63,7 @@ export class Block
 			return(true);
 		}
 
+		this.currrow = inst.row;
 		let move:boolean = await this.form.setCurrentBlock(inst.block);
 
 		if (!move)
@@ -144,10 +146,8 @@ export class Block
 
 	public distribute(field:Field, value:string) : void
 	{
-		let cr:number = 0;
+		let cr:number = this.currrow;
 		let fr:number = field.row.rownum;
-		
-		if (this.currfld != null) cr = this.currfld.row;
 
 		if (fr >= 0) this.getRow(-1).distribute(field,value);
 		else		 this.getRow(cr).distribute(field,value);

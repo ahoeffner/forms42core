@@ -64,7 +64,19 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		return(this.validateInput(value));
     }
 
-	public setStringValue(value:string) : void
+	private clear() : void
+	{
+		this.element.value = "";
+	}
+
+	public override getStringValue(): string
+	{
+		let value:string = this.element.value;
+		if (this.pattern == null) value = value.trim();
+		return(value);
+	}
+
+	public override setStringValue(value:string) : void
 	{
         if (value == null) value = "";
 
@@ -313,17 +325,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.type == "focus")
         {
             pos = this.pattern.findPosition(0);
-			let strval:string = this.getStringValue();
-			let ptrval:string = this.pattern.getValue();
 
-            if (strval.length == 0)
-                this.setStringValue(ptrval);
-
-			if (strval.length != 0)
-			{
-				this.pattern.setValue(strval);
-				this.setStringValue(this.pattern.getValue());
-			}
+			this.pattern.setValue(this.getStringValue());
+			this.setStringValue(this.pattern.getValue());
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
@@ -331,14 +335,20 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             return(true);
         }
 
-        if (this.event.type == "blur" || this.event.type == "change")
+        if (this.event.type == "blur" && this.pattern.isNull())
+        {
+			this.clear();
+            return(true);
+        }
+
+        if (this.event.type == "change")
         {
 			this.validateInput(this.getStringValue());
             return(true);
         }
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
-            this.setStringValue(null);
+			this.clear();
 
         if (this.event.type == "mouseup")
         {

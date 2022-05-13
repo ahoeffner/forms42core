@@ -53,7 +53,7 @@ export class Common
 		this.setError(false);
 	}
 
-	// Bypasses validation
+	// Bypasses object conversion
     public getStringValue() : string
     {
         let str:string = "";

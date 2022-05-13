@@ -14,10 +14,10 @@ import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
-import { EventType } from "../events/EventType.js";
+import { EventType } from "../../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "./BrowserEvent.js";
-import { Event as FormEvent, Events } from "../events/Events.js";
+import { Event as FormEvent, Events } from "../../events/Events.js";
 
 
 export class Field

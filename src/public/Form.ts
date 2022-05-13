@@ -10,12 +10,12 @@
  * accompanied this code).
  */
 
+import { Events } from '../events/Events.js';
 import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
-import { Events } from '../view/events/Events.js';
+import { EventFilter } from '../events/EventFilter.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
-import { EventFilter } from '../view/events/EventFilter.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 

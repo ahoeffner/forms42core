@@ -139,6 +139,11 @@ export class FieldInstance
 		return(this.impl.getStringValue());
 	}
 
+	public setStringValue(value:string) : void
+	{
+		this.impl.setStringValue(value);
+	}
+
 	public setValue(value:any) : boolean
 	{
 		return(this.impl.setValue(value));

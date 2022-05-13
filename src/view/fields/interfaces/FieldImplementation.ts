@@ -20,6 +20,7 @@ export interface FieldImplementation
     getValue() : any;
     getStringValue() : string;
     setValue(value:any) : boolean;
+	setStringValue(value:string) : void;
 
     getElement() : HTMLElement;
 

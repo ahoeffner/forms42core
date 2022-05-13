@@ -144,9 +144,12 @@ export class Block
 
 	public distribute(field:Field, value:string) : void
 	{
-		let r:number = field.row.rownum;
+		let cr:number = 0;
+		let fr:number = field.row.rownum;
+		
+		if (this.currfld != null) cr = this.currfld.row;
 
-		if (r >= 0)	this.getRow(-1)?.distribute(field,value);
-		else		this.getRow(this.currfld.row)?.distribute(field,value);
+		if (fr >= 0) this.getRow(-1).distribute(field,value);
+		else		 this.getRow(cr).distribute(field,value);
 	}
 }

@@ -53,7 +53,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public getValue() : any
     {
         let str:string = this.element.value.trim();
-		console.log("getValue "+this.instance.name+"["+this.instance.row+"] = "+str)
         if (str.length == 0) return(null);
         return(str);
     }
@@ -64,6 +63,17 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         this.element.value = value;
 		return(this.validateInput(value));
     }
+
+	public setStringValue(value:string) : void
+	{
+        if (value == null) value = "";
+
+		if (this.pattern == null) value = value.trim();
+		else value = value + this.pattern.getPlaceholder().substring(value.length);
+
+		this.element.value = value;
+		this.setError(false);
+	}
 
 	public getElement(): HTMLElement
 	{
@@ -303,9 +313,17 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.type == "focus")
         {
             pos = this.pattern.findPosition(0);
+			let strval:string = this.getStringValue();
+			let ptrval:string = this.pattern.getValue();
 
-            if (this.getStringValue().length == 0)
-                this.setStringValue(this.pattern.getValue());
+            if (strval.length == 0)
+                this.setStringValue(ptrval);
+
+			if (strval.length != 0)
+			{
+				this.pattern.setValue(strval);
+				this.setStringValue(this.pattern.getValue());
+			}
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);

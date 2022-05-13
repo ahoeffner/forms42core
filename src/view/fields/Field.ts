@@ -95,7 +95,9 @@ export class Field
 
 	public setValue(value:any) : boolean
 	{
-		return(this.distribute(null,value));
+		let status:boolean = this.instances[0].setValue(value);
+		this.distribute(this.instances[0],this.instances[0].getStringValue());
+		return(status);
 	}
 
 	public getValue() : any
@@ -140,20 +142,10 @@ export class Field
 		}
 	}
 
-	public distribute(inst:FieldInstance, value:string) : boolean
+	public distribute(inst:FieldInstance, value:string) : void
 	{
-		let errors:boolean = false;
-
 		this.instances.forEach((fi) =>
-		{
-			if (fi != inst)
-			{
-				if (!fi.setValue(value))
-					errors = true;
-			}
-		});
-
-		return(errors);
+		{if (fi != inst) fi.setStringValue(value)});
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

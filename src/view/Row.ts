@@ -19,6 +19,7 @@ export class Row
 {
 	private block$:Block = null;
 	private rownum$:number = null;
+	private validated$:boolean = true;
 	private fields:Map<string,Field> = new Map<string,Field>();
 
 	constructor(block:Block, rownum:number)
@@ -49,6 +50,16 @@ export class Row
 			fld.getInstances().forEach((inst) =>
 			{inst.row = rownum;})
 		});
+	}
+
+	public get validated() : boolean
+	{
+		return(this.validated$);
+	}
+
+	public set validated(flag:boolean)
+	{
+		this.validated$ = flag;
 	}
 
 	public addField(field:Field) : void

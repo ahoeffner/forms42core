@@ -57,9 +57,21 @@ export class Block
 		return(this.name$);
 	}
 
-	public async move(delta:number) : Promise<boolean>
+	public get validated() : boolean
 	{
+		return(this.vwblk.validated);
+	}
+
+	public async validate() : Promise<boolean>
+	{
+		if (this.vwblk.validated) return(true);
 		let cont:boolean = await this.fire(EventType.ValidateRecord);
+		return(cont);
+	}
+
+	public async change_record(delta:number) : Promise<boolean>
+	{
+		let cont:boolean = await this.validate();
 		this.current_record$ += delta;
 		return(cont);
 	}

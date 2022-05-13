@@ -11,22 +11,22 @@
  */
 
 import { Block } from './Block.js';
-import { Form as Model } from '../model/Form.js';
-import { Form as Interface } from '../public/Form.js';
+import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
+import { Form as InterfaceForm } from '../public/Form.js';
 
 export class Form
 {
-	private static views:Map<Interface,Form> =
-		new Map<Interface,Form>();
+	private static views:Map<InterfaceForm,Form> =
+		new Map<InterfaceForm,Form>();
 
-	public static clear(parent:Interface) : void
+	public static clear(parent:InterfaceForm) : void
 	{
 		Form.views.delete(parent);
 		Form.getForm(parent);
 	}
 
-	public static getForm(parent:Interface) : Form
+	public static getForm(parent:InterfaceForm) : Form
 	{
 		let frm:Form = Form.views.get(parent);
 
@@ -36,25 +36,26 @@ export class Form
 		return(frm);
 	}
 
-	public static finalize(parent:Interface) : void
+	public static finalize(parent:InterfaceForm) : void
 	{
 		let form:Form = Form.views.get(parent);
 		form.blocks.forEach((blk) => {blk.finalize();});
 		form.linkModels();
 	}
 
-	private model$:Model = null;
-	private parent$:Interface = null;
+	private mdlfrm:ModelForm = null;
+	private current_block$:Block = null;
+	private parent$:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
-	private constructor(parent:Interface)
+	private constructor(parent:InterfaceForm)
 	{
 		this.parent$ = parent;
 		Form.views.set(parent,this);
 		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.constructor.name);
 	}
 
-	public get parent() : Interface
+	public get parent() : InterfaceForm
 	{
 		return(this.parent$);
 	}
@@ -62,6 +63,23 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public async setCurrentBlock(block:string) : Promise<boolean>
+	{
+		if (this.current_block$ == null)
+		{
+			this.current_block$ = this.getBlock(block);
+			return(true);
+		}
+
+		if (this.current_block$.name == block)
+			return(true);
+
+		let cont:boolean = await this.mdlfrm.setCurrentBlock(block);
+		this.current_block$ = this.getBlock(block);
+
+		return(cont);
 	}
 
 	public addBlock(block:Block) : void
@@ -72,7 +90,7 @@ export class Form
 
 	private linkModels() : void
 	{
-		this.model$ = Model.getForm(this.parent);
+		this.mdlfrm = ModelForm.getForm(this.parent);
 		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 }

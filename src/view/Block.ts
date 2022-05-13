@@ -42,6 +42,12 @@ export class Block
 		return(this.name$);
 	}
 
+	public get validated() : boolean
+	{
+		if (this.currfld == null) return(true);
+		return(this.getRow(this.currfld.row).validated);
+	}
+
 	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>
 	{
 		if (this.currfld == null)
@@ -53,11 +59,30 @@ export class Block
 		if (inst.row == -1 || inst.row == this.currfld.row)
 		{
 			this.currfld = inst;
-			return;
+			return(true);
 		}
 
-		let move:boolean = await this.mdlblk.move(this.currfld.row-inst.row);
-		if (!move) this.currfld.focus();
+		let move:boolean = await this.form.setCurrentBlock(inst.block);
+
+		if (!move)
+		{
+			this.currfld.focus();
+			return(false);
+		}
+
+		let last:Row = this.getRow(this.currfld.row);
+
+		console.log("row "+last.rownum+" valid: "+last.validated)
+
+		move = await this.mdlblk.change_record(this.currfld.row-inst.row);
+
+		if (!move)
+		{
+			this.currfld.focus();
+			return(false);
+		}
+
+		last.validated = true;
 
 		this.currfld = inst;
 		let current:Row = this.rows.get(-1);
@@ -68,7 +93,7 @@ export class Block
 			{current.distribute(fld,fld.getStringValue());});
 		}
 
-		return(move);
+		return(true);
 	}
 
 	public addRow(row:Row) : void

@@ -123,8 +123,14 @@ export class Field
 
 		if (event.type == "change")
 		{
+			this.row.validated = false;
+
 			if (!await this.fire(EventType.PostChange))
+			{
 				inst.setError(true);
+				inst.focus();
+				return;
+			}
 		}
 
 		if (event.modified)

@@ -16,16 +16,13 @@ export class Keymap
 {
 	public static Enter:Keymap = new Keymap({key: 13, alt: true});
 
-	public static merge(map:Class<Keymap>) : void
+	public static merge(map:Class<any>) : void
 	{
 		Object.keys(map).forEach((mapped) =>
-		{KeyMapping.add(map[mapped])});
-
-		console.log("Enter: "+KeyMapping.get(Keymap.Enter.signature$).signature$);
-
-		let signature:string = "13";
-		console.log("Custom: "+KeyMapping.get(signature).signature$);
-		console.log("Custom: "+KeyMapping.get(signature).signature$);
+		{
+			if ((map[mapped] instanceof Keymap))
+				KeyMapping.add(map[mapped]);
+		});
 	}
 
 	private key$:number;
@@ -109,7 +106,6 @@ export class KeyMapping
 			signature = KeyMapping.complete(signature);
 
 		let key:Keymap = KeyMapping.map.get(signature);
-		console.log("retrieve <"+signature+"> => "+key);
 
 		if (key == null) key = KeyMapping.create(signature);
 		return(key);

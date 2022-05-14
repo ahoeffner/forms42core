@@ -10,17 +10,22 @@
  * accompanied this code).
  */
 
-import { Class } from "../types/Class";
+import { Class } from "../types/Class.js";
+import { KeyDefaults } from "./KeyDefaults.js";
 
-export class Keymap
+export class KeyMap
 {
-	public static Enter:Keymap = new Keymap({key: 13, alt: true});
+	public static set(map:Class<any>) : void
+	{
+		KeyMapping.clear();
+		KeyMap.merge(map);
+	}
 
 	public static merge(map:Class<any>) : void
 	{
 		Object.keys(map).forEach((mapped) =>
 		{
-			if ((map[mapped] instanceof Keymap))
+			if ((map[mapped] instanceof KeyMap))
 				KeyMapping.add(map[mapped]);
 		});
 	}
@@ -92,20 +97,32 @@ export interface KeyDefinition
 
 export class KeyMapping
 {
-	private static map:Map<string,Keymap> = new Map<string,Keymap>();
+	private static map:Map<string,KeyMap> = KeyMapping.init();
 
-	public static add(keymap:Keymap) : void
+	private static init() : Map<string,KeyMap>
+	{
+		KeyMapping.map = new Map<string,KeyMap>();
+		KeyMap.merge(KeyDefaults);
+		return(KeyMapping.map);
+	}
+
+	public static clear() : void
+	{
+		KeyMapping.map.clear();
+	}
+
+	public static add(keymap:KeyMap) : void
 	{
 		if (keymap != null)
 			KeyMapping.map.set(keymap.signature,keymap);
 	}
 
-	public static get(signature:string, validated?:boolean) : Keymap
+	public static get(signature:string, validated?:boolean) : KeyMap
 	{
 		if (!validated)
 			signature = KeyMapping.complete(signature);
 
-		let key:Keymap = KeyMapping.map.get(signature);
+		let key:KeyMap = KeyMapping.map.get(signature);
 
 		if (key == null) key = KeyMapping.create(signature);
 		return(key);
@@ -127,7 +144,7 @@ export class KeyMapping
 		return(signature);
 	}
 
-	private static create(signature:string) : Keymap
+	private static create(signature:string) : KeyMap
 	{
 		let pos:number = signature.indexOf('|');
 		let key:string = signature.substring(0,pos);
@@ -149,7 +166,7 @@ export class KeyMapping
 			shift: (s == 't' ? true : false),
 		};
 
-		let keymap:Keymap = new Keymap(def);
+		let keymap:KeyMap = new KeyMap(def);
 		KeyMapping.map.set(keymap.signature,keymap);
 
 		return(keymap);

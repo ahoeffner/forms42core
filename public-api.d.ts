@@ -2,10 +2,9 @@ export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 
 export { Event } from './src/events/Events.js';
+export { KeyMap } from './src/events/KeyMap.js';
 export { EventType } from './src/events/EventType.js';
 export { EventFilter } from './src/events/EventFilter.js';
-
-export { KeyMap as Keymap } from './src/events/KeyMap.js';
 
 export { Class } from './src/types/Class.js';
 export { Logger } from './src/application/Logger.js';

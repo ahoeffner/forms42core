@@ -87,7 +87,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		return(this.element);
 	}
 
-    public override setAttributes(attributes: Map<string, any>): void
+    public override setAttributes(attributes:Map<string,any>) : void
     {
         let pattern:string = null;
         let type:string = this.container.type;

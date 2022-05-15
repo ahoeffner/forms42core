@@ -15,7 +15,11 @@ import { FieldProperties } from "../FieldProperties.js";
 
 export interface FieldContainer
 {
+	id:string;
+	row:number;
 	type:string;
+	name:string;
+	block:string;
 	properties:FieldProperties;
 	handleEvent(event:BrowserEvent) : void;
 }

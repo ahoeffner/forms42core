@@ -85,16 +85,8 @@ export class Common
         return(this.attributes);
     }
 
-    public setAttributes(attributes: Map<string, any>): void
+    public setAttributes(attributes:Map<string,any>): void
     {
-		let id:string = this.field.getFieldInstance().id;
-		let name:string = this.field.getFieldInstance().name;
-		let block:string = this.field.getFieldInstance().block;
-
-		if (id.length > 0) this.setAttribute("id",id);
-		if (name.length > 0) this.setAttribute("name",name);
-		if (block.length > 0) this.setAttribute("block",block);
-
 		this.attributes = attributes;
     }
 

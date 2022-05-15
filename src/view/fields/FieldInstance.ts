@@ -77,6 +77,10 @@ export class FieldInstance implements FieldContainer
 		this.impl.initialize(this);
 		this.element$ = this.impl.getElement();
 
+		if (this.id$.length > 0) this.element$.setAttribute("id",this.id$);
+		if (this.name$.length > 0) this.element$.setAttribute("name",this.name$);
+		if (this.block$.length > 0) this.element$.setAttribute("block",this.block$);
+
 		this.field$.add(this);
 	}
 

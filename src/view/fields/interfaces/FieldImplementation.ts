@@ -23,27 +23,6 @@ export interface FieldImplementation
 
     getElement() : HTMLElement;
 
-    getStyle() : string;
-    setStyle(style:string) : void;
-
-    setClass(clazz:string) : void;
-    removeClass(clazz:string) : void;
-
-    getClasses() : string;
-    setClasses(classes:string) : void;
-
-    removeAttribute(attr:string) : void;
-    setAttribute(attr:string, value:string) : void;
-
-    getProperties() : any;
-    setProperties(properties:any) : void;
-
-    getAttributes() : Map<string,any>;
-    setAttributes(properties:Map<string,any>) : void;
-
-    getValidValues() : Set<any> | Map<any, any>
-    setValidValues(values:Set<any>|Map<any,any>) : void;
-
     enabled(flag:boolean) : void;
     readonly(flag:boolean) : void;
 

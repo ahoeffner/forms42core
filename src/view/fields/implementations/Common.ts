@@ -15,30 +15,11 @@ import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 export class Common
 {
-    private properties:any = {};
-	private body:HTMLElement = null;
     private field:FieldImplementation = null;
-    private attributes: Map<string, string> = null;
-    private values: Set<any> | Map<any, any> = null;
 
     public setImplementation(field:FieldImplementation) : void
     {
         this.field = field;
-    }
-
-    public getBody() : HTMLElement
-    {
-        return(this.body);
-    }
-
-    public setBody(body: HTMLElement) : void
-    {
-        this.body = body;
-    }
-
-    public getProperties() : any
-	{
-        return(this.properties);
     }
 
 	// Bypasses validation
@@ -65,11 +46,6 @@ export class Common
         return(str);
     }
 
-    public setProperties(properties: any) : void
-	{
-        this.properties = properties;
-    }
-
     public removeAttribute(attr:string) : void
     {
         this.field.getElement().removeAttribute(attr);
@@ -78,26 +54,6 @@ export class Common
     public setAttribute(attr:string, value:string) : void
     {
         this.field.getElement().setAttribute(attr,value);
-    }
-
-    public getAttributes(): Map<string, any>
-    {
-        return(this.attributes);
-    }
-
-    public setAttributes(attributes:Map<string,any>): void
-    {
-		this.attributes = attributes;
-    }
-
-    public getValidValues() : Set<any> | Map<any, any>
-	{
-        return(this.values);
-    }
-
-    public setValidValues(values: Set<any> | Map<any, any>) : void
-	{
-        this.values = values;
     }
 
     public setError(flag: boolean) : void

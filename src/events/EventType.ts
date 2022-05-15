@@ -2,11 +2,12 @@ export enum EventType
 {
 	Key,
     Lock,
-	NewForm,
 	Connect,
 	Disconnect,
     MouseClick,
     MouseDoubleClick,
+	PreForm,
+	PostForm,
     PreField,
     PostField,
     PostChange,

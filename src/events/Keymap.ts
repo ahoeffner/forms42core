@@ -11,22 +11,34 @@
  */
 
 import { Class } from "../types/Class.js";
-import { KeyDefaults } from "./KeyDefaults.js";
 
 export class KeyMap
 {
-	public static set(map:Class<any>) : void
-	{
-		KeyMapping.clear();
-		KeyMap.merge(map);
-	}
+	private static initialized:boolean = false;
+	public static Enter:KeyMap = new KeyMap({key: 13});
 
-	public static merge(map:Class<any>) : void
+	public static merge(map:Class<KeyMap>) : void
 	{
+		if (!KeyMap.initialized)
+		{
+			KeyMap.initialized = true;
+
+			Object.keys(KeyMap).forEach((mapped) =>
+			{
+				if (KeyMap[mapped] != null && (KeyMap[mapped] instanceof KeyMap))
+					KeyMapping.add(KeyMap[mapped]);
+			});
+		}
+
 		Object.keys(map).forEach((mapped) =>
 		{
-			if ((map[mapped] instanceof KeyMap))
-				KeyMapping.add(map[mapped]);
+			if (map[mapped] != null && (map[mapped] instanceof KeyMap))
+			{
+				let existing:KeyMap = KeyMapping.get(map[mapped].signature);
+
+				if (existing == null) KeyMapping.add(map[mapped]);
+				else map[mapped] = KeyMapping.get(map[mapped].signature);
+			}
 		});
 	}
 
@@ -84,6 +96,11 @@ export class KeyMap
 	{
 		return(this.signature$);
 	}
+
+	public toString() : string
+	{
+		return(this.signature$);
+	}
 }
 
 export interface KeyDefinition
@@ -102,7 +119,6 @@ export class KeyMapping
 	private static init() : Map<string,KeyMap>
 	{
 		KeyMapping.map = new Map<string,KeyMap>();
-		KeyMap.merge(KeyDefaults);
 		return(KeyMapping.map);
 	}
 
@@ -113,7 +129,7 @@ export class KeyMapping
 
 	public static add(keymap:KeyMap) : void
 	{
-		if (keymap != null)
+		if (keymap != null && KeyMapping.map.get(keymap.signature) == null)
 			KeyMapping.map.set(keymap.signature,keymap);
 	}
 

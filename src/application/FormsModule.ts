@@ -14,6 +14,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
+import { KeyMapping } from '../events/KeyMap.js';
 
 export interface Component
 {
@@ -79,6 +80,7 @@ export class FormsModule
 
     constructor()
     {
+		KeyMapping.init();
         FormsModule.instance = this;
         this.state.appl = new Application(this);
     }

@@ -14,22 +14,10 @@ import { Class } from "../types/Class.js";
 
 export class KeyMap
 {
-	private static initialized:boolean = false;
 	public static Enter:KeyMap = new KeyMap({key: 13});
 
-	public static merge(map:Class<KeyMap>) : void
+	public static update(map:Class<KeyMap>) : void
 	{
-		if (!KeyMap.initialized)
-		{
-			KeyMap.initialized = true;
-
-			Object.keys(KeyMap).forEach((mapped) =>
-			{
-				if (KeyMap[mapped] != null && (KeyMap[mapped] instanceof KeyMap))
-					KeyMapping.add(KeyMap[mapped]);
-			});
-		}
-
 		Object.keys(map).forEach((mapped) =>
 		{
 			if (map[mapped] != null && (map[mapped] instanceof KeyMap))
@@ -114,17 +102,17 @@ export interface KeyDefinition
 
 export class KeyMapping
 {
-	private static map:Map<string,KeyMap> = KeyMapping.init();
+	private static map:Map<string,KeyMap> = null;
 
-	private static init() : Map<string,KeyMap>
+	public static init() : void
 	{
 		KeyMapping.map = new Map<string,KeyMap>();
-		return(KeyMapping.map);
-	}
 
-	public static clear() : void
-	{
-		KeyMapping.map.clear();
+		Object.keys(KeyMap).forEach((mapped) =>
+		{
+			if (KeyMap[mapped] != null && (KeyMap[mapped] instanceof KeyMap))
+				KeyMapping.add(KeyMap[mapped]);
+		});
 	}
 
 	public static add(keymap:KeyMap) : void

@@ -3,6 +3,7 @@ export { Block } from './src/public/Block.js';
 
 export { Event } from './src/events/Events.js';
 export { KeyMap } from './src/events/KeyMap.js';
+export { KeyCodes } from './src/events/KeyCodes.js';
 export { EventType } from './src/events/EventType.js';
 export { EventFilter } from './src/events/EventFilter.js';
 

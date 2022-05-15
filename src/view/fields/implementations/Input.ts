@@ -90,7 +90,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public setAttributes(attributes:Map<string,any>) : void
     {
         let pattern:string = null;
-        let type:string = this.container.type;
+        let type:string = this.container.properties.getType();
 
         attributes.forEach((value,attr) =>
         {

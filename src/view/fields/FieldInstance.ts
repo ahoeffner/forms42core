@@ -27,7 +27,6 @@ export class FieldInstance implements FieldContainer
 	private row$:number = null;
 	private name$:string = null;
 	private field$:Field = null;
-	private type$:string = null;
 	private block$:string = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
@@ -46,7 +45,6 @@ export class FieldInstance implements FieldContainer
 
 		this.id$ = element.getAttribute("id");
 		this.name$ = element.getAttribute("name");
-		this.type$ = element.getAttribute("type");
 		this.block$ = element.getAttribute("block");
 
 		if (this.id$ == null)
@@ -54,9 +52,6 @@ export class FieldInstance implements FieldContainer
 
 		if (this.name$ == null)
 			this.name$ = "";
-
-		if (this.type$ == null)
-			this.type$ = "text";
 
 		if (this.block$ == null)
 			this.block$ = "";
@@ -66,12 +61,11 @@ export class FieldInstance implements FieldContainer
 
 		this.id$ = this.id$.toLowerCase();
 		this.name$ = this.name$.toLowerCase();
-		this.type$ = this.type$.toLowerCase();
 		this.block$ = this.block$.toLowerCase();
 		this.properties$ = new FieldProperties(element);
 		this.field$ = Field.create(form,this.block$,this.row$,this.name$);
 
-		let clazz:Class<FieldImplementation> = FieldTypes.get(this.type$);
+		let clazz:Class<FieldImplementation> = FieldTypes.get(this.properties$.getType());
 
 		this.impl = new clazz();
 		this.impl.initialize(this);
@@ -107,11 +101,6 @@ export class FieldInstance implements FieldContainer
 	public get name() : string
 	{
 		return(this.name$);
-	}
-
-	public get type() : string
-	{
-		return(this.type$);
 	}
 
 	public get block() : string

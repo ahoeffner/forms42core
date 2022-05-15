@@ -17,7 +17,6 @@ export interface FieldContainer
 {
 	id:string;
 	row:number;
-	type:string;
 	name:string;
 	block:string;
 	properties:FieldProperties;

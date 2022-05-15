@@ -13,6 +13,7 @@
 
 export class FieldProperties
 {
+	private type:string = null;
 	private styles:string[] = [];
 	private classes:string[] = [];
     private values: Set<any> | Map<any, any> = null;
@@ -21,6 +22,13 @@ export class FieldProperties
 	constructor(element:HTMLElement)
 	{
 		let skip:string[] = ["id","name","type","block","row"];
+
+		this.type = element.getAttribute("type");
+
+		if (this.type == null)
+			this.type = "text";
+
+		this.type = this.type.toLowerCase();
 
 		for (let cls of element.classList.values())
 			this.classes.push(cls);
@@ -31,6 +39,16 @@ export class FieldProperties
 			if (!skip.includes(name.toLowerCase()))
 				this.attrs.set(name,element.getAttribute(name));
 		});
+	}
+
+	public getType() : string
+	{
+		return(this.type);
+	}
+
+	public setType(type:string) : void
+	{
+		this.type = type;
 	}
 
 	public setStyle(style:any) : void

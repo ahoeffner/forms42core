@@ -11,9 +11,11 @@
  */
 
 import { BrowserEvent} from "../BrowserEvent.js";
+import { FieldProperties } from "../FieldProperties.js";
 
 export interface FieldContainer
 {
 	type:string;
+	properties:FieldProperties;
 	handleEvent(event:BrowserEvent) : void;
 }

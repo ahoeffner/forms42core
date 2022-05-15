@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
-import { FieldInstance } from "../FieldInstance";
+import { FieldContainer } from "./FieldContainer";
 
 export interface FieldImplementation
 {
-	initialize(instance:FieldInstance) : void;
+	initialize(container:FieldContainer) : void;
 
     getValue() : any;
     getStringValue() : string;

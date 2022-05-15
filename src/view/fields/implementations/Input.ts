@@ -13,7 +13,6 @@
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../BrowserEvent.js";
-import { FieldInstance } from "../FieldInstance.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
@@ -24,7 +23,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     private dec:boolean = false;
 	private pattern:Pattern = null;
     private placeholder:string = null;
-	private instance:FieldContainer = null;
+	private container:FieldContainer = null;
 
 	private element:HTMLInputElement = null;
     private event:BrowserEvent = new BrowserEvent();
@@ -34,16 +33,16 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		super();
 	}
 
-	public initialize(instance: FieldInstance): void
+	public initialize(container:FieldContainer) : void
 	{
-		this.instance = instance;
+		this.container = container;
 		this.element = document.createElement("input");
 
 		super.setImplementation(this);
 
 		this.addEvents(this.element);
-		this.setClasses(instance.properties.getClasses());
-		this.setAttributes(instance.properties.getAttributes());
+		this.setClasses(container.properties.getClasses());
+		this.setAttributes(container.properties.getAttributes());
 	}
 
     public getValue() : any
@@ -91,7 +90,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public override setAttributes(attributes: Map<string, any>): void
     {
         let pattern:string = null;
-        let type:string = this.instance.type;
+        let type:string = this.container.type;
 
         super.setAttributes(attributes);
 
@@ -212,7 +211,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		}
 
         if (buble)
-			this.instance.handleEvent(this.event);
+			this.container.handleEvent(this.event);
     }
 
     private xint() : boolean

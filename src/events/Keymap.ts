@@ -16,20 +16,6 @@ export class KeyMap
 {
 	public static Enter:KeyMap = new KeyMap({key: 13});
 
-	public static update(map:Class<KeyMap>) : void
-	{
-		Object.keys(map).forEach((mapped) =>
-		{
-			if (map[mapped] != null && (map[mapped] instanceof KeyMap))
-			{
-				let existing:KeyMap = KeyMapping.get(map[mapped].signature);
-
-				if (existing == null) KeyMapping.add(map[mapped]);
-				else map[mapped] = KeyMapping.get(map[mapped].signature);
-			}
-		});
-	}
-
 	private key$:number;
 	private alt$:boolean;
 	private ctrl$:boolean;
@@ -112,6 +98,20 @@ export class KeyMapping
 		{
 			if (KeyMap[mapped] != null && (KeyMap[mapped] instanceof KeyMap))
 				KeyMapping.add(KeyMap[mapped]);
+		});
+	}
+	
+	public static update(map:Class<KeyMap>) : void
+	{
+		Object.keys(map).forEach((mapped) =>
+		{
+			if (map[mapped] != null && (map[mapped] instanceof KeyMap))
+			{
+				let existing:KeyMap = KeyMapping.get(map[mapped].signature);
+
+				if (existing == null) KeyMapping.add(map[mapped]);
+				else map[mapped] = KeyMapping.get(map[mapped].signature);
+			}
 		});
 	}
 

@@ -14,7 +14,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
-import { KeyMapping } from '../events/KeyMap.js';
+import { KeyMap, KeyMapping } from '../events/KeyMap.js';
 
 export interface Component
 {
@@ -123,4 +123,9 @@ export class FormsModule
 		if (this.state.root == null)
             this.state.root = document.body;
     }
+
+	public updateKeyMap(map:Class<KeyMap>) : void
+	{
+		KeyMapping.update(map);
+	}
 }

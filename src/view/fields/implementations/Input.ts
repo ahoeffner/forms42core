@@ -14,6 +14,7 @@ import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../BrowserEvent.js";
 import { FieldInstance } from "../FieldInstance.js";
+import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 
@@ -23,7 +24,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     private dec:boolean = false;
 	private pattern:Pattern = null;
     private placeholder:string = null;
-	private instance:FieldInstance = null;
+	private instance:FieldContainer = null;
 
 	private element:HTMLInputElement = null;
     private event:BrowserEvent = new BrowserEvent();
@@ -43,11 +44,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.addEvents(this.element);
 		this.setClasses(instance.properties.getClasses());
 		this.setAttributes(instance.properties.getAttributes());
-	}
-
-	public getFieldInstance() : FieldInstance
-	{
-		return(this.instance);
 	}
 
     public getValue() : any

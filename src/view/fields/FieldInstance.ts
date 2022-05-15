@@ -16,17 +16,18 @@ import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "./BrowserEvent.js";
+import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 
-export class FieldInstance
+export class FieldInstance implements FieldContainer
 {
 	private form$:Form = null;
 	private id$:string = null;
 	private row$:number = null;
 	private name$:string = null;
-	private type$:string = null;
 	private field$:Field = null;
+	private type$:string = null;
 	private block$:string = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;

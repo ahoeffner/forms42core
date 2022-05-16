@@ -181,6 +181,7 @@ export class BrowserEvent
         this.mark = false;
         this.copy = false;
         this.paste = false;
+		this.navigation = false;
         this.printable$ = false;
 
         switch(this.event.type)
@@ -200,9 +201,13 @@ export class BrowserEvent
                     }
                 }
 
-                if (this.event.key == "Tab") this.navigation = true;
-                if (this.event.key == "Backspace") this.navigation = true;
+				if (this.key == "Backspace") this.ignore = false;
+                if (this.event.key == "ArrowLeft") this.ignore = true;
+                if (this.event.key == "ArrowRight") this.ignore = true;
 
+                if (this.event.key == "Tab") this.navigation = true;
+                if (this.event.key == "Enter") this.navigation = true;
+                if (this.event.key == "Escape") this.navigation = true;
                 if (this.event.key == "ArrowUp") this.navigation = true;
                 if (this.event.key == "ArrowDown") this.navigation = true;
                 if (this.event.key == "ArrowLeft") this.navigation = true;
@@ -282,6 +287,8 @@ export class BrowserEvent
                 if (this.key == "Tab") this.prevent = true;
                 if (this.key == "ArrowUp") this.prevent = true;
                 if (this.key == "ArrowDown") this.prevent = true;
+                if (this.key == "ArrowLeft") this.prevent = true;
+                if (this.key == "ArrowRight") this.prevent = true;
 
                 if (this.key.startsWith("F"))
                 {

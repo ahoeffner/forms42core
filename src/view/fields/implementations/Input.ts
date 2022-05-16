@@ -414,6 +414,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             }
         }
 
+		console.log("key: "+this.event)
         if (ignore) return(true);
 
         if (this.event.key == "Backspace" && !this.event.modifier)

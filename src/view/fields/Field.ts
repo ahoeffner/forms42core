@@ -165,7 +165,7 @@ export class Field
 			{
 				key = KeyMapping.checkBrowserEvent(event);
 				if (key != null) this.fire(null,key);
-				console.log("xxxkey: "+event);
+				console.log("key: "+key+" event: "+event);
 				return;
 			}
 		}

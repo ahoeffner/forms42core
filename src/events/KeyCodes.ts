@@ -12,18 +12,18 @@
 
 export class KeyCodes
 {
-    static backspace    : number =  8;
-    static tab          : number =  9;
-    static enter        : number = 13;
-    static escape       : number = 27;
-    static pageup       : number = 33;
-    static pagedown     : number = 34;
-    static end          : number = 35;
-    static home         : number = 36;
-    static up           : number = 38;
-    static down         : number = 40;
-    static left         : number = 37;
-    static right        : number = 39;
+    static Backspace    : number =  8;
+    static Tab          : number =  9;
+    static Enter        : number = 13;
+    static Escape       : number = 27;
+    static PageUp       : number = 33;
+    static PageDown     : number = 34;
+    static End          : number = 35;
+    static Home         : number = 36;
+    static ArrowUp      : number = 38;
+    static ArrowDown    : number = 40;
+    static ArrowLeft    : number = 37;
+    static ArrowRight   : number = 39;
     static insert       : number = 45;
     static delete       : number = 46;
     static f1           : number = 112;
@@ -42,6 +42,7 @@ export class KeyCodes
 	static code(char:string) : number
 	{
 		if (char == null) return(null);
+		console.log("KeyCodes: "+char.toLowerCase());
 		let numval:number = KeyCodes[char.toLowerCase()];
 
 		if (numval) return(numval);

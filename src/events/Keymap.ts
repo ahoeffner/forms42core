@@ -20,9 +20,9 @@ export class KeyMap
 	public static undo:KeyMap = new KeyMap({key: -2});
 	public static paste:KeyMap = new KeyMap({key: -3});
 
-	public static enter:KeyMap = new KeyMap({key: KeyCodes.enter});
-	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.tab});
-	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.tab, shift: true});
+	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
+	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.Tab});
+	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.Tab, shift: true});
 
 	private key$:number;
 	private alt$:boolean;

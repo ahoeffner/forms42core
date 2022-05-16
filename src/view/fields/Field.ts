@@ -17,6 +17,7 @@ import { FieldInstance } from "./FieldInstance.js";
 import { EventType } from "../../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
+import { KeyMap, KeyMapping } from "../../events/KeyMap.js";
 import { Event as FormEvent, Events } from "../../events/Events.js";
 
 
@@ -143,8 +144,14 @@ export class Field
 
 		if (event.ctrlkey != null || event.funckey != null)
 		{
-			if (event.mark) console.log("mark");
-			console.log(event.key+" alt: "+event.alt+" ctrl: "+event.ctrl+" meta: "+event.meta+" shift: "+event.shift);
+			let key:KeyMap = null;
+
+			if (event.undo) key = KeyMap.undo;
+			else if (event.copy) key = KeyMap.copy;
+			else if (event.paste) key = KeyMap.paste;
+			else key = KeyMapping.parseBrowserEvent(event);
+
+			console.log(key);
 		}
 	}
 

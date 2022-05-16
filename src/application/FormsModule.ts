@@ -82,6 +82,7 @@ export class FormsModule
 	public static platform() : string
 	{
 		let plf:string = navigator.platform;
+		if (plf == null) throw "@FormModule: Unable to detect platform";
 		return(plf);
 	}
 

@@ -208,6 +208,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			this.event.modified = true;
 		}
 
+		if (this.event.mark)
+			buble = false;
+
         if (buble)
 			this.container.handleEvent(this.event);
     }

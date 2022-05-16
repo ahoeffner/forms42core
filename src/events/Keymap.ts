@@ -10,11 +10,19 @@
  * accompanied this code).
  */
 
+import { KeyCodes } from "./KeyCodes.js";
 import { Class } from "../types/Class.js";
+import { BrowserEvent } from "../view/BrowserEvent.js";
 
 export class KeyMap
 {
-	public static Enter:KeyMap = new KeyMap({key: 13});
+	public static copy:KeyMap = new KeyMap({key: -1});
+	public static undo:KeyMap = new KeyMap({key: -2});
+	public static paste:KeyMap = new KeyMap({key: -3});
+
+	public static enter:KeyMap = new KeyMap({key: KeyCodes.enter});
+	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.tab});
+	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.tab, shift: true});
 
 	private key$:number;
 	private alt$:boolean;
@@ -100,7 +108,7 @@ export class KeyMapping
 				KeyMapping.add(KeyMap[mapped]);
 		});
 	}
-	
+
 	public static update(map:Class<KeyMap>) : void
 	{
 		Object.keys(map).forEach((mapped) =>
@@ -130,6 +138,18 @@ export class KeyMapping
 
 		if (key == null) key = KeyMapping.create(signature);
 		return(key);
+	}
+
+	public static parseBrowserEvent(event:BrowserEvent) : KeyMap
+	{
+		let signature:string = event.key+"|";
+
+		signature += event.alt ? 't' : 'f';
+		signature += event.ctrl ? 't' : 'f';
+		signature += event.meta ? 't' : 'f';
+		signature += event.shift ? 't' : 'f';
+
+		return(KeyMapping.get(signature,true));
 	}
 
 	private static complete(signature:string) : string

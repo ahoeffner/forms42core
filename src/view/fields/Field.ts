@@ -19,6 +19,7 @@ import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { KeyMap, KeyMapping } from "../../events/KeyMap.js";
 import { Event as FormEvent, Events } from "../../events/Events.js";
+import { KeyCodes } from "../../events/KeyCodes.js";
 
 
 export class Field
@@ -113,15 +114,19 @@ export class Field
 
 	public async handleEvent(inst:FieldInstance, event:Event)
 	{
+		let key:KeyMap = null;
+
 		if (event.type == "focus")
 		{
 			if (await this.block.setCurrentRow(inst))
 				await this.fire(EventType.PreField);
-		}
+			return;
+			}
 
 		if (event.type == "blur")
 		{
 			await this.fire(EventType.PostField);
+			return;
 		}
 
 		if (event.type == "change")
@@ -132,26 +137,37 @@ export class Field
 			{
 				inst.setError(true);
 				inst.focus();
-				return;
 			}
+
+			return;
 		}
 
 		if (event.modified)
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
+			return;
 		}
 
-		if (event.ctrlkey != null || event.funckey != null)
+		if (event.type.startsWith("key"))
 		{
-			let key:KeyMap = null;
+			if (event.ctrlkey != null || event.funckey != null)
+			{
+				if (event.undo) key = KeyMap.undo;
+				else if (event.copy) key = KeyMap.copy;
+				else if (event.paste) key = KeyMap.paste;
+				else key = KeyMapping.parseBrowserEvent(event);
 
-			if (event.undo) key = KeyMap.undo;
-			else if (event.copy) key = KeyMap.copy;
-			else if (event.paste) key = KeyMap.paste;
-			else key = KeyMapping.parseBrowserEvent(event);
-
-			console.log(key);
+				this.fire(null,key);
+				return;
+			}
+			else
+			{
+				key = KeyMapping.checkBrowserEvent(event);
+				if (key != null) this.fire(null,key);
+				console.log("xxxkey: "+event);
+				return;
+			}
 		}
 	}
 
@@ -161,9 +177,11 @@ export class Field
 		{if (fi != inst) fi.setStringValue(value)});
 	}
 
-	private async fire(type:EventType) : Promise<boolean>
+	private async fire(type:EventType, key?:KeyMap) : Promise<boolean>
 	{
-		let event:FormEvent = FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name)
+		let event:FormEvent = null;
+		if (key != null) event = FormEvent.newKeyEvent(this.form$,key,this.block.name,this.name);
+		else			 event = FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name);
 		return(Events.raise(event));
 	}
 }

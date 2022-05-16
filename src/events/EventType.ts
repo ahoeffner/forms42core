@@ -15,8 +15,6 @@ export enum EventType
     NextField,
     PreviousBlock,
     NextBlock,
-    KeyEnterQuery,
-    KeyExecuteQuery,
     ValidateRecord,
     OnNewRecord,
     PreQuery,

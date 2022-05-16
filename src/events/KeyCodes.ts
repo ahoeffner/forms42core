@@ -38,4 +38,13 @@ export class KeyCodes
     static f10          : number = 121;
     static f11          : number = 122;
     static f12          : number = 123;
+
+	static code(char:string) : number
+	{
+		if (char == null) return(null);
+		let numval:number = KeyCodes[char.toLowerCase()];
+
+		if (numval) return(numval);
+		else return(char.charCodeAt(0));
+	}
 }

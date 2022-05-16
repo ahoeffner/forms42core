@@ -142,14 +142,29 @@ export class KeyMapping
 
 	public static parseBrowserEvent(event:BrowserEvent) : KeyMap
 	{
-		let signature:string = event.key+"|";
+		let key:number = KeyCodes.code(event.key);
 
+		let signature:string = key+"|";
 		signature += event.alt ? 't' : 'f';
 		signature += event.ctrl ? 't' : 'f';
 		signature += event.meta ? 't' : 'f';
 		signature += event.shift ? 't' : 'f';
 
 		return(KeyMapping.get(signature,true));
+	}
+
+	public static checkBrowserEvent(event:BrowserEvent) : KeyMap
+	{
+		let key:number = KeyCodes.code(event.key);
+		if (key == null) return(null);
+
+		let signature:string = key+"|";
+		signature += event.alt ? 't' : 'f';
+		signature += event.ctrl ? 't' : 'f';
+		signature += event.meta ? 't' : 'f';
+		signature += event.shift ? 't' : 'f';
+
+		return(KeyMapping.map.get(signature));
 	}
 
 	private static complete(signature:string) : string

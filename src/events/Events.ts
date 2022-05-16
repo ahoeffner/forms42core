@@ -36,9 +36,9 @@ export class Event
 		return(new Event(type,form,block,field));
 	}
 
-	public static newKeyEvent(type:EventType, form:Form, key:KeyMap, block?:string, field?:string) : Event
+	public static newKeyEvent(form:Form, key:KeyMap, block?:string, field?:string) : Event
 	{
-		return(new Event(type,form,block,field,key));
+		return(new Event(EventType.Key,form,block,field,key));
 	}
 
 

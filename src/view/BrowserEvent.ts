@@ -35,6 +35,7 @@ export class BrowserEvent
     public mousedown:boolean = false;
     public mouseinit:boolean = false;
     public mousemark:boolean = false;
+    public navigation:boolean = false;
     public printable$:boolean = false;
 
     public alt:boolean = false;
@@ -90,6 +91,7 @@ export class BrowserEvent
         this.prevent = false;
         this.modified = false;
         this.mouseinit = false;
+        this.navigation = false;
         this.printable$ = false;
 
         this.ctrlkey = null;
@@ -193,15 +195,18 @@ export class BrowserEvent
                     {
                         this.ignore = false;
                         this.printable$ = true;
+						this.navigation = false;
                         this.key = this.event.key;
                     }
                 }
 
-                if (this.key.startsWith("F")) this.ignore = false;
+                if (this.event.key == "Tab") this.navigation = true;
+                if (this.event.key == "Backspace") this.navigation = true;
 
-                if (this.event.key == "Backspace") this.ignore = false;
-                if (this.event.key == "ArrowLeft") this.ignore = false;
-                if (this.event.key == "ArrowRight") this.ignore = false;
+                if (this.event.key == "ArrowUp") this.navigation = true;
+                if (this.event.key == "ArrowDown") this.navigation = true;
+                if (this.event.key == "ArrowLeft") this.navigation = true;
+                if (this.event.key == "ArrowRight") this.navigation = true;
 
                 if (this.event.key == "Alt") {this.ignore = true; this.alt = false;}
                 if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}
@@ -209,12 +214,14 @@ export class BrowserEvent
                 if (this.event.key == "Control") {this.ignore = true; this.ctrl = false;}
 
                 if (this.ctrlkey != null) this.ignore = false;
+                if (this.key != null && this.key.startsWith("F")) this.ignore = false;
 
             break;
 
             case "keypress":
 
                 this.ignore = true;
+				this.navigation = false;
                 this.key = this.event.key;
 
                 if (this.event.key.length == 1)
@@ -226,6 +233,7 @@ export class BrowserEvent
 
                 this.ignore = true;
                 this.prevent = false;
+				this.navigation = false;
                 this.printable$ = false;
 
                 this.repeat$ = (this.dseq != this.useq && this.event.key == this.key);
@@ -287,6 +295,7 @@ export class BrowserEvent
                 this.key = null;
                 this.ignore = true;
                 this.prevent = false;
+				this.navigation = false;
                 this.printable$ = false;
             break;
         }
@@ -316,6 +325,6 @@ export class BrowserEvent
 
     public toString() : string
     {
-        return(this.type+" prevent: "+this.prevent+" ignore: "+this.ignore+" printable: "+this.printable+" key: "+this.key+" repeat: "+this.repeat);
+        return(this.type+" prevent: "+this.prevent+" ignore: "+this.ignore+" printable: "+this.printable+" key: "+this.key+" navigation: "+this.navigation);
     }
 }

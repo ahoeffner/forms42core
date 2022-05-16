@@ -174,13 +174,10 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 return;
         }
 
-        if (this.event.ignore)
-            return;
+		if (this.event.navigation) buble = true;
+		else if (this.event.ignore) return;
 
 		if (event.type == "change")
-			buble = true;
-
-		if (this.event.isPrintableKey)
 			buble = true;
 
 		if (this.event.type.startsWith("mouse"))

@@ -202,16 +202,14 @@ export class BrowserEvent
                 }
 
 				if (this.key == "Backspace") this.ignore = false;
-                if (this.event.key == "ArrowLeft") this.ignore = true;
-                if (this.event.key == "ArrowRight") this.ignore = true;
+                if (this.event.key == "ArrowLeft") this.ignore = false;
+                if (this.event.key == "ArrowRight") this.ignore = false;
 
                 if (this.event.key == "Tab") this.navigation = true;
                 if (this.event.key == "Enter") this.navigation = true;
                 if (this.event.key == "Escape") this.navigation = true;
                 if (this.event.key == "ArrowUp") this.navigation = true;
                 if (this.event.key == "ArrowDown") this.navigation = true;
-                if (this.event.key == "ArrowLeft") this.navigation = true;
-                if (this.event.key == "ArrowRight") this.navigation = true;
 
                 if (this.event.key == "Alt") {this.ignore = true; this.alt = false;}
                 if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}

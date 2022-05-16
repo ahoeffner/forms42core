@@ -24,8 +24,8 @@ export class KeyCodes
     static ArrowDown    : number = 40;
     static ArrowLeft    : number = 37;
     static ArrowRight   : number = 39;
-    static insert       : number = 45;
-    static delete       : number = 46;
+    static Insert       : number = 45;
+    static Delete       : number = 46;
     static f1           : number = 112;
     static f2           : number = 113;
     static f3           : number = 114;

@@ -12,7 +12,7 @@
 
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
-import { BrowserEvent } from "../BrowserEvent.js";
+import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
@@ -236,7 +236,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 }
             }
 
-            return(false);
+			if (this.event.ctrlkey == null && this.event.funckey == null)
+				return(false);
         }
 
 		if (this.event.type == "blur" || this.event.type == "change")

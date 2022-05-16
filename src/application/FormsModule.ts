@@ -78,6 +78,13 @@ export class FormsModule
         return(FormsModule.instance);
     }
 
+
+	public static platform() : string
+	{
+		let plf:string = navigator.platform;
+		return(plf);
+	}
+
     constructor()
     {
 		KeyMapping.init();

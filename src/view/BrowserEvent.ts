@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { FormsModule } from "../application/FormsModule.js";
+
 export class BrowserEvent
 {
     private event$:any;
@@ -22,6 +24,7 @@ export class BrowserEvent
     public ctrlkey:string = null;
     public funckey:string = null;
 
+    public mark:boolean = false;
     public undo:boolean = false;
     public copy:boolean = false;
     public paste:boolean = false;
@@ -38,6 +41,19 @@ export class BrowserEvent
     public ctrl:boolean = false;
     public meta:boolean = false;
     public shift:boolean = false;
+
+	public static ctrmod:string = BrowserEvent.detect();
+
+	private static detect() : string
+	{
+		let os:string = FormsModule.platform();
+
+		if (os.startsWith("Mac"))
+			return("meta");
+
+		return("ctrl");
+	}
+
 
     public setEvent(event:any) : void
     {
@@ -65,6 +81,7 @@ export class BrowserEvent
         this.alt = false;
         this.meta = false;
         this.ctrl = false;
+        this.mark = false;
         this.undo = false;
         this.copy = false;
         this.paste = false;
@@ -159,6 +176,7 @@ export class BrowserEvent
     private KeyEvent() : void
     {
         this.undo = false;
+        this.mark = false;
         this.copy = false;
         this.paste = false;
         this.printable$ = false;
@@ -238,9 +256,14 @@ export class BrowserEvent
                         default : this.prevent = true;
                     }
 
-					if (this.key == 'c') this.copy = true;
-					if (this.key == 'z') this.undo = true;
-					if (this.key == 'v') this.paste = true;
+					let mod:Boolean = false;
+					if (BrowserEvent.ctrmod == "ctrl" && this.ctrl) mod = true;
+					if (BrowserEvent.ctrmod == "meta" && this.meta) mod = true;
+
+					if (mod && this.key == 'a') this.mark = true;
+					if (mod && this.key == 'c') this.copy = true;
+					if (mod && this.key == 'z') this.undo = true;
+					if (mod && this.key == 'v') this.paste = true;
 				}
 
                 if (this.key == "Alt") this.alt = true;

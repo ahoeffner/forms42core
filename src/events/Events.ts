@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { KeyMap } from "./KeyMap.js";
 import { Form } from "../public/Form.js";
 import { EventType } from "./EventType.js";
 import { EventFilter } from "./EventFilter.js";
@@ -19,7 +20,7 @@ import { EventListener } from "./EventListener.js";
 
 export class KeyEventSource
 {
-	constructor(public key:any, public field:string, public block:string, public record:number, public form:Form) {}
+	constructor(public key:KeyMap, public field:string, public block:string, public record:number, public form:Form) {}
 }
 
 
@@ -35,13 +36,13 @@ export class Event
 		return(new Event(type,form,block,field));
 	}
 
-	public static newKeyEvent(type:EventType, form:Form, key:any, block?:string, field?:string) : Event
+	public static newKeyEvent(type:EventType, form:Form, key:KeyMap, block?:string, field?:string) : Event
 	{
 		return(new Event(type,form,block,field,key));
 	}
 
 
-	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public key?:any)
+	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public key?:KeyMap)
 	{
 	}
 

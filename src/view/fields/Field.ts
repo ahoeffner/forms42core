@@ -16,7 +16,7 @@ import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { EventType } from "../../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
-import { BrowserEvent as Event} from "./BrowserEvent.js";
+import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { Event as FormEvent, Events } from "../../events/Events.js";
 
 
@@ -139,6 +139,12 @@ export class Field
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
+		}
+
+		if (event.ctrlkey != null || event.funckey != null)
+		{
+			if (event.mark) console.log("mark");
+			console.log(event.key+" alt: "+event.alt+" ctrl: "+event.ctrl+" meta: "+event.meta+" shift: "+event.shift);
 		}
 	}
 

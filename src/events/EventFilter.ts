@@ -10,13 +10,14 @@
  * accompanied this code).
  */
 
+import { KeyMap } from "./KeyMap.js";
 import { EventType } from "./EventType.js";
 
 export interface EventFilter
 {
 	type:EventType;
 
-	key?:any;
+	key?:KeyMap;
 	field?:string;
 	block?:string;
 }

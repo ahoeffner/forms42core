@@ -15,7 +15,7 @@ import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { FieldProperties } from "./FieldProperties.js";
-import { BrowserEvent as Event} from "./BrowserEvent.js";
+import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 

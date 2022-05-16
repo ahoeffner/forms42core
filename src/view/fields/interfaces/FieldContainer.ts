@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { BrowserEvent} from "../BrowserEvent.js";
+import { BrowserEvent} from "../../BrowserEvent.js";
 import { FieldProperties } from "../FieldProperties.js";
 
 export interface FieldContainer

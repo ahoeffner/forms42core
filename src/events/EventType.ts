@@ -1,25 +1,32 @@
 export enum EventType
 {
 	Key,
-    Lock,
+	Mouse,
+
 	Connect,
 	Disconnect,
-    MouseClick,
-    MouseDoubleClick,
+
 	PreForm,
 	PostForm,
+
     PreField,
     PostField,
-    PostChange,
-    PreviousField,
+	PostChange,
+
     NextField,
-    PreviousBlock,
     NextBlock,
-    ValidateRecord,
-    OnNewRecord,
-    PreQuery,
+	PreviousField,
+    PreviousBlock,
+
+    PreRecord,
+    PostRecord,
+
+	PreQuery,
     PostQuery,
     PreInsert,
     PreUpdate,
-    PreDelete
+    PreDelete,
+
+    LockRecord,
+	ValidateRecord
 }

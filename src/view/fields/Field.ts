@@ -19,7 +19,6 @@ import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { KeyMap, KeyMapping } from "../../events/KeyMap.js";
 import { Event as FormEvent, Events } from "../../events/Events.js";
-import { KeyCodes } from "../../events/KeyCodes.js";
 
 
 export class Field

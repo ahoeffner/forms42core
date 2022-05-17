@@ -42,9 +42,8 @@ export class KeyCodes
 	static code(char:string) : number
 	{
 		if (char == null) return(null);
-		console.log("KeyCodes: "+char.toLowerCase());
-		let numval:number = KeyCodes[char.toLowerCase()];
-
+		let numval:number = KeyCodes[char];
+		
 		if (numval) return(numval);
 		else return(char.charCodeAt(0));
 	}

@@ -11,6 +11,8 @@ export enum EventType
 
     PreField,
     PostField,
+
+	Editing,
 	PostChange,
 
     NextField,
@@ -23,9 +25,15 @@ export enum EventType
 
 	PreQuery,
     PostQuery,
+
     PreInsert,
+    PostInsert,
+
     PreUpdate,
+    PostUpdate,
+
     PreDelete,
+    PostDelete,
 
     LockRecord,
 	ValidateRecord

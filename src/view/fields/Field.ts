@@ -150,6 +150,7 @@ export class Field
 
 		if (event.modified)
 		{
+			this.fire(EventType.Editing);
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
 			return;

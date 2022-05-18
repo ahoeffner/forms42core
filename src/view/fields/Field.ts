@@ -155,7 +155,7 @@ export class Field
 			return;
 		}
 
-		if (event.type.startsWith("key"))
+		if (event.type.startsWith("key") && !event.navigation)
 		{
 			if (event.ctrlkey != null || event.funckey != null)
 			{
@@ -173,6 +173,13 @@ export class Field
 				if (key != null) this.fire(null,key);
 				return;
 			}
+		}
+
+		if (event.navigation)
+		{
+			key = KeyMapping.parseBrowserEvent(event);
+			this.block.navigate(key,inst);
+			return;
 		}
 	}
 

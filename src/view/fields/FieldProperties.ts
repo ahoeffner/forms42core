@@ -62,7 +62,7 @@ export class FieldProperties
 	public removeStyle(style:any) : void
 	{
 		style = style.toLowerCase();
-		delete this.styles[style];
+		delete this.styles[this.styles.indexOf(style)];
 	}
 
 	public setClass(clazz:any) : void
@@ -76,7 +76,7 @@ export class FieldProperties
 	public removeClass(clazz:any) : void
 	{
 		clazz = clazz.toLowerCase();
-		delete this.classes[clazz];
+		delete this.classes[this.classes.indexOf(clazz)];
 	}
 
 	public setAttribute(attr:string, value:string) : void

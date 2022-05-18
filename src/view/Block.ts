@@ -13,6 +13,7 @@
 import { Row } from "./Row.js";
 import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
+import { KeyMap } from "../events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Form as Interface } from '../public/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -52,6 +53,22 @@ export class Block
 	{
 		if (this.currfld == null) return(true);
 		return(this.getRow(this.currfld.row).validated);
+	}
+
+	public navigate(key:KeyMap, inst:FieldInstance) : void
+	{
+		let next:FieldInstance = null;
+
+		switch(key)
+		{
+			case KeyMap.nextfield :
+			{
+				next = inst.field.row.nextField(inst)
+				break;
+			}
+		}
+
+		next.focus();
 	}
 
 	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>

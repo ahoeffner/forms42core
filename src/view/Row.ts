@@ -73,6 +73,17 @@ export class Row
 		this.instances.push(instance);
 	}
 
+	public nextField(inst:FieldInstance) : FieldInstance
+	{
+		let pos:number = this.instances.indexOf(inst);
+		return(this.instances[pos%this.instances.length]);
+	}
+
+	public isFirstField(inst:FieldInstance) : boolean
+	{
+		return(inst == this.instances[0]);
+	}
+
 	public getField(name:string) : Field
 	{
 		return(this.fields.get(name));

@@ -14,11 +14,15 @@ import { Block } from './Block.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
+import { FieldInstance } from './fields/FieldInstance.js';
 
 export class Form
 {
 	private static views:Map<InterfaceForm,Form> =
 		new Map<InterfaceForm,Form>();
+
+	private instances:Map<HTMLElement,FieldInstance> =
+		new Map<HTMLElement,FieldInstance>();
 
 	public static clear(parent:InterfaceForm) : void
 	{
@@ -63,6 +67,22 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public addInstance(instance:FieldInstance) : void
+	{
+		this.instances.set(instance.element,instance);
+	}
+
+	public deleteInstance(instance:FieldInstance) : void
+	{
+		this.instances.delete(instance.element);
+	}
+
+	public reindexInstance(fr:HTMLElement, instance:FieldInstance) : void
+	{
+		this.instances.delete(fr);
+		this.addInstance(instance);
 	}
 
 	public async setCurrentBlock(block:string) : Promise<boolean>

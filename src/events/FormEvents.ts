@@ -24,21 +24,21 @@ export class KeyEventSource
 }
 
 
-export class Event
+export class FormEvent
 {
-	public static newFormEvent(type:EventType, form:Form) : Event
+	public static newFormEvent(type:EventType, form:Form) : FormEvent
 	{
-		return(new Event(type,form));
+		return(new FormEvent(type,form));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string) : Event
+	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string) : FormEvent
 	{
-		return(new Event(type,form,block,field));
+		return(new FormEvent(type,form,block,field));
 	}
 
-	public static newKeyEvent(form:Form, key:KeyMap, block?:string, field?:string) : Event
+	public static newKeyEvent(form:Form, key:KeyMap, block?:string, field?:string) : FormEvent
 	{
-		return(new Event(EventType.Key,form,block,field,key));
+		return(new FormEvent(EventType.Key,form,block,field,key));
 	}
 
 
@@ -57,7 +57,7 @@ export class Event
 }
 
 
-export class Events
+export class FormEvents
 {
 	private static listeners:EventListener[] = [];
 	private static applisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
@@ -98,13 +98,13 @@ export class Events
 
 				switch(ltype)
 				{
-					case 0: Events.add(lsnr.filter.type,lsnr,Events.applisteners); break;
-					case 1: Events.add(lsnr.filter.type,lsnr,Events.frmlisteners); break;
-					case 2: Events.add(lsnr.filter.type,lsnr,Events.blklisteners); break;
-					case 3: Events.add(lsnr.filter.type,lsnr,Events.fldlisteners); break;
+					case 0: FormEvents.add(lsnr.filter.type,lsnr,FormEvents.applisteners); break;
+					case 1: FormEvents.add(lsnr.filter.type,lsnr,FormEvents.frmlisteners); break;
+					case 2: FormEvents.add(lsnr.filter.type,lsnr,FormEvents.blklisteners); break;
+					case 3: FormEvents.add(lsnr.filter.type,lsnr,FormEvents.fldlisteners); break;
 				}
 			}
-			else Events.listeners.push(lsnr);
+			else FormEvents.listeners.push(lsnr);
 		});
 
 		return(id);
@@ -115,13 +115,13 @@ export class Events
 	{
 		let map:Map<EventType,EventListener[]> = null;
 
-		for (let i = 0; i < Events.listeners.length; i++)
+		for (let i = 0; i < FormEvents.listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.listeners[i];
+			let lsnr:EventListener = FormEvents.listeners[i];
 
 			if (lsnr.id == id)
 			{
-				delete Events.listeners[i];
+				delete FormEvents.listeners[i];
 				break;
 			}
 		}
@@ -130,10 +130,10 @@ export class Events
 		{
 			switch(m)
 			{
-				case 0: map = Events.fldlisteners; break;
-				case 1: map = Events.blklisteners; break;
-				case 2: map = Events.frmlisteners; break;
-				case 3: map = Events.applisteners; break;
+				case 0: map = FormEvents.fldlisteners; break;
+				case 1: map = FormEvents.blklisteners; break;
+				case 2: map = FormEvents.frmlisteners; break;
+				case 3: map = FormEvents.applisteners; break;
 			}
 
 			for(let key of map.keys())
@@ -158,7 +158,7 @@ export class Events
 	}
 
 
-	public static async raise(event:Event) : Promise<boolean>
+	public static async raise(event:FormEvent) : Promise<boolean>
 	{
 		let listeners:EventListener[] = null;
 
@@ -171,7 +171,7 @@ export class Events
 		let done:Set<object> = new Set<object>();
 
 		// Field Listeners
-		listeners = Events.fldlisteners.get(event.type);
+		listeners = FormEvents.fldlisteners.get(event.type);
 		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
@@ -179,17 +179,17 @@ export class Events
 			if (done.has(lsnr.id))
 				continue;
 
-			if (Events.match(event,lsnr))
+			if (FormEvents.match(event,lsnr))
 			{
 				done.add(lsnr.id);
 
-				if (!(await Events.execute(lsnr,event)))
+				if (!(await FormEvents.execute(lsnr,event)))
 					return(false);
 			}
 		}
 
 		// Block Listeners
-		listeners = Events.blklisteners.get(event.type);
+		listeners = FormEvents.blklisteners.get(event.type);
 		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
@@ -197,17 +197,17 @@ export class Events
 			if (done.has(lsnr.id))
 				continue;
 
-			if (Events.match(event,lsnr))
+			if (FormEvents.match(event,lsnr))
 			{
 				done.add(lsnr.id);
 
-				if (!(await Events.execute(lsnr,event)))
+				if (!(await FormEvents.execute(lsnr,event)))
 					return(false);
 			}
 		}
 
 		// Form Listeners
-		listeners = Events.frmlisteners.get(event.type);
+		listeners = FormEvents.frmlisteners.get(event.type);
 		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
@@ -215,17 +215,17 @@ export class Events
 			if (done.has(lsnr.id))
 				continue;
 
-			if (Events.match(event,lsnr))
+			if (FormEvents.match(event,lsnr))
 			{
 				done.add(lsnr.id);
 
-				if (!(await Events.execute(lsnr,event)))
+				if (!(await FormEvents.execute(lsnr,event)))
 					return(false);
 			}
 		}
 
 		// App Listeners
-		listeners = Events.applisteners.get(event.type);
+		listeners = FormEvents.applisteners.get(event.type);
 		for (let i = 0; listeners != null && i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
@@ -233,23 +233,23 @@ export class Events
 			if (done.has(lsnr.id))
 				continue;
 
-			if (Events.match(event,lsnr))
+			if (FormEvents.match(event,lsnr))
 			{
 				done.add(lsnr.id);
 
-				if (!(await Events.execute(lsnr,event)))
+				if (!(await FormEvents.execute(lsnr,event)))
 					return(false);
 			}
 		}
 
-		for (let i = 0; i < Events.listeners.length; i++)
+		for (let i = 0; i < FormEvents.listeners.length; i++)
 		{
-			let lsnr:EventListener = Events.listeners[i];
+			let lsnr:EventListener = FormEvents.listeners[i];
 			if (!done.has(lsnr))
 			{
 				done.add(lsnr.id);
 
-				if (!(await Events.execute(lsnr,event)))
+				if (!(await FormEvents.execute(lsnr,event)))
 					return(false);
 			}
 		}
@@ -258,7 +258,7 @@ export class Events
 	}
 
 
-	private static async execute(lsnr:EventListener, event:Event) : Promise<boolean>
+	private static async execute(lsnr:EventListener, event:FormEvent) : Promise<boolean>
 	{
 		let response:boolean = await lsnr.clazz[lsnr.method](event);
 		if (response == null) response = true;
@@ -266,7 +266,7 @@ export class Events
 	}
 
 
-	private static match(event:Event, lsnr:EventListener) : boolean
+	private static match(event:FormEvent, lsnr:EventListener) : boolean
 	{
 		if (lsnr.form != null && lsnr.form != event.form)
 			return(false);

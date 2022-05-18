@@ -75,7 +75,7 @@ export class FieldInstance implements FieldContainer
 		if (this.name$.length > 0) this.element$.setAttribute("name",this.name$);
 		if (this.block$.length > 0) this.element$.setAttribute("block",this.block$);
 
-		this.field$.add(this);
+		this.field$.addInstance(this);
 	}
 
 	public get id() : string
@@ -151,6 +151,18 @@ export class FieldInstance implements FieldContainer
 	public setError(flag:boolean) : void
 	{
 		this.impl.setError(flag);
+	}
+
+	public setInstanceType(type:string) : void
+	{
+		let element:HTMLElement = this.element;
+		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
+
+		this.impl = new clazz();
+		this.impl.initialize(this);
+		this.element$ = this.impl.getElement();
+
+		this.field.reindexInstance(element,this);
 	}
 
 	public handleEvent(event:Event) : void

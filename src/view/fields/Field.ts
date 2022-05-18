@@ -18,7 +18,7 @@ import { EventType } from "../../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { KeyMap, KeyMapping } from "../../events/KeyMap.js";
-import { Event as FormEvent, Events } from "../../events/Events.js";
+import { FormEvent as FormEvent, FormEvents } from "../../events/FormEvents.js";
 
 
 export class Field
@@ -84,9 +84,16 @@ export class Field
 		return(this.block$);
 	}
 
-	public add(instance:FieldInstance) : void
+	public addInstance(instance:FieldInstance) : void
 	{
 		this.instances.push(instance);
+		this.row.addInstance(instance);
+		this.block.form.addInstance(instance);
+	}
+
+	public reindexInstance(fr:HTMLElement, instance:FieldInstance) : void
+	{
+		this.block.form.reindexInstance(fr,instance);
 	}
 
 	public getInstances() : FieldInstance[]
@@ -180,6 +187,6 @@ export class Field
 		let event:FormEvent = null;
 		if (key != null) event = FormEvent.newKeyEvent(this.form$,key,this.block.name,this.name);
 		else			 event = FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name);
-		return(Events.raise(event));
+		return(FormEvents.raise(event));
 	}
 }

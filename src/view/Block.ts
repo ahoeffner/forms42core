@@ -21,7 +21,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 
 export class Block
 {
-	private form:Form = null;
+	private form$:Form = null;
 	private currrow:number = 0;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
@@ -34,13 +34,18 @@ export class Block
 			name = "";
 
 		this.name$ = name;
-		this.form = Form.getForm(form);
+		this.form$ = Form.getForm(form);
 		ModelBlock.create(Form.getForm(form),this);
 	}
 
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public get form() : Form
+	{
+		return(this.form$);
 	}
 
 	public get validated() : boolean

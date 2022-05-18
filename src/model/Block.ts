@@ -12,11 +12,11 @@
 
 import { Form } from "./Form.js";
 import { EventType } from "../events/EventType.js";
-import { Events, Event } from "../events/Events.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { FormEvents, FormEvent } from "../events/FormEvents.js";
 
 
 export class Block
@@ -103,7 +103,7 @@ export class Block
 
 	private async fire(type:EventType, field?:string) : Promise<boolean>
 	{
-		let event:Event = Event.newFieldEvent(type,this.intfrm,this.name,field)
-		return(Events.raise(event));
+		let event:FormEvent = FormEvent.newFieldEvent(type,this.intfrm,this.name,field)
+		return(FormEvents.raise(event));
 	}
 }

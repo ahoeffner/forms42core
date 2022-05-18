@@ -20,6 +20,7 @@ export class Row
 	private block$:Block = null;
 	private rownum$:number = null;
 	private validated$:boolean = true;
+	private instances:FieldInstance[] = [];
 	private fields:Map<string,Field> = new Map<string,Field>();
 
 	constructor(block:Block, rownum:number)
@@ -65,6 +66,11 @@ export class Row
 	public addField(field:Field) : void
 	{
 		this.fields.set(field.name,field);
+	}
+
+	public addInstance(instance:FieldInstance) : void
+	{
+		this.instances.push(instance);
 	}
 
 	public getField(name:string) : Field

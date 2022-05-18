@@ -16,7 +16,7 @@ import { Properties } from './Properties.js';
 import { FormsModule } from './FormsModule.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { EventType } from '../events/EventType.js';
-import { Event, Events } from '../events/Events.js';
+import { FormEvent, FormEvents } from '../events/FormEvents.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 
 class State
@@ -57,6 +57,6 @@ export class Application
         form.canvas = canvas;
         canvas.setComponent(form);
         parent.appendChild(canvas.getElement());
-		Events.raise(Event.newFormEvent(EventType.PreForm,form));
+		FormEvents.raise(FormEvent.newFormEvent(EventType.PreForm,form));
     }
 }

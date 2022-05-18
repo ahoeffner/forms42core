@@ -75,7 +75,7 @@ export class Row
 
 	public nextField(inst:FieldInstance) : FieldInstance
 	{
-		let pos:number = this.instances.indexOf(inst);
+		let pos:number = this.instances.indexOf(inst) + 1;
 		return(this.instances[pos%this.instances.length]);
 	}
 

@@ -79,7 +79,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		else value = value + this.pattern.getPlaceholder().substring(value.length);
 
 		this.element.value = value;
-		this.setError(false);
+		this.invalid(false);
 	}
 
 	public getElement(): HTMLElement
@@ -201,7 +201,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			buble = true;
 			this.before = after;
-			this.setError(false);
+			this.invalid(false);
 			this.event.modified = true;
 		}
 

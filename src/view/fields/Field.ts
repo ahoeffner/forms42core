@@ -127,7 +127,7 @@ export class Field
 			if (await this.block.setCurrentRow(inst))
 				await this.fire(EventType.PreField);
 			return;
-			}
+		}
 
 		if (event.type == "blur")
 		{
@@ -141,7 +141,7 @@ export class Field
 
 			if (!await this.fire(EventType.PostChange))
 			{
-				inst.setError(true);
+				inst.invalid(true);
 				inst.focus();
 			}
 

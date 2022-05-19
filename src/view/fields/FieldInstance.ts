@@ -143,14 +143,45 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.setValue(value));
 	}
 
-	public focus() : void
+	public blur() : void
 	{
-		setTimeout(() => {this.impl.getElement().focus();},1);
+		this.impl.getElement().blur();
 	}
 
-	public setError(flag:boolean) : void
+	public focus() : void
 	{
-		this.impl.setError(flag);
+		console.log("focus "+this);
+		this.impl.getElement().focus();
+	}
+
+	public hidden(flag?:boolean) : boolean
+	{
+		return(this.impl.hidden(flag));
+	}
+
+	public invalid(flag?:boolean) : boolean
+	{
+		return(this.impl.invalid(flag));
+	}
+
+	public enabled(flag?:boolean) : boolean
+	{
+		return(this.impl.enabled(flag));
+	}
+
+	public readonly(flag?:boolean) : boolean
+	{
+		return(this.impl.readonly(flag));
+	}
+
+	public getStyle(style?:string) : string|string[][]
+	{
+		return(this.impl.getStyle(style));
+	}
+
+	public setStyle(style:string, value:string) : string
+	{
+		return(this.impl.setStyle(style,value));
 	}
 
 	public setInstanceType(type:string) : void
@@ -168,5 +199,10 @@ export class FieldInstance implements FieldContainer
 	public handleEvent(event:Event) : void
 	{
 		this.field.handleEvent(this,event);
+	}
+
+	public toString() : string
+	{
+		return(this.name+"["+this.row+"]");
 	}
 }

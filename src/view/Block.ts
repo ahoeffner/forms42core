@@ -57,7 +57,10 @@ export class Block
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
 	{
+		inst.blur();
 		let next:FieldInstance = null;
+
+		console.log("row: "+inst.row+" "+this.currrow);
 
 		switch(key)
 		{
@@ -68,7 +71,8 @@ export class Block
 			}
 		}
 
-		next.focus();
+		if (next != null)
+			next.focus();
 	}
 
 	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>
@@ -78,6 +82,8 @@ export class Block
 			this.currfld = inst;
 			return(true);
 		}
+
+		console.log("inst: "+inst.row+" curr: "+this.currfld.row+" "+this.currrow)
 
 		if (inst.row == -1 || inst.row == this.currfld.row)
 		{
@@ -106,6 +112,7 @@ export class Block
 
 		if (!move)
 		{
+			console.log("refuse")
 			this.currfld.focus();
 			return(false);
 		}

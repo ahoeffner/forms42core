@@ -21,10 +21,14 @@ export interface FieldImplementation
     setValue(value:any) : boolean;
 	setStringValue(value:string) : void;
 
+    getStyles() : string[][];
+    getStyle(style:string) : string;
+    setStyle(style:string,value:string) : string;
+
     getElement() : HTMLElement;
 
-    enabled(flag:boolean) : void;
-    readonly(flag:boolean) : void;
-
-	setError(flag:boolean) : void;
+	hidden(flag?:boolean) : boolean;
+    enabled(flag?:boolean) : boolean;
+	invalid(flag?:boolean) : boolean;
+    readonly(flag?:boolean) : boolean;
 }

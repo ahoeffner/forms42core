@@ -15,6 +15,10 @@ import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 export class Common
 {
+	private hidden$:boolean = false;
+	private invalid$:boolean = false;
+	private enabled$:boolean = false;
+	private readonly$:boolean = false;
     private field:FieldImplementation = null;
 
     public setImplementation(field:FieldImplementation) : void
@@ -31,7 +35,7 @@ export class Common
 		if (element instanceof HTMLInputElement)
 			element.value = value.trim();
 
-		this.setError(false);
+		this.invalid(false);
 	}
 
 	// Bypasses object conversion
@@ -56,31 +60,86 @@ export class Common
         this.field.getElement().setAttribute(attr,value);
     }
 
-    public setError(flag: boolean) : void
+    public hidden(flag?:boolean) : boolean
 	{
-        if (flag) this.setClass("invalid");
-        else      this.removeClass("invalid");
+		if (flag != null)
+		{
+			this.hidden$ = flag;
+			if (flag) this.setStyle("display","none");
+			else      this.setStyle("display","inline-block");
+		}
+
+		return(this.invalid$);
     }
 
-    public readonly(flag: boolean) : void
+    public invalid(flag?:boolean) : boolean
 	{
-        (this.field.getElement() as HTMLInputElement).readOnly = flag;
+		if (flag != null)
+		{
+			this.invalid$ = flag;
+			if (flag) this.setClass("invalid");
+			else      this.removeClass("invalid");
+		}
+
+		return(this.invalid$);
     }
 
-	public enabled(flag: boolean) : void
+    public readonly(flag?:boolean) : boolean
 	{
-        (this.field.getElement() as HTMLInputElement).disabled = !flag;
+		if (flag != null)
+		{
+			this.readonly$ = flag;
+			(this.field.getElement() as HTMLInputElement).readOnly = flag;
+		}
+		return(this.readonly$);
     }
 
-    public getStyle() : string
+	public enabled(flag:boolean) : boolean
+	{
+		if (flag != null)
+		{
+			this.enabled$ = flag;
+			(this.field.getElement() as HTMLInputElement).disabled = !flag;
+		}
+		return(this.enabled$);
+    }
+
+    public getStyle(style:string) : string
     {
-        return(this.field.getElement().style.cssText);
+		let styles:string[][] = this.getStyles();
+
+		for (let i = 0; i < styles.length; i++)
+		{
+			if (styles[i][0] == style)
+				return(styles[i][1]);
+		}
+
+		return(null);
     }
 
-    public setStyle(style: string) : void
+    public getStyles() : string[][]
     {
-		if (style != null)
-			this.field.getElement().style.cssText = style;
+		let parsed:string[][] = [];
+		let styles:string[] = this.field.getElement().style.cssText.split(";");
+
+		for (let i = 0; i < styles.length; i++)
+		{
+			if (styles[i].trim().length > 0)
+			{
+				let split:number = styles[i].indexOf(":");
+				let entry:string = styles[i].substring(0,split).trim();
+				let value:string = styles[i].substring(split+1).trim();
+				parsed.push([entry,value]);
+			}
+		}
+
+		return(parsed);
+    }
+
+    public setStyle(style:string, value:string) : string
+    {
+		let styles:string[][] = this.getStyles();
+		return(this.field.getElement().style.cssText);
     }
 
     public setClass(clazz:string) : void

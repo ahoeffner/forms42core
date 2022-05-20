@@ -12,11 +12,12 @@
 
 import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
-import { FormEvents } from '../events/FormEvents.js';
+import { EventType } from '../events/EventType.js';
 import { EventFilter } from '../events/EventFilter.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
+import { FormEvent, FormEvents } from '../events/FormEvents.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 
 
@@ -81,8 +82,16 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-    public close() : boolean
+	public getFieldValue(block:string, field:string) : any
+	{
+		return(View.getForm(this).getBlock(block.toLowerCase())?.getFieldValue(field.toLowerCase()));
+	}
+
+    public async close() : Promise<boolean>
     {
+		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.PostForm,this)))
+			return(false);
+
         this.canvas.close();
         return(true);
     }

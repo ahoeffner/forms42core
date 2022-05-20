@@ -26,6 +26,7 @@ export class Field
 	private row$:Row = null;
 	private name$:string = null;
 	private block$:Block = null;
+	private valid$:boolean = true;
 	private form$:Interface = null;
 	private instances:FieldInstance[] = [];
 
@@ -84,6 +85,11 @@ export class Field
 		return(this.block$);
 	}
 
+	public get valid() : boolean
+	{
+		return(this.valid$);
+	}
+
 	public addInstance(instance:FieldInstance) : void
 	{
 		this.instances.push(instance);
@@ -124,7 +130,6 @@ export class Field
 
 		if (event.type == "focus")
 		{
-			console.log("Field, inst: "+inst.name+"["+inst.row+"]")
 			if (await this.block.setCurrentField(inst))
 				await this.fire(EventType.PreField);
 
@@ -143,9 +148,9 @@ export class Field
 
 			if (!await this.fire(EventType.PostChange))
 			{
-				console.log("change failed");
-				inst.invalid(true);
 				inst.focus();
+				inst.invalid(true);
+				this.valid$ = false;
 			}
 
 			return;

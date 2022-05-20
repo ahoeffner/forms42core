@@ -150,7 +150,6 @@ export class FieldInstance implements FieldContainer
 
 	public focus() : void
 	{
-		console.log("focus "+this);
 		this.impl.getElement().focus();
 	}
 

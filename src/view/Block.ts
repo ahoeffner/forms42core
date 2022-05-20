@@ -55,6 +55,11 @@ export class Block
 		return(this.getRow(this.currfld.row).validated);
 	}
 
+	public getFieldValue(field:string) : any
+	{
+		return(this.getRow(this.row).getField(field)?.getValue());
+	}
+
 	public navigate(key:KeyMap, inst:FieldInstance) : void
 	{
 		let next:FieldInstance = null;
@@ -81,7 +86,6 @@ export class Block
 	{
 		// Navigate to current block
 		let move:boolean = await this.form.setCurrentBlock(inst.block);
-		console.log("setCurrentBlock: "+move);
 
 		if (!move)
 		{
@@ -91,7 +95,6 @@ export class Block
 
 		// Navigate to current row
 		move = await this.setCurrentRow(inst.row);
-		console.log("setCurrentRow "+move)
 
 		if (!move)
 		{
@@ -107,19 +110,14 @@ export class Block
 		if (rownum == this.row || rownum == -1)
 			return(true);
 
-		let last:Row = this.getRow(this.row);
-		console.log("row["+this.row+"] validated: "+last.validated)
+		if (!this.getRow(this.row).validateFields())
+			return(false);
 
-		if (!last.validated)
-		{
-			if (!await this.mdlblk.validateRecord())
-				return(false);
+		if (!await this.mdlblk.validateRecord())
+			return(false);
 
-			last.validated = true;
-
-			if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
-				return(false);
-		}
+		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
+			return(false);
 
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);

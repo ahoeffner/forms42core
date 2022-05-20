@@ -65,6 +65,39 @@ export class Row
 		else this.block.getCurrentRow().validated$ = flag;
 	}
 
+	public validateFields() : boolean
+	{
+		if (this.validated)
+			return(true);
+
+		let fields:Field[] = this.getFields();
+
+		for (let i = 0; i < fields.length; i++)
+			if (!fields[i].valid) return(false);
+
+		if (this.rownum >= 0)
+		{
+			let curr:Row = this.block.getRow(-1);
+
+			if (curr != null)
+			{
+				fields = curr.getFields();
+
+				for (let i = 0; i < fields.length; i++)
+					if (!fields[i].valid) return(false);
+			}
+		}
+		else
+		{
+			fields = this.block.getCurrentRow().getFields();
+
+			for (let i = 0; i < fields.length; i++)
+				if (!fields[i].valid) return(false);
+		}
+
+		return(true);
+	}
+
 	public addField(field:Field) : void
 	{
 		this.fields.set(field.name,field);

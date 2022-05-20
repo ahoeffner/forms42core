@@ -70,8 +70,12 @@ export class Block
 
 	public async setCurrentRecord(delta:number) : Promise<boolean>
 	{
-		let cont:boolean = await this.validateRecord();
+		let cont:boolean = false;
+		let next:number = this.record$ + delta;
+
+		if (next > 0 && next < 2) cont = true;
 		if (cont) this.record$ += delta;
+		
 		return(cont);
 	}
 

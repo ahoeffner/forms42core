@@ -90,6 +90,7 @@ export class Block
 
 		// Navigate to current row
 		move = await this.setCurrentRow(inst.row);
+		console.log("move away from "+this.row+" -> "+move+" inst: "+inst.row+" this: "+this.row)
 
 		if (!move)
 		{
@@ -106,16 +107,20 @@ export class Block
 			return(true);
 
 		let last:Row = this.getRow(this.row);
+		console.log("row["+this.row+"] validated: "+last.validated)
 
 		if (!last.validated)
 		{
-			// Navigate to record
+			if (!await this.mdlblk.validateRecord())
+				return(false);
+
+			last.validated = true;
+
 			if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
 				return(false);
 		}
 
 		this.row = rownum;
-		last.validated = true;
 
 		let current:Row = this.rows.get(-1);
 

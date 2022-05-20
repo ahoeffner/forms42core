@@ -124,6 +124,7 @@ export class Field
 
 		if (event.type == "focus")
 		{
+			console.log("Field, inst: "+inst.name+"["+inst.row+"]")
 			if (await this.block.setCurrentField(inst))
 				await this.fire(EventType.PreField);
 

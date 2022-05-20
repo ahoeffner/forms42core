@@ -55,12 +55,14 @@ export class Row
 
 	public get validated() : boolean
 	{
-		return(this.validated$);
+		if (this.rownum >= 0) return(this.validated$);
+		else return(this.block.getCurrentRow().validated$);
 	}
 
 	public set validated(flag:boolean)
 	{
-		this.validated$ = flag;
+		if (this.rownum >= 0) this.validated$ = flag;
+		else this.block.getCurrentRow().validated$ = flag;
 	}
 
 	public addField(field:Field) : void

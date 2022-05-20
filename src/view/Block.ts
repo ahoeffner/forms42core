@@ -57,7 +57,6 @@ export class Block
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
 	{
-		inst.blur();
 		let next:FieldInstance = null;
 
 		console.log("row: "+inst.row+" "+this.currrow);
@@ -75,23 +74,30 @@ export class Block
 			next.focus();
 	}
 
+	public getCurrentRow() : Row
+	{
+		return(this.rows.get(this.currrow));
+	}
+
 	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>
 	{
 		if (this.currfld == null)
 		{
 			this.currfld = inst;
+
+			if (inst.row != -1)
+				this.currrow = inst.row;
+
 			return(true);
 		}
 
-		console.log("inst: "+inst.row+" curr: "+this.currfld.row+" "+this.currrow)
-
-		if (inst.row == -1 || inst.row == this.currfld.row)
+		if (inst.row == -1 || inst.row == this.currrow)
 		{
 			this.currfld = inst;
 			return(true);
 		}
 
-		this.currrow = inst.row;
+		// Navigate to current block
 		let move:boolean = await this.form.setCurrentBlock(inst.block);
 
 		if (!move)
@@ -100,7 +106,8 @@ export class Block
 			return(false);
 		}
 
-		let last:Row = this.getRow(this.currfld.row);
+		let last:Row = this.getRow(this.currrow);
+		console.log("Check val row: "+this.currrow+" "+last.validated);
 
 		if (!last.validated)
 		{
@@ -108,11 +115,11 @@ export class Block
 			return(false);
 		}
 
-		move = await this.mdlblk.change_record(this.currfld.row-inst.row);
+		// Navigate to current row
+		move = await this.mdlblk.change_record(this.currrow-inst.row);
 
 		if (!move)
 		{
-			console.log("refuse")
 			this.currfld.focus();
 			return(false);
 		}
@@ -120,6 +127,8 @@ export class Block
 		last.validated = true;
 
 		this.currfld = inst;
+		this.currrow = inst.row;
+
 		let current:Row = this.rows.get(-1);
 
 		if (current != null)

@@ -95,6 +95,7 @@ export class Row
 				if (!fields[i].valid) return(false);
 		}
 
+		this.validated = true;
 		return(true);
 	}
 

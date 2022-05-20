@@ -113,11 +113,17 @@ export class Block
 		if (!this.getRow(this.row).validateFields())
 			return(false);
 
+		console.log("I")
+
 		if (!await this.mdlblk.validateRecord())
 			return(false);
 
+		console.log("II")
+
 		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
 			return(false);
+
+		console.log("III")
 
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);

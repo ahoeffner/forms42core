@@ -73,9 +73,9 @@ export class Block
 		let cont:boolean = false;
 		let next:number = this.record$ + delta;
 
-		if (next > 0 && next < 2) cont = true;
+		if (next >= 0 && next <= 2) cont = true;
 		if (cont) this.record$ += delta;
-		
+
 		return(cont);
 	}
 

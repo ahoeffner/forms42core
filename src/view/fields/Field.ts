@@ -143,6 +143,7 @@ export class Field
 
 			if (!await this.fire(EventType.PostChange))
 			{
+				console.log("change failed");
 				inst.invalid(true);
 				inst.focus();
 			}

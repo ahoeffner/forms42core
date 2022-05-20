@@ -81,6 +81,7 @@ export class Block
 	{
 		// Navigate to current block
 		let move:boolean = await this.form.setCurrentBlock(inst.block);
+		console.log("setCurrentBlock: "+move);
 
 		if (!move)
 		{
@@ -90,7 +91,7 @@ export class Block
 
 		// Navigate to current row
 		move = await this.setCurrentRow(inst.row);
-		console.log("move away from "+this.row+" -> "+move+" inst: "+inst.row+" this: "+this.row)
+		console.log("setCurrentRow "+move)
 
 		if (!move)
 		{
@@ -121,7 +122,6 @@ export class Block
 		}
 
 		this.row = rownum;
-
 		let current:Row = this.rows.get(-1);
 
 		if (current != null)

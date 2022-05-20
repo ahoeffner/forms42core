@@ -106,7 +106,6 @@ export class Block
 			return(true);
 
 		let last:Row = this.getRow(this.row);
-		console.log("row["+this.row+"] "+last.validated)
 
 		if (!last.validated)
 		{

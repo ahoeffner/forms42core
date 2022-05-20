@@ -38,9 +38,9 @@ export class Block
 	}
 
 	private form:Form = null;
+	private record$:number = 0;
 	private name$:string = null;
 	private vwblk:ViewBlock = null;
-	private current_record$:number = 0;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
 
@@ -62,23 +62,22 @@ export class Block
 		return(this.vwblk.validated);
 	}
 
-	public async validate() : Promise<boolean>
+	public async validateRecord() : Promise<boolean>
 	{
-		if (this.vwblk.validated) return(true);
 		let cont:boolean = await this.fire(EventType.ValidateRecord);
 		return(cont);
 	}
 
-	public async change_record(delta:number) : Promise<boolean>
+	public async setCurrentRecord(delta:number) : Promise<boolean>
 	{
-		let cont:boolean = await this.validate();
-		this.current_record$ += delta;
+		let cont:boolean = await this.validateRecord();
+		if (cont) this.record$ += delta;
 		return(cont);
 	}
 
-	public get current_record() : number
+	public get record() : number
 	{
-		return(this.current_record$);
+		return(this.record$);
 	}
 
 	public link(block:InterfaceBlock) : void

@@ -22,8 +22,8 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 
 export class Block
 {
+	private row:number = 0;
 	private form$:Form = null;
-	private currrow:number = 0;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
 	private currfld:FieldInstance = null;
@@ -59,8 +59,6 @@ export class Block
 	{
 		let next:FieldInstance = null;
 
-		console.log("row: "+inst.row+" "+this.currrow);
-
 		switch(key)
 		{
 			case KeyMap.nextfield :
@@ -76,27 +74,11 @@ export class Block
 
 	public getCurrentRow() : Row
 	{
-		return(this.rows.get(this.currrow));
+		return(this.rows.get(this.row));
 	}
 
-	public async setCurrentRow(inst:FieldInstance) : Promise<boolean>
+	public async setCurrentField(inst:FieldInstance) : Promise<boolean>
 	{
-		if (this.currfld == null)
-		{
-			this.currfld = inst;
-
-			if (inst.row != -1)
-				this.currrow = inst.row;
-
-			return(true);
-		}
-
-		if (inst.row == -1 || inst.row == this.currrow)
-		{
-			this.currfld = inst;
-			return(true);
-		}
-
 		// Navigate to current block
 		let move:boolean = await this.form.setCurrentBlock(inst.block);
 
@@ -106,17 +88,8 @@ export class Block
 			return(false);
 		}
 
-		let last:Row = this.getRow(this.currrow);
-		console.log("Check val row: "+this.currrow+" "+last.validated);
-
-		if (!last.validated)
-		{
-			this.currfld.focus();
-			return(false);
-		}
-
 		// Navigate to current row
-		move = await this.mdlblk.change_record(this.currrow-inst.row);
+		move = await this.setCurrentRow(inst.row);
 
 		if (!move)
 		{
@@ -124,17 +97,33 @@ export class Block
 			return(false);
 		}
 
-		last.validated = true;
-
 		this.currfld = inst;
-		this.currrow = inst.row;
+	}
+
+	public async setCurrentRow(rownum:number) : Promise<boolean>
+	{
+		if (rownum == this.row || rownum == -1)
+			return(true);
+
+		let last:Row = this.getRow(this.row);
+		console.log("row["+this.row+"] "+last.validated)
+
+		if (!last.validated)
+		{
+			// Navigate to record
+			if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
+				return(false);
+		}
+
+		this.row = rownum;
+		last.validated = true;
 
 		let current:Row = this.rows.get(-1);
 
 		if (current != null)
 		{
-			this.rows.get(this.currfld.row).getFields().forEach((fld) =>
-			{current.distribute(fld,fld.getStringValue());});
+			this.rows.get(this.row).getFields().forEach((fld) =>
+			{current.distribute(fld,fld.getStringValue())});
 		}
 
 		return(true);
@@ -184,7 +173,7 @@ export class Block
 
 	public distribute(field:Field, value:string) : void
 	{
-		let cr:number = this.currrow;
+		let cr:number = this.row;
 		let fr:number = field.row.rownum;
 
 		if (fr >= 0) this.getRow(-1).distribute(field,value);

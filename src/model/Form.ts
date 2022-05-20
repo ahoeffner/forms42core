@@ -85,7 +85,7 @@ export class Form
 		this.current_block$ = this.getBlock(block);
 
 		let cont:boolean = true;
-		if (last != null) cont = await last.validate();
+		if (last != null) cont = await last.validateRecord();
 
 		return(cont);
 	}

@@ -124,8 +124,9 @@ export class Field
 
 		if (event.type == "focus")
 		{
-			if (await this.block.setCurrentRow(inst))
+			if (await this.block.setCurrentField(inst))
 				await this.fire(EventType.PreField);
+
 			return;
 		}
 

@@ -135,9 +135,9 @@ export class Row
 		return(fields);
 	}
 
-	public distribute(field:Field, value:string) : void
+	public distribute(field:string, value:string) : void
 	{
-		this.fields.get(field.name)?.distribute(null,value);
+		this.fields.get(field)?.distribute(null,value);
 	}
 
 	public getFieldInstances() : FieldInstance[]

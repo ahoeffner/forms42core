@@ -28,6 +28,7 @@ export class Block
 	private mdlblk:ModelBlock = null;
 	private currfld:FieldInstance = null;
 	private rows:Map<number,Row> = new Map<number,Row>();
+	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>();
 
 	constructor(form:Interface,name:string)
 	{
@@ -52,12 +53,25 @@ export class Block
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);
-		return(this.getRow(this.currfld.row).validated);
+		return(this.getRow(this.row).validated);
+	}
+
+	public setFieldValue(inst:FieldInstance, value:any) : void
+	{
+		let values:Map<string,any> = this.values.get(this.row);
+
+		if (values == null)
+		{
+			values = new Map<string,any>();
+			this.values.set(this.row,values);
+		}
+
+		values.set(inst.name,value);
 	}
 
 	public getFieldValue(field:string) : any
 	{
-		return(this.getRow(this.row).getField(field)?.getValue());
+		return(this.values.get(this.row)?.get(field));
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -135,9 +149,8 @@ export class Block
 
 		if (current != null)
 		{
-			console.log("distribute all !!")
-			this.rows.get(this.row).getFields().forEach((fld) =>
-			{current.distribute(fld,fld.getStringValue())});
+			this.values.get(this.row)?.forEach((value,field) =>
+			{current.distribute(field,value)});
 		}
 
 		return(true);
@@ -190,7 +203,7 @@ export class Block
 		let cr:number = this.row;
 		let fr:number = field.row.rownum;
 
-		if (fr >= 0) this.getRow(-1).distribute(field,value);
-		else		 this.getRow(cr).distribute(field,value);
+		if (fr >= 0) this.getRow(-1).distribute(field.name,value);
+		else		 this.getRow(cr).distribute(field.name,value);
 	}
 }

@@ -13,7 +13,7 @@ export enum EventType
     PostField,
 
 	Editing,
-	PostChange,
+	ValidateField,
 
     NextField,
     NextBlock,

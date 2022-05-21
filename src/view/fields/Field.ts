@@ -149,14 +149,18 @@ export class Field
 
 		if (event.type == "change")
 		{
-			this.valid = true;
 			this.row.validated = false;
 
-			if (!await this.fire(EventType.PostChange))
+			if (!await this.fire(EventType.ValidateField))
 			{
 				inst.focus();
 				inst.invalid(true);
 				this.valid = false;
+			}
+			else
+			{
+				this.valid = true;
+				this.block.setFieldValue(inst,inst.getValue());
 			}
 
 			return;
@@ -166,6 +170,7 @@ export class Field
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
+			this.block.setFieldValue(inst,inst.getStringValue());
 			this.fire(EventType.Editing);
 			return;
 		}
@@ -198,10 +203,16 @@ export class Field
 		}
 	}
 
-	public distribute(inst:FieldInstance, value:string) : void
+	public distribute(inst:FieldInstance, value:any) : void
 	{
 		this.instances.forEach((fi) =>
-		{if (fi != inst) fi.setStringValue(value)});
+		{
+			if (fi != inst)
+			{
+				if (typeof value === "string") fi.setStringValue(value)
+				else fi.setValue(value);
+			}
+		});
 	}
 
 	private async fire(type:EventType, key?:KeyMap) : Promise<boolean>

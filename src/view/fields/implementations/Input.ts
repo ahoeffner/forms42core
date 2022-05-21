@@ -146,7 +146,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
         if (this.pattern != null)
         {
-			buble = true;
             if (!this.xfixed())
                 return;
         }
@@ -245,7 +244,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
 
-                    this.setStringValue(b + this.event.key + a);
+                    this.setElementValue(b + this.event.key + a);
                     this.setPosition(++pos);
                 }
             }
@@ -287,7 +286,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
 
-                    this.setStringValue(b + this.event.key + a);
+                    this.setElementValue(b + this.event.key + a);
                     this.setPosition(++pos);
                 }
             }
@@ -335,7 +334,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             pos = this.pattern.findPosition(0);
 
 			this.pattern.setValue(this.getStringValue());
-			this.setStringValue(this.pattern.getValue());
+			this.setElementValue(this.pattern.getValue());
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
@@ -464,7 +463,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
                 }
 
                 pos = sel[0];
-                this.setStringValue(this.pattern.delete(sel[0],sel[1]));
+                this.setElementValue(this.pattern.delete(sel[0],sel[1]));
 
                 if (sel[1] == sel[0] + 1)
                     pos = this.pattern.prev(true);
@@ -500,7 +499,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             {
                 pos = sel[0];
                 this.pattern.delete(sel[0],sel[1]);
-                this.setStringValue(this.pattern.getValue());
+                this.setElementValue(this.pattern.getValue());
                 pos = this.pattern.findPosition(sel[0]);
                 this.setSelection([pos,pos]);
             }
@@ -508,7 +507,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             if (this.pattern.setCharacter(pos,this.event.key))
             {
                 pos = this.pattern.next(true,pos);
-                this.setStringValue(this.pattern.getValue());
+                this.setElementValue(this.pattern.getValue());
                 this.setSelection([pos,pos]);
             }
 
@@ -551,7 +550,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			if (isNaN(+val))
 			{
-				this.setStringValue(null);
+				this.setElementValue(null);
 				return(false);
 			}
 		}
@@ -560,7 +559,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			if (isNaN(+val) || val.includes(".") || val.includes("."))
 			{
-				this.setStringValue(null);
+				this.setElementValue(null);
 				return(false);
 			}
 		}
@@ -568,7 +567,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		if (this.pattern != null)
 		{
 			let valid:boolean = this.pattern.setValue(val);
-			this.setStringValue(this.pattern.getValue());
+			this.setElementValue(this.pattern.getValue());
 			return(valid);
 		}
 
@@ -618,6 +617,13 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         pos[0] = this.element.selectionStart;
         return(pos);
     }
+
+	private setElementValue(value:string) : void
+	{
+		let b:string = this.before;
+		this.setStringValue(value);
+		this.before = b;
+	}
 
     private addEvents(element:HTMLElement) : void
     {

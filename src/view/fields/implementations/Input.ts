@@ -334,7 +334,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             pos = this.pattern.findPosition(0);
 
 			this.pattern.setValue(this.getStringValue());
-			this.setElementValue(this.pattern.getValue());
+			this.setStringValue(this.pattern.getValue());
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
@@ -534,10 +534,22 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             return(false);
         }
 
-        if (this.event.key == "ArrowRight" && !this.event.modifier)
+        if (this.event.key == "ArrowRight")
         {
-            pos = this.pattern.next(true);
-            this.setSelection([pos,pos]);
+            let sel:number[] = this.getSelection();
+
+            if (!this.event.modifier)
+            {
+                pos = this.pattern.next(true);
+                this.setSelection([pos,pos]);
+            }
+            else if (this.event.shift)
+            {
+				pos = sel[1];
+
+				if (pos < this.pattern.size())
+                    this.setSelection([sel[0],pos]);
+            }
             return(false);
         }
 
@@ -620,9 +632,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	private setElementValue(value:string) : void
 	{
-		let b:string = this.before;
-		this.setStringValue(value);
-		this.before = b;
+		this.element.value = value;
 	}
 
     private addEvents(element:HTMLElement) : void

@@ -1,11 +1,11 @@
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 
-export { KeyMap } from './src/events/KeyMap.js';
-export { KeyCodes } from './src/events/KeyCodes.js';
-export { EventType } from './src/events/EventType.js';
-export { EventFilter } from './src/events/EventFilter.js';
-export { FormEvent as Event } from './src/events/FormEvents.js';
+export { KeyMap } from './src/control/events/KeyMap.js';
+export { KeyCodes } from './src/control/events/KeyCodes.js';
+export { EventType } from './src/control/events/EventType.js';
+export { EventFilter } from './src/control/events/EventFilter.js';
+export { FormEvent as Event } from './src/control/events/FormEvents.js';
 
 export { Class } from './src/types/Class.js';
 export { Logger } from './src/application/Logger.js';

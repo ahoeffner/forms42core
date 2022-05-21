@@ -15,9 +15,9 @@ import { Class } from '../types/Class.js';
 import { Properties } from './Properties.js';
 import { FormsModule } from './FormsModule.js';
 import { Canvas } from './interfaces/Canvas.js';
-import { EventType } from '../events/EventType.js';
-import { FormEvent, FormEvents } from '../events/FormEvents.js';
+import { EventType } from '../control/events/EventType.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 class State
 {

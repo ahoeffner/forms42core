@@ -12,12 +12,12 @@
 
 import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
-import { EventType } from '../events/EventType.js';
-import { EventFilter } from '../events/EventFilter.js';
+import { EventType } from '../control/events/EventType.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 import { Framework } from '../application/Framework.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
-import { FormEvent, FormEvents } from '../events/FormEvents.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 
 

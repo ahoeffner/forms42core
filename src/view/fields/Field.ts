@@ -14,11 +14,11 @@ import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
-import { EventType } from "../../events/EventType.js";
 import { Form as Interface } from "../../public/Form.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
-import { KeyMap, KeyMapping } from "../../events/KeyMap.js";
-import { FormEvent as FormEvent, FormEvents } from "../../events/FormEvents.js";
+import { EventType } from "../../control/events/EventType.js";
+import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
+import { FormEvent as FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
 
 export class Field

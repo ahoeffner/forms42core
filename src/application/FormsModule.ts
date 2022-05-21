@@ -14,7 +14,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
-import { KeyMap, KeyMapping } from '../events/KeyMap.js';
+import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 
 export interface Component
 {

@@ -11,11 +11,11 @@
  */
 
 import { Block } from './Block.js';
-import { EventType } from '../events/EventType.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
-import { FormEvents, FormEvent } from "../events/FormEvents.js";
+import { EventType } from '../control/events/EventType.js';
+import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
 
 export class Form

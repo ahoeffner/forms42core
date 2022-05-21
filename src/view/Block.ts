@@ -13,7 +13,7 @@
 import { Row } from "./Row.js";
 import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
-import { KeyMap } from "../events/KeyMap.js";
+import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Form as Interface } from '../public/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';

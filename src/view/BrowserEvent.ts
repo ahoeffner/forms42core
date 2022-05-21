@@ -308,6 +308,8 @@ export class BrowserEvent
 
     private mouseEvent() : void
     {
+		this.reset();
+		
         if (this.type == "mouseup")
         {
             this.mousedown = false;

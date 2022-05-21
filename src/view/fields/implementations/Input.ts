@@ -19,6 +19,7 @@ import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 export class Input extends Common implements FieldImplementation, EventListenerObject
 {
+	private before:string = "";
     private int:boolean = false;
     private dec:boolean = false;
 	private pattern:Pattern = null;
@@ -54,9 +55,22 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
     public setValue(value:any) : boolean
     {
+		let ok:boolean = false;
         if (value == null) value = "";
-        this.element.value = value;
-		return(this.validateInput(value));
+
+		if (typeof value === "string")
+		{
+			ok = true;
+			this.element.value = value;
+		}
+
+		if (!ok)
+			throw "@Input: Not implemented";
+
+		ok = this.validateInput(value);
+		this.before = this.element.value;
+
+		return(ok);
     }
 
 	private clear() : void
@@ -78,8 +92,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		if (this.pattern == null) value = value.trim();
 		else value = value + this.pattern.getPlaceholder().substring(value.length);
 
-		this.element.value = value;
 		this.invalid(false);
+		this.before = value;
+		this.element.value = value;
 	}
 
 	public getElement(): HTMLElement
@@ -122,7 +137,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         this.element.setAttribute("type",type);
     }
 
-	private before:string = "";
     public handleEvent(event:Event) : void
     {
         let buble:boolean = false;
@@ -200,6 +214,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		if (this.before != after)
 		{
 			buble = true;
+			console.log(this.before+" != "+after);
 			this.before = after;
 			this.invalid(false);
 			this.event.modified = true;

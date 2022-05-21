@@ -77,6 +77,23 @@ export class Block
 			next.focus();
 	}
 
+	public async validate() : Promise<boolean>
+	{
+		if (!this.getRow(this.row).validated)
+		{
+			console.log("Validate")
+
+			if (!this.getRow(this.row).validateFields())
+				return(false);
+
+
+			if (!await this.mdlblk.validateRecord())
+				return(false);
+		}
+
+		return(true);
+	}
+
 	public getCurrentRow() : Row
 	{
 		return(this.rows.get(this.row));
@@ -110,20 +127,13 @@ export class Block
 		if (rownum == this.row || rownum == -1)
 			return(true);
 
-		if (!this.getRow(this.row).validateFields())
+		if (!await this.validate())
 			return(false);
-
-		console.log("I")
-
-		if (!await this.mdlblk.validateRecord())
-			return(false);
-
-		console.log("II")
 
 		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
 			return(false);
 
-		console.log("III")
+		console.log("Validated")
 
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);

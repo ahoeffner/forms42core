@@ -145,6 +145,7 @@ export class Field
 
 		if (event.type == "change")
 		{
+			this.valid$ = true;
 			this.row.validated = false;
 
 			if (!await this.fire(EventType.PostChange))

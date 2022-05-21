@@ -81,11 +81,8 @@ export class Block
 	{
 		if (!this.getRow(this.row).validated)
 		{
-			console.log("Validate")
-
 			if (!this.getRow(this.row).validateFields())
 				return(false);
-
 
 			if (!await this.mdlblk.validateRecord())
 				return(false);
@@ -133,13 +130,12 @@ export class Block
 		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
 			return(false);
 
-		console.log("Validated")
-
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);
 
 		if (current != null)
 		{
+			console.log("distribute all !!")
 			this.rows.get(this.row).getFields().forEach((fld) =>
 			{current.distribute(fld,fld.getStringValue())});
 		}

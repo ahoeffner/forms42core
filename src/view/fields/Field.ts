@@ -87,8 +87,12 @@ export class Field
 
 	public get valid() : boolean
 	{
-		console.log(this.name+"["+this.row.rownum+"] "+this.valid$);
 		return(this.valid$);
+	}
+
+	public set valid(flag:boolean)
+	{
+		this.valid$ = flag;
 	}
 
 	public addInstance(instance:FieldInstance) : void
@@ -145,14 +149,14 @@ export class Field
 
 		if (event.type == "change")
 		{
-			this.valid$ = true;
+			this.valid = true;
 			this.row.validated = false;
 
 			if (!await this.fire(EventType.PostChange))
 			{
 				inst.focus();
 				inst.invalid(true);
-				this.valid$ = false;
+				this.valid = false;
 			}
 
 			return;

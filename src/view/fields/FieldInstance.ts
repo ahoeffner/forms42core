@@ -135,6 +135,7 @@ export class FieldInstance implements FieldContainer
 
 	public setStringValue(value:string) : void
 	{
+		this.field.valid = true;
 		this.impl.setStringValue(value);
 	}
 

@@ -214,7 +214,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		if (this.before != after)
 		{
 			buble = true;
-			console.log(this.before+" != "+after);
 			this.before = after;
 			this.invalid(false);
 			this.event.modified = true;

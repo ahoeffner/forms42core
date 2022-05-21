@@ -135,6 +135,11 @@ export class Row
 		return(fields);
 	}
 
+	public distribute(field:Field, value:string) : void
+	{
+		this.fields.get(field.name)?.distribute(null,value);
+	}
+
 	public getFieldInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
@@ -143,11 +148,6 @@ export class Row
 		{instances.push(...field.getInstances());});
 
 		return(instances);
-	}
-
-	public distribute(field:Field, value:string) : void
-	{
-		this.fields.get(field.name)?.distribute(null,value);
 	}
 
 	public getInstancesByName(name:string, id?:string) : FieldInstance[]

@@ -13,14 +13,12 @@
 import { KeyMap } from "./KeyMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
+import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
-import { Field } from "../../view/fields/Field.js";
-import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
-import { Block as ModelBlock } from "../../model/Block";
-import { FieldInstance } from "../../view/fields/FieldInstance.js";
+import { FieldInstance } from "../../public/FieldInstance.js";
 
 
 
@@ -61,7 +59,7 @@ export class FormEvent
 	public get source() : FieldInstance
 	{
 		if (this.cause?.target instanceof HTMLElement)
-			return(ViewForm.getForm(this.form)?.getInstance(this.cause.target));
+			return(this.form.getFieldInstance(this.cause.target));
 		return(null);
 	}
 

@@ -10,15 +10,18 @@
  * accompanied this code).
  */
 
+import { Field } from './Field.js';
 import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
-import { EventType } from '../control/events/EventType.js';
-import { EventFilter } from '../control/events/EventFilter.js';
+import { FieldInstance } from './FieldInstance.js';
 import { Framework } from '../application/Framework.js';
+import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
-import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 
 class State
@@ -81,6 +84,18 @@ export class Form implements CanvasComponent
 		View.finalize(this);
 		Model.finalize(this);
     }
+
+	public getField(element:HTMLElement) : Field
+	{
+		return(this.getFieldInstance(element)?.field);
+	}
+
+	public getFieldInstance(element:HTMLElement) : FieldInstance
+	{
+		let inst:ViewInstance = View.getForm(this)?.getInstance(element);
+		if (inst != null) return(new FieldInstance(inst));
+		return(null);
+	}
 
 	public getFieldValue(block:string, field:string) : any
 	{

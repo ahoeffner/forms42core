@@ -17,6 +17,7 @@ import { FieldInstance } from './FieldInstance.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
+import { Field as ViewField } from '../view/fields/Field.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
@@ -85,9 +86,13 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-	public getField(element:HTMLElement) : Field
+	public getField(block:string, field:string) : Field
 	{
-		return(this.getFieldInstance(element)?.field);
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		let fld:ViewField = View.getForm(this).getBlock(block)?.getField(field);
+		if (fld != null) return(new Field(fld));
+		return(null);
 	}
 
 	public getFieldInstance(element:HTMLElement) : FieldInstance

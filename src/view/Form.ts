@@ -11,6 +11,7 @@
  */
 
 import { Block } from './Block.js';
+import { Field } from './fields/Field.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -67,6 +68,11 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public getField(block:string, field:string) : Field
+	{
+		return(this.getBlock(block)?.getField(field));
 	}
 
 	public addInstance(instance:FieldInstance) : void

@@ -150,45 +150,4 @@ export class Row
 
 		return(instances);
 	}
-
-	public getInstancesByName(name:string, id?:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-		let field:Field = this.getField(name);
-
-		if (field != null)
-		{
-			if (id == null)
-			{
-				instances.push(...field.getInstances());
-			}
-			else
-			{
-				field.getInstances().forEach((inst) =>
-				{
-					if (inst.id == id)
-						instances.push(inst);
-				});
-			}
-		}
-
-		return(instances);
-	}
-
-	public getInstancesByClass(name:string, clazz:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-		let field:Field = this.getField(name);
-
-		if (field != null)
-		{
-			field.getInstances().forEach((inst) =>
-			{
-				if (inst.properties.hasClass(clazz))
-					instances.push(inst);
-			});
-		}
-
-		return(instances);
-	}
 }

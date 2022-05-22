@@ -11,15 +11,18 @@
  */
 
 import { Form } from './Form.js';
+import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
 import { Block as Model } from '../model/Block.js';
 
 export class Block
 {
+	private form$:Form = null;
 	private name$:string = null;
 
 	constructor(form:Form, name:string)
 	{
+		this.form$ = form;
 		if (name == null) name = "";
 		this.name$ = name.toLowerCase();
 		Model.create(Forms.getForm(form),this);
@@ -28,5 +31,10 @@ export class Block
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public getField(name:string) : Field
+	{
+		return(this.form$.getField(this.name$,name));
 	}
 }

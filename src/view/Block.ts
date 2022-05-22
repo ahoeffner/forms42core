@@ -55,6 +55,11 @@ export class Block
 		return(this.mdlblk);
 	}
 
+	public getField(field:string) : Field
+	{
+		return(this.getRow(this.row).getField(field));
+	}
+
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);

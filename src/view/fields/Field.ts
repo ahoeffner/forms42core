@@ -110,6 +110,20 @@ export class Field
 		return(this.instances);
 	}
 
+	public getInstancesByClass(clazz:string) : FieldInstance[]
+	{
+		clazz = clazz?.toLowerCase();
+		let instances:FieldInstance[] = [];
+
+		this.instances.forEach((inst) =>
+		{
+			if (inst.properties.hasClass(clazz))
+				instances.push(inst);
+		});
+
+		return(instances)
+	}
+
 	public setValue(value:any) : boolean
 	{
 		let status:boolean = this.instances[0].setValue(value);

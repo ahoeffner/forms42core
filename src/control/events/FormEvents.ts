@@ -260,9 +260,23 @@ export class FormEvents
 
 	private static async execute(lsnr:EventListener, event:FormEvent) : Promise<boolean>
 	{
-		let response:boolean = await lsnr.clazz[lsnr.method](event);
-		if (response == null) response = true;
-		return(response);
+		let cont:boolean = true;
+		let response:Promise<boolean> = lsnr.clazz[lsnr.method](event);
+
+		if (response instanceof Promise)
+		{
+			await response.then((value) =>
+			{
+				cont = value;
+			});
+		}
+		else
+		{
+			if (typeof response === "boolean")
+				cont = response;
+		}
+
+		return(cont);
 	}
 
 

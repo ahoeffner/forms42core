@@ -13,12 +13,11 @@
 import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
+import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
-import { BrowserEvent as Event} from "../BrowserEvent.js";
-import { EventType } from "../../control/events/EventType.js";
+import { Block as ModelBlock } from "../../model/Block.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
-import { FormEvent as FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
 
 export class Field
@@ -27,7 +26,7 @@ export class Field
 	private name$:string = null;
 	private block$:Block = null;
 	private valid$:boolean = true;
-	private form$:Interface = null;
+	private mdlblk:ModelBlock = null;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, rownum:number, field:string) : Field
@@ -55,18 +54,17 @@ export class Field
 
 		if (fld == null)
 		{
-			fld = new Field(form,blk,row,field);
+			fld = new Field(blk,row,field);
 			row.addField(fld);
 		}
 
 		return(fld);
 	}
 
-	constructor(form:Interface, block:Block, row:Row, name:string)
+	constructor(block:Block, row:Row, name:string)
 	{
 		this.row$ = row;
 		this.name$ = name;
-		this.form$ = form;
 		this.block$ = block;
 	}
 
@@ -129,21 +127,25 @@ export class Field
 		return(this.instances[0].getStringValue());
 	}
 
-	public async handleEvent(inst:FieldInstance, event:Event)
+	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent)
 	{
 		let key:KeyMap = null;
+		let event:Event = brwevent.event;
+
+		if (this.mdlblk == null)
+			this.mdlblk = this.block$.model;
 
 		if (event.type == "focus")
 		{
 			if (await this.block.setCurrentField(inst))
-				await this.fire(EventType.PreField);
+				await this.mdlblk.preField(event);
 
 			return;
 		}
 
 		if (event.type == "blur")
 		{
-			await this.fire(EventType.PostField);
+			await this.mdlblk.postField(event);
 			return;
 		}
 
@@ -151,7 +153,7 @@ export class Field
 		{
 			this.row.validated = false;
 
-			if (!await this.fire(EventType.ValidateField))
+			if (!await this.mdlblk.validateField(event))
 			{
 				inst.focus();
 				inst.invalid(true);
@@ -166,38 +168,38 @@ export class Field
 			return;
 		}
 
-		if (event.modified)
+		if (brwevent.modified)
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
 			this.block.setFieldValue(inst,inst.getStringValue());
-			this.fire(EventType.Editing);
+			await this.mdlblk.onEditing(event);
 			return;
 		}
 
-		if (event.type.startsWith("key") && !event.navigation)
+		if (event.type.startsWith("key") && !brwevent.navigation)
 		{
-			if (event.ctrlkey != null || event.funckey != null)
+			if (brwevent.ctrlkey != null || brwevent.funckey != null)
 			{
-				if (event.undo) key = KeyMap.undo;
-				else if (event.copy) key = KeyMap.copy;
-				else if (event.paste) key = KeyMap.paste;
-				else key = KeyMapping.parseBrowserEvent(event);
+				if (brwevent.undo) key = KeyMap.undo;
+				else if (brwevent.copy) key = KeyMap.copy;
+				else if (brwevent.paste) key = KeyMap.paste;
+				else key = KeyMapping.parseBrowserEvent(brwevent);
 
-				this.fire(null,key);
+				await this.mdlblk.onKey(event,inst.name,key);
 				return;
 			}
 			else
 			{
-				key = KeyMapping.checkBrowserEvent(event);
-				if (key != null) this.fire(null,key);
+				key = KeyMapping.checkBrowserEvent(brwevent);
+				if (key != null) await this.mdlblk.onKey(event,inst.name,key);
 				return;
 			}
 		}
 
-		if (event.navigation)
+		if (brwevent.navigation)
 		{
-			key = KeyMapping.parseBrowserEvent(event);
+			key = KeyMapping.parseBrowserEvent(brwevent);
 			this.block.navigate(key,inst);
 			return;
 		}
@@ -213,13 +215,5 @@ export class Field
 				else fi.setValue(value);
 			}
 		});
-	}
-
-	private async fire(type:EventType, key?:KeyMap) : Promise<boolean>
-	{
-		let event:FormEvent = null;
-		if (key != null) event = FormEvent.newKeyEvent(this.form$,key,this.block.name,this.name);
-		else			 event = FormEvent.newFieldEvent(type,this.form$,this.block.name,this.name);
-		return(FormEvents.raise(event));
 	}
 }

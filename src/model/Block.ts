@@ -12,6 +12,7 @@
 
 import { Form } from "./Form.js";
 import { Form as ViewForm } from "../view/Form.js";
+import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
@@ -62,9 +63,34 @@ export class Block
 		return(this.vwblk.validated);
 	}
 
+	public async preField(event:Event) : Promise<boolean>
+	{
+		return(this.fire(EventType.PreField,event));
+	}
+
+	public async postField(event:Event) : Promise<boolean>
+	{
+		return(this.fire(EventType.PostField,event));
+	}
+
+	public async onEditing(event:Event) : Promise<boolean>
+	{
+		return(this.fire(EventType.Editing,event));
+	}
+
+	public async validateField(event:Event) : Promise<boolean>
+	{
+		return(this.fire(EventType.ValidateField,event));
+	}
+
+	public async onKey(event:Event, field:string, key:KeyMap) : Promise<boolean>
+	{
+		return(this.fire(EventType.Editing,event,field,key));
+	}
+
 	public async validateRecord() : Promise<boolean>
 	{
-		let cont:boolean = await this.fire(EventType.ValidateRecord);
+		let cont:boolean = await this.fire(EventType.ValidateRecord,null);
 		return(cont);
 	}
 
@@ -104,9 +130,11 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private async fire(type:EventType, field?:string) : Promise<boolean>
+	private async fire(type:EventType, event:Event, field?:string, key?:KeyMap) : Promise<boolean>
 	{
-		let event:FormEvent = FormEvent.newFieldEvent(type,this.intfrm,this.name,field)
-		return(FormEvents.raise(event));
+		let frmevent:FormEvent = null;
+		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,this.name,field);
+		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,this.name,field);
+		return(FormEvents.raise(frmevent));
 	}
 }

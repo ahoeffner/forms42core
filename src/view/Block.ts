@@ -50,6 +50,11 @@ export class Block
 		return(this.form$);
 	}
 
+	public get model() : ModelBlock
+	{
+		return(this.mdlblk);
+	}
+
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);

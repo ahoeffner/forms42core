@@ -19,6 +19,6 @@ export class FieldInstance
 
 	public get field() : Field
 	{
-		return(null);
+		return(new Field(this.inst.field));
 	}
 }

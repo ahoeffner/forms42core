@@ -112,7 +112,6 @@ export class Field
 
 	public getInstancesByClass(clazz:string) : FieldInstance[]
 	{
-		clazz = clazz?.toLowerCase();
 		let instances:FieldInstance[] = [];
 
 		this.instances.forEach((inst) =>

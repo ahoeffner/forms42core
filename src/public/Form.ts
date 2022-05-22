@@ -104,7 +104,9 @@ export class Form implements CanvasComponent
 
 	public getFieldValue(block:string, field:string) : any
 	{
-		return(View.getForm(this).getBlock(block.toLowerCase())?.getFieldValue(field.toLowerCase()));
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		return(View.getForm(this).getBlock(block)?.getFieldValue(field));
 	}
 
     public async close() : Promise<boolean>

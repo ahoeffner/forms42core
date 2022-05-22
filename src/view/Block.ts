@@ -61,6 +61,19 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
+	public addInstance(inst:FieldInstance) : void
+	{
+		let values:Map<string,any> = this.values.get(inst.row);
+
+		if (values == null)
+		{
+			values = new Map<string,any>();
+			this.values.set(inst.row,values);
+		}
+
+		values.set(inst.name,null);
+	}
+
 	public setFieldValue(inst:FieldInstance, value:any) : void
 	{
 		let values:Map<string,any> = this.values.get(this.row);

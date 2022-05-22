@@ -20,7 +20,23 @@ export class EventListener
 
 	constructor(public id:object, public form:Form, public clazz:any, method:Function|string, public filter:EventFilter)
 	{
-		if (typeof method === "string") this.method = method;
-		else							this.method = method.name;
+		if (typeof method === "string")
+		{
+			this.method = method;
+
+			if (form[this.method] == null)
+				throw "@EventListener: method '"+this.method+"' does not exist on form '"+form.constructor.name+"'";
+		}
+		else
+		{
+			this.method = method.name;
+
+			if (form[this.method] == null)
+				throw "@EventListener: method '"+this.method+"' does not exist on form '"+form.constructor.name+"'";
+
+			if (form[this.method] != method)
+				throw "@EventListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
+		}
+
 	}
 }

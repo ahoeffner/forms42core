@@ -107,6 +107,7 @@ export class Row
 	public addInstance(instance:FieldInstance) : void
 	{
 		this.instances.push(instance);
+		this.block$.addInstance(instance);
 	}
 
 	public nextField(inst:FieldInstance) : FieldInstance

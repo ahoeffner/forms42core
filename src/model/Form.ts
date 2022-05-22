@@ -108,9 +108,9 @@ export class Form
 		this.blocks.forEach((blk) => {blk.unlinkView()})
 	}
 
-	private async fire(type:EventType, block?:string) : Promise<boolean>
+	private async fire(type:EventType, event:Event, block?:string) : Promise<boolean>
 	{
-		let event:FormEvent = FormEvent.newFieldEvent(type,this.intfrm,block,null)
-		return(FormEvents.raise(event));
+		let frmevent:FormEvent = FormEvent.newFieldEvent(type,this.intfrm,event,block,null)
+		return(FormEvents.raise(frmevent));
 	}
 }

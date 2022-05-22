@@ -74,6 +74,11 @@ export class Form
 		this.instances.set(instance.element,instance);
 	}
 
+	public getInstance(elem:HTMLElement) : FieldInstance
+	{
+		return(this.instances.get(elem));
+	}
+
 	public deleteInstance(instance:FieldInstance) : void
 	{
 		this.instances.delete(instance.element);

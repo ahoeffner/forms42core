@@ -11,10 +11,16 @@
  */
 
 import { KeyMap } from "./KeyMap.js";
-import { Form } from "../../public/Form.js";
 import { EventType } from "./EventType.js";
+import { Form } from "../../public/Form.js";
+import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
+import { Field } from "../../view/fields/Field.js";
+import { Form as ViewForm } from "../../view/Form.js";
+import { Form as ModelForm } from "../../model/Form.js";
+import { Block as ModelBlock } from "../../model/Block";
+import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
 
 
@@ -26,31 +32,55 @@ export class KeyEventSource
 
 export class FormEvent
 {
-	public static newFormEvent(type:EventType, form:Form) : FormEvent
+	public static newFormEvent(type:EventType, form:Form, cause?:Event) : FormEvent
 	{
-		return(new FormEvent(type,form));
+		return(new FormEvent(type,form, cause));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, block?:string, field?:string) : FormEvent
+	public static newFieldEvent(type:EventType, form:Form, cause?:Event, block?:string, field?:string) : FormEvent
 	{
-		return(new FormEvent(type,form,block,field));
+		return(new FormEvent(type,form,cause,block,field));
 	}
 
-	public static newKeyEvent(form:Form, key:KeyMap, block?:string, field?:string) : FormEvent
+	public static newKeyEvent(form:Form, key:KeyMap, cause?:Event, block?:string, field?:string) : FormEvent
 	{
-		return(new FormEvent(EventType.Key,form,block,field,key));
+		return(new FormEvent(EventType.Key,form,cause,block,field,key));
 	}
 
 
-	private constructor(public type:EventType, public form:Form, public block?:string, public field?:string, public key?:KeyMap)
+	private constructor
+	(
+		public type:EventType,
+		public form:Form,
+		public cause:Event,
+		public blockname?:string,
+		public fieldname?:string,
+		public key?:KeyMap
+	) {}
+
+	public get source() : FieldInstance
 	{
+		if (this.cause?.target instanceof HTMLElement)
+			return(ViewForm.getForm(this.form)?.getInstance(this.cause.target));
+		return(null);
+	}
+
+	public get field() : Field
+	{
+		let inst:FieldInstance = this.source;
+		return(inst?.field);
+	}
+
+	public get block() : Block
+	{
+		return(ModelForm.getForm(this.form)?.getBlock(this.blockname)?.interface);
 	}
 
 	public toString() : string
 	{
 		let str:string = EventType[this.type];
-		if (this.block != null) str += " block: "+this.block;
-		if (this.field != null) str += " field: "+this.field;
+		if (this.blockname != null) str += " block: "+this.blockname;
+		if (this.fieldname != null) str += " field: "+this.fieldname;
 		if (this.key != null) str += " key: "+this.key;
 		return(str);
 	}
@@ -162,11 +192,11 @@ export class FormEvents
 	{
 		let listeners:EventListener[] = null;
 
-		if (event.field != null)
-			event.field = event.field.toLowerCase();
+		if (event.fieldname != null)
+			event.fieldname = event.fieldname.toLowerCase();
 
-		if (event.block != null)
-			event.block = event.block.toLowerCase();
+		if (event.blockname != null)
+			event.blockname = event.blockname.toLowerCase();
 
 		let done:Set<object> = new Set<object>();
 
@@ -267,11 +297,17 @@ export class FormEvents
 		{
 			await response.then((value) =>
 			{
+				if (typeof value !== "boolean")
+					throw "@FormEvents: EventListner '"+lsnr.method+"' did not return boolean";
+
 				cont = value;
 			});
 		}
 		else
 		{
+			if (response != null && typeof response !== "boolean")
+				throw "@FormEvents: EventListner '"+lsnr.method+"' did not return boolean";
+
 			if (typeof response === "boolean")
 				cont = response;
 		}
@@ -287,8 +323,8 @@ export class FormEvents
 
 		if (lsnr.filter != null)
 		{
-			if (lsnr.filter.block != null && lsnr.filter.block != event.block) return(false);
-			if (lsnr.filter.field != null && lsnr.filter.field != event.field) return(false);
+			if (lsnr.filter.block != null && lsnr.filter.block != event.blockname) return(false);
+			if (lsnr.filter.field != null && lsnr.filter.field != event.fieldname) return(false);
 		}
 
 		return(true);

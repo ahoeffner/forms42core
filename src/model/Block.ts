@@ -110,6 +110,11 @@ export class Block
 		return(this.record$);
 	}
 
+	public get interface() : InterfaceBlock
+	{
+		return(this.intblk);
+	}
+
 	public link(block:InterfaceBlock) : void
 	{
 		this.intblk = block;
@@ -133,8 +138,8 @@ export class Block
 	private async fire(type:EventType, event:Event, field?:string, key?:KeyMap) : Promise<boolean>
 	{
 		let frmevent:FormEvent = null;
-		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,this.name,field);
-		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,this.name,field);
+		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,event,this.name,field);
+		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,event,this.name,field);
 		return(FormEvents.raise(frmevent));
 	}
 }

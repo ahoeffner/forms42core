@@ -105,9 +105,25 @@ export class Field
 		this.block.form.reindexInstance(fr,instance);
 	}
 
+	public getInstance(entry:number) : FieldInstance
+	{
+		return(this.instances[entry]);
+	}
+
 	public getInstances() : FieldInstance[]
 	{
 		return(this.instances);
+	}
+
+	public getInstanceEntry(inst:FieldInstance) : number
+	{
+		for (let i = 0; i < this.instances.length; i++)
+		{
+			if (inst == this.instances[i])
+				return(i);
+		}
+
+		return(-1);
 	}
 
 	public getInstancesByClass(clazz:string) : FieldInstance[]

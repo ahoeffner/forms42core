@@ -82,7 +82,17 @@ export class Form
 
 	public getInstance(elem:HTMLElement) : FieldInstance
 	{
-		return(this.instances.get(elem));
+		let inst:FieldInstance = this.instances.get(elem);
+		let block:Block = inst.field.block;
+
+		if (inst.row != block.getCurrentRow().rownum)
+		{
+			let entry:number = inst.field.getInstanceEntry(inst);
+			let field:Field = block.getCurrentRow().getField(inst.name);
+			inst = field.getInstance(entry);
+		}
+
+		return(inst);
 	}
 
 	public deleteInstance(instance:FieldInstance) : void

@@ -42,6 +42,7 @@ export class Field
 			frm.addBlock(blk);
 		}
 
+		if (rownum < 0) rownum = -1;
 		let row:Row = blk.getRow(rownum);
 
 		if (row == null)

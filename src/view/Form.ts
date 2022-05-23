@@ -85,7 +85,7 @@ export class Form
 		let inst:FieldInstance = this.instances.get(elem);
 		let block:Block = inst.field.block;
 
-		if (inst.row != block.getCurrentRow().rownum)
+		if (inst.row >= 0 && inst.row != block.getCurrentRow().rownum)
 		{
 			let entry:number = inst.field.getInstanceEntry(inst);
 			let field:Field = block.getCurrentRow().getField(inst.name);

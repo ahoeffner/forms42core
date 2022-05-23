@@ -68,6 +68,8 @@ export class Block
 
 	public addInstance(inst:FieldInstance) : void
 	{
+		console.log("addInstance "+inst.name+"["+inst.row+"]");
+
 		let values:Map<string,any> = this.values.get(inst.row);
 
 		if (values == null)
@@ -173,7 +175,7 @@ export class Block
 		if (current != null)
 		{
 			this.values.get(this.row)?.forEach((value,field) =>
-			{current.distribute(field,value)});
+			{current.distribute(field,value); console.log(field+" -> "+value)});
 		}
 
 		return(true);
@@ -197,11 +199,20 @@ export class Block
 	public finalize() : void
 	{
 		let rows:Row[] = [];
-
 		this.rows.forEach((row) => {rows.push(row)});
 
+		/*
+		 * If only 1 row, set rownum to 0;
+		 * Otherwise sort all rows and re-number then from 0 - rows
+		*/
+
 		if (rows.length == 1)
+		{
+			let fields:Map<string,any> = this.values.get(rows[0].rownum);
+			this.values.delete(rows[0].rownum);
+			this.values.set(0,fields);
 			rows[0].rownum = 0;
+		}
 
 		if (rows.length > 1)
 		{
@@ -213,12 +224,38 @@ export class Block
 				if (rows[i].rownum < 0)
 					continue;
 
+				let fields:Map<string,any> = this.values.get(rows[i].rownum);
+				this.values.delete(rows[i].rownum);
+				this.values.set(n,fields);
+
 				rows[i].rownum = n++;
 			}
 		}
 
 		this.rows.clear();
-		rows.forEach((row) => {this.rows.set(row.rownum,row)});
+
+		rows.forEach((row) =>
+		{this.rows.set(row.rownum,row)});
+
+		let current:Map<string,any> = this.values.get(-1);
+
+		if (current != null)
+		{
+			let cflds:string[] = [];
+			let rows:Map<string,any>[] = [];
+
+			this.values.forEach((map,rownum) =>
+			{if (rownum >= 0) rows.push(map)});
+
+			current.forEach((_val,fld) =>
+			{cflds.push(fld);});
+
+			rows.forEach((map) =>
+			{
+				cflds.forEach((fld) =>
+				{map.set(fld,null)});
+			})
+		}
 	}
 
 	public distribute(field:Field, value:string) : void

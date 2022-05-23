@@ -68,8 +68,6 @@ export class Block
 
 	public addInstance(inst:FieldInstance) : void
 	{
-		console.log("addInstance "+inst.name+"["+inst.row+"]");
-
 		let values:Map<string,any> = this.values.get(inst.row);
 
 		if (values == null)
@@ -175,7 +173,7 @@ export class Block
 		if (current != null)
 		{
 			this.values.get(this.row)?.forEach((value,field) =>
-			{current.distribute(field,value); console.log(field+" -> "+value)});
+			{current.distribute(field,value)});
 		}
 
 		return(true);
@@ -256,6 +254,8 @@ export class Block
 				{map.set(fld,null)});
 			})
 		}
+
+		this.values.delete(-1);
 	}
 
 	public distribute(field:Field, value:string) : void

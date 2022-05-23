@@ -87,17 +87,23 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	public override setStringValue(value:string) : void
 	{
-        if (value == null) value = "";
+        if (value == null)
+			value = "";
 
-		if (this.pattern == null) value = value.trim();
-		else value = value + this.pattern.getPlaceholder().substring(value.length);
+		value = value.trim();
+
+		if (this.pattern != null)
+		{
+			this.pattern.setValue(value);
+			value = this.pattern.getValue();
+		}
 
 		this.invalid(false);
 		this.before = value;
 		this.element.value = value;
 	}
 
-	public getElement(): HTMLElement
+	public getElement() : HTMLElement
 	{
 		return(this.element);
 	}
@@ -160,7 +166,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.type == "focus")
         {
 			buble = true;
-            if (this.placeholder != null)
+			if (this.placeholder != null)
                 this.setAttribute("placeholder",this.placeholder);
         }
 

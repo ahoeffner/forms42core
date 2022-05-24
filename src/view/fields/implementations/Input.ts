@@ -55,9 +55,13 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.setClasses(container.properties.getClasses());
 		this.setAttributes(container.properties.getAttributes());
 
-		container.properties.hidden(this.hidden());
-		container.properties.enabled(this.enabled());
-		container.properties.readonly(this.readonly());
+		let enabled:boolean = !this.element.disabled;
+		let readonly:boolean = this.element.readOnly;
+		let hidden:boolean = (this.getStyle("display")?.toLowerCase() == "none");
+
+		container.properties.hidden(hidden);
+		container.properties.enabled(enabled);
+		container.properties.readonly(readonly);
 	}
 
     public getValue() : any
@@ -365,9 +369,10 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             return(true);
         }
 
-        if (this.event.type == "blur" && this.pattern.isNull())
+        if (this.event.type == "blur")
         {
-			this.clear();
+			this.pattern.setValue(this.getStringValue());
+			if (this.pattern.isNull()) this.clear();
             return(true);
         }
 

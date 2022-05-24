@@ -175,6 +175,9 @@ export class Block
 		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
 			return(false);
 
+		// disable autofill
+		this.getRow(this.row).readonly();
+
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);
 		this.getRow(this.row).setDefaults();

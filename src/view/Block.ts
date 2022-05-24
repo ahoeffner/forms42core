@@ -22,7 +22,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 
 export class Block
 {
-	private row:number = -1;
+	private row:number = 0;
 	private form$:Form = null;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
@@ -158,14 +158,6 @@ export class Block
 
 	public async setCurrentRow(rownum:number) : Promise<boolean>
 	{
-		if (this.row < 0)
-		{
-			this.row = 0;
-			this.getRow(0)?.setDefaults();
-			this.getRow(-1)?.setDefaults();
-			return(true);
-		}
-
 		if (rownum == this.row || rownum == -1)
 			return(true);
 

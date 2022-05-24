@@ -14,8 +14,11 @@
 export class FieldProperties
 {
 	private type:string = null;
-	private styles:string[] = [];
 	private classes:string[] = [];
+	private styles:string[][] = [];
+	private hidden$:boolean = false;
+	private enabled$:boolean = false;
+	private readonly$:boolean = false;
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
 
@@ -31,13 +34,14 @@ export class FieldProperties
 		this.type = this.type.toLowerCase();
 
 		for (let cls of element.classList.values())
-			this.classes.push(cls);
+			this.classes.push(cls.toLowerCase());
 
 		let an:string[] = element.getAttributeNames();
+
 		an.forEach((name) =>
 		{
 			if (!skip.includes(name.toLowerCase()))
-				this.attrs.set(name,element.getAttribute(name));
+				this.attrs.set(name.toLowerCase(),element.getAttribute(name)?.toLowerCase());
 		});
 	}
 
@@ -48,15 +52,40 @@ export class FieldProperties
 
 	public setType(type:string) : void
 	{
-		this.type = type;
+		this.type = type?.toLowerCase();
 	}
 
-	public setStyle(style:any) : void
+	public enabled(flag?:boolean) : boolean
 	{
+		if (flag != null) this.enabled$ = flag;
+		return(this.enabled$);
+	}
+
+	public readonly(flag?:boolean) : boolean
+	{
+		if (flag != null) this.readonly$ = flag;
+		return(this.readonly$);
+	}
+
+	public hidden(flag?:boolean) : boolean
+	{
+		if (flag != null) this.hidden$ = flag;
+		return(this.hidden$);
+	}
+
+	public getStyles() : string[][]
+	{
+		return(this.styles);
+	}
+
+	public setStyle(style:string, value:string) : void
+	{
+		value = value.toLowerCase();
 		style = style.toLowerCase();
 
-		if (this.styles[style] == null)
-			this.styles.push(style);
+		this.removeStyle(style);
+		let styles:string[][] = this.getStyles();
+		styles.push([style,value]);
 	}
 
 	public removeStyle(style:any) : void
@@ -73,55 +102,54 @@ export class FieldProperties
 			this.classes.push(clazz);
 	}
 
+	public getClasses() : string[]
+	{
+		return(this.classes);
+	}
+
+	public hasClass(clazz:string) : boolean
+	{
+		clazz = clazz.toLowerCase();
+		return(this.classes.includes(clazz));
+	}
+
 	public removeClass(clazz:any) : void
 	{
 		clazz = clazz.toLowerCase();
 		delete this.classes[this.classes.indexOf(clazz)];
 	}
 
-	public setAttribute(attr:string, value:string) : void
+	public setClasses(classes:string|string[]) : void
 	{
-		this.attrs.set(attr.toLowerCase(),value);
-	}
+		this.classes = [];
+		
+		if (!Array.isArray(classes))
+			classes = classes.split(" ,;");
 
-	public removeAttribute(attr:string) : void
-	{
-		this.attrs.delete(attr.toLowerCase());
-	}
-
-	public getStyles() : string
-	{
-		if (this.styles.length == 0)
-			return(null);
-
-		let styles:string = "";
-
-		for(let i = 0; i < this.styles.length; i++)
-			styles += this.styles[i]+";";
-
-		return(styles);
-	}
-
-	public getClasses() : string
-	{
-		if (this.classes.length == 0)
-			return(null);
-
-		let classes:string = null;
-		for(let i = 0; i < this.classes.length; i++)
+		for(let clazz in classes)
 		{
-			if (classes == null) classes = "";
-			else 				 classes += ",";
-
-			classes += this.classes[i];
+			if (clazz.length > 0)
+				this.classes.push(clazz.toLowerCase());
 		}
-
-		return(classes);
 	}
 
 	public getAttributes() : Map<string,string>
 	{
 		return(this.attrs);
+	}
+
+	public setAttribute(attr:string, value:string) : void
+	{
+		attr = attr.toLowerCase();
+		value = value.toLowerCase();
+
+		this.attrs.set(attr,value);
+	}
+
+	public removeAttribute(attr:string) : void
+	{
+		attr = attr.toLowerCase();
+		this.attrs.delete(attr.toLowerCase());
 	}
 
     public getValidValues() : Set<any> | Map<any,any>
@@ -133,9 +161,4 @@ export class FieldProperties
 	{
         this.values = values;
     }
-
-	public hasClass(clazz:string) : boolean
-	{
-		return(this.classes.includes(clazz));
-	}
 }

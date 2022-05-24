@@ -44,6 +44,10 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.addEvents(this.element);
 		this.setClasses(container.properties.getClasses());
 		this.setAttributes(container.properties.getAttributes());
+
+		container.properties.hidden(this.hidden());
+		container.properties.enabled(this.enabled());
+		container.properties.readonly(this.readonly());
 	}
 
     public getValue() : any

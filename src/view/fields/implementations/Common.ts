@@ -65,11 +65,11 @@ export class Common
 		if (flag != null)
 		{
 			this.hidden$ = flag;
-			if (flag) this.setStyle("display","none");
-			else      this.setStyle("display","inline-block");
+			if (flag) this.setClass("invalid");
+			else      this.removeClass("invalid");
 		}
 
-		return(this.invalid$);
+		return(this.hidden$);
     }
 
     public invalid(flag?:boolean) : boolean
@@ -77,8 +77,8 @@ export class Common
 		if (flag != null)
 		{
 			this.invalid$ = flag;
-			if (flag) this.setClass("invalid");
-			else      this.removeClass("invalid");
+			if (flag) this.setStyle("display","none");
+			else      this.removeStyle("display");
 		}
 
 		return(this.invalid$);
@@ -94,7 +94,7 @@ export class Common
 		return(this.readonly$);
     }
 
-	public enabled(flag:boolean) : boolean
+	public enabled(flag?:boolean) : boolean
 	{
 		if (flag != null)
 		{
@@ -106,15 +106,14 @@ export class Common
 
     public getStyle(style:string) : string
     {
-		let styles:string[][] = this.getStyles();
+		style = style.toLowerCase();
+		return(this.field.getElement().style.getPropertyValue(style));
+    }
 
-		for (let i = 0; i < styles.length; i++)
-		{
-			if (styles[i][0] == style)
-				return(styles[i][1]);
-		}
-
-		return(null);
+    public removeStyle(style:string) : void
+    {
+		style = style.toLowerCase();
+		this.field.getElement().style.removeProperty(style);
     }
 
     public getStyles() : string[][]
@@ -129,38 +128,62 @@ export class Common
 				let split:number = styles[i].indexOf(":");
 				let entry:string = styles[i].substring(0,split).trim();
 				let value:string = styles[i].substring(split+1).trim();
-				parsed.push([entry,value]);
+				parsed.push([entry.toLowerCase(),value.toLowerCase()]);
 			}
 		}
 
 		return(parsed);
     }
 
-    public setStyle(style:string, value:string) : string
+    public setStyle(style:string, value:string) : void
     {
+		style = style.toLowerCase();
+
+		this.removeStyle(style);
 		let styles:string[][] = this.getStyles();
-		return(this.field.getElement().style.cssText);
+
+		styles.push([style,value]);
+
+		style = "";
+		styles.forEach((stl) => {style += stl[0]+": "+stl[1]+";"});
+		this.field.getElement().style.cssText = style;
     }
 
     public setClass(clazz:string) : void
     {
-		if (clazz != null)
-			this.field.getElement().classList.add(clazz);
+		clazz = clazz.toLowerCase();
+		this.field.getElement().classList.add(clazz);
     }
+
+	public hasClass(clazz:string) : boolean
+	{
+		clazz = clazz.toLowerCase();
+
+		for (let entry of this.field.getElement().classList.entries())
+			if (entry[1] == clazz) return(true);
+
+		return(false);
+	}
 
     public removeClass(clazz:string) : void
     {
+		clazz = clazz.toLowerCase();
         this.field.getElement().classList.remove(clazz);
     }
 
-    public getClasses() : string
+    public getClasses() : string[]
     {
-        return(this.field.getElement().classList.value);
+		let classes:string[] = [];
+
+		for (let entry of this.field.getElement().classList.entries())
+			classes.push(entry[1]);
+
+		return(classes);
     }
 
-    public setClasses(classes: string) : void
-    {
-		if (classes != null)
-			this.field.getElement().classList.value = classes;
-    }
+	public setClasses(classes:string|string[]) : void
+	{
+		if (!Array.isArray(classes)) this.field.getElement().classList.value = classes;
+		else classes.forEach((clazz) => {this.field.getElement().classList.add(clazz)});
+	}
 }

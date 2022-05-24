@@ -179,9 +179,9 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.getStyle(style));
 	}
 
-	public setStyle(style:string, value:string) : string
+	public setStyle(style:string, value:string) : void
 	{
-		return(this.impl.setStyle(style,value));
+		this.impl.setStyle(style,value);
 	}
 
 	public setInstanceType(type:string) : void

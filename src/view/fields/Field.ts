@@ -167,7 +167,6 @@ export class Field
 
 		if (event.type == "focus")
 		{
-			console.log("focus: "+this.name+"["+this.row.rownum+"] -> "+inst.getStringValue())
 			if (await this.block.setCurrentField(inst))
 				await this.mdlblk.preField(event);
 
@@ -176,7 +175,6 @@ export class Field
 
 		if (event.type == "blur")
 		{
-			console.log("blur: "+this.name+"["+this.row.rownum+"] -> "+inst.getStringValue())
 			await this.mdlblk.postField(event);
 			return;
 		}
@@ -185,7 +183,6 @@ export class Field
 		{
 			this.row.validated = false;
 			this.block.distribute(this,inst.getStringValue());
-			console.log("change: "+this.name+"["+this.row.rownum+"] -> "+inst.getStringValue())
 
 			if (!await this.mdlblk.validateField(event))
 			{

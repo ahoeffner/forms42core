@@ -23,7 +23,14 @@ export interface FieldImplementation
 
     getStyles() : string[][];
     getStyle(style:string) : string;
-    setStyle(style:string,value:string) : string;
+	removeStyle(style:string) : void;
+    setStyle(style:string,value:string) : void;
+
+    getClasses() : string[];
+    setClass(clazz:string) : void;
+    hasClass(clazz:string) : boolean;
+    removeClass(clazz:string) : void;
+    setClasses(clazz:string|string[]) : void;
 
     getElement() : HTMLElement;
 

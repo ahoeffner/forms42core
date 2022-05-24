@@ -65,6 +65,21 @@ export class Row
 		else this.block.getCurrentRow().validated$ = flag;
 	}
 
+	public disable() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.enabled(false)});
+	}
+
+	public readonly() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.readonly(true)});
+	}
+
+	public setDefaults() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.setDefaults()});
+	}
+
 	public validateFields() : boolean
 	{
 		if (this.validated)

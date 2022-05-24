@@ -34,6 +34,16 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		super();
 	}
 
+	public setDefaults() : void
+	{
+		this.hidden(this.container.properties.hidden());
+		this.enabled(this.container.properties.enabled());
+		this.readonly(this.container.properties.readonly());
+
+		this.setClasses(this.container.properties.getClasses());
+		this.setAttributes(this.container.properties.getAttributes());
+	}
+
 	public initialize(container:FieldContainer) : void
 	{
 		this.container = container;
@@ -313,6 +323,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     private xfixed() : boolean
     {
         let prevent:boolean = this.event.prevent;
+
+		if (this.element.readOnly)
+			return(true);
 
         if (this.event.prevent)
             prevent = true;

@@ -14,6 +14,7 @@ import { FieldContainer } from "./FieldContainer";
 
 export interface FieldImplementation
 {
+	setDefaults() : void;
 	initialize(container:FieldContainer) : void;
 
     getValue() : any;

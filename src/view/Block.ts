@@ -22,7 +22,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 
 export class Block
 {
-	private row:number = 0;
+	private row:number = -1;
 	private form$:Form = null;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
@@ -158,6 +158,14 @@ export class Block
 
 	public async setCurrentRow(rownum:number) : Promise<boolean>
 	{
+		if (this.row < 0)
+		{
+			this.row = 0;
+			this.getRow(0)?.setDefaults();
+			this.getRow(-1)?.setDefaults();
+			return(true);
+		}
+
 		if (rownum == this.row || rownum == -1)
 			return(true);
 
@@ -169,9 +177,11 @@ export class Block
 
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);
+		this.getRow(this.row).setDefaults();
 
 		if (current != null)
 		{
+			current.setDefaults();
 			this.values.get(this.row)?.forEach((value,field) =>
 			{current.distribute(field,value)});
 		}
@@ -256,6 +266,12 @@ export class Block
 		}
 
 		this.values.delete(-1);
+
+		this.getRow(0)?.readonly();
+		this.getRow(-1)?.readonly();
+
+		this.rows.forEach((row) =>
+		{if (row.rownum > 0) row.disable()});
 	}
 
 	public distribute(field:Field, value:string) : void

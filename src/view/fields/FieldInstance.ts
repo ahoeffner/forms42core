@@ -174,6 +174,11 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.readonly(flag));
 	}
 
+	public setDefaults() : void
+	{
+		this.impl.setDefaults();
+	}
+
 	public getStyle(style?:string) : string|string[][]
 	{
 		return(this.impl.getStyle(style));

@@ -15,10 +15,10 @@ import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 export class Common
 {
-	private hidden$:boolean = false;
-	private invalid$:boolean = false;
-	private enabled$:boolean = false;
-	private readonly$:boolean = false;
+	private hidden$:boolean = null;
+	private invalid$:boolean = null;
+	private enabled$:boolean = null;
+	private readonly$:boolean = null;
     private field:FieldImplementation = null;
 
     public setImplementation(field:FieldImplementation) : void
@@ -62,11 +62,11 @@ export class Common
 
     public hidden(flag?:boolean) : boolean
 	{
-		if (flag != null)
+		if (flag != null && flag != this.hidden$)
 		{
 			this.hidden$ = flag;
-			if (flag) this.setClass("invalid");
-			else      this.removeClass("invalid");
+			if (flag) this.setStyle("display","none");
+			else      this.removeStyle("display");
 		}
 
 		return(this.hidden$);
@@ -74,11 +74,11 @@ export class Common
 
     public invalid(flag?:boolean) : boolean
 	{
-		if (flag != null)
+		if (flag != null && flag != this.invalid$)
 		{
 			this.invalid$ = flag;
-			if (flag) this.setStyle("display","none");
-			else      this.removeStyle("display");
+			if (flag) this.setClass("invalid");
+			else      this.removeClass("invalid");
 		}
 
 		return(this.invalid$);
@@ -86,7 +86,7 @@ export class Common
 
     public readonly(flag?:boolean) : boolean
 	{
-		if (flag != null)
+		if (flag != null && flag != this.readonly$)
 		{
 			this.readonly$ = flag;
 			(this.field.getElement() as HTMLInputElement).readOnly = flag;
@@ -96,9 +96,12 @@ export class Common
 
 	public enabled(flag?:boolean) : boolean
 	{
-		if (flag != null)
+		console.log("disable flag: "+flag+" change: "+(flag != null && flag != this.enabled$));
+
+		if (flag != null && flag != this.enabled$)
 		{
 			this.enabled$ = flag;
+			console.log("enable "+flag);
 			(this.field.getElement() as HTMLInputElement).disabled = !flag;
 		}
 		return(this.enabled$);

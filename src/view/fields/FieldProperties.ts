@@ -41,7 +41,7 @@ export class FieldProperties
 		an.forEach((name) =>
 		{
 			if (!skip.includes(name.toLowerCase()))
-				this.attrs.set(name.toLowerCase(),element.getAttribute(name)?.toLowerCase());
+				this.attrs.set(name.toLowerCase(),element.getAttribute(name));
 		});
 	}
 
@@ -122,7 +122,7 @@ export class FieldProperties
 	public setClasses(classes:string|string[]) : void
 	{
 		this.classes = [];
-		
+
 		if (!Array.isArray(classes))
 			classes = classes.split(" ,;");
 
@@ -141,8 +141,6 @@ export class FieldProperties
 	public setAttribute(attr:string, value:string) : void
 	{
 		attr = attr.toLowerCase();
-		value = value.toLowerCase();
-
 		this.attrs.set(attr,value);
 	}
 

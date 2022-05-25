@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { FieldProperties } from "../FieldProperties.js";
+import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 
@@ -49,6 +51,25 @@ export class Common
 
         return(str);
     }
+
+	public initialize(tag:HTMLElement, container:FieldContainer) : void
+	{
+		let props:FieldProperties = container.properties;
+		let skip:string[] = ["id","name","type","block","row"];
+
+		props.setType(tag.getAttribute("type"));
+
+		for (let cls of tag.classList.values())
+			props.setClass(cls);
+
+		let an:string[] = tag.getAttributeNames();
+
+		an.forEach((name) =>
+		{
+			if (!skip.includes(name.toLowerCase()))
+				props.setAttribute(name,tag.getAttribute(name));
+		});
+	}
 
     public removeAttribute(attr:string) : void
     {

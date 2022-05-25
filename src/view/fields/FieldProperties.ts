@@ -22,29 +22,6 @@ export class FieldProperties
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
 
-	constructor(element:HTMLElement)
-	{
-		let skip:string[] = ["id","name","type","block","row"];
-
-		this.type = element.getAttribute("type");
-
-		if (this.type == null)
-			this.type = "text";
-
-		this.type = this.type.toLowerCase();
-
-		for (let cls of element.classList.values())
-			this.classes.push(cls.toLowerCase());
-
-		let an:string[] = element.getAttributeNames();
-
-		an.forEach((name) =>
-		{
-			if (!skip.includes(name.toLowerCase()))
-				this.attrs.set(name.toLowerCase(),element.getAttribute(name));
-		});
-	}
-
 	public getType() : string
 	{
 		return(this.type);
@@ -52,7 +29,8 @@ export class FieldProperties
 
 	public setType(type:string) : void
 	{
-		this.type = type?.toLowerCase();
+		if (type == null) type = "text";
+		this.type = type.toLowerCase();
 	}
 
 	public enabled(flag?:boolean) : boolean

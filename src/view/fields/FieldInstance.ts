@@ -32,20 +32,20 @@ export class FieldInstance implements FieldContainer
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
 
-	constructor(form:Form,element:HTMLElement)
+	constructor(form:Form,tag:HTMLElement)
 	{
 		this.form$ = form;
 
-		let row:string = element.getAttribute("row");
+		let row:string = tag.getAttribute("row");
 
 		if (row == null) row = "-1";
 		else if (isNaN(+row)) throw "@FieldInstance: row: '"+row+"' is not a number";
 
 		this.row$ = +row;
 
-		this.id$ = element.getAttribute("id");
-		this.name$ = element.getAttribute("name");
-		this.block$ = element.getAttribute("block");
+		this.id$ = tag.getAttribute("id");
+		this.name$ = tag.getAttribute("name");
+		this.block$ = tag.getAttribute("block");
 
 		if (this.id$ == null)
 			this.id$ = "";
@@ -62,13 +62,13 @@ export class FieldInstance implements FieldContainer
 		this.id$ = this.id$.toLowerCase();
 		this.name$ = this.name$.toLowerCase();
 		this.block$ = this.block$.toLowerCase();
-		this.properties$ = new FieldProperties(element);
+		this.properties$ = new FieldProperties();
 		this.field$ = Field.create(form,this.block$,this.row$,this.name$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(this.properties$.getType());
 
 		this.impl = new clazz();
-		this.impl.initialize(this);
+		this.impl.initialize(tag,this);
 		this.element$ = this.impl.getElement();
 
 		if (this.id$.length > 0) this.element$.setAttribute("id",this.id$);
@@ -195,9 +195,9 @@ export class FieldInstance implements FieldContainer
 		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
 
 		this.impl = new clazz();
-		this.impl.initialize(this);
-		this.element$ = this.impl.getElement();
+		this.impl.initialize(this.element$,this);
 
+		this.element$ = this.impl.getElement();
 		this.field.reindexInstance(element,this);
 	}
 

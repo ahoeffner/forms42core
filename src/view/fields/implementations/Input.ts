@@ -44,12 +44,13 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.setAttributes(this.container.properties.getAttributes());
 	}
 
-	public initialize(container:FieldContainer) : void
+	public initialize(tag:HTMLElement, container:FieldContainer) : void
 	{
 		this.container = container;
 		this.element = document.createElement("input");
 
 		super.setImplementation(this);
+		super.initialize(tag,container);
 
 		this.addEvents(this.element);
 		this.setClasses(container.properties.getClasses());

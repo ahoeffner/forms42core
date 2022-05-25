@@ -15,7 +15,7 @@ import { FieldContainer } from "./FieldContainer";
 export interface FieldImplementation
 {
 	setDefaults() : void;
-	initialize(container:FieldContainer) : void;
+	initialize(tag:HTMLElement, container:FieldContainer) : void;
 
     getValue() : any;
     getStringValue() : string;

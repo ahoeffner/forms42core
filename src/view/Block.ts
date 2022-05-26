@@ -172,11 +172,11 @@ export class Block
 
 		this.row = rownum;
 		let current:Row = this.rows.get(-1);
-		this.getRow(this.row).setDefaults();
+		this.getRow(this.row).setDefaults(null);
 
 		if (current != null)
 		{
-			current.setDefaults();
+			current.setDefaults(null);
 			this.values.get(this.row)?.forEach((value,field) =>
 			{current.distribute(field,value)});
 		}

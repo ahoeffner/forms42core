@@ -13,6 +13,7 @@
 import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
+import { FieldProperties } from "../public/FieldProperties.js";
 
 
 export class Row
@@ -65,6 +66,11 @@ export class Row
 		else this.block.getCurrentRow().validated$ = flag;
 	}
 
+	public enable() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.enabled(true)});
+	}
+
 	public disable() : void
 	{
 		this.getFieldInstances().forEach((inst) => {inst.enabled(false)});
@@ -75,9 +81,9 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.readonly(true)});
 	}
 
-	public setDefaults() : void
+	public setDefaults(override?:FieldProperties) : void
 	{
-		this.getFieldInstances().forEach((inst) => {inst.setDefaults()});
+		this.getFieldInstances().forEach((inst) => {inst.setDefaults(override)});
 	}
 
 	public validateFields() : boolean

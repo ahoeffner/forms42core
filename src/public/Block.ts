@@ -28,6 +28,11 @@ export class Block
 		Model.create(Forms.getForm(form),this);
 	}
 
+	public get form() : Form
+	{
+		return(this.form$);
+	}
+
 	public get name() : string
 	{
 		return(this.name$);

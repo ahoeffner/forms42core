@@ -35,6 +35,11 @@ export class FormEvent
 		return(new FormEvent(type,form, cause));
 	}
 
+	public static newBlockEvent(type:EventType, form:Form, block:string, cause?:Event) : FormEvent
+	{
+		return(new FormEvent(type,form,cause,block));
+	}
+
 	public static newFieldEvent(type:EventType, form:Form, cause?:Event, block?:string, field?:string) : FormEvent
 	{
 		return(new FormEvent(type,form,cause,block,field));

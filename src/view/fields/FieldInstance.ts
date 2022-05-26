@@ -18,6 +18,7 @@ import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
+import { FieldProperties as Override } from "../../public/FieldProperties.js";
 
 
 export class FieldInstance implements FieldContainer
@@ -174,7 +175,7 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.readonly(flag));
 	}
 
-	public setDefaults() : void
+	public setDefaults(override:Override) : void
 	{
 		this.impl.setDefaults();
 	}

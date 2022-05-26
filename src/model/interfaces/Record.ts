@@ -12,6 +12,6 @@
 
 export interface Record
 {
-	recno:number;
+	oid:any;
 	columns:{[name: string]: any};
 }

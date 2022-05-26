@@ -24,7 +24,7 @@ export interface DataSource
 
 	query() : Promise<boolean>;
 	delete(rec:number) : Promise<boolean>;
-	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
-	fetch(start:number, records:number, forward:boolean) : Promise<Record[]>;
+	insert(oid?:any, before?:boolean) : Promise<Record>;
+	fetch(oid?:any, records?:number, forward?:boolean) : Promise<Record[]>;
 }

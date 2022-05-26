@@ -19,12 +19,12 @@ import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
 export class InMemory implements DataSource
 {
-	private cur$:Record = null;
-	private mod$:Record = null;
+	private bef$:Record = null;
+	private aft$:Record = null;
 	private block$:Block = null;
+	private cursor:Record[] = [];
 	private records:Record[] = [];
 	private filters:Filter[] = [];
-	private content:Record[] = [];
 
 	constructor(block:Block, records?:Record[])
 	{
@@ -32,6 +32,7 @@ export class InMemory implements DataSource
 			records = [];
 
 		this.block$ = block;
+		this.cursor = records;
 		this.records = records;
 	}
 
@@ -52,86 +53,123 @@ export class InMemory implements DataSource
 
 	public after() : Record
 	{
-		return(this.mod$);
+		return(this.aft$);
 	}
 
 	public before() : Record
 	{
-		return(this.cur$);
+		return(this.bef$);
 	}
 
-	public async delete(rec:number) : Promise<boolean>
+	public async delete(oid:number) : Promise<boolean>
 	{
-		this.mod$ = null;
-		this.cur$ = this.records[rec];
+		let cur:number = this.indexOf(this.cursor,oid);
+		let rec:number = this.indexOf(this.records,oid);
+
+		if (rec < 0) return(false);
+
+		this.aft$ = null;
+		this.bef$ = this.records[rec];
 
 		if (!await this.fire(EventType.PreDelete))
 		{
-			this.cur$ = null;
-			this.mod$ = null;
+			this.bef$ = null;
 			return(false);
 		}
 
 		delete this.records[rec];
+		if (cur >= 0) delete this.cursor[cur];
 
 		let outcome:boolean = await this.fire(EventType.PostDelete);
 
-		this.cur$ = null;
-		this.mod$ = null;
-
+		this.bef$ = null;
 		return(outcome);
 	}
 
-	public async insert(record:Record) : Promise<boolean>
+	public async insert(oid?:any, before?:boolean) : Promise<Record>
 	{
-		this.cur$ = null;
-		this.mod$ = record;
+		this.bef$ = null;
+		this.aft$ = {oid: new Object(), columns: {}};
+
+		let cur:number = 0;
+		let rec:number = 0;
+
+		if (oid != null)
+		{
+			cur = this.indexOf(this.cursor,oid);
+			rec = this.indexOf(this.records,oid);
+		}
+
+		if (cur < 0) cur = 0;
+		if (rec < 0) rec = 0;
+
+		if (before)
+		{
+			if (cur > 0) cur--;
+			if (rec > 0) rec--;
+		}
 
 		if (!await this.fire(EventType.PreInsert))
 		{
-			this.cur$ = null;
-			this.mod$ = null;
-			return(false);
+			this.aft$ = null;
+			return(null);
 		}
 
-		this.cur$ = this.mod$;
-		record.recno = this.records.length;
-		this.records.push(this.mod$);
+		if (!await this.fire(EventType.PostInsert))
+		{
+			this.aft$ = null;
+			return(null);
+		}
 
-		let outcome:boolean = await this.fire(EventType.PostInsert);
+		let ins:Record = this.aft$;
+		this.cursor.splice(cur,0,ins);
+		this.records.splice(rec,0,ins);
 
-		this.cur$ = null;
-		this.mod$ = null;
-
-		return(outcome);
+		this.aft$ = null;
+		return(ins);
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		this.mod$ = record;
-		this.cur$ = this.records[record.recno];
+		let cur:number = this.indexOf(this.cursor,record.oid);
+		let rec:number = this.indexOf(this.records,record.oid);
+
+		if (rec < 0) return(false);
+
+		this.aft$ = record;
+		this.bef$ = this.records[rec];
 
 		if (!await this.fire(EventType.PreUpdate))
 		{
-			this.cur$ = null;
-			this.mod$ = null;
+			this.bef$ = null;
+			this.aft$ = null;
 			return(false);
 		}
 
-		this.cur$ = this.mod$;
-		this.records[record.recno] = this.mod$;
+		this.records[rec] = this.aft$;
+		if (cur >= 0) this.cursor[cur] = this.aft$;
 
 		let outcome:boolean = await this.fire(EventType.PostUpdate);
 
-		this.cur$ = null;
-		this.mod$ = null;
+		this.bef$ = null;
+		this.aft$ = null;
 
 		return(outcome);
 	}
 
-	public async fetch(start:number, records:number, forward:boolean) : Promise<Record[]>
+	public async fetch(oid?:any, records?:number, forward?:boolean) : Promise<Record[]>
 	{
+		let start:number = 0;
 		let recs:Record[] = [];
+
+		if (records == null)
+			records = 1;
+
+		if (forward == null)
+			forward = true;
+
+		if (oid != null)
+			start = this.indexOf(this.cursor,oid);
 
 		if (!forward)
 		{
@@ -144,8 +182,8 @@ export class InMemory implements DataSource
 			}
 		}
 
-		for (let i = start; i < start + records && i < this.records.length; i++)
-			recs.push(this.records[i])
+		for (let i = start; i < start + records && i < this.cursor.length; i++)
+			recs.push(this.cursor[i])
 
 		return(recs);
 	}
@@ -158,5 +196,16 @@ export class InMemory implements DataSource
 	private async fire(type:EventType) : Promise<boolean>
 	{
 		return(FormEvents.raise(FormEvent.newBlockEvent(type,this.block$.form,this.block$.name)));
+	}
+
+	private indexOf(records:Record[],oid:any) : number
+	{
+		for (let i = 0; i < records.length; i++)
+		{
+			if (records[i].oid == oid)
+				return(i);
+		}
+
+		return(-1);
 	}
 }

@@ -17,14 +17,21 @@ import { DataSource } from "../interfaces/DataSource.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
-export class InMemory implements DataSource
+export class MemoryTable implements DataSource
 {
+	private rows$:number = -1;
 	private bef$:Record = null;
 	private aft$:Record = null;
 	private block$:Block = null;
-	private cursor:Record[] = [];
 	private records:Record[] = [];
 	private filters:Filter[] = [];
+	private cursor:Record[] = null;
+
+	public queryable:boolean  = true;
+	public insertable:boolean = true;
+	public updateable:boolean = true;
+	public deleteable:boolean = true;
+
 
 	constructor(block:Block, records?:Record[])
 	{
@@ -32,8 +39,12 @@ export class InMemory implements DataSource
 			records = [];
 
 		this.block$ = block;
-		this.cursor = records;
 		this.records = records;
+	}
+
+	public set maxrows(rows:number)
+	{
+		this.rows$ = rows;
 	}
 
 	public getFilters() : Filter[]
@@ -61,8 +72,14 @@ export class InMemory implements DataSource
 		return(this.bef$);
 	}
 
+	public async lock(_record:Record) : Promise<boolean>
+	{
+		return(true);
+	}
+
 	public async delete(oid:number) : Promise<boolean>
 	{
+		if (!this.deleteable) return(false);
 		let cur:number = this.indexOf(this.cursor,oid);
 		let rec:number = this.indexOf(this.records,oid);
 
@@ -88,8 +105,17 @@ export class InMemory implements DataSource
 
 	public async insert(oid?:any, before?:boolean) : Promise<Record>
 	{
+		if (!this.insertable)
+			return(null);
+
 		this.bef$ = null;
 		this.aft$ = {oid: new Object(), columns: {}};
+
+		if (this.records == null)
+			this.records = [];
+
+		if (this.rows$ > 0 && this.records.length >= this.rows$)
+			return(null);
 
 		let cur:number = 0;
 		let rec:number = 0;
@@ -122,8 +148,10 @@ export class InMemory implements DataSource
 		}
 
 		let ins:Record = this.aft$;
-		this.cursor.splice(cur,0,ins);
 		this.records.splice(rec,0,ins);
+
+		if (this.cursor != null)
+			this.cursor.splice(cur,0,ins);
 
 		this.aft$ = null;
 		return(ins);
@@ -131,6 +159,7 @@ export class InMemory implements DataSource
 
 	public async update(record:Record) : Promise<boolean>
 	{
+		if (!this.updateable) return(false);
 		let cur:number = this.indexOf(this.cursor,record.oid);
 		let rec:number = this.indexOf(this.records,record.oid);
 
@@ -162,6 +191,9 @@ export class InMemory implements DataSource
 		let start:number = 0;
 		let recs:Record[] = [];
 
+		if (this.records == null)
+			this.records = [];
+
 		if (records == null)
 			records = 1;
 
@@ -182,14 +214,22 @@ export class InMemory implements DataSource
 			}
 		}
 
-		for (let i = start; i < start + records && i < this.cursor.length; i++)
-			recs.push(this.cursor[i])
+		let cursor:Record[] = this.cursor;
+		if (cursor == null) cursor = this.records;
+
+		for (let i = start; i < start + records && i < cursor.length; i++)
+			recs.push(cursor[i]);
 
 		return(recs);
 	}
 
 	public async query() : Promise<boolean>
 	{
+		if (!this.queryable)
+			return(false);
+
+		this.cursor = this.records;
+
 		return(true);
 	}
 

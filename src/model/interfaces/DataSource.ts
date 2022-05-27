@@ -15,6 +15,11 @@ import { Record } from './Record.js';
 
 export interface DataSource
 {
+	queryable:boolean;
+	insertable:boolean;
+	updateable:boolean;
+	deleteable:boolean;
+
 	after() : Record;
 	before() : Record;
 
@@ -24,6 +29,7 @@ export interface DataSource
 
 	query() : Promise<boolean>;
 	delete(rec:number) : Promise<boolean>;
+	lock(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	insert(oid?:any, before?:boolean) : Promise<Record>;
 	fetch(oid?:any, records?:number, forward?:boolean) : Promise<Record[]>;

@@ -19,6 +19,7 @@ import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
 export class MemoryTable implements DataSource
 {
+	private pos$:number = 0;
 	private rows$:number = -1;
 	private bef$:Record = null;
 	private aft$:Record = null;
@@ -186,41 +187,11 @@ export class MemoryTable implements DataSource
 		return(outcome);
 	}
 
-	public async fetch(oid?:any, records?:number, forward?:boolean) : Promise<Record[]>
+	public async fetch() : Promise<Record>
 	{
-		let start:number = 0;
-		let recs:Record[] = [];
-
-		if (this.records == null)
-			this.records = [];
-
-		if (records == null)
-			records = 1;
-
-		if (forward == null)
-			forward = true;
-
-		if (oid != null)
-			start = this.indexOf(this.cursor,oid);
-
-		if (!forward)
-		{
-			start = start - records;
-
-			if (start < 0)
-			{
-				records -= start;
-				start = 0;
-			}
-		}
-
 		let cursor:Record[] = this.cursor;
 		if (cursor == null) cursor = this.records;
-
-		for (let i = start; i < start + records && i < cursor.length; i++)
-			recs.push(cursor[i]);
-
-		return(recs);
+		return(cursor[this.pos$++]);
 	}
 
 	public async query() : Promise<boolean>

@@ -20,9 +20,58 @@ export class DataModel
 
 class Wrapper
 {
-	private pos$:number = 0;
+	private eof$:boolean;
+	private cache$:Record[];
 	private window$:number = 0;
-	private cache:Record[] = [];
+	private winpos$:number[] = [0,-1];
 
-	constructor(private source:DataSource) {}
+	constructor(private source:DataSource)
+	{
+		this.cache$ = [];
+		this.eof$ = false;
+	}
+
+	public set window(size:number)
+	{
+		this.window$ = size;
+	}
+
+	public async fetch(previous?:boolean) : Promise<Record>
+	{
+		if (previous)
+		{
+			if (this.winpos$[0] < 1)
+				return(null);
+
+			this.winpos$[0]--;
+
+			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window$)
+				this.winpos$[1]--;
+
+			return(this.cache$[this.winpos$[0]]);
+		}
+		else
+		{
+			if (this.winpos$[1] >= this.cache$.length-1)
+			{
+				if (this.eof$) return(null);
+				let rec:Record = await this.source.fetch();
+
+				if (rec == null)
+				{
+					this.eof$ = true;
+					return(null);
+				}
+
+				this.cache$.push(rec);
+			}
+
+			this.winpos$[1]++;
+
+			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window$)
+				this.winpos$[0]++;
+
+			return(this.cache$[this.winpos$[1]]);
+		}
+	}
 }

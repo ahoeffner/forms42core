@@ -20,9 +20,6 @@ export interface DataSource
 	updateable:boolean;
 	deleteable:boolean;
 
-	after() : Record;
-	before() : Record;
-
 	getFilters() : Filter[];
 	addFilter(filter:Filter) : void;
 	setFilters(filters:Filter[]) : void;
@@ -31,6 +28,6 @@ export interface DataSource
 	query() : Promise<boolean>;
 	delete(rec:number) : Promise<boolean>;
 	lock(record:Record) : Promise<boolean>;
+	insert(record:Record) : Promise<Record>;
 	update(record:Record) : Promise<boolean>;
-	insert(oid?:any, before?:boolean) : Promise<Record>;
 }

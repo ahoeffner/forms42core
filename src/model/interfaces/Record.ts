@@ -10,8 +10,50 @@
  * accompanied this code).
  */
 
-export interface Record
+export enum RecordStatus
 {
-	oid:any;
-	columns:{[name: string]: any};
+	New,
+	Query,
+	Insert,
+	Update,
+	Delete
+}
+
+export class Record
+{
+	private id$:any;
+	private columns$:{[name: string]: any};
+	private status$:RecordStatus = RecordStatus.Query;
+
+	constructor(columns?:{[name: string]: any})
+	{
+		this.columns$ = columns;
+		this.id$ = new Object();
+		
+		if (columns == null)
+		{
+			this.columns$ = {};
+			this.status$ = RecordStatus.New;
+		}
+	}
+
+	public get id() : any
+	{
+		return(this.id$);
+	}
+
+	public get status() : RecordStatus
+	{
+		return(this.status$);
+	}
+
+	public set status(status:RecordStatus)
+	{
+		this.status$ = status;
+	}
+
+	public get columns() : {[name: string]: any}
+	{
+		return(this.columns$);
+	}
 }

@@ -21,8 +21,6 @@ export class MemoryTable implements DataSource
 {
 	private pos$:number = 0;
 	private rows$:number = -1;
-	private bef$:Record = null;
-	private aft$:Record = null;
 	private block$:Block = null;
 	private records:Record[] = [];
 	private filters:Filter[] = [];
@@ -63,16 +61,6 @@ export class MemoryTable implements DataSource
 		this.filters = filters;
 	}
 
-	public after() : Record
-	{
-		return(this.aft$);
-	}
-
-	public before() : Record
-	{
-		return(this.bef$);
-	}
-
 	public async lock(_record:Record) : Promise<boolean>
 	{
 		return(true);
@@ -86,12 +74,8 @@ export class MemoryTable implements DataSource
 
 		if (rec < 0) return(false);
 
-		this.aft$ = null;
-		this.bef$ = this.records[rec];
-
 		if (!await this.fire(EventType.PreDelete))
 		{
-			this.bef$ = null;
 			return(false);
 		}
 
@@ -100,7 +84,6 @@ export class MemoryTable implements DataSource
 
 		let outcome:boolean = await this.fire(EventType.PostDelete);
 
-		this.bef$ = null;
 		return(outcome);
 	}
 
@@ -108,9 +91,6 @@ export class MemoryTable implements DataSource
 	{
 		if (!this.insertable)
 			return(null);
-
-		this.bef$ = null;
-		this.aft$ = {oid: new Object(), columns: {}};
 
 		if (this.records == null)
 			this.records = [];
@@ -138,51 +118,37 @@ export class MemoryTable implements DataSource
 
 		if (!await this.fire(EventType.PreInsert))
 		{
-			this.aft$ = null;
 			return(null);
 		}
 
 		if (!await this.fire(EventType.PostInsert))
 		{
-			this.aft$ = null;
 			return(null);
 		}
 
-		let ins:Record = this.aft$;
+		let ins:Record = new Record();
 		this.records.splice(rec,0,ins);
 
 		if (this.cursor != null)
 			this.cursor.splice(cur,0,ins);
 
-		this.aft$ = null;
 		return(ins);
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
 		if (!this.updateable) return(false);
-		let cur:number = this.indexOf(this.cursor,record.oid);
-		let rec:number = this.indexOf(this.records,record.oid);
+		let cur:number = this.indexOf(this.cursor,record.id);
+		let rec:number = this.indexOf(this.records,record.id);
 
 		if (rec < 0) return(false);
 
-		this.aft$ = record;
-		this.bef$ = this.records[rec];
-
 		if (!await this.fire(EventType.PreUpdate))
 		{
-			this.bef$ = null;
-			this.aft$ = null;
 			return(false);
 		}
 
-		this.records[rec] = this.aft$;
-		if (cur >= 0) this.cursor[cur] = this.aft$;
-
 		let outcome:boolean = await this.fire(EventType.PostUpdate);
-
-		this.bef$ = null;
-		this.aft$ = null;
 
 		return(outcome);
 	}
@@ -213,7 +179,7 @@ export class MemoryTable implements DataSource
 	{
 		for (let i = 0; i < records.length; i++)
 		{
-			if (records[i].oid == oid)
+			if (records[i].id == oid)
 				return(i);
 		}
 

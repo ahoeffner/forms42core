@@ -39,8 +39,8 @@ export class Block
 	}
 
 	private form:Form = null;
-	private record$:number = 0;
 	private name$:string = null;
+	private record$:number = -1;
 	private vwblk:ViewBlock = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
@@ -96,11 +96,23 @@ export class Block
 
 	public async setCurrentRecord(delta:number) : Promise<boolean>
 	{
+		if (this.record$ < 0)
+		{
+			this.record$ = delta;
+			return(await this.fire(EventType.PreRecord,null));
+		}
+
 		let cont:boolean = false;
 		let next:number = this.record$ + delta;
 
 		if (next >= 0 && next <= 2) cont = true;
-		if (cont) this.record$ += delta;
+
+		if (cont)
+		{
+			await this.fire(EventType.PostRecord,null);
+			this.record$ += delta;
+			await this.fire(EventType.PreRecord,null);
+		}
 
 		return(cont);
 	}

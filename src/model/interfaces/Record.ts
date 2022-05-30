@@ -22,18 +22,21 @@ export enum RecordStatus
 export class Record
 {
 	private id$:any;
-	private columns$:{[name: string]: any};
 	private status$:RecordStatus = RecordStatus.Query;
+	private columns$:Map<string,any> = new Map<string,any>();
 
 	constructor(columns?:{[name: string]: any})
 	{
-		this.columns$ = columns;
 		this.id$ = new Object();
-		
+
 		if (columns == null)
 		{
-			this.columns$ = {};
 			this.status$ = RecordStatus.New;
+		}
+		else
+		{
+			Object.keys(columns).forEach((col) =>
+			{this.columns$.set(col.toLowerCase(),columns[col])});
 		}
 	}
 
@@ -52,8 +55,13 @@ export class Record
 		this.status$ = status;
 	}
 
-	public get columns() : {[name: string]: any}
+	public getValue(column:string) : any
 	{
-		return(this.columns$);
+		return(this.columns$.get(column.toLowerCase()));
+	}
+
+	public setValue(column:string,value:any) : void
+	{
+		this.columns$.set(column.toLowerCase(),value);
 	}
 }

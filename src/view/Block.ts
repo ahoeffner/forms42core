@@ -22,7 +22,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 
 export class Block
 {
-	private row:number = 0;
+	private row$:number = -1;
 	private form$:Form = null;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
@@ -38,6 +38,11 @@ export class Block
 		this.name$ = name;
 		this.form$ = Form.getForm(form);
 		ModelBlock.create(Form.getForm(form),this);
+	}
+
+	public get row() : number
+	{
+		return(this.row$);
 	}
 
 	public get name() : string
@@ -57,13 +62,13 @@ export class Block
 
 	public getField(field:string) : Field
 	{
-		return(this.getRow(this.row).getField(field));
+		return(this.getRow(this.row$).getField(field));
 	}
 
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);
-		return(this.getRow(this.row).validated);
+		return(this.getRow(this.row$).validated);
 	}
 
 	public addInstance(inst:FieldInstance) : void
@@ -81,12 +86,12 @@ export class Block
 
 	public setFieldValue(inst:FieldInstance, value:any) : void
 	{
-		let values:Map<string,any> = this.values.get(this.row);
+		let values:Map<string,any> = this.values.get(this.row$);
 
 		if (values == null)
 		{
 			values = new Map<string,any>();
-			this.values.set(this.row,values);
+			this.values.set(this.row$,values);
 		}
 
 		values.set(inst.name,value);
@@ -94,7 +99,7 @@ export class Block
 
 	public getFieldValue(field:string) : any
 	{
-		return(this.values.get(this.row)?.get(field));
+		return(this.values.get(this.row$)?.get(field));
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -116,9 +121,9 @@ export class Block
 
 	public async validate() : Promise<boolean>
 	{
-		if (!this.getRow(this.row).validated)
+		if (!this.getRow(this.row$).validated)
 		{
-			if (!this.getRow(this.row).validateFields())
+			if (!this.getRow(this.row$).validateFields())
 				return(false);
 
 			if (!await this.mdlblk.validateRecord())
@@ -130,7 +135,7 @@ export class Block
 
 	public getCurrentRow() : Row
 	{
-		return(this.rows.get(this.row));
+		return(this.rows.get(this.row$));
 	}
 
 	public async setCurrentField(inst:FieldInstance) : Promise<boolean>
@@ -158,26 +163,32 @@ export class Block
 
 	public async setCurrentRow(rownum:number) : Promise<boolean>
 	{
-		if (rownum == this.row || rownum == -1)
+		if (this.row$ < 0)
+		{
+			this.row$ = rownum;
+			return(await this.mdlblk.setCurrentRecord(rownum));
+		}
+
+		if (rownum == this.row$ || rownum == -1)
 			return(true);
 
 		if (!await this.validate())
 			return(false);
 
-		if (!await this.mdlblk.setCurrentRecord(rownum-this.row))
+		if (!await this.mdlblk.setCurrentRecord(rownum-this.row$))
 			return(false);
 
 		// disable autofill
-		this.getRow(this.row).readonly();
+		this.getRow(this.row$).readonly();
 
-		this.row = rownum;
+		this.row$ = rownum;
 		let current:Row = this.rows.get(-1);
-		this.getRow(this.row).setDefaults(null);
+		this.getRow(this.row$).setDefaults(null);
 
 		if (current != null)
 		{
 			current.setDefaults(null);
-			this.values.get(this.row)?.forEach((value,field) =>
+			this.values.get(this.row$)?.forEach((value,field) =>
 			{current.distribute(field,value)});
 		}
 
@@ -271,7 +282,7 @@ export class Block
 
 	public distribute(field:Field, value:string) : void
 	{
-		let cr:number = this.row;
+		let cr:number = this.row$;
 		let fr:number = field.row.rownum;
 
 		if (fr >= 0) this.getRow(-1).distribute(field.name,value);

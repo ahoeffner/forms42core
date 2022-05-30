@@ -48,8 +48,8 @@ export class Form
 		form.linkModels();
 	}
 
+	private block$:Block = null;
 	private mdlfrm:ModelForm = null;
-	private current_block$:Block = null;
 	private parent$:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
@@ -108,17 +108,22 @@ export class Form
 
 	public async setCurrentBlock(block:string) : Promise<boolean>
 	{
-		if (this.current_block$ == null)
+		if (this.block$ == null)
 		{
-			this.current_block$ = this.getBlock(block);
+			this.block$ = this.getBlock(block);
+			if (this.block$ == null) return(false);
+
+			if (!await this.mdlfrm.setCurrentBlock(block))
+				return(false);
+
 			return(true);
 		}
 
-		if (this.current_block$.name == block)
+		if (this.block$.name == block)
 			return(true);
 
 		let cont:boolean = await this.mdlfrm.setCurrentBlock(block);
-		this.current_block$ = this.getBlock(block);
+		this.block$ = this.getBlock(block);
 
 		return(cont);
 	}

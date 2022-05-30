@@ -15,6 +15,8 @@ import { Record } from './Record.js';
 
 export interface DataSource
 {
+	arrayfecth:number;
+
 	queryable:boolean;
 	insertable:boolean;
 	updateable:boolean;
@@ -24,8 +26,8 @@ export interface DataSource
 	addFilter(filter:Filter) : void;
 	setFilters(filters:Filter[]) : void;
 
-	fetch() : Promise<Record>;
 	query() : Promise<boolean>;
+	fetch() : Promise<Record[]>;
 	delete(rec:number) : Promise<boolean>;
 	lock(record:Record) : Promise<boolean>;
 	insert(record:Record) : Promise<Record>;

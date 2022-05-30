@@ -21,8 +21,16 @@ export class KeyMap
 	public static paste:KeyMap = new KeyMap({key: -3});
 
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
+	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
+
 	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.Tab});
 	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.Tab, shift: true});
+
+	public static scrollup:KeyMap = new KeyMap({key: KeyCodes.PageUp});
+	public static scrolldown:KeyMap = new KeyMap({key: KeyCodes.PageDown});
+
+    public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp, shift: true});
+	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown, shift: true});
 
 	private key$:number;
 	private alt$:boolean;

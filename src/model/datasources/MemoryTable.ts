@@ -26,6 +26,8 @@ export class MemoryTable implements DataSource
 	private filters:Filter[] = [];
 	private cursor:Record[] = null;
 
+	public arrayfecth:number = 1;
+
 	public queryable:boolean  = true;
 	public insertable:boolean = true;
 	public updateable:boolean = true;
@@ -153,11 +155,11 @@ export class MemoryTable implements DataSource
 		return(outcome);
 	}
 
-	public async fetch() : Promise<Record>
+	public async fetch() : Promise<Record[]>
 	{
 		let cursor:Record[] = this.cursor;
 		if (cursor == null) cursor = this.records;
-		return(cursor[this.pos$++]);
+		return([cursor[this.pos$++]]);
 	}
 
 	public async query() : Promise<boolean>

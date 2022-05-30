@@ -159,6 +159,7 @@ export class Block
 		}
 
 		this.currfld = inst;
+		return(true);
 	}
 
 	public async setCurrentRow(rownum:number) : Promise<boolean>

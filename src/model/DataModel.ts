@@ -18,7 +18,7 @@ export class DataModel
 
 }
 
-class Wrapper
+class DataSourceWrapper
 {
 	private eof$:boolean;
 	private cache$:Record[];
@@ -55,15 +55,18 @@ class Wrapper
 			if (this.winpos$[1] >= this.cache$.length-1)
 			{
 				if (this.eof$) return(null);
-				let rec:Record = await this.source.fetch();
+				let recs:Record[] = await this.source.fetch();
 
-				if (rec == null)
+				if (recs == null || recs.length == 0)
 				{
 					this.eof$ = true;
 					return(null);
 				}
 
-				this.cache$.push(rec);
+				if (recs.length < this.source.arrayfecth)
+					this.eof$ = true;
+
+				this.cache$.push(...recs);
 			}
 
 			this.winpos$[1]++;

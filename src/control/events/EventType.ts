@@ -6,19 +6,18 @@ export enum EventType
 	Connect,
 	Disconnect,
 
+	NewForm,
 	PreForm,
 	PostForm,
+
+	PreBlock,
+	PostBlock,
 
     PreField,
     PostField,
 
 	Editing,
 	ValidateField,
-
-    NextField,
-    NextBlock,
-	PreviousField,
-    PreviousBlock,
 
     PreRecord,
     PostRecord,

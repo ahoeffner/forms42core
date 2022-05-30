@@ -20,6 +20,29 @@ import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
 export class Form
 {
+	private static current$:InterfaceForm = null;
+
+	public static async setForm(form:Form) : Promise<boolean>
+	{
+		if (Form.current$ == null)
+		{
+			Form.current$ = form.intfrm;
+			return(FormEvents.raise(FormEvent.newFormEvent(EventType.PreForm,form.intfrm)));
+		}
+		else
+		{
+			if (form.intfrm == Form.current$)
+				return(true);
+
+			if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.PostForm,Form.current$)))
+				return(false);
+
+			Form.current$ = form.intfrm;
+			return(FormEvents.raise(FormEvent.newFormEvent(EventType.PreForm,Form.current$)));
+		}
+	}
+
+
 	private static models:Map<InterfaceForm,Form> =
 		new Map<InterfaceForm,Form>();
 
@@ -54,8 +77,8 @@ export class Form
 		Form.models.get(parent).linkViews();
 	}
 
+	private block$:Block = null;
 	private vwform:ViewForm = null;
-	private current_block$:Block = null;
 	private intfrm:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
@@ -64,6 +87,11 @@ export class Form
 		this.intfrm = parent;
 		Form.models.set(parent,this);
 		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.constructor.name);
+	}
+
+	public get block() : Block
+	{
+		return(this.block$);
 	}
 
 	public get parent() : InterfaceForm
@@ -78,14 +106,34 @@ export class Form
 
 	public async setCurrentBlock(block:string) : Promise<boolean>
 	{
-		if (this.current_block$.name == block)
+		if (!await Form.setForm(this))
+			return(false);
+
+		if (this.block$ == null)
+		{
+			this.block$ = this.getBlock(block);
+
+			if (this.block$ != null)
+				return(await this.fire(EventType.PreBlock,block));
+		}
+
+		if (this.block$.name == block)
 			return;
 
-		let last:Block = this.current_block$;
-		this.current_block$ = this.getBlock(block);
+		let last:Block = this.block$;
+		this.block$ = this.getBlock(block);
 
 		let cont:boolean = true;
 		if (last != null) cont = await last.validateRecord();
+
+		if (cont)
+		{
+			if (!await this.fire(EventType.PostBlock,last.name))
+				return(false);
+
+			if (!await this.fire(EventType.PreBlock,block))
+				return(false);
+		}
 
 		return(cont);
 	}
@@ -108,7 +156,7 @@ export class Form
 		this.blocks.forEach((blk) => {blk.unlinkView()})
 	}
 
-	private async fire(type:EventType, event:Event, block?:string) : Promise<boolean>
+	private async fire(type:EventType, block?:string) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.newFieldEvent(type,this.intfrm,event,block,null)
 		return(FormEvents.raise(frmevent));

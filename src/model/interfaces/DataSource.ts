@@ -26,10 +26,12 @@ export interface DataSource
 	addFilter(filter:Filter) : void;
 	setFilters(filters:Filter[]) : void;
 
+	post() : Promise<boolean>;
 	query() : Promise<boolean>;
 	fetch() : Promise<Record[]>;
-	delete(rec:number) : Promise<boolean>;
 	lock(record:Record) : Promise<boolean>;
 	insert(record:Record) : Promise<Record>;
 	update(record:Record) : Promise<boolean>;
+	delete(record:Record) : Promise<boolean>;
+	refresh(record:Record) : Promise<Record>;
 }

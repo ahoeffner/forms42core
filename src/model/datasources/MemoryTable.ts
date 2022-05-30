@@ -68,11 +68,21 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public async delete(oid:number) : Promise<boolean>
+	public async post() : Promise<boolean>
+	{
+		return(true);
+	}
+
+	public async refresh(record:Record) : Promise<Record>
+	{
+		return(record);
+	}
+
+	public async delete(record:Record) : Promise<boolean>
 	{
 		if (!this.deleteable) return(false);
-		let cur:number = this.indexOf(this.cursor,oid);
-		let rec:number = this.indexOf(this.records,oid);
+		let cur:number = this.indexOf(this.cursor,record.id);
+		let rec:number = this.indexOf(this.records,record.id);
 
 		if (rec < 0) return(false);
 
@@ -89,7 +99,7 @@ export class MemoryTable implements DataSource
 		return(outcome);
 	}
 
-	public async insert(oid?:any, before?:boolean) : Promise<Record>
+	public async insert(record:Record) : Promise<Record>
 	{
 		if (!this.insertable)
 			return(null);
@@ -103,20 +113,14 @@ export class MemoryTable implements DataSource
 		let cur:number = 0;
 		let rec:number = 0;
 
-		if (oid != null)
+		if (record.id != null)
 		{
-			cur = this.indexOf(this.cursor,oid);
-			rec = this.indexOf(this.records,oid);
+			cur = this.indexOf(this.cursor,record.id);
+			rec = this.indexOf(this.records,record.id);
 		}
 
 		if (cur < 0) cur = 0;
 		if (rec < 0) rec = 0;
-
-		if (before)
-		{
-			if (cur > 0) cur--;
-			if (rec > 0) rec--;
-		}
 
 		if (!await this.fire(EventType.PreInsert))
 		{

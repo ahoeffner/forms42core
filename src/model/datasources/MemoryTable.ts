@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
+import { Record } from "../Record.js";
 import { Block } from "../../public/Block.js";
-import { Record } from "../interfaces/Record.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataSource } from "../interfaces/DataSource.js";
 import { EventType } from "../../control/events/EventType.js";
@@ -25,6 +25,7 @@ export class MemoryTable implements DataSource
 	private records:Record[] = [];
 	private filters:Filter[] = [];
 	private cursor:Record[] = null;
+	private inserted$:Record[] = [];
 
 	public arrayfecth:number = 1;
 
@@ -81,82 +82,51 @@ export class MemoryTable implements DataSource
 	public async delete(record:Record) : Promise<boolean>
 	{
 		if (!this.deleteable) return(false);
-		let cur:number = this.indexOf(this.cursor,record.id);
+
 		let rec:number = this.indexOf(this.records,record.id);
+		let ins:number = this.indexOf(this.inserted$,record.id);
 
-		if (rec < 0) return(false);
+		if (ins >= 0)
+			delete this.inserted$[ins];
 
-		if (!await this.fire(EventType.PreDelete))
+		if (rec >= 0)
 		{
-			return(false);
+			if (!await this.fire(EventType.PreDelete))
+				return(false);
+
+			delete this.records[rec];
+			return(await this.fire(EventType.PostDelete));
 		}
 
-		delete this.records[rec];
-		if (cur >= 0) delete this.cursor[cur];
-
-		let outcome:boolean = await this.fire(EventType.PostDelete);
-
-		return(outcome);
+		return(ins >= 0 || rec >= 0);
 	}
 
-	public async insert(record:Record) : Promise<Record>
+	public async insert(record:Record) : Promise<boolean>
 	{
 		if (!this.insertable)
-			return(null);
-
-		if (this.records == null)
-			this.records = [];
+			return(false);
 
 		if (this.rows$ > 0 && this.records.length >= this.rows$)
 			return(null);
 
-		let cur:number = 0;
-		let rec:number = 0;
-
-		if (record.id != null)
-		{
-			cur = this.indexOf(this.cursor,record.id);
-			rec = this.indexOf(this.records,record.id);
-		}
-
-		if (cur < 0) cur = 0;
-		if (rec < 0) rec = 0;
-
 		if (!await this.fire(EventType.PreInsert))
-		{
-			return(null);
-		}
+			return(false);
 
 		if (!await this.fire(EventType.PostInsert))
-		{
-			return(null);
-		}
+			return(false);
 
-		let ins:Record = new Record();
-		this.records.splice(rec,0,ins);
-
-		if (this.cursor != null)
-			this.cursor.splice(cur,0,ins);
-
-		return(ins);
+		this.inserted$.push(record);
+		return(true);
 	}
 
-	public async update(record:Record) : Promise<boolean>
+	public async update(_record:Record) : Promise<boolean>
 	{
 		if (!this.updateable) return(false);
-		let cur:number = this.indexOf(this.cursor,record.id);
-		let rec:number = this.indexOf(this.records,record.id);
-
-		if (rec < 0) return(false);
 
 		if (!await this.fire(EventType.PreUpdate))
-		{
 			return(false);
-		}
 
-		let outcome:boolean = await this.fire(EventType.PostUpdate);
-
-		return(outcome);
+		return(await this.fire(EventType.PostUpdate));
 	}
 
 	public async fetch() : Promise<Record[]>
@@ -168,8 +138,8 @@ export class MemoryTable implements DataSource
 
 	public async query() : Promise<boolean>
 	{
-		if (!this.queryable)
-			return(false);
+		if (!this.queryable) return(false);
+		this.records.push(...this.inserted$);
 
 		this.cursor = this.records;
 

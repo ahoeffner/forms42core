@@ -9,6 +9,7 @@ export enum EventType
 	NewForm,
 	PreForm,
 	PostForm,
+	CloseForm,
 
 	PreBlock,
 	PostBlock,

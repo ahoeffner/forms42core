@@ -11,10 +11,13 @@
  */
 
 import { Form } from "./Form.js";
+import { Record } from "./Record";
 import { Form as ViewForm } from "../view/Form.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
+import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
+import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
@@ -42,6 +45,7 @@ export class Block
 	private name$:string = null;
 	private record$:number = -1;
 	private vwblk:ViewBlock = null;
+	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
 
@@ -58,7 +62,33 @@ export class Block
 		return(this.name$);
 	}
 
-	public get validated() : boolean
+	public get datasource() : DataSource
+	{
+		let recs:number = this.vwblk.rows;
+
+		if (this.source$ == null)
+		{
+			let records:Record[] = [];
+
+			for (let i = 0; i < recs; i++)
+				records.push(new Record());
+
+			this.source$ = new MemoryTable(this.intblk,records);
+
+			this.source$.queryable = false;
+			this.source$.deleteable = false;
+			this.source$.insertable = false;
+		}
+
+		return(this.source$);
+	}
+
+	public set datasource(source:DataSource)
+	{
+		this.source$ = source;
+	}
+
+	public validated() : boolean
 	{
 		return(this.vwblk.validated);
 	}

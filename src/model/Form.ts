@@ -22,6 +22,9 @@ export class Form
 {
 	private static current$:InterfaceForm = null;
 
+	private static models:Map<InterfaceForm,Form> =
+		new Map<InterfaceForm,Form>();
+
 	public static async setForm(form:Form) : Promise<boolean>
 	{
 		if (Form.current$ == null)
@@ -42,11 +45,7 @@ export class Form
 		}
 	}
 
-
-	private static models:Map<InterfaceForm,Form> =
-		new Map<InterfaceForm,Form>();
-
-	public static clear(parent:InterfaceForm) : void
+	public static drop(parent:InterfaceForm) : void
 	{
 		let remove:string[] = [];
 		let form:Form = Form.models.get(parent);
@@ -102,6 +101,11 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public async validated() : Promise<boolean>
+	{
+		return(this.block$.validated());
 	}
 
 	public async setCurrentBlock(block:string) : Promise<boolean>

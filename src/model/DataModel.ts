@@ -10,12 +10,16 @@
  * accompanied this code).
  */
 
-import { Record } from "./interfaces/Record.js";
+import { Record } from "./Record.js";
+import { Block } from "../public/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 
 export class DataModel
 {
-
+	public addBlock(block:Block) : void
+	{
+		null;
+	}
 }
 
 class DataSourceWrapper
@@ -34,6 +38,13 @@ class DataSourceWrapper
 	public set window(size:number)
 	{
 		this.window$ = size;
+	}
+
+	public create() : Record
+	{
+		let record:Record = new Record();
+
+		return(record);
 	}
 
 	public async fetch(previous?:boolean) : Promise<Record>

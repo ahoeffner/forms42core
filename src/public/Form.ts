@@ -65,8 +65,8 @@ export class Form implements CanvasComponent
 		else
 		{
 			replace = true;
-			View.clear(this);
-			Model.clear(this);
+			View.drop(this);
+			Model.drop(this);
 		}
 
         if (typeof page === 'string')
@@ -111,7 +111,10 @@ export class Form implements CanvasComponent
 
     public async close() : Promise<boolean>
     {
-		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.PostForm,this)))
+		if (Model.getForm(this).validated())
+			return(false);
+
+		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.CloseForm,this)))
 			return(false);
 
         this.canvas.close();

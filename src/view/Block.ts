@@ -27,7 +27,7 @@ export class Block
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
 	private currfld:FieldInstance = null;
-	private rows:Map<number,Row> = new Map<number,Row>();
+	private rows$:Map<number,Row> = new Map<number,Row>();
 	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>();
 
 	constructor(form:Interface,name:string)
@@ -43,6 +43,11 @@ export class Block
 	public get row() : number
 	{
 		return(this.row$);
+	}
+
+	public get rows() : number
+	{
+		return(this.rows$.size);
 	}
 
 	public get name() : string
@@ -135,7 +140,7 @@ export class Block
 
 	public getCurrentRow() : Row
 	{
-		return(this.rows.get(this.row$));
+		return(this.rows$.get(this.row$));
 	}
 
 	public async setCurrentField(inst:FieldInstance) : Promise<boolean>
@@ -183,7 +188,7 @@ export class Block
 		this.getRow(this.row$).readonly();
 
 		this.row$ = rownum;
-		let current:Row = this.rows.get(-1);
+		let current:Row = this.rows$.get(-1);
 		this.getRow(this.row$).setDefaults(null);
 
 		if (current != null)
@@ -198,12 +203,12 @@ export class Block
 
 	public addRow(row:Row) : void
 	{
-		this.rows.set(row.rownum,row);
+		this.rows$.set(row.rownum,row);
 	}
 
 	public getRow(rownum:number) : Row
 	{
-		return(this.rows.get(rownum));
+		return(this.rows$.get(rownum));
 	}
 
 	public linkModel() : void
@@ -214,7 +219,7 @@ export class Block
 	public finalize() : void
 	{
 		let rows:Row[] = [];
-		this.rows.forEach((row) => {rows.push(row)});
+		this.rows$.forEach((row) => {rows.push(row)});
 
 		/*
 		 * If only 1 row, set rownum to 0;
@@ -247,10 +252,10 @@ export class Block
 			}
 		}
 
-		this.rows.clear();
+		this.rows$.clear();
 
 		rows.forEach((row) =>
-		{this.rows.set(row.rownum,row)});
+		{this.rows$.set(row.rownum,row)});
 
 		let current:Map<string,any> = this.values.get(-1);
 
@@ -277,7 +282,7 @@ export class Block
 		this.getRow(0)?.readonly();
 		this.getRow(-1)?.readonly();
 
-		this.rows.forEach((row) =>
+		this.rows$.forEach((row) =>
 		{if (row.rownum > 0) row.disable()});
 	}
 

@@ -11,7 +11,7 @@
  */
 
 import { Filter } from './Filter.js';
-import { Record } from './Record.js';
+import { Record } from '../Record.js';
 
 export interface DataSource
 {
@@ -30,7 +30,7 @@ export interface DataSource
 	query() : Promise<boolean>;
 	fetch() : Promise<Record[]>;
 	lock(record:Record) : Promise<boolean>;
-	insert(record:Record) : Promise<Record>;
+	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
 	refresh(record:Record) : Promise<Record>;

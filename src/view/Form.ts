@@ -25,7 +25,7 @@ export class Form
 	private instances:Map<HTMLElement,FieldInstance> =
 		new Map<HTMLElement,FieldInstance>();
 
-	public static clear(parent:InterfaceForm) : void
+	public static drop(parent:InterfaceForm) : void
 	{
 		Form.views.delete(parent);
 		Form.getForm(parent);

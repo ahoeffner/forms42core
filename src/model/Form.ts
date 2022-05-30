@@ -73,12 +73,6 @@ export class Form
 		return(frm);
 	}
 
-	public static getBlock(parent:InterfaceForm, block:InterfaceBlock) : Block
-	{
-		let frm:Form = Form.models.get(parent);
-		return(frm.getBlock(block.name));
-	}
-
 	public static finalize(parent:InterfaceForm) : void
 	{
 		Form.models.get(parent).linkViews();

@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record } from "./Record";
+import { Record } from "./Record.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -39,6 +39,11 @@ export class Block
 			blk.link(block);
 
 		return(blk);
+	}
+
+	public static getBlock(form:InterfaceForm, block:InterfaceBlock) : Block
+	{
+		Form.getForm(form).getBlock(block.name);
 	}
 
 	private form:Form = null;

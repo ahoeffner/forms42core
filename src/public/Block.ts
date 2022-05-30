@@ -41,7 +41,7 @@ export class Block
 
 	public set datasource(source:DataSource)
 	{
-		Forms.getForm(this.form).getBlock(this.name).datasource = source;
+		Model.getBlock(this.form,this).datasource = source;
 	}
 
 	public getField(name:string) : Field

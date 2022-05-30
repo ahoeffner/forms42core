@@ -10,15 +10,23 @@
  * accompanied this code).
  */
 
+import { Form } from "./Form.js";
 import { Record } from "./Record.js";
-import { Block } from "../public/Block.js";
+import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 
 export class DataModel
 {
-	public addBlock(block:Block) : void
+	private sources$:Map<ModelBlock,DataSourceWrapper> =
+		new Map<ModelBlock,DataSourceWrapper>();
+
+	constructor(private form:Form) {}
+
+	public setBlock(block:ModelBlock) : void
 	{
-		null;
+		let existing:DataSourceWrapper = this.sources$.get(block);
+		if (existing != null) console.log("Datasource changed");
+		this.sources$.set(block,new DataSourceWrapper(block));
 	}
 }
 
@@ -29,7 +37,7 @@ class DataSourceWrapper
 	private window$:number = 0;
 	private winpos$:number[] = [0,-1];
 
-	constructor(private source:DataSource)
+	constructor(private block:ModelBlock)
 	{
 		this.cache$ = [];
 		this.eof$ = false;
@@ -38,6 +46,11 @@ class DataSourceWrapper
 	public set window(size:number)
 	{
 		this.window$ = size;
+	}
+
+	public get source() : DataSource
+	{
+		return(this.block.datasource);
 	}
 
 	public create() : Record

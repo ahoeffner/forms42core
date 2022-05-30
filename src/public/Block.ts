@@ -14,6 +14,7 @@ import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
 import { Block as Model } from '../model/Block.js';
+import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
 {
@@ -36,6 +37,11 @@ export class Block
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public set datasource(source:DataSource)
+	{
+		Forms.getForm(this.form).getBlock(this.name).datasource = source;
 	}
 
 	public getField(name:string) : Field

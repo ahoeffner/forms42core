@@ -16,7 +16,6 @@ import { Form as Model } from '../model/Form.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
-import { FormsModule } from '../application/FormsModule.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { EventFilter } from '../control/events/EventFilter.js';
@@ -28,7 +27,6 @@ import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 class State
 {
     page:HTMLElement = null;
-    module:FormsModule = FormsModule.get();
 }
 
 

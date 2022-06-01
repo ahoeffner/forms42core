@@ -108,7 +108,8 @@ export class Form implements CanvasComponent
 		let blk:ViewBlock = View.getForm(this).getBlock(block);
 
 		if (blk == null) return(null);
-		if (blk.hasField(field)) return(blk.getValue(field));
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
 
 		return(null);
 	}

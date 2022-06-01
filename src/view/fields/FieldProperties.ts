@@ -116,10 +116,15 @@ export class FieldProperties
 		return(this.attrs);
 	}
 
-	public setAttribute(attr:string, value:string) : void
+	public setAttribute(attr:string, value:any) : void
 	{
+		let val:string = "";
 		attr = attr.toLowerCase();
-		this.attrs.set(attr,value);
+
+		if (value != null)
+			val += value;
+			
+		this.attrs.set(attr,val);
 	}
 
 	public removeAttribute(attr:string) : void

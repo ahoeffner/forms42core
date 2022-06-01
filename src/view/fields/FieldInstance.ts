@@ -175,6 +175,15 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.readonly(flag));
 	}
 
+	public setRownum() : void
+	{
+		if (this.row$ >= 0)
+		{
+			this.impl.setAttribute("row",this.row$);
+			this.properties.setAttribute("row",this.row$);
+		}
+	}
+
 	public setDefaults(override:Override) : void
 	{
 		this.impl.setDefaults();

@@ -284,6 +284,9 @@ export class Block
 
 		this.rows$.forEach((row) =>
 		{if (row.rownum > 0) row.disable()});
+
+		if (this.rows$.size > 1)
+			this.rows$.forEach((row) =>	{row.setRownum()});
 	}
 
 	public distribute(field:Field, value:string) : void

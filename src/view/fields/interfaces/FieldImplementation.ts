@@ -25,7 +25,10 @@ export interface FieldImplementation
     getStyles() : string[][];
     getStyle(style:string) : string;
 	removeStyle(style:string) : void;
-    setStyle(style:string,value:string) : void;
+    setStyle(style:string, value:string) : void;
+
+	removeAttribute(name:string) : void;
+	setAttribute(name:string, value:any) : void;
 
     getClasses() : string[];
     setClass(clazz:string) : void;

@@ -41,9 +41,9 @@ export class Block
 		return(blk);
 	}
 
-	public static getBlock(form:InterfaceForm, block:InterfaceBlock) : Block
+	public static getBlock(block:InterfaceBlock) : Block
 	{
-		Form.getForm(form).getBlock(block.name);
+		return(Form.getForm(block.form).getBlock(block.name));
 	}
 
 	private form:Form = null;

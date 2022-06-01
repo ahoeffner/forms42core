@@ -76,9 +76,11 @@ export class Common
         this.field.getElement().removeAttribute(attr);
     }
 
-    public setAttribute(attr:string, value:string) : void
+    public setAttribute(attr:string, value:any) : void
     {
-        this.field.getElement().setAttribute(attr,value);
+		let val:string = "";
+		if (value != null) val += value
+		this.field.getElement().setAttribute(attr,val);
     }
 
     public hidden(flag?:boolean) : boolean

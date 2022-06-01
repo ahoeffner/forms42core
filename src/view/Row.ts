@@ -81,6 +81,11 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.readonly(true)});
 	}
 
+	public setRownum() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.setRownum()});
+	}
+
 	public setDefaults(override?:FieldProperties) : void
 	{
 		this.getFieldInstances().forEach((inst) => {inst.setDefaults(override)});

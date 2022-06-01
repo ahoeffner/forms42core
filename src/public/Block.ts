@@ -44,6 +44,18 @@ export class Block
 		Model.getBlock(this).datasource = source;
 	}
 
+	public addKey(name:string, fields:string|string[], primary?:boolean) : void
+	{
+		if (name == null) throw "@Block: Key name is madatory";
+		if (fields == null) throw "@Block: Key fields is madatory";
+		Model.getBlock(this).addKey(name,fields,primary);
+	}
+
+	public removeKey(name:string) : boolean
+	{
+		return(Model.getBlock(this).removeKey(name));
+	}
+
 	public getField(name:string) : Field
 	{
 		return(this.form$.getField(this.name$,name));

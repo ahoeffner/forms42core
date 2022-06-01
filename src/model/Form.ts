@@ -106,9 +106,9 @@ export class Form
 		return(this.blocks.get(name));
 	}
 
-	public async validated() : Promise<boolean>
+	public get validated() : boolean
 	{
-		return(this.block$.validated());
+		return(this.block$.validated);
 	}
 
 	public async setCurrentBlock(block:string) : Promise<boolean>

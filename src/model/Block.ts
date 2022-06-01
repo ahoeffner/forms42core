@@ -12,6 +12,7 @@
 
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
+import { Key } from "./relations/Key.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -47,6 +48,7 @@ export class Block
 	}
 
 	private form:Form = null;
+	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
 	private vwblk:ViewBlock = null;
@@ -93,9 +95,47 @@ export class Block
 		this.source$ = source;
 	}
 
-	public validated() : boolean
+	public get keys() : Key[]
+	{
+		return(this.keys$);
+	}
+
+	public get validated() : boolean
 	{
 		return(this.vwblk.validated);
+	}
+
+	public addKey(name:string, fields:string|string[], primary?:boolean) : void
+	{
+		if (primary)
+		{
+			for (let i = 0; i < this.keys$.length; i++)
+				this.keys$[i].primary = false;
+		}
+
+		this.keys$.push(new Key(name,this,fields,primary));
+	}
+
+	public removeKey(name:string) : boolean
+	{
+		for (let i = 0; i < this.keys$.length; i++)
+		{
+			if (name == this.keys$[i].name)
+			{
+				if (this.keys$[i].primary)
+					throw "@Block: Cannot delete primary key";
+
+				delete this.keys$[i];
+				return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	public link(detail:Block, mkey:Key, dkey:Key) : void
+	{
+
 	}
 
 	public async preField(event:Event) : Promise<boolean>

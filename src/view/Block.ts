@@ -15,8 +15,8 @@ import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
-import { Form as Interface } from '../public/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 
 
@@ -30,7 +30,7 @@ export class Block
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>();
 
-	constructor(form:Interface,name:string)
+	constructor(form:InterfaceForm,name:string)
 	{
 		if (name == null)
 			name = "";

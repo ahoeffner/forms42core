@@ -133,11 +133,6 @@ export class Block
 		return(false);
 	}
 
-	public link(detail:Block, mkey:Key, dkey:Key) : void
-	{
-
-	}
-
 	public async preField(event:Event) : Promise<boolean>
 	{
 		return(this.fire(EventType.PreField,event));

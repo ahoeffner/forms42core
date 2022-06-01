@@ -14,6 +14,7 @@ import { Field } from './Field.js';
 import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
 import { FieldInstance } from './FieldInstance.js';
+import { Block as ViewBlock } from '../view/Block.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Field as ViewField } from '../view/fields/Field.js';
@@ -100,16 +101,21 @@ export class Form implements CanvasComponent
 		return(null);
 	}
 
-	public getFieldValue(block:string, field:string) : any
+	public getValue(block:string, field:string) : any
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
-		return(View.getForm(this).getBlock(block)?.getFieldValue(field));
+		let blk:ViewBlock = View.getForm(this).getBlock(block);
+
+		if (blk == null) return(null);
+		if (blk.hasField(field)) return(blk.getValue(field));
+
+		return(null);
 	}
 
     public async close() : Promise<boolean>
     {
-		if (Model.getForm(this).validated())
+		if (Model.getForm(this).validated)
 			return(false);
 
 		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.CloseForm,this)))

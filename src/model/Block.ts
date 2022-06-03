@@ -97,6 +97,12 @@ export class Block
 
 	public set datasource(source:DataSource)
 	{
+		if (this.source$ != null)
+		{
+			this.form$.datamodel.clear(this);
+			this.form$.datamodel.setWrapper(this);
+		}
+
 		this.source$ = source;
 	}
 

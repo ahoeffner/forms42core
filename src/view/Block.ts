@@ -115,7 +115,7 @@ export class Block
 
 	public getValue(field:string) : any
 	{
-		return(this.values.get(this.row$)?.get(field));
+		return(this.rows$.get(this.row$).getField(field)?.getValue());
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void

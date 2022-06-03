@@ -140,10 +140,13 @@ export class MemoryTable implements DataSource
 	{
 		if (!this.queryable) return(false);
 		this.records.push(...this.inserted$);
-
 		this.cursor = this.records;
-
 		return(true);
+	}
+
+	public closeCursor(): void
+	{
+		this.cursor = null;
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

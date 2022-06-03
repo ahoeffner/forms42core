@@ -26,6 +26,7 @@ export interface DataSource
 	addFilter(filter:Filter) : void;
 	setFilters(filters:Filter[]) : void;
 
+	closeCursor() : void;
 	post() : Promise<boolean>;
 	query() : Promise<boolean>;
 	fetch() : Promise<Record[]>;

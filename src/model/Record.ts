@@ -22,6 +22,7 @@ export enum RecordStatus
 export class Record
 {
 	private id$:any;
+	private keys$:{[column:string]:any};
 	private status$:RecordStatus = RecordStatus.Query;
 	private columns$:Map<string,any> = new Map<string,any>();
 
@@ -43,6 +44,26 @@ export class Record
 	public get id() : any
 	{
 		return(this.id$);
+	}
+
+	public get key() : {[column:string]:any}
+	{
+		return(this.keys$);
+	}
+
+	public setKey(column:string, value:any) : void
+	{
+		this.keys$[column] = value;
+	}
+
+	public get keys() : {key:string, value:any}[]
+	{
+		let keys:{key:string, value:any}[] = [];
+
+		Object.keys(this.keys$).forEach((col) =>
+		{keys.push({key: col, value: this.keys$[col]});})
+
+		return(keys);
 	}
 
 	public get status() : RecordStatus

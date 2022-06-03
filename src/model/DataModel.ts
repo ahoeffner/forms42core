@@ -19,12 +19,17 @@ export class DataModel
 	private sources$:Map<ModelBlock,DataSourceWrapper> =
 		new Map<ModelBlock,DataSourceWrapper>();
 
+	public clear(block:ModelBlock) : void
+	{
+		this.getWrapper(block)?.clear();
+	}
+
 	public getWrapper(block:ModelBlock) : DataSourceWrapper
 	{
 		return(this.sources$.get(block));
 	}
 
-	public addWrapper(block:ModelBlock) : void
+	public setWrapper(block:ModelBlock) : void
 	{
 		this.sources$.set(block,new DataSourceWrapper(block));
 	}
@@ -57,6 +62,13 @@ class DataSourceWrapper
 	{
 		let record:Record = new Record();
 		return(record);
+	}
+
+	public clear() : void
+	{
+		this.source.post();
+		this.winpos$ = [0,-1];
+		this.source.closeCursor();
 	}
 
 	public getValue(record:number, field:string) : any

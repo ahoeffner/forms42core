@@ -15,11 +15,11 @@ import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class FieldInstance
 {
-	constructor(private inst:ViewInstance) {}
+	constructor(private inst$:ViewInstance) {}
 
 	public get field() : Field
 	{
-		return(new Field(this.inst.field));
+		return(new Field(this.inst$.field));
 	}
 
 	public getValue() : any
@@ -27,8 +27,9 @@ export class FieldInstance
 		return(this.field.getValue());
 	}
 
-	public setValue(value:any) : boolean
+	public setValue(value:any) : void
 	{
-		return(this.field.setValue(value));
+		this.inst$.field.setValue(value);
+		this.inst$.field.block.model.setValue(this.inst$.name,value);
 	}
 }

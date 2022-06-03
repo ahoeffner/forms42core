@@ -78,7 +78,7 @@ export class Form
 
 	private block$:Block = null;
 	private intfrm:InterfaceForm = null;
-	private datamodel:DataModel = new DataModel();
+	private datamodel$:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	private constructor(parent:InterfaceForm)
@@ -101,6 +101,11 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public get datamodel() : DataModel
+	{
+		return(this.datamodel$);
 	}
 
 	public get validated() : boolean
@@ -144,7 +149,7 @@ export class Form
 
 	public addBlock(block:Block) : void
 	{
-		this.datamodel.setBlock(block);
+		this.datamodel$.setBlock(block);
 		this.blocks.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
 	}

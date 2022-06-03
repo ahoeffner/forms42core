@@ -19,6 +19,11 @@ export class DataModel
 	private sources$:Map<ModelBlock,DataSourceWrapper> =
 		new Map<ModelBlock,DataSourceWrapper>();
 
+	public getWrapper(block:ModelBlock) : DataSourceWrapper
+	{
+		return(this.sources$.get(block));
+	}
+
 	public setBlock(block:ModelBlock) : void
 	{
 		let existing:DataSourceWrapper = this.sources$.get(block);
@@ -53,8 +58,21 @@ class DataSourceWrapper
 	public create() : Record
 	{
 		let record:Record = new Record();
-
 		return(record);
+	}
+
+	public getValue(record:number, field:string) : any
+	{
+		return(this.cache$[record]?.getValue(field));
+	}
+
+	public setValue(record:number, field:string, value:any) : boolean
+	{
+		if (record < 0 || record >= this.cache$.length)
+			return(false);
+
+		this.cache$[record].setValue(field,value);
+		return(true);
 	}
 
 	public async fetch(previous?:boolean) : Promise<Record>

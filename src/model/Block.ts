@@ -202,6 +202,16 @@ export class Block
 		return(this.intblk);
 	}
 
+	public getValue(field:string) : any
+	{
+		return(this.form.datamodel.getWrapper(this).getValue(this.record,field));
+	}
+
+	public setValue(field:string, value:any) : boolean
+	{
+		return(this.form.datamodel.getWrapper(this).setValue(this.record,field,value));
+	}
+
 	public link(block:InterfaceBlock) : void
 	{
 		this.intblk = block;

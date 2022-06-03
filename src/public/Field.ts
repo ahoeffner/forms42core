@@ -43,8 +43,9 @@ export class Field
 		return(this.field$.getValue());
 	}
 
-	public setValue(value:any) : boolean
+	public setValue(value:any) : void
 	{
-		return(this.field$.setValue(value));
+		this.field$.setValue(value);
+		this.field$.block.model.setValue(this.field$.name,value);
 	}
 }

@@ -63,9 +63,15 @@ export class Block
 		return(this.form$.getField(this.name$,name));
 	}
 
-	public setValue(block:string, field:string, value:any)
+	public setValue(field:string, value:any) : void
 	{
-		console.log("setValue");
+		let blk:ViewBlock = ViewBlock.getBlock(this);
+		let mdl:ModelBlock = ModelBlock.getBlock(this);
+
+		mdl.setValue(field,value);
+
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) fld.setValue(value);
 	}
 
 	public getValue(field:string) : any
@@ -77,6 +83,7 @@ export class Block
 		let fld:ViewField = blk.getField(field);
 		if (fld != null) return(blk.getValue(field));
 
-		return(null);
+		let mdl:ModelBlock = ModelBlock.getBlock(this);
+		return(mdl.getValue(field));
 	}
 }

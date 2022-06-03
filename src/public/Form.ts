@@ -101,6 +101,11 @@ export class Form implements CanvasComponent
 		return(null);
 	}
 
+	public setValue(block:string, field:string, value:any)
+	{
+		console.log("setValue");
+	}
+
 	public getValue(block:string, field:string) : any
 	{
 		block = block?.toLowerCase();

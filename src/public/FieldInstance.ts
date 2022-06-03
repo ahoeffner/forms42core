@@ -21,4 +21,14 @@ export class FieldInstance
 	{
 		return(new Field(this.inst.field));
 	}
+
+	public getValue() : any
+	{
+		return(this.field.getValue());
+	}
+
+	public setValue(value:any) : boolean
+	{
+		return(this.field.setValue(value));
+	}
 }

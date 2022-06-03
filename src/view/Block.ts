@@ -18,6 +18,7 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
+import { Block as InterfaceBlock } from '../public/Block.js';
 
 
 export class Block
@@ -29,6 +30,11 @@ export class Block
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>();
+
+	public static getBlock(block:InterfaceBlock) : Block
+	{
+		return(Form.getForm(block.form).getBlock(block.name));
+	}
 
 	constructor(form:InterfaceForm,name:string)
 	{

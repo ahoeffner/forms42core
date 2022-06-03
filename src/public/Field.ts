@@ -15,13 +15,13 @@ import { Field as ViewField } from '../view/fields/Field.js';
 
 export class Field
 {
-	constructor(private fld:ViewField) {}
+	constructor(private field$:ViewField) {}
 
 	public getInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
 
-		this.fld.getInstances().forEach((inst) =>
+		this.field$.getInstances().forEach((inst) =>
 		{instances.push(new FieldInstance(inst))});
 
 		return(instances);
@@ -32,9 +32,19 @@ export class Field
 		clazz = clazz?.toLowerCase();
 		let instances:FieldInstance[] = [];
 
-		this.fld.getInstancesByClass(clazz).forEach((inst) =>
+		this.field$.getInstancesByClass(clazz).forEach((inst) =>
 		{instances.push(new FieldInstance(inst))});
 
 		return(instances);
+	}
+
+	public getValue() : any
+	{
+		return(this.field$.getValue());
+	}
+
+	public setValue(value:any) : boolean
+	{
+		return(this.field$.setValue(value));
 	}
 }

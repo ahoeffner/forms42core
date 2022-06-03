@@ -13,7 +13,9 @@
 import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
-import { Block as Model } from '../model/Block.js';
+import { Block as ViewBlock } from '../view/Block.js';
+import { Block as ModelBlock } from '../model/Block.js';
+import { Field as ViewField } from '../view/fields/Field';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
@@ -26,7 +28,7 @@ export class Block
 		this.form$ = form;
 		if (name == null) name = "";
 		this.name$ = name.toLowerCase();
-		Model.create(Forms.getForm(form),this);
+		ModelBlock.create(Forms.getForm(form),this);
 	}
 
 	public get form() : Form
@@ -41,23 +43,40 @@ export class Block
 
 	public set datasource(source:DataSource)
 	{
-		Model.getBlock(this).datasource = source;
+		ModelBlock.getBlock(this).datasource = source;
 	}
 
 	public addKey(name:string, fields:string|string[], primary?:boolean) : void
 	{
 		if (name == null) throw "@Block: Key name is madatory";
 		if (fields == null) throw "@Block: Key fields is madatory";
-		Model.getBlock(this).addKey(name,fields,primary);
+		ModelBlock.getBlock(this).addKey(name,fields,primary);
 	}
 
 	public removeKey(name:string) : boolean
 	{
-		return(Model.getBlock(this).removeKey(name));
+		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
 	public getField(name:string) : Field
 	{
 		return(this.form$.getField(this.name$,name));
+	}
+
+	public setValue(block:string, field:string, value:any)
+	{
+		console.log("setValue");
+	}
+
+	public getValue(field:string) : any
+	{
+		field = field?.toLowerCase();
+		let blk:ViewBlock = ViewBlock.getBlock(this);
+
+		if (blk == null) return(null);
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
+
+		return(null);
 	}
 }

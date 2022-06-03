@@ -24,10 +24,8 @@ export class DataModel
 		return(this.sources$.get(block));
 	}
 
-	public setBlock(block:ModelBlock) : void
+	public addWrapper(block:ModelBlock) : void
 	{
-		let existing:DataSourceWrapper = this.sources$.get(block);
-		if (existing != null) console.log("Datasource changed");
 		this.sources$.set(block,new DataSourceWrapper(block));
 	}
 }

@@ -149,8 +149,8 @@ export class Form
 
 	public addBlock(block:Block) : void
 	{
-		this.datamodel$.setBlock(block);
 		this.blocks.set(block.name,block);
+		this.datamodel$.addWrapper(block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
 	}
 

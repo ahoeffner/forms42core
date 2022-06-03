@@ -55,6 +55,7 @@ export class Block
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
+	private disconnected$:boolean = false;
 
 	private constructor(form:Form, name:string)
 	{
@@ -72,6 +73,16 @@ export class Block
 	public get form() : Form
 	{
 		return(this.form$);
+	}
+
+	public get disconnected() : boolean
+	{
+		return(this.disconnected$);
+	}
+
+	public set disconnected(flag:boolean)
+	{
+		this.disconnected$ = flag;
 	}
 
 	public get datasource() : DataSource
@@ -210,11 +221,13 @@ export class Block
 
 	public getValue(field:string) : any
 	{
+		if (this.disconnected$) return(null);
 		return(this.form.datamodel.getWrapper(this).getValue(this.record,field));
 	}
 
 	public setValue(field:string, value:any) : boolean
 	{
+		if (this.disconnected$) return(true);
 		return(this.form.datamodel.getWrapper(this).setValue(this.record,field,value));
 	}
 

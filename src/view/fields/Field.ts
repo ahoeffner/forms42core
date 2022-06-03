@@ -142,6 +142,7 @@ export class Field
 
 	public setValue(value:any) : boolean
 	{
+		this.block$.setFieldValue(this.instances[0],value);
 		let status:boolean = this.instances[0].setValue(value);
 		this.distribute(this.instances[0],this.instances[0].getStringValue());
 		return(status);

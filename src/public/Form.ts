@@ -15,6 +15,7 @@ import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Block as ViewBlock } from '../view/Block.js';
+import { Block as ModelBlock } from '../model/Block.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Field as ViewField } from '../view/fields/Field.js';
@@ -25,19 +26,13 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 
-class State
-{
-    page:HTMLElement = null;
-}
-
-
 export class Form implements CanvasComponent
 {
     public canvas:Canvas = null;
     public moveable:boolean = true;
     public navigable:boolean = true;
     public resizable:boolean = true;
-    private state:State = new State();
+    private view$:HTMLElement = null;
 
     constructor(page?:string|HTMLElement)
     {
@@ -49,14 +44,14 @@ export class Form implements CanvasComponent
 
     public getView() : HTMLElement
     {
-        return(this.state.page);
+        return(this.view$);
     }
 
     public setView(page:string|HTMLElement)
     {
 		let replace:boolean = false;
 
-		if (this.state.page == null)
+		if (this.view$ == null)
 		{
 			View.getForm(this);
 			Model.getForm(this);
@@ -76,7 +71,7 @@ export class Form implements CanvasComponent
 		}
 
         Framework.parse(this,page);
-        this.state.page = page;
+        this.view$ = page;
 
 		if (replace)
 			this.canvas.refresh();
@@ -101,9 +96,16 @@ export class Form implements CanvasComponent
 		return(null);
 	}
 
-	public setValue(block:string, field:string, value:any)
+	public setValue(block:string, field:string, value:any) : void
 	{
-		console.log("setValue");
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		let blk:ViewBlock = View.getForm(this).getBlock(block);
+
+		blk.getField(field)?.setValue(value);
+
+		let mdl:ModelBlock = blk.model;
+		mdl.setValue(field,value);
 	}
 
 	public getValue(block:string, field:string) : any
@@ -116,7 +118,8 @@ export class Form implements CanvasComponent
 		let fld:ViewField = blk.getField(field);
 		if (fld != null) return(blk.getValue(field));
 
-		return(null);
+		let mdl:ModelBlock = blk.model;
+		return(mdl.getValue(field));
 	}
 
     public async close() : Promise<boolean>

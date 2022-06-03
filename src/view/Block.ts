@@ -108,11 +108,6 @@ export class Block
 		values.set(inst.name,value);
 	}
 
-	public hasField(field:string) : boolean
-	{
-		return(this.rows$.get(this.row$)?.getField(field) != null);
-	}
-
 	public getValue(field:string) : any
 	{
 		return(this.rows$.get(this.row$).getField(field)?.getValue());

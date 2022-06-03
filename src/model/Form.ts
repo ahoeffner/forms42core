@@ -12,11 +12,9 @@
 
 import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
-import { Form as ViewForm } from '../view/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
-import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
 
@@ -79,9 +77,8 @@ export class Form
 	}
 
 	private block$:Block = null;
-	private vwform:ViewForm = null;
 	private intfrm:InterfaceForm = null;
-	private datamodel:DataModel = new DataModel(this);
+	private datamodel:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	private constructor(parent:InterfaceForm)
@@ -154,13 +151,11 @@ export class Form
 
 	private linkViews() : void
 	{
-		this.vwform = ViewForm.getForm(this.parent);
 		this.blocks.forEach((blk) => {blk.linkView()})
 	}
 
 	private unlinkViews() : void
 	{
-		this.vwform = ViewForm.getForm(this.parent);
 		this.blocks.forEach((blk) => {blk.unlinkView()})
 	}
 

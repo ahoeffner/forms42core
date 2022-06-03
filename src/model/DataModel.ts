@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
@@ -19,8 +18,6 @@ export class DataModel
 {
 	private sources$:Map<ModelBlock,DataSourceWrapper> =
 		new Map<ModelBlock,DataSourceWrapper>();
-
-	constructor(private form:Form) {}
 
 	public setBlock(block:ModelBlock) : void
 	{

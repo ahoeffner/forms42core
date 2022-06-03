@@ -47,7 +47,7 @@ export class Block
 		return(Form.getForm(block.form).getBlock(block.name));
 	}
 
-	private form:Form = null;
+	private form$:Form = null;
 	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
@@ -58,15 +58,20 @@ export class Block
 
 	private constructor(form:Form, name:string)
 	{
-		this.form = form;
+		this.form$ = form;
 		this.name$ = name;
-		this.form.addBlock(this);
+		this.form$.addBlock(this);
 		this.intfrm = form.parent;
 	}
 
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public get form() : Form
+	{
+		return(this.form$);
 	}
 
 	public get datasource() : DataSource
@@ -204,7 +209,7 @@ export class Block
 
 	public linkView() : void
 	{
-		this.vwblk = ViewForm.getForm(this.form.parent).getBlock(this.name);
+		this.vwblk = ViewForm.getForm(this.form$.parent).getBlock(this.name);
 	}
 
 	public unlinkView() : void

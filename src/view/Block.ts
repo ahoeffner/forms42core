@@ -29,7 +29,7 @@ export class Block
 	private mdlblk:ModelBlock = null;
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>();
+	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>(); // All values, row + current
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{

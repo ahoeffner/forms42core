@@ -96,7 +96,7 @@ export class Block
 			for (let i = 0; i < recs; i++)
 				records.push(new Record());
 
-			this.source$ = new MemoryTable(this.intblk,records);
+			this.source$ = new MemoryTable(records);
 
 			this.source$.queryable = false;
 			this.source$.deleteable = false;
@@ -229,6 +229,14 @@ export class Block
 	{
 		if (this.disconnected$) return(true);
 		return(this.form.datamodel.getWrapper(this).setValue(this.record,field,value));
+	}
+
+	public async executequery() : Promise<boolean>
+	{
+		this.form.datamodel.getWrapper(this).query();
+		let record:Record = await this.form.datamodel.getWrapper(this).fetch();
+		console.log("fetched "+record.id);
+		return(true);
 	}
 
 	public link(block:InterfaceBlock) : void

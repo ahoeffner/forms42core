@@ -11,8 +11,12 @@
  */
 
 import { Record } from "./Record.js";
+import { Form } from "../public/Form.js";
+import { Form as ModelForm } from "../model/Form.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
+import { EventType } from "../control/events/EventType.js";
+import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 export class DataModel
 {
@@ -39,6 +43,7 @@ class DataSourceWrapper
 {
 	private eof$:boolean;
 	private cache$:Record[];
+	private form:Form = null;
 	private window$:number = 0;
 	private winpos$:number[] = [0,-1];
 
@@ -46,6 +51,7 @@ class DataSourceWrapper
 	{
 		this.cache$ = [];
 		this.eof$ = false;
+		this.form = block.form.parent;
 	}
 
 	public set window(size:number)
@@ -56,12 +62,6 @@ class DataSourceWrapper
 	public get source() : DataSource
 	{
 		return(this.block.datasource);
-	}
-
-	public create() : Record
-	{
-		let record:Record = new Record();
-		return(record);
 	}
 
 	public clear() : void
@@ -84,6 +84,70 @@ class DataSourceWrapper
 		this.cache$[record].setValue(field,value);
 		return(true);
 	}
+
+	public create(record?:Record, before?:boolean) : Record
+	{
+		if (!this.source.insertable) return(null);
+
+		let pos:number = this.indexOf(record);
+		if (before && pos > 0) pos--;
+
+		let inserted:Record = new Record();
+		this.cache$.splice(pos,0,record);
+
+		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window$)
+			this.winpos$[1]--;
+
+		return(inserted);
+	}
+
+	public async insert(record:Record) : Promise<boolean>
+	{
+		if (!this.source.insertable)
+			return(false);
+
+		if (!await this.fire(EventType.PreInsert))
+			return(false);
+
+		if (!this.source.insert(record))
+			return(false);
+
+		return(!await this.fire(EventType.PostInsert));
+	}
+
+	public async update(record:Record) : Promise<boolean>
+	{
+		if (!this.source.updateable)
+			return(false);
+
+		if (!await this.fire(EventType.PreUpdate))
+			return(false);
+
+		if (!this.source.update(record))
+			return(false);
+
+		return(!await this.fire(EventType.PostUpdate));
+	}
+
+	public async delete(record:Record) : Promise<boolean>
+	{
+		if (!this.source.deleteable)
+			return(false);
+
+		if (!await this.fire(EventType.PreDelete))
+			return(false);
+
+		if (!this.source.delete(record))
+			return(false);
+
+		return(!await this.fire(EventType.PostDelete));
+	}
+
+	public async query() : Promise<boolean>
+	{
+		return(this.source.query());
+	}
+
 
 	public async fetch(previous?:boolean) : Promise<Record>
 	{
@@ -125,5 +189,24 @@ class DataSourceWrapper
 
 			return(this.cache$[this.winpos$[1]]);
 		}
+	}
+
+	private indexOf(record:Record) : number
+	{
+		if (record == null)
+			return(0);
+
+		for (let i = 0; i < this.cache$.length; i++)
+		{
+			if (this.cache$[i].id == record.id)
+				return(i);
+		}
+
+		return(0);
+	}
+
+	private async fire(type:EventType) : Promise<boolean>
+	{
+		return(FormEvents.raise(FormEvent.newBlockEvent(type,this.form,this.block.name)));
 	}
 }

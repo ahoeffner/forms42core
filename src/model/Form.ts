@@ -73,7 +73,10 @@ export class Form
 
 	public static finalize(parent:InterfaceForm) : void
 	{
-		Form.models.get(parent).linkViews();
+		let form:Form = Form.models.get(parent);
+
+		form.linkViews();
+		form.autoquery();
 	}
 
 	private block$:Block = null;
@@ -152,6 +155,15 @@ export class Form
 		this.blocks.set(block.name,block);
 		this.datamodel$.setWrapper(block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
+	}
+
+	private autoquery() : void
+	{
+		this.blocks.forEach((block) =>
+		{
+			if (!block.isLinked())
+				block.executequery();
+		});
 	}
 
 	private linkViews() : void

@@ -12,7 +12,6 @@
 
 import { Record } from "./Record.js";
 import { Form } from "../public/Form.js";
-import { Form as ModelForm } from "../model/Form.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 import { EventType } from "../control/events/EventType.js";
@@ -39,7 +38,7 @@ export class DataModel
 	}
 }
 
-class DataSourceWrapper
+export class DataSourceWrapper
 {
 	private eof$:boolean;
 	private cache$:Record[];

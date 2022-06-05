@@ -66,6 +66,13 @@ export class Record
 		return(keys);
 	}
 
+	public get values() : {key:string, value:any}[]
+	{
+		let values:{key:string, value:any}[] = [];
+		this.columns$.forEach((val,col) => {values.push({key: col, value: val})});
+		return(values);
+	}
+
 	public get status() : RecordStatus
 	{
 		return(this.status$);

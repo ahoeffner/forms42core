@@ -13,6 +13,7 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
+import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -115,6 +116,11 @@ export class Block
 		}
 
 		this.source$ = source;
+	}
+
+	private get wrapper() : DataSourceWrapper
+	{
+		return(this.form.datamodel.getWrapper(this));
 	}
 
 	public get keys() : Key[]
@@ -233,9 +239,17 @@ export class Block
 
 	public async executequery() : Promise<boolean>
 	{
-		this.form.datamodel.getWrapper(this).query();
-		let record:Record = await this.form.datamodel.getWrapper(this).fetch();
-		console.log("fetched "+record.id);
+		let wrapper:DataSourceWrapper = this.wrapper;
+
+		wrapper.query();
+		let record:Record = await wrapper.fetch();
+
+		for (let i = 0; i < this.vwblk.rows && record != null; i++)
+		{
+			this.vwblk.display(i,record);
+			record = await wrapper.fetch();
+		}
+
 		return(true);
 	}
 

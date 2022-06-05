@@ -19,6 +19,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { Record } from "../model/Record.js";
 
 
 export class Block
@@ -217,9 +218,11 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
-	public linkModel() : void
+	public display(row:number, record:Record) : void
 	{
-		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
+		this.getRow(row).enable();
+		record.values.forEach((col) =>
+		{this.getRow(row).distribute(col.key,col.value);})
 	}
 
 	public finalize() : void
@@ -302,5 +305,10 @@ export class Block
 
 		if (fr >= 0) this.getRow(-1).distribute(field.name,value);
 		else		 this.getRow(cr).distribute(field.name,value);
+	}
+
+	public linkModel() : void
+	{
+		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
 	}
 }

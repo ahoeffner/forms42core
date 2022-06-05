@@ -76,6 +76,11 @@ export class Block
 		return(this.form$);
 	}
 
+	public get view() : ViewBlock
+	{
+		return(this.vwblk);
+	}
+
 	public get disconnected() : boolean
 	{
 		return(this.disconnected$);

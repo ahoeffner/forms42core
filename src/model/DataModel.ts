@@ -51,11 +51,7 @@ export class DataSourceWrapper
 		this.cache$ = [];
 		this.eof$ = false;
 		this.form = block.form.parent;
-	}
-
-	public set window(size:number)
-	{
-		this.window$ = size;
+		this.window$ = block.view.rows;
 	}
 
 	public get source() : DataSource

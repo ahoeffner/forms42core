@@ -13,17 +13,18 @@
 import { Row } from "./Row.js";
 import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
+import { Record } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
-import { Record } from "../model/Record.js";
 
 
 export class Block
 {
+	private rc$:number = -1;
 	private row$:number = -1;
 	private form$:Form = null;
 	private name$:string = null;
@@ -54,7 +55,7 @@ export class Block
 
 	public get rows() : number
 	{
-		return(this.rows$.size);
+		return(this.rc$);
 	}
 
 	public get name() : string
@@ -220,7 +221,9 @@ export class Block
 
 	public display(row:number, record:Record) : void
 	{
+		console.log("row: "+row);
 		this.getRow(row).enable();
+		this.getRow(row).readonly();
 		record.values.forEach((col) =>
 		{this.getRow(row).distribute(col.key,col.value);})
 	}
@@ -266,10 +269,13 @@ export class Block
 		rows.forEach((row) =>
 		{this.rows$.set(row.rownum,row)});
 
+		this.rc$ = rows.length;
 		let current:Map<string,any> = this.values.get(-1);
 
 		if (current != null)
 		{
+			this.rc$--;
+			
 			let cflds:string[] = [];
 			let rows:Map<string,any>[] = [];
 

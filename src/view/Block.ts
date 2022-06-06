@@ -180,6 +180,7 @@ export class Block
 		if (this.row$ < 0)
 		{
 			this.row$ = rownum;
+			this.displaycurrent(this.row$);
 			this.getRow(this.row$).setDefaults(null);
 			return(await this.mdlblk.setCurrentRecord(rownum));
 		}
@@ -227,6 +228,7 @@ export class Block
 
 		if (current != null)
 		{
+			current.bound = true;
 			current.setDefaults(null);
 			this.values.get(row)?.forEach((val,fld) => {current.distribute(fld,val)});
 		}

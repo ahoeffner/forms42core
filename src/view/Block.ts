@@ -20,6 +20,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { type } from "os";
 
 
 export class Block
@@ -97,7 +98,7 @@ export class Block
 		values.set(inst.name,null);
 	}
 
-	public setFieldValue(inst:FieldInstance, value:any) : void
+	public setFieldValue(inst:string|FieldInstance, value:any) : boolean
 	{
 		let values:Map<string,any> = this.values.get(this.row$);
 
@@ -107,7 +108,14 @@ export class Block
 			this.values.set(this.row$,values);
 		}
 
+		if (typeof inst === "string")
+		{
+			inst = this.getField(inst).getInstance(0);
+			if (inst == null) return(false);
+		}
+
 		values.set(inst.name,value);
+		return(true);
 	}
 
 	public getValue(field:string) : any
@@ -179,10 +187,14 @@ export class Block
 	{
 		if (this.row$ < 0)
 		{
-			this.row$ = rownum;
+			this.row$ = 0;
+
+			if (rownum > 0)
+				this.row$ = rownum;
+
 			this.displaycurrent(this.row$);
 			this.getRow(this.row$).setDefaults(null);
-			return(await this.mdlblk.setCurrentRecord(rownum));
+			return(await this.mdlblk.setCurrentRecord(this.row$));
 		}
 
 		if (rownum == this.row$ || rownum == -1)
@@ -218,16 +230,22 @@ export class Block
 	{
 		this.getRow(row).enable();
 		this.getRow(row).bound = true;
+
 		record.values.forEach((col) =>
-		{this.getRow(row).distribute(col.key,col.value);})
+		{
+			if (this.setFieldValue(col.key,col.value))
+				this.getRow(row).distribute(col.key,col.value);
+		})
 	}
 
 	public displaycurrent(row:number) : void
 	{
 		let current:Row = this.rows$.get(-1);
+		let bound:boolean = this.rows$.get(row).bound;
 
-		if (current != null)
+		if (current != null && bound)
 		{
+			current.enable();
 			current.bound = true;
 			current.setDefaults(null);
 			this.values.get(row)?.forEach((val,fld) => {current.distribute(fld,val)});

@@ -180,6 +180,7 @@ export class Block
 		if (this.row$ < 0)
 		{
 			this.row$ = rownum;
+			this.getRow(this.row$).setDefaults(null);
 			return(await this.mdlblk.setCurrentRecord(rownum));
 		}
 
@@ -221,7 +222,6 @@ export class Block
 
 	public display(row:number, record:Record) : void
 	{
-		console.log("row: "+row);
 		this.getRow(row).enable();
 		this.getRow(row).readonly();
 		record.values.forEach((col) =>
@@ -275,7 +275,7 @@ export class Block
 		if (current != null)
 		{
 			this.rc$--;
-			
+
 			let cflds:string[] = [];
 			let rows:Map<string,any>[] = [];
 

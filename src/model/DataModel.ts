@@ -43,7 +43,6 @@ export class DataSourceWrapper
 	private eof$:boolean;
 	private cache$:Record[];
 	private form:Form = null;
-	private window$:number = 0;
 	private winpos$:number[] = [0,-1];
 
 	constructor(private block:ModelBlock)
@@ -51,7 +50,11 @@ export class DataSourceWrapper
 		this.cache$ = [];
 		this.eof$ = false;
 		this.form = block.form.parent;
-		this.window$ = block.view.rows;
+	}
+
+	public get window() : number
+	{
+		return(this.block.view.rows);
 	}
 
 	public get source() : DataSource
@@ -90,7 +93,7 @@ export class DataSourceWrapper
 		let inserted:Record = new Record();
 		this.cache$.splice(pos,0,record);
 
-		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window$)
+		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)
 			this.winpos$[1]--;
 
 		return(inserted);
@@ -153,7 +156,7 @@ export class DataSourceWrapper
 
 			this.winpos$[0]--;
 
-			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window$)
+			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
 				this.winpos$[1]--;
 
 			return(this.cache$[this.winpos$[0]]);
@@ -179,7 +182,7 @@ export class DataSourceWrapper
 
 			this.winpos$[1]++;
 
-			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window$)
+			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
 				this.winpos$[0]++;
 
 			return(this.cache$[this.winpos$[1]]);

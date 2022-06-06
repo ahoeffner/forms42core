@@ -224,6 +224,7 @@ export class Block
 	{
 		this.getRow(row).enable();
 		this.getRow(row).readonly();
+		this.getRow(row).bound = true;
 		record.values.forEach((col) =>
 		{this.getRow(row).distribute(col.key,col.value);})
 	}

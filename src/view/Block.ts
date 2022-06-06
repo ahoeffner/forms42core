@@ -197,16 +197,9 @@ export class Block
 		this.getRow(this.row$).readonly();
 
 		this.row$ = rownum;
-		let current:Row = this.rows$.get(-1);
 		this.getRow(this.row$).setDefaults(null);
 
-		if (current != null)
-		{
-			current.setDefaults(null);
-			this.values.get(this.row$)?.forEach((value,field) =>
-			{current.distribute(field,value)});
-		}
-
+		this.displaycurrent(this.row$);
 		return(true);
 	}
 
@@ -223,7 +216,6 @@ export class Block
 	public display(row:number, record:Record) : void
 	{
 		this.getRow(row).enable();
-		this.getRow(row).readonly();
 		this.getRow(row).bound = true;
 		record.values.forEach((col) =>
 		{this.getRow(row).distribute(col.key,col.value);})
@@ -234,7 +226,10 @@ export class Block
 		let current:Row = this.rows$.get(-1);
 
 		if (current != null)
+		{
+			current.setDefaults(null);
 			this.values.get(row)?.forEach((val,fld) => {current.distribute(fld,val)});
+		}
 	}
 
 	public finalize() : void

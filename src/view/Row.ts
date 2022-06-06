@@ -174,7 +174,7 @@ export class Row
 		return(fields);
 	}
 
-	public distribute(field:string, value:string) : void
+	public distribute(field:string, value:any) : void
 	{
 		this.fields.get(field)?.distribute(null,value);
 	}

@@ -246,12 +246,16 @@ export class Block
 	{
 		let wrapper:DataSourceWrapper = this.wrapper;
 
-		wrapper.query();
+		if (!wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();
 
 		for (let i = 0; i < this.vwblk.rows && record != null; i++)
 		{
 			this.vwblk.display(i,record);
+
+			if (i == 0)
+				this.vwblk.displaycurrent(0);
+
 			record = await wrapper.fetch();
 		}
 

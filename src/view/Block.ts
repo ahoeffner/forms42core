@@ -229,6 +229,14 @@ export class Block
 		{this.getRow(row).distribute(col.key,col.value);})
 	}
 
+	public displaycurrent(row:number) : void
+	{
+		let current:Row = this.rows$.get(-1);
+
+		if (current != null)
+			this.values.get(row)?.forEach((val,fld) => {current.distribute(fld,val)});
+	}
+
 	public finalize() : void
 	{
 		let rows:Row[] = [];

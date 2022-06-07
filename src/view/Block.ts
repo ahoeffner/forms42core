@@ -30,6 +30,7 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
+	private fieldnames$:string[] = [];
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>(); // All values, row + current
@@ -79,6 +80,11 @@ export class Block
 		return(this.getRow(this.row$).getField(field));
 	}
 
+	public getFieldNames() : string[]
+	{
+		return(this.fieldnames$);
+	}
+
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);
@@ -96,6 +102,9 @@ export class Block
 		}
 
 		values.set(inst.name,null);
+		
+		if (this.fieldnames$.indexOf(inst.name) < 0)
+			this.fieldnames$.push(inst.name);
 	}
 
 	public setFieldValue(inst:string|FieldInstance, value:any) : boolean

@@ -102,7 +102,7 @@ export class Block
 			for (let i = 0; i < recs; i++)
 				records.push(new Record());
 
-			this.source$ = new MemoryTable(records);
+			this.source$ = new MemoryTable().setRecords(records);
 
 			this.source$.queryable = false;
 			this.source$.deleteable = false;

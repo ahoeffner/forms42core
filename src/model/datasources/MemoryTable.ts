@@ -30,12 +30,28 @@ export class MemoryTable implements DataSource
 	public updateable:boolean = true;
 	public deleteable:boolean = true;
 
-
-	constructor(records?:Record[])
+	public setRecords(records:Record[]) : MemoryTable
 	{
-		if (records == null)
-			records = [];
+		if (records == null) records = [];
 		this.records = records;
+		return(this);
+	}
+
+	public setData(columns:string[], records:any[][]) : MemoryTable
+	{
+		this.records = [];
+
+		records.forEach((rec) =>
+		{
+			let record:Record = new Record();
+
+			for (let i = 0; i < rec.length && i < columns.length; i++)
+				record.setValue(columns[i],rec[i]);
+
+			this.records.push(record);
+		})
+
+		return(this);
 	}
 
 	public set maxrows(rows:number)
@@ -122,7 +138,7 @@ export class MemoryTable implements DataSource
 
 		if (!this.queryable)
 			return(false);
-			
+
 		this.cursor = this.records;
 		return(true);
 	}

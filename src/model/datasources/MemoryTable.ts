@@ -30,28 +30,20 @@ export class MemoryTable implements DataSource
 	public updateable:boolean = true;
 	public deleteable:boolean = true;
 
-	public setRecords(records:Record[]) : MemoryTable
+	public constructor(columns?:string[], records?:any[][])
 	{
-		if (records == null) records = [];
-		this.records = records;
-		return(this);
-	}
-
-	public setData(columns:string[], records:any[][]) : MemoryTable
-	{
-		this.records = [];
-
-		records.forEach((rec) =>
+		if (columns != null && records != null)
 		{
-			let record:Record = new Record();
+			records.forEach((rec) =>
+			{
+				let data:{[name:string]: any} = {};
 
-			for (let i = 0; i < rec.length && i < columns.length; i++)
-				record.setValue(columns[i],rec[i]);
+				for (let i = 0; i < rec.length && i < columns.length; i++)
+					data[columns[i]] = rec[i];
 
-			this.records.push(record);
-		})
-
-		return(this);
+				this.records.push(new Record(null,data));
+			});
+		}
 	}
 
 	public set maxrows(rows:number)

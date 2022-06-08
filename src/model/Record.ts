@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { DataSourceWrapper } from "./DataModel";
+
 export enum RecordStatus
 {
 	New,
@@ -22,13 +24,19 @@ export enum RecordStatus
 export class Record
 {
 	private id$:any;
-	private keys$:{[column:string]:any};
+	private keys$:any[] = [];
+	private values$:any[] = [];
+	private columns$:string[] = null;
+	private wrapper$:DataSourceWrapper;
 	private status$:RecordStatus = RecordStatus.Query;
-	private columns$:Map<string,any> = new Map<string,any>();
 
-	constructor(columns?:{[name: string]: any})
+	constructor(wrapper:DataSourceWrapper, columns?:{[name:string]: any})
 	{
+		this.wrapper$ = wrapper;
 		this.id$ = new Object();
+
+		if (wrapper == null)
+			this.columns$ = [];
 
 		if (columns == null)
 		{
@@ -37,7 +45,15 @@ export class Record
 		else
 		{
 			Object.keys(columns).forEach((col) =>
-			{this.columns$.set(col.toLowerCase(),columns[col])});
+			{
+				col = col.toLowerCase();
+
+				if (wrapper == null)
+					this.columns$.push(col);
+
+				let idx:number = this.columns.indexOf(col);
+				if (idx >= 0) this.values$[idx] = columns[col];
+			});
 		}
 	}
 
@@ -46,30 +62,24 @@ export class Record
 		return(this.id$);
 	}
 
-	public get key() : {[column:string]:any}
+	public get keys() : any[]
 	{
 		return(this.keys$);
 	}
 
-	public setKey(column:string, value:any) : void
+	public get columns() : string[]
 	{
-		this.keys$[column] = value;
+		if (this.wrapper$ == null) return(this.columns$);
+		else 					   return(this.wrapper$.columns);
 	}
 
-	public get keys() : {key:string, value:any}[]
+	public get values() : {name:string,value:any}[]
 	{
-		let keys:{key:string, value:any}[] = [];
+		let values:{name:string, value:any}[] = [];
 
-		Object.keys(this.keys$).forEach((col) =>
-		{keys.push({key: col, value: this.keys$[col]});})
+		for (let i = 0; i < this.values$.length; i++)
+			values.push({name: this.columns[i], value: this.values$[i]});
 
-		return(keys);
-	}
-
-	public get values() : {key:string, value:any}[]
-	{
-		let values:{key:string, value:any}[] = [];
-		this.columns$.forEach((val,col) => {values.push({key: col, value: val})});
 		return(values);
 	}
 
@@ -83,13 +93,22 @@ export class Record
 		this.status$ = status;
 	}
 
+	public addKey(value:any) : void
+	{
+		this.keys$.push(value);
+	}
+
 	public getValue(column:string) : any
 	{
-		return(this.columns$.get(column.toLowerCase()));
+		column = column.toLowerCase();
+		let idx:number = this.columns.indexOf(column);
+		return(this.values$[idx]);
 	}
 
 	public setValue(column:string,value:any) : void
 	{
-		this.columns$.set(column.toLowerCase(),value);
+		column = column.toLowerCase();
+		let idx:number = this.columns.indexOf(column);
+		if (idx >= 0) this.values$[idx] = value;
 	}
 }

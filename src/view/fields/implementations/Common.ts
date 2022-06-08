@@ -22,6 +22,7 @@ export class Common
 	private readonly$:boolean = true;
 	private invalid$:boolean = false;
     private field:FieldImplementation = null;
+	private container$:FieldContainer = null;
 
     public setImplementation(field:FieldImplementation) : void
     {
@@ -54,6 +55,7 @@ export class Common
 
 	public initialize(tag:HTMLElement, container:FieldContainer) : void
 	{
+		this.container$ = container;
 		let props:FieldProperties = container.properties;
 		let skip:string[] = ["id","name","type","block","row"];
 

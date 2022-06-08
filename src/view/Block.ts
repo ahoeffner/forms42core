@@ -20,7 +20,6 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
-import { type } from "os";
 
 
 export class Block
@@ -30,7 +29,7 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
-	private fieldnames$:string[] = [];
+	private fieldnames$:string[] = null;
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>(); // All values, row + current
@@ -46,6 +45,7 @@ export class Block
 			name = "";
 
 		this.name$ = name;
+		this.fieldnames$ = [];
 		this.form$ = Form.getForm(form);
 		ModelBlock.create(Form.getForm(form),this);
 	}
@@ -102,7 +102,7 @@ export class Block
 		}
 
 		values.set(inst.name,null);
-		
+
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
 	}
@@ -235,6 +235,18 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
+	public openrow(rownum:number)
+	{
+		let row:Row = this.getRow(rownum);
+		let current:Row = this.rows$.get(-1);
+
+		if (row.bound)
+		{
+			row.setDefaults(null);
+			current?.setDefaults(null);
+		}
+	}
+
 	public display(row:number, record:Record) : void
 	{
 		this.getRow(row).enable();
@@ -242,8 +254,8 @@ export class Block
 
 		record.values.forEach((col) =>
 		{
-			if (this.setFieldValue(col.key,col.value))
-				this.getRow(row).distribute(col.key,col.value);
+			if (this.setFieldValue(col.name,col.value))
+				this.getRow(row).distribute(col.name,col.value);
 		})
 	}
 
@@ -337,7 +349,7 @@ export class Block
 			this.rows$.forEach((row) =>	{row.setRownum()});
 	}
 
-	public distribute(field:Field, value:string) : void
+	public distribute(field:Field, value:any) : void
 	{
 		let cr:number = this.row$;
 		let fr:number = field.row.rownum;

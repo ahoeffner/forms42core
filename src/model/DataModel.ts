@@ -32,9 +32,11 @@ export class DataModel
 		return(this.sources$.get(block));
 	}
 
-	public setWrapper(block:ModelBlock) : void
+	public setWrapper(block:ModelBlock) : DataSourceWrapper
 	{
-		this.sources$.set(block,new DataSourceWrapper(block));
+		let wrapper:DataSourceWrapper = new DataSourceWrapper(block);
+		this.sources$.set(block,wrapper);
+		return(wrapper);
 	}
 }
 
@@ -60,6 +62,11 @@ export class DataSourceWrapper
 	public get source() : DataSource
 	{
 		return(this.block.datasource);
+	}
+
+	public get columns() : string[]
+	{
+		return(this.block.columns);
 	}
 
 	public clear() : void
@@ -90,7 +97,7 @@ export class DataSourceWrapper
 		let pos:number = this.indexOf(record);
 		if (before && pos > 0) pos--;
 
-		let inserted:Record = new Record();
+		let inserted:Record = new Record(this);
 		this.cache$.splice(pos,0,record);
 
 		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)

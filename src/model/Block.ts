@@ -53,6 +53,7 @@ export class Block
 	private name$:string = null;
 	private record$:number = -1;
 	private vwblk:ViewBlock = null;
+	private columns$:string[] = null;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
@@ -81,6 +82,14 @@ export class Block
 		return(this.vwblk);
 	}
 
+	public get columns() : string[]
+	{
+		if (this.columns$ == null)
+			this.columns$ = this.vwblk.getFieldNames();
+
+		return(this.columns$);
+	}
+
 	public get disconnected() : boolean
 	{
 		return(this.disconnected$);
@@ -93,16 +102,23 @@ export class Block
 
 	public get datasource() : DataSource
 	{
-		let recs:number = this.vwblk.rows;
-
 		if (this.source$ == null)
 		{
-			let records:Record[] = [];
+			let data:any[][] = [];
+			let recs:number = this.vwblk.rows;
+			let cols:number = this.columns.length;
 
-			for (let i = 0; i < recs; i++)
-				records.push(new Record());
+			for (let r = 0; r < recs; r++)
+			{
+				let row:any[] = [];
 
-			this.source$ = new MemoryTable().setRecords(records);
+				for (let c = 0; c < cols; c++)
+					row.push(null);
+
+				data.push(row);
+			}
+
+			this.source$ = new MemoryTable(this.columns,data);
 
 			this.source$.queryable = false;
 			this.source$.deleteable = false;
@@ -233,13 +249,17 @@ export class Block
 	public getValue(field:string) : any
 	{
 		if (this.disconnected$) return(null);
-		return(this.form.datamodel.getWrapper(this).getValue(this.record,field));
+		return(this.wrapper.getValue(this.record,field));
 	}
 
 	public setValue(field:string, value:any) : boolean
 	{
 		if (this.disconnected$) return(true);
-		return(this.form.datamodel.getWrapper(this).setValue(this.record,field,value));
+
+		if (this.columns.indexOf(field) < 0)
+			this.columns.push(field);
+
+		return(this.wrapper.setValue(this.record,field,value));
 	}
 
 	public async executequery() : Promise<boolean>
@@ -254,7 +274,10 @@ export class Block
 			this.vwblk.display(i,record);
 
 			if (i == 0)
+			{
+				this.vwblk.openrow(0);
 				this.vwblk.displaycurrent(0);
+			}
 
 			record = await wrapper.fetch();
 		}

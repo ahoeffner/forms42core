@@ -120,7 +120,6 @@ export class Block
 
 			this.source$ = new MemoryTable(this.columns,data);
 
-			this.source$.queryable = false;
 			this.source$.deleteable = false;
 			this.source$.insertable = false;
 		}
@@ -222,9 +221,6 @@ export class Block
 		}
 
 		let cont:boolean = false;
-		let next:number = this.record$ + delta;
-
-		if (next >= 0 && next <= 2) cont = true;
 
 		if (cont)
 		{
@@ -266,7 +262,7 @@ export class Block
 	{
 		let wrapper:DataSourceWrapper = this.wrapper;
 
-		if (!wrapper.query()) return(false);
+		if (!await wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();
 
 		for (let i = 0; i < this.vwblk.rows && record != null; i++)
@@ -274,10 +270,7 @@ export class Block
 			this.vwblk.display(i,record);
 
 			if (i == 0)
-			{
-				this.vwblk.openrow(0);
 				this.vwblk.displaycurrent(0);
-			}
 
 			record = await wrapper.fetch();
 		}

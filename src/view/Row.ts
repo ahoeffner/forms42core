@@ -21,10 +21,9 @@ export class Row
 {
 	private block$:Block = null;
 	private rownum$:number = null;
-	private bound$:boolean = false;
-	private state$:FieldState = null;
 	private validated$:boolean = true;
 	private instances:FieldInstance[] = [];
+	private state$:FieldState = FieldState.DISABLED;
 	private fields:Map<string,Field> = new Map<string,Field>();
 
 	constructor(block:Block, rownum:number)
@@ -41,11 +40,6 @@ export class Row
 	public get rownum() : number
 	{
 		return(this.rownum$);
-	}
-
-	public get bound() : boolean
-	{
-		return(this.state$ != FieldState.DISABLED);
 	}
 
 	public set rownum(rownum:number)
@@ -92,7 +86,6 @@ export class Row
 
 	public setDefaults(override?:FieldProperties) : void
 	{
-		if (!this.bound) return;
 		this.getFieldInstances().forEach((inst) => {inst.setDefaults(override)});
 	}
 

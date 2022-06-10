@@ -202,9 +202,10 @@ export class Block
 			if (rownum > 0)
 				this.row$ = rownum;
 
-			this.displaycurrent(this.row$);
-			this.getRow(this.row$).setDefaults(null);
-			return(await this.mdlblk.setCurrentRecord(this.row$));
+			await this.mdlblk.setCurrentRecord(this.row$)
+			this.openrow(0);
+
+			return(true);
 		}
 
 		if (rownum == this.row$ || rownum == -1)
@@ -220,9 +221,8 @@ export class Block
 		this.getRow(this.row$).setFieldState(FieldState.READONLY);
 
 		this.row$ = rownum;
-		this.getRow(this.row$).setDefaults(null);
+		this.openrow(this.row$);
 
-		this.displaycurrent(this.row$);
 		return(true);
 	}
 
@@ -236,21 +236,28 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
-	public openrow(rownum:number)
+	private openrow(rownum:number)
 	{
 		let row:Row = this.getRow(rownum);
 		let current:Row = this.rows$.get(-1);
 
-		if (row.bound)
+		if (row.getFieldState() == FieldState.READONLY)
 		{
-			row.setDefaults(null);
-			current?.setDefaults(null);
+			row.setFieldState(FieldState.OPEN);
+
+			if (current.getFieldState() == FieldState.READONLY)
+				current?.setFieldState(FieldState.OPEN);
+
+			this.displaycurrent(rownum);
 		}
 	}
 
 	public display(rownum:number, record:Record) : void
 	{
-		this.getRow(rownum).setFieldState(FieldState.READONLY);
+		let row:Row = this.getRow(rownum);
+
+		if (row.getFieldState() == FieldState.DISABLED)
+			row.setFieldState(FieldState.READONLY);
 
 		record.values.forEach((col) =>
 		{
@@ -262,13 +269,9 @@ export class Block
 	public displaycurrent(rownum:number) : void
 	{
 		let current:Row = this.rows$.get(-1);
-		let bound:boolean = this.rows$.get(rownum).bound;
 
-		if (current != null && bound)
-		{
-			current.setDefaults(null);
+		if (current != null)
 			this.values.get(rownum)?.forEach((val,fld) => {current.distribute(fld,val)});
-		}
 	}
 
 	public finalize() : void

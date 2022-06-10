@@ -89,10 +89,11 @@ export class Common
 		{
 			case FieldState.OPEN:
 				if (enabled && !this.enabled()) this.enabled(true);
-				if (readonly && !this.readonly()) this.readonly(true);
+				if (!readonly && this.readonly()) this.readonly(false);
 				break;
 
 			case FieldState.READONLY:
+				if (enabled) this.enabled(true);
 				this.readonly(true);
 				break;
 

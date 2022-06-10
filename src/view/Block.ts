@@ -202,9 +202,13 @@ export class Block
 			if (rownum > 0)
 				this.row$ = rownum;
 
-			await this.mdlblk.setCurrentRecord(this.row$)
-			this.openrow(0);
+			if (!await this.mdlblk.setCurrentRecord(this.row$))
+			{
+				this.row$ = -1;
+				return(false);
+			}
 
+			this.openrow(0);
 			return(true);
 		}
 

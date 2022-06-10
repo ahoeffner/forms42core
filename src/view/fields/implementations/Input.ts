@@ -97,6 +97,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.element.value = "";
 	}
 
+	// Get unvalidated
 	public override getStringValue(): string
 	{
 		let value:string = this.element.value;
@@ -104,6 +105,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		return(value);
 	}
 
+	// Set unvalidated
 	public override setStringValue(value:string) : void
 	{
         if (value == null)
@@ -113,7 +115,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		if (this.pattern != null && value.length > 0)
 		{
-			console.log("pattern "+this.container.name+"["+this.container.row+"]")
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
 		}
@@ -330,9 +331,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     {
         let prevent:boolean = this.event.prevent;
 
-		if (this.element.readOnly)
-			return(true);
-
         if (this.event.prevent)
             prevent = true;
 
@@ -377,6 +375,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			if (this.pattern.isNull()) this.clear();
             return(true);
         }
+
+		if (this.element.readOnly)
+			return(true);
 
         if (this.event.type == "change")
         {

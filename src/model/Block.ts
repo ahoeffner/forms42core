@@ -217,19 +217,14 @@ export class Block
 		if (this.record$ < 0)
 		{
 			this.record$ = delta;
-			return(await this.fire(EventType.PreRecord,null));
+			return(this.fire(EventType.PreRecord,null));
 		}
 
-		let cont:boolean = false;
+		if (!await this.fire(EventType.PostRecord,null))
+			return(false);
 
-		if (cont)
-		{
-			await this.fire(EventType.PostRecord,null);
-			this.record$ += delta;
-			await this.fire(EventType.PreRecord,null);
-		}
-
-		return(cont);
+		this.record$ += delta;
+		return(this.fire(EventType.PreRecord,null));
 	}
 
 	public get record() : number

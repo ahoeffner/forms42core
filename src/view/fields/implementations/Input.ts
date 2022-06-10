@@ -111,8 +111,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 		value = value.trim();
 
-		if (this.pattern != null)
+		if (this.pattern != null && value.length > 0)
 		{
+			console.log("pattern "+this.container.name+"["+this.container.row+"]")
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
 		}
@@ -587,6 +588,9 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	private validateInput(val:string) : boolean
 	{
+		if (val.trim().length == 0)
+			return(true);
+
 		if (this.dec)
 		{
 			if (isNaN(+val))

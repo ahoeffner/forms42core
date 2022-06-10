@@ -160,24 +160,9 @@ export class FieldInstance implements FieldContainer
 		this.impl.setFieldState(state);
 	}
 
-	public hidden(flag?:boolean) : boolean
-	{
-		return(this.impl.hidden(flag));
-	}
-
 	public invalid(flag?:boolean) : boolean
 	{
 		return(this.impl.invalid(flag));
-	}
-
-	public enabled(flag?:boolean) : boolean
-	{
-		return(this.impl.enabled(flag));
-	}
-
-	public readonly(flag?:boolean) : boolean
-	{
-		return(this.impl.readonly(flag));
 	}
 
 	public setRownum() : void

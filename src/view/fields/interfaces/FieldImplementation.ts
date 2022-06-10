@@ -12,6 +12,13 @@
 
 import { FieldContainer } from "./FieldContainer";
 
+export enum FieldState
+{
+	OPEN,
+	READONLY,
+	DISABLED
+}
+
 export interface FieldImplementation
 {
 	setDefaults() : void;
@@ -21,6 +28,9 @@ export interface FieldImplementation
     getStringValue() : string;
     setValue(value:any) : boolean;
 	setStringValue(value:string) : void;
+
+	getFieldState() : FieldState;
+	setFieldState(state:FieldState) : void;
 
     getStyles() : string[][];
     getStyle(style:string) : string;

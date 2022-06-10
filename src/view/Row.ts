@@ -14,6 +14,7 @@ import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "../public/FieldProperties.js";
+import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
 
 export class Row
@@ -21,6 +22,7 @@ export class Row
 	private block$:Block = null;
 	private rownum$:number = null;
 	private bound$:boolean = false;
+	private state$:FieldState = null;
 	private validated$:boolean = true;
 	private instances:FieldInstance[] = [];
 	private fields:Map<string,Field> = new Map<string,Field>();
@@ -43,12 +45,7 @@ export class Row
 
 	public get bound() : boolean
 	{
-		return(this.bound$);
-	}
-
-	public set bound(flag:boolean)
-	{
-		this.bound$ = flag;
+		return(this.state$ != FieldState.DISABLED);
 	}
 
 	public set rownum(rownum:number)
@@ -77,19 +74,15 @@ export class Row
 		else this.block.getCurrentRow().validated$ = flag;
 	}
 
-	public enable() : void
+	public getFieldState() : FieldState
 	{
-		this.getFieldInstances().forEach((inst) => {inst.enabled(true)});
+		return(this.state$);
 	}
 
-	public disable() : void
+	public setFieldState(state:FieldState) : void
 	{
-		this.getFieldInstances().forEach((inst) => {inst.enabled(false)});
-	}
-
-	public readonly() : void
-	{
-		this.getFieldInstances().forEach((inst) => {inst.readonly(true)});
+		this.state$ = state;
+		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
 	public setRownum() : void

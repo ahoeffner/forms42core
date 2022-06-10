@@ -20,6 +20,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
 
 export class Block
@@ -216,7 +217,7 @@ export class Block
 			return(false);
 
 		// disable autofill
-		this.getRow(this.row$).readonly();
+		this.getRow(this.row$).setFieldState(FieldState.READONLY);
 
 		this.row$ = rownum;
 		this.getRow(this.row$).setDefaults(null);
@@ -247,29 +248,26 @@ export class Block
 		}
 	}
 
-	public display(row:number, record:Record) : void
+	public display(rownum:number, record:Record) : void
 	{
-		this.getRow(row).enable();
-		this.getRow(row).bound = true;
+		this.getRow(rownum).setFieldState(FieldState.READONLY);
 
 		record.values.forEach((col) =>
 		{
 			if (this.setFieldValue(col.name,col.value))
-				this.getRow(row).distribute(col.name,col.value);
+				this.getRow(rownum).distribute(col.name,col.value);
 		})
 	}
 
-	public displaycurrent(row:number) : void
+	public displaycurrent(rownum:number) : void
 	{
 		let current:Row = this.rows$.get(-1);
-		let bound:boolean = this.rows$.get(row).bound;
+		let bound:boolean = this.rows$.get(rownum).bound;
 
 		if (current != null && bound)
 		{
-			current.enable();
-			current.bound = true;
 			current.setDefaults(null);
-			this.values.get(row)?.forEach((val,fld) => {current.distribute(fld,val)});
+			this.values.get(rownum)?.forEach((val,fld) => {current.distribute(fld,val)});
 		}
 	}
 
@@ -339,11 +337,11 @@ export class Block
 
 		this.values.delete(-1);
 
-		this.getRow(0)?.readonly();
-		this.getRow(-1)?.readonly();
+		this.getRow(0)?.setFieldState(FieldState.READONLY);
+		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 
 		this.rows$.forEach((row) =>
-		{if (row.rownum > 0) row.disable()});
+		{if (row.rownum > 0) row.setFieldState(FieldState.DISABLED)});
 
 		if (this.rows$.size > 1)
 			this.rows$.forEach((row) =>	{row.setRownum()});

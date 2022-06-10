@@ -12,7 +12,7 @@
 
 import { FieldProperties } from "../FieldProperties.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
-import { FieldImplementation } from "../interfaces/FieldImplementation.js";
+import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
 
 export class Common
@@ -21,6 +21,7 @@ export class Common
 	private enabled$:boolean = true;
 	private readonly$:boolean = true;
 	private invalid$:boolean = false;
+	private state$:FieldState = null;
     private field:FieldImplementation = null;
 	private container$:FieldContainer = null;
 
@@ -71,6 +72,34 @@ export class Common
 			if (!skip.includes(name.toLowerCase()))
 				props.setAttribute(name,tag.getAttribute(name));
 		});
+	}
+
+	public getFieldState() : FieldState
+	{
+		return(this.state$);
+	}
+
+	public setFieldState(state:FieldState) : void
+	{
+		this.state$ = state;
+		let enabled:boolean = this.container$.properties.enabled();
+		let readonly:boolean = this.container$.properties.readonly();
+
+		switch(state)
+		{
+			case FieldState.OPEN:
+				if (enabled && !this.enabled()) this.enabled(true);
+				if (readonly && !this.readonly()) this.readonly(true);
+				break;
+
+			case FieldState.READONLY:
+				this.readonly(true);
+				break;
+
+			case FieldState.DISABLED:
+				this.enabled(false);
+				break;
+			}
 	}
 
     public removeAttribute(attr:string) : void

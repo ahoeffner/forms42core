@@ -17,8 +17,8 @@ import { Class } from "../../types/Class.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
-import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 import { FieldProperties as Override } from "../../public/FieldProperties.js";
+import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
 
 
 export class FieldInstance implements FieldContainer
@@ -153,6 +153,11 @@ export class FieldInstance implements FieldContainer
 	public focus() : void
 	{
 		this.impl.getElement().focus();
+	}
+
+	public setFieldState(state:FieldState) : void
+	{
+		this.impl.setFieldState(state);
 	}
 
 	public hidden(flag?:boolean) : boolean

@@ -40,7 +40,7 @@ export class Properties
     public static getTagLibrary() : Map<string,Class<Tag>>
     {
         return(
-            new Map
+            new Map<string,Class<Tag>>
             (
                 [
                     ["field",Field],
@@ -53,10 +53,11 @@ export class Properties
     public static getAttributeLibrary() : Map<string,Class<Tag>>
     {
         return(
-            new Map
+            new Map<string,Class<Tag>>
             (
                 [
-                    ["for",Foreach]
+                    ["for",Foreach],
+                    ["blockx",Field]
                 ]
             ));
     }

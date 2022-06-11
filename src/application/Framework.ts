@@ -134,11 +134,19 @@ export class Framework
 
 				for (let an = 0; impl == null && an < attrnames.length; an++)
 				{
+					let atrnm:string = attrnames[an].toLowerCase();
+
+					if (Framework.attrlib.get(atrnm))
+					{
+						impl = Framework.attrlib.get(atrnm);
+						if (impl != null) attr = atrnm;
+					}
+
+					else
+
 					if (attrnames[an].startsWith(prefix))
 					{
-						let atrnm:string = attrnames[an].substring(prefix.length);
-
-						atrnm = atrnm.toLowerCase();
+						atrnm = atrnm.substring(prefix.length);
 						impl = Framework.attrlib.get(atrnm);
 						if (impl != null) attr = atrnm;
 					}

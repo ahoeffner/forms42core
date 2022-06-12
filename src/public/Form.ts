@@ -127,7 +127,7 @@ export class Form implements CanvasComponent
 		if (Model.getForm(this).validated)
 			return(false);
 
-		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.CloseForm,this)))
+		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.FormClose,this)))
 			return(false);
 
         this.canvas.close();

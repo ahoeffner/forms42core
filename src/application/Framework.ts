@@ -139,6 +139,8 @@ export class Framework
 					{
 						impl = Framework.attrlib.get(atrnm);
 						if (impl != null) attr = atrnm;
+						if (impl != null && impl.constructor.name.endsWith("Field"))
+							console.log("debug");
 					}
 
 					if (impl == null)

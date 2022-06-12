@@ -53,7 +53,8 @@ export class Block
 
 	public get row() : number
 	{
-		return(this.row$);
+		if (this.row$ < 0) return(0);
+		else               return(this.row$);
 	}
 
 	public get rows() : number
@@ -78,7 +79,7 @@ export class Block
 
 	public getField(field:string) : Field
 	{
-		return(this.getRow(this.row$).getField(field));
+		return(this.getRow(this.row)?.getField(field));
 	}
 
 	public getFieldNames() : string[]
@@ -89,7 +90,7 @@ export class Block
 	public get validated() : boolean
 	{
 		if (this.currfld == null) return(true);
-		return(this.getRow(this.row$).validated);
+		return(this.getRow(this.row).validated);
 	}
 
 	public addInstance(inst:FieldInstance) : void
@@ -110,17 +111,17 @@ export class Block
 
 	public setFieldValue(inst:string|FieldInstance, value:any) : boolean
 	{
-		let values:Map<string,any> = this.values.get(this.row$);
+		let values:Map<string,any> = this.values.get(this.row);
 
 		if (values == null)
 		{
 			values = new Map<string,any>();
-			this.values.set(this.row$,values);
+			this.values.set(this.row,values);
 		}
 
 		if (typeof inst === "string")
 		{
-			inst = this.getField(inst).getInstance(0);
+			inst = this.getField(inst)?.getInstance(0);
 			if (inst == null) return(false);
 		}
 
@@ -130,7 +131,7 @@ export class Block
 
 	public getValue(field:string) : any
 	{
-		return(this.rows$.get(this.row$).getField(field)?.getValue());
+		return(this.rows$.get(this.row).getField(field)?.getValue());
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -152,9 +153,9 @@ export class Block
 
 	public async validate() : Promise<boolean>
 	{
-		if (!this.getRow(this.row$).validated)
+		if (!this.getRow(this.row).validated)
 		{
-			if (!this.getRow(this.row$).validateFields())
+			if (!this.getRow(this.row).validateFields())
 				return(false);
 
 			if (!await this.mdlblk.validateRecord())
@@ -166,7 +167,7 @@ export class Block
 
 	public getCurrentRow() : Row
 	{
-		return(this.rows$.get(this.row$));
+		return(this.rows$.get(this.row));
 	}
 
 	public async setCurrentField(inst:FieldInstance) : Promise<boolean>
@@ -249,10 +250,13 @@ export class Block
 		{
 			row.setFieldState(FieldState.OPEN);
 
-			if (current.getFieldState() == FieldState.READONLY)
-				current?.setFieldState(FieldState.OPEN);
+			if (current != null)
+			{
+				if (current.getFieldState() == FieldState.READONLY)
+					current.setFieldState(FieldState.OPEN);
 
-			this.displaycurrent(rownum);
+				this.displaycurrent(rownum);
+			}
 		}
 	}
 
@@ -359,8 +363,8 @@ export class Block
 		let cr:number = this.row$;
 		let fr:number = field.row.rownum;
 
-		if (fr >= 0) this.getRow(-1).distribute(field.name,value);
-		else		 this.getRow(cr).distribute(field.name,value);
+		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value);
+		else		 this.getRow(cr)?.distribute(field.name,value);
 	}
 
 	public linkModel() : void

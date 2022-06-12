@@ -33,7 +33,7 @@ export class FieldInstance implements FieldContainer
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
 
-	constructor(form:Form,tag:HTMLElement)
+	constructor(form:Form,block:string,tag:HTMLElement)
 	{
 		this.form$ = form;
 
@@ -43,10 +43,10 @@ export class FieldInstance implements FieldContainer
 		else if (isNaN(+row)) throw "@FieldInstance: row: '"+row+"' is not a number";
 
 		this.row$ = +row;
+		this.block$ = block;
 
 		this.id$ = tag.getAttribute("id");
 		this.name$ = tag.getAttribute("name");
-		this.block$ = tag.getAttribute("block");
 
 		if (this.id$ == null)
 			this.id$ = "";
@@ -73,6 +73,7 @@ export class FieldInstance implements FieldContainer
 		this.element$ = this.impl.getElement();
 
 		// Don't set block to prevent double creation
+		this.element$.setAttribute("block",this.block$);
 		if (this.id$.length > 0) this.element$.setAttribute("id",this.id$);
 		if (this.name$.length > 0) this.element$.setAttribute("name",this.name$);
 

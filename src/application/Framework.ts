@@ -117,9 +117,12 @@ export class Framework
         if (doc == null) return;
 		let prefix:string = Properties.AttributePrefix;
 
-        for (let i = 0; i < doc.childNodes.length; i++)
+		let nodes:Node[] = [];
+		doc.childNodes.forEach((node) => {nodes.push(node)});
+
+        for (let i = 0; i < nodes.length; i++)
         {
-            let element:Node = doc.children.item(i);
+            let element:Node = nodes[i];
             if (!(element instanceof HTMLElement)) continue;
 
             let impl:Tag = null;
@@ -139,8 +142,6 @@ export class Framework
 					{
 						impl = Framework.attrlib.get(atrnm);
 						if (impl != null) attr = atrnm;
-						if (impl != null && impl.constructor.name.endsWith("Field"))
-							console.log("debug");
 					}
 
 					if (impl == null)
@@ -160,7 +161,7 @@ export class Framework
                 let replace:HTMLElement|HTMLElement[]|string = impl.parse(this.component,element,attr);
                 Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
-                if (replace == null)
+				if (replace == null)
                 {
                     element.remove();
                     element = null;

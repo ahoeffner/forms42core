@@ -25,6 +25,8 @@ export class Field implements Tag
 			throw "@Field: Fields cannot be placed on non-forms "+component.constructor.name;
 
 		let block:string = tag.getAttribute(attr);
+		tag.removeAttribute(attr);
+
 		let field:FieldInstance = new FieldInstance(component,block,tag);
 
         return(field.element);

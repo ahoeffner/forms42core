@@ -355,7 +355,7 @@ export class Block
 		{if (row.rownum > 0) row.setFieldState(FieldState.DISABLED)});
 
 		if (this.rows$.size > 1)
-			this.rows$.forEach((row) =>	{row.setBlockAndRow()});
+			this.rows$.forEach((row) =>	{row.setRownum()});
 	}
 
 	public distribute(field:Field, value:any) : void

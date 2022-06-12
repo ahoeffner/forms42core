@@ -128,27 +128,27 @@ export class Framework
 
             if (Properties.ParseTags)
 			{
-                impl = Framework.taglib.get(tag);
-
+				impl = Framework.taglib.get(tag);
 				let attrnames:string[] = element.getAttributeNames();
 
 				for (let an = 0; impl == null && an < attrnames.length; an++)
 				{
 					let atrnm:string = attrnames[an].toLowerCase();
 
-					if (Framework.attrlib.get(atrnm))
+					if (!Properties.RequireAttributePrefix)
 					{
 						impl = Framework.attrlib.get(atrnm);
 						if (impl != null) attr = atrnm;
 					}
 
-					else
-
-					if (attrnames[an].startsWith(prefix))
+					if (impl == null)
 					{
-						atrnm = atrnm.substring(prefix.length);
-						impl = Framework.attrlib.get(atrnm);
-						if (impl != null) attr = atrnm;
+						if (attrnames[an].startsWith(prefix))
+						{
+							atrnm = attrnames[an].substring(prefix.length).toLowerCase();
+							impl = Framework.attrlib.get(atrnm);
+							if (impl != null) attr = atrnm;
+						}
 					}
 				}
 			}
@@ -247,6 +247,13 @@ export class Framework
             });
         }
     }
+
+	public print(elem:HTMLElement) : void
+	{
+		console.log(elem.tagName);
+		let attrs:string[] = elem.getAttributeNames();
+		attrs.forEach((attr) => {console.log(attr+"="+elem.getAttribute(attr))});
+	}
 }
 
 

@@ -79,9 +79,9 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
-	public setRownum() : void
+	public setBlockAndRow() : void
 	{
-		this.getFieldInstances().forEach((inst) => {inst.setRownum()});
+		this.getFieldInstances().forEach((inst) => {inst.setBlockAndRow()});
 	}
 
 	public setDefaults(override?:FieldProperties) : void

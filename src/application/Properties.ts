@@ -30,6 +30,7 @@ export class Properties
 {
     public static RootTag:string = "forms";
     public static AttributePrefix:string = "$";
+    public static RequireAttributePrefix:boolean = false;
 
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
@@ -43,7 +44,6 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    ["field",Field],
                     ["include",Include],
                     [Properties.RootTag,Root]
                 ]
@@ -57,7 +57,7 @@ export class Properties
             (
                 [
                     ["for",Foreach],
-                    ["blockx",Field]
+                    ["block",Field]
                 ]
             ));
     }

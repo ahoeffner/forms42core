@@ -72,9 +72,9 @@ export class FieldInstance implements FieldContainer
 		this.impl.initialize(tag,this);
 		this.element$ = this.impl.getElement();
 
+		// Don't set block to prevent double creation
 		if (this.id$.length > 0) this.element$.setAttribute("id",this.id$);
 		if (this.name$.length > 0) this.element$.setAttribute("name",this.name$);
-		if (this.block$.length > 0) this.element$.setAttribute("block",this.block$);
 
 		this.field$.addInstance(this);
 	}
@@ -165,11 +165,12 @@ export class FieldInstance implements FieldContainer
 		return(this.impl.invalid(flag));
 	}
 
-	public setRownum() : void
+	public setBlockAndRow() : void
 	{
 		if (this.row$ >= 0)
 		{
 			this.impl.setAttribute("row",this.row$);
+			this.impl.setAttribute("block",this.block$);
 			this.properties.setAttribute("row",this.row$);
 		}
 	}

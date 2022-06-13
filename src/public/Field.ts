@@ -17,6 +17,11 @@ export class Field
 {
 	constructor(private field$:ViewField) {}
 
+	public get name() : string
+	{
+		return(this.field$.name);
+	}
+
 	public getInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];

@@ -17,6 +17,11 @@ export class FieldInstance
 {
 	constructor(private inst$:ViewInstance) {}
 
+	public get name() : string
+	{
+		return(this.field.name);
+	}
+
 	public get field() : Field
 	{
 		return(new Field(this.inst$.field));

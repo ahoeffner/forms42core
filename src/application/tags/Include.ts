@@ -12,10 +12,10 @@
 
 import { Tag } from "./Tag.js";
 import { Class } from "../../types/Class.js";
-import { Properties } from "../../application/Properties.js";
-import { FormsModule } from "../../application/FormsModule.js";
-import { HTMLFragment } from "../../application/HTMLFragment.js";
-import { ComponentFactory } from "../../application/ComponentFactory.js";
+import { Properties } from "../Properties.js";
+import { FormsModule } from "../FormsModule.js";
+import { HTMLFragment } from "../HTMLFragment.js";
+import { ComponentFactory } from "../ComponentFactory.js";
 
 
 export class Include implements Tag

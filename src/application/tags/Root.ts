@@ -11,7 +11,7 @@
  */
 
 import { Tag } from "./Tag.js";
-import { Framework } from "../../application/Framework.js";
+import { Framework } from "../Framework.js";
 
 export class Root implements Tag
 {

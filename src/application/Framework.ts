@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Tag } from '../view/tags/Tag.js';
+import { Tag } from './tags/Tag.js';
 import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Properties } from './Properties.js';

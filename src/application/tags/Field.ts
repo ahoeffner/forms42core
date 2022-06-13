@@ -12,8 +12,8 @@
 
 import { Tag } from "./Tag.js";
 import { Form } from "../../public/Form.js";
-import { FieldInstance } from "../fields/FieldInstance.js";
-import { Properties } from "../../application/Properties.js";
+import { Properties } from "../Properties.js";
+import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
 export class Field implements Tag
 {

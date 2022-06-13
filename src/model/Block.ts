@@ -201,7 +201,6 @@ export class Block
 		if (!await this.fire(EventType.ValidateField,event))
 			return(false);
 
-		console.log("save "+field+"["+this.record+"] -> "+value)
 		this.wrapper.setValue(this.record,field,value);
 		return(true);
 	}

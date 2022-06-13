@@ -186,7 +186,6 @@ export class Field
 			{
 				inst.focus();
 				inst.invalid(true);
-				this.valid = false;
 			}
 			else
 			{
@@ -198,6 +197,7 @@ export class Field
 
 		if (brwevent.modified)
 		{
+			this.valid = false;
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
 			await this.mdlblk.onEditing(event);

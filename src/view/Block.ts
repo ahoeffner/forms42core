@@ -236,8 +236,10 @@ export class Block
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);
 
+		row.clear();
+
 		record.values.forEach((field) =>
-		{this.getRow(rownum).distribute(field.name,field.value);})
+		{row.distribute(field.name,field.value);})
 	}
 
 	public displaycurrent(rownum:number) : void
@@ -246,6 +248,7 @@ export class Block
 
 		if (current != null)
 		{
+			current.clear();
 			let rec:Record = this.mdlblk.getRecord(rownum-this.row);
 			rec.values.forEach((field) => {current.distribute(field.name,field.value)});
 		}

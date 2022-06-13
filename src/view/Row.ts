@@ -160,6 +160,11 @@ export class Row
 		return(fields);
 	}
 
+	public clear() : void
+	{
+		this.getFieldInstances().forEach((inst) => {inst.setValue(null)});
+	}
+
 	public distribute(field:string, value:any) : void
 	{
 		this.fields.get(field)?.distribute(null,value);

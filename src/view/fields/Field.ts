@@ -142,7 +142,6 @@ export class Field
 
 	public setValue(value:any) : void
 	{
-		this.block$.setFieldValue(this.instances[0],value);
 		this.distribute(null,value);
 	}
 
@@ -164,7 +163,7 @@ export class Field
 		if (this.mdlblk == null)
 			this.mdlblk = this.block$.model;
 
-		if (event.type == "focus")
+		if (brwevent.type == "focus")
 		{
 			if (await this.block.setCurrentField(inst))
 				await this.mdlblk.preField(event);
@@ -172,18 +171,18 @@ export class Field
 			return;
 		}
 
-		if (event.type == "blur")
+		if (brwevent.type == "blur")
 		{
 			await this.mdlblk.postField(event);
 			return;
 		}
 
-		if (event.type == "change")
+		if (brwevent.type == "change")
 		{
 			this.row.validated = false;
 			this.block.distribute(this,inst.getStringValue());
 
-			if (!await this.mdlblk.validateField(event))
+			if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
 			{
 				inst.focus();
 				inst.invalid(true);
@@ -192,7 +191,6 @@ export class Field
 			else
 			{
 				this.valid = true;
-				this.block.setFieldValue(inst,inst.getValue());
 			}
 
 			return;
@@ -202,12 +200,11 @@ export class Field
 		{
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
-			this.block.setFieldValue(inst,inst.getStringValue());
 			await this.mdlblk.onEditing(event);
 			return;
 		}
 
-		if (event.type.startsWith("key") && !brwevent.navigation)
+		if (brwevent.type.startsWith("key") && !brwevent.navigation)
 		{
 			if (brwevent.ctrlkey != null || brwevent.funckey != null)
 			{

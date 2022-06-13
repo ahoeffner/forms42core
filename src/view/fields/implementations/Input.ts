@@ -23,6 +23,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     private int:boolean = false;
     private dec:boolean = false;
 	private pattern:Pattern = null;
+	private fixedval:string = null;
     private placeholder:string = null;
 	private container:FieldContainer = null;
 
@@ -180,8 +181,20 @@ export class Input extends Common implements FieldImplementation, EventListenerO
         if (this.event.type == "blur")
         {
 			buble = true;
+
+			if (this.pattern != null)
+			{
+				// Fixed doesn't fire change
+				if (this.getStringValue() != this.fixedval)
+				{
+					this.event.type = "change";
+					this.container.handleEvent(this.event);
+					this.event.type = "blur";
+				}
+			}
+
             if (this.placeholder != null)
-                this.removeAttribute("placeholder");
+				this.removeAttribute("placeholder");
         }
 
         if (this.event.type == "focus")
@@ -365,6 +378,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
+			this.fixedval = this.getStringValue();
 
             return(true);
         }
@@ -376,14 +390,14 @@ export class Input extends Common implements FieldImplementation, EventListenerO
             return(true);
         }
 
-		if (this.element.readOnly)
-			return(true);
-
         if (this.event.type == "change")
         {
 			this.validateInput(this.getStringValue());
             return(true);
         }
+
+		if (this.element.readOnly)
+			return(true);
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
 			this.clear();

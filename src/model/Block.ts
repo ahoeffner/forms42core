@@ -196,9 +196,14 @@ export class Block
 		return(this.fire(EventType.Editing,event));
 	}
 
-	public async validateField(event:Event) : Promise<boolean>
+	public async validateField(event:Event, field:string, value:any) : Promise<boolean>
 	{
-		return(this.fire(EventType.ValidateField,event));
+		if (!await this.fire(EventType.ValidateField,event))
+			return(false);
+
+		console.log("save "+field+"["+this.record+"] -> "+value)
+		this.wrapper.setValue(this.record,field,value);
+		return(true);
 	}
 
 	public async onKey(event:Event, field:string, key:KeyMap) : Promise<boolean>
@@ -229,7 +234,8 @@ export class Block
 
 	public get record() : number
 	{
-		return(this.record$);
+		if (this.record$ < 0) return(0);
+		else				  return(this.record$);
 	}
 
 	public get interface() : InterfaceBlock
@@ -255,6 +261,7 @@ export class Block
 
 	public async executequery() : Promise<boolean>
 	{
+		this.record$ = -1;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		if (!await wrapper.query()) return(false);
@@ -271,6 +278,11 @@ export class Block
 		}
 
 		return(true);
+	}
+
+	public getRecord(offset:number) : Record
+	{
+		return(this.wrapper.getRecord(this.record + offset));
 	}
 
 	public link(block:InterfaceBlock) : void

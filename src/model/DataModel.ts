@@ -148,6 +148,11 @@ export class DataSourceWrapper
 		return(!await this.fire(EventType.PostDelete));
 	}
 
+	public getRecord(record:number) : Record
+	{
+		return(this.cache$[record]);
+	}
+
 	public async query() : Promise<boolean>
 	{
 		return(this.source.query());

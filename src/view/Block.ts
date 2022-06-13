@@ -33,7 +33,6 @@ export class Block
 	private fieldnames$:string[] = null;
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private values:Map<number,Map<string,any>> = new Map<number,Map<string,any>>(); // All values, row + current
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -82,6 +81,11 @@ export class Block
 		return(this.getRow(this.row)?.getField(field));
 	}
 
+	public getValue(field:string) : any
+	{
+		return(this.rows$.get(this.row).getField(field)?.getValue());
+	}
+
 	public getFieldNames() : string[]
 	{
 		return(this.fieldnames$);
@@ -95,43 +99,8 @@ export class Block
 
 	public addInstance(inst:FieldInstance) : void
 	{
-		let values:Map<string,any> = this.values.get(inst.row);
-
-		if (values == null)
-		{
-			values = new Map<string,any>();
-			this.values.set(inst.row,values);
-		}
-
-		values.set(inst.name,null);
-
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
-	}
-
-	public setFieldValue(inst:string|FieldInstance, value:any) : boolean
-	{
-		let values:Map<string,any> = this.values.get(this.row);
-
-		if (values == null)
-		{
-			values = new Map<string,any>();
-			this.values.set(this.row,values);
-		}
-
-		if (typeof inst === "string")
-		{
-			inst = this.getField(inst)?.getInstance(0);
-			if (inst == null) return(false);
-		}
-
-		values.set(inst.name,value);
-		return(true);
-	}
-
-	public getValue(field:string) : any
-	{
-		return(this.rows$.get(this.row).getField(field)?.getValue());
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -267,11 +236,8 @@ export class Block
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);
 
-		record.values.forEach((col) =>
-		{
-			if (this.setFieldValue(col.name,col.value))
-				this.getRow(rownum).distribute(col.name,col.value);
-		})
+		record.values.forEach((field) =>
+		{this.getRow(rownum).distribute(field.name,field.value);})
 	}
 
 	public displaycurrent(rownum:number) : void
@@ -279,7 +245,10 @@ export class Block
 		let current:Row = this.rows$.get(-1);
 
 		if (current != null)
-			this.values.get(rownum)?.forEach((val,fld) => {current.distribute(fld,val)});
+		{
+			let rec:Record = this.mdlblk.getRecord(rownum-this.row);
+			rec.values.forEach((field) => {current.distribute(field.name,field.value)});
+		}
 	}
 
 	public finalize() : void
@@ -293,12 +262,7 @@ export class Block
 		*/
 
 		if (rows.length == 1)
-		{
-			let fields:Map<string,any> = this.values.get(rows[0].rownum);
-			this.values.delete(rows[0].rownum);
-			this.values.set(0,fields);
 			rows[0].rownum = 0;
-		}
 
 		if (rows.length > 1)
 		{
@@ -307,14 +271,8 @@ export class Block
 
 			for (let i = 0; i < rows.length; i++)
 			{
-				if (rows[i].rownum < 0)
-					continue;
-
-				let fields:Map<string,any> = this.values.get(rows[i].rownum);
-				this.values.delete(rows[i].rownum);
-				this.values.set(n,fields);
-
-				rows[i].rownum = n++;
+				if (rows[i].rownum >= 0)
+					rows[i].rownum = n++;
 			}
 		}
 
@@ -324,29 +282,7 @@ export class Block
 		{this.rows$.set(row.rownum,row)});
 
 		this.rc$ = rows.length;
-		let current:Map<string,any> = this.values.get(-1);
-
-		if (current != null)
-		{
-			this.rc$--;
-
-			let cflds:string[] = [];
-			let rows:Map<string,any>[] = [];
-
-			this.values.forEach((map,rownum) =>
-			{if (rownum >= 0) rows.push(map)});
-
-			current.forEach((_val,fld) =>
-			{cflds.push(fld);});
-
-			rows.forEach((map) =>
-			{
-				cflds.forEach((fld) =>
-				{map.set(fld,null)});
-			})
-		}
-
-		this.values.delete(-1);
+		if (this.getRow(-1) != null) this.rc$--;
 
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);

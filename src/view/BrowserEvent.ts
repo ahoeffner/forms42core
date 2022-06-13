@@ -15,6 +15,7 @@ import { FormsModule } from "../application/FormsModule.js";
 export class BrowserEvent
 {
     private event$:any;
+	private type$:string;
 
     private dseq:number = 0;
     private useq:number = 0;
@@ -59,6 +60,7 @@ export class BrowserEvent
     public setEvent(event:any) : void
     {
         this.event$ = event;
+		this.type$ = event.type;
 
         if (!this.isKeyEvent) this.reset();
         else                  this.KeyEvent();
@@ -143,7 +145,12 @@ export class BrowserEvent
 
     public get type() : string
     {
-        return(this.event.type);
+        return(this.type$);
+    }
+
+    public set type(type:string)
+    {
+        this.type$ = type;
     }
 
     public get repeat() : boolean
@@ -309,7 +316,7 @@ export class BrowserEvent
     private mouseEvent() : void
     {
 		this.reset();
-		
+
         if (this.type == "mouseup")
         {
             this.mousedown = false;

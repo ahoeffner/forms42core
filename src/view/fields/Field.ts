@@ -29,7 +29,7 @@ export class Field
 	private mdlblk:ModelBlock = null;
 	private instances:FieldInstance[] = [];
 
-	public static create(form:Interface, block:string, rownum:number, field:string) : Field
+	public static create(form:Interface, block:string, field:string, rownum:number) : Field
 	{
 		let frm:Form = Form.getForm(form);
 		if (frm == null) return(null);

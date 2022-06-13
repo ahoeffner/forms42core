@@ -64,7 +64,7 @@ export class FieldInstance implements FieldContainer
 		this.name$ = this.name$.toLowerCase();
 		this.block$ = this.block$.toLowerCase();
 		this.properties$ = new FieldProperties();
-		this.field$ = Field.create(form,this.block$,this.row$,this.name$);
+		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(this.properties$.getType());
 

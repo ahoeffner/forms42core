@@ -211,6 +211,26 @@ export class Framework
             let attrvalue:string = element.getAttribute(attrnames[an]);
             if (attrvalue != null) attrvalue = attrvalue.trim();
 
+			if (!Properties.RequireAttributePrefix)
+			{
+				if (attrnames[an].toLowerCase().startsWith("on") && attrvalue.startsWith("this."))
+				{
+					let events:string[][] = this.events.get(element);
+
+					if (events == null)
+					{
+						events = [];
+						this.events.set(element,events);
+					}
+
+					events.push([attrnames[an],attrvalue]);
+					element.removeAttribute(attrnames[an]);
+
+					Logger.log(Type.eventparser,"Add event: '"+attrvalue+"' for: "+attrnames[an]);
+					continue;
+				}
+			}
+
 			if (!attrnames[an].startsWith(prefix))
 				continue;
 

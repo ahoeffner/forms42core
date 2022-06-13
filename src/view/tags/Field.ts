@@ -13,6 +13,7 @@
 import { Tag } from "./Tag.js";
 import { Form } from "../../public/Form.js";
 import { FieldInstance } from "../fields/FieldInstance.js";
+import { Properties } from "../../application/Properties.js";
 
 export class Field implements Tag
 {
@@ -25,6 +26,13 @@ export class Field implements Tag
 			throw "@Field: Fields cannot be placed on non-forms "+component.constructor.name;
 
 		let block:string = tag.getAttribute(attr);
+
+		if (block == null)
+		{
+			attr = Properties.AttributePrefix+attr;
+			block = tag.getAttribute(attr);
+		}
+
 		if (attr != "block") tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,block,tag);
 

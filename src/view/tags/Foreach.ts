@@ -19,8 +19,13 @@ export class Foreach implements Tag
     public parse(_component:any, tag:HTMLElement, attr:string) : HTMLElement[]
     {
 		let tags:HTMLElement[] = [];
-		attr = Properties.AttributePrefix+attr;
 		let expr:string = tag.getAttribute(attr);
+
+		if (expr == null)
+		{
+			attr = Properties.AttributePrefix+attr;
+			expr = tag.getAttribute(attr);
+		}
 
 		if (expr == null)
 			throw "@Foreach: cannot locate attribute "+attr;

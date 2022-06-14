@@ -17,6 +17,7 @@ import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
+import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { FieldInstance } from "../../public/FieldInstance.js";
 
@@ -32,7 +33,7 @@ export class FormEvent
 {
 	public static newFormEvent(type:EventType, form:Form, cause?:Event) : FormEvent
 	{
-		return(new FormEvent(type,form, cause));
+		return(new FormEvent(type,form,cause));
 	}
 
 	public static newBlockEvent(type:EventType, form:Form, block:string, cause?:Event) : FormEvent
@@ -40,43 +41,89 @@ export class FormEvent
 		return(new FormEvent(type,form,cause,block));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, cause?:Event, block?:string, field?:string) : FormEvent
+	public static newFieldEvent(type:EventType, form:Form, block:string, cause:Event) : FormEvent
 	{
-		return(new FormEvent(type,form,cause,block,field));
+		return(new FormEvent(type,form,cause,block));
 	}
 
-	public static newKeyEvent(form:Form, key:KeyMap, cause?:Event, block?:string, field?:string) : FormEvent
+	public static newKeyEvent(form:Form, key:KeyMap, block:string, cause:Event) : FormEvent
 	{
-		return(new FormEvent(EventType.Key,form,cause,block,field,key));
+		return(new FormEvent(EventType.Key,form,cause,block,key));
 	}
+
+	private block$:Block = null;
+	private fieldname$:string = null;
+	private instance$:FieldInstance = null;
+
+	private bevaluated:boolean = false;
+	private fevaluated:boolean = false;
+	private ievaluated:boolean = false;
 
 
 	private constructor
 	(
-		public type:EventType,
-		public form:Form,
-		public cause:Event,
-		public blockname?:string,
-		public fieldname?:string,
-		public key?:KeyMap
+		private type$:EventType,
+		private form$:Form,
+		private cause$:Event,
+		private blockname$?:string,
+		private key$?:KeyMap
 	) {}
+
+	public get type() : EventType
+	{
+		return(this.type$);
+	}
+
+	public get form() : Form
+	{
+		return(this.form$);
+	}
 
 	public get source() : FieldInstance
 	{
-		if (this.cause?.target instanceof HTMLElement)
-			return(this.form.getFieldInstance(this.cause.target));
-		return(null);
-	}
+		if (this.ievaluated) return(this.instance$);
 
-	public get field() : Field
-	{
-		let inst:FieldInstance = this.source;
-		return(inst?.field);
+		if (this.cause$?.target instanceof HTMLElement)
+			this.instance$ = new FieldInstance(ViewForm.getForm(this.form$).getInstance(this.cause$.target));
+
+		this.ievaluated = true;
+		return(this.instance$);
 	}
 
 	public get block() : Block
 	{
-		return(ModelForm.getForm(this.form)?.getBlock(this.blockname)?.interface);
+		if (this.bevaluated) return(this.block$);
+
+		this.bevaluated = true;
+		this.block$ = ModelForm.getForm(this.form$)?.getBlock(this.blockname$)?.interface;
+
+		return(this.block$);
+	}
+
+	public get blockname() : string
+	{
+		return(this.blockname$);
+	}
+
+	public get field() : Field
+	{
+		return(this.source?.field);
+	}
+
+	public get key() : KeyMap
+	{
+		return(this.key$);
+	}
+
+	public get fieldname() : string
+	{
+		if (this.fevaluated) return(this.fieldname$);
+
+		if (this.cause$?.target instanceof HTMLElement)
+			this.fieldname$ = ViewForm.getForm(this.form$).getInstance(this.cause$.target)?.name;
+
+		this.fevaluated = true;
+		return(this.fieldname$);
 	}
 
 	public toString() : string
@@ -194,13 +241,6 @@ export class FormEvents
 	public static async raise(event:FormEvent) : Promise<boolean>
 	{
 		let listeners:EventListener[] = null;
-
-		if (event.fieldname != null)
-			event.fieldname = event.fieldname.toLowerCase();
-
-		if (event.blockname != null)
-			event.blockname = event.blockname.toLowerCase();
-
 		let done:Set<object> = new Set<object>();
 
 		// Field Listeners

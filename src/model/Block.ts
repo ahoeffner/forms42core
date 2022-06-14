@@ -205,9 +205,9 @@ export class Block
 		return(true);
 	}
 
-	public async onKey(event:Event, field:string, key:KeyMap) : Promise<boolean>
+	public async onKey(event:Event, key:KeyMap) : Promise<boolean>
 	{
-		return(this.fire(EventType.Editing,event,field,key));
+		return(this.fire(EventType.Editing,event,key));
 	}
 
 	public async validateRecord() : Promise<boolean>
@@ -304,11 +304,11 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private async fire(type:EventType, event:Event, field?:string, key?:KeyMap) : Promise<boolean>
+	private async fire(type:EventType, event:Event, key?:KeyMap) : Promise<boolean>
 	{
 		let frmevent:FormEvent = null;
-		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,event,this.name,field);
-		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,event,this.name,field);
+		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,this.name,event);
+		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,this.name,event);
 		return(FormEvents.raise(frmevent));
 	}
 }

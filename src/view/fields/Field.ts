@@ -213,13 +213,13 @@ export class Field
 				else if (brwevent.paste) key = KeyMap.paste;
 				else key = KeyMapping.parseBrowserEvent(brwevent);
 
-				await this.mdlblk.onKey(event,inst.name,key);
+				await this.mdlblk.onKey(event,key);
 				return;
 			}
 			else
 			{
 				key = KeyMapping.checkBrowserEvent(brwevent);
-				if (key != null) await this.mdlblk.onKey(event,inst.name,key);
+				if (key != null) await this.mdlblk.onKey(event,key);
 				return;
 			}
 		}

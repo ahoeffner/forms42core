@@ -15,6 +15,7 @@ import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
+import { FieldProperties } from "../FieldProperties.js";
 
 
 export class Input extends Common implements FieldImplementation, EventListenerObject
@@ -33,6 +34,12 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	constructor()
 	{
 		super();
+	}
+
+	public create() : HTMLInputElement
+	{
+		this.element = document.createElement("input");
+		return(this.element);
 	}
 
 	public setDefaults() : void
@@ -133,7 +140,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public setAttributes(attributes:Map<string,any>) : void
     {
         let pattern:string = null;
-        let type:string = this.container.properties.getType();
+        let type:string = this.container.properties.getSubType();
 
         attributes.forEach((value,attr) =>
         {
@@ -231,7 +238,12 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		else if (this.event.ignore) return;
 
 		if (event.type == "change")
+		{
 			buble = true;
+
+			if (this.pattern != null)
+				this.fixedval = this.getStringValue();
+		}
 
 		if (this.event.type.startsWith("mouse"))
 			buble = true;

@@ -13,24 +13,36 @@
 
 export class FieldProperties
 {
-	private type:string = null;
+	private tag:string = null;
+	private subtype:string = null;
 	private classes:string[] = [];
 	private styles:string[][] = [];
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
 	private readonly$:boolean = false;
+	private required$:boolean = false;
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
 
-	public getType() : string
+	public getTag() : string
 	{
-		return(this.type);
+		return(this.tag);
 	}
 
-	public setType(type:string) : void
+	public setTag(tag:string) : void
+	{
+		this.tag = tag.toLowerCase();
+	}
+
+	public getSubType() : string
+	{
+		return(this.subtype);
+	}
+
+	public setSubType(type:string) : void
 	{
 		if (type == null) type = "text";
-		this.type = type.toLowerCase();
+		this.subtype = type.toLowerCase();
 	}
 
 	public enabled(flag?:boolean) : boolean
@@ -43,6 +55,12 @@ export class FieldProperties
 	{
 		if (flag != null) this.readonly$ = flag;
 		return(this.readonly$);
+	}
+
+	public required(flag?:boolean) : boolean
+	{
+		if (flag != null) this.required$ = flag;
+		return(this.required$);
 	}
 
 	public hidden(flag?:boolean) : boolean
@@ -123,7 +141,7 @@ export class FieldProperties
 
 		if (value != null)
 			val += value;
-			
+
 		this.attrs.set(attr,val);
 	}
 

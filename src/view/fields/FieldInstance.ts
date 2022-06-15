@@ -19,6 +19,7 @@ import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldProperties as Override } from "../../public/FieldProperties.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { BlockProperties } from "../BlockProperties.js";
 
 
 export class FieldInstance implements FieldContainer
@@ -63,10 +64,10 @@ export class FieldInstance implements FieldContainer
 		this.id$ = this.id$.toLowerCase();
 		this.name$ = this.name$.toLowerCase();
 		this.block$ = this.block$.toLowerCase();
-		this.properties$ = new FieldProperties();
+		this.properties$ = BlockProperties.consume(tag);
 		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 
-		let clazz:Class<FieldImplementation> = FieldTypes.get(this.properties$.getType());
+		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);
 
 		this.impl = new clazz();
 		this.impl.initialize(tag,this);

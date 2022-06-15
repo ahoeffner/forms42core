@@ -98,6 +98,7 @@ export class Field
 	{
 		this.instances.push(instance);
 		this.row.addInstance(instance);
+		this.block.addInstance(instance);
 		this.block.form.addInstance(instance);
 	}
 

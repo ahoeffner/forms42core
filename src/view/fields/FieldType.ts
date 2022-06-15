@@ -17,7 +17,7 @@ import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 export class FieldTypes
 {
-	private static exceptions:Map<string,Class<FieldImplementation>> =
+	private static implementations:Map<string,Class<FieldImplementation>> =
 		FieldTypes.init();
 
 
@@ -26,14 +26,14 @@ export class FieldTypes
 		let map:Map<string,Class<FieldImplementation>> =
 			new Map<string,Class<FieldImplementation>>();
 
-		map.set("dropdown",null);
+		map.set("input",Input);
+
 		return(map);
 	}
 
-	public static get(type:string) : Class<FieldImplementation>
+	public static get(tag:string) : Class<FieldImplementation>
 	{
-		if (type == null) return(Input);
-		let impl:Class<FieldImplementation> = FieldTypes.exceptions.get(type);
+		let impl:Class<FieldImplementation> = FieldTypes.implementations.get(tag.toLowerCase());
 		if (impl == null) impl = Input;
 		return(impl);
 	}

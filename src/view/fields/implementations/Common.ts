@@ -60,7 +60,7 @@ export class Common
 		let props:FieldProperties = container.properties;
 		let skip:string[] = ["id","name","type","block","row"];
 
-		props.setType(tag.getAttribute("type"));
+		props.setSubType(tag.getAttribute("type"));
 
 		for (let cls of tag.classList.values())
 			props.setClass(cls);

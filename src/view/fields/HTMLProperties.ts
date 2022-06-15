@@ -21,7 +21,7 @@ export class HTMLProperties
 	private tag$:string = null;
 	private subtype$:string = null;
 	private classes$:string[] = [];
-	private styles:string[][] = [];
+	private styles$:string[][] = [];
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
 	private readonly$:boolean = false;
@@ -103,33 +103,49 @@ export class HTMLProperties
 		else this.subtype$ = type.trim().toLowerCase();
 	}
 
-	public enabled(flag?:boolean) : boolean
+	public get enabled() : boolean
 	{
-		if (flag != null) this.enabled$ = flag;
 		return(this.enabled$);
 	}
 
-	public readonly(flag?:boolean) : boolean
+	public set enabled(flag:boolean)
 	{
-		if (flag != null) this.readonly$ = flag;
+		this.enabled$ = flag;
+	}
+
+	public get readonly() : boolean
+	{
 		return(this.readonly$);
 	}
 
-	public required(flag?:boolean) : boolean
+	public set readonly(flag:boolean)
 	{
-		if (flag != null) this.required$ = flag;
+		this.readonly$ = flag;
+	}
+
+	public get required() : boolean
+	{
 		return(this.required$);
 	}
 
-	public hidden(flag?:boolean) : boolean
+	public set required(flag:boolean)
 	{
-		if (flag != null) this.hidden$ = flag;
+		this.required$ = flag;
+	}
+
+	public get hidden() : boolean
+	{
 		return(this.hidden$);
+	}
+
+	public set hidden(flag:boolean)
+	{
+		this.hidden$ = flag;
 	}
 
 	public getStyles() : string[][]
 	{
-		return(this.styles);
+		return(this.styles$);
 	}
 
 	public setStyle(style:string, value:string) : void
@@ -145,7 +161,7 @@ export class HTMLProperties
 	public removeStyle(style:any) : void
 	{
 		style = style.toLowerCase();
-		delete this.styles[this.styles.indexOf(style)];
+		delete this.styles$[this.styles$.indexOf(style)];
 	}
 
 	public setClass(clazz:any) : void

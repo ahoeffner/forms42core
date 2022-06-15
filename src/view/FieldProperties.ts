@@ -44,6 +44,14 @@ export class FieldProperties
 
 		props.row = +row;
 
+		if (tag instanceof HTMLInputElement)
+		{
+			props.hidden = tag.hidden;
+			props.enabled = !tag.disabled;
+			props.readonly = tag.readOnly;
+			props.required = tag.required;
+		}
+
 		for (let cls of tag.classList.values())
 			props.setClass(cls);
 

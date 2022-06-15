@@ -133,10 +133,11 @@ export class FieldInstance implements FieldContainer
 		this.impl.getElement().focus();
 	}
 
-	public invalid(flag:boolean) : boolean
+	public invalid(flag:boolean) : void
 	{
-		return(this.impl.invalid(flag));
+		this.impl.invalid(flag);
 	}
+
 	public setFieldState(state:FieldState) : void
 	{
 		this.impl.setFieldState(state);

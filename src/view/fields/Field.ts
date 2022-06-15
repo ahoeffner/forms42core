@@ -186,7 +186,7 @@ export class Field
 			if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
 			{
 				inst.focus();
-				inst.invalid(true);
+				inst.valid = false;
 				this.valid = false;
 			}
 			else
@@ -199,6 +199,7 @@ export class Field
 
 		if (brwevent.modified)
 		{
+			if (!this.valid) inst.valid = true;
 			this.distribute(inst,inst.getStringValue());
 			this.block.distribute(this,inst.getStringValue());
 			await this.mdlblk.onEditing(event);

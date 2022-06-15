@@ -34,5 +34,4 @@ export interface FieldImplementation
 	setFieldState(state:FieldState) : void;
 
     getElement() : HTMLElement;
-	invalid(flag:boolean) : void;
 }

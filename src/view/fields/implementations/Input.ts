@@ -13,9 +13,9 @@
 import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
+import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
-import { HTMLProperties } from "../HTMLProperties.js";
 
 
 export class Input extends Common implements FieldImplementation, EventListenerObject
@@ -51,7 +51,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		this.addEvents(this.element);
 		this.setClasses(properties.getClasses());
 		this.setAttributes(properties.getAttributes());
-
+		super.setProperties(properties);
 	}
 
     public getValue() : any
@@ -108,7 +108,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			value = this.pattern.getValue();
 		}
 
-		this.invalid(false);
 		this.before = value;
 		this.element.value = value;
 	}
@@ -247,7 +246,6 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		{
 			buble = true;
 			this.before = after;
-			this.invalid(false);
 			this.event.modified = true;
 		}
 

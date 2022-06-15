@@ -18,7 +18,6 @@ import { HTMLProperties } from "./HTMLProperties.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
-import { FieldProperties as Override } from "../../public/FieldProperties.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
 
 
@@ -92,6 +91,13 @@ export class FieldInstance implements FieldContainer
 		return(this.field$);
 	}
 
+	public set valid(flag:boolean)
+	{
+		if (!flag) this.element.classList.add("invalid");
+		else       this.element.classList.remove("invalid");
+
+	}
+
 	public get properties() : HTMLProperties
 	{
 		return(this.properties$);
@@ -114,6 +120,7 @@ export class FieldInstance implements FieldContainer
 
 	public setStringValue(value:string) : void
 	{
+		this.valid = true;
 		this.field.valid = true;
 		this.impl.setStringValue(value);
 	}
@@ -131,11 +138,6 @@ export class FieldInstance implements FieldContainer
 	public focus() : void
 	{
 		this.impl.getElement().focus();
-	}
-
-	public invalid(flag:boolean) : void
-	{
-		this.impl.invalid(flag);
 	}
 
 	public setFieldState(state:FieldState) : void

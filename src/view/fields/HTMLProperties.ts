@@ -99,7 +99,7 @@ export class HTMLProperties
 
 	public set subtype(type:string)
 	{
-		if (type == null) type = "text";
+		if (type == null) this.subtype$ = "text";
 		else this.subtype$ = type.trim().toLowerCase();
 	}
 

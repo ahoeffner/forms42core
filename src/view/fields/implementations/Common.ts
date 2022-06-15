@@ -11,7 +11,6 @@
  */
 
 import { HTMLProperties } from "../HTMLProperties.js";
-import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
 
@@ -20,10 +19,14 @@ export class Common
 	private hidden$:boolean = false;
 	private enabled$:boolean = true;
 	private readonly$:boolean = true;
-	private invalid$:boolean = false;
 	private state$:FieldState = null;
     private field:FieldImplementation = null;
-	private container$:FieldContainer = null;
+	private properties:HTMLProperties = null;
+
+	public setProperties(properties:HTMLProperties) : void
+	{
+		this.properties = properties;
+	}
 
     public setImplementation(field:FieldImplementation) : void
     {
@@ -38,8 +41,6 @@ export class Common
 
 		if (element instanceof HTMLInputElement)
 			element.value = value.trim();
-
-		this.invalid(false);
 	}
 
 	// Bypasses object conversion
@@ -54,26 +55,6 @@ export class Common
         return(str);
     }
 
-	public initialize(tag:HTMLElement, container:FieldContainer) : void
-	{
-		this.container$ = container;
-		let props:HTMLProperties = container.properties;
-		let skip:string[] = ["id","name","type","block","row"];
-
-		props.subtype = tag.getAttribute("type");
-
-		for (let cls of tag.classList.values())
-			props.setClass(cls);
-
-		let an:string[] = tag.getAttributeNames();
-
-		an.forEach((name) =>
-		{
-			if (!skip.includes(name.toLowerCase()))
-				props.setAttribute(name,tag.getAttribute(name));
-		});
-	}
-
 	public getFieldState() : FieldState
 	{
 		return(this.state$);
@@ -82,8 +63,8 @@ export class Common
 	public setFieldState(state:FieldState) : void
 	{
 		this.state$ = state;
-		let enabled:boolean = this.container$.properties.enabled;
-		let readonly:boolean = this.container$.properties.readonly;
+		let enabled:boolean = this.properties.enabled;
+		let readonly:boolean = this.properties.readonly;
 
 		switch(state)
 		{
@@ -125,18 +106,6 @@ export class Common
 		}
 
 		return(this.hidden$);
-    }
-
-    public invalid(flag?:boolean) : boolean
-	{
-		if (flag != null)
-		{
-			this.invalid$ = flag;
-			if (flag) this.setClass("invalid");
-			else      this.removeClass("invalid");
-		}
-
-		return(this.invalid$);
     }
 
     public readonly(flag?:boolean) : boolean

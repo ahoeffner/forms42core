@@ -15,7 +15,6 @@ import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
-import { FieldProperties } from "../FieldProperties.js";
 
 
 export class Input extends Common implements FieldImplementation, EventListenerObject
@@ -140,7 +139,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public setAttributes(attributes:Map<string,any>) : void
     {
         let pattern:string = null;
-        let type:string = this.container.properties.getSubType();
+        let type:string = this.container.properties.subtype;
 
         attributes.forEach((value,attr) =>
         {

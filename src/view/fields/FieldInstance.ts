@@ -14,12 +14,12 @@ import { Field } from "./Field.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
-import { FieldProperties } from "./FieldProperties.js";
+import { HTMLProperties } from "./HTMLProperties.js";
+import { BlockProperties } from "../BlockProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldProperties as Override } from "../../public/FieldProperties.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
-import { BlockProperties } from "../BlockProperties.js";
 
 
 export class FieldInstance implements FieldContainer
@@ -32,7 +32,7 @@ export class FieldInstance implements FieldContainer
 	private block$:string = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
-	private properties$:FieldProperties = null;
+	private properties$:HTMLProperties = null;
 
 	constructor(form:Form,block:string,tag:HTMLElement)
 	{
@@ -49,14 +49,11 @@ export class FieldInstance implements FieldContainer
 		this.id$ = tag.getAttribute("id");
 		this.name$ = tag.getAttribute("name");
 
-		if (this.id$ == null)
-			this.id$ = "";
-
 		if (this.name$ == null)
 			this.name$ = "";
 
-		if (this.block$ == null)
-			this.block$ = "";
+		if (this.block$ == null || this.block$.trim().length == 0)
+			throw "@FieldInstance: Block must be specified";
 
 		if (this.row$ == null || this.row$ < 0)
 			this.row$ = -1;
@@ -73,9 +70,8 @@ export class FieldInstance implements FieldContainer
 		this.impl.initialize(tag,this);
 		this.element$ = this.impl.getElement();
 
-		if (this.id$.length > 0) this.element$.setAttribute("id",this.id$);
-		if (this.name$.length > 0) this.element$.setAttribute("name",this.name$);
-		if (this.block$.length > 0) this.element$.setAttribute("block",this.block$);
+		if (this.id$ != null && this.id$.length > 0)
+			this.element$.setAttribute("id",this.id$);
 
 		this.field$.addInstance(this);
 	}
@@ -115,7 +111,7 @@ export class FieldInstance implements FieldContainer
 		return(this.field$);
 	}
 
-	public get properties() : FieldProperties
+	public get properties() : HTMLProperties
 	{
 		return(this.properties$);
 	}

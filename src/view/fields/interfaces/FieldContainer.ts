@@ -11,7 +11,7 @@
  */
 
 import { BrowserEvent} from "../../BrowserEvent.js";
-import { FieldProperties } from "../FieldProperties.js";
+import { HTMLProperties } from "../HTMLProperties.js";
 
 export interface FieldContainer
 {
@@ -19,6 +19,6 @@ export interface FieldContainer
 	row:number;
 	name:string;
 	block:string;
-	properties:FieldProperties;
+	properties:HTMLProperties;
 	handleEvent(event:BrowserEvent) : void;
 }

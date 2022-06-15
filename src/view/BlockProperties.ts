@@ -11,24 +11,24 @@
  */
 
 import { FieldInstance } from "./fields/FieldInstance.js";
-import { FieldProperties } from "./fields/FieldProperties.js";
+import { HTMLProperties } from "./fields/HTMLProperties.js";
 
 
 export class BlockProperties
 {
-	private defaults$:Map<FieldInstance,FieldProperties> =
-		new Map<FieldInstance,FieldProperties>();
+	private defaults$:Map<FieldInstance,HTMLProperties> =
+		new Map<FieldInstance,HTMLProperties>();
 
-	private overrides$:Map<object,Map<FieldInstance,FieldProperties>> =
-		new Map<object,Map<FieldInstance,FieldProperties>>();
+	private overrides$:Map<object,Map<FieldInstance,HTMLProperties>> =
+		new Map<object,Map<FieldInstance,HTMLProperties>>();
 
-	public static consume(tag:HTMLElement) : FieldProperties
+	public static consume(tag:HTMLElement) : HTMLProperties
 	{
 		let skip:string[] = ["id","name","block","row"];
-		let props:FieldProperties = new FieldProperties();
+		let props:HTMLProperties = new HTMLProperties();
 
-		props.setTag(tag.tagName);
-		props.setSubType(tag.getAttribute("type"));
+		props.tag = tag.tagName;
+		props.subtype = tag.getAttribute("type");
 
 		for (let cls of tag.classList.values())
 			props.setClass(cls);

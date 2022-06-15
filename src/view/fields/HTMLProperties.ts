@@ -11,11 +11,16 @@
  */
 
 
-export class FieldProperties
+export class HTMLProperties
 {
-	private tag:string = null;
-	private subtype:string = null;
-	private classes:string[] = [];
+	private row:number = -1;
+	private id$:string = null;
+	private name$:string = null;
+	private block$:string = null;
+
+	private tag$:string = null;
+	private subtype$:string = null;
+	private classes$:string[] = [];
 	private styles:string[][] = [];
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
@@ -24,25 +29,25 @@ export class FieldProperties
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
 
-	public getTag() : string
+	public get tag() : string
 	{
-		return(this.tag);
+		return(this.tag$);
 	}
 
-	public setTag(tag:string) : void
+	public set tag(tag:string)
 	{
-		this.tag = tag.toLowerCase();
+		this.tag$ = tag.toLowerCase();
 	}
 
-	public getSubType() : string
+	public get subtype() : string
 	{
-		return(this.subtype);
+		return(this.subtype$);
 	}
 
-	public setSubType(type:string) : void
+	public set subtype(type:string)
 	{
 		if (type == null) type = "text";
-		this.subtype = type.toLowerCase();
+		this.subtype$ = type.toLowerCase();
 	}
 
 	public enabled(flag?:boolean) : boolean
@@ -94,30 +99,30 @@ export class FieldProperties
 	{
 		clazz = clazz.toLowerCase();
 
-		if (this.classes[clazz] == null)
-			this.classes.push(clazz);
+		if (this.classes$[clazz] == null)
+			this.classes$.push(clazz);
 	}
 
 	public getClasses() : string[]
 	{
-		return(this.classes);
+		return(this.classes$);
 	}
 
 	public hasClass(clazz:string) : boolean
 	{
 		clazz = clazz.toLowerCase();
-		return(this.classes.includes(clazz));
+		return(this.classes$.includes(clazz));
 	}
 
 	public removeClass(clazz:any) : void
 	{
 		clazz = clazz.toLowerCase();
-		delete this.classes[this.classes.indexOf(clazz)];
+		delete this.classes$[this.classes$.indexOf(clazz)];
 	}
 
 	public setClasses(classes:string|string[]) : void
 	{
-		this.classes = [];
+		this.classes$ = [];
 
 		if (!Array.isArray(classes))
 			classes = classes.split(" ,;");
@@ -125,7 +130,7 @@ export class FieldProperties
 		for(let clazz in classes)
 		{
 			if (clazz.length > 0)
-				this.classes.push(clazz.toLowerCase());
+				this.classes$.push(clazz.toLowerCase());
 		}
 	}
 

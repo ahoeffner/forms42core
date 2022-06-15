@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { FieldProperties } from "../FieldProperties.js";
+import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
@@ -57,10 +57,10 @@ export class Common
 	public initialize(tag:HTMLElement, container:FieldContainer) : void
 	{
 		this.container$ = container;
-		let props:FieldProperties = container.properties;
+		let props:HTMLProperties = container.properties;
 		let skip:string[] = ["id","name","type","block","row"];
 
-		props.setSubType(tag.getAttribute("type"));
+		props.subtype = tag.getAttribute("type");
 
 		for (let cls of tag.classList.values())
 			props.setClass(cls);

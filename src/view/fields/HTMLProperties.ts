@@ -13,7 +13,7 @@
 
 export class HTMLProperties
 {
-	private row:number = -1;
+	private row$:number = -1;
 	private id$:string = null;
 	private name$:string = null;
 	private block$:string = null;
@@ -28,6 +28,59 @@ export class HTMLProperties
 	private required$:boolean = false;
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
+
+	public get id() : string
+	{
+		return(this.id$);
+	}
+
+	public set id(id:string)
+	{
+		if (id != null)
+		{
+			this.id$ = id.trim().toLowerCase();
+			if (this.id$.length == 0) this.id$ = null;
+		}
+	}
+
+	public get name() : string
+	{
+		return(this.name$);
+	}
+
+	public set name(name:string)
+	{
+		if (name != null)
+		{
+			this.name$ = name.trim().toLowerCase();
+			if (this.name$.length == 0) this.name$ = null;
+		}
+	}
+
+	public get block() : string
+	{
+		return(this.block$);
+	}
+
+	public set block(block:string)
+	{
+		if (block != null)
+		{
+			this.block$ = block.trim().toLowerCase();
+			if (this.block$.length == 0) this.block$ = null;
+		}
+	}
+
+	public get row() : number
+	{
+		return(this.row$);
+	}
+
+	public set row(row:number)
+	{
+		if (row < 0) this.row$ = -1;
+		else		 this.row$ = row;
+	}
 
 	public get tag() : string
 	{
@@ -47,7 +100,7 @@ export class HTMLProperties
 	public set subtype(type:string)
 	{
 		if (type == null) type = "text";
-		this.subtype$ = type.toLowerCase();
+		else this.subtype$ = type.trim().toLowerCase();
 	}
 
 	public enabled(flag?:boolean) : boolean

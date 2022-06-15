@@ -49,8 +49,8 @@ export class FieldInstance implements FieldContainer
 		this.id$ = tag.getAttribute("id");
 		this.name$ = tag.getAttribute("name");
 
-		if (this.name$ == null)
-			this.name$ = "";
+		if (this.name$ == null || this.name.trim().length == 0)
+			throw "@FieldInstance: Name must be specified";
 
 		if (this.block$ == null || this.block$.trim().length == 0)
 			throw "@FieldInstance: Block must be specified";
@@ -58,9 +58,6 @@ export class FieldInstance implements FieldContainer
 		if (this.row$ == null || this.row$ < 0)
 			this.row$ = -1;
 
-		this.id$ = this.id$.toLowerCase();
-		this.name$ = this.name$.toLowerCase();
-		this.block$ = this.block$.toLowerCase();
 		this.properties$ = BlockProperties.consume(tag);
 		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 

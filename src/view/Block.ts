@@ -21,7 +21,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
-import { BlockProperties } from "./BlockProperties.js";
+import { FieldProperties } from "./FieldProperties.js";
 
 
 export class Block
@@ -34,7 +34,7 @@ export class Block
 	private fieldnames$:string[] = null;
 	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private properties:BlockProperties = new BlockProperties();
+	private properties:FieldProperties = new FieldProperties();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{

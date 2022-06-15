@@ -15,7 +15,7 @@ import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { HTMLProperties } from "./HTMLProperties.js";
-import { BlockProperties } from "../BlockProperties.js";
+import { FieldProperties } from "../FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldContainer } from "./interfaces/FieldContainer.js";
 import { FieldProperties as Override } from "../../public/FieldProperties.js";
@@ -58,7 +58,7 @@ export class FieldInstance implements FieldContainer
 		if (this.row$ == null || this.row$ < 0)
 			this.row$ = -1;
 
-		this.properties$ = BlockProperties.consume(tag);
+		this.properties$ = FieldProperties.consume(tag);
 		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);

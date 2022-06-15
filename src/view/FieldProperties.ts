@@ -14,7 +14,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { HTMLProperties } from "./fields/HTMLProperties.js";
 
 
-export class BlockProperties
+export class FieldProperties
 {
 	private defaults$:Map<FieldInstance,HTMLProperties> =
 		new Map<FieldInstance,HTMLProperties>();

@@ -82,8 +82,8 @@ export class Common
 	public setFieldState(state:FieldState) : void
 	{
 		this.state$ = state;
-		let enabled:boolean = this.container$.properties.enabled();
-		let readonly:boolean = this.container$.properties.readonly();
+		let enabled:boolean = this.container$.properties.enabled;
+		let readonly:boolean = this.container$.properties.readonly;
 
 		switch(state)
 		{

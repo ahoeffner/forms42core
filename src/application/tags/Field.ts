@@ -30,11 +30,11 @@ export class Field implements Tag
 		if (block == null)
 		{
 			attr = Properties.AttributePrefix+attr;
-			block = tag.getAttribute(attr);
+			tag.setAttribute("block",tag.getAttribute(attr));
 		}
 
 		if (attr != "block") tag.removeAttribute(attr);
-		let field:FieldInstance = new FieldInstance(component,block,tag);
+		let field:FieldInstance = new FieldInstance(component,tag);
 
         return(field.element);
     }

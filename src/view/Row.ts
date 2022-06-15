@@ -86,7 +86,8 @@ export class Row
 
 	public setDefaults(override?:FieldProperties) : void
 	{
-		this.getFieldInstances().forEach((inst) => {inst.setDefaults(override)});
+		null;
+		//this.getFieldInstances().forEach((inst) => {inst.setDefaults(override)});
 	}
 
 	public validateFields() : boolean

@@ -52,6 +52,15 @@ export class FieldProperties
 			props.required = tag.required;
 		}
 
+		else
+
+		if (tag instanceof HTMLSelectElement)
+		{
+			props.hidden = tag.hidden;
+			props.enabled = !tag.disabled;
+			props.required = tag.required;
+		}
+
 		for (let cls of tag.classList.values())
 			props.setClass(cls);
 

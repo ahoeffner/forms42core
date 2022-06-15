@@ -15,6 +15,7 @@ import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldContainer } from "../interfaces/FieldContainer.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
+import { HTMLProperties } from "../HTMLProperties.js";
 
 
 export class Input extends Common implements FieldImplementation, EventListenerObject
@@ -35,41 +36,22 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		super();
 	}
 
-	public create() : HTMLInputElement
+	public create(container:FieldContainer) : HTMLInputElement
 	{
 		this.element = document.createElement("input");
+
+		this.container = container;
+		super.setImplementation(this);
+
 		return(this.element);
 	}
 
-	public setDefaults() : void
+	public apply(properties:HTMLProperties) : void
 	{
-		this.hidden(this.container.properties.hidden());
-		this.enabled(this.container.properties.enabled());
-		this.readonly(this.container.properties.readonly());
-
-		this.setClasses(this.container.properties.getClasses());
-		this.setAttributes(this.container.properties.getAttributes());
-	}
-
-	public initialize(tag:HTMLElement, container:FieldContainer) : void
-	{
-		this.container = container;
-		this.element = document.createElement("input");
-
-		super.setImplementation(this);
-		super.initialize(tag,container);
-
 		this.addEvents(this.element);
-		this.setClasses(container.properties.getClasses());
-		this.setAttributes(container.properties.getAttributes());
+		this.setClasses(properties.getClasses());
+		this.setAttributes(properties.getAttributes());
 
-		let enabled:boolean = !this.element.disabled;
-		let readonly:boolean = this.element.readOnly;
-		let hidden:boolean = (this.getStyle("display")?.toLowerCase() == "none");
-
-		container.properties.hidden(hidden);
-		container.properties.enabled(enabled);
-		container.properties.readonly(readonly);
 	}
 
     public getValue() : any

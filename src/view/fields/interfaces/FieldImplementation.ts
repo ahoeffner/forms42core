@@ -10,7 +10,8 @@
  * accompanied this code).
  */
 
-import { FieldContainer } from "./FieldContainer";
+import { FieldContainer } from "./FieldContainer.js";
+import { HTMLProperties } from "../HTMLProperties.js";
 
 export enum FieldState
 {
@@ -21,10 +22,10 @@ export enum FieldState
 
 export interface FieldImplementation
 {
-	setDefaults() : void;
-	initialize(tag:HTMLElement, container:FieldContainer) : void;
+	apply(properties:HTMLProperties) : void
+	create(container:FieldContainer) : HTMLInputElement;
 
-    getValue() : any;
+	getValue() : any;
     getStringValue() : string;
     setValue(value:any) : boolean;
 	setStringValue(value:string) : void;
@@ -32,24 +33,6 @@ export interface FieldImplementation
 	getFieldState() : FieldState;
 	setFieldState(state:FieldState) : void;
 
-    getStyles() : string[][];
-    getStyle(style:string) : string;
-	removeStyle(style:string) : void;
-    setStyle(style:string, value:string) : void;
-
-	removeAttribute(name:string) : void;
-	setAttribute(name:string, value:any) : void;
-
-    getClasses() : string[];
-    setClass(clazz:string) : void;
-    hasClass(clazz:string) : boolean;
-    removeClass(clazz:string) : void;
-    setClasses(clazz:string|string[]) : void;
-
     getElement() : HTMLElement;
-
-	hidden(flag?:boolean) : boolean;
-    enabled(flag?:boolean) : boolean;
-	invalid(flag?:boolean) : boolean;
-    readonly(flag?:boolean) : boolean;
+    invalid(flag?:boolean) : boolean
 }

@@ -34,42 +34,26 @@ export class FieldInstance implements FieldContainer
 	private impl:FieldImplementation = null;
 	private properties$:HTMLProperties = null;
 
-	constructor(form:Form,block:string,tag:HTMLElement)
+	constructor(form:Form,tag:HTMLElement)
 	{
 		this.form$ = form;
-
-		let row:string = tag.getAttribute("row");
-
-		if (row == null) row = "-1";
-		else if (isNaN(+row)) throw "@FieldInstance: row: '"+row+"' is not a number";
-
-		this.row$ = +row;
-		this.block$ = block;
-
-		this.id$ = tag.getAttribute("id");
-		this.name$ = tag.getAttribute("name");
-
-		if (this.name$ == null || this.name.trim().length == 0)
-			throw "@FieldInstance: Name must be specified";
-
-		if (this.block$ == null || this.block$.trim().length == 0)
-			throw "@FieldInstance: Block must be specified";
-
-		if (this.row$ == null || this.row$ < 0)
-			this.row$ = -1;
-
 		this.properties$ = FieldProperties.consume(tag);
+
+		this.id$ = this.properties$.id;
+		this.row$ = this.properties$.row;
+		this.name$ = this.properties$.name;
+		this.block$ = this.properties$.block;
+
 		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);
 
 		this.impl = new clazz();
-		this.impl.initialize(tag,this);
+
+		this.impl.create(this);
+		this.impl.apply(this.properties$);
+
 		this.element$ = this.impl.getElement();
-
-		if (this.id$ != null && this.id$.length > 0)
-			this.element$.setAttribute("id",this.id$);
-
 		this.field$.addInstance(this);
 	}
 
@@ -149,47 +133,30 @@ export class FieldInstance implements FieldContainer
 		this.impl.getElement().focus();
 	}
 
+	public invalid(flag:boolean) : boolean
+	{
+		return(this.impl.invalid(flag));
+	}
 	public setFieldState(state:FieldState) : void
 	{
 		this.impl.setFieldState(state);
-	}
-
-	public invalid(flag?:boolean) : boolean
-	{
-		return(this.impl.invalid(flag));
 	}
 
 	public setRownum() : void
 	{
 		if (this.row$ >= 0)
 		{
-			this.impl.setAttribute("row",this.row$);
+			this.impl.getElement().setAttribute("row",""+this.row$);
 			this.properties.setAttribute("row",this.row$);
 		}
 	}
-
-	public setDefaults(override:Override) : void
-	{
-		this.impl.setDefaults();
-	}
-
-	public getStyle(style?:string) : string|string[][]
-	{
-		return(this.impl.getStyle(style));
-	}
-
-	public setStyle(style:string, value:string) : void
-	{
-		this.impl.setStyle(style,value);
-	}
-
 	public setInstanceType(type:string) : void
 	{
 		let element:HTMLElement = this.element;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
 
 		this.impl = new clazz();
-		this.impl.initialize(this.element$,this);
+		//this.impl.initialize(this.element$,this);
 
 		this.element$ = this.impl.getElement();
 		this.field.reindexInstance(element,this);

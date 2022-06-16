@@ -56,6 +56,7 @@ export class FieldProperties
 
 		if (tag instanceof HTMLSelectElement)
 		{
+			props.readonly = false;
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
@@ -73,5 +74,40 @@ export class FieldProperties
 		});
 
 		return(props);
+	}
+
+	public static apply(tag:HTMLElement, props:HTMLProperties) : void
+	{
+		let styles:string = "";
+
+		tag.setAttribute("name",props.name);
+		tag.setAttribute("block",props.block);
+		if (props.id != null) tag.setAttribute("id",props.id);
+		if (props.row >= 0) tag.setAttribute("row",""+props.row);
+
+		props.getClasses().forEach((clazz) => {tag.classList.add(clazz)});
+		props.getStyles().forEach((style,name) => {styles += name+":"+style+";"});
+		props.getAttributes().forEach((value,name) => {tag.setAttribute(name,value)});
+
+		tag.style.cssText = styles;
+
+		if (tag instanceof HTMLInputElement)
+		{
+			tag.hidden = props.hidden;
+			tag.disabled = !props.enabled;
+			tag.readOnly = props.readonly;
+			tag.required = props.required;
+		}
+
+		else
+
+		if (tag instanceof HTMLSelectElement)
+		{
+			tag.hidden = props.hidden;
+			tag.disabled = !props.enabled;
+			tag.required = props.required;
+
+			// If readonly, remove all but selected index
+		}
 	}
 }

@@ -48,8 +48,11 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	public apply(properties:HTMLProperties) : void
 	{
-		this.addEvents(this.element);
-		this.setClasses(properties.getClasses());
+		if (properties.init)
+			this.addEvents(this.element);
+
+		properties.apply(this.element);
+
 		this.setAttributes(properties.getAttributes());
 		super.setProperties(properties);
 	}

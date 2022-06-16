@@ -42,17 +42,14 @@ export class FieldInstance implements FieldContainer
 		this.row$ = this.properties$.row;
 		this.name$ = this.properties$.name;
 		this.block$ = this.properties$.block;
-
 		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);
-
 		this.impl = new clazz();
 
 		this.impl.create(this);
-		this.impl.apply(this.properties$);
-
 		this.element$ = this.impl.getElement();
+
 		this.field$.addInstance(this);
 	}
 

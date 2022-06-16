@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { FieldProperties } from "../FieldProperties.js";
+
 
 export class HTMLProperties
 {
@@ -18,14 +20,17 @@ export class HTMLProperties
 	private name$:string = null;
 	private block$:string = null;
 
-	private tag$:string = null;
+	private tagname$:string = null;
 	private subtype$:string = null;
 	private classes$:string[] = [];
 	private styles$:string[][] = [];
+
+	private init$:boolean = true;
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
 	private readonly$:boolean = false;
 	private required$:boolean = false;
+
     private values: Set<any> | Map<any, any> = null;
 	private attrs:Map<string,string> = new Map<string,string>();
 
@@ -84,12 +89,12 @@ export class HTMLProperties
 
 	public get tag() : string
 	{
-		return(this.tag$);
+		return(this.tagname$);
 	}
 
 	public set tag(tag:string)
 	{
-		this.tag$ = tag.toLowerCase();
+		this.tagname$ = tag.toLowerCase();
 	}
 
 	public get subtype() : string
@@ -101,6 +106,16 @@ export class HTMLProperties
 	{
 		if (type == null) this.subtype$ = "text";
 		else this.subtype$ = type.trim().toLowerCase();
+	}
+
+	public get init() : boolean
+	{
+		return(this.init$);
+	}
+
+	public set init(flag:boolean)
+	{
+		this.init$ = flag;
 	}
 
 	public get enabled() : boolean
@@ -234,4 +249,9 @@ export class HTMLProperties
 	{
         this.values = values;
     }
+
+	public apply(tag:HTMLElement) : void
+	{
+		FieldProperties.apply(tag,this);
+	}
 }

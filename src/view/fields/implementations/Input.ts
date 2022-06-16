@@ -189,6 +189,20 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.event.modified = false;
         let pos:number = this.getPosition();
 
+        if (this.event.type == "focus")
+        {
+			buble = true;
+
+			if (this.pattern != null)
+			{
+				try {this.fixedval = this.getValue();}
+				catch (error) {this.fixedval = null}
+			}
+
+			if (this.placeholder != null)
+                this.element.setAttribute("placeholder",this.placeholder);
+        }
+
         if (this.pattern != null)
         {
             if (!this.xfixed())
@@ -201,8 +215,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (this.pattern != null)
 			{
+				let compare:boolean = false;
 				// Fixed doesn't fire change
-				if (this.getStringValue() != this.fixedval)
+
+				try {if (this.getValue() == this.fixedval) compare = true;}
+				catch (error) {compare = false}
+
+				if (!compare)
 				{
 					this.event.type = "change";
 					this.eventhandler.handleEvent(this.event);
@@ -212,13 +231,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
             if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
-        }
-
-        if (this.event.type == "focus")
-        {
-			buble = true;
-			if (this.placeholder != null)
-                this.element.setAttribute("placeholder",this.placeholder);
         }
 
         if (this.event.mouseinit)
@@ -252,7 +264,10 @@ export class Input implements FieldImplementation, EventListenerObject
 			buble = true;
 
 			if (this.pattern != null)
-				this.fixedval = this.getStringValue();
+			{
+				try {this.fixedval = this.getValue();}
+				catch (error) {this.fixedval = null}
+			}
 		}
 
 		if (this.event.type.startsWith("mouse"))
@@ -399,7 +414,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
-			this.fixedval = this.getStringValue();
 
             return(true);
         }

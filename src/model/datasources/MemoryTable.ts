@@ -120,7 +120,7 @@ export class MemoryTable implements DataSource
 	public async fetch() : Promise<Record[]>
 	{
 		let cursor:Record[] = this.cursor;
-		if (cursor == null) cursor = this.records;
+		if (this.pos$ >= cursor.length) return([]);
 		return([cursor[this.pos$++]]);
 	}
 

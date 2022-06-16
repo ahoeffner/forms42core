@@ -68,13 +68,11 @@ export class Common
 		switch(state)
 		{
 			case FieldState.OPEN:
-				console.log("open "+this.properties$.name+"["+this.properties$.row+"]")
 				if (enabled) this.enabled(true);
 				if (!readonly) this.readonly(false);
 				break;
 
 			case FieldState.READONLY:
-				console.log("readonly "+this.properties$.name+"["+this.properties$.row+"]")
 				if (enabled) this.enabled(true);
 				this.readonly(true);
 				break;
@@ -102,6 +100,7 @@ export class Common
 		if (flag != null)
 		{
 			this.readonly$ = flag;
+			console.log("readonly "+this.properties$.name+"["+this.properties$.row+"] = "+flag);
 			(this.field.getElement() as HTMLInputElement).readOnly = flag;
 		}
 		return(this.readonly$);

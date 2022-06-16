@@ -180,7 +180,7 @@ export class Block
 				return(false);
 			}
 
-			this.openrow(0);
+			this.openrow(this.row$);
 			return(true);
 		}
 

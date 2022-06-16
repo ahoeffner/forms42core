@@ -13,9 +13,9 @@
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { FieldProperties } from "../../FieldProperties.js";
 
 
 export class Input implements FieldImplementation, EventListenerObject
@@ -92,6 +92,13 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (typeof value === "string")
 		{
 			ok = true;
+			this.element.value = value;
+		}
+
+		if (typeof value === "number")
+		{
+			ok = true;
+			value = value+"";
 			this.element.value = value;
 		}
 
@@ -615,7 +622,7 @@ export class Input implements FieldImplementation, EventListenerObject
         return(true);
     }
 
-	private validateInput(val:string) : boolean
+	private validateInput(val:any) : boolean
 	{
 		if (val.trim().length == 0)
 			return(true);

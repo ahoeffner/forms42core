@@ -99,6 +99,13 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
+	public clear() : boolean
+	{
+		if (!this.validated) return(false);
+		this.rows$.forEach((row) => {row.clear()});
+		return(true);
+	}
+
 	public addInstance(inst:FieldInstance) : void
 	{
 		if (this.fieldnames$.indexOf(inst.name) < 0)

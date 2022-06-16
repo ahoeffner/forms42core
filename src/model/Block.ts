@@ -54,11 +54,11 @@ export class Block
 	private record$:number = -1;
 	private vwblk:ViewBlock = null;
 	private columns$:string[] = null;
+	private postquery$:Record = null;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
 	private disconnected$:boolean = false;
-	private postquerymode$:boolean = false;
 
 	private constructor(form:Form, name:string)
 	{
@@ -93,12 +93,7 @@ export class Block
 
 	public get postquery() : boolean
 	{
-		return(this.postquerymode$);
-	}
-
-	public set postquery(flag:boolean)
-	{
-		this.postquerymode$ = flag;
+		return(this.postquery$ != null);
 	}
 
 	public get disconnected() : boolean
@@ -202,6 +197,19 @@ export class Block
 		return(this.fire(EventType.PostField,event));
 	}
 
+	public async preQuery() : Promise<boolean>
+	{
+		return(this.fire(EventType.PreQuery,null));
+	}
+
+	public async postQuery(record:Record) : Promise<boolean>
+	{
+		this.postquery$ = record;
+		let resp:boolean = await this.fire(EventType.PostQuery,null);
+		this.postquery$ = null;
+		return(resp);
+	}
+
 	public async onEditing(event:Event) : Promise<boolean>
 	{
 		return(this.fire(EventType.Editing,event));
@@ -255,6 +263,10 @@ export class Block
 	public getValue(field:string) : any
 	{
 		if (this.disconnected$) return(null);
+
+		if (this.postquery$ != null)
+			return(this.postquery$.getValue(field));
+
 		return(this.wrapper.getValue(this.record,field));
 	}
 
@@ -265,13 +277,24 @@ export class Block
 		if (this.columns.indexOf(field) < 0)
 			this.columns.push(field);
 
+		if (this.postquery$ != null)
+		{
+			this.postquery$.setValue(field,value)
+			return(true);
+		}
+
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
 	public async executequery() : Promise<boolean>
 	{
-		this.record$ = -1;
+		if (!await this.preQuery())
+			return(false);
+
+		if (!this.view.clear()) return(false);
 		let wrapper:DataSourceWrapper = this.wrapper;
+
+		this.record$ = -1;
 
 		if (!await wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();

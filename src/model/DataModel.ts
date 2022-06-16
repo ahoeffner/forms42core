@@ -189,6 +189,7 @@ export class DataSourceWrapper
 				if (recs.length < this.source.arrayfecth)
 					this.eof$ = true;
 
+				recs.forEach((rec) => {this.block.postQuery(rec)});
 				this.cache$.push(...recs);
 			}
 

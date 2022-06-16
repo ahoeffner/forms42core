@@ -70,8 +70,11 @@ export class Block
 
 		mdl.setValue(field,value);
 
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) fld.setValue(value);
+		if (!mdl.postquery)
+		{
+			let fld:ViewField = blk.getField(field);
+			if (fld != null) fld.setValue(value);
+		}
 	}
 
 	public getValue(field:string) : any
@@ -80,8 +83,12 @@ export class Block
 		let blk:ViewBlock = ViewBlock.getBlock(this);
 
 		if (blk == null) return(null);
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) return(blk.getValue(field));
+
+		if (!blk.model.postquery)
+		{
+			let fld:ViewField = blk.getField(field);
+			if (fld != null) return(blk.getValue(field));
+		}
 
 		let mdl:ModelBlock = ModelBlock.getBlock(this);
 		return(mdl.getValue(field));

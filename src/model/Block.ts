@@ -58,6 +58,7 @@ export class Block
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
 	private disconnected$:boolean = false;
+	private postquerymode$:boolean = false;
 
 	private constructor(form:Form, name:string)
 	{
@@ -88,6 +89,16 @@ export class Block
 			this.columns$ = this.vwblk.getFieldNames();
 
 		return(this.columns$);
+	}
+
+	public get postquery() : boolean
+	{
+		return(this.postquerymode$);
+	}
+
+	public set postquery(flag:boolean)
+	{
+		this.postquerymode$ = flag;
 	}
 
 	public get disconnected() : boolean
@@ -198,11 +209,11 @@ export class Block
 
 	public async validateField(event:Event, field:string, value:any) : Promise<boolean>
 	{
-		if (!await this.fire(EventType.ValidateField,event))
+		if (!await this.fire(EventType.WhenValidateField,event))
 			return(false);
 
 		this.wrapper.setValue(this.record,field,value);
-		return(true);
+		return(this.fire(EventType.PostValidateField,event));
 	}
 
 	public async onKey(event:Event, key:KeyMap) : Promise<boolean>
@@ -212,8 +223,9 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		let cont:boolean = await this.fire(EventType.ValidateRecord,null);
-		return(cont);
+		if (await this.fire(EventType.WhenValidateRecord,null))
+			return(this.fire(EventType.PostValidateRecord,null))
+		return(false);
 	}
 
 	public async setCurrentRecord(delta:number) : Promise<boolean>

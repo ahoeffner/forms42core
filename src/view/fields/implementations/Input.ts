@@ -10,21 +10,22 @@
  * accompanied this code).
  */
 
-import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
-import { FieldImplementation } from "../interfaces/FieldImplementation.js";
+import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { FieldProperties } from "../../FieldProperties.js";
 
 
-export class Input extends Common implements FieldImplementation, EventListenerObject
+export class Input implements FieldImplementation, EventListenerObject
 {
 	private before:string = "";
     private int:boolean = false;
     private dec:boolean = false;
 	private pattern:Pattern = null;
 	private fixedval:string = null;
+	private state:FieldState = null;
     private placeholder:string = null;
 	private properties:HTMLProperties = null;
 	private eventhandler:FieldEventHandler = null;
@@ -32,30 +33,48 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	private element:HTMLInputElement = null;
     private event:BrowserEvent = new BrowserEvent();
 
-	constructor()
-	{
-		super();
-	}
-
 	public create(eventhandler:FieldEventHandler) : HTMLInputElement
 	{
 		this.element = document.createElement("input");
-
 		this.eventhandler = eventhandler;
-		super.setImplementation(this);
-
 		return(this.element);
 	}
 
 	public apply(properties:HTMLProperties) : void
 	{
 		this.properties = properties;
-		if (properties.init) this.addEvents(this.element);
-
 		properties.apply(this.element);
-
 		this.setAttributes(properties.getAttributes());
-		super.setProperties(properties);
+		if (properties.init) this.addEvents(this.element);
+	}
+
+	public getFieldState() : FieldState
+	{
+		return(this.state);
+	}
+
+	public setFieldState(state:FieldState) : void
+	{
+		this.state = state;
+		let enabled:boolean = this.properties.enabled;
+		let readonly:boolean = this.properties.readonly;
+
+		switch(state)
+		{
+			case FieldState.OPEN:
+				if (enabled) FieldProperties.setEnabledState(this.element,this.properties,true);
+				if (!readonly) FieldProperties.setReadOnlyState(this.element,this.properties,false);
+				break;
+
+			case FieldState.READONLY:
+				if (enabled) FieldProperties.setEnabledState(this.element,this.properties,true);
+				FieldProperties.setReadOnlyState(this.element,this.properties,true);
+				break;
+
+			case FieldState.DISABLED:
+				FieldProperties.setEnabledState(this.element,this.properties,false);
+				break;
+			}
 	}
 
     public getValue() : any
@@ -91,7 +110,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	}
 
 	// Get unvalidated
-	public override getStringValue(): string
+	public getStringValue(): string
 	{
 		let value:string = this.element.value;
 		if (this.pattern == null) value = value.trim();
@@ -99,7 +118,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	}
 
 	// Set unvalidated
-	public override setStringValue(value:string) : void
+	public setStringValue(value:string) : void
 	{
         if (value == null)
 			value = "";
@@ -185,24 +204,24 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			}
 
             if (this.placeholder != null)
-				this.removeAttribute("placeholder");
+				this.element.removeAttribute("placeholder");
         }
 
         if (this.event.type == "focus")
         {
 			buble = true;
 			if (this.placeholder != null)
-                this.setAttribute("placeholder",this.placeholder);
+                this.element.setAttribute("placeholder",this.placeholder);
         }
 
         if (this.event.mouseinit)
                 this.clearSelection(pos);
 
         if (this.event.type == "mouseover" && this.placeholder != null)
-            this.setAttribute("placeholder",this.placeholder);
+            this.element.setAttribute("placeholder",this.placeholder);
 
         if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)
-            this.removeAttribute("placeholder");
+            this.element.removeAttribute("placeholder");
 
         this.event.preventDefault();
 

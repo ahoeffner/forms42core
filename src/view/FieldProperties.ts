@@ -106,8 +106,35 @@ export class FieldProperties
 			tag.hidden = props.hidden;
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
-
-			// If readonly, remove all but selected index
+			FieldProperties.setReadOnly(tag,props,props.readonly);
 		}
+	}
+
+	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	{
+		if (flag) FieldProperties.setReadOnly(tag,props,flag);
+		else if (!props.readonly) FieldProperties.setReadOnly(tag,props,flag);
+	}
+
+	public static setEnabledState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	{
+		if (!flag) FieldProperties.setEnabled(tag,props,flag);
+		else if (props.enabled) FieldProperties.setEnabled(tag,props,flag);
+	}
+
+	public static setReadOnly(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	{
+		if (tag instanceof HTMLInputElement) tag.readOnly = flag;
+
+		if (tag instanceof HTMLSelectElement)
+		{
+			let idx:number = tag.options.selectedIndex;
+		}
+	}
+
+	public static setEnabled(tag:HTMLElement, _props:HTMLProperties, flag:boolean) : void
+	{
+		if (tag instanceof HTMLInputElement) tag.disabled = !flag;
+		if (tag instanceof HTMLSelectElement) tag.disabled = !flag;
 	}
 }

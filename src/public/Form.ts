@@ -102,7 +102,8 @@ export class Form implements CanvasComponent
 		field = field?.toLowerCase();
 		let blk:ViewBlock = View.getForm(this).getBlock(block);
 
-		blk.getField(field)?.setValue(value);
+		if (!blk.model.postquery)
+			blk.getField(field)?.setValue(value);
 
 		let mdl:ModelBlock = blk.model;
 		mdl.setValue(field,value);
@@ -115,8 +116,12 @@ export class Form implements CanvasComponent
 		let blk:ViewBlock = View.getForm(this).getBlock(block);
 
 		if (blk == null) return(null);
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) return(blk.getValue(field));
+
+		if (!blk.model.postquery)
+		{
+			let fld:ViewField = blk.getField(field);
+			if (fld != null) return(blk.getValue(field));
+		}
 
 		let mdl:ModelBlock = blk.model;
 		return(mdl.getValue(field));

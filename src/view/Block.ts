@@ -289,14 +289,16 @@ export class Block
 		this.rc$ = rows.length;
 		if (this.getRow(-1) != null) this.rc$--;
 
+		this.rows$.forEach((row) =>
+		{
+			row.initialize();
+
+			if (row.rownum > 0)
+				row.setFieldState(FieldState.DISABLED);
+		});
+
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
-
-		this.rows$.forEach((row) =>
-		{if (row.rownum > 0) row.setFieldState(FieldState.DISABLED)});
-
-		if (this.rows$.size > 1)
-			this.rows$.forEach((row) =>	{row.setRownum()});
 	}
 
 	public distribute(field:Field, value:any) : void

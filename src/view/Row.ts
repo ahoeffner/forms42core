@@ -52,7 +52,16 @@ export class Row
 		this.getFields().forEach((fld) =>
 		{
 			fld.getInstances().forEach((inst) =>
-			{inst.row = rownum;})
+			{inst.properties.row = rownum;})
+		});
+	}
+
+	public initialize() : void
+	{
+		this.getFields().forEach((fld) =>
+		{
+			fld.getInstances().forEach((inst) =>
+			{inst.initialize();})
 		});
 	}
 
@@ -77,11 +86,6 @@ export class Row
 	{
 		this.state$ = state;
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
-	}
-
-	public setRownum() : void
-	{
-		this.getFieldInstances().forEach((inst) => {inst.setRownum()});
 	}
 
 	public setDefaults(override?:FieldProperties) : void

@@ -142,14 +142,11 @@ export class FieldInstance implements FieldContainer
 		this.impl.setFieldState(state);
 	}
 
-	public setRownum() : void
+	public initialize() : void
 	{
-		if (this.row$ >= 0)
-		{
-			this.impl.getElement().setAttribute("row",""+this.row$);
-			this.properties.setAttribute("row",this.row$);
-		}
+		this.impl.apply(this.properties$);
 	}
+
 	public setInstanceType(type:string) : void
 	{
 		let element:HTMLElement = this.element;

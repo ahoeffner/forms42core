@@ -213,7 +213,7 @@ export class Block
 			return(false);
 
 		this.wrapper.setValue(this.record,field,value);
-		return(this.fire(EventType.PostValidateField,event));
+		return(true);
 	}
 
 	public async onKey(event:Event, key:KeyMap) : Promise<boolean>
@@ -223,9 +223,7 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		if (await this.fire(EventType.WhenValidateRecord,null))
-			return(this.fire(EventType.PostValidateRecord,null))
-		return(false);
+		return(this.fire(EventType.WhenValidateRecord,null))
 	}
 
 	public async setCurrentRecord(delta:number) : Promise<boolean>

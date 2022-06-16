@@ -20,7 +20,6 @@ export enum EventType
 
 	Editing,
 	WhenValidateField,
-	PostValidateField,
 
     PreRecord,
     PostRecord,
@@ -38,6 +37,5 @@ export enum EventType
     PostDelete,
 
     LockRecord,
-	WhenValidateRecord,
-	PostValidateRecord
+	WhenValidateRecord
 }

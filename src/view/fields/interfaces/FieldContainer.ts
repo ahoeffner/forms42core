@@ -15,10 +15,6 @@ import { HTMLProperties } from "../HTMLProperties.js";
 
 export interface FieldContainer
 {
-	id:string;
-	row:number;
-	name:string;
-	block:string;
 	properties:HTMLProperties;
 	handleEvent(event:BrowserEvent) : void;
 }

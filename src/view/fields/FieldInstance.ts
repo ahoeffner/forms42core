@@ -24,11 +24,7 @@ import { FieldImplementation, FieldState } from "./interfaces/FieldImplementatio
 export class FieldInstance implements FieldContainer
 {
 	private form$:Form = null;
-	private id$:string = null;
-	private row$:number = null;
-	private name$:string = null;
 	private field$:Field = null;
-	private block$:string = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
 	private properties$:HTMLProperties = null;
@@ -37,12 +33,7 @@ export class FieldInstance implements FieldContainer
 	{
 		this.form$ = form;
 		this.properties$ = FieldProperties.consume(tag);
-
-		this.id$ = this.properties$.id;
-		this.row$ = this.properties$.row;
-		this.name$ = this.properties$.name;
-		this.block$ = this.properties$.block;
-		this.field$ = Field.create(form,this.block$,this.name$,this.row$);
+		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);
 		this.impl = new clazz();
@@ -53,19 +44,9 @@ export class FieldInstance implements FieldContainer
 		this.field$.addInstance(this);
 	}
 
-	public get id() : string
-	{
-		return(this.id$);
-	}
-
 	public get row() : number
 	{
-		return(this.row$);
-	}
-
-	public set row(row:number)
-	{
-		this.row$ = row;
+		return(this.properties$.row);
 	}
 
 	public get form() : Form
@@ -75,12 +56,12 @@ export class FieldInstance implements FieldContainer
 
 	public get name() : string
 	{
-		return(this.name$);
+		return(this.properties$.name);
 	}
 
 	public get block() : string
 	{
-		return(this.block$);
+		return(this.properties.block);
 	}
 
 	public get field() : Field

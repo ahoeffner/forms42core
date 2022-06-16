@@ -21,11 +21,11 @@ export class Common
 	private readonly$:boolean = true;
 	private state$:FieldState = null;
     private field:FieldImplementation = null;
-	private properties:HTMLProperties = null;
+	private properties$:HTMLProperties = null;
 
 	public setProperties(properties:HTMLProperties) : void
 	{
-		this.properties = properties;
+		this.properties$ = properties;
 	}
 
     public setImplementation(field:FieldImplementation) : void
@@ -63,8 +63,8 @@ export class Common
 	public setFieldState(state:FieldState) : void
 	{
 		this.state$ = state;
-		let enabled:boolean = this.properties.enabled;
-		let readonly:boolean = this.properties.readonly;
+		let enabled:boolean = this.properties$.enabled;
+		let readonly:boolean = this.properties$.readonly;
 
 		switch(state)
 		{

@@ -11,10 +11,8 @@
  */
 
 import { BrowserEvent} from "../../BrowserEvent.js";
-import { HTMLProperties } from "../HTMLProperties.js";
 
-export interface FieldContainer
+export interface FieldEventHandler
 {
-	properties:HTMLProperties;
 	handleEvent(event:BrowserEvent) : void;
 }

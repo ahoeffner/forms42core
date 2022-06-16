@@ -17,11 +17,11 @@ import { Class } from "../../types/Class.js";
 import { HTMLProperties } from "./HTMLProperties.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
-import { FieldContainer } from "./interfaces/FieldContainer.js";
+import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
 
 
-export class FieldInstance implements FieldContainer
+export class FieldInstance implements FieldEventHandler
 {
 	private form$:Form = null;
 	private field$:Field = null;

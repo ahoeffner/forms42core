@@ -14,7 +14,7 @@ import { Common } from "./Common.js";
 import { Pattern } from "../Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
-import { FieldContainer } from "../interfaces/FieldContainer.js";
+import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation } from "../interfaces/FieldImplementation.js";
 
 
@@ -26,7 +26,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 	private pattern:Pattern = null;
 	private fixedval:string = null;
     private placeholder:string = null;
-	private container:FieldContainer = null;
+	private properties:HTMLProperties = null;
+	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
     private event:BrowserEvent = new BrowserEvent();
@@ -36,11 +37,11 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 		super();
 	}
 
-	public create(container:FieldContainer) : HTMLInputElement
+	public create(eventhandler:FieldEventHandler) : HTMLInputElement
 	{
 		this.element = document.createElement("input");
 
-		this.container = container;
+		this.eventhandler = eventhandler;
 		super.setImplementation(this);
 
 		return(this.element);
@@ -48,8 +49,8 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 
 	public apply(properties:HTMLProperties) : void
 	{
-		if (properties.init)
-			this.addEvents(this.element);
+		this.properties = properties;
+		if (properties.init) this.addEvents(this.element);
 
 		properties.apply(this.element);
 
@@ -123,7 +124,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
     public setAttributes(attributes:Map<string,any>) : void
     {
         let pattern:string = null;
-        let type:string = this.container.properties.subtype;
+        let type:string = this.properties.subtype;
 
         attributes.forEach((value,attr) =>
         {
@@ -178,7 +179,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 				if (this.getStringValue() != this.fixedval)
 				{
 					this.event.type = "change";
-					this.container.handleEvent(this.event);
+					this.eventhandler.handleEvent(this.event);
 					this.event.type = "blur";
 				}
 			}
@@ -256,7 +257,7 @@ export class Input extends Common implements FieldImplementation, EventListenerO
 			buble = false;
 
         if (buble)
-			this.container.handleEvent(this.event);
+			this.eventhandler.handleEvent(this.event);
     }
 
     private xint() : boolean

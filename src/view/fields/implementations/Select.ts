@@ -22,6 +22,7 @@ export class Select implements FieldImplementation, EventListenerObject
 	private properties:HTMLProperties = null;
 	private eventhandler:FieldEventHandler = null;
 
+	private value$:string = null;
 	private element:HTMLSelectElement = null;
     private event:BrowserEvent = new BrowserEvent();
 
@@ -42,12 +43,12 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		let idx:number = this.element.selectedIndex;
-		return(this.element.options.item(idx).value);
+		return(this.value$);
 	}
 
 	public setValue(value:any) : boolean
 	{
+		this.value$ = value;
 		let found:boolean = false;
 		this.element.options.selectedIndex = 0;
 
@@ -125,7 +126,11 @@ export class Select implements FieldImplementation, EventListenerObject
 			buble = true;
 
 		if (this.event.type == "change")
+		{
 			buble = true;
+			let idx:number = this.element.selectedIndex;
+			this.value$ = this.element.options.item(idx).value;
+		}
 
 		if (this.event.type.startsWith("mouse"))
 			buble = true;

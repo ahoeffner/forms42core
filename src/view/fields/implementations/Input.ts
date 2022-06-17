@@ -17,7 +17,6 @@ import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { Key } from "../../../model/relations/Key.js";
 
 enum Case
 {
@@ -96,7 +95,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public getValue() : any
     {
-        return(this.getObject(this.element.value));
+		return(this.getObject(this.element.value));
     }
 
     public setValue(value:any) : boolean
@@ -282,6 +281,34 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (event.type == "change")
 		{
 			buble = false;
+
+			if (this.datatype == DataType.integer)
+			{
+				let clean:boolean = false;
+				let value:string = this.getStringValue();
+
+				while(value.startsWith('0') && value.length > 1)
+				{
+					clean = true;
+					value = value.substring(1);
+				}
+
+				if (clean) this.setElementValue(value);
+			}
+
+			if (this.datatype == DataType.decimal)
+			{
+				let clean:boolean = false;
+				let value:string = this.getStringValue();
+
+				while(value.startsWith('0') && value.length > 1 && value.charAt(1) != '.' && value.charAt(1) != ',')
+				{
+					clean = true;
+					value = value.substring(1);
+				}
+
+				if (clean) this.setElementValue(value);
+			}
 
 			if (this.pattern == null)
 			{

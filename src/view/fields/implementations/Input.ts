@@ -149,35 +149,28 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public setAttributes(attributes:Map<string,any>) : void
     {
-        let pattern:string = null;
-        let type:string = this.properties.subtype;
+        let type:string = attributes.get("type");
+		if (type == null) type = "text";
 
         attributes.forEach((value,attr) =>
         {
+			if (attr.toLowerCase() == "integer")
+				this.int = true;
+
+			if (attr.toLowerCase() == "decimal")
+				this.dec = true;
+
+			if (attr.toLowerCase() == "format")
+				this.pattern = new Pattern(value);
+
+			if (attr.toLowerCase() == "placeholder")
+				this.placeholder = value;
+
 			this.element.setAttribute(attr,value);
-            if (attr == "x-pattern") pattern = value;
-            if (attr == "x-placeholder") this.placeholder = value;
         });
-
-        if (type == "x-int")
-            this.int = true;
-
-        if (type == "x-dec")
-            this.dec = true;
 
         if (type == "x-date")
             this.pattern = new Pattern("{##} - {##} - {####}");
-
-        if (type == "x-fixed")
-        {
-            if (pattern == null)
-                console.error("x-pattern not specified for x-fixed field");
-
-            this.pattern = new Pattern(pattern);
-        }
-
-		if (type.startsWith("x-"))
-			type = "text";
 
         this.element.setAttribute("type",type);
     }
@@ -200,7 +193,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 
 			if (this.placeholder != null)
-                this.element.setAttribute("placeholder",this.placeholder);
+				this.element.removeAttribute("placeholder");
         }
 
         if (this.pattern != null)
@@ -236,7 +229,7 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.mouseinit)
                 this.clearSelection(pos);
 
-        if (this.event.type == "mouseover" && this.placeholder != null)
+        if (this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
             this.element.setAttribute("placeholder",this.placeholder);
 
         if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)

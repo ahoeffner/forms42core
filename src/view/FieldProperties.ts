@@ -29,7 +29,6 @@ export class FieldProperties
 
 		props.tag = tag.tagName;
 		props.id = tag.getAttribute("id");
-		props.subtype = tag.getAttribute("type");
 
 		props.block = tag.getAttribute("block");
 		if (props.block == null) throw "@FieldInstance: Block must be specified";

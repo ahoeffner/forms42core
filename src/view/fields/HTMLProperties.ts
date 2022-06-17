@@ -21,7 +21,6 @@ export class HTMLProperties
 	private block$:string = null;
 
 	private tagname$:string = null;
-	private subtype$:string = null;
 	private classes$:string[] = [];
 	private styles$:string[][] = [];
 
@@ -95,17 +94,6 @@ export class HTMLProperties
 	public set tag(tag:string)
 	{
 		this.tagname$ = tag.toLowerCase();
-	}
-
-	public get subtype() : string
-	{
-		return(this.subtype$);
-	}
-
-	public set subtype(type:string)
-	{
-		if (type == null) this.subtype$ = "text";
-		else this.subtype$ = type.trim().toLowerCase();
 	}
 
 	public get init() : boolean

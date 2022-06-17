@@ -69,6 +69,7 @@ export class FieldProperties
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
+			props.setValidValues(FieldProperties.selectOptions(tag));
 		}
 
 		for (let cls of tag.classList.values())
@@ -145,5 +146,32 @@ export class FieldProperties
 	{
 		if (tag instanceof HTMLInputElement) tag.disabled = !flag;
 		if (tag instanceof HTMLSelectElement) tag.disabled = !flag;
+	}
+
+	private static selectOptions(tag:HTMLSelectElement) : Map<string,string>
+	{
+		let hasEmpty:boolean = false;
+		let options:Map<string,string> = new Map<string,string>();
+
+		for (let i = 0; i < tag.options.length; i++)
+		{
+			let label:string = tag.options.item(i).label.trim();
+			let value:string = tag.options.item(i).value.trim();
+
+			console.log(label+" -> "+value);
+
+			if (label.length == 0 && value.length == 0)
+				hasEmpty = true;
+
+			if (label.length == 0 && value.length != null)
+				label = value;
+
+			options.set(label,value);
+		}
+
+		console.log("After")
+		options.forEach((value,label) => {console.log(label+" -> "+value)})
+
+		return(options);
 	}
 }

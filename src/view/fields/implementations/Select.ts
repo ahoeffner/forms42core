@@ -47,7 +47,7 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
-		null;
+		return(true);
 	}
 
 	public getStringValue() : string

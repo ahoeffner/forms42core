@@ -101,13 +101,19 @@ export class Block
 
 	public clear() : boolean
 	{
-		if (!this.validated) return(false);
+		if (!this.validated)
+			return(false);
+
+		this.properties.clear();
 		this.rows$.forEach((row) => {row.clear()});
+
 		return(true);
 	}
 
 	public addInstance(inst:FieldInstance) : void
 	{
+		this.properties.setDefault(inst,inst.properties);
+		
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
 	}

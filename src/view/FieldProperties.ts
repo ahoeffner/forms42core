@@ -22,6 +22,16 @@ export class FieldProperties
 	private overrides$:Map<object,Map<FieldInstance,HTMLProperties>> =
 		new Map<object,Map<FieldInstance,HTMLProperties>>();
 
+	public clear() : void
+	{
+		this.overrides$.clear();
+	}
+
+	public setDefault(inst:FieldInstance, properties:HTMLProperties) : void
+	{
+		this.defaults$.set(inst,properties);
+	}
+
 	public static consume(tag:HTMLElement) : HTMLProperties
 	{
 		let skip:string[] = ["id","name","block","row"];

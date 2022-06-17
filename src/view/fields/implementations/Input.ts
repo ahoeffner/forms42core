@@ -21,10 +21,10 @@ import { FieldImplementation, FieldState } from "../interfaces/FieldImplementati
 export class Input implements FieldImplementation, EventListenerObject
 {
 	private before:string = "";
+	private initial:string = "";
     private int:boolean = false;
     private dec:boolean = false;
 	private pattern:Pattern = null;
-	private fixedval:string = null;
 	private state:FieldState = null;
     private placeholder:string = null;
 	private properties:HTMLProperties = null;
@@ -79,42 +79,23 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public getValue() : any
     {
-        let str:string = this.element.value.trim();
-        if (str.length == 0) return(null);
-        return(str);
+        return(this.getObject(this.element.value));
     }
 
     public setValue(value:any) : boolean
     {
-		let ok:boolean = false;
-        if (value == null) value = "";
+        if (value == null)
+			value = "";
 
-		if (typeof value === "string")
-		{
-			ok = true;
-			this.element.value = value;
-		}
+		if (!this.validate(value))
+			return(false);
 
-		if (typeof value === "number")
-		{
-			ok = true;
-			value = value+"";
-			this.element.value = value;
-		}
+		this.before = value;
+		this.initial = value;
+		this.element.value = value;
 
-		if (!ok)
-			throw "@Input: Not implemented";
-
-		ok = this.validateInput(value);
-		this.before = this.element.value;
-
-		return(ok);
+		return(true);
     }
-
-	private clear() : void
-	{
-		this.element.value = "";
-	}
 
 	// Get unvalidated
 	public getStringValue(): string
@@ -139,6 +120,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		}
 
 		this.before = value;
+		this.initial = value;
 		this.element.value = value;
 	}
 
@@ -169,6 +151,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.element.setAttribute(attr,value);
         });
 
+		this.element.removeAttribute("placeholder");
+
         if (type == "x-date")
             this.pattern = new Pattern("{##} - {##} - {####}");
 
@@ -185,12 +169,8 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.type == "focus")
         {
 			buble = true;
-
-			if (this.pattern != null)
-			{
-				try {this.fixedval = this.getValue();}
-				catch (error) {this.fixedval = null}
-			}
+			this.initial = this.getStringValue();
+			if (this.pattern != null) this.initial = this.pattern.getValue();
 
 			if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
@@ -205,22 +185,28 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.type == "blur")
         {
 			buble = true;
+			let change:boolean = false;
 
-			if (this.pattern != null)
+			if (this.pattern == null)
 			{
-				let compare:boolean = false;
-				// Fixed doesn't fire change
-
-				try {if (this.getValue() == this.fixedval) compare = true;}
-				catch (error) {compare = false}
-
-				if (!compare)
-				{
-					this.event.type = "change";
-					this.eventhandler.handleEvent(this.event);
-					this.event.type = "blur";
-				}
+				if (this.getStringValue() != this.initial)
+					change = true;
 			}
+			else
+			{
+				if (this.pattern.getValue() != this.initial)
+					change = true;
+			}
+
+			if (change)
+			{
+				this.event.type = "change";
+				this.eventhandler.handleEvent(this.event);
+				this.event.type = "blur";
+			}
+
+			this.initial = this.getStringValue();
+			if (this.pattern != null) this.initial = this.pattern.getValue();
 
             if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
@@ -229,7 +215,7 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.mouseinit)
                 this.clearSelection(pos);
 
-        if (this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
+        if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
             this.element.setAttribute("placeholder",this.placeholder);
 
         if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)
@@ -254,13 +240,21 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (event.type == "change")
 		{
-			buble = true;
+			buble = false;
 
-			if (this.pattern != null)
+			if (this.pattern == null)
 			{
-				try {this.fixedval = this.getValue();}
-				catch (error) {this.fixedval = null}
+				if (this.getStringValue() != this.initial)
+					buble = true;
 			}
+			else
+			{
+				if (this.pattern.getValue() != this.initial)
+					buble = true;
+			}
+
+			this.initial = this.getStringValue();
+			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
 		if (this.event.type.startsWith("mouse"))
@@ -322,9 +316,6 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(false);
         }
 
-		if (this.event.type == "blur" || this.event.type == "change")
-			this.validateInput(this.getStringValue());
-
         return(true);
     }
 
@@ -362,9 +353,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
             return(false);
         }
-
-		if (this.event.type == "blur" || this.event.type == "change")
-			this.validateInput(this.getStringValue());
 
         return(true);
     }
@@ -419,10 +407,7 @@ export class Input implements FieldImplementation, EventListenerObject
         }
 
         if (this.event.type == "change")
-        {
-			this.validateInput(this.getStringValue());
             return(true);
-        }
 
 		if (this.element.readOnly)
 			return(true);
@@ -629,32 +614,44 @@ export class Input implements FieldImplementation, EventListenerObject
         return(true);
     }
 
-	private validateInput(val:any) : boolean
+	private getObject(value:string) : any
 	{
-		if (val.trim().length == 0)
-			return(true);
+		value = value.trim();
+
+		if (value.length == 0)
+			return(null);
+
+		if (this.int)
+			return(+value);
 
 		if (this.dec)
-		{
-			if (isNaN(+val))
-			{
-				this.setElementValue(null);
-				return(false);
-			}
-		}
+			return(+value);
+
+		if (this.pattern != null)
+			return(this.pattern.getValue());
+
+		return(value);
+	}
+
+	private validate(value:any) : boolean
+	{
+		value += "";
+
+		if (value.trim().length == 0)
+			return(true);
+
+		if (this.dec && isNaN(+value))
+			return(false);
 
 		if (this.int)
 		{
-			if (isNaN(+val) || val.includes(".") || val.includes("."))
-			{
-				this.setElementValue(null);
+			if (isNaN(+value) || value.includes(".") || value.includes("."))
 				return(false);
-			}
 		}
 
 		if (this.pattern != null)
 		{
-			let valid:boolean = this.pattern.setValue(val);
+			let valid:boolean = this.pattern.setValue(value);
 			this.setElementValue(this.pattern.getValue());
 			return(valid);
 		}
@@ -709,6 +706,16 @@ export class Input implements FieldImplementation, EventListenerObject
 	private setElementValue(value:string) : void
 	{
 		this.element.value = value;
+	}
+
+	private get disabled() : boolean
+	{
+		return(this.element.disabled);
+	}
+
+	private clear() : void
+	{
+		this.element.value = "";
 	}
 
     private addEvents(element:HTMLElement) : void

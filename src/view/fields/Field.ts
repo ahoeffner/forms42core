@@ -215,7 +215,7 @@ export class Field
 				else if (brwevent.paste) key = KeyMap.paste;
 				else key = KeyMapping.parseBrowserEvent(brwevent);
 
-				await this.mdlblk.onKey(event,key);
+				if (key != null) await this.mdlblk.onKey(event,key);
 				return;
 			}
 			else
@@ -229,7 +229,7 @@ export class Field
 		if (brwevent.navigation)
 		{
 			key = KeyMapping.parseBrowserEvent(brwevent);
-			this.block.navigate(key,inst);
+			if (key != null) this.block.navigate(key,inst);
 			return;
 		}
 	}

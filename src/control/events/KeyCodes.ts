@@ -43,7 +43,7 @@ export class KeyCodes
 	{
 		if (char == null) return(null);
 		let numval:number = KeyCodes[char];
-		
+
 		if (numval) return(numval);
 		else return(char.charCodeAt(0));
 	}

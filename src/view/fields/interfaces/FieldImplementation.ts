@@ -23,7 +23,7 @@ export enum FieldState
 export interface FieldImplementation
 {
 	apply(properties:HTMLProperties) : void
-	create(container:FieldEventHandler) : HTMLInputElement;
+	create(eventhandler:FieldEventHandler) : HTMLElement;
 
 	getValue() : any;
     getStringValue() : string;

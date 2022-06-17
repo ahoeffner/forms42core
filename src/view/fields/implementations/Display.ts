@@ -16,7 +16,7 @@ import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
-export class Select implements FieldImplementation, EventListenerObject
+export class Display implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
 	private properties:HTMLProperties = null;

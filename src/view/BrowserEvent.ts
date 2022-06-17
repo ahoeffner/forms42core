@@ -209,12 +209,19 @@ export class BrowserEvent
                 }
 
 				if (this.key == "Backspace") this.ignore = false;
+                if (this.event.key == "PageUp") this.ignore = false;
+                if (this.event.key == "PageDown") this.ignore = false;
+				
                 if (this.event.key == "ArrowLeft") this.ignore = false;
                 if (this.event.key == "ArrowRight") this.ignore = false;
 
                 if (this.event.key == "Tab") this.navigation = true;
                 if (this.event.key == "Enter") this.navigation = true;
                 if (this.event.key == "Escape") this.navigation = true;
+
+                if (this.event.key == "PageUp") this.navigation = true;
+                if (this.event.key == "PageDown") this.navigation = true;
+
                 if (this.event.key == "ArrowUp") this.navigation = true;
                 if (this.event.key == "ArrowDown") this.navigation = true;
 
@@ -290,10 +297,12 @@ export class BrowserEvent
                 if (this.key == "Control") this.ctrl = true;
 
                 if (this.key == "Tab") this.prevent = true;
+
+                if (this.key == "PageUp") this.prevent = true;
+                if (this.key == "PageDown") this.prevent = true;
+
                 if (this.key == "ArrowUp") this.prevent = true;
                 if (this.key == "ArrowDown") this.prevent = true;
-                if (this.key == "ArrowLeft") this.prevent = true;
-                if (this.key == "ArrowRight") this.prevent = true;
 
                 if (this.key.startsWith("F"))
                 {

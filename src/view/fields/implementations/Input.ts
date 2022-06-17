@@ -17,6 +17,7 @@ import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { Key } from "../../../model/relations/Key.js";
 
 enum Case
 {
@@ -270,7 +271,10 @@ export class Input implements FieldImplementation, EventListenerObject
         }
 
 		if (this.cse != Case.mixed)
-			this.xcase();
+		{
+			if (!this.xcase())
+				return;
+		}
 
 		if (this.event.navigation) buble = true;
 		else if (this.event.ignore) return;
@@ -327,49 +331,36 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private xcase() : boolean
 	{
-        if (this.event.type == "keyup")
-        {
-            if (this.event.isPrintableKey)
-            {
-				let words:string[];
-				let value:string = this.getElementValue();
-
-				switch(this.cse)
-				{
-					case Case.upper :
-						value = value.toLocaleUpperCase();
-						break;
-
-					case Case.lower :
-						value = value.toLocaleLowerCase();
-						break;
-
-					case Case.initcap :
-						words = value.split(" ");
-
-						value = "";
-						for (let i = 0; i < words.length; i++)
-						{
-							if (words[i].length > 0)
-							{
-								value += words[i].charAt(0).toLocaleUpperCase() +
-									words[i].substring(1).toLocaleLowerCase();
-
-								if (i < words.length - 1) value += " ";
-							}
-						}
-
-						break;
-				}
-
-				this.setElementValue(value);
-            }
-
-			if (this.event.ctrlkey == null && this.event.funckey == null)
+		if (this.event.type == "keydown" && this.event.isPrintableKey)
+		{
+			if (this.event.ctrlkey != null || this.event.funckey != null)
 				return(false);
-        }
 
-        return(true);
+			this.event.preventDefault(true);
+			let pos:number = this.getPosition();
+			let value:string = this.getElementValue();
+
+			if (pos >= value.length) value += this.event.key;
+			else value = value.substring(0,pos) + this.event.key + value.substring(pos);
+
+			let cap:boolean = true;
+			let initcap:string = "";
+
+			for (let i = 0; i < value.length; i++)
+			{
+				if (!cap) initcap += value.charAt(i);
+				else initcap += value.charAt(i).toLocaleUpperCase();
+
+				cap = false;
+				if (value.charAt(i) == ' ')
+					cap = true;
+			}
+
+			this.setElementValue(initcap);
+			this.setPosition(pos+1);
+		}
+
+		return(true);
 	}
 
     private xint() : boolean

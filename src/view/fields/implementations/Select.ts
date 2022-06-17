@@ -45,12 +45,12 @@ export class Select implements FieldImplementation, EventListenerObject
 		throw new Error("Method not implemented.");
 	}
 
-	public getStringValue() : string
+	public setValue(value:any) : boolean
 	{
-		throw new Error("Method not implemented.");
+		null;
 	}
 
-	public setValue(value:any) : boolean
+	public getStringValue() : string
 	{
 		throw new Error("Method not implemented.");
 	}

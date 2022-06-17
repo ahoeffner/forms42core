@@ -11,11 +11,20 @@
  */
 
 import { Pattern } from "../Pattern.js";
+import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+
+enum Case
+{
+	upper,
+	lower,
+	mixed,
+	initcap
+}
 
 
 export class Input implements FieldImplementation, EventListenerObject
@@ -24,6 +33,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private initial:string = "";
     private int:boolean = false;
     private dec:boolean = false;
+	private cse:Case = Case.mixed;
 	private pattern:Pattern = null;
 	private state:FieldState = null;
     private placeholder:string = null;
@@ -31,6 +41,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
+	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
 	public create(eventhandler:FieldEventHandler) : HTMLInputElement
@@ -46,6 +57,11 @@ export class Input implements FieldImplementation, EventListenerObject
 		properties.apply(this.element);
 		this.setAttributes(properties.getAttributes());
 		if (properties.init) this.addEvents(this.element);
+	}
+
+	public getDataType() : DataType
+	{
+		return(this.datatype);
 	}
 
 	public getFieldState() : FieldState
@@ -136,11 +152,30 @@ export class Input implements FieldImplementation, EventListenerObject
 
         attributes.forEach((value,attr) =>
         {
+			if (attr.toLowerCase() == "upper")
+				this.cse = Case.upper;
+
+			if (attr.toLowerCase() == "lower")
+				this.cse = Case.lower;
+
+			if (attr.toLowerCase() == "initcap")
+				this.cse = Case.initcap;
+
 			if (attr.toLowerCase() == "integer")
 				this.int = true;
 
 			if (attr.toLowerCase() == "decimal")
 				this.dec = true;
+
+			if (attr.toLowerCase() == "date")
+			{
+				this.pattern = new Pattern("{##} - {##} - {####}");
+			}
+
+			if (attr.toLowerCase() == "datetime")
+			{
+				this.pattern = new Pattern("{##} - {##} - {####}");
+			}
 
 			if (attr.toLowerCase() == "format")
 				this.pattern = new Pattern(value);
@@ -151,11 +186,10 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.element.setAttribute(attr,value);
         });
 
+		if (this.int) this.datatype = DataType.integer;
+		if (this.dec) this.datatype = DataType.decimal;
+
 		this.element.removeAttribute("placeholder");
-
-        if (type == "x-date")
-            this.pattern = new Pattern("{##} - {##} - {####}");
-
         this.element.setAttribute("type",type);
     }
 
@@ -235,6 +269,9 @@ export class Input implements FieldImplementation, EventListenerObject
                 return;
         }
 
+		if (this.cse != Case.mixed)
+			this.xcase();
+
 		if (this.event.navigation) buble = true;
 		else if (this.event.ignore) return;
 
@@ -287,6 +324,53 @@ export class Input implements FieldImplementation, EventListenerObject
         if (buble)
 			this.eventhandler.handleEvent(this.event);
     }
+
+	private xcase() : boolean
+	{
+        if (this.event.type == "keyup")
+        {
+            if (this.event.isPrintableKey)
+            {
+				let words:string[];
+				let value:string = this.getElementValue();
+
+				switch(this.cse)
+				{
+					case Case.upper :
+						value = value.toLocaleUpperCase();
+						break;
+
+					case Case.lower :
+						value = value.toLocaleLowerCase();
+						break;
+
+					case Case.initcap :
+						words = value.split(" ");
+
+						value = "";
+						for (let i = 0; i < words.length; i++)
+						{
+							if (words[i].length > 0)
+							{
+								value += words[i].charAt(0).toLocaleUpperCase() +
+									words[i].substring(1).toLocaleLowerCase();
+
+								if (i < words.length - 1) value += " ";
+							}
+						}
+
+						break;
+				}
+
+				this.setElementValue(value);
+            }
+
+			if (this.event.ctrlkey == null && this.event.funckey == null)
+				return(false);
+        }
+
+        return(true);
+	}
 
     private xint() : boolean
     {
@@ -702,6 +786,11 @@ export class Input implements FieldImplementation, EventListenerObject
         pos[0] = this.element.selectionStart;
         return(pos);
     }
+
+	private getElementValue() : string
+	{
+		return(this.element.value);
+	}
 
 	private setElementValue(value:string) : void
 	{

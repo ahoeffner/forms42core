@@ -282,32 +282,10 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			buble = false;
 
-			if (this.datatype == DataType.integer)
+			if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 			{
-				let clean:boolean = false;
-				let value:string = this.getStringValue();
-
-				while(value.startsWith('0') && value.length > 1)
-				{
-					clean = true;
-					value = value.substring(1);
-				}
-
-				if (clean) this.setElementValue(value);
-			}
-
-			if (this.datatype == DataType.decimal)
-			{
-				let clean:boolean = false;
-				let value:string = this.getStringValue();
-
-				while(value.startsWith('0') && value.length > 1 && value.charAt(1) != '.' && value.charAt(1) != ',')
-				{
-					clean = true;
-					value = value.substring(1);
-				}
-
-				if (clean) this.setElementValue(value);
+				let num:string = this.getElementValue();
+				if (num.trim().length > 0) this.setElementValue((+num)+"");
 			}
 
 			if (this.pattern == null)

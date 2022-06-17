@@ -12,6 +12,7 @@
 
 import { Class } from "../../types/Class.js";
 import { Input } from "./implementations/Input.js";
+import { Select } from "./implementations/Select.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 
@@ -27,6 +28,7 @@ export class FieldTypes
 			new Map<string,Class<FieldImplementation>>();
 
 		map.set("input",Input);
+		map.set("select",Select);
 
 		return(map);
 	}

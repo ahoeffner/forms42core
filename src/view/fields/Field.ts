@@ -181,7 +181,8 @@ export class Field
 		if (brwevent.type == "change")
 		{
 			this.row.validated = false;
-			this.block.distribute(this,inst.getStringValue());
+			this.distribute(inst,inst.getValue());
+			this.block.distribute(this,inst.getValue());
 
 			if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
 			{

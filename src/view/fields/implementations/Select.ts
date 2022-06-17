@@ -42,22 +42,35 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		throw new Error("Method not implemented.");
+		let idx:number = this.element.selectedIndex;
+		return(this.element.options.item(idx).value);
 	}
 
 	public setValue(value:any) : boolean
 	{
-		return(true);
+		let found:boolean = false;
+		this.element.options.selectedIndex = 0;
+
+		for (let i = 0; i < this.element.options.length; i++)
+		{
+			if (this.element.options.item(i).value == value)
+			{
+				found = true;
+				this.element.options.selectedIndex = i;
+			}
+		}
+
+		return(found);
 	}
 
 	public getStringValue() : string
 	{
-		throw new Error("Method not implemented.");
+		return(this.getValue());
 	}
 
 	public setStringValue(value:string) : void
 	{
-		throw new Error("Method not implemented.");
+		this.setValue(value);
 	}
 
 	public getElement() : HTMLElement
@@ -102,8 +115,37 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public handleEvent(event:Event) : void
 	{
+        let buble:boolean = false;
 		this.event.setEvent(event);
-		this.eventhandler.handleEvent(this.event);
+
+		if (this.event.type == "focus")
+			buble = true;
+
+		if (this.event.type == "blur")
+			buble = true;
+
+		if (this.event.type == "change")
+			buble = true;
+
+		if (this.event.type.startsWith("mouse"))
+			buble = true;
+
+		if (this.event.onScrollUp)
+			buble = true;
+
+        if (this.event.onScrollDown)
+			buble = true;
+
+        if (this.event.onCtrlKeyDown)
+			buble = true;
+
+        if (this.event.onFuncKey)
+			buble = true;
+
+		this.event.preventDefault();
+
+		if (buble)
+			this.eventhandler.handleEvent(this.event);
 	}
 
     private addEvents(element:HTMLElement) : void

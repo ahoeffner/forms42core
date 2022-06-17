@@ -69,7 +69,7 @@ export class FieldProperties
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
-			props.setValidValues(FieldProperties.selectOptions(tag));
+			props.setValidValues(FieldProperties.getSelectOptions(tag));
 		}
 
 		for (let cls of tag.classList.values())
@@ -116,6 +116,7 @@ export class FieldProperties
 			tag.hidden = props.hidden;
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
+			FieldProperties.setSelectOptions(tag,props);
 			FieldProperties.setReadOnly(tag,props,props.readonly);
 		}
 	}
@@ -148,30 +149,62 @@ export class FieldProperties
 		if (tag instanceof HTMLSelectElement) tag.disabled = !flag;
 	}
 
-	private static selectOptions(tag:HTMLSelectElement) : Map<string,string>
+	private static getSelectOptions(tag:HTMLSelectElement) : Map<string,string>
 	{
-		let hasEmpty:boolean = false;
 		let options:Map<string,string> = new Map<string,string>();
 
+		options.set("","");
 		for (let i = 0; i < tag.options.length; i++)
 		{
 			let label:string = tag.options.item(i).label.trim();
 			let value:string = tag.options.item(i).value.trim();
 
-			console.log(label+" -> "+value);
+			if (label.length > 0 || value.length > 0)
+			{
 
-			if (label.length == 0 && value.length == 0)
-				hasEmpty = true;
-
-			if (label.length == 0 && value.length != null)
+				if (label.length == 0 && value.length != null)
 				label = value;
 
-			options.set(label,value);
+				options.set(label,value);
+			}
 		}
 
-		console.log("After")
-		options.forEach((value,label) => {console.log(label+" -> "+value)})
-
 		return(options);
+	}
+
+	private static setSelectOptions(tag:HTMLSelectElement, props:HTMLProperties) : void
+	{
+		while(tag.options.length > 0)
+			tag.options.remove(0);
+
+		let options:HTMLOptionElement[] = [];
+
+		if (props.getValidValues() instanceof Set)
+		{
+			props.getValidValues().forEach((value:string) =>
+			{
+				let option:HTMLOptionElement = new HTMLOptionElement();
+
+				option.label = value;
+				option.value = value;
+
+				options.push(option);
+			})
+		}
+
+		if (props.getValidValues() instanceof Map)
+		{
+			props.getValidValues().forEach((value:string,label:string) =>
+			{
+				let option:HTMLOptionElement = new Option();
+
+				option.label = label;
+				option.value = value;
+
+				options.push(option);
+			})
+		}
+
+		options.forEach((option) => tag.options.add(option));
 	}
 }

@@ -102,8 +102,37 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public handleEvent(event:Event) : void
 	{
+        let buble:boolean = false;
 		this.event.setEvent(event);
-		this.eventhandler.handleEvent(this.event);
+
+		if (this.event.type == "focus")
+			buble = true;
+
+		if (this.event.type == "blur")
+			buble = true;
+
+		if (this.event.type == "change")
+			buble = true;
+
+		if (this.event.type.startsWith("mouse"))
+			buble = true;
+
+		if (this.event.onScrollUp)
+			buble = true;
+
+        if (this.event.onScrollDown)
+			buble = true;
+
+        if (this.event.onCtrlKeyDown)
+			buble = true;
+
+        if (this.event.onFuncKey)
+			buble = true;
+
+		this.event.preventDefault();
+
+		if (buble)
+			this.eventhandler.handleEvent(this.event);
 	}
 
     private addEvents(element:HTMLElement) : void

@@ -30,7 +30,9 @@ export class HTMLProperties
 	private readonly$:boolean = false;
 	private required$:boolean = false;
 
-    private values: Set<any> | Map<any, any> = null;
+    private values:Map<string,string> = null;
+    private valmap:Map<string,string> = null;
+
 	private attrs:Map<string,string> = new Map<string,string>();
 
 	public get id() : string
@@ -228,14 +230,30 @@ export class HTMLProperties
 		this.attrs.delete(attr.toLowerCase());
 	}
 
-    public getValidValues() : Set<any> | Map<any,any>
+    public getValidValues() : Map<string,string>
 	{
 		return(this.values);
     }
 
-    public setValidValues(values: Set<any> | Map<any,any>) : void
+    public getValidValue(key:string) : string
 	{
-        this.values = values;
+		if (this.valmap == null)
+			return(null);
+
+		return(this.valmap.get(key));
+    }
+
+    public setValidValues(values: Set<string> | Map<string,string>) : void
+	{
+		if (values instanceof Set)
+		{
+			this.values = new Map<string,string>();
+			values.forEach((value) => {this.values.set(value,value)});
+		}
+        else this.values = values;
+
+		this.valmap = new Map<string,string>();
+		this.values.forEach((val,key) => {this.valmap.set(val,key)});
     }
 
 	public apply(tag:HTMLElement) : void

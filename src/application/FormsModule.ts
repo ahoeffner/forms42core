@@ -78,7 +78,6 @@ class State
 
 export class FormsModule
 {
-    private state:State = new State();
     private static instance:FormsModule;
 
     public static get() : FormsModule

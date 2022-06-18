@@ -108,8 +108,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		this.before = value;
 		this.initial = value;
-		this.element.value = value;
 
+		this.element.value = value+"";
 		return(true);
     }
 

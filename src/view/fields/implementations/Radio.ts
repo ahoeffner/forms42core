@@ -24,6 +24,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private eventhandler:FieldEventHandler = null;
 
 	private value$:string = null;
+	private checked:string = null;
 	private element:HTMLInputElement = null;
 	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
@@ -39,6 +40,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		properties.apply(this.element);
+		this.checked = properties.value;
 		this.setAttributes(properties.getAttributes());
 		if (properties.init) this.addEvents(this.element);
 	}
@@ -56,12 +58,14 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
-        if (value == null)
-			value = "";
-
 		this.value$ = value;
-		this.element.value = value;
-		console.log("setval "+value);
+
+		let comp:string = "";
+		if (value != null) comp = value+"";
+
+		if (comp == this.checked) this.element.setAttribute("checked","");
+		else					  this.element.removeAttribute("checked");
+
 		return(true);
 	}
 

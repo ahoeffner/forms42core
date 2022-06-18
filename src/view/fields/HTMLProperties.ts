@@ -30,6 +30,7 @@ export class HTMLProperties
 	private readonly$:boolean = false;
 	private required$:boolean = false;
 
+	private value$:string = null;
     private values:Map<string,string> = null;
     private valmap:Map<string,string> = null;
 
@@ -42,6 +43,8 @@ export class HTMLProperties
 
 	public set id(id:string)
 	{
+		this.id$ = null;
+
 		if (id != null)
 		{
 			this.id$ = id.trim().toLowerCase();
@@ -56,6 +59,8 @@ export class HTMLProperties
 
 	public set name(name:string)
 	{
+		this.name$ = null;
+
 		if (name != null)
 		{
 			this.name$ = name.trim().toLowerCase();
@@ -70,6 +75,8 @@ export class HTMLProperties
 
 	public set block(block:string)
 	{
+		this.block$ = null;
+
 		if (block != null)
 		{
 			this.block$ = block.trim().toLowerCase();
@@ -93,14 +100,33 @@ export class HTMLProperties
 		return(this.tagname$);
 	}
 
+	public set value(value:string)
+	{
+		this.value$ = null;
+
+		if (value != null)
+		{
+			this.value$ = value.trim();
+			if (this.value$.length == 0)
+				this.value$ = null;
+		}
+	}
+
+	public get value() : string
+	{
+		return(this.value$);
+	}
+
 	public set tag(tag:string)
 	{
-		this.tagname$ = tag.toLowerCase();
+		this.tagname$ = tag?.toLowerCase();
 	}
 
 	public get init() : boolean
 	{
-		return(this.init$);
+		let init:boolean = this.init$;
+		this.init$ = false;
+		return(init);
 	}
 
 	public set init(flag:boolean)
@@ -235,17 +261,17 @@ export class HTMLProperties
 		this.attrs.delete(attr.toLowerCase());
 	}
 
-    public getValidValues() : Map<string,string>
-	{
-		return(this.values);
-    }
-
     public getValidValue(key:string) : string
 	{
 		if (this.valmap == null)
 			return(null);
 
 		return(this.valmap.get(key));
+    }
+
+    public getValidValues() : Map<string,string>
+	{
+		return(this.values);
     }
 
     public setValidValues(values: Set<string> | Map<string,string>) : void

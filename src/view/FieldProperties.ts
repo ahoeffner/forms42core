@@ -34,8 +34,8 @@ export class FieldProperties
 
 	public static consume(tag:HTMLElement) : HTMLProperties
 	{
-		let skip:string[] = ["id","name","block","row"];
 		let props:HTMLProperties = new HTMLProperties();
+		let skip:string[] = ["id","name","block","row","value"];
 
 		props.tag = tag.tagName;
 		props.id = tag.getAttribute("id");
@@ -46,6 +46,7 @@ export class FieldProperties
 		props.name = tag.getAttribute("name");
 		if (props.name == null)	throw "@FieldInstance: Name must be specified";
 
+		props.value = tag.getAttribute("value");
 		let row:string = tag.getAttribute("row");
 
 		if (row == null) row = "-1";
@@ -107,6 +108,9 @@ export class FieldProperties
 			tag.disabled = !props.enabled;
 			tag.readOnly = props.readonly;
 			tag.required = props.required;
+
+			if (props.getAttribute("type")?.toLowerCase() == "radio")
+				tag.setAttribute("value",props.value);
 		}
 
 		else

@@ -361,8 +361,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 				for (let i = 0; i < value.length; i++)
 				{
-					if (!cap) initcap += value.charAt(i);
-					else initcap += value.charAt(i).toLocaleUpperCase();
+					if (cap) initcap += value.charAt(i).toLocaleUpperCase();
+					else 	 initcap += value.charAt(i).toLocaleLowerCase();
 
 					cap = false;
 					if (value.charAt(i) == ' ')

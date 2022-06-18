@@ -160,7 +160,6 @@ export class Select implements FieldImplementation, EventListenerObject
 			this.value$ = this.element.options.item(idx).value;
 		}
 
-
 		if (this.event.type.startsWith("mouse"))
 			buble = true;
 

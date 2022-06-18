@@ -343,7 +343,11 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			this.event.preventDefault(true);
 			let pos:number = this.getPosition();
+			let sel:number[] = this.getSelection();
 			let value:string = this.getElementValue();
+
+			if (sel[1] - sel[0] > 0)
+				value = value.substring(0,sel[0]) + value.substring(sel[1])
 
 			if (pos >= value.length) value += this.event.key;
 			else value = value.substring(0,pos) + this.event.key + value.substring(pos);

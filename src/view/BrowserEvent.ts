@@ -213,8 +213,6 @@ export class BrowserEvent
                         this.key = this.event.key;
                     }
                 }
-                if (this.event.key == "Enter") this.accept = true;
-                if (this.event.key == "Escape") this.cancel = true;
 
 				if (this.key == "Backspace") this.ignore = false;
                 if (this.event.key == "PageUp") this.ignore = false;
@@ -235,6 +233,9 @@ export class BrowserEvent
                 if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}
                 if (this.event.key == "Shift") {this.ignore = true; this.shift = false;}
                 if (this.event.key == "Control") {this.ignore = true; this.ctrl = false;}
+
+                if (this.event.key == "Enter") {this.accept = true; this.ignore = false;}
+                if (this.event.key == "Escape") {this.cancel = true; this.ignore = false;}
 
                 if (this.ctrlkey != null) this.ignore = false;
                 if (this.key != null && this.key.startsWith("F")) this.ignore = false;
@@ -303,6 +304,8 @@ export class BrowserEvent
                 if (this.key == "Control") this.ctrl = true;
 
                 if (this.key == "Tab") this.prevent = true;
+                if (this.key == "Enter") this.prevent = true;
+                if (this.key == "Escape") this.prevent = true;
 
                 if (this.key == "PageUp") this.prevent = true;
                 if (this.key == "PageDown") this.prevent = true;

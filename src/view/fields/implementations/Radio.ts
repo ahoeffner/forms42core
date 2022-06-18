@@ -114,6 +114,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 			buble = true;
 
+		if (this.event.accept || this.event.cancel)
+			buble = true;
+
 		if (this.event.type.startsWith("mouse"))
 			buble = true;
 

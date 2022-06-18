@@ -17,13 +17,13 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
-import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 
 
 export class Field
 {
 	private row$:Row = null;
+	private value$:any = null;
 	private name$:string = null;
 	private block$:Block = null;
 	private valid$:boolean = true;
@@ -167,6 +167,8 @@ export class Field
 
 		if (brwevent.type == "focus")
 		{
+			this.value$ = inst.getValue();
+
 			if (await this.block.setCurrentField(inst))
 				await this.mdlblk.preField(event);
 
@@ -181,13 +183,33 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			if (!await this.change(inst,brwevent)) return;
-			if (!await this.block.validate()) return;
+			let value:any = inst.getValue();
+
+			if (value != this.value$)
+			{
+				if (await this.change(inst,brwevent))
+					this.value$ = value;
+			}
+
+			if (!await this.block.validate())
+				return;
+
+			key = KeyMapping.checkBrowserEvent(brwevent);
+			if (key != null) await this.mdlblk.onKey(event,key);
+
+			return;
 		}
 
 		if (brwevent.type == "change")
 		{
-			this.change(inst,brwevent);
+			let value:any = inst.getValue();
+
+			if (value != this.value$)
+			{
+				if (await this.change(inst,brwevent))
+					this.value$ = value;
+			}
+
 			return;
 		}
 

@@ -17,6 +17,7 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
+import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 
 
@@ -178,23 +179,15 @@ export class Field
 			return;
 		}
 
+		if (brwevent.accept)
+		{
+			if (!await this.change(inst,brwevent)) return;
+			if (!await this.block.validate()) return;
+		}
+
 		if (brwevent.type == "change")
 		{
-			this.row.validated = false;
-			this.distribute(inst,inst.getValue());
-			this.block.distribute(this,inst.getValue());
-
-			if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
-			{
-				inst.focus();
-				inst.valid = false;
-				this.valid = false;
-			}
-			else
-			{
-				this.valid = true;
-			}
-
+			this.change(inst,brwevent);
 			return;
 		}
 
@@ -245,5 +238,26 @@ export class Field
 				else fi.setValue(value);
 			}
 		});
+	}
+
+	private async change(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
+	{
+		this.row.validated = false;
+		let event:Event = brwevent.event;
+		this.distribute(inst,inst.getValue());
+		this.block.distribute(this,inst.getValue());
+
+		if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
+		{
+			inst.focus();
+			inst.valid = false;
+			this.valid = false;
+			return(false);
+		}
+		else
+		{
+			this.valid = true;
+			return(true);
+		}
 	}
 }

@@ -30,6 +30,8 @@ export class BrowserEvent
     public copy:boolean = false;
     public paste:boolean = false;
 	public focus:boolean = false;
+    public accept:boolean = false;
+    public cancel:boolean = false;
     public ignore:boolean = false;
     public prevent:boolean = false;
     public modified:boolean = false;
@@ -89,7 +91,9 @@ export class BrowserEvent
         this.copy = false;
         this.paste = false;
         this.shift = false;
-        this.ignore = false;
+		this.accept = false;
+		this.cancel = false;
+		this.ignore = false;
         this.prevent = false;
         this.modified = false;
         this.mouseinit = false;
@@ -188,6 +192,8 @@ export class BrowserEvent
         this.mark = false;
         this.copy = false;
         this.paste = false;
+		this.accept = false;
+		this.cancel = false;
 		this.navigation = false;
         this.printable$ = false;
 
@@ -207,17 +213,17 @@ export class BrowserEvent
                         this.key = this.event.key;
                     }
                 }
+                if (this.event.key == "Enter") this.accept = true;
+                if (this.event.key == "Escape") this.cancel = true;
 
 				if (this.key == "Backspace") this.ignore = false;
                 if (this.event.key == "PageUp") this.ignore = false;
                 if (this.event.key == "PageDown") this.ignore = false;
-				
+
                 if (this.event.key == "ArrowLeft") this.ignore = false;
                 if (this.event.key == "ArrowRight") this.ignore = false;
 
                 if (this.event.key == "Tab") this.navigation = true;
-                if (this.event.key == "Enter") this.navigation = true;
-                if (this.event.key == "Escape") this.navigation = true;
 
                 if (this.event.key == "PageUp") this.navigation = true;
                 if (this.event.key == "PageDown") this.navigation = true;

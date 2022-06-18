@@ -217,7 +217,7 @@ export class Block
 
 	public async validateField(event:Event, field:string, value:any) : Promise<boolean>
 	{
-		if (!await this.fire(EventType.WhenValidateField,event))
+		if (!await this.fire(EventType.ValidateField,event))
 			return(false);
 
 		this.wrapper.setValue(this.record,field,value);
@@ -231,7 +231,7 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		return(this.fire(EventType.WhenValidateRecord,null))
+		return(this.fire(EventType.ValidateRecord,null))
 	}
 
 	public async setCurrentRecord(delta:number) : Promise<boolean>

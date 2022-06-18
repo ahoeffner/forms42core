@@ -327,8 +327,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.modified = true;
 		}
 
-		if (this.event.mark)
-			buble = false;
+		if (this.event.accept || this.event.cancel)
+			buble = true;
 
         if (buble)
 			this.eventhandler.handleEvent(this.event);
@@ -348,20 +348,32 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (pos >= value.length) value += this.event.key;
 			else value = value.substring(0,pos) + this.event.key + value.substring(pos);
 
-			let cap:boolean = true;
-			let initcap:string = "";
+			if (this.cse == Case.upper)
+				value = value.toLocaleUpperCase();
 
-			for (let i = 0; i < value.length; i++)
+			if (this.cse == Case.lower)
+				value = value.toLocaleLowerCase();
+
+			if (this.cse == Case.initcap)
 			{
-				if (!cap) initcap += value.charAt(i);
-				else initcap += value.charAt(i).toLocaleUpperCase();
+				let cap:boolean = true;
+				let initcap:string = "";
 
-				cap = false;
-				if (value.charAt(i) == ' ')
-					cap = true;
+				for (let i = 0; i < value.length; i++)
+				{
+					if (!cap) initcap += value.charAt(i);
+					else initcap += value.charAt(i).toLocaleUpperCase();
+
+					cap = false;
+					if (value.charAt(i) == ' ')
+						cap = true;
+				}
+
+				value = initcap;
 			}
 
-			this.setElementValue(initcap);
+
+			this.setElementValue(value);
 			this.setPosition(pos+1);
 		}
 

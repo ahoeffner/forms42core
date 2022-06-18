@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
@@ -22,12 +23,14 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private properties:HTMLProperties = null;
 	private eventhandler:FieldEventHandler = null;
 
-	private element:HTMLSelectElement = null;
+	private value$:string = null;
+	private element:HTMLInputElement = null;
+	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
-	public create(eventhandler:FieldEventHandler) : HTMLSelectElement
+	public create(eventhandler:FieldEventHandler) : HTMLInputElement
 	{
-		this.element = document.createElement("select");
+		this.element = document.createElement("input");
 		this.eventhandler = eventhandler;
 		return(this.element);
 	}
@@ -42,22 +45,34 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		throw new Error("Method not implemented.");
+		if (this.datatype == DataType.integer)
+			return(+this.value$);
+
+		if (this.datatype == DataType.decimal)
+			return(+this.value$);
+
+		return(this.value$);
 	}
 
 	public setValue(value:any) : boolean
 	{
-		throw new Error("Method not implemented.");
+        if (value == null)
+			value = "";
+
+		this.value$ = value;
+		this.element.value = value;
+		console.log("setval "+value);
+		return(true);
 	}
 
 	public getStringValue() : string
 	{
-		throw new Error("Method not implemented.");
+		return(this.getValue());
 	}
 
 	public setStringValue(value:string) : void
 	{
-		throw new Error("Method not implemented.");
+		this.setValue(value);
 	}
 
 	public getElement() : HTMLElement
@@ -112,7 +127,11 @@ export class Radio implements FieldImplementation, EventListenerObject
 			buble = true;
 
 		if (this.event.type == "change")
+		{
 			buble = true;
+			this.value$ = this.element.value;
+			console.log("change "+this.element.value)
+		}
 
 		if (this.event.accept || this.event.cancel)
 			buble = true;

@@ -68,11 +68,9 @@ export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
 
 class State
 {
-    root:HTMLElement;
-    appl:Application;
-    framework:Framework;
-
-	static baseurl:string = null;
+	static baseurl:string;
+    static root:HTMLElement;
+    static appl:Application;
 
     static components:Map<string,Class<any>> =
         new Map<string,Class<any>>();
@@ -101,25 +99,25 @@ export class FormsModule
     {
 		KeyMapping.init();
         FormsModule.instance = this;
-        this.state.appl = new Application(this);
+        State.appl = new Application(this);
     }
 
     public getRootElement() : HTMLElement
     {
-        return(this.state.root);
+        return(State.root);
     }
 
     public setRootElement(root:HTMLElement) : void
     {
-        this.state.root = root;
+        State.root = root;
     }
 
     public getApplication() : Application
     {
-        return(this.state.appl);
+        return(State.appl);
     }
 
-    public addComponent(clazz:Class<any>, path?:string) : void
+    public mapComponent(clazz:Class<any>, path?:string) : void
     {
         if (path == null) path = clazz.name.toLowerCase();
         State.components.set(path,clazz);
@@ -133,18 +131,25 @@ export class FormsModule
     public parse(doc?:Element) : void
     {
         if (doc == null) doc = document.body;
-        this.state.framework = Framework.parse(this,doc);
-        let root:HTMLElement = this.state.framework.getRoot();
+        let frmwrk:Framework = Framework.parse(this,doc);
 
-        if (this.state.root == null)
-            this.state.root = root;
-
-		if (this.state.root == null)
-            this.state.root = document.body;
+        let root:HTMLElement = frmwrk.getRoot();
+        if (State.root == null) State.root = root;
+		if (State.root == null) State.root = document.body;
     }
 
 	public updateKeyMap(map:Class<KeyMap>) : void
 	{
 		KeyMapping.update(map);
+	}
+
+	public autoopen() : boolean
+	{
+		let url:string = window.location.pathname;
+		let root:string = State.baseurl != null ? State.baseurl : "/";
+
+		State.components
+
+		return(true);
 	}
 }

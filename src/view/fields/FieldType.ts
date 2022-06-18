@@ -11,6 +11,7 @@
  */
 
 import { Class } from "../../types/Class.js";
+import { Radio } from "./implementations/Radio.js";
 import { Input } from "./implementations/Input.js";
 import { Select } from "./implementations/Select.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
@@ -28,15 +29,20 @@ export class FieldTypes
 			new Map<string,Class<FieldImplementation>>();
 
 		map.set("input",Input);
+		map.set("radio",Radio);
 		map.set("select",Select);
 
 		return(map);
 	}
 
-	public static get(tag:string) : Class<FieldImplementation>
+	public static get(tag:string, type?:string) : Class<FieldImplementation>
 	{
 		let impl:Class<FieldImplementation> = FieldTypes.implementations.get(tag.toLowerCase());
-		if (impl == null) impl = Input;
+		if (impl == null) return(Input);
+
+		if (impl == Input && type?.toLowerCase() == "radio")
+			return(Radio);
+
 		return(impl);
 	}
 }

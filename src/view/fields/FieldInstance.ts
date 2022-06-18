@@ -35,7 +35,7 @@ export class FieldInstance implements FieldEventHandler
 		this.properties$ = FieldProperties.consume(tag);
 		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);
 
-		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName);
+		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName,this.properties$.getAttribute("type"));
 		this.impl = new clazz();
 
 		this.impl.create(this);

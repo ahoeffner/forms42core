@@ -213,6 +213,11 @@ export class HTMLProperties
 		return(this.attrs);
 	}
 
+	public getAttribute(attr:string) : string
+	{
+		return(this.attrs.get(attr.toLowerCase()));
+	}
+
 	public setAttribute(attr:string, value:any) : void
 	{
 		let val:string = "";

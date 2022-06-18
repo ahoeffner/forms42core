@@ -27,9 +27,19 @@ function isComponent(object: any): object is Component
     return('path' in object && 'class' in object);
 }
 
-export const ModuleDefinition = (components:(Class<any> | Component)[]) =>
+export const BaseURL = (url:string) =>
 {
-    function define(_comp_:Class<any>)
+    function define(_comp_:Class<FormsModule>)
+	{
+		State.baseurl = url;
+	}
+
+	return(define);
+}
+
+export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
+{
+    function define(_comp_:Class<FormsModule>)
     {
         components.forEach(element =>
         {
@@ -62,6 +72,8 @@ class State
     appl:Application;
     framework:Framework;
 
+	static baseurl:string = null;
+
     static components:Map<string,Class<any>> =
         new Map<string,Class<any>>();
 }
@@ -77,7 +89,6 @@ export class FormsModule
             FormsModule.instance = new FormsModule();
         return(FormsModule.instance);
     }
-
 
 	public static platform() : string
 	{

@@ -11,6 +11,7 @@
  */
 
 import { Tag } from "./Tag.js";
+import { Logger, Type } from "../Logger.js";
 import { Properties } from "../Properties.js";
 
 
@@ -20,6 +21,7 @@ export class Foreach implements Tag
     {
 		let tags:HTMLElement[] = [];
 		let expr:string = tag.getAttribute(attr);
+		Logger.log(Type.htmlparser,"Execute custom tag 'foreach' on: "+tag.tagName);
 
 		if (expr == null)
 		{

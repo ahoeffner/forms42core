@@ -87,8 +87,6 @@ export class Field
 
 	public get valid() : boolean
 	{
-		console.log(this.name+"["+this.row.rownum+"] valid "+this.valid$+" "+this.getValue());
-
 		if (this.valid$ && this.getValue() == null)
 		{
 			let valid:boolean = true;

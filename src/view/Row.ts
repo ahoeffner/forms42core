@@ -93,10 +93,11 @@ export class Row
 		if (this.validated)
 			return(true);
 
+		let valid:boolean = true;
 		let fields:Field[] = this.getFields();
 
 		for (let i = 0; i < fields.length; i++)
-			if (!fields[i].valid) return(false);
+			if (!fields[i].valid) valid = false;
 
 		if (this.rownum >= 0)
 		{
@@ -107,7 +108,7 @@ export class Row
 				fields = curr.getFields();
 
 				for (let i = 0; i < fields.length; i++)
-					if (!fields[i].valid) return(false);
+					if (!fields[i].valid) valid = false;
 			}
 		}
 		else
@@ -115,11 +116,11 @@ export class Row
 			fields = this.block.getCurrentRow().getFields();
 
 			for (let i = 0; i < fields.length; i++)
-				if (!fields[i].valid) return(false);
+				if (!fields[i].valid) valid = false;
 		}
 
-		this.validated = true;
-		return(true);
+		this.validated = valid;
+		return(valid);
 	}
 
 	public addField(field:Field) : void

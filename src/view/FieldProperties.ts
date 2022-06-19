@@ -141,9 +141,12 @@ export class FieldProperties
 
 	public static setReadOnly(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
 	{
-		if (tag instanceof HTMLInputElement) tag.readOnly = flag;
+		let ignore:boolean = true;
 
-		if (tag instanceof HTMLSelectElement)
+		if (tag instanceof HTMLInputElement)
+			tag.readOnly = flag;
+
+		if (tag instanceof HTMLSelectElement && !ignore)
 		{
 			if (flag)
 			{

@@ -24,6 +24,7 @@ export class Select implements FieldImplementation, EventListenerObject
 	private eventhandler:FieldEventHandler = null;
 
 	private value$:string = null;
+	private multiple:boolean = false;
 	private element:HTMLSelectElement = null;
 	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
@@ -58,16 +59,35 @@ export class Select implements FieldImplementation, EventListenerObject
 	{
 		this.value$ = value;
 		let found:boolean = false;
-		this.element.options.selectedIndex = 0;
+		let valstr:string = (value+"").trim();
+		this.element.options.selectedIndex = -1;
+		
+		let values:string[] = [];
+		if (valstr.length > 0) values.push(valstr);
+
+		if (this.multiple && valstr.includes(","))
+		{
+			values = [];
+			let opts:string[] = valstr.split(",");
+
+			opts.forEach((opt) =>
+			{
+				opt = opt.trim();
+				if (opt.length > 0) values.push(opt);
+			})
+		}
 
 		for (let i = 0; i < this.element.options.length; i++)
 		{
-			if (this.element.options.item(i).value == value)
+			if (values.indexOf(this.element.options.item(i).value) >= 0)
 			{
 				found = true;
-				this.element.options.selectedIndex = i;
+				this.element.options.item(i).selected = true;
 			}
 		}
+
+		if (!found)
+			this.element.options.selectedIndex = 0;
 
 		return(found);
 	}
@@ -137,7 +157,10 @@ export class Select implements FieldImplementation, EventListenerObject
 			if (attr.toLowerCase() == "decimal")
 				this.datatype = DataType.decimal;
 
-				this.element.setAttribute(attr,value);
+			if (attr.toLowerCase() == "multiple")
+				this.multiple = true;
+
+			this.element.setAttribute(attr,value);
 		});
 	}
 
@@ -155,15 +178,13 @@ export class Select implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 		{
 			buble = true;
-			let idx:number = this.element.selectedIndex;
-			this.value$ = this.element.options.item(idx).value;
+			this.value$ = this.getSelected();
 		}
 
 		if (this.event.accept || this.event.cancel)
 		{
 			buble = true;
-			let idx:number = this.element.selectedIndex;
-			this.value$ = this.element.options.item(idx).value;
+			this.value$ = this.getSelected();
 		}
 
 		if (this.event.type.startsWith("mouse"))
@@ -185,6 +206,29 @@ export class Select implements FieldImplementation, EventListenerObject
 
 		if (buble)
 			this.eventhandler.handleEvent(this.event);
+	}
+
+	private getSelected() : string
+	{
+		let values:string = "";
+
+		for (let i = 0; i < this.element.options.length; i++)
+		{
+			let option:HTMLOptionElement = this.element.options.item(i);
+
+			if (option.selected)
+			{
+				if (values.length > 0)
+					values += ", ";
+
+				values += option.value;
+			}
+		}
+
+		if (values.length == 0)
+			values = null;
+
+		return(values);
 	}
 
     private addEvents(element:HTMLElement) : void

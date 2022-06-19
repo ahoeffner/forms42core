@@ -126,7 +126,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 			if (attr.toLowerCase() == "decimal")
 				this.datatype = DataType.decimal;
 
-				this.element.setAttribute(attr,value);
+			this.element.setAttribute(attr,value);
 		});
 	}
 

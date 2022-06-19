@@ -87,6 +87,24 @@ export class Field
 
 	public get valid() : boolean
 	{
+		console.log(this.name+"["+this.row.rownum+"] valid "+this.valid$+" "+this.getValue());
+
+		if (this.valid$ && this.getValue() == null)
+		{
+			let valid:boolean = true;
+
+			this.instances.forEach((inst) =>
+			{
+				if (inst.properties.required)
+				{
+					valid = false;
+					inst.valid = false;
+				}
+			})
+
+			if (!valid)	return(false);
+		}
+
 		return(this.valid$);
 	}
 
@@ -199,8 +217,6 @@ export class Field
 
 			return;
 		}
-
-		let field:string = this.name+"["+this.row.rownum+"]";
 
 		if (brwevent.type == "change")
 		{

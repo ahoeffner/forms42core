@@ -231,7 +231,7 @@ export class Field
 
 		if (brwevent.modified)
 		{
-			if (!this.valid) inst.valid = true;
+			inst.valid = true;
 			let value:string = inst.getStringValue();
 
 			this.distribute(inst,value);

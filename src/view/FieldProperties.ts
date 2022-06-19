@@ -73,6 +73,15 @@ export class FieldProperties
 			props.setValidValues(FieldProperties.getSelectOptions(tag));
 		}
 
+		else
+
+		{
+			props.enabled = true;
+			props.readonly = false;
+			props.required = false;
+			props.hidden = tag.hidden;
+		}
+
 		for (let cls of tag.classList.values())
 			props.setClass(cls);
 

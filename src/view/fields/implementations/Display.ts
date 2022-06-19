@@ -24,14 +24,13 @@ export class Display implements FieldImplementation, EventListenerObject
 	private eventhandler:FieldEventHandler = null;
 
 	private value$:string = null;
-	private checked:string = null;
-	private element:HTMLInputElement = null;
+	private element:HTMLElement = null;
 	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
-	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
+	public create(eventhandler:FieldEventHandler, tag:string) : HTMLElement
 	{
-		this.element = document.createElement("input");
+		this.element = document.createElement(tag);
 		this.eventhandler = eventhandler;
 		return(this.element);
 	}
@@ -40,7 +39,6 @@ export class Display implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		properties.apply(this.element);
-		this.checked = properties.value;
 		this.setAttributes(properties.getAttributes());
 		if (properties.init) this.addEvents(this.element);
 	}
@@ -59,9 +57,16 @@ export class Display implements FieldImplementation, EventListenerObject
 	public setValue(value:any) : boolean
 	{
 		this.value$ = value;
-		let comp:string = "";
-		if (value != null) comp = value+"";
-		this.element.checked = (comp == this.checked);
+
+		this.element.textContent = "";
+		this.element.firstChild?.remove;
+
+		if (value != null)
+		{
+			if (value instanceof HTMLElement) this.element.appendChild(value);
+			else this.element.textContent = value;
+		}
+
 		return(true);
 	}
 
@@ -112,21 +117,21 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public setAttributes(attributes:Map<string,string>) : void
 	{
-        attributes.forEach((value,attr) =>
+		this.datatype = DataType.string;
+
+        attributes.forEach((_value,attr) =>
         {
-			if (attr.toLowerCase() == "date")
+			if (attr == "date")
 				this.datatype = DataType.date;
 
-			if (attr.toLowerCase() == "datetime")
+			if (attr == "datetime")
 				this.datatype = DataType.datetime;
 
-			if (attr.toLowerCase() == "integer")
+			if (attr == "integer")
 				this.datatype = DataType.integer;
 
-			if (attr.toLowerCase() == "decimal")
+			if (attr == "decimal")
 				this.datatype = DataType.decimal;
-
-			this.element.setAttribute(attr,value);
 		});
 	}
 
@@ -140,15 +145,6 @@ export class Display implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "blur")
 			buble = true;
-
-		if (this.event.type == "change")
-		{
-			buble = true;
-			this.value$ = this.element.value;
-
-			if (!this.element.checked)
-				this.value$ = null;
-		}
 
 		if (this.event.accept || this.event.cancel)
 			buble = true;

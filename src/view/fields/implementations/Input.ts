@@ -155,51 +155,56 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public setAttributes(attributes:Map<string,any>) : void
     {
+		this.int = false;
+		this.dec = false;
+		this.pattern = null;
+		this.cse = Case.mixed;
+		this.placeholder = null;
+		this.datatype = DataType.string;
+
 		this.type = attributes.get("type");
 		if (this.type == null) this.type = "text"
 
         attributes.forEach((value,attr) =>
         {
-			if (attr.toLowerCase() == "upper")
+			if (attr == "upper")
 				this.cse = Case.upper;
 
-			if (attr.toLowerCase() == "lower")
+			if (attr == "lower")
 				this.cse = Case.lower;
 
-			if (attr.toLowerCase() == "initcap")
+			if (attr == "initcap")
 				this.cse = Case.initcap;
 
-			if (attr.toLowerCase() == "integer")
+			if (attr == "integer")
 			{
 				this.int = true;
 				this.datatype = DataType.integer;
 			}
 
-			if (attr.toLowerCase() == "decimal")
+			if (attr == "decimal")
 			{
 				this.dec = true;
 				this.datatype = DataType.decimal;
 			}
 
-			if (attr.toLowerCase() == "date")
+			if (attr == "date")
 			{
 				this.datatype = DataType.date;
 				this.pattern = new Pattern("{##} - {##} - {####}");
 			}
 
-			if (attr.toLowerCase() == "datetime")
+			if (attr == "datetime")
 			{
 				this.datatype = DataType.datetime;
 				this.pattern = new Pattern("{##} - {##} - {####}");
 			}
 
-			if (attr.toLowerCase() == "format")
+			if (attr == "format")
 				this.pattern = new Pattern(value);
 
-			if (attr.toLowerCase() == "placeholder")
+			if (attr == "placeholder")
 				this.placeholder = value;
-
-			this.element.setAttribute(attr,value);
         });
 
 		this.element.removeAttribute("placeholder");

@@ -61,7 +61,7 @@ export class Select implements FieldImplementation, EventListenerObject
 		let found:boolean = false;
 		let valstr:string = (value+"").trim();
 		this.element.options.selectedIndex = -1;
-		
+
 		let values:string[] = [];
 		if (valstr.length > 0) values.push(valstr);
 
@@ -143,24 +143,25 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public setAttributes(attributes:Map<string,string>) : void
 	{
-        attributes.forEach((value,attr) =>
+		this.multiple = false;
+		this.datatype = DataType.string;
+
+        attributes.forEach((_value,attr) =>
         {
-			if (attr.toLowerCase() == "date")
+			if (attr == "date")
 				this.datatype = DataType.date;
 
-			if (attr.toLowerCase() == "datetime")
+			if (attr == "datetime")
 				this.datatype = DataType.datetime;
 
-			if (attr.toLowerCase() == "integer")
+			if (attr == "integer")
 				this.datatype = DataType.integer;
 
-			if (attr.toLowerCase() == "decimal")
+			if (attr == "decimal")
 				this.datatype = DataType.decimal;
 
-			if (attr.toLowerCase() == "multiple")
+			if (attr == "multiple")
 				this.multiple = true;
-
-			this.element.setAttribute(attr,value);
 		});
 	}
 

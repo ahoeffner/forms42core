@@ -112,21 +112,21 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public setAttributes(attributes:Map<string,string>) : void
 	{
-        attributes.forEach((value,attr) =>
+		this.datatype = DataType.string;
+
+		attributes.forEach((_value,attr) =>
         {
-			if (attr.toLowerCase() == "date")
+			if (attr == "date")
 				this.datatype = DataType.date;
 
-			if (attr.toLowerCase() == "datetime")
+			if (attr == "datetime")
 				this.datatype = DataType.datetime;
 
-			if (attr.toLowerCase() == "integer")
+			if (attr == "integer")
 				this.datatype = DataType.integer;
 
-			if (attr.toLowerCase() == "decimal")
+			if (attr == "decimal")
 				this.datatype = DataType.decimal;
-
-			this.element.setAttribute(attr,value);
 		});
 	}
 

@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
@@ -22,12 +23,15 @@ export class Display implements FieldImplementation, EventListenerObject
 	private properties:HTMLProperties = null;
 	private eventhandler:FieldEventHandler = null;
 
-	private element:HTMLSelectElement = null;
+	private value$:string = null;
+	private checked:string = null;
+	private element:HTMLInputElement = null;
+	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
-	public create(eventhandler:FieldEventHandler) : HTMLSelectElement
+	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{
-		this.element = document.createElement("select");
+		this.element = document.createElement("input");
 		this.eventhandler = eventhandler;
 		return(this.element);
 	}
@@ -36,28 +40,39 @@ export class Display implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		properties.apply(this.element);
+		this.checked = properties.value;
 		this.setAttributes(properties.getAttributes());
 		if (properties.init) this.addEvents(this.element);
 	}
 
 	public getValue() : any
 	{
-		throw new Error("Method not implemented.");
+		if (this.datatype == DataType.integer)
+			return(+this.value$);
+
+		if (this.datatype == DataType.decimal)
+			return(+this.value$);
+
+		return(this.value$);
 	}
 
 	public setValue(value:any) : boolean
 	{
-		throw new Error("Method not implemented.");
+		this.value$ = value;
+		let comp:string = "";
+		if (value != null) comp = value+"";
+		this.element.checked = (comp == this.checked);
+		return(true);
 	}
 
 	public getStringValue() : string
 	{
-		throw new Error("Method not implemented.");
+		return(this.getValue());
 	}
 
 	public setStringValue(value:string) : void
 	{
-		throw new Error("Method not implemented.");
+		this.setValue(value);
 	}
 
 	public getElement() : HTMLElement
@@ -94,10 +109,25 @@ export class Display implements FieldImplementation, EventListenerObject
 			}
 	}
 
+
 	public setAttributes(attributes:Map<string,string>) : void
 	{
         attributes.forEach((value,attr) =>
-        {this.element.setAttribute(attr,value);});
+        {
+			if (attr.toLowerCase() == "date")
+				this.datatype = DataType.date;
+
+			if (attr.toLowerCase() == "datetime")
+				this.datatype = DataType.datetime;
+
+			if (attr.toLowerCase() == "integer")
+				this.datatype = DataType.integer;
+
+			if (attr.toLowerCase() == "decimal")
+				this.datatype = DataType.decimal;
+
+				this.element.setAttribute(attr,value);
+		});
 	}
 
 	public handleEvent(event:Event) : void
@@ -112,7 +142,13 @@ export class Display implements FieldImplementation, EventListenerObject
 			buble = true;
 
 		if (this.event.type == "change")
+		{
 			buble = true;
+			this.value$ = this.element.value;
+
+			if (!this.element.checked)
+				this.value$ = null;
+		}
 
 		if (this.event.accept || this.event.cancel)
 			buble = true;

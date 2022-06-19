@@ -109,6 +109,9 @@ export class FieldProperties
 			tag.readOnly = props.readonly;
 			tag.required = props.required;
 
+			if (props.getAttribute("type")?.toLowerCase() == "checkbox")
+				tag.setAttribute("value",props.value);
+
 			if (props.getAttribute("type")?.toLowerCase() == "radio")
 				tag.setAttribute("value",props.value);
 		}
@@ -143,7 +146,22 @@ export class FieldProperties
 
 		if (tag instanceof HTMLSelectElement)
 		{
-			let idx:number = tag.options.selectedIndex;
+			if (flag)
+			{
+				let idx:number = tag.options.selectedIndex;
+				if (idx < 0) idx = 0;
+
+				let option:HTMLOptionElement = tag.options.item(idx);
+
+				while(tag.options.length > 0)
+					tag.options.remove(0);
+
+				tag.options.add(option);
+			}
+			else
+			{
+				this.setSelectOptions(tag,props);
+			}
 		}
 	}
 

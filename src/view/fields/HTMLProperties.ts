@@ -100,6 +100,11 @@ export class HTMLProperties
 		return(this.tagname$);
 	}
 
+	public set tag(tag:string)
+	{
+		this.tagname$ = tag?.toLowerCase();
+	}
+
 	public set value(value:string)
 	{
 		this.value$ = null;
@@ -115,11 +120,6 @@ export class HTMLProperties
 	public get value() : string
 	{
 		return(this.value$);
-	}
-
-	public set tag(tag:string)
-	{
-		this.tagname$ = tag?.toLowerCase();
 	}
 
 	public get init() : boolean

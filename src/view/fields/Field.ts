@@ -200,6 +200,8 @@ export class Field
 			return;
 		}
 
+		let field:string = this.name+"["+this.row.rownum+"]";
+
 		if (brwevent.type == "change")
 		{
 			let value:any = inst.getValue();
@@ -216,8 +218,11 @@ export class Field
 		if (brwevent.modified)
 		{
 			if (!this.valid) inst.valid = true;
-			this.distribute(inst,inst.getStringValue());
-			this.block.distribute(this,inst.getStringValue());
+			let value:string = inst.getStringValue();
+
+			this.distribute(inst,value);
+			this.block.distribute(this,value);
+
 			await this.mdlblk.onEditing(event);
 			return;
 		}

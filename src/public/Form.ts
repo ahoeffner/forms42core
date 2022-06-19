@@ -89,10 +89,8 @@ export class Form implements CanvasComponent
 		return(null);
 	}
 
-	public getFieldInstance(element:HTMLElement) : FieldInstance
+	public getFieldInstance(id:string) : FieldInstance
 	{
-		let inst:ViewInstance = View.getForm(this)?.getInstance(element);
-		if (inst != null) return(new FieldInstance(inst));
 		return(null);
 	}
 

@@ -29,6 +29,7 @@ enum Case
 
 export class Input implements FieldImplementation, EventListenerObject
 {
+	private type:string = null;
 	private before:string = "";
 	private initial:string = "";
     private int:boolean = false;
@@ -44,7 +45,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
-	public create(eventhandler:FieldEventHandler) : HTMLInputElement
+	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{
 		this.element = document.createElement("input");
 		this.eventhandler = eventhandler;
@@ -106,6 +107,12 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (!this.validate(value))
 			return(false);
 
+		if (this.pattern != null && value.length > 0)
+		{
+			this.pattern.setValue(value);
+			value = this.pattern.getValue();
+		}
+
 		this.before = value;
 		this.initial = value;
 
@@ -137,6 +144,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		this.before = value;
 		this.initial = value;
+
 		this.element.value = value;
 	}
 
@@ -147,8 +155,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public setAttributes(attributes:Map<string,any>) : void
     {
-        let type:string = attributes.get("type");
-		if (type == null) type = "text";
+		this.type = attributes.get("type");
+		if (this.type == null) this.type = "text"
 
         attributes.forEach((value,attr) =>
         {
@@ -162,18 +170,26 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.cse = Case.initcap;
 
 			if (attr.toLowerCase() == "integer")
+			{
 				this.int = true;
+				this.datatype = DataType.integer;
+			}
 
 			if (attr.toLowerCase() == "decimal")
+			{
 				this.dec = true;
+				this.datatype = DataType.decimal;
+			}
 
 			if (attr.toLowerCase() == "date")
 			{
+				this.datatype = DataType.date;
 				this.pattern = new Pattern("{##} - {##} - {####}");
 			}
 
 			if (attr.toLowerCase() == "datetime")
 			{
+				this.datatype = DataType.datetime;
 				this.pattern = new Pattern("{##} - {##} - {####}");
 			}
 
@@ -186,11 +202,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.element.setAttribute(attr,value);
         });
 
-		if (this.int) this.datatype = DataType.integer;
-		if (this.dec) this.datatype = DataType.decimal;
-
 		this.element.removeAttribute("placeholder");
-        this.element.setAttribute("type",type);
     }
 
     public handleEvent(event:Event) : void
@@ -198,7 +210,6 @@ export class Input implements FieldImplementation, EventListenerObject
         let buble:boolean = false;
         this.event.setEvent(event);
 		this.event.modified = false;
-        let pos:number = this.getPosition();
 
         if (this.event.type == "focus")
         {
@@ -235,6 +246,13 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (change)
 			{
 				this.event.type = "change";
+
+				if (this.pattern != null)
+				{
+					this.pattern.setValue(this.getElementValue());
+					this.setElementValue(this.pattern.getValue());
+				}
+
 				this.eventhandler.handleEvent(this.event);
 				this.event.type = "blur";
 			}
@@ -245,9 +263,6 @@ export class Input implements FieldImplementation, EventListenerObject
             if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
         }
-
-        if (this.event.mouseinit)
-                this.clearSelection(pos);
 
         if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
             this.element.setAttribute("placeholder",this.placeholder);
@@ -336,6 +351,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private xcase() : boolean
 	{
+		if (this.type == "range")
+			return(true);
+
 		if (this.event.type == "keydown" && this.event.isPrintableKey)
 		{
 			if (this.event.ctrlkey != null || this.event.funckey != null)
@@ -386,6 +404,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
     private xint() : boolean
     {
+		if (this.type == "range")
+			return(true);
+
         let pos:number = this.getPosition();
 
         if (this.event.type == "keydown")
@@ -417,6 +438,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
     private xdec() : boolean
     {
+		if (this.type == "range")
+			return(true);
+
         let pos:number = this.getPosition();
 
         if (this.event.type == "keydown")
@@ -455,6 +479,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
     private xfixed() : boolean
     {
+		if (this.type == "range")
+			return(true);
+
         let prevent:boolean = this.event.prevent;
 
         if (this.event.prevent)
@@ -510,6 +537,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
 			this.clear();
+
+		if (this.event.mouseinit)
+			this.clearSelection(pos);
 
         if (this.event.type == "mouseup")
         {

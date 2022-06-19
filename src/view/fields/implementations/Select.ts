@@ -28,7 +28,7 @@ export class Select implements FieldImplementation, EventListenerObject
 	private datatype:DataType = DataType.string;
     private event:BrowserEvent = new BrowserEvent();
 
-	public create(eventhandler:FieldEventHandler) : HTMLSelectElement
+	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLSelectElement
 	{
 		this.element = document.createElement("select");
 		this.eventhandler = eventhandler;
@@ -125,13 +125,19 @@ export class Select implements FieldImplementation, EventListenerObject
 	{
         attributes.forEach((value,attr) =>
         {
+			if (attr.toLowerCase() == "date")
+				this.datatype = DataType.date;
+
+			if (attr.toLowerCase() == "datetime")
+				this.datatype = DataType.datetime;
+
 			if (attr.toLowerCase() == "integer")
 				this.datatype = DataType.integer;
 
 			if (attr.toLowerCase() == "decimal")
 				this.datatype = DataType.decimal;
 
-			this.element.setAttribute(attr,value);
+				this.element.setAttribute(attr,value);
 		});
 	}
 

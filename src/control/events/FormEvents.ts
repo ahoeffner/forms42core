@@ -51,6 +51,11 @@ export class FormEvent
 		return(new FormEvent(EventType.Key,form,cause,block,key));
 	}
 
+	public static newMouseEvent(form:Form, block:string, cause:Event) : FormEvent
+	{
+		return(null);
+	}
+
 	private block$:Block = null;
 	private fieldname$:string = null;
 	private instance$:FieldInstance = null;

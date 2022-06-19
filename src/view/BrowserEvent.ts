@@ -107,6 +107,7 @@ export class BrowserEvent
     public get isMouseEvent() : boolean
     {
         if (this.event.type == "wheel") return(true);
+        if (this.event.type.includes("click")) return(true);
         return(this.event.type.startsWith("mouse"));
     }
 

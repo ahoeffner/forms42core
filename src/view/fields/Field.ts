@@ -17,6 +17,7 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
+import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 
 
@@ -241,6 +242,12 @@ export class Field
 			return;
 		}
 
+		if (brwevent.isMouseEvent)
+		{
+			let mevent:FormEvent = FormEvent.newMouseEvent(this.block.form.parent, this.block.name, brwevent.event);
+			await FormEvents.raise(mevent);
+		}
+
 		if (brwevent.type.startsWith("key") && !brwevent.navigation)
 		{
 			if (brwevent.ctrlkey != null || brwevent.funckey != null)
@@ -297,6 +304,7 @@ export class Field
 		}
 		else
 		{
+			inst.valid = true;
 			this.valid = true;
 			return(true);
 		}

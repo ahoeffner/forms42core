@@ -124,7 +124,6 @@ export class FieldProperties
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
 			FieldProperties.setSelectOptions(tag,props);
-			FieldProperties.setReadOnly(tag,props,props.readonly);
 		}
 	}
 
@@ -148,19 +147,37 @@ export class FieldProperties
 		{
 			if (flag)
 			{
-				let idx:number = tag.options.selectedIndex;
-				if (idx < 0) idx = 0;
+				let options:HTMLOptionElement[] = [];
 
-				let option:HTMLOptionElement = tag.options.item(idx);
+				for (let i = 0; i < tag.options.length; i++)
+				{
+					let option:HTMLOptionElement = tag.options.item(i);
+					if (option.selected && option.value.length > 0) options.push(option);
+				}
 
 				while(tag.options.length > 0)
 					tag.options.remove(0);
 
-				tag.options.add(option);
+				if (options.length == 0)
+					options.push(new Option());
+
+				for (let i = 0; i < options.length; i++)
+					tag.options.add(options[i]);
 			}
 			else
 			{
-				this.setSelectOptions(tag,props);
+				let values:string[] = [];
+
+				for (let i = 0; i < tag.options.length; i++)
+					values.push(tag.options.item(i).value);
+
+				FieldProperties.setSelectOptions(tag,props);
+
+				for (let i = 0; i < tag.options.length; i++)
+				{
+					let option:HTMLOptionElement = tag.options.item(i);
+					if (values.includes(option.value)) option.selected = true;
+				}
 			}
 		}
 	}
@@ -201,31 +218,15 @@ export class FieldProperties
 
 		let options:HTMLOptionElement[] = [];
 
-		if (props.getValidValues() instanceof Set)
+		props.getValidValues().forEach((value:string,label:string) =>
 		{
-			props.getValidValues().forEach((value:string) =>
-			{
-				let option:HTMLOptionElement = new HTMLOptionElement();
+			let option:HTMLOptionElement = new Option();
 
-				option.label = value;
-				option.value = value;
+			option.label = label;
+			option.value = value;
 
-				options.push(option);
-			})
-		}
-
-		if (props.getValidValues() instanceof Map)
-		{
-			props.getValidValues().forEach((value:string,label:string) =>
-			{
-				let option:HTMLOptionElement = new Option();
-
-				option.label = label;
-				option.value = value;
-
-				options.push(option);
-			})
-		}
+			options.push(option);
+		})
 
 		options.forEach((option) => tag.options.add(option));
 	}

@@ -113,7 +113,7 @@ export class Block
 	public addInstance(inst:FieldInstance) : void
 	{
 		this.properties.setDefault(inst,inst.properties);
-		
+
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
 	}
@@ -127,6 +127,12 @@ export class Block
 			case KeyMap.nextfield :
 			{
 				next = inst.field.row.nextField(inst)
+				break;
+			}
+
+			case KeyMap.prevfield :
+			{
+				next = inst.field.row.prevField(inst)
 				break;
 			}
 		}

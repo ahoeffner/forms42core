@@ -83,9 +83,6 @@ export class BrowserEvent
     public reset() : void
     {
         this.key = null;
-        this.alt = false;
-        this.meta = false;
-        this.ctrl = false;
         this.mark = false;
         this.undo = false;
         this.copy = false;
@@ -204,15 +201,9 @@ export class BrowserEvent
 
                 this.useq = this.dseq;
 
-				if (this.event.key == "Tab")
-					console.log("Tab")
-
-				if (this.event.key == "ArrowUp")
-					console.log("ArrowUp")
-
                 if (!this.alt && !this.ctrl && !this.meta)
                 {
-                    if (this.event.key.length == 1)
+                    if (this.event.key?.length == 1)
                     {
                         this.ignore = false;
                         this.printable$ = true;
@@ -274,6 +265,7 @@ export class BrowserEvent
                 this.funckey = null;
 
                 this.key = this.event.key;
+
 
                 if (this.key.length == 1 && (this.alt || this.ctrl || this.meta))
                 {

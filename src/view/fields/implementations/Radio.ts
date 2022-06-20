@@ -170,6 +170,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 		this.event.preventDefault();
 
+		if (this.event.navigation) buble = true;
+		else if (this.event.ignore) return;
+
 		if (buble)
 			this.eventhandler.handleEvent(this.event);
 	}

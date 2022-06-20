@@ -19,6 +19,7 @@ import { FieldProperties } from "../FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { Display } from "./implementations/Display.js";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -116,6 +117,14 @@ export class FieldInstance implements FieldEventHandler
 	public focus() : void
 	{
 		this.impl.getElement().focus();
+	}
+
+	public focusable() : boolean
+	{
+		if (this.impl instanceof Display)
+			return(false);
+
+		return(this.properties.enabled);
 	}
 
 	public setFieldState(state:FieldState) : void

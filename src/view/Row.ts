@@ -133,16 +133,110 @@ export class Row
 		this.instances.push(instance);
 	}
 
-	public nextField(inst:FieldInstance) : FieldInstance
+	public focusable() : boolean
 	{
-		let pos:number = this.instances.indexOf(inst) + 1;
-		console.log("pos: "+pos+" inst: "+this.instances.length);
-		return(this.instances[pos%this.instances.length]);
+		for (let i = 0; i < this.instances.length; i++)
+		{
+			if (this.instances[i].focusable())
+				return(true);
+		}
+
+		return(false);
 	}
 
-	public isFirstField(inst:FieldInstance) : boolean
+	public prevField(inst:FieldInstance) : FieldInstance
 	{
-		return(inst == this.instances[0]);
+		let prev:number = -1;
+		let pos:number = this.instances.length - 1;
+
+		if (inst != null)
+			pos = this.instances.indexOf(inst) - 1;
+
+		for (let i = pos; i >= 0; i--)
+		{
+			if (this.instances[i].focusable())
+			{
+				prev = i;
+				break;
+			}
+		}
+
+		if (prev < 0)
+		{
+			if (this.rownum >= 0)
+			{
+				let current:Row = this.block.getRow(-1);
+
+				if (current != null && current.focusable())
+					return(current.prevField(null));
+			}
+			else
+			{
+				let mrow:Row = this.block.getCurrentRow();
+
+				if (mrow != null && mrow.focusable())
+					return(mrow.prevField(null));
+			}
+		}
+
+		if (prev < 0)
+		{
+			for (let i = this.instances.length - 1; i >= 0; i--)
+			{
+				if (this.instances[i].focusable())
+					return(this.instances[i]);
+			}
+		}
+
+		return(this.instances[prev]);
+	}
+
+
+	public nextField(inst:FieldInstance) : FieldInstance
+	{
+		let pos:number = 0;
+		let next:number = -1;
+
+		if (inst != null)
+			pos = this.instances.indexOf(inst) + 1;
+
+		for (let i = pos; i < this.instances.length; i++)
+		{
+			if (this.instances[i].focusable())
+			{
+				next = i;
+				break;
+			}
+		}
+
+		if (next < 0)
+		{
+			if (this.rownum >= 0)
+			{
+				let current:Row = this.block.getRow(-1);
+
+				if (current != null && current.focusable())
+					return(current.nextField(null));
+			}
+			else
+			{
+				let mrow:Row = this.block.getCurrentRow();
+
+				if (mrow != null && mrow.focusable())
+					return(mrow.nextField(null));
+			}
+		}
+
+		if (next < 0)
+		{
+			for (let i = 0; i < this.instances.length; i++)
+			{
+				if (this.instances[i].focusable())
+					return(this.instances[i]);
+			}
+		}
+
+		return(this.instances[next]);
 	}
 
 	public getField(name:string) : Field

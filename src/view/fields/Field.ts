@@ -88,6 +88,7 @@ export class Field
 
 	public get valid() : boolean
 	{
+		// Though valid, check required
 		if (this.valid$ && this.getValue() == null)
 		{
 			let valid:boolean = true;
@@ -200,13 +201,8 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			let value:any = inst.getValue();
-
-			if (value != this.value$)
-			{
-				if (await this.change(inst,brwevent))
-					this.value$ = value;
-			}
+			if (!await this.validate(inst,brwevent))
+				return;
 
 			if (!await this.block.validate())
 				return;
@@ -219,14 +215,7 @@ export class Field
 
 		if (brwevent.type == "change")
 		{
-			let value:any = inst.getValue();
-
-			if (value != this.value$)
-			{
-				if (await this.change(inst,brwevent))
-					this.value$ = value;
-			}
-
+			await this.validate(inst,brwevent);
 			return;
 		}
 
@@ -288,14 +277,17 @@ export class Field
 		});
 	}
 
-	private async change(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
+	private async validate(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
 	{
 		this.row.validated = false;
 		let event:Event = brwevent.event;
 		this.distribute(inst,inst.getValue());
 		this.block.distribute(this,inst.getValue());
 
-		if (!await this.mdlblk.validateField(event,this.name,inst.getValue()))
+		let value:any = inst.getValue();
+		if (value == this.value$) return(true);
+
+		if (!await this.mdlblk.validateField(event,this.name,value))
 		{
 			inst.focus();
 			inst.valid = false;
@@ -306,6 +298,7 @@ export class Field
 		{
 			inst.valid = true;
 			this.valid = true;
+			this.value$ = value;
 			return(true);
 		}
 	}

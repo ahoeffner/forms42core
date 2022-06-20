@@ -13,6 +13,7 @@
 import { KeyMap } from "./KeyMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
+import { MouseEvent } from "./MouseEvent.js";
 import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
@@ -53,7 +54,7 @@ export class FormEvent
 
 	public static newMouseEvent(form:Form, block:string, cause:Event) : FormEvent
 	{
-		return(null);
+		return(new FormEvent(EventType.Mouse,form,cause,block,null,new MouseEvent(cause)));
 	}
 
 	private block$:Block = null;
@@ -71,7 +72,8 @@ export class FormEvent
 		private form$:Form,
 		private cause$:Event,
 		private blockname$?:string,
-		private key$?:KeyMap
+		private key$?:KeyMap,
+		private mevent?:MouseEvent
 	) {}
 
 	public get type() : EventType

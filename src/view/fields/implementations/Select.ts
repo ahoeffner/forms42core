@@ -170,6 +170,9 @@ export class Select implements FieldImplementation, EventListenerObject
         let buble:boolean = false;
 		this.event.setEvent(event);
 
+		if (this.event.isKeyEvent)
+			console.log(this.event)
+
 		if (this.event.type == "focus")
 			buble = true;
 

@@ -204,6 +204,12 @@ export class BrowserEvent
 
                 this.useq = this.dseq;
 
+				if (this.event.key == "Tab")
+					console.log("Tab")
+
+				if (this.event.key == "ArrowUp")
+					console.log("ArrowUp")
+
                 if (!this.alt && !this.ctrl && !this.meta)
                 {
                     if (this.event.key.length == 1)

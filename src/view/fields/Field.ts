@@ -260,7 +260,13 @@ export class Field
 		if (brwevent.navigation)
 		{
 			key = KeyMapping.parseBrowserEvent(brwevent);
-			if (key != null) this.block.navigate(key,inst);
+
+			if (key != null)
+			{
+				if (await this.validate(inst,brwevent))
+					this.block.navigate(key,inst);
+			}
+			
 			return;
 		}
 	}

@@ -145,7 +145,7 @@ export class Block
 	{
 		if (!this.getRow(this.row).validated)
 		{
-			if (!this.getRow(this.row).validateFields())
+			if (!this.getRow(this.row).validate())
 				return(false);
 
 			if (!await this.mdlblk.validateRecord())

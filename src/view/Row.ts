@@ -88,7 +88,7 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
-	public validateFields() : boolean
+	public validate() : boolean
 	{
 		if (this.validated)
 			return(true);

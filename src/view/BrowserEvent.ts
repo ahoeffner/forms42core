@@ -46,7 +46,8 @@ export class BrowserEvent
     public meta:boolean = false;
     public shift:boolean = false;
 
-	public static ctrmod:string = BrowserEvent.detect();
+	private static instance:BrowserEvent = null;
+	private static ctrmod:string = BrowserEvent.detect();
 
 	private static detect() : string
 	{
@@ -58,6 +59,15 @@ export class BrowserEvent
 		return("ctrl");
 	}
 
+	public static get() : BrowserEvent
+	{
+		if (BrowserEvent.instance == null)
+			BrowserEvent.instance = new BrowserEvent();
+
+		return(BrowserEvent.instance);
+	}
+
+	private constructor() {null;}
 
     public setEvent(event:any) : void
     {
@@ -73,12 +83,10 @@ export class BrowserEvent
         if (this.type == "focus") this.focus = true;
     }
 
-
     public get event() : any
     {
         return(this.event$);
     }
-
 
     public reset() : void
     {
@@ -87,7 +95,6 @@ export class BrowserEvent
         this.undo = false;
         this.copy = false;
         this.paste = false;
-        this.shift = false;
 		this.accept = false;
 		this.cancel = false;
 		this.ignore = false;

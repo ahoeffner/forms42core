@@ -27,7 +27,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private checked:string = null;
 	private element:HTMLInputElement = null;
 	private datatype:DataType = DataType.string;
-    private event:BrowserEvent = new BrowserEvent();
+    private event:BrowserEvent = BrowserEvent.get();
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{

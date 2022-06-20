@@ -27,7 +27,7 @@ export class Select implements FieldImplementation, EventListenerObject
 	private multiple:boolean = false;
 	private element:HTMLSelectElement = null;
 	private datatype:DataType = DataType.string;
-    private event:BrowserEvent = new BrowserEvent();
+    private event:BrowserEvent = BrowserEvent.get();
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLSelectElement
 	{

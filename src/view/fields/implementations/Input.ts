@@ -43,7 +43,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private element:HTMLInputElement = null;
 	private datatype:DataType = DataType.string;
-    private event:BrowserEvent = new BrowserEvent();
+    private event:BrowserEvent = BrowserEvent.get();
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{

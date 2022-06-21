@@ -15,35 +15,12 @@ import { DataModel } from './DataModel.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
-import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
 
 export class Form
 {
-	private static current$:InterfaceForm = null;
-
 	private static models:Map<InterfaceForm,Form> =
 		new Map<InterfaceForm,Form>();
-
-	public static async setForm(form:Form) : Promise<boolean>
-	{
-		if (Form.current$ == null)
-		{
-			Form.current$ = form.intfrm;
-			return(FormEvents.raise(FormEvent.newFormEvent(EventType.PreForm,form.intfrm)));
-		}
-		else
-		{
-			if (form.intfrm == Form.current$)
-				return(true);
-
-			if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.PostForm,Form.current$)))
-				return(false);
-
-			Form.current$ = form.intfrm;
-			return(FormEvents.raise(FormEvent.newFormEvent(EventType.PreForm,Form.current$)));
-		}
-	}
 
 	public static drop(parent:InterfaceForm) : void
 	{
@@ -116,40 +93,6 @@ export class Form
 		return(this.block$.validated);
 	}
 
-	public async setCurrentBlock(block:string) : Promise<boolean>
-	{
-		if (!await Form.setForm(this))
-			return(false);
-
-		if (this.block$ == null)
-		{
-			this.block$ = this.getBlock(block);
-
-			if (this.block$ != null)
-				return(await this.fire(EventType.PreBlock,block));
-		}
-
-		if (this.block$.name == block)
-			return;
-
-		let last:Block = this.block$;
-		this.block$ = this.getBlock(block);
-
-		let cont:boolean = true;
-		if (last != null) cont = await last.validateRecord();
-
-		if (cont)
-		{
-			if (!await this.fire(EventType.PostBlock,last.name))
-				return(false);
-
-			if (!await this.fire(EventType.PreBlock,block))
-				return(false);
-		}
-
-		return(cont);
-	}
-
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
@@ -174,11 +117,5 @@ export class Form
 	private unlinkViews() : void
 	{
 		this.blocks.forEach((blk) => {blk.unlinkView()})
-	}
-
-	public async fire(type:EventType, block:string) : Promise<boolean>
-	{
-		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.intfrm,block)
-		return(FormEvents.raise(frmevent));
 	}
 }

@@ -97,7 +97,7 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public async validate() : Promise<boolean>
+	public async validateRow() : Promise<boolean>
 	{
 		return(this.getRow(this.row).validate());
 	}
@@ -156,29 +156,6 @@ export class Block
 		return(this.rows$.get(this.row));
 	}
 
-	public async focus() : Promise<boolean>
-	{
-		// Navigate to current block
-		let move:boolean = await this.form.setCurrentBlock(this.name);
-
-		if (!move)
-		{
-			inst.focus();
-			return(false);
-		}
-
-		// Navigate to current row
-		move = await this.setCurrentRow(inst.row);
-
-		if (!move)
-		{
-			inst.focus();
-			return(false);
-		}
-
-		return(true);
-	}
-
 	public async setCurrentRow(rownum:number) : Promise<boolean>
 	{
 		if (this.row$ < 0)
@@ -201,7 +178,7 @@ export class Block
 		if (rownum == this.row$ || rownum == -1)
 			return(true);
 
-		if (!await this.validate())
+		if (!await this.validateRow())
 			return(false);
 
 		if (!await this.mdlblk.setCurrentRecord(rownum-this.row$))

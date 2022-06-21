@@ -189,7 +189,7 @@ export class Field
 			this.value$ = inst.getValue();
 
 			// Will trigger everything
-			await this.block.form.setField(inst);
+			await this.block.form.preField(inst);
 
 			return;
 		}
@@ -205,7 +205,7 @@ export class Field
 			if (!await this.validate(inst,brwevent))
 				return;
 
-			if (!await this.block.validate())
+			if (!await this.block.validateRow())
 				return;
 
 			key = KeyMapping.checkBrowserEvent(brwevent);

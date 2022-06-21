@@ -12,13 +12,10 @@
 
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
-import { Form as ModelForm } from '../model/Form.js';
-import { Block as ModelBlock } from '../model/Block.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
-import { EventType } from '../../index.js';
-import { Row } from './Row.js';
+import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form
@@ -52,10 +49,9 @@ export class Form
 		form.linkModels();
 	}
 
-	private block$:Block = null;
-	private mdlfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
-	private currfld$:FieldInstance = null;
+	private currinst$:FieldInstance = null;
+	private static currfrm$:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	private constructor(parent:InterfaceForm)
@@ -73,6 +69,12 @@ export class Form
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
+	}
+
+	public addBlock(block:Block) : void
+	{
+		this.blocks.set(block.name,block);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
 	}
 
 	public getField(block:string, field:string) : Field
@@ -111,110 +113,147 @@ export class Form
 		this.addInstance(instance);
 	}
 
-	public async setField(inst:FieldInstance) : Promise<boolean>
+	public focus() : void
 	{
-		let nrow:Row = inst.field.row;
-		let nblock:ModelBlock = inst.field.mdlblock;
+		this.currinst$?.focus();
+	}
 
-		if (this.currfld$ == null)
+	public validate() : boolean
+	{
+		if (this.currinst$ == null)
+			return(true);
+
+		let block:Block = this.getBlock(this.currinst$.block);
+
+		if (!block.model.validated)
 		{
-			this.currfld$ = inst;
-			await this.fireBlockEvent(EventType.PreBlock,inst.block);
-			return(await this.fireFieldEvent(EventType.PreField,inst));
-		}
-
-		let crow:Row = this.currfld$.field.row;
-		let cblock:ModelBlock = this.currfld$.field.mdlblock;
-
-		if (nblock != cblock)
-		{
-			if (!cblock.validated)
-			{
-				this.currfld$.focus();
-				return(false);
-			}
-
-			if (!await this.fireBlockEvent(EventType.PostBlock,cblock.name))
-			{
-				this.currfld$.focus();
-				return(false);
-			}
-
-			if (!await this.fireBlockEvent(EventType.PreBlock,nblock.name))
-			{
-				this.currfld$.focus();
-				return(false);
-			}
-		}
-
-		if (nrow != crow)
-		{
-			if (!await this.fireBlockEvent(EventType.PostRecord,cblock.name))
-			{
-				this.currfld$.focus();
-				return(false);
-			}
-
-			if (!await this.fireBlockEvent(EventType.PreRecord,nblock.name))
-			{
-				this.currfld$.focus();
-				return(false);
-			}
-		}
-
-		if (!await this.fireFieldEvent(EventType.PostField,this.currfld$))
-		{
-			this.currfld$.focus();
+			this.focus();
 			return(false);
 		}
 
-		if (!await this.fireFieldEvent(EventType.PreField,inst))
-		{
-			this.currfld$.focus();
-			return(false);
-		}
-
-		this.currfld$ = inst;
 		return(true);
 	}
 
-	public async setCurrentBlock(block:string) : Promise<boolean>
+
+	public async preField(inst:FieldInstance) : Promise<boolean>
 	{
-		if (this.block$ == null)
+		let pform:Form = this;
+		let nform:Form = this;
+
+		let nblock:Block = inst.field.block;
+		let pblock:Block = this.currinst$?.field.block;
+
+		let prec:number = pblock.model.record;
+		let nrec:number = inst.field.block.model.record;
+
+		//Execute PostXXXX triggers
+
+		// No changes in record or block on previous form, just fire postform
+		if (this.parent != Form.currfrm$ && Form.currfrm$ != null)
 		{
-			this.block$ = this.getBlock(block);
-			if (this.block$ == null) return(false);
+			pform = Form.getForm(Form.currfrm$);
 
-			if (!await this.mdlfrm$.setCurrentBlock(block))
+			if (!await this.fireFormEvent(EventType.PostForm,Form.currfrm$))
+			{
+				pform.focus();
 				return(false);
-
-			return(true);
+			}
 		}
 
-		if (this.block$.name == block)
-			return(true);
+		// PostField already fired on blur
 
-		let cont:boolean = await this.mdlfrm$.setCurrentBlock(block);
-		this.block$ = this.getBlock(block);
+		if (!await this.postRecord(nblock,prec,nrec))
+		{
+			nform.focus();
+			return(false);
+		}
 
-		return(cont);
+		if (!await this.postBlock(pblock))
+		{
+			nform.focus();
+			return(false);
+		}
+
+		// Execute PreXXXX triggers
+
+		if (!await this.preForm(this.parent))
+		{
+			pform.focus();
+			return(false);
+		}
+
+		if (!await this.preBlock(nblock))
+		{
+			nform.focus();
+			return(false);
+		}
+
+		if (!await this.preRecord(nblock,prec,nrec))
+		{
+			nform.focus();
+			return(false);
+		}
+
+		this.currinst$ = inst;
+		Form.currfrm$ = this.parent;
+
+		return(true);
 	}
 
-	public addBlock(block:Block) : void
+	private async preForm(form:InterfaceForm) : Promise<boolean>
 	{
-		this.blocks.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
+		if (this.parent == Form.currfrm$) return(true);
+		return(await this.fireFormEvent(EventType.PreForm,form));
+	}
+
+	private async preBlock(block:Block) : Promise<boolean>
+	{
+		if (block == this.currinst$.field.block) return(true);
+		return(await this.fireBlockEvent(EventType.PreBlock,block.name));
+	}
+
+	private async postBlock(block:Block) : Promise<boolean>
+	{
+		if (block == this.currinst$.field.block) return(true);
+		return(await this.fireBlockEvent(EventType.PreBlock,block.name))
+	}
+
+	private async preRecord(block:Block, prec:number, nrec:number) : Promise<boolean>
+	{
+		if (nrec == prec) return(true);
+		return(await this.fireBlockEvent(EventType.PreRecord,block.name))
+	}
+
+	private async postRecord(block:Block, prec:number, nrec:number) : Promise<boolean>
+	{
+		if (nrec == prec)
+			return(true);
+
+		if (!await block.validateRow())
+			return(false);
+
+		return(await this.fireBlockEvent(EventType.PostRecord,block.name))
+	}
+
+	public async postField(inst:FieldInstance) : Promise<boolean>
+	{
+		return(await this.fireFieldEvent(EventType.PostRecord,inst))
 	}
 
 	private linkModels() : void
 	{
-		this.mdlfrm$ = ModelForm.getForm(this.parent);
 		this.blocks.forEach((blk) => {blk.linkModel();});
+	}
+
+	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.newFormEvent(type,form);
+		return(FormEvents.raise(frmevent));
 	}
 
 	private async fireBlockEvent(type:EventType, block:string) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.parent,block)
+		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.parent,block);
 		return(FormEvents.raise(frmevent));
 	}
 

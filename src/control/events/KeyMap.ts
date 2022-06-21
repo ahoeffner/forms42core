@@ -26,11 +26,14 @@ export class KeyMap
 	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.Tab});
 	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.Tab, shift: true});
 
-	public static scrollup:KeyMap = new KeyMap({key: KeyCodes.PageUp});
-	public static scrolldown:KeyMap = new KeyMap({key: KeyCodes.PageDown});
+	public static prevrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowUp});
+	public static nextrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowDown});
 
-    public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp, shift: true});
-	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown, shift: true});
+    public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
+	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
+
+	public static scrollup:KeyMap = new KeyMap({key: KeyCodes.ArrowUp, shift: true});
+	public static scrolldown:KeyMap = new KeyMap({key: KeyCodes.ArrowDown, shift: true});
 
 	private key$:number;
 	private alt$:boolean;

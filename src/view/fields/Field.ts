@@ -17,8 +17,8 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
-import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
+import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
 
 export class Field
@@ -28,7 +28,6 @@ export class Field
 	private name$:string = null;
 	private block$:Block = null;
 	private valid$:boolean = true;
-	private mdlblk:ModelBlock = null;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, field:string, rownum:number) : Field
@@ -84,6 +83,11 @@ export class Field
 	public get block() : Block
 	{
 		return(this.block$);
+	}
+
+	public get mdlblock() : ModelBlock
+	{
+		return(this.block$.model);
 	}
 
 	public get valid() : boolean
@@ -180,22 +184,19 @@ export class Field
 		let key:KeyMap = null;
 		let event:Event = brwevent.event;
 
-		if (this.mdlblk == null)
-			this.mdlblk = this.block$.model;
-
 		if (brwevent.type == "focus")
 		{
 			this.value$ = inst.getValue();
 
-			if (await this.block.setCurrentField(inst))
-				await this.mdlblk.preField(event);
+			// Will trigger everything
+			await this.block.form.setField(inst);
 
 			return;
 		}
 
 		if (brwevent.type == "blur")
 		{
-			await this.mdlblk.postField(event);
+			await this.mdlblock.postField(event);
 			return;
 		}
 
@@ -208,7 +209,7 @@ export class Field
 				return;
 
 			key = KeyMapping.checkBrowserEvent(brwevent);
-			if (key != null) await this.mdlblk.onKey(event,key);
+			if (key != null) await this.mdlblock.onKey(event,key);
 
 			return;
 		}
@@ -232,7 +233,7 @@ export class Field
 			this.distribute(inst,value);
 			this.block.distribute(this,value);
 
-			await this.mdlblk.onEditing(event);
+			await this.mdlblock.onEditing(event);
 			return;
 		}
 
@@ -251,13 +252,13 @@ export class Field
 				else if (brwevent.paste) key = KeyMap.paste;
 				else key = KeyMapping.parseBrowserEvent(brwevent);
 
-				if (key != null) await this.mdlblk.onKey(event,key);
+				if (key != null) await this.mdlblock.onKey(event,key);
 				return;
 			}
 			else
 			{
 				key = KeyMapping.checkBrowserEvent(brwevent);
-				if (key != null) await this.mdlblk.onKey(event,key);
+				if (key != null) await this.mdlblock.onKey(event,key);
 				return;
 			}
 		}
@@ -295,7 +296,7 @@ export class Field
 		let value:any = inst.getValue();
 		if (value == this.value$) return(true);
 
-		if (!await this.mdlblk.validateField(event,this.name,value))
+		if (!await this.mdlblock.validateField(event,this.name,value))
 		{
 			inst.focus();
 			inst.valid = false;

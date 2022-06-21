@@ -13,9 +13,13 @@
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
 import { Form as ModelForm } from '../model/Form.js';
+import { Block as ModelBlock } from '../model/Block.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
+import { EventType } from '../../index.js';
+import { Row } from './Row.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form
 {
@@ -49,8 +53,9 @@ export class Form
 	}
 
 	private block$:Block = null;
-	private mdlfrm:ModelForm = null;
+	private mdlfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
+	private currfld$:FieldInstance = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	private constructor(parent:InterfaceForm)
@@ -106,6 +111,73 @@ export class Form
 		this.addInstance(instance);
 	}
 
+	public async setField(inst:FieldInstance) : Promise<boolean>
+	{
+		let nrow:Row = inst.field.row;
+		let nblock:ModelBlock = inst.field.mdlblock;
+
+		if (this.currfld$ == null)
+		{
+			this.currfld$ = inst;
+			await this.fireBlockEvent(EventType.PreBlock,inst.block);
+			return(await this.fireFieldEvent(EventType.PreField,inst));
+		}
+
+		let crow:Row = this.currfld$.field.row;
+		let cblock:ModelBlock = this.currfld$.field.mdlblock;
+
+		if (nblock != cblock)
+		{
+			if (!cblock.validated)
+			{
+				this.currfld$.focus();
+				return(false);
+			}
+
+			if (!await this.fireBlockEvent(EventType.PostBlock,cblock.name))
+			{
+				this.currfld$.focus();
+				return(false);
+			}
+
+			if (!await this.fireBlockEvent(EventType.PreBlock,nblock.name))
+			{
+				this.currfld$.focus();
+				return(false);
+			}
+		}
+
+		if (nrow != crow)
+		{
+			if (!await this.fireBlockEvent(EventType.PostRecord,cblock.name))
+			{
+				this.currfld$.focus();
+				return(false);
+			}
+
+			if (!await this.fireBlockEvent(EventType.PreRecord,nblock.name))
+			{
+				this.currfld$.focus();
+				return(false);
+			}
+		}
+
+		if (!await this.fireFieldEvent(EventType.PostField,this.currfld$))
+		{
+			this.currfld$.focus();
+			return(false);
+		}
+
+		if (!await this.fireFieldEvent(EventType.PreField,inst))
+		{
+			this.currfld$.focus();
+			return(false);
+		}
+
+		this.currfld$ = inst;
+		return(true);
+	}
+
 	public async setCurrentBlock(block:string) : Promise<boolean>
 	{
 		if (this.block$ == null)
@@ -113,7 +185,7 @@ export class Form
 			this.block$ = this.getBlock(block);
 			if (this.block$ == null) return(false);
 
-			if (!await this.mdlfrm.setCurrentBlock(block))
+			if (!await this.mdlfrm$.setCurrentBlock(block))
 				return(false);
 
 			return(true);
@@ -122,7 +194,7 @@ export class Form
 		if (this.block$.name == block)
 			return(true);
 
-		let cont:boolean = await this.mdlfrm.setCurrentBlock(block);
+		let cont:boolean = await this.mdlfrm$.setCurrentBlock(block);
 		this.block$ = this.getBlock(block);
 
 		return(cont);
@@ -136,7 +208,19 @@ export class Form
 
 	private linkModels() : void
 	{
-		this.mdlfrm = ModelForm.getForm(this.parent);
+		this.mdlfrm$ = ModelForm.getForm(this.parent);
 		this.blocks.forEach((blk) => {blk.linkModel();});
+	}
+
+	private async fireBlockEvent(type:EventType, block:string) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.parent,block)
+		return(FormEvents.raise(frmevent));
+	}
+
+	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.newFieldEvent(type,inst);
+		return(FormEvents.raise(frmevent));
 	}
 }

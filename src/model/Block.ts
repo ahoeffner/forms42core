@@ -341,7 +341,7 @@ export class Block
 	{
 		let frmevent:FormEvent = null;
 		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,this.name,event);
-		else 			 frmevent = FormEvent.newFieldEvent(type,this.intfrm,this.name,event);
+		else 			 frmevent = FormEvent.newFieldEventOld(type,this.intfrm,this.name,event);
 		return(FormEvents.raise(frmevent));
 	}
 }

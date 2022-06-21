@@ -21,6 +21,7 @@ import { EventListener } from "./EventListener.js";
 import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { FieldInstance } from "../../public/FieldInstance.js";
+import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 
 
 
@@ -42,7 +43,12 @@ export class FormEvent
 		return(new FormEvent(type,form,cause,block));
 	}
 
-	public static newFieldEvent(type:EventType, form:Form, block:string, cause:Event) : FormEvent
+	public static newFieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
+	{
+		return(null);
+	}
+
+	public static newFieldEventOld(type:EventType, form:Form, block:string, cause:Event) : FormEvent
 	{
 		return(new FormEvent(type,form,cause,block));
 	}

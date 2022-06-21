@@ -32,7 +32,6 @@ export class Block
 	private name$:string = null;
 	private mdlblk:ModelBlock = null;
 	private fieldnames$:string[] = null;
-	private currfld:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private properties:FieldProperties = new FieldProperties();
 
@@ -139,6 +138,13 @@ export class Block
 				next = inst.field.row.prevField(inst)
 				break;
 			}
+
+			case KeyMap.nextrecord :
+			{
+				if (this.validated)
+					next = this.getCurrentRow().prevField(inst)
+				break;
+			}
 		}
 
 		if (next != null)
@@ -150,14 +156,14 @@ export class Block
 		return(this.rows$.get(this.row));
 	}
 
-	public async setCurrentField(inst:FieldInstance) : Promise<boolean>
+	public async focus() : Promise<boolean>
 	{
 		// Navigate to current block
-		let move:boolean = await this.form.setCurrentBlock(inst.block);
+		let move:boolean = await this.form.setCurrentBlock(this.name);
 
 		if (!move)
 		{
-			this.currfld.focus();
+			inst.focus();
 			return(false);
 		}
 
@@ -166,11 +172,10 @@ export class Block
 
 		if (!move)
 		{
-			this.currfld.focus();
+			inst.focus();
 			return(false);
 		}
 
-		this.currfld = inst;
 		return(true);
 	}
 

@@ -13,7 +13,6 @@
 import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
-import { FieldProperties } from "../public/FieldProperties.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
 
@@ -65,18 +64,6 @@ export class Row
 		});
 	}
 
-	public get validated() : boolean
-	{
-		if (this.rownum >= 0) return(this.validated$);
-		else return(this.block.getCurrentRow().validated$);
-	}
-
-	public set validated(flag:boolean)
-	{
-		if (this.rownum >= 0) this.validated$ = flag;
-		else this.block.getCurrentRow().validated$ = flag;
-	}
-
 	public getFieldState() : FieldState
 	{
 		return(this.state$);
@@ -88,7 +75,19 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
-	public validate() : boolean
+	public get validated() : boolean
+	{
+		if (this.rownum >= 0) return(this.validated$);
+		else return(this.block.getCurrentRow().validated$);
+	}
+
+	public invalidate() : void
+	{
+		if (this.rownum >= 0) this.validated$ = false;
+		else this.block.getCurrentRow().validated$ = false;
+	}
+
+	public async validate() : Promise<boolean>
 	{
 		if (this.validated)
 			return(true);
@@ -119,8 +118,12 @@ export class Row
 				if (!fields[i].valid) valid = false;
 		}
 
-		this.validated = valid;
-		return(valid);
+		if (valid)
+		{
+			this.validated$ = await this.block.model.validateRecord();
+		}
+
+		return(this.validated$);
 	}
 
 	public addField(field:Field) : void

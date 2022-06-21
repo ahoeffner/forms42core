@@ -215,6 +215,10 @@ export class Field
 
 		if (brwevent.type == "change")
 		{
+			this.row.invalidate();
+			this.distribute(inst,inst.getValue());
+			this.block.distribute(this,inst.getValue());
+
 			await this.validate(inst,brwevent);
 			return;
 		}
@@ -224,6 +228,7 @@ export class Field
 			inst.valid = true;
 			let value:string = inst.getStringValue();
 
+			this.row.invalidate();
 			this.distribute(inst,value);
 			this.block.distribute(this,value);
 
@@ -266,7 +271,7 @@ export class Field
 				if (await this.validate(inst,brwevent))
 					this.block.navigate(key,inst);
 			}
-			
+
 			return;
 		}
 	}
@@ -285,10 +290,7 @@ export class Field
 
 	private async validate(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
 	{
-		this.row.validated = false;
 		let event:Event = brwevent.event;
-		this.distribute(inst,inst.getValue());
-		this.block.distribute(this,inst.getValue());
 
 		let value:any = inst.getValue();
 		if (value == this.value$) return(true);

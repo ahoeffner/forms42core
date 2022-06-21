@@ -16,12 +16,12 @@ import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
+import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
-import { FieldProperties } from "./FieldProperties.js";
 
 
 export class Block
@@ -95,8 +95,12 @@ export class Block
 
 	public get validated() : boolean
 	{
-		if (this.currfld == null) return(true);
 		return(this.getRow(this.row).validated);
+	}
+
+	public async validate() : Promise<boolean>
+	{
+		return(this.getRow(this.row).validate());
 	}
 
 	public clear() : boolean
@@ -139,20 +143,6 @@ export class Block
 
 		if (next != null)
 			next.focus();
-	}
-
-	public async validate() : Promise<boolean>
-	{
-		if (!this.getRow(this.row).validated)
-		{
-			if (!this.getRow(this.row).validate())
-				return(false);
-
-			if (!await this.mdlblk.validateRecord())
-				return(false);
-		}
-
-		return(true);
 	}
 
 	public getCurrentRow() : Row

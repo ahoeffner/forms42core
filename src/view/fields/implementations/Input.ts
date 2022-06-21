@@ -255,7 +255,9 @@ export class Input implements FieldImplementation, EventListenerObject
 				if (this.pattern != null)
 				{
 					this.pattern.setValue(this.getElementValue());
-					this.setElementValue(this.pattern.getValue());
+
+					if (this.pattern.isNull()) this.setElementValue(null);
+					else					   this.setElementValue(this.pattern.getValue());
 				}
 
 				this.eventhandler.handleEvent(this.event);
@@ -315,6 +317,11 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 			else
 			{
+				this.pattern.setValue(this.getElementValue());
+
+				if (this.pattern.isNull()) this.setElementValue(null);
+				else					   this.setElementValue(this.pattern.getValue());
+
 				if (this.pattern.getValue() != this.initial)
 					buble = true;
 			}
@@ -841,6 +848,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private setElementValue(value:string) : void
 	{
+		if (value == null) value = "";
 		this.element.value = value;
 	}
 

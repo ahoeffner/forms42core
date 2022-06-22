@@ -366,6 +366,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.type == "range")
 			return(true);
 
+		if (this.element.readOnly)
+			return(true);
+
 		if (this.event.type == "keydown" && this.event.isPrintableKey)
 		{
 			if (this.event.ctrlkey != null || this.event.funckey != null)
@@ -419,6 +422,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.type == "range")
 			return(true);
 
+		if (this.element.readOnly)
+			return(true);
+
         let pos:number = this.getPosition();
 
         if (this.event.type == "keydown")
@@ -451,6 +457,9 @@ export class Input implements FieldImplementation, EventListenerObject
     private xdec() : boolean
     {
 		if (this.type == "range")
+			return(true);
+
+		if (this.element.readOnly)
 			return(true);
 
         let pos:number = this.getPosition();

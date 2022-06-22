@@ -18,7 +18,6 @@ import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
-import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { FieldInstance } from "../../public/FieldInstance.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
@@ -33,44 +32,36 @@ export class KeyEventSource
 
 export class FormEvent
 {
-	public static newFormEvent(type:EventType, form:Form, cause?:Event) : FormEvent
+	public static newFormEvent(type:EventType, form:Form) : FormEvent
 	{
-		return(new FormEvent(type,form,cause));
+		return(new FormEvent(type,form));
 	}
 
 	public static newBlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance) : FormEvent
 	{
-		return(null);
-		//return(new FormEvent(type,form,cause,block));
+		return(new FormEvent(type,form,inst,inst != null ? inst.block : block));
 	}
 
 	public static newFieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
 	{
-		return(null);
+		return(new FormEvent(type,inst.field.block.form.parent,inst));
 	}
 
-	public static newFieldEventOld(type:EventType, form:Form, block:string, cause:Event) : FormEvent
-	{
-		return(new FormEvent(type,form,cause,block));
-	}
 
 	public static newKeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
 	{
-		return(null);
-		//return(new FormEvent(EventType.Key,form,cause,block,key));
+		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
 	}
 
-	public static newMouseEvent(form:Form, block:string, cause:Event) : FormEvent
+	public static newMouseEvent(form:Form, cause:Event, inst?:ViewFieldInstance, block?:string) : FormEvent
 	{
-		return(new FormEvent(EventType.Mouse,form,cause,block,null,new MouseEvent(cause)));
+		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,new MouseEvent(cause)));
 	}
 
 	private block$:Block = null;
-	private fieldname$:string = null;
 	private instance$:FieldInstance = null;
 
 	private bevaluated:boolean = false;
-	private fevaluated:boolean = false;
 	private ievaluated:boolean = false;
 
 
@@ -78,7 +69,7 @@ export class FormEvent
 	(
 		private type$:EventType,
 		private form$:Form,
-		private inst:ViewFieldInstance,
+		private inst?:ViewFieldInstance,
 		private blockname$?:string,
 		private key$?:KeyMap,
 		private mevent?:MouseEvent
@@ -98,8 +89,8 @@ export class FormEvent
 	{
 		if (this.ievaluated) return(this.instance$);
 
-		if (this.cause$?.target instanceof HTMLElement)
-			this.instance$ = new FieldInstance(ViewForm.getForm(this.form$).getInstance(this.cause$.target));
+		if (this.inst != null)
+			this.instance$ = new FieldInstance(this.inst);
 
 		this.ievaluated = true;
 		return(this.instance$);
@@ -132,13 +123,7 @@ export class FormEvent
 
 	public get fieldname() : string
 	{
-		if (this.fevaluated) return(this.fieldname$);
-
-		if (this.cause$?.target instanceof HTMLElement)
-			this.fieldname$ = ViewForm.getForm(this.form$).getInstance(this.cause$.target)?.name;
-
-		this.fevaluated = true;
-		return(this.fieldname$);
+		return(this.inst?.name);
 	}
 
 	public toString() : string

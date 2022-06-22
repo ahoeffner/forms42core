@@ -17,15 +17,11 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { KeyMap } from '../control/events/KeyMap.js';
 
 export class Form
 {
 	private static views:Map<InterfaceForm,Form> =
 		new Map<InterfaceForm,Form>();
-
-	private instances:Map<HTMLElement,FieldInstance> =
-		new Map<HTMLElement,FieldInstance>();
 
 	public static drop(parent:InterfaceForm) : void
 	{
@@ -81,37 +77,6 @@ export class Form
 	public getField(block:string, field:string) : Field
 	{
 		return(this.getBlock(block)?.getField(field));
-	}
-
-	public addInstance(instance:FieldInstance) : void
-	{
-		this.instances.set(instance.element,instance);
-	}
-
-	public getInstance(elem:HTMLElement) : FieldInstance
-	{
-		let inst:FieldInstance = this.instances.get(elem);
-		let block:Block = inst.field.block;
-
-		if (inst.row >= 0 && inst.row != block.getCurrentRow().rownum)
-		{
-			let entry:number = inst.field.getInstanceEntry(inst);
-			let field:Field = block.getCurrentRow().getField(inst.name);
-			inst = field.getInstance(entry);
-		}
-
-		return(inst);
-	}
-
-	public deleteInstance(instance:FieldInstance) : void
-	{
-		this.instances.delete(instance.element);
-	}
-
-	public reindexInstance(fr:HTMLElement, instance:FieldInstance) : void
-	{
-		this.instances.delete(fr);
-		this.addInstance(instance);
 	}
 
 	public focus() : void

@@ -122,12 +122,6 @@ export class Field
 		this.instances.push(instance);
 		this.row.addInstance(instance);
 		this.block.addInstance(instance);
-		this.block.form.addInstance(instance);
-	}
-
-	public reindexInstance(fr:HTMLElement, instance:FieldInstance) : void
-	{
-		this.block.form.reindexInstance(fr,instance);
 	}
 
 	public getInstance(entry:number) : FieldInstance
@@ -239,7 +233,7 @@ export class Field
 
 		if (brwevent.isMouseEvent)
 		{
-			let mevent:FormEvent = FormEvent.newMouseEvent(this.block.form.parent, this.block.name, brwevent.event);
+			let mevent:FormEvent = FormEvent.newMouseEvent(this.block.form.parent, brwevent.event,inst);
 			await FormEvents.raise(mevent);
 		}
 

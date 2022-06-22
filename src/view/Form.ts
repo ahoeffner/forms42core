@@ -17,6 +17,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { off } from 'process';
 
 export class Form
 {
@@ -50,7 +51,7 @@ export class Form
 	}
 
 	private parent$:InterfaceForm = null;
-	private currinst$:FieldInstance = null;
+	private curinst$:FieldInstance = null;
 	private static currfrm$:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
@@ -115,15 +116,15 @@ export class Form
 
 	public focus() : void
 	{
-		this.currinst$?.focus();
+		this.curinst$?.focus();
 	}
 
 	public validate() : boolean
 	{
-		if (this.currinst$ == null)
+		if (this.curinst$ == null)
 			return(true);
 
-		let block:Block = this.getBlock(this.currinst$.block);
+		let block:Block = this.getBlock(this.curinst$.block);
 
 		if (!block.model.validated)
 		{
@@ -137,64 +138,67 @@ export class Form
 
 	public async preField(inst:FieldInstance) : Promise<boolean>
 	{
-		let pform:Form = this;
-		let nform:Form = this;
+		let preform:Form = this;
+		let nxtform:Form = this;
 
-		let nblock:Block = inst.field.block;
-		let pblock:Block = this.currinst$?.field.block;
+		let nxtblock:Block = inst.field.block;
+		let preblock:Block = this.curinst$?.field.block;
 
-		let prec:number = pblock.model.record;
-		let nrec:number = inst.field.block.model.record;
+		let offset:number = nxtblock.offset(inst);
+		let prerec:number = preblock.model.record;
+		let nxtrec:number = nxtblock.model.record + offset;
 
 		//Execute PostXXXX triggers
 
-		// No changes in record or block on previous form, just fire postform
 		if (this.parent != Form.currfrm$ && Form.currfrm$ != null)
 		{
-			pform = Form.getForm(Form.currfrm$);
+			preform = Form.getForm(Form.currfrm$);
 
 			if (!await this.fireFormEvent(EventType.PostForm,Form.currfrm$))
 			{
-				pform.focus();
+				preform.focus();
 				return(false);
 			}
 		}
 
-		// PostField already fired on blur
-
-		if (!await this.postRecord(nblock,prec,nrec))
+		if (preblock != null)
 		{
-			nform.focus();
-			return(false);
-		}
+			// PostField already fired on blur
 
-		if (!await this.postBlock(pblock))
-		{
-			nform.focus();
-			return(false);
+			if (!await this.postRecord(preblock,prerec,nxtblock,nxtrec))
+			{
+				nxtform.focus();
+				return(false);
+			}
+
+			if (!await this.postBlock(preblock))
+			{
+				nxtform.focus();
+				return(false);
+			}
 		}
 
 		// Execute PreXXXX triggers
 
 		if (!await this.preForm(this.parent))
 		{
-			pform.focus();
+			preform.focus();
 			return(false);
 		}
 
-		if (!await this.preBlock(nblock))
+		if (!await this.preBlock(nxtblock))
 		{
-			nform.focus();
+			nxtform.focus();
 			return(false);
 		}
 
-		if (!await this.preRecord(nblock,prec,nrec))
+		if (!await this.preRecord(nxtblock,prerec,nxtrec))
 		{
-			nform.focus();
+			nxtform.focus();
 			return(false);
 		}
 
-		this.currinst$ = inst;
+		this.curinst$ = inst;
 		Form.currfrm$ = this.parent;
 
 		return(true);
@@ -208,13 +212,13 @@ export class Form
 
 	private async preBlock(block:Block) : Promise<boolean>
 	{
-		if (block == this.currinst$.field.block) return(true);
+		if (block == this.curinst$.field.block) return(true);
 		return(await this.fireBlockEvent(EventType.PreBlock,block.name));
 	}
 
 	private async postBlock(block:Block) : Promise<boolean>
 	{
-		if (block == this.currinst$.field.block) return(true);
+		if (block == this.curinst$.field.block) return(true);
 		return(await this.fireBlockEvent(EventType.PreBlock,block.name))
 	}
 
@@ -224,15 +228,12 @@ export class Form
 		return(await this.fireBlockEvent(EventType.PreRecord,block.name))
 	}
 
-	private async postRecord(block:Block, prec:number, nrec:number) : Promise<boolean>
+	private async postRecord(preblock:Block, prec:number, nxtblock:Block, nrec:number) : Promise<boolean>
 	{
-		if (nrec == prec)
+		if (nrec == prec && preblock == nxtblock)
 			return(true);
 
-		if (!await block.validateRow())
-			return(false);
-
-		return(await this.fireBlockEvent(EventType.PostRecord,block.name))
+		return(await this.fireBlockEvent(EventType.PostRecord,preblock.name))
 	}
 
 	public async postField(inst:FieldInstance) : Promise<boolean>

@@ -151,6 +151,11 @@ export class Block
 			next.focus();
 	}
 
+	public offset(inst:FieldInstance) : number
+	{
+		return(inst.row-this.row$);
+	}
+
 	public getCurrentRow() : Row
 	{
 		return(this.rows$.get(this.row));

@@ -136,10 +136,10 @@ export class Form
 	}
 
 
-	public async preField(inst:FieldInstance) : Promise<boolean>
+	public async goto(inst:FieldInstance) : Promise<boolean>
 	{
-		let preform:Form = this;
 		let nxtform:Form = this;
+		let preform:Form = this;
 
 		let nxtblock:Block = inst.field.block;
 		let preblock:Block = this.curinst$?.field.block;
@@ -148,30 +148,48 @@ export class Form
 		let prerec:number = preblock.model.record;
 		let nxtrec:number = nxtblock.model.record + offset;
 
-		//Execute PostXXXX triggers
+		/**********************************************************************
+			Go to form
+		 **********************************************************************/
 
-		if (this.parent != Form.currfrm$ && Form.currfrm$ != null)
+		if (this.parent != Form.currfrm$)
 		{
-			preform = Form.getForm(Form.currfrm$);
+			if (Form.currfrm$ != null)
+			{
+				preform = Form.getForm(Form.currfrm$);
 
-			if (!await this.fireFormEvent(EventType.PostForm,Form.currfrm$))
+				if (!await this.fireFormEvent(EventType.PostForm,Form.currfrm$))
+				{
+					preform.focus();
+					return(false);
+				}
+			}
+
+			if (!await this.preForm(this.parent))
 			{
 				preform.focus();
 				return(false);
 			}
 		}
 
+
+		/**********************************************************************
+			Leave current form field
+		 **********************************************************************/
+
+		let move:boolean = true;
+
 		if (preblock != null)
 		{
 			// PostField already fired on blur
 
-			if (!await this.postRecord(preblock,prerec,nxtblock,nxtrec))
+			if (!await this.postRecord(preblock,nxtblock,offset))
 			{
 				nxtform.focus();
 				return(false);
 			}
 
-			if (!await this.postBlock(preblock))
+			if (!await this.postBlock(preblock,nxtblock))
 			{
 				nxtform.focus();
 				return(false);
@@ -179,12 +197,6 @@ export class Form
 		}
 
 		// Execute PreXXXX triggers
-
-		if (!await this.preForm(this.parent))
-		{
-			preform.focus();
-			return(false);
-		}
 
 		if (!await this.preBlock(nxtblock))
 		{
@@ -216,10 +228,10 @@ export class Form
 		return(await this.fireBlockEvent(EventType.PreBlock,block.name));
 	}
 
-	private async postBlock(block:Block) : Promise<boolean>
+	private async postBlock(preblock:Block, nxtblock:Block) : Promise<boolean>
 	{
-		if (block == this.curinst$.field.block) return(true);
-		return(await this.fireBlockEvent(EventType.PreBlock,block.name))
+		if (preblock == nxtblock) return(true);
+		return(await this.fireBlockEvent(EventType.PreBlock,preblock.name))
 	}
 
 	private async preRecord(block:Block, prec:number, nrec:number) : Promise<boolean>
@@ -228,9 +240,9 @@ export class Form
 		return(await this.fireBlockEvent(EventType.PreRecord,block.name))
 	}
 
-	private async postRecord(preblock:Block, prec:number, nxtblock:Block, nrec:number) : Promise<boolean>
+	private async postRecord(preblock:Block, nxtblock:Block, offset:number) : Promise<boolean>
 	{
-		if (nrec == prec && preblock == nxtblock)
+		if (offset == 0 && preblock == nxtblock)
 			return(true);
 
 		return(await this.fireBlockEvent(EventType.PostRecord,preblock.name))

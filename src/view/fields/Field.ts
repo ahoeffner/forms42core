@@ -189,7 +189,7 @@ export class Field
 			this.value$ = inst.getValue();
 
 			// Will trigger everything
-			await this.block.form.preField(inst);
+			await this.block.form.goto(inst);
 
 			return;
 		}

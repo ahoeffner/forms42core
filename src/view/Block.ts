@@ -104,6 +104,13 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
+	public async validateField(inst:FieldInstance, value:any) : Promise<boolean>
+	{
+		let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
+		if (cont) this.mdlblk.setValue(inst.name,value);
+		return(cont);
+	}
+
 	public clear() : boolean
 	{
 		if (!this.validated)
@@ -131,13 +138,6 @@ export class Block
 	public async onEditing(inst:FieldInstance) : Promise<boolean>
 	{
 		return(this.fireFieldEvent(EventType.Editing,inst));
-	}
-
-	public async validateField(inst:FieldInstance, value:any) : Promise<boolean>
-	{
-		let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
-		if (cont) this.mdlblk.setValue(inst.name,value);
-		return(cont);
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void

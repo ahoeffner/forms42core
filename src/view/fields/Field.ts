@@ -176,7 +176,6 @@ export class Field
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent)
 	{
 		let key:KeyMap = null;
-		let event:Event = brwevent.event;
 
 		if (brwevent.type == "focus")
 		{

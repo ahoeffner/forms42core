@@ -144,6 +144,12 @@ export class Form
 
 			if (preblock != nxtblock)
 			{
+				if (!await preblock.validate())
+				{
+					this.focus();
+					return(false);
+				}
+
 				if (!await this.fireBlockEvent(EventType.PostRecord,preblock.name))
 				{
 					this.focus();
@@ -158,6 +164,12 @@ export class Form
 			}
 			else if (recoffset != 0)
 			{
+				if (!await nxtblock.validate())
+				{
+					this.focus();
+					return(false);
+				}
+
 				if (!await this.fireBlockEvent(EventType.PostRecord,preblock.name))
 				{
 					this.focus();

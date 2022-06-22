@@ -127,7 +127,7 @@ export class Form implements CanvasComponent
 
     public async close() : Promise<boolean>
     {
-		if (Model.getForm(this).validated)
+		if (View.getForm(this).validated)
 			return(false);
 
 		if (!await FormEvents.raise(FormEvent.newFormEvent(EventType.FormClose,this)))

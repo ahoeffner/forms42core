@@ -18,10 +18,12 @@ import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from '../model/Block.js';
-import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
+import { Form as InterfaceForm } from '../public/Form.js';
+import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
+import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 
 export class Block
@@ -92,14 +94,14 @@ export class Block
 		return(this.fieldnames$);
 	}
 
+	public async validate() : Promise<boolean>
+	{
+		return(this.getRow(this.row).validate());
+	}
+
 	public get validated() : boolean
 	{
 		return(this.getRow(this.row).validated);
-	}
-
-	public async validateRow() : Promise<boolean>
-	{
-		return(this.getRow(this.row).validate());
 	}
 
 	public clear() : boolean
@@ -119,6 +121,23 @@ export class Block
 
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
+	}
+
+	public async onKey(inst:FieldInstance, key:KeyMap) : Promise<boolean>
+	{
+		return(this.fireKeyEvent(inst,key));
+	}
+
+	public async onEditing(inst:FieldInstance) : Promise<boolean>
+	{
+		return(this.fireFieldEvent(EventType.Editing,inst));
+	}
+
+	public async validateField(inst:FieldInstance, value:any) : Promise<boolean>
+	{
+		let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
+		if (cont) this.mdlblk.setValue(inst.name,value);
+		return(cont);
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -161,7 +180,7 @@ export class Block
 		return(this.rows$.get(this.row));
 	}
 
-	public async setCurrentRow(rownum:number) : Promise<boolean>
+	public setCurrentRow(rownum:number) : void
 	{
 		if (this.row$ < 0)
 		{
@@ -170,32 +189,18 @@ export class Block
 			if (rownum > 0)
 				this.row$ = rownum;
 
-			if (!await this.mdlblk.setCurrentRecord(this.row$))
-			{
-				this.row$ = -1;
-				return(false);
-			}
-
 			this.openrow(this.row$);
-			return(true);
+			return;
 		}
 
 		if (rownum == this.row$ || rownum == -1)
-			return(true);
-
-		if (!await this.validateRow())
-			return(false);
-
-		if (!await this.mdlblk.setCurrentRecord(rownum-this.row$))
-			return(false);
+			return;
 
 		// disable autofill
 		this.getRow(this.row$).setFieldState(FieldState.READONLY);
 
 		this.row$ = rownum;
 		this.openrow(this.row$);
-
-		return(true);
 	}
 
 	public addRow(row:Row) : void
@@ -309,5 +314,17 @@ export class Block
 	public linkModel() : void
 	{
 		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
+	}
+
+	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.newKeyEvent(this.form.parent,inst,key);
+		return(FormEvents.raise(frmevent));
+	}
+
+	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.newFieldEvent(type,inst);
+		return(FormEvents.raise(frmevent));
 	}
 }

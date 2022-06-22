@@ -14,7 +14,6 @@ import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
-import { EventType } from '../control/events/EventType.js';
 
 
 export class Form
@@ -86,11 +85,6 @@ export class Form
 	public get datamodel() : DataModel
 	{
 		return(this.datamodel$);
-	}
-
-	public get validated() : boolean
-	{
-		return(this.block$.validated);
 	}
 
 	public addBlock(block:Block) : void

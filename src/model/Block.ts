@@ -15,7 +15,6 @@ import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
-import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -154,11 +153,6 @@ export class Block
 		return(this.keys$);
 	}
 
-	public get validated() : boolean
-	{
-		return(this.vwblk.validated);
-	}
-
 	public addKey(name:string, fields:string|string[], primary?:boolean) : void
 	{
 		if (primary)
@@ -187,66 +181,27 @@ export class Block
 		return(false);
 	}
 
-	public async preField(event:Event) : Promise<boolean>
-	{
-		return(this.fire(EventType.PreField,event));
-	}
-
-	public async postField(event:Event) : Promise<boolean>
-	{
-		return(this.fire(EventType.PostField,event));
-	}
-
 	public async preQuery() : Promise<boolean>
 	{
-		return(this.fire(EventType.PreQuery,null));
+		return(this.fire(EventType.PreQuery));
 	}
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
 		this.postquery$ = record;
-		let resp:boolean = await this.fire(EventType.PostQuery,null);
+		let resp:boolean = await this.fire(EventType.PostQuery);
 		this.postquery$ = null;
 		return(resp);
 	}
 
-	public async onEditing(event:Event) : Promise<boolean>
-	{
-		return(this.fire(EventType.Editing,event));
-	}
-
-	public async validateField(event:Event, field:string, value:any) : Promise<boolean>
-	{
-		if (!await this.fire(EventType.ValidateField,event))
-			return(false);
-
-		this.wrapper.setValue(this.record,field,value);
-		return(true);
-	}
-
-	public async onKey(event:Event, key:KeyMap) : Promise<boolean>
-	{
-		return(this.fire(EventType.Editing,event,key));
-	}
-
 	public async validateRecord() : Promise<boolean>
 	{
-		return(this.fire(EventType.ValidateRecord,null))
+		return(this.fire(EventType.ValidateRecord))
 	}
 
-	public async setCurrentRecord(delta:number) : Promise<boolean>
+	public move(delta:number) : void
 	{
-		if (this.record$ < 0)
-		{
-			this.record$ = delta;
-			return(this.fire(EventType.PreRecord,null));
-		}
-
-		if (!await this.fire(EventType.PostRecord,null))
-			return(false);
-
 		this.record$ += delta;
-		return(this.fire(EventType.PreRecord,null));
 	}
 
 	public get record() : number
@@ -337,11 +292,9 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private async fire(type:EventType, event:Event, key?:KeyMap) : Promise<boolean>
+	private async fire(type:EventType) : Promise<boolean>
 	{
-		let frmevent:FormEvent = null;
-		if (key != null) frmevent = FormEvent.newKeyEvent(this.intfrm,key,this.name,event);
-		else 			 frmevent = FormEvent.newFieldEventOld(type,this.intfrm,this.name,event);
+		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.intfrm,this.name);
 		return(FormEvents.raise(frmevent));
 	}
 }

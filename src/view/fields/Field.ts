@@ -196,7 +196,7 @@ export class Field
 
 		if (brwevent.type == "blur")
 		{
-			await this.mdlblock.postField(event);
+			await this.block.form.leave(inst);
 			return;
 		}
 
@@ -205,11 +205,11 @@ export class Field
 			if (!await this.validate(inst,brwevent))
 				return;
 
-			if (!await this.block.validateRow())
+			if (!await this.block.validate())
 				return;
 
 			key = KeyMapping.checkBrowserEvent(brwevent);
-			if (key != null) await this.mdlblock.onKey(event,key);
+			if (key != null) await this.block.onKey(inst,key);
 
 			return;
 		}
@@ -233,7 +233,7 @@ export class Field
 			this.distribute(inst,value);
 			this.block.distribute(this,value);
 
-			await this.mdlblock.onEditing(event);
+			await this.block.onEditing(inst);
 			return;
 		}
 
@@ -252,13 +252,13 @@ export class Field
 				else if (brwevent.paste) key = KeyMap.paste;
 				else key = KeyMapping.parseBrowserEvent(brwevent);
 
-				if (key != null) await this.mdlblock.onKey(event,key);
+				if (key != null) await this.block.onKey(inst,key);
 				return;
 			}
 			else
 			{
 				key = KeyMapping.checkBrowserEvent(brwevent);
-				if (key != null) await this.mdlblock.onKey(event,key);
+				if (key != null) await this.block.onKey(inst,key);
 				return;
 			}
 		}
@@ -291,12 +291,10 @@ export class Field
 
 	private async validate(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
 	{
-		let event:Event = brwevent.event;
-
 		let value:any = inst.getValue();
 		if (value == this.value$) return(true);
 
-		if (!await this.mdlblock.validateField(event,this.name,value))
+		if (!await this.block.validateField(inst,value))
 		{
 			inst.focus();
 			inst.valid = false;

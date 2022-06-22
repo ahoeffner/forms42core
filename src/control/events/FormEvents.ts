@@ -38,9 +38,10 @@ export class FormEvent
 		return(new FormEvent(type,form,cause));
 	}
 
-	public static newBlockEvent(type:EventType, form:Form, block:string, cause?:Event) : FormEvent
+	public static newBlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance) : FormEvent
 	{
-		return(new FormEvent(type,form,cause,block));
+		return(null);
+		//return(new FormEvent(type,form,cause,block));
 	}
 
 	public static newFieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
@@ -53,9 +54,10 @@ export class FormEvent
 		return(new FormEvent(type,form,cause,block));
 	}
 
-	public static newKeyEvent(form:Form, key:KeyMap, block:string, cause:Event) : FormEvent
+	public static newKeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
 	{
-		return(new FormEvent(EventType.Key,form,cause,block,key));
+		return(null);
+		//return(new FormEvent(EventType.Key,form,cause,block,key));
 	}
 
 	public static newMouseEvent(form:Form, block:string, cause:Event) : FormEvent
@@ -76,7 +78,7 @@ export class FormEvent
 	(
 		private type$:EventType,
 		private form$:Form,
-		private cause$:Event,
+		private inst:ViewFieldInstance,
 		private blockname$?:string,
 		private key$?:KeyMap,
 		private mevent?:MouseEvent

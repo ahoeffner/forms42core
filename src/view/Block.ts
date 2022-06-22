@@ -94,21 +94,25 @@ export class Block
 		return(this.fieldnames$);
 	}
 
-	public async validate() : Promise<boolean>
+	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
 	{
-		return(this.getRow(this.row).validate());
+		if (inst == null)
+		{
+			console.log("validate row")
+			return(this.getRow(this.row).validate());
+		}
+		else
+		{
+			console.log("validate field")
+			let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
+			if (cont) this.mdlblk.setValue(inst.name,value);
+			return(cont);
+		}
 	}
 
 	public get validated() : boolean
 	{
 		return(this.getRow(this.row).validated);
-	}
-
-	public async validateField(inst:FieldInstance, value:any) : Promise<boolean>
-	{
-		let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
-		if (cont) this.mdlblk.setValue(inst.name,value);
-		return(cont);
 	}
 
 	public clear() : boolean
@@ -172,7 +176,9 @@ export class Block
 
 	public offset(inst:FieldInstance) : number
 	{
-		return(inst.row-this.row$);
+		let row:number = inst.row;
+		if (row < 0) row = this.row;
+		return(row-this.row$);
 	}
 
 	public getCurrentRow() : Row

@@ -195,7 +195,7 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			if (!await this.validate(inst,brwevent))
+			if (!await this.validate(inst))
 				return;
 
 			if (!await this.block.validate())
@@ -213,7 +213,7 @@ export class Field
 			this.distribute(inst,inst.getValue());
 			this.block.distribute(this,inst.getValue());
 
-			await this.validate(inst,brwevent);
+			await this.validate(inst);
 			return;
 		}
 
@@ -262,7 +262,7 @@ export class Field
 
 			if (key != null)
 			{
-				if (await this.validate(inst,brwevent))
+				if (await this.validate(inst))
 					this.block.navigate(key,inst);
 			}
 
@@ -282,12 +282,12 @@ export class Field
 		});
 	}
 
-	private async validate(inst:FieldInstance, brwevent:BrowserEvent) : Promise<boolean>
+	private async validate(inst:FieldInstance) : Promise<boolean>
 	{
 		let value:any = inst.getValue();
 		if (value == this.value$) return(true);
 
-		if (!await this.block.validateField(inst,value))
+		if (!await this.block.validate(inst,value))
 		{
 			inst.focus();
 			inst.valid = false;

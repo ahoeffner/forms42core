@@ -146,7 +146,6 @@ export class FieldInstance implements FieldEventHandler
 		//this.impl.initialize(this.element$,this);
 
 		this.element$ = this.impl.getElement();
-		this.field.reindexInstance(element,this);
 	}
 
 	public handleEvent(event:Event) : void

@@ -64,6 +64,16 @@ export class Form
 		return(this.parent$);
 	}
 
+	public get block() : Block
+	{
+		return(this.curinst$?.field.block);
+	}
+
+	public get instance() : FieldInstance
+	{
+		return(this.curinst$);
+	}
+
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks.get(name));
@@ -230,6 +240,14 @@ export class Form
 			nxtblock.model.triggerstate = null;
 		}
 
+		// Prefield
+
+		if (!await this.fireFieldEvent(EventType.PreField,inst))
+		{
+			this.focus();
+			return(false);
+		}
+
 		this.curinst$ = inst;
 		Form.currfrm$ = this.parent;
 		nxtblock.setCurrentRow(inst.row);
@@ -237,15 +255,58 @@ export class Form
 		return(true);
 	}
 
+	public async enterForm(form:Form) : Promise<boolean>
+	{
+		form.block.model.setTriggerState(false,false,0);
+		let cont:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
+		form.block.model.triggerstate = null;
+		return(cont);
+	}
+
+	public async enterBlock(block:Block, offset:number) : Promise<boolean>
+	{
+		block.model.setTriggerState(false,false,offset);
+		let cont:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
+		block.model.triggerstate = null;
+		return(cont);
+	}
+
+	public async enterRecord(block:Block, offset:number) : Promise<boolean>
+	{
+		let trgstate:TriggerState = block.model.setTriggerState(true,true,offset);
+		let cont:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
+		trgstate.applychanges();
+		block.model.triggerstate = null;
+		return(cont);
+	}
+
+	public async leaveForm(form:Form) : Promise<boolean>
+	{
+		form.block.model.setTriggerState(false,false,0);
+		let cont:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
+		form.block.model.triggerstate = null;
+		return(cont);
+	}
+
+	public async leaveBlock(block:Block) : Promise<boolean>
+	{
+		block.model.setTriggerState(false,false,0);
+		let cont:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
+		block.model.triggerstate = null;
+		return(cont);
+	}
+
+	public async leaveRecord(block:Block) : Promise<boolean>
+	{
+		block.model.setTriggerState(false,false,0);
+		let cont:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
+		block.model.triggerstate = null;
+		return(cont);
+	}
+
 	public async leave(inst:FieldInstance) : Promise<boolean>
 	{
-		if (!await this.fireFieldEvent(EventType.PostField,inst))
-		{
-			this.focus();
-			return(false);
-		}
-
-		return(true);
+		return(!await this.fireFieldEvent(EventType.PostField,inst));
 	}
 
 	private linkModels() : void

@@ -189,7 +189,9 @@ export class Field
 
 		if (brwevent.type == "blur")
 		{
-			await this.block.form.leave(inst);
+			if (!await this.block.form.leave(inst))
+				inst.focus();
+
 			return;
 		}
 

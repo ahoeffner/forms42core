@@ -44,9 +44,6 @@ export class Block
 
 	constructor(form:InterfaceForm,name:string)
 	{
-		if (name == null)
-			name = "";
-
 		this.name$ = name;
 		this.fieldnames$ = [];
 		this.form$ = Form.getForm(form);
@@ -98,12 +95,10 @@ export class Block
 	{
 		if (inst == null)
 		{
-			console.log("validate row")
 			return(this.getRow(this.row).validate());
 		}
 		else
 		{
-			console.log("validate field")
 			let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
 			if (cont) this.mdlblk.setValue(inst.name,value);
 			return(cont);
@@ -195,18 +190,21 @@ export class Block
 			if (rownum > 0)
 				this.row$ = rownum;
 
-			this.openrow(this.row$);
+			this.openrow();
 			return;
 		}
 
-		if (rownum == this.row$ || rownum == -1)
+		if (rownum == this.row || rownum == -1)
 			return;
 
-		// disable autofill
-		this.getRow(this.row$).setFieldState(FieldState.READONLY);
+		this.mdlblk.move(rownum-this.row);
 
+		// disable autofill
+		this.getRow(this.row).setFieldState(FieldState.READONLY);
 		this.row$ = rownum;
-		this.openrow(this.row$);
+
+		this.openrow();
+		this.displaycurrent();
 	}
 
 	public addRow(row:Row) : void
@@ -219,9 +217,9 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
-	private openrow(rownum:number)
+	private openrow()
 	{
-		let row:Row = this.getRow(rownum);
+		let row:Row = this.getRow(this.row);
 		let current:Row = this.rows$.get(-1);
 
 		if (row.getFieldState() == FieldState.READONLY)
@@ -232,8 +230,6 @@ export class Block
 			{
 				if (current.getFieldState() == FieldState.READONLY)
 					current.setFieldState(FieldState.OPEN);
-
-				this.displaycurrent(rownum);
 			}
 		}
 	}
@@ -251,15 +247,15 @@ export class Block
 		{row.distribute(field.name,field.value);})
 	}
 
-	public displaycurrent(rownum:number) : void
+	private displaycurrent() : void
 	{
 		let current:Row = this.rows$.get(-1);
 
 		if (current != null)
 		{
 			current.clear();
-			let rec:Record = this.mdlblk.getRecord(rownum-this.row);
-			rec.values.forEach((field) => {current.distribute(field.name,field.value)});
+			let record:Record = this.mdlblk.getRecord();
+			record.values.forEach((field) => {current.distribute(field.name,field.value)});
 		}
 	}
 

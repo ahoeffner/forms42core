@@ -219,7 +219,6 @@ export class Form
 
 		this.curinst$ = inst;
 		Form.currfrm$ = this.parent;
-
 		nxtblock.setCurrentRow(inst.row);
 
 		return(true);

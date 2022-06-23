@@ -200,7 +200,7 @@ export class Block
 
 	public move(delta:number) : void
 	{
-		this.record$ += delta;
+		this.record$ = this.record + delta;
 	}
 
 	public get record() : number
@@ -224,7 +224,6 @@ export class Block
 
 	public setValue(field:string, value:any) : boolean
 	{
-		console.log("setValue('"+field+"',"+value+")")
 		if (this.columns.indexOf(field) < 0)
 			this.columns.push(field);
 
@@ -234,6 +233,7 @@ export class Block
 			return(true);
 		}
 
+		console.log("setvalue "+this.record+" "+field+" "+value)
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
@@ -249,14 +249,13 @@ export class Block
 
 		if (!await wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();
-		console.log("fetch "+record.getValue("country_id"));
 
 		for (let i = 0; i < this.vwblk.rows && record != null; i++)
 		{
 			this.vwblk.display(i,record);
 
 			if (i == 0)
-				this.vwblk.displaycurrent(0);
+				this.vwblk.setCurrentRow(0)
 
 			record = await wrapper.fetch();
 		}
@@ -264,9 +263,10 @@ export class Block
 		return(true);
 	}
 
-	public getRecord(offset:number) : Record
+	public getRecord() : Record
 	{
-		return(this.wrapper.getRecord(this.record + offset));
+		console.log("getRecord "+this.record)
+		return(this.wrapper.getRecord(this.record));
 	}
 
 	public link(block:InterfaceBlock) : void

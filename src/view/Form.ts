@@ -100,7 +100,7 @@ export class Form
 		return(true);
 	}
 
-	public async goto(inst:FieldInstance) : Promise<boolean>
+	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
 		/**********************************************************************
 			Go to form
@@ -113,6 +113,12 @@ export class Form
 			if (Form.currfrm$ != null)
 			{
 				preform = Form.getForm(Form.currfrm$);
+
+				if (!preform.validated)
+				{
+					preform.focus();
+					return(false);
+				}
 
 				// If not in call and not valid => return(false);
 

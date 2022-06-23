@@ -32,8 +32,8 @@ export class Record
 
 	constructor(wrapper:DataSourceWrapper, columns?:{[name:string]: any})
 	{
-		this.wrapper$ = wrapper;
 		this.id$ = new Object();
+		this.wrapper$ = wrapper;
 
 		if (wrapper == null)
 			this.columns$ = [];

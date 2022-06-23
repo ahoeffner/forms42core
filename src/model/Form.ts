@@ -94,12 +94,19 @@ export class Form
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
 	}
 
-	private autoquery() : void
+	private async autoquery()
 	{
-		this.blocks.forEach((block) =>
+		this.blocks.forEach(async(block) =>
 		{
 			if (!block.isLinked())
-				block.executequery();
+			{
+				block.datasource = block.createMemorySource();
+
+				await block.executequery();
+				block.datasource.queryable = false;
+				block.datasource.insertable = false;
+				block.datasource.deleteable = false;
+			}
 		});
 	}
 

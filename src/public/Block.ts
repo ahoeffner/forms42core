@@ -70,7 +70,7 @@ export class Block
 
 		mdl.setValue(field,value);
 
-		if (!mdl.postquery)
+		if (mdl.triggerstate == null)
 		{
 			let fld:ViewField = blk.getField(field);
 			if (fld != null) fld.setValue(value);
@@ -82,15 +82,12 @@ export class Block
 		field = field?.toLowerCase();
 		let blk:ViewBlock = ViewBlock.getBlock(this);
 
-		if (blk == null) return(null);
-
-		if (!blk.model.postquery)
+		if (blk.model.triggerstate == null)
 		{
 			let fld:ViewField = blk.getField(field);
 			if (fld != null) return(blk.getValue(field));
 		}
 
-		let mdl:ModelBlock = ModelBlock.getBlock(this);
-		return(mdl.getValue(field));
+		return(blk.model.getValue(field));
 	}
 }

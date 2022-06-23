@@ -182,7 +182,7 @@ export class Field
 			this.value$ = inst.getValue();
 
 			// Will trigger everything
-			await this.block.form.goto(inst);
+			await this.block.form.enter(inst);
 
 			return;
 		}

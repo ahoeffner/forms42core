@@ -100,11 +100,12 @@ export class Form implements CanvasComponent
 		field = field?.toLowerCase();
 		let blk:ViewBlock = View.getForm(this).getBlock(block);
 
-		if (!blk.model.postquery)
-			blk.getField(field)?.setValue(value);
+		if (blk == null) return(null);
 
-		let mdl:ModelBlock = blk.model;
-		mdl.setValue(field,value);
+		blk.model.setValue(field,value);
+
+		if (blk.model.triggerstate == null)
+			blk.getField(field)?.setValue(value);
 	}
 
 	public getValue(block:string, field:string) : any
@@ -115,14 +116,13 @@ export class Form implements CanvasComponent
 
 		if (blk == null) return(null);
 
-		if (!blk.model.postquery)
+		if (blk.model.triggerstate == null)
 		{
 			let fld:ViewField = blk.getField(field);
 			if (fld != null) return(blk.getValue(field));
 		}
 
-		let mdl:ModelBlock = blk.model;
-		return(mdl.getValue(field));
+		return(blk.model.getValue(field));
 	}
 
     public async close() : Promise<boolean>

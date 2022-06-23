@@ -13,6 +13,7 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
+import { TriggerState } from "./TriggerState.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -53,11 +54,10 @@ export class Block
 	private record$:number = -1;
 	private vwblk:ViewBlock = null;
 	private columns$:string[] = null;
-	private postquery$:Record = null;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
-	private disconnected$:boolean = false;
+	private trgstate$:TriggerState = null;
 
 	private constructor(form:Form, name:string)
 	{
@@ -90,45 +90,18 @@ export class Block
 		return(this.columns$);
 	}
 
-	public get postquery() : boolean
+	public get triggerstate() : TriggerState
 	{
-		return(this.postquery$ != null);
+		return(this.trgstate$);
 	}
 
-	public get disconnected() : boolean
+	public set triggerstate(trgstate:TriggerState)
 	{
-		return(this.disconnected$);
-	}
-
-	public set disconnected(flag:boolean)
-	{
-		this.disconnected$ = flag;
+		this.trgstate$ = trgstate;
 	}
 
 	public get datasource() : DataSource
 	{
-		if (this.source$ == null)
-		{
-			let data:any[][] = [];
-			let recs:number = this.vwblk.rows;
-			let cols:number = this.columns.length;
-
-			for (let r = 0; r < recs; r++)
-			{
-				let row:any[] = [];
-
-				for (let c = 0; c < cols; c++)
-					row.push(null);
-
-				data.push(row);
-			}
-
-			this.source$ = new MemoryTable(this.columns,data);
-
-			this.source$.deleteable = false;
-			this.source$.insertable = false;
-		}
-
 		return(this.source$);
 	}
 
@@ -141,6 +114,29 @@ export class Block
 		}
 
 		this.source$ = source;
+	}
+
+	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
+	{
+		let data:any[][] = [];
+
+		if (recs == null)
+		{
+			recs = this.vwblk.rows;
+			columns = this.columns;
+		}
+
+		for (let r = 0; r < recs; r++)
+		{
+			let row:any[] = [];
+
+			for (let c = 0; c < columns.length; c++)
+				row.push(null);
+
+			data.push(row);
+		}
+
+		return(new MemoryTable(columns,data));
 	}
 
 	private get wrapper() : DataSourceWrapper
@@ -183,14 +179,17 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
-		return(this.fire(EventType.PreQuery));
+		this.trgstate$ = new TriggerState();
+		let resp:boolean = await this.fire(EventType.PreQuery);
+		this.trgstate$ = null;
+		return(resp);
 	}
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
-		this.postquery$ = record;
+		this.trgstate$ = new TriggerState(record);
 		let resp:boolean = await this.fire(EventType.PostQuery);
-		this.postquery$ = null;
+		this.trgstate$ = null;
 		return(resp);
 	}
 
@@ -217,24 +216,21 @@ export class Block
 
 	public getValue(field:string) : any
 	{
-		if (this.disconnected$) return(null);
-
-		if (this.postquery$ != null)
-			return(this.postquery$.getValue(field));
+		if (this.trgstate$ != null)
+			return(this.trgstate$.record.getValue(field));
 
 		return(this.wrapper.getValue(this.record,field));
 	}
 
 	public setValue(field:string, value:any) : boolean
 	{
-		if (this.disconnected$) return(true);
-
+		console.log("setValue('"+field+"',"+value+")")
 		if (this.columns.indexOf(field) < 0)
 			this.columns.push(field);
 
-		if (this.postquery$ != null)
+		if (this.trgstate$ != null)
 		{
-			this.postquery$.setValue(field,value)
+			this.trgstate$.record.setValue(field,value)
 			return(true);
 		}
 
@@ -253,6 +249,7 @@ export class Block
 
 		if (!await wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();
+		console.log("fetch "+record.getValue("country_id"));
 
 		for (let i = 0; i < this.vwblk.rows && record != null; i++)
 		{

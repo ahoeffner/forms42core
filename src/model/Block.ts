@@ -264,7 +264,6 @@ export class Block
 
 	public getRecord() : Record
 	{
-		console.log("getRecord "+this.record)
 		return(this.wrapper.getRecord(this.record));
 	}
 

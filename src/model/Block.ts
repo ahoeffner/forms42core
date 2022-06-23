@@ -100,14 +100,14 @@ export class Block
 		this.trgstate$ = trgstate;
 	}
 
-	public setTriggerState(update:boolean, link?:boolean) : TriggerState
+	public setTriggerState(update:boolean, link:boolean, offset:number) : TriggerState
 	{
-		this.trgstate$ = new TriggerState(this.getRecord(),update);
+		this.trgstate$ = new TriggerState(this.getRecord(offset),update);
 
 		if (link)
 		{
 			this.trgstate$.block = this.vwblk;
-			this.trgstate$.row = this.vwblk.row;
+			this.trgstate$.row = this.vwblk.row + offset;
 		}
 
 		return(this.trgstate$);
@@ -285,9 +285,10 @@ export class Block
 		return(true);
 	}
 
-	public getRecord() : Record
+	public getRecord(offset?:number) : Record
 	{
-		return(this.wrapper.getRecord(this.record));
+		if (offset == null) offset = 0;
+		return(this.wrapper.getRecord(this.record+offset));
 	}
 
 	public link(block:InterfaceBlock) : void

@@ -191,6 +191,8 @@ export class Block
 				this.row$ = rownum;
 
 			this.openrow();
+			this.displaycurrent();
+			
 			return;
 		}
 

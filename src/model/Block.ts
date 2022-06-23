@@ -233,7 +233,6 @@ export class Block
 			return(true);
 		}
 
-		console.log("setvalue "+this.record+" "+field+" "+value)
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 

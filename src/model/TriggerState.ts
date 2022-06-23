@@ -10,10 +10,15 @@
  * accompanied this code).
  */
 
+import { Block } from "../view/Block.js";
 import { Record } from "./Record.js";
 
 export class TriggerState
 {
+	private row$:number = null;
+	private block$:Block = null;
+	private dirty$:boolean = true;
+
 	private record$:Record = null;
 	private update$:boolean = true;
 
@@ -21,6 +26,26 @@ export class TriggerState
 	{
 		this.record$ = record;
 		if (update != null)	this.update = update;
+	}
+
+	public get row() : number
+	{
+		return(this.row$);
+	}
+
+	public set row(row:number)
+	{
+		this.row$ = row;
+	}
+
+	public get block() : Block
+	{
+		return(this.block$);
+	}
+
+	public set block(block:Block)
+	{
+		this.block$ = block;
 	}
 
 	public get record() : Record
@@ -34,6 +59,16 @@ export class TriggerState
 	public set record(record:Record)
 	{
 		this.record$ = record;
+	}
+
+	public get dirty() : boolean
+	{
+		return(this.dirty$);
+	}
+
+	public set dirty(dirty:boolean)
+	{
+		this.dirty$ = dirty;
 	}
 
 	public get update() : boolean
@@ -56,5 +91,11 @@ export class TriggerState
 	{
 		this.update$ = update;
 		return(this);
+	}
+
+	public applychanges() : void
+	{
+		if (this.block != null && this.dirty)
+			this.block$.display(this.row,this.record);
 	}
 }

@@ -17,6 +17,8 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { TriggerState } from '../model/TriggerState.js';
+import { nextTick } from 'process';
 
 export class Form
 {
@@ -190,31 +192,43 @@ export class Form
 
 		if (nxtblock != preblock)
 		{
+			let trgstate:TriggerState = nxtblock.model.setTriggerState(false,true);
+
 			if (!await this.fireBlockEvent(EventType.PreBlock,nxtblock.name))
 			{
 				this.focus();
 				return(false);
 			}
 
-			// Move to record
+			trgstate.update = true;
 
 			if (!await this.fireBlockEvent(EventType.PreRecord,nxtblock.name))
 			{
+				trgstate.applychanges();
+				nxtblock.model.triggerstate = null;
+
 				this.focus();
-				// Move back
 				return(false);
 			}
+
+			trgstate.applychanges();
+			nxtblock.model.triggerstate = null;
 		}
 		else if (recoffset != 0)
 		{
-			// Move to record
+			let trgstate:TriggerState = nxtblock.model.setTriggerState(true,true);
 
 			if (!await this.fireBlockEvent(EventType.PreRecord,nxtblock.name))
 			{
+				trgstate.applychanges();
+				nxtblock.model.triggerstate = null;
+
 				this.focus();
-				// Move back
 				return(false);
 			}
+
+			trgstate.applychanges();
+			nxtblock.model.triggerstate = null;
 		}
 
 		this.curinst$ = inst;

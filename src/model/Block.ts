@@ -100,6 +100,24 @@ export class Block
 		this.trgstate$ = trgstate;
 	}
 
+	public setTriggerState(update:boolean, link?:boolean) : TriggerState
+	{
+		this.trgstate$ = new TriggerState(this.getRecord(),update);
+
+		if (link)
+		{
+			this.trgstate$.block = this.vwblk;
+			this.trgstate$.row = this.vwblk.row;
+		}
+
+		return(this.trgstate$);
+	}
+
+	public applyTriggerChanges() : void
+	{
+		this.trgstate$?.applychanges();
+	}
+
 	public get datasource() : DataSource
 	{
 		return(this.source$);
@@ -229,7 +247,12 @@ export class Block
 
 		if (this.trgstate$ != null)
 		{
-			this.trgstate$.record.setValue(field,value)
+			if (this.trgstate$.update)
+			{
+				this.trgstate$.dirty = true;
+				this.trgstate$.record.setValue(field,value)
+			}
+
 			return(true);
 		}
 

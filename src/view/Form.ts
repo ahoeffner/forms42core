@@ -304,7 +304,12 @@ export class Form
 		return(cont);
 	}
 
-	public async leave(inst:FieldInstance) : Promise<boolean>
+	public async prefield(inst:FieldInstance) : Promise<boolean>
+	{
+		return(!await this.fireFieldEvent(EventType.PreField,inst));
+	}
+
+	public async postfield(inst:FieldInstance) : Promise<boolean>
 	{
 		return(!await this.fireFieldEvent(EventType.PostField,inst));
 	}

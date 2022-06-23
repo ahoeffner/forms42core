@@ -109,6 +109,13 @@ export class Record
 	{
 		column = column.toLowerCase();
 		let idx:number = this.columns.indexOf(column);
-		if (idx >= 0) this.values$[idx] = value;
+
+		if (idx < 0)
+		{
+			idx = this.columns.length;
+			this.columns.push(column);
+		}
+
+		this.values$[idx] = value;
 	}
 }

@@ -100,22 +100,16 @@ export class Block
 		this.trgstate$ = trgstate;
 	}
 
-	public setTriggerState(update:boolean, link:boolean, offset:number) : TriggerState
+	public setTriggerState(offset:number) : TriggerState
 	{
-		this.trgstate$ = new TriggerState(this.getRecord(offset),update);
-
-		if (link)
-		{
-			this.trgstate$.block = this.vwblk;
-			this.trgstate$.row = this.vwblk.row + offset;
-		}
-
+		this.trgstate$ = new TriggerState(this.getRecord(offset),true);
 		return(this.trgstate$);
 	}
 
-	public applyTriggerChanges() : void
+	public endTriggerChanges(apply:boolean) : void
 	{
-		this.trgstate$?.applychanges();
+		if (apply) this.trgstate$?.applychanges();
+		this.trgstate$ = null;
 	}
 
 	public get datasource() : DataSource
@@ -235,7 +229,7 @@ export class Block
 	public getValue(field:string) : any
 	{
 		if (this.trgstate$ != null)
-			return(this.trgstate$.record.getValue(field));
+			return(this.trgstate$.getValue(field));
 
 		return(this.wrapper.getValue(this.record,field));
 	}
@@ -247,12 +241,7 @@ export class Block
 
 		if (this.trgstate$ != null)
 		{
-			if (this.trgstate$.update)
-			{
-				this.trgstate$.dirty = true;
-				this.trgstate$.record.setValue(field,value)
-			}
-
+			this.trgstate$.setValue(field,value)
 			return(true);
 		}
 

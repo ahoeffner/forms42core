@@ -10,92 +10,62 @@
  * accompanied this code).
  */
 
-import { Block } from "../view/Block.js";
 import { Record } from "./Record.js";
 
 export class TriggerState
 {
-	private row$:number = null;
-	private block$:Block = null;
 	private dirty$:boolean = true;
-
+	private wrkcpy$:Record = null;
 	private record$:Record = null;
-	private update$:boolean = true;
 
-	public constructor(record?:Record, update?:boolean)
+	public constructor(record?:Record, clone?:boolean)
 	{
 		this.record$ = record;
-		if (update != null)	this.update = update;
+		this.wrkcpy$ = record;
+
+		if (clone)
+		{
+			this.wrkcpy$ = new Record(null);
+			record.values.forEach((column) =>
+			{this.wrkcpy$.setValue(column.name,column.value)})
+		}
 	}
 
-	public get row() : number
-	{
-		return(this.row$);
-	}
-
-	public set row(row:number)
-	{
-		this.row$ = row;
-	}
-
-	public get block() : Block
-	{
-		return(this.block$);
-	}
-
-	public set block(block:Block)
-	{
-		this.block$ = block;
-	}
-
-	public get record() : Record
-	{
-		if (this.record$ == null)
-			this.record$ = new Record(null,null);
-
-		return(this.record$);
-	}
-
-	public set record(record:Record)
-	{
-		this.record$ = record;
-	}
-
-	public get dirty() : boolean
+	public dirty() : boolean
 	{
 		return(this.dirty$);
 	}
 
-	public set dirty(dirty:boolean)
-	{
-		this.dirty$ = dirty;
-	}
-
-	public get update() : boolean
-	{
-		return(this.update$);
-	}
-
-	public set update(update:boolean)
-	{
-		this.update$ = update;
-	}
-
-	public setRecord(record:Record) : TriggerState
+	public setRecord(record:Record, clone:boolean)
 	{
 		this.record$ = record;
-		return(this);
+		this.wrkcpy$ = record;
+
+		if (clone)
+		{
+			this.wrkcpy$ = new Record(null);
+			record.values.forEach((column) =>
+			{this.wrkcpy$.setValue(column.name,column.value)})
+		}
 	}
 
-	public setUpdate(update:boolean) : TriggerState
+	public getValue(column:string) : any
 	{
-		this.update$ = update;
-		return(this);
+		return(this.wrkcpy$.getValue(column));
+	}
+
+	public setValue(column:string, value:any) : void
+	{
+		this.dirty$ = true;
+		this.record$.setValue(column,value);
 	}
 
 	public applychanges() : void
 	{
-		if (this.block != null && this.dirty)
-			this.block$.display(this.row,this.record);
+		if (this.wrkcpy$ != this.record$)
+		{
+			this.wrkcpy$.values.forEach((column) =>
+			{this.record$.setValue(column.name,column.value)})
+		}
 	}
 }

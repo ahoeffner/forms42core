@@ -180,18 +180,13 @@ export class Field
 		if (brwevent.type == "focus")
 		{
 			this.value$ = inst.getValue();
-
-			// Will trigger everything
 			await this.block.form.enter(inst);
-
 			return;
 		}
 
 		if (brwevent.type == "blur")
 		{
-			if (!await this.block.form.postfield(inst))
-				inst.focus();
-
+			await this.block.form.leave(inst);
 			return;
 		}
 

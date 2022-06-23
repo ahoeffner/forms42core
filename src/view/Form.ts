@@ -18,6 +18,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { off } from 'process';
 
 export class Form
 {
@@ -47,9 +48,9 @@ export class Form
 		form.linkModels();
 	}
 
+	private static curform$:Form = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
-	private static currfrm$:InterfaceForm = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
 	private constructor(parent:InterfaceForm)
@@ -113,17 +114,23 @@ export class Form
 
 	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
+		let nxtblock:Block = inst.field.block;
+		let recoffset:number = nxtblock.offset(inst);
+		let preblock:Block = this.curinst$?.field.block;
+
 		/**********************************************************************
 			Go to form
 		 **********************************************************************/
 
-		if (this.parent != Form.currfrm$)
+		if (this != Form.curform$)
 		{
 			let preform:Form = this;
 
-			if (Form.currfrm$ != null)
+			if (Form.curform$ != null)
 			{
-				preform = Form.getForm(Form.currfrm$);
+				preform = Form.curform$;
+
+				// If not in call and not valid => return(false);
 
 				if (!preform.validated)
 				{
@@ -131,16 +138,14 @@ export class Form
 					return(false);
 				}
 
-				// If not in call and not valid => return(false);
-
-				if (!await this.fireFormEvent(EventType.PostForm,Form.currfrm$))
+				if (!await this.leaveForm(preform))
 				{
 					preform.focus();
 					return(false);
 				}
 			}
 
-			if (!await this.fireFormEvent(EventType.PreForm,this.parent))
+			if (!await this.enterForm(this,nxtblock,recoffset))
 			{
 				preform.focus();
 				return(false);
@@ -150,10 +155,6 @@ export class Form
 		/**********************************************************************
 			Leave this forms current record and block
 		 **********************************************************************/
-
-		let nxtblock:Block = inst.field.block;
-		let recoffset:number = nxtblock.offset(inst);
-		let preblock:Block = this.curinst$?.field.block;
 
 		if (preblock != null)
 		{
@@ -167,13 +168,13 @@ export class Form
 					return(false);
 				}
 
-				if (!await this.fireBlockEvent(EventType.PostRecord,preblock.name))
+				if (!await this.leaveRecord(preblock))
 				{
 					this.focus();
 					return(false);
 				}
 
-				if (!await this.fireBlockEvent(EventType.PostBlock,preblock.name))
+				if (!await this.leaveBlock(preblock))
 				{
 					this.focus();
 					return(false);
@@ -187,7 +188,7 @@ export class Form
 					return(false);
 				}
 
-				if (!await this.fireBlockEvent(EventType.PostRecord,preblock.name))
+				if (!await this.leaveRecord(preblock))
 				{
 					this.focus();
 					return(false);
@@ -201,117 +202,115 @@ export class Form
 
 		if (nxtblock != preblock)
 		{
-			let trgstate:TriggerState = nxtblock.model.setTriggerState(false,true,recoffset);
-
-			if (!await this.fireBlockEvent(EventType.PreBlock,nxtblock.name))
+			if (!await this.enterBlock(nxtblock,recoffset))
 			{
 				this.focus();
 				return(false);
 			}
 
-			trgstate.update = true;
-
-			if (!await this.fireBlockEvent(EventType.PreRecord,nxtblock.name))
+			if (!await this.enterRecord(nxtblock,recoffset))
 			{
-				trgstate.applychanges();
-				nxtblock.model.triggerstate = null;
-
 				this.focus();
 				return(false);
 			}
-
-			trgstate.applychanges();
-			nxtblock.model.triggerstate = null;
 		}
 		else if (recoffset != 0)
 		{
-			let trgstate:TriggerState = nxtblock.model.setTriggerState(true,true,recoffset);
-
-			if (!await this.fireBlockEvent(EventType.PreRecord,nxtblock.name))
+			if (!await this.enterRecord(nxtblock,recoffset))
 			{
-				trgstate.applychanges();
-				nxtblock.model.triggerstate = null;
-
 				this.focus();
 				return(false);
 			}
-
-			trgstate.applychanges();
-			nxtblock.model.triggerstate = null;
 		}
 
 		// Prefield
 
-		if (!await this.fireFieldEvent(EventType.PreField,inst))
+		if (!await this.enterField(inst,recoffset))
 		{
 			this.focus();
 			return(false);
 		}
 
+		Form.curform$ = this;
 		this.curinst$ = inst;
-		Form.currfrm$ = this.parent;
 		nxtblock.setCurrentRow(inst.row);
 
 		return(true);
 	}
 
-	public async enterForm(form:Form) : Promise<boolean>
+	public async leave(inst:FieldInstance) : Promise<boolean>
 	{
-		form.block.model.setTriggerState(false,false,0);
-		let cont:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		form.block.model.triggerstate = null;
-		return(cont);
+		//let recoffset:number = inst.field.block.offset(inst);
+		if (!await this.LeaveField(inst))
+		{
+			Form.curform$.focus();
+			return(false);
+		}
+		return(true);
+	}
+
+	public async enterForm(form:Form, block:Block, offset:number) : Promise<boolean>
+	{
+		block.model.setTriggerState(offset);
+		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
+		block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setTriggerState(false,false,offset);
-		let cont:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
-		block.model.triggerstate = null;
-		return(cont);
+		block.model.setTriggerState(offset);
+		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
+		block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		let trgstate:TriggerState = block.model.setTriggerState(true,true,offset);
-		let cont:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
-		trgstate.applychanges();
-		block.model.triggerstate = null;
-		return(cont);
+		block.model.setTriggerState(offset);
+		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
+		block.model.endTriggerChanges(success);
+		return(success);
+	}
+
+	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
+	{
+		inst.field.block.model.setTriggerState(offset);
+		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);
+		inst.field.block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		form.block.model.setTriggerState(false,false,0);
-		let cont:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
-		form.block.model.triggerstate = null;
-		return(cont);
+		form.block.model.setTriggerState(0);
+		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
+		form.block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		block.model.setTriggerState(false,false,0);
-		let cont:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
-		block.model.triggerstate = null;
-		return(cont);
+		block.model.setTriggerState(0);
+		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
+		block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
-		block.model.setTriggerState(false,false,0);
-		let cont:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
-		block.model.triggerstate = null;
-		return(cont);
+		block.model.setTriggerState(0);
+		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
+		block.model.endTriggerChanges(success);
+		return(success);
 	}
 
-	public async prefield(inst:FieldInstance) : Promise<boolean>
+	public async LeaveField(inst:FieldInstance) : Promise<boolean>
 	{
-		return(!await this.fireFieldEvent(EventType.PreField,inst));
-	}
-
-	public async postfield(inst:FieldInstance) : Promise<boolean>
-	{
-		return(!await this.fireFieldEvent(EventType.PostField,inst));
+		inst.field.block.model.setTriggerState(0);
+		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
+		inst.field.block.model.endTriggerChanges(success);
+		return(success);
 	}
 
 	private linkModels() : void

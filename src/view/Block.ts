@@ -192,7 +192,7 @@ export class Block
 
 			this.openrow();
 			this.displaycurrent();
-			
+
 			return;
 		}
 
@@ -247,6 +247,12 @@ export class Block
 
 		record.values.forEach((field) =>
 		{row.distribute(field.name,field.value);})
+	}
+
+	public refresh(rownum:number, record:Record) : void
+	{
+		this.display(rownum,record);
+		if (rownum == this.row) this.displaycurrent();
 	}
 
 	private displaycurrent() : void

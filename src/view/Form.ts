@@ -12,13 +12,11 @@
 
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
-import { TriggerState } from '../model/TriggerState.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { off } from 'process';
 
 export class Form
 {

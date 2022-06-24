@@ -13,11 +13,11 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
-import { TriggerState } from "./TriggerState.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
+import { BlockTransaction } from "./BlockTransaction.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
@@ -57,7 +57,7 @@ export class Block
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
-	private trgstate$:TriggerState = null;
+	private trgstate$:BlockTransaction = null;
 
 	private constructor(form:Form, name:string)
 	{
@@ -90,19 +90,19 @@ export class Block
 		return(this.columns$);
 	}
 
-	public get triggerstate() : TriggerState
+	public get triggerstate() : BlockTransaction
 	{
 		return(this.trgstate$);
 	}
 
-	public set triggerstate(trgstate:TriggerState)
+	public set triggerstate(trgstate:BlockTransaction)
 	{
 		this.trgstate$ = trgstate;
 	}
 
-	public setTriggerState(offset:number) : TriggerState
+	public setTriggerState(offset:number) : BlockTransaction
 	{
-		this.trgstate$ = new TriggerState(this.getRecord(offset),true);
+		this.trgstate$ = new BlockTransaction(this.getRecord(offset),true);
 		return(this.trgstate$);
 	}
 
@@ -191,7 +191,7 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
-		this.trgstate$ = new TriggerState();
+		this.trgstate$ = new BlockTransaction();
 		let resp:boolean = await this.fire(EventType.PreQuery);
 		this.trgstate$ = null;
 		return(resp);
@@ -199,7 +199,7 @@ export class Block
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
-		this.trgstate$ = new TriggerState(record);
+		this.trgstate$ = new BlockTransaction(record);
 		let resp:boolean = await this.fire(EventType.PostQuery);
 		this.trgstate$ = null;
 		return(resp);

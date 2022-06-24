@@ -15,7 +15,6 @@ import { Form as View } from '../view/Form.js';
 import { Form as Model } from '../model/Form.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Block as ViewBlock } from '../view/Block.js';
-import { Block as ModelBlock } from '../model/Block.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Field as ViewField } from '../view/fields/Field.js';
@@ -23,7 +22,6 @@ import { Canvas } from '../application/interfaces/Canvas.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 
 export class Form implements CanvasComponent
@@ -103,9 +101,7 @@ export class Form implements CanvasComponent
 		if (blk == null) return(null);
 
 		blk.model.setValue(field,value);
-
-		if (blk.model.triggerstate == null)
-			blk.getField(field)?.setValue(value);
+		blk.getField(field)?.setValue(value);
 	}
 
 	public getValue(block:string, field:string) : any
@@ -116,11 +112,8 @@ export class Form implements CanvasComponent
 
 		if (blk == null) return(null);
 
-		if (blk.model.triggerstate == null)
-		{
-			let fld:ViewField = blk.getField(field);
-			if (fld != null) return(blk.getValue(field));
-		}
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
 
 		return(blk.model.getValue(field));
 	}

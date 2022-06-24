@@ -12,7 +12,7 @@
 
 import { Record } from "./Record.js";
 
-export class TriggerState
+export class BlockTransaction
 {
 	private dirty$:boolean = true;
 	private wrkcpy$:Record = null;

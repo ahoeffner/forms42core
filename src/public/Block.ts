@@ -70,11 +70,8 @@ export class Block
 
 		mdl.setValue(field,value);
 
-		if (mdl.triggerstate == null)
-		{
-			let fld:ViewField = blk.getField(field);
-			if (fld != null) fld.setValue(value);
-		}
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) fld.setValue(value);
 	}
 
 	public getValue(field:string) : any
@@ -82,11 +79,8 @@ export class Block
 		field = field?.toLowerCase();
 		let blk:ViewBlock = ViewBlock.getBlock(this);
 
-		if (blk.model.triggerstate == null)
-		{
-			let fld:ViewField = blk.getField(field);
-			if (fld != null) return(blk.getValue(field));
-		}
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
 
 		return(blk.model.getValue(field));
 	}

@@ -83,6 +83,11 @@ export class EventTransaction
 		}
 	}
 
+	public remove(block?:Block|ViewBlock) : void
+	{
+		this.trx.delete(block.name);
+	}
+
 	public done() : boolean
 	{
 		let size:number = this.trx.size;

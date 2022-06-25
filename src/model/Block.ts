@@ -334,10 +334,11 @@ export class Block
 			return;
 		}
 
-		if (apply)
-			evttrx.apply();
+		if (apply) evttrx.apply(this);
+		else 	   evttrx.remove(this);
 
-		this.form.eventTransaction = null;
+		if (evttrx.done())
+			this.form.eventTransaction = null;
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

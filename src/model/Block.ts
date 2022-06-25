@@ -95,20 +95,18 @@ export class Block
 		return(this.form.eventTransaction);
 	}
 
-	public setEventTransaction(offset:number) : EventTransaction
+	public setEventTransaction(offset:number) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
 		if (evttrx != null)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
-			return(evttrx);
+			return;
 		}
 
 		evttrx = new EventTransaction(this,null,offset,true);
 		this.form.eventTransaction = evttrx;
-
-		return(evttrx);
 	}
 
 	public endEventTransaction(apply:boolean) : void
@@ -208,22 +206,25 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(record);
-		let resp:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(resp);
-		return(resp);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
 	}
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
 		this.setModelEventTransaction(record);
-		let resp:boolean = await this.fire(EventType.PostQuery);
-		this.endModelEventTransaction(resp);
-		return(resp);
+		let success:boolean = await this.fire(EventType.PostQuery);
+		this.endModelEventTransaction(success);
+		return(success);
 	}
 
 	public async validateRecord() : Promise<boolean>
 	{
-		return(this.fire(EventType.ValidateRecord))
+		this.setEventTransaction(0);
+		let success:boolean = await this.fire(EventType.ValidateRecord);
+		this.endEventTransaction(success);
+		return(success);
 	}
 
 	public move(delta:number) : void
@@ -307,26 +308,26 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private setModelEventTransaction(record:Record) : EventTransaction
+	private setModelEventTransaction(record:Record) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
 		if (evttrx != null && !evttrx.crud)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
-			return(evttrx);
+			return;
 		}
 
 		if (evttrx) evttrx.join(this,record,0,false);
 		else evttrx = new EventTransaction(this,record,0,false,true);
 
 		this.form.eventTransaction = evttrx;
-		return(evttrx);
 	}
 
 	private endModelEventTransaction(apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
+		console.log("end trans I "+this.form.eventTransaction)
 
 		if (evttrx == null || !evttrx.crud)
 		{
@@ -339,6 +340,8 @@ export class Block
 
 		if (evttrx.done())
 			this.form.eventTransaction = null;
+
+		console.log("end trans II "+this.form.eventTransaction)
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

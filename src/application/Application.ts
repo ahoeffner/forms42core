@@ -58,6 +58,7 @@ export class Application
         instance.canvas = canvas;
         canvas.setComponent(instance);
         container.appendChild(canvas.getElement());
+		console.log("Raise newFormEvent XXX")
 		FormEvents.raise(FormEvent.newFormEvent(EventType.FormInit,instance));
     }
 }

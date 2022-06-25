@@ -18,17 +18,15 @@ import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
+import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { FieldInstance } from "../../public/FieldInstance.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
-
-
 
 export class KeyEventSource
 {
 	constructor(public key:KeyMap, public field:string, public block:string, public record:number, public form:Form) {}
 }
-
 
 export class FormEvent
 {
@@ -47,7 +45,6 @@ export class FormEvent
 		return(new FormEvent(type,inst.field.block.form.parent,inst));
 	}
 
-
 	public static newKeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
 	{
 		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
@@ -64,7 +61,6 @@ export class FormEvent
 	private bevaluated:boolean = false;
 	private ievaluated:boolean = false;
 
-
 	private constructor
 	(
 		private type$:EventType,
@@ -72,7 +68,7 @@ export class FormEvent
 		private inst?:ViewFieldInstance,
 		private blockname$?:string,
 		private key$?:KeyMap,
-		private mevent?:MouseEvent
+		private mevent$?:MouseEvent
 	) {}
 
 	public get type() : EventType
@@ -124,6 +120,11 @@ export class FormEvent
 	public get fieldname() : string
 	{
 		return(this.inst?.name);
+	}
+
+	public get mouseevent() : MouseEvent
+	{
+		return(this.mevent$);
 	}
 
 	public toString() : string
@@ -242,6 +243,12 @@ export class FormEvents
 	{
 		let listeners:EventListener[] = null;
 		let done:Set<object> = new Set<object>();
+
+		//console.log("Raise "+EventType[event.type]+"("+event.type+")")
+		console.log("Raise "+EventType[event.type]+"("+event.type+") <"+ModelForm.getForm(event.form).eventTransaction+">")
+
+		if (ModelForm.getForm(event.form).eventTransaction == undefined && event.mouseevent == null)
+			console.log("Missing Transaction for event "+event.type);
 
 		// Field Listeners
 		listeners = FormEvents.fldlisteners.get(event.type);

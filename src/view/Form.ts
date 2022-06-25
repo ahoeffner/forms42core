@@ -29,6 +29,11 @@ export class Form
 		Form.getForm(parent);
 	}
 
+	public static current() : Form
+	{
+		return(Form.curform$);
+	}
+
 	public static getForm(parent:InterfaceForm) : Form
 	{
 		let frm:Form = Form.views.get(parent);

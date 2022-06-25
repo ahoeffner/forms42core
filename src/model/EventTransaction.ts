@@ -22,13 +22,16 @@ export class EventTransaction
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
 
-	public constructor(block:Block, record?:Record, offset?:number, applyvw?:boolean, crud?:boolean)
+	public constructor(block?:Block, record?:Record, offset?:number, applyvw?:boolean, crud?:boolean)
 	{
-		this.crud = crud;
-		if (offset == null) offset = 0;
-		if (applyvw == null) applyvw = true;
-		if (record == null) record = block.getRecord(offset);
-		this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,crud));
+		if (block != null)
+		{
+			this.crud = crud;
+			if (offset == null) offset = 0;
+			if (applyvw == null) applyvw = true;
+			if (record == null) record = block.getRecord(offset);
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,crud));
+		}
 	}
 
 	public join(block:Block, record?:Record, offset?:number, applyvw?:boolean) : void

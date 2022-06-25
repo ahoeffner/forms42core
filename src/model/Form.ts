@@ -12,6 +12,7 @@
 
 import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
+import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -97,6 +98,35 @@ export class Form
 	public set eventTransaction(evttrans:EventTransaction)
 	{
 		this.evttrans$ = evttrans;
+	}
+
+	public setEventTransaction() : void
+	{
+		let evttrx:EventTransaction = this.eventTransaction;
+
+		if (evttrx != null)
+		{
+			Alert.fatal("Already in transaction","Transaction Failure");
+			return;
+		}
+
+		this.eventTransaction = new EventTransaction();
+	}
+
+	public endEventTransaction(apply:boolean) : void
+	{
+		let evttrx:EventTransaction = this.eventTransaction;
+
+		if (evttrx == null || evttrx.crud)
+		{
+			Alert.fatal("Not in transaction","Transaction Failure");
+			return;
+		}
+
+		if (apply)
+			evttrx.apply();
+
+		this.eventTransaction = null;
 	}
 
 	public addBlock(block:Block) : void

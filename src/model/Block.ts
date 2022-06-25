@@ -95,17 +95,17 @@ export class Block
 		return(this.form.eventTransaction);
 	}
 
-	public setEventTransaction(offset:number) : void
+	public setEventTransaction(event:EventType, offset:number) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
 		if (evttrx != null)
 		{
-			Alert.fatal("Already in transaction","Transaction Failure");
+			Alert.fatal("Cannot start transaction: "+EventType[event]+". Form in transaction "+evttrx.event,"Transaction Failure");
 			return;
 		}
 
-		evttrx = new EventTransaction(this,null,offset,true);
+		evttrx = new EventTransaction(event,this,null,offset,true);
 		this.form.eventTransaction = evttrx;
 	}
 
@@ -205,7 +205,7 @@ export class Block
 	public async preQuery() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(record);
+		this.setModelEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
 		this.endModelEventTransaction(success);
 		return(success);
@@ -213,7 +213,7 @@ export class Block
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
-		this.setModelEventTransaction(record);
+		this.setModelEventTransaction(EventType.PostQuery,record);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		this.endModelEventTransaction(success);
 		return(success);
@@ -221,7 +221,7 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		this.setEventTransaction(0);
+		this.setEventTransaction(EventType.ValidateRecord,0);
 		let success:boolean = await this.fire(EventType.ValidateRecord);
 		this.endEventTransaction(success);
 		return(success);
@@ -308,7 +308,7 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private setModelEventTransaction(record:Record) : void
+	private setModelEventTransaction(event:EventType, record:Record) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
@@ -319,7 +319,7 @@ export class Block
 		}
 
 		if (evttrx) evttrx.join(this,record,0,false);
-		else evttrx = new EventTransaction(this,record,0,false,true);
+		else evttrx = new EventTransaction(event,this,record,0,false,true);
 
 		this.form.eventTransaction = evttrx;
 	}

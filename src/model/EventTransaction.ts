@@ -15,6 +15,7 @@ import { Record } from "./Record.js";
 import { Alert } from "../application/Alert.js";
 import { Field } from "../view/fields/Field.js";
 import { Block as ViewBlock } from "../view/Block.js";
+import { EventType } from "../control/events/EventType.js";
 
 /*
 	When transactions is blocked, it protects against changes
@@ -26,14 +27,17 @@ import { Block as ViewBlock } from "../view/Block.js";
 
 export class EventTransaction
 {
+	private event$:EventType;
 	private anonymous:number = 0;
 	private blocked$:boolean = false;
 
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
 
-	public constructor(block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
+	public constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
+		this.event$ = event;
+
 		if (block != null)
 		{
 			this.blocked$ = shared;
@@ -55,6 +59,11 @@ export class EventTransaction
 	public set blocked(shared:boolean)
 	{
 		this.blocked$ = shared;
+	}
+
+	public get event() : string
+	{
+		return(EventType[this.event$]);
 	}
 
 	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void

@@ -16,6 +16,7 @@ import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
+import { EventType } from '../../index.js';
 
 
 export class Form
@@ -100,7 +101,7 @@ export class Form
 		this.evttrans$ = evttrans;
 	}
 
-	public setEventTransaction() : void
+	public setEventTransaction(event:EventType) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
@@ -111,7 +112,7 @@ export class Form
 		}
 
 		if (evttrx) evttrx.join();
-		else evttrx = new EventTransaction();
+		else evttrx = new EventTransaction(event);
 
 		evttrx.blocked = true;
 		this.eventTransaction = evttrx;

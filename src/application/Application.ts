@@ -60,7 +60,7 @@ export class Application
         canvas.setComponent(instance);
         container.appendChild(canvas.getElement());
 
-		ModelForm.getForm(instance).setEventTransaction();
+		ModelForm.getForm(instance).setEventTransaction(EventType.FormInit);
 		FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
 		ModelForm.getForm(instance).endEventTransaction();
     }

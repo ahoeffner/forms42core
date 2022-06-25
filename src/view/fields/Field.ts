@@ -229,7 +229,7 @@ export class Field
 
 		if (brwevent.isMouseEvent)
 		{
-			let mevent:FormEvent = FormEvent.newMouseEvent(this.block.form.parent, brwevent.event,inst);
+			let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent, brwevent.event,inst);
 			await FormEvents.raise(mevent);
 		}
 

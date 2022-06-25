@@ -323,19 +323,19 @@ export class Form
 
 	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.newFormEvent(type,form);
+		let frmevent:FormEvent = FormEvent.FormEvent(type,form);
 		return(FormEvents.raise(frmevent));
 	}
 
 	private async fireBlockEvent(type:EventType, block:string) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.parent,block);
+		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.parent,block);
 		return(FormEvents.raise(frmevent));
 	}
 
 	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.newFieldEvent(type,inst);
+		let frmevent:FormEvent = FormEvent.FieldEvent(type,inst);
 		return(FormEvents.raise(frmevent));
 	}
 }

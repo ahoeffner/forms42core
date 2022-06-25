@@ -113,9 +113,9 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null || evttrx.crud)
+		if (evttrx == null || evttrx.shared)
 		{
-			Alert.fatal("Not in transaction","Transaction Failure");
+			Alert.fatal("Block not in transaction","Transaction Failure");
 			return;
 		}
 
@@ -312,7 +312,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx != null && !evttrx.crud)
+		if (evttrx != null && !evttrx.shared)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
 			return;
@@ -327,11 +327,10 @@ export class Block
 	private endModelEventTransaction(apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
-		console.log("end trans I "+this.form.eventTransaction)
 
-		if (evttrx == null || !evttrx.crud)
+		if (evttrx == null || !evttrx.shared)
 		{
-			Alert.fatal("Not in transaction","Transaction Failure");
+			Alert.fatal("Model not in transaction","Transaction Failure");
 			return;
 		}
 
@@ -340,13 +339,11 @@ export class Block
 
 		if (evttrx.done())
 			this.form.eventTransaction = null;
-
-		console.log("end trans II "+this.form.eventTransaction)
 	}
 
 	private async fire(type:EventType) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.newBlockEvent(type,this.intfrm,this.name);
+		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.intfrm,this.name);
 		return(FormEvents.raise(frmevent));
 	}
 }

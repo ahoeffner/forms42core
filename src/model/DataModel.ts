@@ -220,6 +220,6 @@ export class DataSourceWrapper
 
 	private async fire(type:EventType) : Promise<boolean>
 	{
-		return(FormEvents.raise(FormEvent.newBlockEvent(type,this.form,this.block.name)));
+		return(FormEvents.raise(FormEvent.BlockEvent(type,this.form,this.block.name)));
 	}
 }

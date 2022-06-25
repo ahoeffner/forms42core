@@ -104,29 +104,33 @@ export class Form
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx != null)
+		if (evttrx != null && !evttrx.shared)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
 			return;
 		}
 
-		this.eventTransaction = new EventTransaction();
+		if (evttrx) evttrx.join();
+		else evttrx = new EventTransaction();
+
+		this.eventTransaction = evttrx;
+		this.eventTransaction.shared = true;
 	}
 
-	public endEventTransaction(apply:boolean) : void
+	public endEventTransaction() : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null || evttrx.crud)
+		if (evttrx == null || !evttrx.shared)
 		{
-			Alert.fatal("Not in transaction","Transaction Failure");
+			Alert.fatal("Form not in transaction ","Transaction Failure");
 			return;
 		}
 
-		if (apply)
-			evttrx.apply();
+		evttrx.remove();
 
-		this.eventTransaction = null;
+		if (evttrx.done())
+			this.eventTransaction = null;
 	}
 
 	public addBlock(block:Block) : void

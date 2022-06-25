@@ -17,29 +17,40 @@ import { Block as ViewBlock } from "../view/Block.js";
 
 export class EventTransaction
 {
-	public crud:boolean = false;
+	public shared:boolean = false;
+
+	private anonymous:number = 0;
 
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
 
-	public constructor(block?:Block, record?:Record, offset?:number, applyvw?:boolean, crud?:boolean)
+	public constructor(block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
 		if (block != null)
 		{
-			this.crud = crud;
+			this.shared = shared;
 			if (offset == null) offset = 0;
 			if (applyvw == null) applyvw = true;
 			if (record == null) record = block.getRecord(offset);
-			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,crud));
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,shared));
+			return;
 		}
+
+		this.anonymous++;
 	}
 
-	public join(block:Block, record?:Record, offset?:number, applyvw?:boolean) : void
+	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
-		if (offset == null) offset = 0;
-		if (applyvw == null) applyvw = true;
-		if (record == null) record = block.getRecord(offset);
-		this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,true));
+		if (block != null)
+		{
+			if (offset == null) offset = 0;
+			if (applyvw == null) applyvw = true;
+			if (record == null) record = block.getRecord(offset);
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,true));
+			return;
+		}
+
+		this.anonymous++;
 	}
 
 	public getValue(block:Block|ViewBlock, field:string) : any
@@ -88,7 +99,8 @@ export class EventTransaction
 
 	public remove(block?:Block|ViewBlock) : void
 	{
-		this.trx.delete(block.name);
+		if (block == null) this.anonymous--;
+		else               this.trx.delete(block.name);
 	}
 
 	public done() : boolean
@@ -97,11 +109,11 @@ export class EventTransaction
 
 		this.trx.forEach((trx) =>
 		{
-			if (!trx.crud)
+			if (!trx.shared)
 				size--;
 		});
 
-		return(size == 0);
+		return(size == 0 && this.anonymous == 0);
 	}
 }
 
@@ -109,17 +121,17 @@ class BlockTransaction
 {
 	offset:number = 0;
 	block:Block = null;
-	crud:boolean = true;
 	record:Record = null;
 	wrkcpy:Record = null;
+	shared:boolean = true;
 	applyvw:boolean = true;
 
-	constructor(block:Block, record:Record, offset:number, applyvw:boolean, crud:boolean)
+	constructor(block:Block, record:Record, offset:number, applyvw:boolean, shared:boolean)
 	{
-		this.crud = crud;
 		this.block = block;
 		this.offset = offset;
 		this.record = record;
+		this.shared = shared;
 		this.applyvw = applyvw;
 	}
 

@@ -18,7 +18,6 @@ import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
-import { Form as ViewForm } from "../../view/Form.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { FieldInstance } from "../../public/FieldInstance.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
@@ -30,27 +29,27 @@ export class KeyEventSource
 
 export class FormEvent
 {
-	public static newFormEvent(type:EventType, form:Form) : FormEvent
+	public static FormEvent(type:EventType, form:Form) : FormEvent
 	{
 		return(new FormEvent(type,form));
 	}
 
-	public static newBlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance) : FormEvent
+	public static BlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance) : FormEvent
 	{
 		return(new FormEvent(type,form,inst,inst != null ? inst.block : block));
 	}
 
-	public static newFieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
+	public static FieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
 	{
 		return(new FormEvent(type,inst.field.block.form.parent,inst));
 	}
 
-	public static newKeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
+	public static KeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
 	{
 		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
 	}
 
-	public static newMouseEvent(form:Form, cause:Event, inst?:ViewFieldInstance, block?:string) : FormEvent
+	public static MouseEvent(form:Form, cause:Event, inst?:ViewFieldInstance, block?:string) : FormEvent
 	{
 		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,new MouseEvent(cause)));
 	}
@@ -243,12 +242,6 @@ export class FormEvents
 	{
 		let listeners:EventListener[] = null;
 		let done:Set<object> = new Set<object>();
-
-		//console.log("Raise "+EventType[event.type]+"("+event.type+")")
-		console.log("Raise "+EventType[event.type]+"("+event.type+") <"+ModelForm.getForm(event.form).eventTransaction+">")
-
-		if (ModelForm.getForm(event.form).eventTransaction == undefined && event.mouseevent == null)
-			console.log("Missing Transaction for event "+event.type);
 
 		// Field Listeners
 		listeners = FormEvents.fldlisteners.get(event.type);

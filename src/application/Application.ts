@@ -15,6 +15,7 @@ import { Class } from '../types/Class.js';
 import { Properties } from './Properties.js';
 import { FormsModule } from './FormsModule.js';
 import { Canvas } from './interfaces/Canvas.js';
+import { Form as ModelForm } from '../model/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -58,7 +59,9 @@ export class Application
         instance.canvas = canvas;
         canvas.setComponent(instance);
         container.appendChild(canvas.getElement());
-		console.log("Raise newFormEvent XXX")
-		FormEvents.raise(FormEvent.newFormEvent(EventType.FormInit,instance));
+
+		ModelForm.getForm(instance).setEventTransaction();
+		FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
+		ModelForm.getForm(instance).endEventTransaction();
     }
 }

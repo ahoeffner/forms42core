@@ -115,7 +115,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null)
+		if (evttrx == null || evttrx.crud)
 		{
 			Alert.fatal("Not in transaction","Transaction Failure");
 			return;
@@ -311,15 +311,16 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx != null)
+		if (evttrx != null && !evttrx.crud)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
 			return(evttrx);
 		}
 
-		evttrx = new EventTransaction(this,record,0,false);
-		this.form.eventTransaction = evttrx;
+		if (evttrx) evttrx.join(this,record,0,false);
+		else evttrx = new EventTransaction(this,record,0,false,true);
 
+		this.form.eventTransaction = evttrx;
 		return(evttrx);
 	}
 
@@ -327,7 +328,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null)
+		if (evttrx == null || !evttrx.crud)
 		{
 			Alert.fatal("Not in transaction","Transaction Failure");
 			return;

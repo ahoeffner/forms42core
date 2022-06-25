@@ -17,17 +17,27 @@ import { Block as ViewBlock } from "../view/Block.js";
 
 export class EventTransaction
 {
+	public crud:boolean = false;
+
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
 
-	public constructor(block:Block, record?:Record, offset?:number, applyvw?:boolean)
+	public constructor(block:Block, record?:Record, offset?:number, applyvw?:boolean, crud?:boolean)
+	{
+		this.crud = crud;
+		if (offset == null) offset = 0;
+		if (applyvw == null) applyvw = true;
+		if (record == null) record = block.getRecord(offset);
+		this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,crud));
+	}
+
+	public join(block:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
 		if (offset == null) offset = 0;
 		if (applyvw == null) applyvw = true;
 		if (record == null) record = block.getRecord(offset);
-		this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw));
+		this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,true));
 	}
-
 
 	public getValue(block:Block|ViewBlock, field:string) : any
 	{
@@ -52,16 +62,38 @@ export class EventTransaction
 		if (trx == null)
 		{
 			let record:Record = block.getRecord(0);
-			trx = new BlockTransaction(block,record,0,true);
+			trx = new BlockTransaction(block,record,0,true,false);
 			this.trx.set(block.name,trx);
 		}
 
 		return(trx.setValue(field,value));
 	}
 
-	public apply() : void
+	public apply(block?:Block|ViewBlock) : void
 	{
-		this.trx.forEach((trx) => {trx.apply()});
+		if (block)
+		{
+			this.trx.get(block.name)?.apply();
+			this.trx.delete(block.name);
+		}
+		else
+		{
+			this.trx.forEach((trx) => {trx.apply()});
+			this.trx.clear();
+		}
+	}
+
+	public done() : boolean
+	{
+		let size:number = this.trx.size;
+
+		this.trx.forEach((trx) =>
+		{
+			if (!trx.crud)
+				size--;
+		});
+
+		return(size == 0);
 	}
 }
 
@@ -69,12 +101,14 @@ class BlockTransaction
 {
 	offset:number = 0;
 	block:Block = null;
+	crud:boolean = true;
 	record:Record = null;
 	wrkcpy:Record = null;
 	applyvw:boolean = true;
 
-	constructor(block:Block, record:Record, offset:number, applyvw:boolean)
+	constructor(block:Block, record:Record, offset:number, applyvw:boolean, crud:boolean)
 	{
+		this.crud = crud;
 		this.block = block;
 		this.offset = offset;
 		this.record = record;

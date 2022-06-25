@@ -91,6 +91,16 @@ export class Block
 		return(this.fieldnames$);
 	}
 
+	public setEventTransaction(event:EventType, offset:number) : void
+	{
+		this.model.setEventTransaction(event,offset);
+	}
+
+	public endEventTransaction(apply:boolean) : void
+	{
+		this.model.endEventTransaction(apply);
+	}
+
 	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
 	{
 		if (inst == null)
@@ -99,9 +109,14 @@ export class Block
 		}
 		else
 		{
-			let cont:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
-			if (cont) this.mdlblk.setValue(inst.name,value);
-			return(cont);
+			this.setEventTransaction(EventType.ValidateField,0);
+			let success:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
+			this.endEventTransaction(success);
+
+			if (success)
+				this.mdlblk.setValue(inst.name,value);
+
+			return(success);
 		}
 	}
 
@@ -136,7 +151,10 @@ export class Block
 
 	public async onEditing(inst:FieldInstance) : Promise<boolean>
 	{
-		return(this.fireFieldEvent(EventType.Editing,inst));
+		this.setEventTransaction(EventType.Editing,0);
+		let success:boolean = await	this.fireFieldEvent(EventType.Editing,inst);
+		this.endEventTransaction(success);
+		return(success);
 	}
 
 	public navigate(key:KeyMap, inst:FieldInstance) : void
@@ -166,7 +184,10 @@ export class Block
 		}
 
 		if (next != null)
-			next.focus();
+		{
+			inst.blur();
+			setTimeout(() => {next.focus();},10);
+		}
 	}
 
 	public offset(inst:FieldInstance) : number

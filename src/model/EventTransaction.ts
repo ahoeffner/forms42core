@@ -12,14 +12,22 @@
 
 import { Block } from "./Block.js";
 import { Record } from "./Record.js";
+import { Alert } from "../application/Alert.js";
 import { Field } from "../view/fields/Field.js";
 import { Block as ViewBlock } from "../view/Block.js";
 
+/*
+	When transactions is blocked, it protects against changes
+	in blocks not participating in the transaction.
+
+	This happens during CRUD operations. But also when forms are created or closed.
+	During form operations, all blocks are initially blocked using an anonymous block.
+*/
+
 export class EventTransaction
 {
-	public shared:boolean = false;
-
 	private anonymous:number = 0;
+	private blocked$:boolean = false;
 
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
@@ -28,15 +36,25 @@ export class EventTransaction
 	{
 		if (block != null)
 		{
-			this.shared = shared;
+			this.blocked$ = shared;
 			if (offset == null) offset = 0;
 			if (applyvw == null) applyvw = true;
 			if (record == null) record = block.getRecord(offset);
-			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,shared));
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw));
 			return;
 		}
 
 		this.anonymous++;
+	}
+
+	public get blocked() : boolean
+	{
+		return(this.blocked$);
+	}
+
+	public set blocked(shared:boolean)
+	{
+		this.blocked$ = shared;
 	}
 
 	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
@@ -46,7 +64,7 @@ export class EventTransaction
 			if (offset == null) offset = 0;
 			if (applyvw == null) applyvw = true;
 			if (record == null) record = block.getRecord(offset);
-			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw,true));
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw));
 			return;
 		}
 
@@ -75,8 +93,14 @@ export class EventTransaction
 
 		if (trx == null)
 		{
+			if (this.blocked)
+			{
+				Alert.warning("Changes is not allowed to this block, while in blocking event","Warning");
+				return(false);
+			}
+
 			let record:Record = block.getRecord(0);
-			trx = new BlockTransaction(block,record,0,true,false);
+			trx = new BlockTransaction(block,record,0,true);
 			this.trx.set(block.name,trx);
 		}
 
@@ -105,15 +129,7 @@ export class EventTransaction
 
 	public done() : boolean
 	{
-		let size:number = this.trx.size;
-
-		this.trx.forEach((trx) =>
-		{
-			if (!trx.shared)
-				size--;
-		});
-
-		return(size == 0 && this.anonymous == 0);
+		return(this.trx.size == 0 && this.anonymous == 0);
 	}
 }
 
@@ -123,15 +139,13 @@ class BlockTransaction
 	block:Block = null;
 	record:Record = null;
 	wrkcpy:Record = null;
-	shared:boolean = true;
 	applyvw:boolean = true;
 
-	constructor(block:Block, record:Record, offset:number, applyvw:boolean, shared:boolean)
+	constructor(block:Block, record:Record, offset:number, applyvw:boolean)
 	{
 		this.block = block;
 		this.offset = offset;
 		this.record = record;
-		this.shared = shared;
 		this.applyvw = applyvw;
 	}
 

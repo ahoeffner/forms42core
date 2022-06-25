@@ -19,11 +19,13 @@ export class Alert
 	}
 	public static warning(msg:string, title:string)
 	{
-		window.alert(msg);
+		//window.alert(msg);
+		console.log(msg);
 	}
 
 	public static message(msg:string, title:string)
 	{
-		window.alert(msg);
+		//window.alert(msg);
+		console.log(msg);
 	}
 }

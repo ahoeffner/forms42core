@@ -113,7 +113,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null || evttrx.shared)
+		if (evttrx == null || evttrx.blocked)
 		{
 			Alert.fatal("Block not in transaction","Transaction Failure");
 			return;
@@ -312,7 +312,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx != null && !evttrx.shared)
+		if (evttrx != null && !evttrx.blocked)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
 			return;
@@ -328,7 +328,7 @@ export class Block
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null || !evttrx.shared)
+		if (evttrx == null || !evttrx.blocked)
 		{
 			Alert.fatal("Model not in transaction","Transaction Failure");
 			return;

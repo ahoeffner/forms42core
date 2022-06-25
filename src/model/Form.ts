@@ -104,7 +104,7 @@ export class Form
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx != null && !evttrx.shared)
+		if (evttrx != null && !evttrx.blocked)
 		{
 			Alert.fatal("Already in transaction","Transaction Failure");
 			return;
@@ -113,15 +113,15 @@ export class Form
 		if (evttrx) evttrx.join();
 		else evttrx = new EventTransaction();
 
+		evttrx.blocked = true;
 		this.eventTransaction = evttrx;
-		this.eventTransaction.shared = true;
 	}
 
 	public endEventTransaction() : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
-		if (evttrx == null || !evttrx.shared)
+		if (evttrx == null || !evttrx.blocked)
 		{
 			Alert.fatal("Form not in transaction ","Transaction Failure");
 			return;

@@ -13,11 +13,12 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
+import { Alert } from "../application/Alert.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
-import { BlockTransaction } from "./BlockTransaction.js";
+import { EventTransaction } from "./EventTransaction.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
@@ -57,7 +58,6 @@ export class Block
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
-	private trgstate$:BlockTransaction = null;
 
 	private constructor(form:Form, name:string)
 	{
@@ -90,26 +90,41 @@ export class Block
 		return(this.columns$);
 	}
 
-	public get triggerstate() : BlockTransaction
+	public get eventTransaction() : EventTransaction
 	{
-		return(this.trgstate$);
+		return(this.form.eventTransaction);
 	}
 
-	public set triggerstate(trgstate:BlockTransaction)
+	public setEventTransaction(offset:number) : EventTransaction
 	{
-		this.trgstate$ = trgstate;
+		let evttrx:EventTransaction = this.eventTransaction;
+
+		if (evttrx != null)
+		{
+			Alert.fatal("Already in transaction","Transaction Failure");
+			return(evttrx);
+		}
+
+		evttrx = new EventTransaction(this,null,offset,true);
+		this.form.eventTransaction = evttrx;
+
+		return(evttrx);
 	}
 
-	public setTriggerState(offset:number) : BlockTransaction
+	public endEventTransaction(apply:boolean) : void
 	{
-		this.trgstate$ = new BlockTransaction(this.getRecord(offset),true);
-		return(this.trgstate$);
-	}
+		let evttrx:EventTransaction = this.eventTransaction;
 
-	public endTriggerChanges(apply:boolean) : void
-	{
-		if (apply) this.trgstate$?.applychanges();
-		this.trgstate$ = null;
+		if (evttrx == null)
+		{
+			Alert.fatal("Not in transaction","Transaction Failure");
+			return;
+		}
+
+		if (apply)
+			evttrx.apply();
+
+		this.form.eventTransaction = null;
 	}
 
 	public get datasource() : DataSource
@@ -191,17 +206,18 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
-		this.trgstate$ = new BlockTransaction();
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(record);
 		let resp:boolean = await this.fire(EventType.PreQuery);
-		this.trgstate$ = null;
+		this.endModelEventTransaction(resp);
 		return(resp);
 	}
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
-		this.trgstate$ = new BlockTransaction(record);
+		this.setModelEventTransaction(record);
 		let resp:boolean = await this.fire(EventType.PostQuery);
-		this.trgstate$ = null;
+		this.endModelEventTransaction(resp);
 		return(resp);
 	}
 
@@ -228,9 +244,6 @@ export class Block
 
 	public getValue(field:string) : any
 	{
-		if (this.trgstate$ != null)
-			return(this.trgstate$.getValue(field));
-
 		return(this.wrapper.getValue(this.record,field));
 	}
 
@@ -238,12 +251,6 @@ export class Block
 	{
 		if (this.columns.indexOf(field) < 0)
 			this.columns.push(field);
-
-		if (this.trgstate$ != null)
-		{
-			this.trgstate$.setValue(field,value)
-			return(true);
-		}
 
 		return(this.wrapper.setValue(this.record,field,value));
 	}
@@ -298,6 +305,38 @@ export class Block
 	public isLinked() : boolean
 	{
 		return(this.intblk != null);
+	}
+
+	private setModelEventTransaction(record:Record) : EventTransaction
+	{
+		let evttrx:EventTransaction = this.eventTransaction;
+
+		if (evttrx != null)
+		{
+			Alert.fatal("Already in transaction","Transaction Failure");
+			return(evttrx);
+		}
+
+		evttrx = new EventTransaction(this,record,0,false);
+		this.form.eventTransaction = evttrx;
+
+		return(evttrx);
+	}
+
+	private endModelEventTransaction(apply:boolean) : void
+	{
+		let evttrx:EventTransaction = this.eventTransaction;
+
+		if (evttrx == null)
+		{
+			Alert.fatal("Not in transaction","Transaction Failure");
+			return;
+		}
+
+		if (apply)
+			evttrx.apply();
+
+		this.form.eventTransaction = null;
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

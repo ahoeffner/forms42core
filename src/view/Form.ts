@@ -249,65 +249,65 @@ export class Form
 
 	public async enterForm(form:Form, block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setTriggerState(offset);
+		block.model.setEventTransaction(offset);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		block.model.endTriggerChanges(success);
+		block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setTriggerState(offset);
+		block.model.setEventTransaction(offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
-		block.model.endTriggerChanges(success);
+		block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setTriggerState(offset);
+		block.model.setEventTransaction(offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
-		block.model.endTriggerChanges(success);
+		block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
 	{
-		inst.field.block.model.setTriggerState(offset);
+		inst.field.block.model.setEventTransaction(offset);
 		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);
-		inst.field.block.model.endTriggerChanges(success);
+		inst.field.block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		form.block.model.setTriggerState(0);
+		form.block.model.setEventTransaction(0);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
-		form.block.model.endTriggerChanges(success);
+		form.block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		block.model.setTriggerState(0);
+		block.model.setEventTransaction(0);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
-		block.model.endTriggerChanges(success);
+		block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
-		block.model.setTriggerState(0);
+		block.model.setEventTransaction(0);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
-		block.model.endTriggerChanges(success);
+		block.model.endEventTransaction(success);
 		return(success);
 	}
 
 	public async LeaveField(inst:FieldInstance) : Promise<boolean>
 	{
-		inst.field.block.model.setTriggerState(0);
+		inst.field.block.model.setEventTransaction(0);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
-		inst.field.block.model.endTriggerChanges(success);
+		inst.field.block.model.endEventTransaction(success);
 		return(success);
 	}
 

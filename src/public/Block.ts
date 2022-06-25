@@ -63,25 +63,34 @@ export class Block
 		return(this.form$.getField(this.name$,name));
 	}
 
-	public setValue(field:string, value:any) : void
-	{
-		let blk:ViewBlock = ViewBlock.getBlock(this);
-		let mdl:ModelBlock = ModelBlock.getBlock(this);
-
-		mdl.setValue(field,value);
-
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) fld.setValue(value);
-	}
-
 	public getValue(field:string) : any
 	{
 		field = field?.toLowerCase();
 		let blk:ViewBlock = ViewBlock.getBlock(this);
 
+		if (blk.model.eventTransaction)
+			return(blk.model.eventTransaction.getValue(blk,field));
+
 		let fld:ViewField = blk.getField(field);
 		if (fld != null) return(blk.getValue(field));
 
 		return(blk.model.getValue(field));
+	}
+
+	public setValue(field:string, value:any) : void
+	{
+		let blk:ViewBlock = ViewBlock.getBlock(this);
+		let mdl:ModelBlock = ModelBlock.getBlock(this);
+
+		if (blk.model.eventTransaction)
+		{
+			blk.model.eventTransaction.setValue(blk,field,value);
+			return;
+		}
+
+		mdl.setValue(field,value);
+
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) fld.setValue(value);
 	}
 }

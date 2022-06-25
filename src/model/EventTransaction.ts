@@ -84,14 +84,7 @@ class BlockTransaction
 	public getValue(field:string) : any
 	{
 		if (this.wrkcpy == null)
-		{
-			let fld:Field = this.block.view.getField(field);
-
-			if (fld != null)
-				return(fld.getValue());
-
-			return(this.block.getValue(field));
-		}
+			return(this.record.getValue(field));
 
 		return(this.wrkcpy.getValue(field));
 	}

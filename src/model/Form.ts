@@ -13,6 +13,7 @@
 import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
 import { Logger, Type } from '../application/Logger.js';
+import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 
 
@@ -57,6 +58,7 @@ export class Form
 
 	private block$:Block = null;
 	private intfrm:InterfaceForm = null;
+	private evttrans$:EventTransaction = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
@@ -87,6 +89,16 @@ export class Form
 		return(this.datamodel$);
 	}
 
+	public get eventTransaction() : EventTransaction
+	{
+		return(this.evttrans$);
+	}
+
+	public set eventTransaction(evttrans:EventTransaction)
+	{
+		this.evttrans$ = evttrans;
+	}
+
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
@@ -96,7 +108,7 @@ export class Form
 
 	private async autoquery()
 	{
-		this.blocks.forEach(async(block) =>
+		for(let block of this.blocks.values())
 		{
 			if (!block.isLinked())
 			{
@@ -107,7 +119,7 @@ export class Form
 				block.datasource.insertable = false;
 				block.datasource.deleteable = false;
 			}
-		});
+		}
 	}
 
 	private linkViews() : void

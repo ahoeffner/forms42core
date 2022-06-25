@@ -14,7 +14,8 @@ export class Alert
 {
 	public static fatal(msg:string, title:string)
 	{
-		window.alert(msg);
+		//window.alert(msg);
+		console.log(msg);
 	}
 	public static warning(msg:string, title:string)
 	{

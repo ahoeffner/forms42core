@@ -100,6 +100,12 @@ export class Form implements CanvasComponent
 
 		if (blk == null) return(null);
 
+		if (blk.model.eventTransaction)
+		{
+			blk.model.eventTransaction.setValue(blk,field,value);
+			return;
+		}
+
 		blk.model.setValue(field,value);
 		blk.getField(field)?.setValue(value);
 	}
@@ -111,6 +117,9 @@ export class Form implements CanvasComponent
 		let blk:ViewBlock = View.getForm(this).getBlock(block);
 
 		if (blk == null) return(null);
+
+		if (blk.model.eventTransaction)
+			return(blk.model.eventTransaction.getValue(blk,field));
 
 		let fld:ViewField = blk.getField(field);
 		if (fld != null) return(blk.getValue(field));

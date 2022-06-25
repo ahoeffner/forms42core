@@ -213,6 +213,7 @@ export class Block
 
 			this.openrow();
 			this.displaycurrent();
+			this.model.queryDetails();
 
 			return;
 		}
@@ -228,6 +229,7 @@ export class Block
 
 		this.openrow();
 		this.displaycurrent();
+		this.model.queryDetails();
 	}
 
 	public addRow(row:Row) : void

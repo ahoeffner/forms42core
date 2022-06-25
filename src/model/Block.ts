@@ -282,6 +282,12 @@ export class Block
 		return(true);
 	}
 
+	public async queryDetails() : Promise<boolean>
+	{
+		console.log("queryDetails");
+		return(true);
+	}
+
 	public getRecord(offset?:number) : Record
 	{
 		if (offset == null) offset = 0;

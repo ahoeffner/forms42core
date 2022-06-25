@@ -147,6 +147,11 @@ export class Row
 		return(false);
 	}
 
+	public getFieldIndex(inst:FieldInstance) : number
+	{
+		return(this.getFieldInstances().indexOf(inst));
+	}
+
 	public prevField(inst:FieldInstance) : FieldInstance
 	{
 		let prev:number = -1;

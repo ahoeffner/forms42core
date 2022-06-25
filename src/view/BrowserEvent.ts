@@ -244,7 +244,6 @@ export class BrowserEvent
 
                 if (this.ctrlkey != null) this.ignore = false;
                 if (this.key != null && this.key.startsWith("F")) this.ignore = false;
-
             break;
 
             case "keypress":

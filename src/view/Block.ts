@@ -157,7 +157,7 @@ export class Block
 		return(success);
 	}
 
-	public navigate(key:KeyMap, inst:FieldInstance) : void
+	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<void>
 	{
 		let next:FieldInstance = null;
 
@@ -177,8 +177,9 @@ export class Block
 
 			case KeyMap.nextrecord :
 			{
-				if (this.validated)
-					next = this.getCurrentRow().prevField(inst)
+				console.log(inst.field.row.getFieldIndex(inst));
+				//if (this.validated)
+					//next = this.getCurrentRow().prevField(inst)
 				break;
 			}
 		}

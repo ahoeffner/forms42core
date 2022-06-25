@@ -177,6 +177,10 @@ export class Field
 	{
 		let key:KeyMap = null;
 
+		if (brwevent.navigation)
+			console.log(brwevent)
+
+
 		if (brwevent.type == "focus")
 		{
 			this.value$ = inst.getValue();
@@ -231,6 +235,7 @@ export class Field
 		{
 			let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent, brwevent.event,inst);
 			await FormEvents.raise(mevent);
+			return;
 		}
 
 		if (brwevent.type.startsWith("key") && !brwevent.navigation)
@@ -260,7 +265,7 @@ export class Field
 			if (key != null)
 			{
 				if (await this.validate(inst))
-					this.block.navigate(key,inst);
+					await this.block.navigate(key,inst);
 			}
 
 			return;

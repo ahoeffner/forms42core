@@ -22,6 +22,7 @@ import { Canvas } from '../application/interfaces/Canvas.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { Alert } from '../application/Alert.js';
 
 
 export class Form implements CanvasComponent
@@ -45,7 +46,7 @@ export class Form implements CanvasComponent
         return(this.view$);
     }
 
-    public setView(page:string|HTMLElement)
+    public setView(page:string|HTMLElement) : void
     {
 		let replace:boolean = false;
 
@@ -56,6 +57,12 @@ export class Form implements CanvasComponent
 		}
 		else
 		{
+			if (!this.valid)
+			{
+				Alert.warning("Form must be validated before layout can be changed","Validate");
+				return;
+			}
+
 			replace = true;
 			View.drop(this);
 			Model.drop(this);
@@ -125,6 +132,11 @@ export class Form implements CanvasComponent
 		if (fld != null) return(blk.getValue(field));
 
 		return(blk.model.getValue(field));
+	}
+
+	public get valid() : boolean
+	{
+		return(View.getForm(this).validated());
 	}
 
     public async close() : Promise<boolean>

@@ -527,7 +527,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		// Get ready to markup
 		if (this.event.mousedown && this.event.mouseinit)
-			this.clearSelection(pos);
+			this.clearSelection();
 
 		// Mark current pos for replace
 		if (this.event.type == "click" && !this.event.mousemark)
@@ -792,9 +792,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.element.selectionEnd = sel[1]+1;
     }
 
-    private clearSelection(pos:number) : void
+    private clearSelection() : void
     {
-        this.setPosition(pos);
+		this.element.setSelectionRange(0,0);
     }
 
     private getSelection() : number[]

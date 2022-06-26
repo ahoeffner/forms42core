@@ -361,6 +361,7 @@ export class BrowserEvent
         {
             this.mousedown = true;
             this.mousemark = false;
+            setTimeout(() => {if (this.mousedown) this.mousemark = true;},0);
         }
 
 		if (this.onScrollUp || this.onScrollDown)
@@ -369,13 +370,10 @@ export class BrowserEvent
         let first:boolean = !this.mousemark;
         if (this.type == "mousemove" && this.mousedown)
         {
+			console.log("move")
             this.mousemark = true;
             this.mouseinit = first;
-			console.log("markup: "+first)
         }
-
-        if (this.type == "mousemove" && this.mousedown)
-			console.log("marking ");
     }
 
     public toString() : string

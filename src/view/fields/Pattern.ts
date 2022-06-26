@@ -224,6 +224,9 @@ export class Pattern implements PatternType
 
     public findPosition(pos:number) : number
     {
+		if (pos >= this.placeholder$.length)
+			return(this.placeholder$.length-1);
+
         if (this.tokens.get(pos).type == 'f')
         {
             let fr:number = pos;
@@ -244,13 +247,13 @@ export class Pattern implements PatternType
             dist1 = pos - fr;
             dist2 = to - pos;
 
-            pos = fr;
+			pos = fr;
 
             if (dist2 < dist1)
                 pos = to;
         }
 
-        return(pos);
+		return(pos);
     }
 
     public setCharacter(pos:number, c:string) : boolean

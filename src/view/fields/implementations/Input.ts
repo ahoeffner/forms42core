@@ -525,6 +525,22 @@ export class Input implements FieldImplementation, EventListenerObject
         this.event.preventDefault(prevent);
         let pos:number = this.getPosition();
 
+		if (this.event.type == "click" && !this.event.mousemark)
+		{
+			console.log(this.event.mouseinit+" "+this.event.mousemark)
+            let npos:number = this.pattern.findPosition(pos);
+			this.setSelection([npos,npos]);
+
+			setTimeout(() =>
+			{
+				// Sometimes setSelection can fail
+				let sel:number[] = this.getSelection();
+				if (sel[0] == sel[1]) this.setSelection([npos,npos]);
+			},0);
+
+			return(true);
+		}
+
         if (this.event.type == "focus")
         {
             pos = this.pattern.findPosition(0);
@@ -553,68 +569,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
 			this.clear();
-
-		if (this.event.mouseinit)
-			this.clearSelection(pos);
-
-        if (this.event.type == "mouseup")
-        {
-            // Wait until position is set
-
-            let sel:number[] = this.getSelection();
-
-            if (sel[0] > this.pattern.size() - 1)
-                sel[0] = this.pattern.size() - 1;
-
-            if (sel[1] > this.pattern.size() - 1)
-                sel[1] = this.pattern.size() - 1;
-
-            if (sel[1] < sel[0]) sel[1] = sel[0];
-
-            if (!this.event.mousemark)
-            {
-                setTimeout(() =>
-                {
-                    pos = this.getPosition();
-
-                    if (pos >= this.pattern.size())
-                        pos = this.pattern.size() - 1;
-
-                    pos = this.pattern.findPosition(pos);
-                    let fld:number[] = this.pattern.getFieldArea(pos);
-
-                    // toggle field selection
-                    if (sel[1] - sel[0] < 1) pos = fld[0];
-                    else                     fld = [pos,pos];
-
-                    this.setSelection(fld);
-                    this.pattern.setPosition(this.pattern.findPosition(pos));
-					console.log("Mark "+fld)
-                },0);
-            }
-            else
-            {
-                setTimeout(() =>
-                {
-                    pos = this.getPosition();
-
-                    if (pos >= this.pattern.size())
-                        pos = this.pattern.size() - 1;
-
-                    if (!this.pattern.setPosition(pos))
-                        pos = this.pattern.findPosition(pos);
-
-                    sel[1] = sel[1] - 1;
-                    if (sel[1] < sel[0]) sel[1] = sel[0];
-
-                    this.setSelection(sel);
-                    this.pattern.setPosition(pos);
-					console.log("Draw "+sel)
-                },0);
-            }
-
-            return(false);
-        }
 
         let ignore:boolean = this.event.ignore;
         if (this.event.printable) ignore = false;

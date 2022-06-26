@@ -361,7 +361,6 @@ export class BrowserEvent
         {
             this.mousedown = true;
             this.mousemark = false;
-			setTimeout(() => {console.log("is mouse down? "+this.mousedown)},0);
         }
 
 		if (this.onScrollUp || this.onScrollDown)
@@ -374,6 +373,9 @@ export class BrowserEvent
             this.mouseinit = first;
 			console.log("markup: "+first)
         }
+
+        if (this.type == "mousemove" && this.mousedown)
+			console.log("marking ");
     }
 
     public toString() : string

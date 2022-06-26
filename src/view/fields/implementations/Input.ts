@@ -354,9 +354,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.modified = true;
 		}
 
-		if (this.event.key == "Tab")
-			console.log(this.event.key+" "+this.event.repeat+" nav: "+this.event.navigation+" ign: "+this.event.ignore+" buble: "+buble)
-
 		if (this.event.accept || this.event.cancel)
 			buble = true;
 

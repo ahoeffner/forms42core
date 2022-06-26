@@ -177,10 +177,6 @@ export class Field
 	{
 		let key:KeyMap = null;
 
-		if (brwevent.navigation)
-			console.log(brwevent)
-
-
 		if (brwevent.type == "focus")
 		{
 			this.value$ = inst.getValue();

@@ -182,6 +182,7 @@ export class Radio implements FieldImplementation, EventListenerObject
         element.addEventListener("blur",this);
         element.addEventListener("focus",this);
         element.addEventListener("change",this);
+        element.addEventListener("submit",this);
 
         element.addEventListener("keyup",this);
         element.addEventListener("keydown",this);

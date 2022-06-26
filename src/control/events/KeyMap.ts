@@ -200,7 +200,10 @@ export class KeyMapping
 		let key:string = signature.substring(0,pos);
 
 		if (isNaN(+key))
-			throw "@KeyMapping: invalid key signature. key: '"+key+"' is not a number";
+		{
+			console.error("@KeyMapping: invalid key signature. Key: '"+key+"' is not a number and not mapped");
+			key = "-128";
+		}
 
 		let a:string = signature.substring(pos,pos+1);
 		let c:string = signature.substring(pos,pos+2);

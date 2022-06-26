@@ -159,6 +159,7 @@ export class Block
 
 	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<void>
 	{
+		let move:boolean = true;
 		let next:FieldInstance = null;
 
 		switch(key)
@@ -177,14 +178,21 @@ export class Block
 
 			case KeyMap.nextrecord :
 			{
-				console.log(inst.field.row.getFieldIndex(inst));
-				//if (this.validated)
-					//next = this.getCurrentRow().prevField(inst)
+				console.log("nextrecord");
+				if (this.validated)
+				{
+					if (inst.row < this.rows - 2)
+					{
+						let idx:number = inst.field.row.getFieldIndex(inst);
+						next = this.getRow(inst.row+1).getFieldByIndex(idx);
+					}
+				}
+
 				break;
 			}
 		}
 
-		if (next != null)
+		if (next != null && move)
 		{
 			inst.blur();
 			setTimeout(() => {next.focus();},10);

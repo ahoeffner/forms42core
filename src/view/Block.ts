@@ -157,10 +157,9 @@ export class Block
 		return(success);
 	}
 
-	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<void>
+	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<FieldInstance>
 	{
-		let move:boolean = true;
-		let next:FieldInstance = null;
+		let next:FieldInstance = inst;
 
 		switch(key)
 		{
@@ -178,25 +177,21 @@ export class Block
 
 			case KeyMap.nextrecord :
 			{
-				console.log("nextrecord");
-				if (this.validated)
-				{
-					if (inst.row < this.rows - 2)
-					{
-						let idx:number = inst.field.row.getFieldIndex(inst);
-						next = this.getRow(inst.row+1).getFieldByIndex(idx);
-					}
-				}
+				next = await this.scroll(inst,1);
+				break;
+			}
 
+			case KeyMap.prevrecord :
+			{
+				next = await this.scroll(inst,-1);
 				break;
 			}
 		}
 
-		if (next != null && move)
-		{
-			inst.blur();
-			setTimeout(() => {next.focus();},10);
-		}
+		if (next != inst) inst.blur();
+		setTimeout(() => {next.focus();},0);
+
+		return(next);
 	}
 
 	public offset(inst:FieldInstance) : number
@@ -251,23 +246,6 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
-	private openrow()
-	{
-		let row:Row = this.getRow(this.row);
-		let current:Row = this.rows$.get(-1);
-
-		if (row.getFieldState() == FieldState.READONLY)
-		{
-			row.setFieldState(FieldState.OPEN);
-
-			if (current != null)
-			{
-				if (current.getFieldState() == FieldState.READONLY)
-					current.setFieldState(FieldState.OPEN);
-			}
-		}
-	}
-
 	public display(rownum:number, record:Record) : void
 	{
 		let row:Row = this.getRow(rownum);
@@ -287,6 +265,23 @@ export class Block
 		if (rownum == this.row) this.displaycurrent();
 	}
 
+	private openrow()
+	{
+		let row:Row = this.getRow(this.row);
+		let current:Row = this.rows$.get(-1);
+
+		if (row.getFieldState() == FieldState.READONLY)
+		{
+			row.setFieldState(FieldState.OPEN);
+
+			if (current != null)
+			{
+				if (current.getFieldState() == FieldState.READONLY)
+					current.setFieldState(FieldState.OPEN);
+			}
+		}
+	}
+
 	private displaycurrent() : void
 	{
 		let current:Row = this.rows$.get(-1);
@@ -297,6 +292,52 @@ export class Block
 			let record:Record = this.mdlblk.getRecord();
 			record.values.forEach((field) => {current.distribute(field.name,field.value)});
 		}
+	}
+
+	private async scroll(inst:FieldInstance, offset:number) : Promise<FieldInstance>
+	{
+		let next:FieldInstance = inst;
+
+		if (!await this.validate())
+			return(next);
+
+		if (this.row + offset < 0)
+		{
+			console.log("try fetc backwards");
+			return(next);
+		}
+
+		if (this.row + offset >= this.rows)
+		{
+			console.log("try fetc forwards");
+			return(next);
+		}
+
+		this.getCurrentRow().validate();
+		let idx:number = inst.field.row.getFieldIndex(inst);
+
+		if (inst.row < 0)
+		{
+			if (!await this.form.LeaveField(inst))
+				return;
+
+			if (!await this.form.leaveRecord(this))
+				return;
+
+			if (!await this.form.enterRecord(this,offset))
+				return;
+
+			if (!await this.form.enterField(inst,offset))
+				return;
+
+			this.setCurrentRow(this.row+offset);
+		}
+		else
+		{
+			next = this.getRow(this.row+offset).getFieldByIndex(idx);
+		}
+
+		return(next);
 	}
 
 	public finalize() : void

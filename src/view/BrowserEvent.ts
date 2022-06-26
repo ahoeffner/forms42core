@@ -280,7 +280,6 @@ export class BrowserEvent
 
                 this.key = this.event.key;
 
-
                 if (this.key.length == 1 && (this.alt || this.ctrl || this.meta))
                 {
                     this.ignore = false;
@@ -326,6 +325,10 @@ export class BrowserEvent
                 if (this.key == "ArrowUp") this.prevent = true;
                 if (this.key == "ArrowDown") this.prevent = true;
 
+				if (this.key == "Tab" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
+				if (this.key == "ArrowUp" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
+				if (this.key == "ArrowDown" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
+
                 if (this.key.startsWith("F"))
                 {
                     this.prevent = true;
@@ -351,20 +354,25 @@ export class BrowserEvent
         if (this.type == "mouseup")
         {
             this.mousedown = false;
-            setTimeout(() => {this.mousemark = false;},1);
+            setTimeout(() => {this.mousemark = false;},0);
         }
 
         if (this.type == "mousedown")
         {
             this.mousedown = true;
             this.mousemark = false;
+			setTimeout(() => {console.log("is mouse down? "+this.mousedown)},0);
         }
+
+		if (this.onScrollUp || this.onScrollDown)
+			this.prevent = true;
 
         let first:boolean = !this.mousemark;
         if (this.type == "mousemove" && this.mousedown)
         {
             this.mousemark = true;
             this.mouseinit = first;
+			console.log("markup: "+first)
         }
     }
 

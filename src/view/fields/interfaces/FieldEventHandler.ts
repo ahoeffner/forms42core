@@ -14,5 +14,5 @@ import { BrowserEvent} from "../../BrowserEvent.js";
 
 export interface FieldEventHandler
 {
-	handleEvent(event:BrowserEvent) : void;
+	handleEvent(event:BrowserEvent) : Promise<void>;
 }

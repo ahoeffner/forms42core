@@ -148,9 +148,9 @@ export class FieldInstance implements FieldEventHandler
 		this.element$ = this.impl.getElement();
 	}
 
-	public handleEvent(event:Event) : void
+	public async handleEvent(event:Event) : Promise<void>
 	{
-		this.field.handleEvent(this,event);
+		return(this.field.handleEvent(this,event));
 	}
 
 	public toString() : string

@@ -135,7 +135,7 @@ export class Display implements FieldImplementation, EventListenerObject
 		});
 	}
 
-	public handleEvent(event:Event) : void
+	public async handleEvent(event:Event) : Promise<void>
 	{
         let buble:boolean = false;
 		this.event.setEvent(event);
@@ -167,7 +167,7 @@ export class Display implements FieldImplementation, EventListenerObject
 		this.event.preventDefault();
 
 		if (buble)
-			this.eventhandler.handleEvent(this.event);
+			await this.eventhandler.handleEvent(this.event);
 	}
 
     private addEvents(element:HTMLElement) : void

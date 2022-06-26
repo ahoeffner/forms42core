@@ -165,7 +165,7 @@ export class Select implements FieldImplementation, EventListenerObject
 		});
 	}
 
-	public handleEvent(event:Event) : void
+	public async handleEvent(event:Event) : Promise<void>
 	{
         let buble:boolean = false;
 		this.event.setEvent(event);
@@ -209,7 +209,7 @@ export class Select implements FieldImplementation, EventListenerObject
 		else if (this.event.ignore) return;
 
 		if (buble)
-			this.eventhandler.handleEvent(this.event);
+			await this.eventhandler.handleEvent(this.event);
 	}
 
 	private getSelected() : string

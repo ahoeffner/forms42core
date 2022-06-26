@@ -210,7 +210,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.element.removeAttribute("placeholder");
     }
 
-    public handleEvent(event:Event) : void
+    public async handleEvent(event:Event) : Promise<void>
     {
         let buble:boolean = false;
         this.event.setEvent(event);
@@ -354,11 +354,14 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.modified = true;
 		}
 
+		if (this.event.key == "Tab")
+			console.log(this.event.key+" "+this.event.repeat+" nav: "+this.event.navigation+" ign: "+this.event.ignore+" buble: "+buble)
+
 		if (this.event.accept || this.event.cancel)
 			buble = true;
 
         if (buble)
-			this.eventhandler.handleEvent(this.event);
+			await this.eventhandler.handleEvent(this.event);
     }
 
 	private xcase() : boolean
@@ -446,9 +449,6 @@ export class Input implements FieldImplementation, EventListenerObject
                     this.setPosition(++pos);
                 }
             }
-
-			if (this.event.ctrlkey == null && this.event.funckey == null)
-				return(false);
         }
 
         return(true);
@@ -491,8 +491,6 @@ export class Input implements FieldImplementation, EventListenerObject
                     this.setPosition(++pos);
                 }
             }
-
-            return(false);
         }
 
         return(true);
@@ -594,7 +592,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
                     this.setSelection(fld);
                     this.pattern.setPosition(this.pattern.findPosition(pos));
-                },1);
+					console.log("Mark "+fld)
+                },0);
             }
             else
             {
@@ -613,7 +612,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
                     this.setSelection(sel);
                     this.pattern.setPosition(pos);
-                },1);
+					console.log("Draw "+sel)
+                },0);
             }
 
             return(false);

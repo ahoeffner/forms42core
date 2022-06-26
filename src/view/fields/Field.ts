@@ -13,6 +13,7 @@
 import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
+import { EventStack } from "./EventStack.js";
 import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
@@ -173,7 +174,12 @@ export class Field
 		return(this.instances[0].getStringValue());
 	}
 
-	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent)
+	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
+	{
+		return(await EventStack.stack(this,inst,brwevent));
+	}
+
+	public async performEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		let key:KeyMap = null;
 
@@ -227,13 +233,6 @@ export class Field
 			return;
 		}
 
-		if (brwevent.isMouseEvent)
-		{
-			let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent, brwevent.event,inst);
-			await FormEvents.raise(mevent);
-			return;
-		}
-
 		if (brwevent.type.startsWith("key") && !brwevent.navigation)
 		{
 			if (brwevent.ctrlkey != null || brwevent.funckey != null)
@@ -254,16 +253,30 @@ export class Field
 			}
 		}
 
+		if (brwevent.onScrollUp) {brwevent.navigation = true; key = KeyMap.nextrecord;}
+		if (brwevent.onScrollDown) {brwevent.navigation = true; key = KeyMap.prevrecord;}
+
 		if (brwevent.navigation)
 		{
-			key = KeyMapping.parseBrowserEvent(brwevent);
+			if (key == null)
+				key = KeyMapping.parseBrowserEvent(brwevent);
 
-			if (key != null)
+			if (brwevent.onScrollUp || brwevent.onScrollDown)
+				inst = this.block.form.instance;
+
+			if (key != null && inst != null)
 			{
 				if (await this.validate(inst))
 					await this.block.navigate(key,inst);
 			}
 
+			return;
+		}
+
+		if (brwevent.isMouseEvent)
+		{
+			let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent, brwevent.event,inst);
+			await FormEvents.raise(mevent);
 			return;
 		}
 	}
@@ -280,7 +293,7 @@ export class Field
 		});
 	}
 
-	private async validate(inst:FieldInstance) : Promise<boolean>
+	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
 		let value:any = inst.getValue();
 		if (value == this.value$) return(true);

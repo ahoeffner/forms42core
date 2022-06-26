@@ -32,6 +32,10 @@ export class Properties
     public static AttributePrefix:string = "$";
     public static RequireAttributePrefix:boolean = false;
 
+	public static DateFormat:string = "DD-MM-YYYY";
+	public static TimeFormat:string = "HH24:MI:SS";
+
+
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
 
@@ -61,12 +65,6 @@ export class Properties
                 ]
             ));
     }
-
-    /*
-            ["calendar",{tag: Tag.Calendar, element: "div"}],
-            ["listofvalues",{tag: Tag.ListOfValues, element: "div"}]
-
-    */
 
     public static CanvasProperties:CanvasProperties = new CanvasProperties();
 }

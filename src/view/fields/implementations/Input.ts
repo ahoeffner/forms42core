@@ -60,11 +60,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (properties.init) this.addEvents(this.element);
 	}
 
-	public getDataType() : DataType
-	{
-		return(this.datatype);
-	}
-
 	public getFieldState() : FieldState
 	{
 		return(this.state);
@@ -163,7 +158,10 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.datatype = DataType.string;
 
 		this.type = attributes.get("type");
-		if (this.type == null) this.type = "text"
+		if (this.type == null) this.type = "text";
+
+		if (this.type == "number")
+			this.datatype = DataType.integer;
 
         attributes.forEach((value,attr) =>
         {
@@ -667,6 +665,9 @@ export class Input implements FieldImplementation, EventListenerObject
             if (this.pattern.setCharacter(pos,this.event.key))
             {
                 pos = this.pattern.next(true,pos);
+
+				console.log("DATE: "+this.pattern.getField(0).getValue());
+
                 this.setElementValue(this.pattern.getValue());
                 this.setSelection([pos,pos]);
             }

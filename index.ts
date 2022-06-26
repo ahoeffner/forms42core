@@ -3,6 +3,8 @@ console.log("Version "+version);
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 
+export { dates } from './src/model/dates/dates.js';
+
 export { KeyMap } from './src/control/events/KeyMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';
 export { EventType } from './src/control/events/EventType.js';

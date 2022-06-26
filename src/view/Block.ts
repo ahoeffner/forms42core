@@ -188,9 +188,10 @@ export class Block
 			}
 		}
 
-		if (next != inst) inst.blur();
-		setTimeout(() => {next.focus();},0);
+		if (next != inst)
+			inst.blur();
 
+		next.focus();
 		return(next);
 	}
 

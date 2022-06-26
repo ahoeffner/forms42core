@@ -24,28 +24,42 @@ interface event
 
 export class EventStack
 {
-	private static next:event = null;
+	private static stack$:event[] = [];
+	private static running:boolean = false;
 
 	// Javascript might not be multithreaded, but browsers doesn't wait for events to be handled
 	public static async stack(field:Field, inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
-		if (EventStack.next != null)
-			return;
-
-		EventStack.next = {field: field, inst:inst, brwevent: brwevent};
-		return(await EventStack.handle(EventStack.next));
+		EventStack.stack$.unshift({field: field, inst:inst, brwevent: brwevent.clone()});
+		await EventStack.handle();
 	}
 
-	private static async handle(cmd:event) : Promise<void>
+	private static async handle() : Promise<void>
 	{
+		if (EventStack.running)
+			return;
+
+		EventStack.running = true;
+
+		let cmd:event = EventStack.stack$.pop();
+
+		if (cmd == undefined)
+		{
+			EventStack.running = false;
+			return;
+		}
+
 		try
 		{
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
-			this.next = null;
+
+			EventStack.running = false;
+			setTimeout(() => {EventStack.handle();},0);
 		}
 		catch (error)
 		{
-			this.next = null;
+			EventStack.stack$ = [];
+			EventStack.running = false;
 			Alert.warning(""+error,"Fatal Error");
 		}
 	}

@@ -525,9 +525,13 @@ export class Input implements FieldImplementation, EventListenerObject
         this.event.preventDefault(prevent);
         let pos:number = this.getPosition();
 
+		// Get ready to markup
+		if (this.event.mousedown && this.event.mouseinit)
+			this.clearSelection(pos);
+
+		// Mark current pos for replace
 		if (this.event.type == "click" && !this.event.mousemark)
 		{
-			console.log(this.event.mouseinit+" "+this.event.mousemark)
             let npos:number = this.pattern.findPosition(pos);
 			this.setSelection([npos,npos]);
 

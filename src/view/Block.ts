@@ -319,16 +319,16 @@ export class Block
 		if (inst.row < 0)
 		{
 			if (!await this.form.LeaveField(inst))
-				return;
+				return(next);
 
 			if (!await this.form.leaveRecord(this))
-				return;
+				return(next);
 
 			if (!await this.form.enterRecord(this,offset))
-				return;
+				return(next);
 
 			if (!await this.form.enterField(inst,offset))
-				return;
+				return(next);
 
 			this.setCurrentRow(this.row+offset);
 		}

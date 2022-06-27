@@ -27,11 +27,14 @@ export class EventStack
 	private static stack$:event[] = [];
 	private static running:boolean = false;
 
-	// Javascript might not be multithreaded, but browsers doesn't wait for events to be handled
+	// Javascript might not be multi-threaded, but browsers doesn't wait for events to be handled
+	// This code requires events to passed one at a time, which cannot be guaranteed !!!!
+
 	public static async stack(field:Field, inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		EventStack.stack$.unshift({field: field, inst:inst, brwevent: brwevent.clone()});
 		await EventStack.handle();
+		EventStack.trylater(1000);
 	}
 
 	private static async handle() : Promise<void>
@@ -46,6 +49,7 @@ export class EventStack
 		if (cmd == undefined)
 		{
 			EventStack.running = false;
+			EventStack.trylater(1000);
 			return;
 		}
 
@@ -62,5 +66,14 @@ export class EventStack
 			EventStack.running = false;
 			Alert.warning(""+error,"Fatal Error");
 		}
+	}
+
+	private static async trylater(sleep:number) : Promise<void>
+	{
+		setTimeout(() =>
+		{
+			if (!EventStack.running && EventStack.stack$.length > 0)
+				EventStack.handle();
+		},sleep);
 	}
 }

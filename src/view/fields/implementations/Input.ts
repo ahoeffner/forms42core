@@ -360,10 +360,6 @@ export class Input implements FieldImplementation, EventListenerObject
                 return;
         }
 
-		if (this.pattern)
-		console.log("3 <"+this.pattern.getValue()+"> <"+this.getElementValue()+">")
-
-
         if (this.event.type == "blur")
         {
 			buble = true;
@@ -818,6 +814,8 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(true);
 			}
 
+			console.log("1 <"+this.pattern.getValue()+"> <"+this.getElementValue()+">")
+
             if (this.pattern.setCharacter(pos,this.event.key))
             {
 				if (this.datetokens != null)
@@ -828,12 +826,10 @@ export class Input implements FieldImplementation, EventListenerObject
 				}
 
 				pos = this.pattern.next(true,pos);
-				console.log("1 <"+this.pattern.getValue()+"> <"+this.getElementValue()+">")
                 this.setElementValue(this.pattern.getValue());
                 this.setSelection([pos,pos]);
             }
 
-			console.log("2 <"+this.pattern.getValue()+"> <"+this.getElementValue()+">")
             return(true);
         }
 

@@ -559,11 +559,19 @@ export class Input implements FieldImplementation, EventListenerObject
         {
             if (this.event.isPrintableKey)
             {
-                if (this.event.key < '0' || this.event.key > '9')
+                let pass:boolean = false;
+
+                if (this.event.key >= '0' && this.event.key <= '9')
+                    pass = true;
+
+                if (this.event.key == "-" && !this.element.value.includes("-"))
+                    pass = true;
+
+                if (!pass)
                 {
                     this.event.preventDefault(true);
                 }
-                else if (this.event.repeat)
+                else if (this.event.repeat && this.event.key != ".")
                 {
                     let value:string = this.element.value;
 
@@ -599,6 +607,9 @@ export class Input implements FieldImplementation, EventListenerObject
                     pass = true;
 
                 if (this.event.key == "." && !this.element.value.includes("."))
+                    pass = true;
+
+				if (this.event.key == "-" && !this.element.value.includes("-"))
                     pass = true;
 
                 if (!pass)
@@ -898,27 +909,70 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private validateDatePart(token:FormatToken, value:string) : string
 	{
-		let mod:boolean = false;
-
 		switch(token.type)
 		{
-			case DatePart.Day :
-								if (+value.charAt(0) > 3)
-								{
-									mod = true;
-									value = '3'+value.substring(1);
-								}
+			case DatePart.Day : value = this.validateDayPart(value); break;
+			case DatePart.Month : value = this.validateMonthPart(value); break;
+			default : value = null;
+		}
 
-								if (+value > 31)
-								{
-									mod = true;
-									value = "31";
-								}
+		return(value);
+	}
 
+	private validateDayPart(value:string) : string
+	{
+		let mod:boolean = false;
+
+		if (value.charAt(0) == ' ')
+		{
+			mod = true;
+			value = '0' + value.substring(1);
+		}
+
+		else
+
+		if (+value.charAt(0) > 3)
+		{
+			mod = true;
+			value = '3' + value.substring(1);
+		}
+
+		if (+value > 31)
+		{
+			mod = true;
+			value = "31";
 		}
 
 		if (mod) return(value);
-		else     return(null);
+		return(null);
+	}
+
+	private validateMonthPart(value:string) : string
+	{
+		let mod:boolean = false;
+
+		if (value.charAt(0) == ' ')
+		{
+			mod = true;
+			value = '0' + value.substring(1);
+		}
+
+		else
+
+		if (+value.charAt(0) > 1)
+		{
+			mod = true;
+			value = '1' + value.substring(1);
+		}
+
+		if (+value > 12)
+		{
+			mod = true;
+			value = "12";
+		}
+
+		if (mod) return(value);
+		return(null);
 	}
 
     private getPosition() : number

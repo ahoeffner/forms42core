@@ -17,7 +17,7 @@ import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
-import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
+import { DatePart, dates, DateToken, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
 enum Case
@@ -803,6 +803,14 @@ export class Input implements FieldImplementation, EventListenerObject
                 this.setSelection([pos,pos]);
             }
 
+			if (this.datetokens != null && this.event.key == ' ' && this.pattern.isNull())
+			{
+				this.setIntermediateValue(this.getCurrentDate());
+				this.pattern.setPosition(0);
+				this.setPosition(0);
+				return(true);
+			}
+
             if (this.pattern.setCharacter(pos,this.event.key))
             {
 				if (this.datetokens != null)
@@ -911,8 +919,10 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		switch(token.type)
 		{
-			case DatePart.Day : value = this.validateDayPart(value); break;
+			case DatePart.Day 	: value = this.validateDayPart(value); break;
 			case DatePart.Month : value = this.validateMonthPart(value); break;
+			case DatePart.Year 	: value = this.validateYearPart(value); break;
+
 			default : value = null;
 		}
 
@@ -973,6 +983,51 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (mod) return(value);
 		return(null);
+	}
+
+	private validateYearPart(value:string) : string
+	{
+		let mod:boolean = false;
+
+		if (value.trim().length == 0)
+		{
+			let tokens:DateToken[] = dates.tokenizeDate(new Date());
+
+			for (let i = 0; i < tokens.length; i++)
+			{
+				if (tokens[i].type == DatePart.Year)
+				{
+					mod = true;
+					value = tokens[i].value;
+					break;
+				}
+			}
+		}
+
+		else
+
+		if (value.charAt(0) == ' ' && value.charAt(1) == ' ')
+		{
+			let tokens:DateToken[] = dates.tokenizeDate(new Date());
+
+			for (let i = 0; i < tokens.length; i++)
+			{
+				if (tokens[i].type == DatePart.Year)
+				{
+					mod = true;
+					value = tokens[i].value.substring(0,2) + value.substring(2);
+					break;
+				}
+			}
+		}
+
+		if (mod) return(value);
+		return(null);
+	}
+
+	private getCurrentDate() : string
+	{
+		return(dates.format(new Date()));
 	}
 
     private getPosition() : number

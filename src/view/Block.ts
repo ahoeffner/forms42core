@@ -400,6 +400,28 @@ export class Block
 		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
 	}
 
+	public dumpInstances() : void
+	{
+		this.getCurrentRow().getFieldInstances().forEach((inst) =>
+		{
+			let value:any = inst.getValue();
+			if (value == null) console.log(inst.name+" "+null);
+			else console.log(inst.name+" "+value+" "+value.constructor.name);
+		});
+
+		let current:Row = this.getRow(-1);
+
+		if (current != null)
+		{
+			current.getFieldInstances().forEach((inst) =>
+			{
+				let value:any = inst.getValue();
+				if (value == null) console.log(inst.name+" "+null);
+				else console.log(inst.name+" "+value+" "+value.constructor.name);
+			});
+		}
+	}
+
 	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.form.parent,inst,key);

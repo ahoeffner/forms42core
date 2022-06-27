@@ -15,6 +15,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Properties } from './Properties.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
+import { Alert } from './Alert.js';
 
 
 export class Framework
@@ -356,7 +357,9 @@ export class DynamicCall
 			{
 				let problem:string = "is null";
 				if (!(this.path[i] in component)) problem = "does not exists";
-                throw "@Framework: Attribute : '"+this.path[i]+"' on component: '"+component.constructor.name+"' "+problem;
+				let msg:string = "@Framework: Attribute : '"+this.path[i]+"' on component: '"+component.constructor.name+"' "+problem;
+				Alert.fatal(msg,"Invoke Method");
+				return;
 			}
 
             component = component[this.path[i]];
@@ -373,7 +376,8 @@ export class DynamicCall
         }
         catch (error)
         {
-            throw "@Framework: Failed to invoke method: '"+this.method+"' on component: "+component.constructor.name;
+			let msg:string = "@Framework: Failed to invoke method: '"+this.method+"' on component: "+component.constructor.name;
+			Alert.fatal(msg+" "+error,"Invoke Method");
         }
     }
 }
@@ -423,6 +427,10 @@ class EventHandler implements EventListenerObject
         }
 
         if (method != null) method.invoke(this.component);
-        else throw "@Framework: Cannot find "+event.type+" on this or parent any elements";
+        else
+		{
+			let msg:string = "@Framework: Cannot find "+event.type+" on this or parent any elements";
+			Alert.fatal(msg,"Invoke Method");
+		}
     }
 }

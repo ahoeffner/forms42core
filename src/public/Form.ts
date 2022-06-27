@@ -157,4 +157,9 @@ export class Form implements CanvasComponent
 	{
 		FormEvents.addListener(this,this,method,filter);
 	}
+
+	public dumpInstances() : void
+	{
+		View.getForm(this).dumpInstances();
+	}
 }

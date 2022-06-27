@@ -321,6 +321,11 @@ export class Form
 		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 
+	public dumpInstances() : void
+	{
+		this.block.dumpInstances();
+	}
+
 	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.FormEvent(type,form);

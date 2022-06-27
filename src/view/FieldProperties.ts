@@ -82,6 +82,8 @@ export class FieldProperties
 			props.hidden = tag.hidden;
 		}
 
+		props.setStyles(tag.style.cssText);
+
 		for (let cls of tag.classList.values())
 			props.setClass(cls);
 
@@ -106,10 +108,11 @@ export class FieldProperties
 		if (props.row >= 0) tag.setAttribute("row",""+props.row);
 
 		props.getClasses().forEach((clazz) => {tag.classList.add(clazz)});
-		props.getStyles().forEach((style,name) => {styles += name+":"+style+";"});
 		props.getAttributes().forEach((value,name) => {tag.setAttribute(name,value)});
+		props.getStyles().forEach((element) => {styles += element.style+":"+element.value+";"});
 
-		tag.style.cssText = styles;
+		if (styles.length > 0)
+			tag.style.cssText = styles;
 
 		if (tag instanceof HTMLInputElement)
 		{

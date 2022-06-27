@@ -257,9 +257,9 @@ export class Input implements FieldImplementation, EventListenerObject
 				let parts:number = 3;
 				this.datatype = DataType.datetime;
 
-				datesize += 2;
-				datepattern += "  ";
-				this.placeholder += "  ";
+				datesize++;
+				datepattern += "@";
+				this.placeholder += "@";
 
 				types.forEach((type) =>
 				{

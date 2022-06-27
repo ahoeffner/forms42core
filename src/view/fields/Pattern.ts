@@ -194,7 +194,7 @@ export class Pattern implements PatternType
             }
             else
             {
-				if (this.setCharacter(i,c)) pos++;
+				if (c == ' ' || this.setCharacter(i,c)) pos++;
 				else valid = false;
             }
         }

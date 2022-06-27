@@ -12,6 +12,12 @@
 
 import { FieldProperties } from "../FieldProperties.js";
 
+export interface Style
+{
+	style:string;
+	value:string;
+}
+
 
 export class HTMLProperties
 {
@@ -20,9 +26,9 @@ export class HTMLProperties
 	private name$:string = null;
 	private block$:string = null;
 
+	private styles$:Style[] = [];
 	private tagname$:string = null;
 	private classes$:string[] = [];
-	private styles$:string[][] = [];
 
 	private init$:boolean = true;
 	private hidden$:boolean = false;
@@ -174,9 +180,32 @@ export class HTMLProperties
 		this.hidden$ = flag;
 	}
 
-	public getStyles() : string[][]
+	public getStyles() : Style[]
 	{
 		return(this.styles$);
+	}
+
+	public setStyles(styles:string) : void
+	{
+		let elements:string[] = styles.split(";")
+
+		for (let i = 0; i < elements.length; i++)
+		{
+			let element:string = elements[i].trim();
+
+			if (element.length > 0)
+			{
+				let pos:number = element.indexOf(':');
+
+				if (pos > 0)
+				{
+					let style:string = element.substring(0,pos).trim();
+					let value:string = element.substring(pos+1).trim();
+
+					this.setStyle(style,value);
+				}
+			}
+		}
 	}
 
 	public setStyle(style:string, value:string) : void
@@ -185,14 +214,21 @@ export class HTMLProperties
 		style = style.toLowerCase();
 
 		this.removeStyle(style);
-		let styles:string[][] = this.getStyles();
-		styles.push([style,value]);
+		this.styles$.push({style: style, value: value});
 	}
 
-	public removeStyle(style:any) : void
+	public removeStyle(style:string) : void
 	{
 		style = style.toLowerCase();
-		delete this.styles$[this.styles$.indexOf(style)];
+
+		for (let i = 0; i < this.styles$.length; i++)
+		{
+			if (this.styles$[i].style == style)
+			{
+				delete this.styles$[i];
+				break;
+			}
+		}
 	}
 
 	public setClass(clazz:any) : void

@@ -32,8 +32,9 @@ export class Properties
     public static AttributePrefix:string = "$";
     public static RequireAttributePrefix:boolean = false;
 
+	public static DateDelimitors:string = "./- ";
+	public static TimeFormat:string = "HH:mm:ss";
 	public static DateFormat:string = "DD-MM-YYYY";
-	public static TimeFormat:string = "HH24:MI:SS";
 
 
     public static ParseTags:boolean = true;

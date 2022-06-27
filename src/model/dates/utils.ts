@@ -10,7 +10,15 @@
  * accompanied this code).
  */
 
+import { Alert } from '../../application/Alert.js';
+import { Properties } from '../../application/Properties.js';
+import { DateToken } from './dates.js';
 import {format as formatimpl, parse as parseimpl} from './fecha.js';
+
+/*
+	Format strings follow implementation, eg "DD-MM-YYYY HH:mm:ss":
+    see https://github.com/taylorhakes/fecha/blob/master/README.md
+*/
 
 export interface datepart
 {
@@ -20,154 +28,100 @@ export interface datepart
 
 export class utils
 {
-    private static delim:string = null;
-    private static deftmfmt:string = null;
-    private static tokens$:datepart[] = null;
-    private static deffmt:string = utils.default();
-
-	private static default() : string
+	private static date() : string
 	{
-		let format:string = "dd-mm-yyyy";
-		this.setFormat("DD-MM-YYYY","HH24:MI:SS");
-		return(format);
+		return(Properties.DateFormat);
 	}
 
-    private static init(format:string) : void
-    {
-        utils.tokens$ = utils.split(format,"-/:. ");
+	private static full() : string
+	{
+		return(Properties.DateFormat+" "+Properties.TimeFormat);
+	}
 
-        for(let i = 0; i < utils.tokens$.length; i++)
-        {
-            if (utils.tokens$[i].delim != " ")
-            {
-                utils.delim = utils.tokens$[i].delim;
-                break;
-            }
-        }
-    }
+	private static delim() : string
+	{
+		return(Properties.DateDelimitors);
+	}
 
-    public static setFormat(datefmt:string, timefmt:string) : void
+    public static parse(datestr:string, withtime:boolean, format?:string) : Date
     {
-        utils.deffmt = datefmt;
-        utils.deftmfmt = timefmt;
-        utils.init(datefmt);
-    }
-
-    public static getDateFormat() : string
-    {
-        return(utils.deffmt);
-    }
-
-    public static getDateTimeFormat() : string
-    {
-        return(utils.deftmfmt);
-    }
-
-    public static parse(datestr:string, format?:string) : Date
-    {
-        if (format == null) format = utils.deffmt;
+        if (format == null)
+		{
+			if (withtime) format = utils.full();
+			else		  format = utils.date();
+		}
 
         if (datestr == null || datestr.trim().length == 0)
             return(null);
 
-        let date:Date = parseimpl(datestr,format);
-        if (date == null) datestr = utils.reformat(datestr);
-
-        if (datestr == null) return(null);
-        return(parseimpl(datestr,format));
-    }
-
-    public static parsetime(datestr:string, format?:string) : Date
-    {
-        if (format == null) format = utils.deftmfmt;
-
-        if (datestr == null || datestr.trim().length == 0)
-            return(null);
-
-        let date:Date = parseimpl(datestr,format);
-        if (date == null) datestr = utils.reformat(datestr);
-
-        if (datestr == null) return(null);
-        return(parseimpl(datestr,format));
+		try
+		{
+			return(parseimpl(datestr,format));
+		}
+		catch (error)
+		{
+			Alert.message(""+error,"Date Parser");
+			return(null);
+		}
     }
 
     public static format(date:Date, format?:string) : string
     {
-        if (format == null) format = utils.deffmt;
-        return(formatimpl(date,format));
+        if (format == null)
+			format = utils.full();
+
+		try
+		{
+			return(formatimpl(date,format));
+		}
+		catch (error)
+		{
+			Alert.message(""+error,"Date Formatter");
+			return(null);
+		}
     }
 
-    public static formattime(date:Date, format?:string) : string
-    {
-        if (format == null) format = utils.deftmfmt;
-        return(formatimpl(date,format));
-    }
+	public static tokenize(date:Date, format?:string) : DateToken[]
+	{
+		let tokens:DateToken[] = [];
 
-    private static reformat(datestr:string) : string
-    {
-        let ndate:string = "";
+        if (format == null)
+			format = utils.full();
 
-        if (!isNaN(+datestr))
-        {
-            let pos:number = 0;
+		let delim:string = utils.delim();
+		let value:string = utils.format(date);
 
-            for(let i = 0; i < 3; i++)
-            {
-                let len:number = utils.tokens$[i].token.length;
-                ndate += datestr.substring(pos,pos+len) + utils.tokens$[i].delim;
-                pos += len;
-            }
+		if (value == null)
+			return(null);
 
-            return(ndate);
-        }
+		let start:number = 0;
+		for (let i = 0; i < format.length; i++)
+		{
+			if (delim.includes(format.charAt(i)))
+			{
+				let token:DateToken =
+				{
+					pos: start,
+					length: i - start,
+					mask: format.substring(start,i),
+					value: value.substring(start,i)
+				}
 
-        if (utils.delim != "-") datestr = utils.replaceAll(datestr,"-",utils.delim);
-        if (utils.delim != "/") datestr = utils.replaceAll(datestr,"/",utils.delim);
-        if (utils.delim != ".") datestr = utils.replaceAll(datestr,".",utils.delim);
+				tokens.push(token);
+				start = i + 1;
+			}
+		}
 
-        let parts:datepart[] = utils.split(datestr,utils.delim+": ");
+		let token:DateToken =
+		{
+			pos: 0,
+			mask: format,
+			length: format.length,
+			value: value.substring(0,format.length)
+		}
 
-        for (let i = 0; i < parts.length; i++)
-        {
-            let numeric:boolean = !isNaN(+parts[i].token);
-            if (numeric && parts[i].token.length == 1) parts[i].token = "0"+parts[i].token;
-        }
+		tokens.push(token);
 
-        parts.forEach((part) => {ndate += part.token+part.delim})
-
-        return(ndate);
-    }
-
-
-    private static split(str:string, splitter:string) : datepart[]
-    {
-        let parts:datepart[] = [];
-        let delimiters:Set<string> = new Set<string>();
-
-        for (let i = 0; i < splitter.length; i++)
-            delimiters.add(splitter[i]+"");
-
-        let pos:number = 0;
-
-        for (let i = 0; i < str.length; i++)
-        {
-            if (delimiters.has(str[i]+""))
-            {
-                parts.push({token: str.substring(pos,i), delim: str[i]});
-                pos = i + 1;
-            }
-        }
-
-        if (pos < str.length)
-            parts.push({token: str.substring(pos,str.length), delim: ""});
-
-        return(parts);
-    }
-
-
-    private static replaceAll(str:string, search:string, replace:string) : string
-    {
-        while(str.indexOf(search) >= 0) str = str.replace(search,replace);
-        return(str);
-    }
+		return(tokens);
+	}
 }

@@ -12,15 +12,31 @@
 
 import { utils } from "./utils.js";
 
+export interface DateToken
+{
+	pos:number,
+	length:number,
+	mask:string,
+	value:string
+}
+
 export class dates
 {
-    public static parse(datestr:string, format?:string) : Date
+    public static parse(datestr:string, withtime?:boolean, format?:string) : Date
     {
-        return(utils.parse(datestr,format));
+		if (withtime == null)
+			withtime = datestr.includes(' ');
+
+        return(utils.parse(datestr,withtime,format));
     }
 
     public static format(date:Date, format?:string) : string
     {
         return(utils.format(date,format));
+    }
+
+    public static tokenize(date:Date, format?:string) : DateToken[]
+    {
+        return(utils.tokenize(date,format));
     }
 }

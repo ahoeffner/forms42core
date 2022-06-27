@@ -10,21 +10,37 @@
  * accompanied this code).
  */
 
+export enum Type
+{
+	Log,
+	Popup,
+	PopAndLog
+}
+
 export class Alert
 {
-	public static fatal(msg:string, title:string)
+	public static fatal(msg:string, title:string, type?:Type)
 	{
+		if (type == null)
+			type = Type.PopAndLog;
+
 		//window.alert(msg);
 		console.log(msg);
 	}
-	public static warning(msg:string, title:string)
+	public static warning(msg:string, title:string, type?:Type)
 	{
+		if (type == null)
+			type = Type.Popup;
+
 		//window.alert(msg);
 		console.log(msg);
 	}
 
-	public static message(msg:string, title:string)
+	public static message(msg:string, title:string, type?:Type)
 	{
+		if (type == null)
+			type = Type.Popup;
+
 		//window.alert(msg);
 		console.log(msg);
 	}

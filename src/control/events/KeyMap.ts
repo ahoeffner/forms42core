@@ -155,6 +155,12 @@ export class KeyMapping
 	{
 		let key:number = KeyCodes.code(event.key);
 
+		if (key == null)
+		{
+			console.error("@KeyMapping: invalid key signature '"+event.key+"' in "+event.type);
+			return(null);
+		}
+
 		let signature:string = key+"|";
 		signature += event.alt ? 't' : 'f';
 		signature += event.ctrl ? 't' : 'f';
@@ -201,7 +207,7 @@ export class KeyMapping
 
 		if (isNaN(+key))
 		{
-			console.error("@KeyMapping: invalid key signature. Key: '"+key+"' is not a number and not mapped");
+			console.error("@KeyMapping: invalid key signature '"+signature+"'. Key: '"+key+"' is not a number and not mapped");
 			return(null);
 		}
 

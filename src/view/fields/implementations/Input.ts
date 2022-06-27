@@ -797,7 +797,8 @@ export class Input implements FieldImplementation, EventListenerObject
 				if (this.datetokens != null)
 				{
 					let section:Section = this.pattern.findField(pos);
-					console.log("DATE: "+section.getValue()+" "+this.datetokens[section.field()].mask);
+					let correct:string = this.validateDatePart(this.datetokens[section.field()],section.getValue());
+					if (correct != null) section.setValue(correct);
 				}
 
 				pos = this.pattern.next(true,pos);
@@ -893,6 +894,31 @@ export class Input implements FieldImplementation, EventListenerObject
 		}
 
 		return(true);
+	}
+
+	private validateDatePart(token:FormatToken, value:string) : string
+	{
+		let mod:boolean = false;
+
+		switch(token.type)
+		{
+			case DatePart.Day :
+								if (+value.charAt(0) > 3)
+								{
+									mod = true;
+									value = '3'+value.substring(1);
+								}
+
+								if (+value > 31)
+								{
+									mod = true;
+									value = "31";
+								}
+
+		}
+
+		if (mod) return(value);
+		else     return(null);
 	}
 
     private getPosition() : number

@@ -11,8 +11,8 @@
  */
 
 import { Alert } from '../../application/Alert.js';
+import { dates, DateToken, DatePart } from './dates.js';
 import { Properties } from '../../application/Properties.js';
-import { DateToken } from './dates.js';
 import {format as formatimpl, parse as parseimpl} from './fecha.js';
 
 /*
@@ -28,17 +28,17 @@ export interface datepart
 
 export class utils
 {
-	private static date() : string
+	public static date() : string
 	{
 		return(Properties.DateFormat);
 	}
 
-	private static full() : string
+	public static full() : string
 	{
 		return(Properties.DateFormat+" "+Properties.TimeFormat);
 	}
 
-	private static delim() : string
+	public static delim() : string
 	{
 		return(Properties.DateDelimitors);
 	}
@@ -95,15 +95,20 @@ export class utils
 			return(null);
 
 		let start:number = 0;
+		let mask:string = null;
+
 		for (let i = 0; i < format.length; i++)
 		{
 			if (delim.includes(format.charAt(i)))
 			{
+				mask = format.substring(start,i);
+
 				let token:DateToken =
 				{
 					pos: start,
+					mask: mask,
 					length: i - start,
-					mask: format.substring(start,i),
+					type: dates.getTokenType(mask),
 					value: value.substring(start,i)
 				}
 
@@ -112,18 +117,22 @@ export class utils
 			}
 		}
 
+		mask = format.substring(start);
+
 		tokens.push(
 		{
 			pos: start,
-			mask: format.substring(start),
+			mask: mask,
+			value: value.substring(start),
 			length: format.length - start,
-			value: value.substring(start)
+			type: dates.getTokenType(mask)
 		});
 
 		tokens.push(
 		{
 			pos: 0,
 			mask: format,
+			type: DatePart.Date,
 			length: format.length,
 			value: value.substring(0,format.length)
 		});

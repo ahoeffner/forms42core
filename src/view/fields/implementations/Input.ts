@@ -16,6 +16,7 @@ import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
+import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
 enum Case
@@ -161,6 +162,12 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.type == "number")
 			this.datatype = DataType.integer;
 
+		if (this.type == "date")
+			this.datatype = DataType.date;
+
+		if (this.type == "datetime")
+			this.datatype = DataType.datetime;
+
         attributes.forEach((value,attr) =>
         {
 			if (attr == "upper")
@@ -187,7 +194,53 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "date")
 			{
 				this.datatype = DataType.date;
-				this.pattern = new Pattern("{##} - {##} - {####}");
+				let types:FormatToken[] = dates.tokenizeFormat();
+
+				let parts:number = 3;
+				this.placeholder = "";
+				let pattern:string = "";
+
+				types.forEach((type) =>
+				{
+					if (type.type == DatePart.Year)
+					{
+						parts--;
+						this.placeholder += type.mask;
+						pattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							pattern += " "+type.delimitor+" ";
+							this.placeholder += " "+type.delimitor+" ";
+						}
+					}
+
+					if (type.type == DatePart.Month)
+					{
+						parts--;
+						pattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							pattern += " "+type.delimitor+" ";
+							this.placeholder += " "+type.delimitor+" ";
+						}
+					}
+
+					if (type.type == DatePart.Day)
+					{
+						parts--;
+						pattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							pattern += " "+type.delimitor+" ";
+							this.placeholder += " "+type.delimitor+" ";
+						}
+					}
+				})
+
+				this.pattern = new Pattern(pattern);
 			}
 
 			if (attr == "datetime")

@@ -24,16 +24,23 @@ export class Alert
 		if (type == null)
 			type = Type.PopAndLog;
 
-		//window.alert(msg);
-		console.log(msg);
+		if (type == Type.Popup || type == Type.PopAndLog)
+			window.alert(msg);
+
+		if (type == Type.PopAndLog)
+			console.log(title+": "+msg);
 	}
 	public static warning(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
 			type = Type.Popup;
 
-		//window.alert(msg);
-		console.log(msg);
+
+		if (type == Type.Popup || type == Type.PopAndLog)
+			window.alert(msg);
+
+		if (type == Type.PopAndLog)
+			console.log(title+": "+msg);
 	}
 
 	public static message(msg:string, title:string, type?:Type)
@@ -41,7 +48,10 @@ export class Alert
 		if (type == null)
 			type = Type.Popup;
 
-		//window.alert(msg);
-		console.log(msg);
+		if (type == Type.Popup || type == Type.PopAndLog)
+			window.alert(msg);
+
+		if (type == Type.PopAndLog)
+			console.log(title+": "+msg);
 	}
 }

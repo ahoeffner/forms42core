@@ -218,6 +218,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					if (type.type == DatePart.Month)
 					{
 						parts--;
+						this.placeholder += type.mask;
 						pattern += "{"+type.length+"#}";
 
 						if (parts > 0)
@@ -230,6 +231,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					if (type.type == DatePart.Day)
 					{
 						parts--;
+						this.placeholder += type.mask;
 						pattern += "{"+type.length+"#}";
 
 						if (parts > 0)

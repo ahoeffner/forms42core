@@ -12,7 +12,6 @@
 
 import { utils } from "./utils.js";
 import { Alert } from "../../application/Alert.js";
-import { Properties } from "../../application/Properties.js";
 
 export interface DateToken
 {
@@ -45,30 +44,25 @@ export enum DatePart
 
 export class dates
 {
-	private static validated$:boolean = null;
-
-	private static validate() : boolean
+	public static validate() : boolean
 	{
-		if (Properties.DateFormat != "DD-MM-YYYY" && Properties.DateFormat != "YYYY-MM-DD")
-		{
-			Alert.fatal("Illegal default format. Only 'DD-MM-YYYY' or 'YYYY-MM-DD' is currently implemented","Date format failure");
-			return(false);
-		}
+		let valid:boolean = true;
+		let tokens:FormatToken[] = dates.tokenizeFormat();
 
-		if (Properties.TimeFormat != 'HH:mm:ss')
+		tokens.forEach((token) =>
 		{
-			Alert.fatal("Illegal default time-format. Only 'HH:mm:ss' is currently implemented","Date format failure");
-			return(false);
-		}
+			if (token.type == null)
+			{
+				Alert.fatal("Format '"+token.mask+"' is not supported in default format","Date format")
+				valid = false;
+			}
+		})
 
-		return(true);
+		return(valid);
 	}
 
 	public static parse(datestr:string, withtime?:boolean, format?:string) : Date
     {
-		if (dates.validated$ == null)
-			dates.validated$ == dates.validate();
-
 		if (withtime == null)
 			withtime = datestr.includes(' ');
 
@@ -77,25 +71,16 @@ export class dates
 
     public static format(date:Date, format?:string) : string
     {
-		if (dates.validated$ == null)
-			dates.validated$ == dates.validate();
-
         return(utils.format(date,format));
     }
 
     public static tokenizeDate(date:Date, format?:string) : DateToken[]
     {
-		if (dates.validated$ == null)
-			dates.validated$ == dates.validate();
-
         return(utils.tokenize(date,format));
     }
 
 	public static getTokenType(token:string) : DatePart
 	{
-		if (dates.validated$ == null)
-			dates.validated$ == dates.validate();
-
 		switch(token)
 		{
 			case "DD": 	 return(DatePart.Day);
@@ -110,21 +95,25 @@ export class dates
 
     public static tokenizeFormat(format?:string) : FormatToken[]
     {
-		if (dates.validated$ == null)
-			dates.validated$ == dates.validate();
-
 		let tokens:FormatToken[] = [];
 
         if (format == null)
 			format = utils.full();
 
+		let last:number = 0;
+		let start:number = 0;
 		let delim:string = utils.delim();
 
-		let start:number = 0;
 		for (let i = 0; i < format.length; i++)
 		{
 			if (delim.includes(format.charAt(i)))
 			{
+				if (i - last == 1)
+				{
+					Alert.fatal("Date delimitors can only be 1 character","Date delimitor");
+					throw "@dates: Date delimitors can only be 1 character";
+				}
+
 				let token:FormatToken =
 				{
 					pos: start,
@@ -135,6 +124,8 @@ export class dates
 				}
 
 				tokens.push(token);
+
+				last = i;
 				start = i + 1;
 			}
 		}

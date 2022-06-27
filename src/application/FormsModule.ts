@@ -14,6 +14,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Application } from './Application.js';
+import { dates } from '../model/dates/dates.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 
 export interface Component
@@ -96,6 +97,7 @@ export class FormsModule
 
     constructor()
     {
+		dates.validate();
 		KeyMapping.init();
         FormsModule.instance = this;
         State.appl = new Application(this);

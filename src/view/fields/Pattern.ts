@@ -585,6 +585,11 @@ class Field implements Section
         return(this.size$);
     }
 
+	public field() : number
+	{
+		return(this.fn);
+	}
+
     public isNull() : boolean
     {
         let empty:boolean = true;

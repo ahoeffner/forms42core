@@ -49,6 +49,7 @@ export interface Section
 {
     pos() : number;
     size() : number;
+    field() : number;
     isNull() : boolean;
     getValue() : string;
     setValue(value:string) : void;

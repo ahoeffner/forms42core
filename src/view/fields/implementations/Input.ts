@@ -12,6 +12,7 @@
 
 import { Pattern } from "../Pattern.js";
 import { DataType } from "./DataType.js";
+import { Section } from "../interfaces/Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
@@ -39,6 +40,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private pattern:Pattern = null;
 	private state:FieldState = null;
     private placeholder:string = null;
+	private datetokens:FormatToken[] = null;
 	private properties:HTMLProperties = null;
 	private eventhandler:FieldEventHandler = null;
 
@@ -197,6 +199,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (attr == "date" || attr == "datetime")
 			{
+				this.datetokens = [];
 				let parts:number = 3;
 				this.placeholder = "";
 
@@ -209,6 +212,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -224,6 +228,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -239,6 +244,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -258,8 +264,8 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.datatype = DataType.datetime;
 
 				datesize++;
-				datepattern += "@";
-				this.placeholder += "@";
+				datepattern += " ";
+				this.placeholder += " ";
 
 				types.forEach((type) =>
 				{
@@ -267,6 +273,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -282,6 +289,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -297,6 +305,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						datesize += type.length;
+						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
@@ -323,6 +332,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.element.setAttribute("size",""+datesize);
 
 			this.pattern = new Pattern(datepattern);
+			this.placeholder = this.placeholder.toLowerCase();
 		}
 
 		this.element.removeAttribute("placeholder");
@@ -784,10 +794,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
             if (this.pattern.setCharacter(pos,this.event.key))
             {
-                pos = this.pattern.next(true,pos);
+				if (this.datetokens != null)
+				{
+					let section:Section = this.pattern.findField(pos);
+					console.log("DATE: "+section.getValue()+" "+this.datetokens[section.field()].mask);
+				}
 
-				console.log("DATE: "+this.pattern.getField(0).getValue());
-
+				pos = this.pattern.next(true,pos);
                 this.setElementValue(this.pattern.getValue());
                 this.setSelection([pos,pos]);
             }

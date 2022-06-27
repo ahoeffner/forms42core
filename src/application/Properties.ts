@@ -36,7 +36,6 @@ export class Properties
 	public static TimeFormat:string = "HH:mm:ss";
 	public static DateFormat:string = "DD-MM-YYYY";
 
-
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
 

@@ -932,70 +932,17 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		switch(token.type)
 		{
-			case DatePart.Day 	: value = this.validateDayPart(value); break;
-			case DatePart.Month : value = this.validateMonthPart(value); break;
-			case DatePart.Year 	: value = this.validateYearPart(value); break;
+			case DatePart.Year 		: value = this.validateYearPart(value); break;
+			case DatePart.Day 		: value = this.validateDateField(value,31); break;
+			case DatePart.Month 	: value = this.validateDateField(value,12); break;
+			case DatePart.Hour 		: value = this.validateDateField(value,23); break;
+			case DatePart.Minute 	: value = this.validateDateField(value,59); break;
+			case DatePart.Second 	: value = this.validateDateField(value,59); break;
 
 			default : value = null;
 		}
 
 		return(value);
-	}
-
-	private validateDayPart(value:string) : string
-	{
-		let mod:boolean = false;
-
-		if (value.charAt(0) == ' ')
-		{
-			mod = true;
-			value = '0' + value.substring(1);
-		}
-
-		else
-
-		if (+value.charAt(0) > 3)
-		{
-			mod = true;
-			value = '3' + value.substring(1);
-		}
-
-		if (+value > 31)
-		{
-			mod = true;
-			value = "31";
-		}
-
-		if (mod) return(value);
-		return(null);
-	}
-
-	private validateMonthPart(value:string) : string
-	{
-		let mod:boolean = false;
-
-		if (value.charAt(0) == ' ')
-		{
-			mod = true;
-			value = '0' + value.substring(1);
-		}
-
-		else
-
-		if (+value.charAt(0) > 1)
-		{
-			mod = true;
-			value = '1' + value.substring(1);
-		}
-
-		if (+value > 12)
-		{
-			mod = true;
-			value = "12";
-		}
-
-		if (mod) return(value);
-		return(null);
 	}
 
 	private validateYearPart(value:string) : string
@@ -1032,6 +979,34 @@ export class Input implements FieldImplementation, EventListenerObject
 					break;
 				}
 			}
+		}
+
+		if (mod) return(value);
+		return(null);
+	}
+
+	private validateDateField(value:string, max:number) : string
+	{
+		let mod:boolean = false;
+
+		if (value.charAt(0) == ' ')
+		{
+			mod = true;
+			value = '0' + value.substring(1);
+		}
+
+		else
+
+		if (+value.charAt(0) > max/10)
+		{
+			mod = true;
+			value = max/10 + value.substring(1);
+		}
+
+		if (+value > max)
+		{
+			mod = true;
+			value = ""+max;
 		}
 
 		if (mod) return(value);

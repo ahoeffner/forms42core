@@ -153,6 +153,7 @@ export class KeyMapping
 
 	public static parseBrowserEvent(event:BrowserEvent) : KeyMap
 	{
+		if (event.key == null) return(null);
 		let key:number = KeyCodes.code(event.key);
 
 		if (key == null)

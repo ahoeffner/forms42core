@@ -35,6 +35,7 @@ class WatchDog
 	private constructor()
 	{
 		this.check(500);
+		console.log("Watchdog started");
 	}
 
 	private check(interval:number) : void

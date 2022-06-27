@@ -32,6 +32,17 @@ export class FieldInstance implements FieldEventHandler
 
 	constructor(form:Form,tag:HTMLElement)
 	{
+		let parent:Element = tag.parentElement;
+
+		while(parent != null)
+		{
+			if (parent.tagName.toLowerCase() == "form")
+				parent.setAttribute("onsubmit","return false;");
+
+			parent = parent.parentElement;
+		}
+
+
 		this.form$ = form;
 		this.properties$ = FieldProperties.consume(tag);
 		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);

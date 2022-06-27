@@ -156,6 +156,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.placeholder = null;
 		this.datatype = DataType.string;
 
+		let datepattern:string = "";
+		let types:FormatToken[] = dates.tokenizeFormat();
+
 		this.type = attributes.get("type");
 		if (this.type == null) this.type = "text";
 
@@ -191,14 +194,13 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.datatype = DataType.decimal;
 			}
 
-			if (attr == "date")
+			if (attr == "date" || attr == "datetime")
 			{
-				this.datatype = DataType.date;
-				let types:FormatToken[] = dates.tokenizeFormat();
-
 				let parts:number = 3;
 				this.placeholder = "";
-				let pattern:string = "";
+
+				this.datatype = DataType.date;
+				types = dates.tokenizeFormat();
 
 				types.forEach((type) =>
 				{
@@ -206,12 +208,12 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						this.placeholder += type.mask;
-						pattern += "{"+type.length+"#}";
+						datepattern += "{"+type.length+"#}";
 
 						if (parts > 0)
 						{
-							pattern += " "+type.delimitor+" ";
-							this.placeholder += " "+type.delimitor+" ";
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
 						}
 					}
 
@@ -219,12 +221,12 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						this.placeholder += type.mask;
-						pattern += "{"+type.length+"#}";
+						datepattern += "{"+type.length+"#}";
 
 						if (parts > 0)
 						{
-							pattern += " "+type.delimitor+" ";
-							this.placeholder += " "+type.delimitor+" ";
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
 						}
 					}
 
@@ -232,23 +234,66 @@ export class Input implements FieldImplementation, EventListenerObject
 					{
 						parts--;
 						this.placeholder += type.mask;
-						pattern += "{"+type.length+"#}";
+						datepattern += "{"+type.length+"#}";
 
 						if (parts > 0)
 						{
-							pattern += " "+type.delimitor+" ";
-							this.placeholder += " "+type.delimitor+" ";
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
 						}
 					}
 				})
-
-				this.pattern = new Pattern(pattern);
 			}
 
 			if (attr == "datetime")
 			{
+				let parts:number = 3;
 				this.datatype = DataType.datetime;
-				this.pattern = new Pattern("{##} - {##} - {####}");
+
+				datepattern += "  ";
+				this.placeholder += "  ";
+
+				types.forEach((type) =>
+				{
+					if (type.type == DatePart.Hour)
+					{
+						parts--;
+						this.placeholder += type.mask;
+						datepattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
+						}
+					}
+
+					if (type.type == DatePart.Minute)
+					{
+						parts--;
+						this.placeholder += type.mask;
+						datepattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
+						}
+					}
+
+					if (type.type == DatePart.Second)
+					{
+						parts--;
+						this.placeholder += type.mask;
+						datepattern += "{"+type.length+"#}";
+
+						if (parts > 0)
+						{
+							datepattern += type.delimitor;
+							this.placeholder += type.delimitor;
+						}
+					}
+				})
 			}
 
 			if (attr == "format")
@@ -257,6 +302,17 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "placeholder")
 				this.placeholder = value;
         });
+
+		if (datepattern.length > 0)
+		{
+			if (attributes.get("size") == null)
+			{
+				console.log("no size");
+				this.element.setAttribute("size",""+datepattern.length);
+			}
+
+			this.pattern = new Pattern(datepattern);
+		}
 
 		this.element.removeAttribute("placeholder");
     }

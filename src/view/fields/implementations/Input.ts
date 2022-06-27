@@ -496,6 +496,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.type == "range")
 			return(true);
 
+		if (this.element.readOnly)
+			return(true);
+
         let prevent:boolean = this.event.prevent;
 
         if (this.event.prevent)
@@ -565,9 +568,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "change")
             return(true);
-
-		if (this.element.readOnly)
-			return(true);
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
 			this.clear();

@@ -35,16 +35,12 @@ class WatchDog
 	private constructor()
 	{
 		this.check(500);
-		console.log("Watchdog started");
 	}
 
 	private check(interval:number) : void
 	{
 		if (!EventStack.running && EventStack.stack$.length > 0)
-		{
 			EventStack.handle();
-			console.log("Eventstack restarted")
-		}
 
 		setTimeout(() => {this.check(interval);},interval);
 	}

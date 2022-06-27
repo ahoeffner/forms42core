@@ -831,6 +831,35 @@ export class Input implements FieldImplementation, EventListenerObject
 					let section:Section = this.pattern.findField(pos);
 					let correct:string = this.validateDatePart(this.datetokens[section.field()],section.getValue());
 					if (correct != null) section.setValue(correct);
+
+					let finished:boolean = true;
+
+					this.pattern.getFields().forEach((section) =>
+					{
+						if (section.getValue().includes(' '))
+							finished = false;
+					});
+
+					if (finished)
+					{
+						let dayentry:number = -1;
+
+						for (let i = 0; i < this.datetokens.length; i++)
+						{
+							if (this.datetokens[i].type == DatePart.Day)
+								dayentry = i;
+						}
+
+						if (dayentry >= 0)
+						{
+							let tries:number = 3;
+							while(!this.validateDate(this.pattern.getValue()) && --tries >= 0)
+							{
+								let day:number = +this.pattern.getField(dayentry).getValue();
+								this.pattern.getField(dayentry).setValue(""+(day-1));
+							}
+						}
+					}
 				}
 
 				pos = this.pattern.next(true,pos);
@@ -925,6 +954,13 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(valid);
 		}
 
+		return(true);
+	}
+
+	private validateDate(value:string) : boolean
+	{
+		let date:Date = dates.parse(value);
+		if (date == null) return(false);
 		return(true);
 	}
 

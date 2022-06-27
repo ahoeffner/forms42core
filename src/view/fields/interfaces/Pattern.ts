@@ -37,6 +37,7 @@ export interface Pattern
     next(printable:boolean,from?:number) : number;
 
     getPosition() : number;
+    getFields() : Section[];
     getField(n:number) : Section;
     input(pos:number) : boolean;
     findField(pos?:number) : Section;

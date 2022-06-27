@@ -148,6 +148,11 @@ export class Pattern implements PatternType
         return(null);
     }
 
+	public getFields() : Section[]
+	{
+		return(this.fields);
+	}
+
     public findField(pos:number) : Field
     {
         if (pos == null) pos = this.pos;

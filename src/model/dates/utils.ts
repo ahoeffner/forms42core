@@ -112,15 +112,21 @@ export class utils
 			}
 		}
 
-		let token:DateToken =
+		tokens.push(
+		{
+			pos: start,
+			mask: format.substring(start),
+			length: format.length - start,
+			value: value.substring(start)
+		});
+
+		tokens.push(
 		{
 			pos: 0,
 			mask: format,
 			length: format.length,
 			value: value.substring(0,format.length)
-		}
-
-		tokens.push(token);
+		});
 
 		return(tokens);
 	}

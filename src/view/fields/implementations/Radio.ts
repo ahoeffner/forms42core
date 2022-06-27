@@ -65,12 +65,12 @@ export class Radio implements FieldImplementation, EventListenerObject
 		return(true);
 	}
 
-	public getStringValue() : string
+	public getIntermediateValue() : string
 	{
 		return(this.getValue());
 	}
 
-	public setStringValue(value:string) : void
+	public setIntermediateValue(value:string) : void
 	{
 		this.setValue(value);
 	}

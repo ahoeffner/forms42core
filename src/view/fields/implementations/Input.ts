@@ -115,16 +115,14 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(true);
     }
 
-	// Get unvalidated
-	public getStringValue(): string
+	public getIntermediateValue(): string
 	{
 		let value:string = this.element.value;
 		if (this.pattern == null) value = value.trim();
 		return(value);
 	}
 
-	// Set unvalidated
-	public setStringValue(value:string) : void
+	public setIntermediateValue(value:string) : void
 	{
         if (value == null)
 			value = "";
@@ -217,7 +215,7 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.type == "focus")
         {
 			buble = true;
-			this.initial = this.getStringValue();
+			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 
 			if (this.placeholder != null)
@@ -237,7 +235,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (this.pattern == null)
 			{
-				if (this.getStringValue() != this.initial)
+				if (this.getIntermediateValue() != this.initial)
 					change = true;
 			}
 			else
@@ -262,7 +260,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.event.type = "blur";
 			}
 
-			this.initial = this.getStringValue();
+			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 
             if (this.placeholder != null)
@@ -310,7 +308,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (this.pattern == null)
 			{
-				if (this.getStringValue() != this.initial)
+				if (this.getIntermediateValue() != this.initial)
 					buble = true;
 			}
 			else
@@ -324,7 +322,7 @@ export class Input implements FieldImplementation, EventListenerObject
 					buble = true;
 			}
 
-			this.initial = this.getStringValue();
+			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
@@ -343,7 +341,7 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.onFuncKey)
 			buble = true;
 
-		let after:string = this.getStringValue();
+		let after:string = this.getIntermediateValue();
 
 		if (this.before != after)
 		{
@@ -550,8 +548,8 @@ export class Input implements FieldImplementation, EventListenerObject
         {
             pos = this.pattern.findPosition(0);
 
-			this.pattern.setValue(this.getStringValue());
-			this.setStringValue(this.pattern.getValue());
+			this.pattern.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.pattern.getValue());
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
@@ -561,7 +559,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "blur")
         {
-			this.pattern.setValue(this.getStringValue());
+			this.pattern.setValue(this.getIntermediateValue());
 			if (this.pattern.isNull()) this.clear();
             return(true);
         }
@@ -642,7 +640,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			setTimeout(() =>
 			{
-				this.pattern.setValue(this.getStringValue());
+				this.pattern.setValue(this.getIntermediateValue());
 				this.setValue(this.pattern.getValue());
                 this.setPosition(this.pattern.next(true,pos));
 			},0);

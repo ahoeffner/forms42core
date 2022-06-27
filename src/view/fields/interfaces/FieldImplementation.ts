@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { FieldEventHandler } from "./FieldEventHandler.js";
 import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldEventHandler } from "./FieldEventHandler.js";
 
 export enum FieldState
 {
@@ -26,9 +26,10 @@ export interface FieldImplementation
 	create(eventhandler:FieldEventHandler, tag:string) : HTMLElement;
 
 	getValue() : any;
-    getStringValue() : string;
     setValue(value:any) : boolean;
-	setStringValue(value:string) : void;
+
+	getIntermediateValue() : string;
+	setIntermediateValue(value:string) : void;
 
 	getFieldState() : FieldState;
 	setFieldState(state:FieldState) : void;

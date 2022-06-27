@@ -22,34 +22,59 @@ interface event
 	brwevent:BrowserEvent
 }
 
+class WatchDog
+{
+	private static watchdog:WatchDog = null;
+
+	public static start() : void
+	{
+		if (WatchDog.watchdog == null)
+			WatchDog.watchdog = new WatchDog();
+	}
+
+	private constructor()
+	{
+		this.check(500);
+	}
+
+	private check(interval:number) : void
+	{
+		if (!EventStack.running && EventStack.stack$.length > 0)
+		{
+			EventStack.handle();
+			console.log("Eventstack restarted")
+		}
+
+		setTimeout(() => {this.check(interval);},interval);
+	}
+}
+
 export class EventStack
 {
-	private static stack$:event[] = [];
-	private static running:boolean = false;
+	public static stack$:event[] = [];
+	public static running:boolean = false;
 
 	// Javascript might not be multi-threaded, but browsers doesn't wait for events to be handled
 	// This code requires events to passed one at a time, which cannot be guaranteed !!!!
 
 	public static async stack(field:Field, inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
+		WatchDog.start();
 		EventStack.stack$.unshift({field: field, inst:inst, brwevent: brwevent.clone()});
 		await EventStack.handle();
-		EventStack.trylater(1000);
 	}
 
-	private static async handle() : Promise<void>
+	public static async handle() : Promise<void>
 	{
 		if (EventStack.running)
 			return;
 
 		EventStack.running = true;
-
 		let cmd:event = EventStack.stack$.pop();
 
 		if (cmd == undefined)
 		{
 			EventStack.running = false;
-			EventStack.trylater(1000);
 			return;
 		}
 
@@ -66,14 +91,5 @@ export class EventStack
 			EventStack.running = false;
 			Alert.warning(""+error,"Fatal Error");
 		}
-	}
-
-	private static async trylater(sleep:number) : Promise<void>
-	{
-		setTimeout(() =>
-		{
-			if (!EventStack.running && EventStack.stack$.length > 0)
-				EventStack.handle();
-		},sleep);
 	}
 }

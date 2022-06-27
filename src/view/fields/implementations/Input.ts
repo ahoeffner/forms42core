@@ -805,9 +805,12 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (this.datetokens != null && this.event.key == ' ' && this.pattern.isNull())
 			{
-				this.setIntermediateValue(this.getCurrentDate());
-				this.pattern.setPosition(0);
+				this.pattern.setValue(this.getCurrentDate());
+				this.setElementValue(this.pattern.getValue());
+
 				this.setPosition(0);
+				this.pattern.setPosition(0);
+
 				return(true);
 			}
 

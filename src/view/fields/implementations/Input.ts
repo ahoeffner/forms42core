@@ -711,7 +711,13 @@ export class Input implements FieldImplementation, EventListenerObject
             return(true);
 
         if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
+		{
 			this.clear();
+            return(true);
+		}
+
+		if (this.event.type.startsWith("mouse") || this.event.type == "wheel")
+			return(true);
 
         let ignore:boolean = this.event.ignore;
         if (this.event.printable) ignore = false;
@@ -794,15 +800,6 @@ export class Input implements FieldImplementation, EventListenerObject
         {
             let sel:number[] = this.getSelection();
 
-            if (sel[0] != sel[1])
-            {
-                pos = sel[0];
-                this.pattern.delete(sel[0],sel[1]);
-                this.setElementValue(this.pattern.getValue());
-                pos = this.pattern.findPosition(sel[0]);
-                this.setSelection([pos,pos]);
-            }
-
 			if (this.datetokens != null && this.event.key == ' ' && this.pattern.isNull())
 			{
 				this.pattern.setValue(this.getCurrentDate());
@@ -814,7 +811,18 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(true);
 			}
 
-			console.log("1 <"+this.pattern.getValue()+"> <"+this.getElementValue()+">")
+            if (sel[0] != sel[1])
+            {
+                pos = sel[0];
+
+				if (!this.pattern.isValid(pos,this.event.key))
+					return(true);
+
+                this.pattern.delete(sel[0],sel[1]);
+                this.setElementValue(this.pattern.getValue());
+                pos = this.pattern.findPosition(sel[0]);
+                this.setSelection([pos,pos]);
+            }
 
             if (this.pattern.setCharacter(pos,this.event.key))
             {

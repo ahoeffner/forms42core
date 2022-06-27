@@ -261,7 +261,7 @@ export class Pattern implements PatternType
         if (!this.setPosition(pos))
             return(false);
 
-        let valid:Validity = this.isValid(pos,c);
+        let valid:Validity = this.validity(pos,c);
 
         switch(valid)
         {
@@ -278,7 +278,17 @@ export class Pattern implements PatternType
         return(true);
     }
 
-    public isValid(pos:number, c:string) : Validity
+	public isValid(pos: number, c: string) : boolean
+	{
+		let valid:Validity = this.validity(pos,c);
+
+		if (valid == Validity.false || valid == Validity.na)
+			return(false);
+
+		return(true);
+	}
+
+    public validity(pos:number, c:string) : Validity
     {
         let lc = c.toLocaleLowerCase();
         let uc = c.toLocaleUpperCase();

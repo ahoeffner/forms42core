@@ -29,7 +29,9 @@ export interface Pattern
 
     getValue() : string;
     setValue(value:any) : boolean;
-    isValid(pos:number, c:string) : Validity
+
+	isValid(pos:number, c:string) : boolean
+    validity(pos:number, c:string) : Validity
 
     prev(printable:boolean,from?:number) : number;
     next(printable:boolean,from?:number) : number;

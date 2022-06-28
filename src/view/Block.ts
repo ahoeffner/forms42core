@@ -78,7 +78,37 @@ export class Block
 
 	public getField(field:string) : Field
 	{
-		return(this.getRow(this.row)?.getField(field));
+		let fld:Field = this.getRow(this.row)?.getField(field);
+		if (fld == null) fld = this.getRow(-1)?.getField(field);
+		return(fld);
+	}
+
+	public getFields() : Field[]
+	{
+		let row:Row = null;
+		let fields:Field[] = [];
+
+		row = this.getRow(this.row);
+		if (row != null) fields.push(...row.getFields());
+
+		row = this.getRow(-1);
+		if (row != null) fields.push(...row.getFields());
+
+		return(fields);
+	}
+
+	public getFieldInstances() : FieldInstance[]
+	{
+		let row:Row = null;
+		let instances:FieldInstance[] = [];
+
+		row = this.getRow(this.row);
+		if (row != null) instances.push(...row.getFieldInstances());
+
+		row = this.getRow(-1);
+		if (row != null) instances.push(...row.getFieldInstances());
+
+		return(instances);
 	}
 
 	public getValue(field:string) : any
@@ -257,7 +287,7 @@ export class Block
 		row.clear();
 
 		record.values.forEach((field) =>
-		{row.distribute(field.name,field.value);})
+		{row.distribute(field.name,field.value,true);})
 	}
 
 	public refresh(rownum:number, record:Record) : void
@@ -291,7 +321,7 @@ export class Block
 		{
 			current.clear();
 			let record:Record = this.mdlblk.getRecord();
-			record.values.forEach((field) => {current.distribute(field.name,field.value)});
+			record.values.forEach((field) => {current.distribute(field.name,field.value,true)});
 		}
 	}
 
@@ -386,13 +416,13 @@ export class Block
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 	}
 
-	public distribute(field:Field, value:any) : void
+	public distribute(field:Field, value:any, valid:boolean) : void
 	{
 		let cr:number = this.row$;
 		let fr:number = field.row.rownum;
 
-		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value);
-		else		 this.getRow(cr)?.distribute(field.name,value);
+		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value,valid);
+		else		 this.getRow(cr)?.distribute(field.name,value,valid);
 	}
 
 	public linkModel() : void
@@ -402,24 +432,17 @@ export class Block
 
 	public dumpInstances() : void
 	{
-		this.getCurrentRow().getFieldInstances().forEach((inst) =>
+		this.getFields().forEach((field) =>
+		{
+			console.log(field.name+"["+field.row.rownum+"] dirty: "+field.dirty);
+		})
+
+		this.getFieldInstances().forEach((inst) =>
 		{
 			let value:any = inst.getValue();
 			if (value == null) console.log(inst.name+" "+null);
 			else console.log(inst.name+" "+value+" "+value.constructor.name);
 		});
-
-		let current:Row = this.getRow(-1);
-
-		if (current != null)
-		{
-			current.getFieldInstances().forEach((inst) =>
-			{
-				let value:any = inst.getValue();
-				if (value == null) console.log(inst.name+" "+null);
-				else console.log(inst.name+" "+value+" "+value.constructor.name);
-			});
-		}
 	}
 
 	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>

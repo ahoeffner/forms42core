@@ -508,7 +508,7 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.onFuncKey)
 			bubble = true;
 
-		if (this.event.isPrintableKey)
+		if (!this.event.isMouseEvent)
 		{
 			let after:string = this.getIntermediateValue();
 

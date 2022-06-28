@@ -88,6 +88,11 @@ export class Field
 		return(this.block$);
 	}
 
+	public get dirty() : boolean
+	{
+		return(this.dirty$);
+	}
+
 	public get mdlblock() : ModelBlock
 	{
 		return(this.block$.model);
@@ -165,12 +170,12 @@ export class Field
 	{
 		this.dirty$ = false;
 		this.value$ = value;
-		this.distribute(null,value);
+		this.distribute(null,value,true);
 	}
 
 	public getValue() : any
 	{
-		console.log("dirty: "+this.dirty$)
+		console.log("dirty: "+this.dirty$+" "+this.value$)
 		if (!this.dirty$) return(this.value$);
 
 		let inst:FieldInstance = this.instance$;
@@ -204,7 +209,7 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			if (!await this.validate(inst, inst.getValue()))
+			if (!await this.validate(inst,inst.getValue()))
 				return;
 
 			if (!await this.block.validate())
@@ -221,10 +226,11 @@ export class Field
 			this.row.invalidate();
 			let value:any = inst.getValue();
 
-			this.distribute(inst,value);
-			this.block.distribute(this,value);
-
 			await this.validate(inst,value);
+
+			this.distribute(inst,value,this.valid);
+			this.block.distribute(this,value,this.valid);
+
 			return;
 		}
 
@@ -234,8 +240,8 @@ export class Field
 			let value:string = inst.getIntermediateValue();
 
 			this.row.invalidate();
-			this.distribute(inst,value);
-			this.block.distribute(this,value);
+			this.distribute(inst,value,false);
+			this.block.distribute(this,value,false);
 
 			await this.block.onEditing(inst);
 			return;
@@ -289,14 +295,16 @@ export class Field
 		}
 	}
 
-	public distribute(inst:FieldInstance, value:any) : void
+	public distribute(inst:FieldInstance, value:any, valid:boolean) : void
 	{
+		if (inst == null) this.dirty$ = !valid;
+
 		this.instances$.forEach((fi) =>
 		{
 			if (fi != inst)
 			{
-				if (typeof value === "string") fi.setIntermediateValue(value)
-				else fi.setValue(value);
+				if (valid) fi.setValue(value);
+				else fi.setIntermediateValue(value);
 			}
 		});
 	}
@@ -306,19 +314,25 @@ export class Field
 		if (value == this.value$)
 			return(true);
 
+		let before:any = value;
+
+		this.dirty$ = false;
+		this.value$ = value;
+
 		if (!await this.block.validate(inst,value))
 		{
-			inst.focus();
 			inst.valid = false;
 			this.valid = false;
+			this.dirty$ = true;
+			this.value$ = before;
+
+			inst.focus();
 			return(false);
 		}
 		else
 		{
 			inst.valid = true;
 			this.valid = true;
-			this.dirty$ = false;
-			this.value$ = value;
 			return(true);
 		}
 	}

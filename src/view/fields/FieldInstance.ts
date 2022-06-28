@@ -55,6 +55,11 @@ export class FieldInstance implements FieldEventHandler
 		return(this.form$);
 	}
 
+	public get id() : string
+	{
+		return(this.properties$.id);
+	}
+
 	public get name() : string
 	{
 		return(this.properties$.name);

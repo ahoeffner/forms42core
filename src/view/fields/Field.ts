@@ -29,6 +29,7 @@ export class Field
 	private name$:string = null;
 	private block$:Block = null;
 	private valid$:boolean = true;
+	private dirty$:boolean = false;
 	private instances:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, field:string, rownum:number) : Field
@@ -94,7 +95,7 @@ export class Field
 	public get valid() : boolean
 	{
 		// Though valid, check required
-		if (this.valid$ && this.getValue() == null)
+		if (this.valid$ && this.value$ == null)
 		{
 			let valid:boolean = true;
 
@@ -166,12 +167,13 @@ export class Field
 
 	public getValue() : any
 	{
-		return(this.instances[0].getValue());
+		if (!this.dirty$) return(this.value$);
+		else return(this.instances[0].getIntermediateValue());
 	}
 
 	public getStringValue() : string
 	{
-		return(this.instances[0].getStringValue());
+		return(this.instances[0].getIntermediateValue());
 	}
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
@@ -198,7 +200,7 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			if (!await this.validate(inst))
+			if (!await this.validate(inst, inst.getValue()))
 				return;
 
 			if (!await this.block.validate())
@@ -213,17 +215,21 @@ export class Field
 		if (brwevent.type == "change")
 		{
 			this.row.invalidate();
-			this.distribute(inst,inst.getValue());
-			this.block.distribute(this,inst.getValue());
+			let value:any = inst.getValue();
 
-			await this.validate(inst);
+			this.distribute(inst,value);
+			this.block.distribute(this,value);
+
+			await this.validate(inst,value);
 			return;
 		}
 
 		if (brwevent.modified)
 		{
 			inst.valid = true;
-			let value:string = inst.getStringValue();
+			this.dirty$ = true;
+
+			let value:string = inst.getIntermediateValue();
 
 			this.row.invalidate();
 			this.distribute(inst,value);
@@ -266,7 +272,7 @@ export class Field
 
 			if (key != null && inst != null)
 			{
-				if (await this.validate(inst))
+				if (await this.validate(inst,inst.getValue()))
 					await this.block.navigate(key,inst);
 			}
 
@@ -287,16 +293,16 @@ export class Field
 		{
 			if (fi != inst)
 			{
-				if (typeof value === "string") fi.setStringValue(value)
+				if (typeof value === "string") fi.setIntermediateValue(value)
 				else fi.setValue(value);
 			}
 		});
 	}
 
-	public async validate(inst:FieldInstance) : Promise<boolean>
+	public async validate(inst:FieldInstance, value:any) : Promise<boolean>
 	{
-		let value:any = inst.getValue();
-		if (value == this.value$) return(true);
+		if (value == this.value$)
+			return(true);
 
 		if (!await this.block.validate(inst,value))
 		{
@@ -309,6 +315,7 @@ export class Field
 		{
 			inst.valid = true;
 			this.valid = true;
+			this.dirty$ = false;
 			this.value$ = value;
 			return(true);
 		}

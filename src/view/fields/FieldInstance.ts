@@ -92,21 +92,21 @@ export class FieldInstance implements FieldEventHandler
 		return(this.impl.getValue());
 	}
 
-	public getStringValue() : string
+	public setValue(value:any) : boolean
+	{
+		return(this.impl.setValue(value));
+	}
+
+	public getIntermediateValue() : string
 	{
 		return(this.impl.getIntermediateValue());
 	}
 
-	public setStringValue(value:string) : void
+	public setIntermediateValue(value:string) : void
 	{
 		this.valid = true;
 		this.field.valid = true;
 		this.impl.setIntermediateValue(value);
-	}
-
-	public setValue(value:any) : boolean
-	{
-		return(this.impl.setValue(value));
 	}
 
 	public blur() : void

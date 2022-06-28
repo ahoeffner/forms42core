@@ -272,9 +272,9 @@ export class Row
 		this.getFieldInstances().forEach((inst) => {inst.setValue(null)});
 	}
 
-	public distribute(field:string, value:any, valid:boolean) : void
+	public distribute(field:string, value:any, dirty:boolean) : void
 	{
-		this.fields.get(field)?.distribute(null,value,valid);
+		this.fields.get(field)?.distribute(null,value,dirty);
 	}
 
 	public getFieldInstances() : FieldInstance[]

@@ -287,7 +287,7 @@ export class Block
 		row.clear();
 
 		record.values.forEach((field) =>
-		{row.distribute(field.name,field.value,true);})
+		{row.distribute(field.name,field.value,false);})
 	}
 
 	public refresh(rownum:number, record:Record) : void
@@ -321,7 +321,7 @@ export class Block
 		{
 			current.clear();
 			let record:Record = this.mdlblk.getRecord();
-			record.values.forEach((field) => {current.distribute(field.name,field.value,true)});
+			record.values.forEach((field) => {current.distribute(field.name,field.value,false)});
 		}
 	}
 
@@ -416,13 +416,13 @@ export class Block
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 	}
 
-	public distribute(field:Field, value:any, valid:boolean) : void
+	public distribute(field:Field, value:any, dirty:boolean) : void
 	{
 		let cr:number = this.row$;
 		let fr:number = field.row.rownum;
 
-		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value,valid);
-		else		 this.getRow(cr)?.distribute(field.name,value,valid);
+		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value,dirty);
+		else		 this.getRow(cr)?.distribute(field.name,value,dirty);
 	}
 
 	public linkModel() : void

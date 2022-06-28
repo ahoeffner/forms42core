@@ -168,9 +168,10 @@ export class Field
 
 	public setValue(value:any) : void
 	{
-		this.dirty$ = false;
 		this.value$ = value;
-		this.distribute(null,value,true);
+		this.dirty$ = false;
+		this.distribute(null,this.value$,this.dirty);
+		this.block.distribute(this,this.value$,this.dirty);
 	}
 
 	public getValue() : any
@@ -209,11 +210,20 @@ export class Field
 
 		if (brwevent.accept)
 		{
-			if (!await this.validate(inst,inst.getValue()))
-				return;
+			if (this.dirty)
+			{
+				this.dirty$ = false;
+				this.value$ = inst.getValue();
 
-			if (!await this.block.validate())
-				return;
+				this.distribute(inst,this.value$,this.dirty);
+				this.block.distribute(this,this.value$,this.dirty);
+
+				if (!await this.validate(inst))
+					return;
+
+				if (!await this.block.validate())
+					return;
+			}
 
 			key = KeyMapping.checkBrowserEvent(brwevent);
 			if (key != null) await this.block.onKey(inst,key);
@@ -221,16 +231,17 @@ export class Field
 			return;
 		}
 
-		if (brwevent.type == "change")
+		if (brwevent.type == "change" && this.dirty)
 		{
+			this.dirty$ = false;
+
 			this.row.invalidate();
-			let value:any = inst.getValue();
+			this.value$ = inst.getValue();
 
-			await this.validate(inst,value);
+			this.distribute(inst,this.value$,this.dirty);
+			this.block.distribute(this,this.value$,this.dirty);
 
-			this.distribute(inst,value,this.valid);
-			this.block.distribute(this,value,this.valid);
-
+			await this.validate(inst);
 			return;
 		}
 
@@ -280,8 +291,19 @@ export class Field
 
 			if (key != null && inst != null)
 			{
-				if (await this.validate(inst,inst.getValue()))
-					await this.block.navigate(key,inst);
+				if (this.dirty)
+				{
+					this.dirty$ = false;
+					this.value$ = inst.getValue();
+
+					this.distribute(inst,this.value$,this.dirty);
+					this.block.distribute(this,this.value$,this.dirty);
+
+					if (!await this.validate(inst))
+						return;
+				}
+
+				await this.block.navigate(key,inst);
 			}
 
 			return;
@@ -295,37 +317,33 @@ export class Field
 		}
 	}
 
-	public distribute(inst:FieldInstance, value:any, valid:boolean) : void
+	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
-		if (inst == null) this.dirty$ = !valid;
+		if (inst == null)
+		{
+			this.dirty$ = dirty;
+			this.value$ = value;
+		}
+
+		if (dirty && value != null)
+			console.log(value+" "+value.constructor.name+" "+(new Error()).stack)
 
 		this.instances$.forEach((fi) =>
 		{
 			if (fi != inst)
 			{
-				if (valid) fi.setValue(value);
+				if (!dirty) fi.setValue(value);
 				else fi.setIntermediateValue(value);
 			}
 		});
 	}
 
-	public async validate(inst:FieldInstance, value:any) : Promise<boolean>
+	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
-		if (value == this.value$)
-			return(true);
-
-		let before:any = value;
-
-		this.dirty$ = false;
-		this.value$ = value;
-
-		if (!await this.block.validate(inst,value))
+		if (!await this.block.validate(inst,this.value$))
 		{
 			inst.valid = false;
 			this.valid = false;
-			this.dirty$ = true;
-			this.value$ = before;
-
 			inst.focus();
 			return(false);
 		}

@@ -74,14 +74,6 @@ export class BrowserEvent
         this.event$ = event;
 		this.type$ = event.type;
 
-		if (event.type == "submit")
-		{
-			this.accept = true;
-			this.prevent = true;
-			this.ignore = false;
-			return;
-		}
-
         if (!this.isKeyEvent) this.reset();
         else                  this.KeyEvent();
 

@@ -10,12 +10,13 @@
  * accompanied this code).
  */
 
+import { Alert } from './Alert.js';
 import { Tag } from './tags/Tag.js';
 import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Properties } from './Properties.js';
+import { isFormField } from './tags/FormField.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
-import { Alert } from './Alert.js';
 
 
 export class Framework
@@ -113,17 +114,19 @@ export class Framework
         return(this.root);
     }
 
-    private parseDoc(doc:Element) : void
+    private parseDoc(doc:Element, form?:Element) : void
     {
         if (doc == null) return;
 		let prefix:string = Properties.AttributePrefix;
 
 		let nodes:Node[] = [];
+		let inform:boolean = form != null;
+		if (doc instanceof HTMLFormElement) form = doc;
 		doc.childNodes.forEach((node) => {nodes.push(node)});
 
         for (let i = 0; i < nodes.length; i++)
         {
-            let element:Node = nodes[i];
+			let element:Node = nodes[i];
             if (!(element instanceof HTMLElement)) continue;
 
             let impl:Tag = null;
@@ -162,6 +165,12 @@ export class Framework
                 let replace:HTMLElement|HTMLElement[]|string = impl.parse(this.component,element,attr);
                 Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
 
+				if (form != null && isFormField(impl))
+				{
+					if (impl.editable)
+						form.setAttribute("onsubmit","return false;");
+				}
+
 				if (replace == null)
                 {
                     element.remove();
@@ -188,15 +197,17 @@ export class Framework
 						this.root = replace[0];
 
 					for(let r=0; r < replace.length; r++)
-						this.parseDoc(replace[r]);
+						this.parseDoc(replace[r],form);
                 }
 
                 continue;
             }
 
             this.addEvents(element);
-            this.parseDoc(element);
+            this.parseDoc(element,form);
         }
+
+		if (!inform) form = null;
     }
 
     private addEvents(element:Element) : void

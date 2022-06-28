@@ -11,12 +11,15 @@
  */
 
 import { Tag } from "./Tag.js";
+import { FormField } from "./FormField.js";
 import { Form } from "../../public/Form.js";
 import { Properties } from "../Properties.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
-export class Field implements Tag
+export class Field implements Tag, FormField
 {
+	private editable$:boolean = false;
+
     public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
     {
 		if (component == null)
@@ -33,9 +36,17 @@ export class Field implements Tag
 			tag.setAttribute("block",tag.getAttribute(attr));
 		}
 
+		let type:string = tag.tagName.toLowerCase();
+		if (type == "input" || type == "select") this.editable$ = true;
+
 		if (attr != "block") tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,tag);
 
         return(field.element);
     }
+
+	public get editable() : boolean
+	{
+		return(this.editable$);
+	}
 }

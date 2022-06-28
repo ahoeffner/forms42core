@@ -827,40 +827,7 @@ export class Input implements FieldImplementation, EventListenerObject
             if (this.pattern.setCharacter(pos,this.event.key))
             {
 				if (this.datetokens != null)
-				{
-					let section:Section = this.pattern.findField(pos);
-					let correct:string = this.validateDatePart(this.datetokens[section.field()],section.getValue());
-					if (correct != null) section.setValue(correct);
-
-					let finished:boolean = true;
-
-					this.pattern.getFields().forEach((section) =>
-					{
-						if (section.getValue().includes(' '))
-							finished = false;
-					});
-
-					if (finished)
-					{
-						let dayentry:number = -1;
-
-						for (let i = 0; i < this.datetokens.length; i++)
-						{
-							if (this.datetokens[i].type == DatePart.Day)
-								dayentry = i;
-						}
-
-						if (dayentry >= 0)
-						{
-							let tries:number = 3;
-							while(!this.validateDate(this.pattern.getValue()) && --tries >= 0)
-							{
-								let day:number = +this.pattern.getField(dayentry).getValue();
-								this.pattern.getField(dayentry).setValue(""+(day-1));
-							}
-						}
-					}
-				}
+					this.validateDateField(pos);
 
 				pos = this.pattern.next(true,pos);
                 this.setElementValue(this.pattern.getValue());
@@ -957,96 +924,70 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(true);
 	}
 
-	private validateDate(value:string) : boolean
+	private validateDateField(pos:number) : void
 	{
-		let date:Date = dates.parse(value);
-		if (date == null) return(false);
-		return(true);
-	}
+		let section:Section = this.pattern.findField(pos);
+		let token:FormatToken = this.datetokens[section.field()];
 
-	private validateDatePart(token:FormatToken, value:string) : string
-	{
+		let maxval:number = 0;
+		let value:string = section.getValue();
+
 		switch(token.type)
 		{
-			case DatePart.Year 		: value = this.validateYearPart(value); break;
-			case DatePart.Day 		: value = this.validateDateField(value,31); break;
-			case DatePart.Month 	: value = this.validateDateField(value,12); break;
-			case DatePart.Hour 		: value = this.validateDateField(value,23); break;
-			case DatePart.Minute 	: value = this.validateDateField(value,59); break;
-			case DatePart.Second 	: value = this.validateDateField(value,59); break;
-
-			default : value = null;
+			case DatePart.Day 		: maxval = 31; break;
+			case DatePart.Month 	: maxval = 12; break;
+			case DatePart.Hour 		: maxval = 23; break;
+			case DatePart.Minute 	: maxval = 59; break;
+			case DatePart.Second 	: maxval = 59; break;
 		}
 
-		return(value);
-	}
+		if (maxval > 0 && +value > maxval)
+			section.setValue(""+maxval);
 
-	private validateYearPart(value:string) : string
-	{
-		let mod:boolean = false;
 
-		if (value.trim().length == 0)
+		let finished:boolean = true;
+		this.pattern.getFields().forEach((section) =>
 		{
-			let tokens:DateToken[] = dates.tokenizeDate(new Date());
+			value = section.getValue();
 
-			for (let i = 0; i < tokens.length; i++)
+			if (value.trim().length > 0)
 			{
-				if (tokens[i].type == DatePart.Year)
+				let lpad:string = "";
+
+				for (let i = 0; i < value.length; i++)
 				{
-					mod = true;
-					value = tokens[i].value;
-					break;
+					if (value.charAt(i) != ' ') break;
+					else lpad += "0";
+				}
+
+				if (lpad.length > 0)
+					section.setValue(lpad+value.substring(lpad.length));
+			}
+
+			if (section.getValue().includes(' '))
+				finished = false;
+		});
+
+		if (finished)
+		{
+			let dayentry:number = -1;
+
+			for (let i = 0; i < this.datetokens.length; i++)
+			{
+				if (this.datetokens[i].type == DatePart.Day)
+					dayentry = i;
+			}
+
+			if (dayentry >= 0)
+			{
+				let tries:number = 3;
+				while(dates.parse(this.pattern.getValue()) == null && --tries >= 0)
+				{
+					let day:number = +this.pattern.getField(dayentry).getValue();
+					this.pattern.getField(dayentry).setValue(""+(day-1));
 				}
 			}
 		}
-
-		else
-
-		if (value.charAt(0) == ' ' && value.charAt(1) == ' ')
-		{
-			let tokens:DateToken[] = dates.tokenizeDate(new Date());
-
-			for (let i = 0; i < tokens.length; i++)
-			{
-				if (tokens[i].type == DatePart.Year)
-				{
-					mod = true;
-					value = tokens[i].value.substring(0,2) + value.substring(2);
-					break;
-				}
-			}
-		}
-
-		if (mod) return(value);
-		return(null);
-	}
-
-	private validateDateField(value:string, max:number) : string
-	{
-		let mod:boolean = false;
-
-		if (value.charAt(0) == ' ')
-		{
-			mod = true;
-			value = '0' + value.substring(1);
-		}
-
-		else
-
-		if (+value.charAt(0) > max/10)
-		{
-			mod = true;
-			value = max/10 + value.substring(1);
-		}
-
-		if (+value > max)
-		{
-			mod = true;
-			value = ""+max;
-		}
-
-		if (mod) return(value);
-		return(null);
 	}
 
 	private getCurrentDate() : string
@@ -1124,7 +1065,6 @@ export class Input implements FieldImplementation, EventListenerObject
         element.addEventListener("blur",this);
         element.addEventListener("focus",this);
         element.addEventListener("change",this);
-        element.addEventListener("submit",this);
 
         element.addEventListener("keyup",this);
         element.addEventListener("keydown",this);

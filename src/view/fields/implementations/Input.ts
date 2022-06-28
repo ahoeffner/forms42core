@@ -19,6 +19,7 @@ import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { DatePart, dates, DateToken, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { Alert } from "../../../application/Alert.js";
 
 enum Case
 {
@@ -981,11 +982,16 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (dayentry >= 0)
 			{
 				let tries:number = 3;
+				value = this.pattern.getValue();
+
 				while(dates.parse(this.pattern.getValue()) == null && --tries >= 0)
 				{
 					let day:number = +this.pattern.getField(dayentry).getValue();
 					this.pattern.getField(dayentry).setValue(""+(day-1));
 				}
+
+				if (tries < 3)
+					Alert.message("Date '"+value+"' is invalid, changed to "+this.pattern.getValue(),"Date Validation");
 			}
 		}
 	}

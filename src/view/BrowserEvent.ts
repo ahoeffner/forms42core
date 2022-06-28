@@ -90,7 +90,6 @@ export class BrowserEvent
 
     public reset() : void
     {
-		console.log("reset")
         this.key = null;
         this.mark = false;
         this.undo = false;

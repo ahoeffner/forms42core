@@ -382,14 +382,12 @@ export class Input implements FieldImplementation, EventListenerObject
         if (this.event.type == "focus")
         {
 			bubble = true;
-			console.log("handler focus")
 			this.initial = this.getIntermediateValue();
+
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 
 			if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
-
-			console.log("handler focus done")
 		}
 
         if (this.pattern != null)
@@ -511,9 +509,8 @@ export class Input implements FieldImplementation, EventListenerObject
         if (!bubble && this.event.onFuncKey)
 			bubble = true;
 
-		if (!this.event.isPrintableKey)
+		if (this.event.isPrintableKey)
 		{
-			console.log("Edit chack")
 			let after:string = this.getIntermediateValue();
 
 			if (!bubble && this.before != after)
@@ -731,7 +728,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "focus")
         {
-			console.log("xfixed focus")
             pos = this.pattern.findPosition(0);
 
 			this.pattern.setValue(this.getIntermediateValue());
@@ -739,7 +735,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
-			console.log("xfixed focus done")
 
             return(true);
         }

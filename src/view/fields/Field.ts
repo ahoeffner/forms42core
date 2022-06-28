@@ -30,7 +30,8 @@ export class Field
 	private block$:Block = null;
 	private valid$:boolean = true;
 	private dirty$:boolean = false;
-	private instances:FieldInstance[] = [];
+	private instance$:FieldInstance = null;
+	private instances$:FieldInstance[] = [];
 
 	public static create(form:Interface, block:string, field:string, rownum:number) : Field
 	{
@@ -99,7 +100,7 @@ export class Field
 		{
 			let valid:boolean = true;
 
-			this.instances.forEach((inst) =>
+			this.instances$.forEach((inst) =>
 			{
 				if (inst.properties.required)
 				{
@@ -121,26 +122,26 @@ export class Field
 
 	public addInstance(instance:FieldInstance) : void
 	{
-		this.instances.push(instance);
+		this.instances$.push(instance);
 		this.row.addInstance(instance);
 		this.block.addInstance(instance);
 	}
 
 	public getInstance(entry:number) : FieldInstance
 	{
-		return(this.instances[entry]);
+		return(this.instances$[entry]);
 	}
 
 	public getInstances() : FieldInstance[]
 	{
-		return(this.instances);
+		return(this.instances$);
 	}
 
 	public getInstanceEntry(inst:FieldInstance) : number
 	{
-		for (let i = 0; i < this.instances.length; i++)
+		for (let i = 0; i < this.instances$.length; i++)
 		{
-			if (inst == this.instances[i])
+			if (inst == this.instances$[i])
 				return(i);
 		}
 
@@ -151,7 +152,7 @@ export class Field
 	{
 		let instances:FieldInstance[] = [];
 
-		this.instances.forEach((inst) =>
+		this.instances$.forEach((inst) =>
 		{
 			if (inst.properties.hasClass(clazz))
 				instances.push(inst);
@@ -162,13 +163,20 @@ export class Field
 
 	public setValue(value:any) : void
 	{
+		this.dirty$ = false;
+		this.value$ = value;
 		this.distribute(null,value);
 	}
 
 	public getValue() : any
 	{
+		console.log("dirty: "+this.dirty$)
 		if (!this.dirty$) return(this.value$);
-		else return(this.instances[0].getIntermediateValue());
+
+		let inst:FieldInstance = this.instance$;
+		if (inst == null) inst = this.instances$[0];
+
+		return(inst.getIntermediateValue());
 	}
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
@@ -182,6 +190,7 @@ export class Field
 
 		if (brwevent.type == "focus")
 		{
+			this.instance$ = inst;
 			this.value$ = inst.getValue();
 			await this.block.form.enter(inst);
 			return;
@@ -282,7 +291,7 @@ export class Field
 
 	public distribute(inst:FieldInstance, value:any) : void
 	{
-		this.instances.forEach((fi) =>
+		this.instances$.forEach((fi) =>
 		{
 			if (fi != inst)
 			{

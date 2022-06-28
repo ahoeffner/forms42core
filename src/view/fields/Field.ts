@@ -171,11 +171,6 @@ export class Field
 		else return(this.instances[0].getIntermediateValue());
 	}
 
-	public getStringValue() : string
-	{
-		return(this.instances[0].getIntermediateValue());
-	}
-
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		return(await EventStack.stack(this,inst,brwevent));
@@ -226,9 +221,7 @@ export class Field
 
 		if (brwevent.modified)
 		{
-			inst.valid = true;
-			this.dirty$ = true;
-
+			inst.valid = true;	this.dirty$ = true;
 			let value:string = inst.getIntermediateValue();
 
 			this.row.invalidate();

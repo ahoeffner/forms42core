@@ -13,13 +13,14 @@
 import { Pattern } from "../Pattern.js";
 import { DataType } from "./DataType.js";
 import { Section } from "../interfaces/Pattern.js";
+import { DataConverter } from "../DATAConverter.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
+import { Alert } from "../../../application/Alert.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
-import { DatePart, dates, DateToken, FormatToken } from "../../../model/dates/dates.js";
+import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { Alert } from "../../../application/Alert.js";
 
 enum Case
 {
@@ -43,6 +44,7 @@ export class Input implements FieldImplementation, EventListenerObject
     private placeholder:string = null;
 	private datetokens:FormatToken[] = null;
 	private properties:HTMLProperties = null;
+	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
@@ -95,7 +97,19 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public getValue() : any
     {
-		return(this.getObject(this.element.value));
+		let value:string = this.getElementValue();
+		if (value.trim().length == 0) return(null);
+
+		if (DataType[this.datatype].startsWith("date"))
+			return(dates.parse(value));
+
+		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+			return(+value);
+
+		if (this.pattern != null)
+			return(this.pattern.getValue().trim())
+
+		return(value);
     }
 
     public setValue(value:any) : boolean
@@ -103,10 +117,29 @@ export class Input implements FieldImplementation, EventListenerObject
         if (value == null)
 			value = "";
 
-		if (!this.validate(value))
-			return(false);
+		if (DataType[this.datatype].startsWith("date"))
+		{
+			if (typeof value === "number")
+				value = new Date(+value);
 
-		if (this.pattern != null && value.length > 0)
+			if (value instanceof Date)
+				value = dates.format(value);
+		}
+
+		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+		{
+			if (isNaN(+value) || (this.datatype == DataType.integer && (value+"").includes(".")))
+			{
+				this.before = null;
+				this.initial = null;
+				this.setElementValue(null);
+				return(false);
+			}
+
+			value = (+value) + "";
+		}
+
+		if (this.pattern != null && (value+"").length > 0)
 		{
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
@@ -115,7 +148,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.before = value;
 		this.initial = value;
 
-		this.element.value = value+"";
+		this.element.value = value;
 		return(true);
     }
 
@@ -879,51 +912,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         return(true);
     }
-
-	private getObject(value:string) : any
-	{
-		value = value.trim();
-
-		if (value.length == 0)
-			return(null);
-
-		if (this.int)
-			return(+value);
-
-		if (this.dec)
-			return(+value);
-
-		if (this.pattern != null)
-			return(this.pattern.getValue());
-
-		return(value);
-	}
-
-	private validate(value:any) : boolean
-	{
-		value += "";
-
-		if (value.trim().length == 0)
-			return(true);
-
-		if (this.dec && isNaN(+value))
-			return(false);
-
-		if (this.int)
-		{
-			if (isNaN(+value) || value.includes(".") || value.includes("."))
-				return(false);
-		}
-
-		if (this.pattern != null)
-		{
-			let valid:boolean = this.pattern.setValue(value);
-			this.setElementValue(this.pattern.getValue());
-			return(valid);
-		}
-
-		return(true);
-	}
 
 	private validateDateField(pos:number) : void
 	{

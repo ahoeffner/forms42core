@@ -168,9 +168,7 @@ export class Field
 
 	public setValue(value:any) : void
 	{
-		this.value$ = value;
-		this.dirty$ = false;
-		this.distribute(null,this.value$,this.dirty);
+		this.distribute(null,value,false);
 		this.block.distribute(this,this.value$,this.dirty);
 	}
 
@@ -247,12 +245,12 @@ export class Field
 
 		if (brwevent.modified)
 		{
-			inst.valid = true;	this.dirty$ = true;
 			let value:string = inst.getIntermediateValue();
 
+			inst.valid = true;
 			this.row.invalidate();
-			this.distribute(inst,value,false);
-			this.block.distribute(this,value,false);
+			this.distribute(inst,value,true);
+			this.block.distribute(this,value,true);
 
 			await this.block.onEditing(inst);
 			return;
@@ -325,8 +323,7 @@ export class Field
 			this.value$ = value;
 		}
 
-		if (dirty && value != null)
-			console.log(value+" "+value.constructor.name+" "+(new Error()).stack)
+		console.log("value: "+value+" row: "+this.row.rownum+" dirty: "+dirty)
 
 		this.instances$.forEach((fi) =>
 		{

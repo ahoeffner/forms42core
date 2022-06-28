@@ -97,7 +97,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public getValue() : any
     {
-		console.log(this.properties.name+".getValue()")
 		let value:string = this.getElementValue();
 		if (value.trim().length == 0) return(null);
 
@@ -494,19 +493,19 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
-		if (!bubble && this.event.type.startsWith("mouse"))
+		if (this.event.type.startsWith("mouse"))
 			bubble = true;
 
-		if (!bubble && this.event.onScrollUp)
+		if (this.event.onScrollUp)
 			bubble = true;
 
-        if (!bubble && this.event.onScrollDown)
+        if (this.event.onScrollDown)
 			bubble = true;
 
-        if (!bubble && this.event.onCtrlKeyDown)
+        if (this.event.onCtrlKeyDown)
 			bubble = true;
 
-        if (!bubble && this.event.onFuncKey)
+        if (this.event.onFuncKey)
 			bubble = true;
 
 		if (this.event.isPrintableKey)
@@ -521,7 +520,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 		}
 
-		if (!bubble && this.event.accept || this.event.cancel)
+		if (this.event.accept || this.event.cancel)
 			bubble = true;
 
         if (bubble)
@@ -1040,7 +1039,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private getElementValue() : string
 	{
-		console.log(this.properties.name+".getElementValue() "+this.event.type)
 		return(this.element.value);
 	}
 

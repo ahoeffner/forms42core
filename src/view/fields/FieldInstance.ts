@@ -99,8 +99,8 @@ export class FieldInstance implements FieldEventHandler
 
 	public setValue(value:any) : boolean
 	{
-		//this.valid = true;
-		//this.field.valid = true;
+		this.valid = true;
+		this.field.valid = true;
 		return(this.impl.setValue(value));
 	}
 

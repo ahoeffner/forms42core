@@ -174,7 +174,6 @@ export class Field
 
 	public getValue() : any
 	{
-		console.log("dirty: "+this.dirty$+" "+this.value$)
 		if (!this.dirty$) return(this.value$);
 
 		let inst:FieldInstance = this.instance$;
@@ -293,7 +292,6 @@ export class Field
 				{
 					this.dirty$ = false;
 					this.value$ = inst.getValue();
-
 					this.distribute(inst,this.value$,this.dirty);
 					this.block.distribute(this,this.value$,this.dirty);
 
@@ -317,13 +315,8 @@ export class Field
 
 	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
-		if (inst == null)
-		{
-			this.dirty$ = dirty;
-			this.value$ = value;
-		}
-
-		console.log("value: "+value+" row: "+this.row.rownum+" dirty: "+dirty)
+		this.dirty$ = dirty;
+		this.value$ = value;
 
 		this.instances$.forEach((fi) =>
 		{
@@ -339,9 +332,9 @@ export class Field
 	{
 		if (!await this.block.validate(inst,this.value$))
 		{
+			inst.focus();
 			inst.valid = false;
 			this.valid = false;
-			inst.focus();
 			return(false);
 		}
 		else

@@ -101,7 +101,14 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (value.trim().length == 0) return(null);
 
 		if (DataType[this.datatype].startsWith("date"))
-			return(dates.parse(value));
+		{
+			let date:Date = dates.parse(value);
+
+			if (date == null && !this.pattern.isNull())
+				this.setElementValue(null);
+
+			return(date);
+		}
 
 		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 			return(+value);

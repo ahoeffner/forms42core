@@ -168,48 +168,48 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public async handleEvent(event:Event) : Promise<void>
 	{
-        let buble:boolean = false;
+        let bubble:boolean = false;
 		this.event.setEvent(event);
 
 		if (this.event.type == "focus")
-			buble = true;
+			bubble = true;
 
 		if (this.event.type == "blur")
-			buble = true;
+			bubble = true;
 
 		if (this.event.type == "change")
 		{
-			buble = true;
+			bubble = true;
 			this.value$ = this.getSelected();
 		}
 
 		if (this.event.accept || this.event.cancel)
 		{
-			buble = true;
+			bubble = true;
 			this.value$ = this.getSelected();
 		}
 
 		if (this.event.type.startsWith("mouse"))
-			buble = true;
+			bubble = true;
 
 		if (this.event.onScrollUp)
-			buble = true;
+			bubble = true;
 
         if (this.event.onScrollDown)
-			buble = true;
+			bubble = true;
 
         if (this.event.onCtrlKeyDown)
-			buble = true;
+			bubble = true;
 
         if (this.event.onFuncKey)
-			buble = true;
+			bubble = true;
 
 		this.event.preventDefault();
 
-		if (this.event.navigation) buble = true;
+		if (this.event.navigation) bubble = true;
 		else if (this.event.ignore) return;
 
-		if (buble)
+		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
 	}
 

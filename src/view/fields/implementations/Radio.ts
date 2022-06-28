@@ -145,7 +145,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 		{
 			buble = true;
-			this.value$ = this.element.value;
+			this.value$ = this.getElementValue();
 
 			if (!this.element.checked)
 				this.value$ = null;
@@ -176,6 +176,11 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 		if (buble)
 			await this.eventhandler.handleEvent(this.event);
+	}
+
+	private getElementValue() : string
+	{
+		return(this.element.value);
 	}
 
     private addEvents(element:HTMLElement) : void

@@ -97,6 +97,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public getValue() : any
     {
+		console.log(this.properties.name+".getValue()")
 		let value:string = this.getElementValue();
 		if (value.trim().length == 0) return(null);
 
@@ -148,13 +149,13 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.before = value;
 		this.initial = value;
 
-		this.element.value = value;
+		this.setElementValue(value);
 		return(true);
     }
 
 	public getIntermediateValue(): string
 	{
-		let value:string = this.element.value;
+		let value:string = this.getElementValue();
 		if (this.pattern == null) value = value.trim();
 		return(value);
 	}
@@ -175,7 +176,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.before = value;
 		this.initial = value;
 
-		this.element.value = value;
+		this.setElementValue(value);
 	}
 
 	public getElement() : HTMLElement
@@ -374,19 +375,22 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public async handleEvent(event:Event) : Promise<void>
     {
-        let buble:boolean = false;
         this.event.setEvent(event);
+        let bubble:boolean = false;
 		this.event.modified = false;
 
         if (this.event.type == "focus")
         {
-			buble = true;
+			bubble = true;
+			console.log("handler focus")
 			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 
 			if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");
-        }
+
+			console.log("handler focus done")
+		}
 
         if (this.pattern != null)
         {
@@ -396,7 +400,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "blur")
         {
-			buble = true;
+			bubble = true;
 			let change:boolean = false;
 
 			if (this.pattern == null)
@@ -459,12 +463,12 @@ export class Input implements FieldImplementation, EventListenerObject
 				return;
 		}
 
-		if (this.event.navigation) buble = true;
+		if (this.event.navigation) bubble = true;
 		else if (this.event.ignore) return;
 
 		if (event.type == "change")
 		{
-			buble = false;
+			bubble = false;
 
 			if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 			{
@@ -475,7 +479,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.pattern == null)
 			{
 				if (this.getIntermediateValue() != this.initial)
-					buble = true;
+					bubble = true;
 			}
 			else
 			{
@@ -485,41 +489,45 @@ export class Input implements FieldImplementation, EventListenerObject
 				else					   this.setElementValue(this.pattern.getValue());
 
 				if (this.pattern.getValue() != this.initial)
-					buble = true;
+					bubble = true;
 			}
 
 			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
-		if (this.event.type.startsWith("mouse"))
-			buble = true;
+		if (!bubble && this.event.type.startsWith("mouse"))
+			bubble = true;
 
-		if (this.event.onScrollUp)
-			buble = true;
+		if (!bubble && this.event.onScrollUp)
+			bubble = true;
 
-        if (this.event.onScrollDown)
-			buble = true;
+        if (!bubble && this.event.onScrollDown)
+			bubble = true;
 
-        if (this.event.onCtrlKeyDown)
-			buble = true;
+        if (!bubble && this.event.onCtrlKeyDown)
+			bubble = true;
 
-        if (this.event.onFuncKey)
-			buble = true;
+        if (!bubble && this.event.onFuncKey)
+			bubble = true;
 
-		let after:string = this.getIntermediateValue();
-
-		if (this.before != after)
+		if (!this.event.isPrintableKey)
 		{
-			buble = true;
-			this.before = after;
-			this.event.modified = true;
+			console.log("Edit chack")
+			let after:string = this.getIntermediateValue();
+
+			if (!bubble && this.before != after)
+			{
+				bubble = true;
+				this.before = after;
+				this.event.modified = true;
+			}
 		}
 
-		if (this.event.accept || this.event.cancel)
-			buble = true;
+		if (!bubble && this.event.accept || this.event.cancel)
+			bubble = true;
 
-        if (buble)
+        if (bubble)
 			await this.eventhandler.handleEvent(this.event);
     }
 
@@ -598,7 +606,7 @@ export class Input implements FieldImplementation, EventListenerObject
                 if (this.event.key >= '0' && this.event.key <= '9')
                     pass = true;
 
-                if (this.event.key == "-" && !this.element.value.includes("-"))
+                if (this.event.key == "-" && !this.getElementValue().includes("-"))
                     pass = true;
 
                 if (!pass)
@@ -607,7 +615,7 @@ export class Input implements FieldImplementation, EventListenerObject
                 }
                 else if (this.event.repeat && this.event.key != ".")
                 {
-                    let value:string = this.element.value;
+                    let value:string = this.getElementValue();
 
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
@@ -640,10 +648,10 @@ export class Input implements FieldImplementation, EventListenerObject
                 if (this.event.key >= '0' && this.event.key <= '9')
                     pass = true;
 
-                if (this.event.key == "." && !this.element.value.includes("."))
+                if (this.event.key == "." && !this.getElementValue().includes("."))
                     pass = true;
 
-				if (this.event.key == "-" && !this.element.value.includes("-"))
+				if (this.event.key == "-" && !this.getElementValue().includes("-"))
                     pass = true;
 
                 if (!pass)
@@ -652,7 +660,7 @@ export class Input implements FieldImplementation, EventListenerObject
                 }
                 else if (this.event.repeat && this.event.key != ".")
                 {
-                    let value:string = this.element.value;
+                    let value:string = this.getElementValue();
 
                     let a:string = value.substring(pos);
                     let b:string = value.substring(0,pos);
@@ -723,6 +731,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "focus")
         {
+			console.log("xfixed focus")
             pos = this.pattern.findPosition(0);
 
 			this.pattern.setValue(this.getIntermediateValue());
@@ -730,6 +739,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
             this.setPosition(pos);
             this.pattern.setPosition(pos);
+			console.log("xfixed focus done")
 
             return(true);
         }
@@ -1035,6 +1045,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private getElementValue() : string
 	{
+		console.log(this.properties.name+".getElementValue() "+this.event.type)
 		return(this.element.value);
 	}
 
@@ -1051,7 +1062,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private clear() : void
 	{
-		this.element.value = "";
+		this.setElementValue(null);
 	}
 
     private addEvents(element:HTMLElement) : void

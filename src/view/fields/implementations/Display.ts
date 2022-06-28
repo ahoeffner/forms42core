@@ -12,6 +12,7 @@
 
 import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
+import { dates } from "../../../model/dates/dates.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
@@ -45,10 +46,10 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		if (this.datatype == DataType.integer)
-			return(+this.value$);
+		if (DataType[this.datatype].startsWith("date"))
+			return(dates.parse(this.value$));
 
-		if (this.datatype == DataType.decimal)
+		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 			return(+this.value$);
 
 		return(this.value$);

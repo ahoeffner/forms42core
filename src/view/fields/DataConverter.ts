@@ -18,10 +18,8 @@ export enum Tier
 
 export interface DataConverter
 {
-	update:boolean;
-
 	getValue(tier:Tier) : any;
-    setValue(tier:Tier,value:any) : boolean;
+    setValue(tier:Tier,value:any) : void;
 
 	getIntermediateValue(tier:Tier) : string;
 	setIntermediateValue(tier:Tier,value:string) : void;

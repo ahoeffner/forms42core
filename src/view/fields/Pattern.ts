@@ -181,7 +181,7 @@ export class Pattern implements PatternType
 		this.value = this.placeholder$;
 
 		if (value == null)
-            return;
+            return(true);
 
         let pos:number = 0;
 		value = value.trim();

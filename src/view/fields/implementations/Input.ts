@@ -133,17 +133,9 @@ export class Input implements FieldImplementation, EventListenerObject
     {
 		if (this.dataconverter != null)
 		{
-			if (!this.dataconverter.setValue(Tier.Backend,value))
-			{
-				this.setElementValue(null);
-				return(false);
-			}
-
+			this.dataconverter.setValue(Tier.Backend,value);
 			value = this.dataconverter.getValue(Tier.Frontend);
 		}
-
-        if (value == null)
-			value = "";
 
 		if (DataType[this.datatype].startsWith("date"))
 		{
@@ -157,14 +149,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 		{
 			if (isNaN(+value) || (this.datatype == DataType.integer && (value+"").includes(".")))
-			{
-				this.before = null;
-				this.initial = null;
-				this.setElementValue(null);
-				return(false);
-			}
-
-			value = (+value) + "";
+				value = null;
 		}
 
 		if (this.pattern != null && (value+"").length > 0)
@@ -173,10 +158,14 @@ export class Input implements FieldImplementation, EventListenerObject
 			value = this.pattern.getValue();
 		}
 
+        if (value == null)
+			value = "";
+
+		value += "";
 		this.before = value;
 		this.initial = value;
-
 		this.setElementValue(value);
+		
 		return(true);
     }
 

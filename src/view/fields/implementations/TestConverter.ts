@@ -14,8 +14,7 @@ import { DataConverter, Tier } from "../DATAConverter.js";
 
 export class TestConverter implements DataConverter
 {
-	public update: boolean;
-	private value:string = null;
+	private value:{frontend:string, backend:string} = {frontend: null, backend: null};
 
 	private static b2f:Map<string,string> = new Map<string,string>
 	(
@@ -37,43 +36,46 @@ export class TestConverter implements DataConverter
 
 	public getValue(tier:Tier) : any
 	{
-		console.log("getValue("+Tier[tier]+") value: "+this.value);
-
-		if (tier == Tier.Backend) return(TestConverter.b2f.get(this.value));
-		else					  return(TestConverter.f2b.get(this.value));
+		if (tier == Tier.Backend) return(this.value.backend);
+		else					  return(this.value.frontend);
 	}
 
-	public setValue(tier:Tier, value:any) : boolean
+	public setValue(tier:Tier, value:any) : void
 	{
-		this.value = value;
-		console.log("setValue("+Tier[tier]+","+value+")");
-
 		if (tier == Tier.Frontend)
 		{
-			if (value == "DK") this.value = "Denmark";
-			if (value == "SE") this.value = "Sweden";
-			if (value == "NO") this.value = "Norway";
+			this.value.frontend = value;
+			this.value.backend = TestConverter.f2b.get(value);
 		}
 		else
 		{
-			if (value == "Denmark") this.value = "DK";
-			if (value == "Sweden")  this.value = "SE";
-			if (value == "Norway")  this.value = "NO";
+			this.value.backend = value;
+			this.value.frontend = TestConverter.b2f.get(value);
 		}
-
-		return(true)
 	}
 
 	public getIntermediateValue(tier:Tier) : string
 	{
-		let value:string = this.getValue(tier);
-		console.log("getIntermediateValue("+Tier[tier]+") value: "+value);
-		return(value);
+		if (tier == Tier.Backend) return(this.value.backend);
+		else 					  return(this.value.frontend);
 	}
 
 	public setIntermediateValue(tier:Tier, value:string) : void
 	{
-		this.value = value;
-		console.log("setIntermediateValue("+Tier[tier]+","+value+") -> "+this.value);
+		if (tier == Tier.Backend)
+		{
+			this.value.backend = value;
+			this.value.frontend = TestConverter.b2f.get(value);
+		}
+		else
+		{
+			this.value.frontend = value;
+			this.value.backend = TestConverter.f2b.get(value);
+		}
+	}
+
+	public toString() : string
+	{
+		return("value: ["+this.value.frontend+","+this.value.backend+"]")
 	}
 }

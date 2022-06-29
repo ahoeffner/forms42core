@@ -10,13 +10,19 @@
  * accompanied this code).
  */
 
+export enum Tier
+{
+	Backend,
+	Frontend
+}
+
 export interface DataConverter
 {
 	update:boolean;
-	
-	getValue() : any;
-    setValue(value:any) : boolean;
 
-	getIntermediateValue() : string;
-	setIntermediateValue(value:string) : void;
+	getValue(tier:Tier) : any;
+    setValue(tier:Tier,value:any) : boolean;
+
+	getIntermediateValue(tier:Tier) : string;
+	setIntermediateValue(tier:Tier,value:string) : void;
 }

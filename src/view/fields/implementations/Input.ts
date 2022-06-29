@@ -13,14 +13,15 @@
 import { Pattern } from "../Pattern.js";
 import { DataType } from "./DataType.js";
 import { Section } from "../interfaces/Pattern.js";
-import { DataConverter } from "../DATAConverter.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { Alert } from "../../../application/Alert.js";
+import { DataConverter, Tier } from "../DATAConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { TestConverter } from "./TestConverter.js";
 
 enum Case
 {
@@ -98,7 +99,16 @@ export class Input implements FieldImplementation, EventListenerObject
     public getValue() : any
     {
 		let value:string = this.getElementValue();
-		if (value.trim().length == 0) return(null);
+
+		if (this.dataconverter != null)
+		{
+			value = this.dataconverter.getValue(Tier.Backend);
+			if (value == null) this.setElementValue(null);
+			return(value);
+		}
+
+		if (value.trim().length == 0)
+			return(null);
 
 		if (DataType[this.datatype].startsWith("date"))
 		{
@@ -121,6 +131,17 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public setValue(value:any) : boolean
     {
+		if (this.dataconverter != null)
+		{
+			if (!this.dataconverter.setValue(Tier.Backend,value))
+			{
+				this.setElementValue(null);
+				return(false);
+			}
+
+			value = this.dataconverter.getValue(Tier.Frontend);
+		}
+
         if (value == null)
 			value = "";
 
@@ -161,6 +182,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public getIntermediateValue(): string
 	{
+		if (this.dataconverter != null)
+			return(this.dataconverter.getIntermediateValue(Tier.Backend));
+
 		let value:string = this.getElementValue();
 		if (this.pattern == null) value = value.trim();
 		return(value);
@@ -168,6 +192,12 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public setIntermediateValue(value:string) : void
 	{
+		if (this.dataconverter != null)
+		{
+			this.dataconverter.setIntermediateValue(Tier.Backend,value);
+			value = this.dataconverter.getIntermediateValue(Tier.Frontend);
+		}
+
         if (value == null)
 			value = "";
 
@@ -249,39 +279,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 				types.forEach((type) =>
 				{
-					if (type.type == DatePart.Year)
-					{
-						parts--;
-						datesize += type.length;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datesize++;
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-
-					if (type.type == DatePart.Month)
-					{
-						parts--;
-						datesize += type.length;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datesize++;
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-
-					if (type.type == DatePart.Day)
+					if (type.type == DatePart.Year || type.type == DatePart.Month || type.type == DatePart.Day)
 					{
 						parts--;
 						datesize += type.length;
@@ -310,39 +308,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 				types.forEach((type) =>
 				{
-					if (type.type == DatePart.Hour)
-					{
-						parts--;
-						datesize += type.length;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datesize++;
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-
-					if (type.type == DatePart.Minute)
-					{
-						parts--;
-						datesize += type.length;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datesize++;
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-
-					if (type.type == DatePart.Second)
+					if (type.type == DatePart.Hour || type.type == DatePart.Minute || type.type == DatePart.Second)
 					{
 						parts--;
 						datesize += type.length;
@@ -366,6 +332,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "placeholder")
 				this.placeholder = value;
         });
+
+		if (this.element.getAttribute("id") == "cn1")
+			this.dataconverter = new TestConverter();
 
 		if (datepattern.length > 0)
 		{
@@ -517,13 +486,16 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (!this.event.isMouseEvent)
 		{
-			let after:string = this.getIntermediateValue();
+			let after:string = this.getElementValue();
 
-			if (!bubble && this.before != after)
+			if (this.before != after)
 			{
 				bubble = true;
 				this.before = after;
 				this.event.modified = true;
+
+				if (this.dataconverter != null)
+					this.dataconverter.setIntermediateValue(Tier.Frontend,after);
 			}
 		}
 

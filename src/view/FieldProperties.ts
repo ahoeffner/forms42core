@@ -104,6 +104,7 @@ export class FieldProperties
 
 		tag.setAttribute("name",props.name);
 		tag.setAttribute("block",props.block);
+
 		if (props.id != null) tag.setAttribute("id",props.id);
 		if (props.row >= 0) tag.setAttribute("row",""+props.row);
 

@@ -21,7 +21,6 @@ import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { TestConverter } from "./TestConverter.js";
 
 enum Case
 {
@@ -165,7 +164,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.before = value;
 		this.initial = value;
 		this.setElementValue(value);
-		
+
 		return(true);
     }
 
@@ -321,9 +320,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "placeholder")
 				this.placeholder = value;
         });
-
-		if (this.element.getAttribute("id") == "cn1")
-			this.dataconverter = new TestConverter();
 
 		if (datepattern.length > 0)
 		{

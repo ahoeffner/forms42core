@@ -14,6 +14,7 @@ import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
 import { HTMLProperties } from "../HTMLProperties.js";
+import { DataConverter, Tier } from "../DATAConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -22,6 +23,7 @@ export class Select implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
 	private properties:HTMLProperties = null;
+	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private value$:string = null;
@@ -47,8 +49,19 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
+		if (this.dataconverter != null)
+		{
+			this.value$ = this.dataconverter.getValue(Tier.Backend);
+			if (this.value$ == null) this.element.options.selectedIndex = 0;
+			return(this.value$);
+		}
+
 		if (DataType[this.datatype].startsWith("date"))
-			return(dates.parse(this.value$));
+		{
+			let value:Date = dates.parse(this.value$);
+			if (value == null) this.element.options.selectedIndex = 0;
+			return(value);
+		}
 
 		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
 			return(+this.value$);
@@ -58,6 +71,21 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
+		if (this.dataconverter != null)
+		{
+			this.dataconverter.setValue(Tier.Backend,value);
+			value = this.dataconverter.getValue(Tier.Frontend);
+		}
+
+		if (DataType[this.datatype].startsWith("date"))
+		{
+			if (typeof value === "number")
+				value = new Date(+value);
+
+			if (value instanceof Date)
+				value = dates.format(value);
+		}
+
 		this.value$ = value;
 		let found:boolean = false;
 		let valstr:string = (value+"").trim();

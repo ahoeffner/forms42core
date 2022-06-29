@@ -93,6 +93,11 @@ export class Field
 		return(this.dirty$);
 	}
 
+	public set dirty(flag:boolean)
+	{
+		this.dirty$ = flag;
+	}
+
 	public get mdlblock() : ModelBlock
 	{
 		return(this.block$.model);
@@ -174,7 +179,7 @@ export class Field
 
 	public getValue() : any
 	{
-		if (!this.dirty$) return(this.value$);
+		if (!this.dirty) return(this.value$);
 
 		let inst:FieldInstance = this.instance$;
 		if (inst == null) inst = this.instances$[0];
@@ -209,7 +214,7 @@ export class Field
 		{
 			if (this.dirty)
 			{
-				this.dirty$ = false;
+				this.dirty = false;
 				this.value$ = inst.getValue();
 
 				this.distribute(inst,this.value$,this.dirty);
@@ -228,9 +233,9 @@ export class Field
 			return;
 		}
 
-		if (brwevent.type == "change" && this.dirty)
+		if (brwevent.type == "change")
 		{
-			this.dirty$ = false;
+			this.dirty = false;
 
 			this.row.invalidate();
 			this.value$ = inst.getValue();
@@ -290,7 +295,7 @@ export class Field
 			{
 				if (this.dirty)
 				{
-					this.dirty$ = false;
+					this.dirty = false;
 					this.value$ = inst.getValue();
 					this.distribute(inst,this.value$,this.dirty);
 					this.block.distribute(this,this.value$,this.dirty);
@@ -315,7 +320,7 @@ export class Field
 
 	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
-		this.dirty$ = dirty;
+		this.dirty = dirty;
 		this.value$ = value;
 
 		this.instances$.forEach((fi) =>

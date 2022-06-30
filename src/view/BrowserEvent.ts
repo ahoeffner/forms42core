@@ -81,8 +81,8 @@ export class BrowserEvent
 
         if (this.isMouseEvent) this.mouseEvent();
 
-        if (this.type == "blur") this.focus = false;
-        if (this.type == "focus") this.focus = true;
+        if (this.type == "blur") {this.focus = false; this.alt = false; this.ctrl = false; this.meta = false}
+        if (this.type == "focus") {this.focus = true; this.alt = false; this.ctrl = false; this.meta = false}
     }
 
     public get event() : any

@@ -5,9 +5,9 @@ export { dates } from './src/model/dates/dates.js';
 export { DataConverter, Tier } from "./src/view/fields/DataConverter.js";
 
 export { KeyMap } from './src/control/events/KeyMap.js';
+export { MouseMap } from './src/control/events/MouseMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';
 export { EventType } from './src/control/events/EventType.js';
-export { MouseMap as MouseEvent } from './src/control/events/MouseMap.js';
 export { EventFilter } from './src/control/events/EventFilter.js';
 export { FormEvent as Event } from './src/control/events/FormEvents.js';
 

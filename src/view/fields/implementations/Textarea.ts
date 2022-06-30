@@ -128,7 +128,7 @@ export class Textarea implements FieldImplementation, EventListenerObject
 		if (this.event.accept || this.event.cancel)
 			bubble = true;
 
-		if (this.event.type.includes("click"))
+		if (this.event.bubbleMouseEvent)
 			bubble = true;
 
 		if (this.event.onScrollUp)

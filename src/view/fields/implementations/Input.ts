@@ -454,7 +454,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
-		if (this.event.type.includes("click"))
+		if (this.event.bubbleMouseEvent)
 			bubble = true;
 
 		if (this.event.onScrollUp)

@@ -217,8 +217,7 @@ export class Select implements FieldImplementation, EventListenerObject
 			this.value$ = this.getSelected();
 		}
 
-
-		if (this.event.type.includes("click"))
+		if (this.event.bubbleMouseEvent)
 			bubble = true;
 
 		if (this.event.onScrollUp)

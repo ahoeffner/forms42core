@@ -111,9 +111,16 @@ export class BrowserEvent
     public get isMouseEvent() : boolean
     {
         if (this.event.type == "wheel") return(true);
-        if (this.event.type == "wheel") return(true);
         if (this.event.type == "contextmenu") return(true);
+        if (this.event.type.includes("click")) return(true);
         if (this.event.type.startsWith("mouse")) return(true);
+		return(false);
+    }
+
+    public get bubbleMouseEvent() : boolean
+    {
+        if (this.event.type == "contextmenu") return(true);
+        if (this.event.type.includes("click")) return(true);
 		return(false);
     }
 
@@ -346,11 +353,7 @@ export class BrowserEvent
 		this.reset();
 
         if (this.type == "contextmenu")
-        {
-			this.event.preventDefault();
-			console.log("contextmenu")
 			this.prevent = true;
-        }
 
         if (this.type == "mouseup")
         {

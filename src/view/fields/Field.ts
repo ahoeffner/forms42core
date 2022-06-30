@@ -18,7 +18,7 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
-import { MouseEvent} from "../../control/events/MouseEvent.js";
+import { MouseEvent, MouseEventParser} from "../../control/events/MouseEvent.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 
@@ -315,7 +315,7 @@ export class Field
 		{
 			if (brwevent.event.type.includes("click"))
 			{
-				let mevent:MouseEvent = MouseEvent.parseBrowserEvent(brwevent);
+				let mevent:MouseEvent = MouseEventParser.parseBrowserEvent(brwevent);
 				let fevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,mevent,inst);
 				await FormEvents.raise(fevent);
 			}

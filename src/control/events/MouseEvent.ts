@@ -12,16 +12,19 @@
 
 import { BrowserEvent } from "../../view/BrowserEvent.js";
 
-export class MouseEvent
+export enum MouseEvent
 {
-	public static Click:MouseEvent = new MouseEvent();
-	public static DBLClick:MouseEvent = new MouseEvent();
-	public static ContextMenu:MouseEvent = new MouseEvent();
+	click,
+	dblclick,
+	contextmenu
+}
 
+export class MouseEventParser
+{
 	public static parseBrowserEvent(event:BrowserEvent) : MouseEvent
 	{
-		if (event.type == "click") return(MouseEvent.Click);
-		else if (event.type == "dblclick") return(MouseEvent.DBLClick);
-		else if (event.type == "contextmenu") return(MouseEvent.ContextMenu);
+		if (event.type == "click") return(MouseEvent.click);
+		else if (event.type == "dblclick") return(MouseEvent.dblclick);
+		else if (event.type == "contextmenu") return(MouseEvent.contextmenu);
 	}
 }

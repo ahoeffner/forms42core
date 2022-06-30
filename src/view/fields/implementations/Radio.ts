@@ -166,6 +166,9 @@ export class Radio implements FieldImplementation, EventListenerObject
         let bubble:boolean = false;
 		this.event.setEvent(event);
 
+		if (this.event.type == "wait")
+			return;
+
 		if (this.event.type == "focus")
 			bubble = true;
 

@@ -47,6 +47,7 @@ export class BrowserEvent
     public shift:boolean = false;
 
 	private static instance:BrowserEvent = null;
+	private static DBLClickDetection:number = 200;
 	private static ctrmod:string = BrowserEvent.detect();
 
 	private static detect() : string
@@ -119,8 +120,8 @@ export class BrowserEvent
 
     public get bubbleMouseEvent() : boolean
     {
-        if (this.event.type == "contextmenu") return(true);
-        if (this.event.type.includes("click")) return(true);
+        if (this.type == "contextmenu") return(true);
+        if (this.type.includes("click")) return(true);
 		return(false);
     }
 
@@ -348,9 +349,27 @@ export class BrowserEvent
         }
     }
 
+	public async wait() : Promise<void>
+	{
+        return(new Promise(resolve => setTimeout(resolve,BrowserEvent.DBLClickDetection)));
+	}
+
     private mouseEvent() : void
     {
 		this.reset();
+
+		if (this.event.type == "click" || this.event.type == "dblclick")
+		{
+			this.type = "wait";
+			
+			setTimeout(() =>
+			{
+				if (this.type == "wait")
+					this.type = this.event.type;
+			},
+				BrowserEvent.DBLClickDetection
+			);
+		}
 
         if (this.type == "contextmenu")
 			this.prevent = true;

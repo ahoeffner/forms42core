@@ -339,6 +339,12 @@ export class Input implements FieldImplementation, EventListenerObject
         let bubble:boolean = false;
 		this.event.modified = false;
 
+		if (this.event.type == "wait")
+		{
+			await this.event.wait();
+			console.log("after: "+this.event.type);
+		}
+
         if (this.event.type == "focus")
         {
 			bubble = true;

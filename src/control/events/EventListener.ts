@@ -37,6 +37,12 @@ export class EventListener
 			if (form[this.method] != method)
 				throw "@EventListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
 		}
+	}
 
+	public toString() : string
+	{
+		let str:string = this.method;
+		if (this.filter) str += JSON.stringify(this.filter);
+		return(str);
 	}
 }

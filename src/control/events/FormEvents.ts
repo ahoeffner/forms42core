@@ -61,14 +61,15 @@ export class FormEvent
 	private ievaluated:boolean = false;
 
 	private constructor
-	(
-		private type$:EventType,
-		private form$:Form,
-		private inst?:ViewFieldInstance,
-		private blockname$?:string,
-		private key$?:KeyMap,
-		private mevent$?:MouseMap
-	) {}
+		(
+			private type$:EventType,
+			private form$:Form, private inst?:ViewFieldInstance,
+			private blockname$?:string, private key$?:KeyMap,private mevent$?:MouseMap
+		)
+	{
+		if (inst != null)
+			this.blockname$ = inst.block;
+	}
 
 	public get type() : EventType
 	{

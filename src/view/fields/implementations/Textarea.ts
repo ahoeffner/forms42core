@@ -12,7 +12,7 @@
 
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
-import { DataConverter, Tier } from "../DATAConverter.js";
+import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -113,39 +113,39 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	public async handleEvent(event:Event) : Promise<void>
 	{
-        let buble:boolean = false;
+        let bubble:boolean = false;
 		this.event.setEvent(event);
 
 		if (this.event.type == "focus")
-			buble = true;
+			bubble = true;
 
 		if (this.event.type == "blur")
-			buble = true;
+			bubble = true;
 
 		if (this.event.type == "change")
-			buble = true;
+			bubble = true;
 
 		if (this.event.accept || this.event.cancel)
-			buble = true;
+			bubble = true;
 
-		if (this.event.type.startsWith("mouse"))
-			buble = true;
+		if (this.event.type.includes("click"))
+			bubble = true;
 
 		if (this.event.onScrollUp)
-			buble = true;
+			bubble = true;
 
         if (this.event.onScrollDown)
-			buble = true;
+			bubble = true;
 
         if (this.event.onCtrlKeyDown)
-			buble = true;
+			bubble = true;
 
         if (this.event.onFuncKey)
-			buble = true;
+			bubble = true;
 
 		this.event.preventDefault();
 
-		if (buble)
+		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
 	}
 
@@ -171,5 +171,6 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
         element.addEventListener("click",this);
         element.addEventListener("dblclick",this);
+        element.addEventListener("contextmenu",this);
     }
 }

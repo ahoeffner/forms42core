@@ -16,7 +16,7 @@ import { Section } from "../interfaces/Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { Alert } from "../../../application/Alert.js";
-import { DataConverter, Tier } from "../DATAConverter.js";
+import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
@@ -454,7 +454,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.pattern != null) this.initial = this.pattern.getValue();
 		}
 
-		if (this.event.type.startsWith("mouse"))
+		if (this.event.type.includes("click"))
 			bubble = true;
 
 		if (this.event.onScrollUp)
@@ -1044,5 +1044,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         element.addEventListener("click",this);
         element.addEventListener("dblclick",this);
+        element.addEventListener("contextmenu",this);
     }
 }

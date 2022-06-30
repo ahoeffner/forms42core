@@ -111,8 +111,10 @@ export class BrowserEvent
     public get isMouseEvent() : boolean
     {
         if (this.event.type == "wheel") return(true);
-        if (this.event.type.includes("click")) return(true);
-        return(this.event.type.startsWith("mouse"));
+        if (this.event.type == "wheel") return(true);
+        if (this.event.type == "contextmenu") return(true);
+        if (this.event.type.startsWith("mouse")) return(true);
+		return(false);
     }
 
     public get isKeyEvent() : boolean
@@ -342,6 +344,13 @@ export class BrowserEvent
     private mouseEvent() : void
     {
 		this.reset();
+
+        if (this.type == "contextmenu")
+        {
+			this.event.preventDefault();
+			console.log("contextmenu")
+			this.prevent = true;
+        }
 
         if (this.type == "mouseup")
         {

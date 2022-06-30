@@ -14,7 +14,7 @@ import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
 import { HTMLProperties } from "../HTMLProperties.js";
-import { DataConverter, Tier } from "../DATAConverter.js";
+import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -217,7 +217,8 @@ export class Select implements FieldImplementation, EventListenerObject
 			this.value$ = this.getSelected();
 		}
 
-		if (this.event.type.startsWith("mouse"))
+
+		if (this.event.type.includes("click"))
 			bubble = true;
 
 		if (this.event.onScrollUp)
@@ -286,5 +287,6 @@ export class Select implements FieldImplementation, EventListenerObject
 
         element.addEventListener("click",this);
         element.addEventListener("dblclick",this);
+        element.addEventListener("contextmenu",this);
     }
 }

@@ -317,7 +317,7 @@ export class Field
 				let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,brwevent.event,inst);
 				await FormEvents.raise(mevent);
 			}
-			
+
 			return;
 		}
 	}

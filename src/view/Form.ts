@@ -17,6 +17,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { FormsModule } from '../application/FormsModule.js';
 
 export class Form
 {
@@ -257,6 +258,7 @@ export class Form
 		block.model.setEventTransaction(EventType.PreForm,offset);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		block.model.endEventTransaction(success);
+		if (success) this.setURL();
 		return(success);
 	}
 
@@ -321,9 +323,21 @@ export class Form
 		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 
-	public dumpInstances() : void
+	public dumpFieldInstances() : void
 	{
-		this.block.dumpInstances();
+		this.block.dumpFieldInstances();
+	}
+
+	private setURL() : void
+	{
+		let location:Location = window.location;
+		let params:URLSearchParams = new URLSearchParams(location.search);
+		let path:string = location.protocol + '//' + location.host + location.pathname;
+
+		//FormsModule.get().getFormPath(this.name)
+
+		params.set("form","Countries")
+		window.history.replaceState('', '',path+"?"+params);
 	}
 
 	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>

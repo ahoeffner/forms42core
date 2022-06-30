@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
@@ -59,6 +60,8 @@ export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
             }
 
             State.components.set(path,clazz);
+			State.classes.set(clazz.name,path);
+
             Logger.log(Type.classloader,"Loading class: "+clazz.name+" into position: "+path);
         });
     }
@@ -72,6 +75,9 @@ class State
 	static baseurl:string;
     static root:HTMLElement;
     static appl:Application;
+
+    static classes:Map<string,string> =
+        new Map<string,string>();
 
     static components:Map<string,Class<any>> =
         new Map<string,Class<any>>();
@@ -124,6 +130,11 @@ export class FormsModule
         State.components.set(path,clazz);
     }
 
+    public getFormPath(clazz:Class<any>) : string
+    {
+        return(State.classes.get(clazz.name));
+    }
+
     public getComponent(path:string) : Class<any>
     {
         return(State.components.get(path.toLowerCase()));
@@ -144,13 +155,23 @@ export class FormsModule
 		KeyMapping.update(map);
 	}
 
-	public autoopen() : boolean
+	public OpenURLForm() : boolean
 	{
-		let url:string = window.location.pathname;
-		let root:string = State.baseurl != null ? State.baseurl : "/";
+		let location:Location = window.location;
+		let params:URLSearchParams = new URLSearchParams(location.search);
 
-		State.components
+		if (params.get("form") != null)
+		{
+			let form:string = params.get("form");
+			let clazz:Class<any> = this.getComponent(form);
 
-		return(true);
+			if (clazz != null && clazz.prototype instanceof Form)
+			{
+				this.getApplication().showform(clazz);
+				return(true);
+			}
+		}
+
+		return(false);
 	}
 }

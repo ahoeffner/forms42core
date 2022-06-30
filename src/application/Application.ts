@@ -34,7 +34,7 @@ export class Application
         this.state.module = module;
     }
 
-    public showform(form:Class<Form>|string, container?:HTMLElement) : void
+    public showform(form:Class<Form>|string, container?:HTMLElement) : Form
     {
 		if (typeof form === "string")
 		{
@@ -63,5 +63,7 @@ export class Application
 		ModelForm.getForm(instance).setEventTransaction(EventType.FormInit);
 		FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
 		ModelForm.getForm(instance).endEventTransaction();
+
+		return(instance);
     }
 }

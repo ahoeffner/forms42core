@@ -430,12 +430,10 @@ export class Block
 		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
 	}
 
-	public dumpInstances() : void
+	public dumpFieldInstances() : void
 	{
 		this.getFields().forEach((field) =>
-		{
-			console.log(field.name+"["+field.row.rownum+"] dirty: "+field.dirty);
-		})
+		{console.log(field.name+"["+field.row.rownum+"] dirty: "+field.dirty);})
 
 		this.getFieldInstances().forEach((inst) =>
 		{

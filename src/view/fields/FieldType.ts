@@ -16,6 +16,7 @@ import { Input } from "./implementations/Input.js";
 import { Select } from "./implementations/Select.js";
 import { Display } from "./implementations/Display.js";
 import { CheckBox } from "./implementations/CheckBox.js";
+import { Textarea } from "./implementations/Textarea.js";
 import { FieldImplementation } from "./interfaces/FieldImplementation.js";
 
 
@@ -32,6 +33,7 @@ export class FieldTypes
 
 		map.set("input",Input);
 		map.set("select",Select);
+		map.set("textarea",Textarea);
 
 		return(map);
 	}

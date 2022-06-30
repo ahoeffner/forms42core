@@ -54,7 +54,7 @@ export class FieldProperties
 
 		props.row = +row;
 
-		if (tag instanceof HTMLInputElement)
+		if (tag instanceof HTMLInputElement || tag instanceof HTMLTextAreaElement)
 		{
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
@@ -115,7 +115,7 @@ export class FieldProperties
 		if (styles.length > 0)
 			tag.style.cssText = styles;
 
-		if (tag instanceof HTMLInputElement)
+		if (tag instanceof HTMLInputElement || tag instanceof HTMLTextAreaElement)
 		{
 			tag.hidden = props.hidden;
 			tag.disabled = !props.enabled;

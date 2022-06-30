@@ -10,30 +10,26 @@
  * accompanied this code).
  */
 
-import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
-import { dates } from "../../../model/dates/dates.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { DataConverter, Tier } from "../DATAConverter.js";
 import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
-export class Display implements FieldImplementation, EventListenerObject
+export class Textarea implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
 	private properties:HTMLProperties = null;
 	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
-	private value$:any = null;
-	private element:HTMLElement = null;
-	private datatype:DataType = DataType.string;
+	private element:HTMLTextAreaElement = null;
     private event:BrowserEvent = BrowserEvent.get();
 
-	public create(eventhandler:FieldEventHandler, tag:string) : HTMLElement
+	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLElement
 	{
-		this.element = document.createElement(tag);
+		this.element = document.createElement("textarea");
 		this.eventhandler = eventhandler;
 		return(this.element);
 	}
@@ -42,30 +38,21 @@ export class Display implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		properties.apply(this.element);
-		this.setAttributes(properties.getAttributes());
 		if (properties.init) this.addEvents(this.element);
 	}
 
 	public getValue() : any
 	{
+		let value = this.element.value;
+
 		if (this.dataconverter != null)
 		{
-			this.value$ = this.dataconverter.getValue(Tier.Backend);
-			if (this.value$ == null) this.clear();
-			return(this.value$);
-		}
-
-		if (DataType[this.datatype].startsWith("date"))
-		{
-			let value:Date = dates.parse(this.value$);
-			if (value == null) this.clear();
+			value = this.dataconverter.getValue(Tier.Backend);
+			if (value == null) this.element.value = "";
 			return(value);
 		}
 
-		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
-			return(+this.value$);
-
-		return(this.value$);
+		return(value);
 	}
 
 	public setValue(value:any) : boolean
@@ -76,34 +63,8 @@ export class Display implements FieldImplementation, EventListenerObject
 			value = this.dataconverter.getValue(Tier.Frontend);
 		}
 
-		if (DataType[this.datatype].startsWith("date"))
-		{
-			if (typeof value === "number")
-				value = new Date(+value);
-
-			if (value instanceof Date)
-				value = dates.format(value);
-		}
-
-		this.clear();
-		this.value$ = value;
-
-		if (value != null)
-		{
-			if (value instanceof HTMLElement) this.element.appendChild(value);
-			else this.element.textContent = value;
-		}
-
+		this.element.value = value;
 		return(true);
-	}
-
-	private clear() : void
-	{
-		if (this.value$ != null)
-		{
-			if (this.value$ instanceof HTMLElement) this.element.firstChild?.remove;
-			else this.element.textContent = "";
-		}
 	}
 
 	public getIntermediateValue() : string
@@ -150,26 +111,6 @@ export class Display implements FieldImplementation, EventListenerObject
 			}
 	}
 
-	public setAttributes(attributes:Map<string,string>) : void
-	{
-		this.datatype = DataType.string;
-
-        attributes.forEach((_value,attr) =>
-        {
-			if (attr == "date")
-				this.datatype = DataType.date;
-
-			if (attr == "datetime")
-				this.datatype = DataType.datetime;
-
-			if (attr == "integer")
-				this.datatype = DataType.integer;
-
-			if (attr == "decimal")
-				this.datatype = DataType.decimal;
-		});
-	}
-
 	public async handleEvent(event:Event) : Promise<void>
 	{
         let buble:boolean = false;
@@ -179,6 +120,9 @@ export class Display implements FieldImplementation, EventListenerObject
 			buble = true;
 
 		if (this.event.type == "blur")
+			buble = true;
+
+		if (this.event.type == "change")
 			buble = true;
 
 		if (this.event.accept || this.event.cancel)

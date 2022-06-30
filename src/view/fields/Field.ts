@@ -312,8 +312,12 @@ export class Field
 
 		if (brwevent.isMouseEvent)
 		{
-			let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent, brwevent.event,inst);
-			await FormEvents.raise(mevent);
+			if (brwevent.event.type.includes("click"))
+			{
+				let mevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,brwevent.event,inst);
+				await FormEvents.raise(mevent);
+			}
+			
 			return;
 		}
 	}

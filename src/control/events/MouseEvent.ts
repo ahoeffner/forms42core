@@ -26,5 +26,6 @@ export class MouseEventParser
 		if (event.type == "click") return(MouseEvent.click);
 		else if (event.type == "dblclick") return(MouseEvent.dblclick);
 		else if (event.type == "contextmenu") return(MouseEvent.contextmenu);
+		return(null);
 	}
 }

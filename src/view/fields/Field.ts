@@ -313,7 +313,7 @@ export class Field
 
 		if (brwevent.isMouseEvent)
 		{
-			if (brwevent.event.type.includes("click"))
+			if (brwevent.event.type.includes("click") || brwevent.type == "contextmenu")
 			{
 				let mevent:MouseEvent = MouseEventParser.parseBrowserEvent(brwevent);
 				let fevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,mevent,inst);

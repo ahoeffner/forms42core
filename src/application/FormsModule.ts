@@ -94,13 +94,6 @@ export class FormsModule
         return(FormsModule.instance);
     }
 
-	public static platform() : string
-	{
-		let plf:string = navigator.platform;
-		if (plf == null) throw "@FormModule: Unable to detect platform";
-		return(plf);
-	}
-
     constructor()
     {
 		dates.validate();
@@ -130,9 +123,9 @@ export class FormsModule
         State.components.set(path,clazz);
     }
 
-    public getFormPath(clazz:Class<any>) : string
+    public static getFormPath(clazz:string) : string
     {
-        return(State.classes.get(clazz.name));
+        return(State.classes.get(clazz));
     }
 
     public getComponent(path:string) : Class<any>
@@ -171,7 +164,6 @@ export class FormsModule
 				return(true);
 			}
 		}
-
 		return(false);
 	}
 }

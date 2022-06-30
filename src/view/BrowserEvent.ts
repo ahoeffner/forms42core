@@ -10,8 +10,6 @@
  * accompanied this code).
  */
 
-import { FormsModule } from "../application/FormsModule.js";
-
 export class BrowserEvent
 {
     private event$:any;
@@ -53,7 +51,8 @@ export class BrowserEvent
 
 	private static detect() : string
 	{
-		let os:string = FormsModule.platform();
+		let os:string = navigator.platform;
+		if (os == null) throw "@BrowserEvent: Unable to detect platform";
 
 		if (os.startsWith("Mac"))
 			return("meta");

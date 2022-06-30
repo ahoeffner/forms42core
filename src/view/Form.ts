@@ -334,10 +334,13 @@ export class Form
 		let params:URLSearchParams = new URLSearchParams(location.search);
 		let path:string = location.protocol + '//' + location.host + location.pathname;
 
-		//FormsModule.get().getFormPath(this.name)
+		let map:string = FormsModule.getFormPath(this.parent.constructor.name)
 
-		params.set("form","Countries")
-		window.history.replaceState('', '',path+"?"+params);
+		if (map != null)
+		{
+			params.set("form",map)
+			window.history.replaceState('', '',path+"?"+params);
+		}
 	}
 
 	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>

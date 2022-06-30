@@ -340,10 +340,10 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.event.modified = false;
 
 		if (this.event.type == "wait")
-		{
 			await this.event.wait();
-			console.log("after: "+this.event.type);
-		}
+
+		if (this.event.waiting)
+			return;
 
         if (this.event.type == "focus")
         {

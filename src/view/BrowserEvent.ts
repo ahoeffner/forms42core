@@ -16,6 +16,7 @@ export class BrowserEvent
 {
     private event$:any;
 	private type$:string;
+	private wait$:boolean = false;
 
     private dseq:number = 0;
     private useq:number = 0;
@@ -165,6 +166,16 @@ export class BrowserEvent
     public get type() : string
     {
         return(this.type$);
+    }
+
+    public get waiting() : boolean
+    {
+        return(this.wait$);
+    }
+
+    public get basetype() : string
+    {
+        return(this.event$.type);
     }
 
     public set type(type:string)
@@ -351,7 +362,13 @@ export class BrowserEvent
 
 	public async wait() : Promise<void>
 	{
-        return(new Promise(resolve => setTimeout(resolve,BrowserEvent.DBLClickDetection)));
+		this.type = "click";
+
+        await new Promise(resolve => setTimeout(resolve,BrowserEvent.DBLClickDetection));
+		while(this.type == "mousedown") await new Promise(resolve => setTimeout(resolve,10));
+
+		this.wait$ = false;
+		this.type = this.event.type;
 	}
 
     private mouseEvent() : void
@@ -360,15 +377,11 @@ export class BrowserEvent
 
 		if (this.event.type == "click" || this.event.type == "dblclick")
 		{
+			if (this.waiting)
+				return;
+
 			this.type = "wait";
-			
-			setTimeout(() =>
-			{
-				if (this.type == "wait")
-					this.type = this.event.type;
-			},
-				BrowserEvent.DBLClickDetection
-			);
+			this.wait$ = true;
 		}
 
         if (this.type == "contextmenu")

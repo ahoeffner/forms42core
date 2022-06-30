@@ -200,6 +200,9 @@ export class Select implements FieldImplementation, EventListenerObject
 		this.event.setEvent(event);
 
 		if (this.event.type == "wait")
+			await this.event.wait();
+
+		if (this.event.waiting)
 			return;
 
 		if (this.event.type == "focus")

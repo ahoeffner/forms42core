@@ -11,6 +11,7 @@
  */
 
 import { KeyMap } from "./KeyMap.js";
+import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 
 export interface EventFilter
@@ -20,4 +21,5 @@ export interface EventFilter
 	key?:KeyMap;
 	field?:string;
 	block?:string;
+	mouse?:MouseMap;
 }

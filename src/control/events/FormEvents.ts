@@ -11,9 +11,9 @@
  */
 
 import { KeyMap } from "./KeyMap.js";
+import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
-import { MouseEvent } from "./MouseEvent.js";
 import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
@@ -49,7 +49,7 @@ export class FormEvent
 		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
 	}
 
-	public static MouseEvent(form:Form, event:MouseEvent, inst?:ViewFieldInstance, block?:string) : FormEvent
+	public static MouseEvent(form:Form, event:MouseMap, inst?:ViewFieldInstance, block?:string) : FormEvent
 	{
 		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,event));
 	}
@@ -67,7 +67,7 @@ export class FormEvent
 		private inst?:ViewFieldInstance,
 		private blockname$?:string,
 		private key$?:KeyMap,
-		private mevent$?:MouseEvent
+		private mevent$?:MouseMap
 	) {}
 
 	public get type() : EventType
@@ -121,7 +121,7 @@ export class FormEvent
 		return(this.inst?.name);
 	}
 
-	public get mouseevent() : MouseEvent
+	public get mouse() : MouseMap
 	{
 		return(this.mevent$);
 	}

@@ -176,7 +176,6 @@ export class FormEvents
 
 			if (lsnr.filter != null)
 			{
-				console.log("type: "+lsnr.filter.type)
 				if (lsnr.filter.type == null)
 				{
 					if (lsnr.filter.key != null) lsnr.filter.type = EventType.Key;

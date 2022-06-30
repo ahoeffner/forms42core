@@ -60,8 +60,8 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    ["for",Foreach],
-                    ["block",Field]
+                    ["block",Field],
+                    ["foreach",Foreach]
                 ]
             ));
     }

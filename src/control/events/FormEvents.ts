@@ -128,11 +128,17 @@ export class FormEvent
 
 	public toString() : string
 	{
-		let str:string = EventType[this.type];
+		let str:string = "";
+
+		if (this.type != null) str += " type: " + EventType[this.type];
+
 		if (this.blockname != null) str += " block: "+this.blockname;
 		if (this.fieldname != null) str += " field: "+this.fieldname;
+
 		if (this.key != null) str += " key: "+this.key;
-		return(str);
+		if (this.mouse != null) str += " mouse: "+MouseMap[this.mouse];
+
+		return(str.substring(1));
 	}
 }
 
@@ -140,10 +146,10 @@ export class FormEvent
 export class FormEvents
 {
 	private static listeners:EventListener[] = [];
-	private static applisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
-	private static frmlisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
-	private static blklisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
-	private static fldlisteners:Map<EventType,EventListener[]> = new Map<EventType,EventListener[]>();
+	private static applisteners:Map<EventType|number,EventListener[]> = new Map<EventType|number,EventListener[]>();
+	private static frmlisteners:Map<EventType|number,EventListener[]> = new Map<EventType|number,EventListener[]>();
+	private static blklisteners:Map<EventType|number,EventListener[]> = new Map<EventType|number,EventListener[]>();
+	private static fldlisteners:Map<EventType|number,EventListener[]> = new Map<EventType|number,EventListener[]>();
 
 	public static addListener(form:Form, clazz:any, method:Function|string, filter?:EventFilter|EventFilter[]) : object
 	{
@@ -170,6 +176,13 @@ export class FormEvents
 
 			if (lsnr.filter != null)
 			{
+				console.log("type: "+lsnr.filter.type)
+				if (lsnr.filter.type == null)
+				{
+					if (lsnr.filter.key != null) lsnr.filter.type = EventType.Key;
+					if (lsnr.filter.mouse != null) lsnr.filter.type = EventType.Mouse;
+				}
+
 				if (lsnr.filter.field != null) lsnr.filter.field = lsnr.filter.field.toLowerCase();
 				if (lsnr.filter.block != null) lsnr.filter.block = lsnr.filter.block.toLowerCase();
 
@@ -244,8 +257,9 @@ export class FormEvents
 		let done:Set<object> = new Set<object>();
 
 		// Field Listeners
-		listeners = FormEvents.fldlisteners.get(event.type);
-		for (let i = 0; listeners != null && i < listeners.length; i++)
+		listeners = FormEvents.merge(FormEvents.fldlisteners,event.type);
+
+		for (let i = 0; i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
 
@@ -262,8 +276,9 @@ export class FormEvents
 		}
 
 		// Block Listeners
-		listeners = FormEvents.blklisteners.get(event.type);
-		for (let i = 0; listeners != null && i < listeners.length; i++)
+		listeners = FormEvents.merge(FormEvents.blklisteners,event.type);
+
+		for (let i = 0; i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
 
@@ -280,8 +295,9 @@ export class FormEvents
 		}
 
 		// Form Listeners
-		listeners = FormEvents.frmlisteners.get(event.type);
-		for (let i = 0; listeners != null && i < listeners.length; i++)
+		listeners = FormEvents.merge(FormEvents.frmlisteners,event.type);
+
+		for (let i = 0; i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
 
@@ -298,8 +314,9 @@ export class FormEvents
 		}
 
 		// App Listeners
-		listeners = FormEvents.applisteners.get(event.type);
-		for (let i = 0; listeners != null && i < listeners.length; i++)
+		listeners = FormEvents.merge(FormEvents.applisteners,event.type);
+
+		for (let i = 0; i < listeners.length; i++)
 		{
 			let lsnr:EventListener = listeners[i];
 
@@ -328,6 +345,19 @@ export class FormEvents
 		}
 
 		return(true);
+	}
+
+	private static merge(lsnrs:Map<EventType|number,EventListener[]>, type:EventType) : EventListener[]
+	{
+		let all:EventListener[] = [];
+
+		let typed:EventListener[] = lsnrs.get(type);
+		let untyped:EventListener[] = lsnrs.get(-1);
+
+		if (typed != null) all.push(...typed);
+		if (untyped != null) all.push(...untyped);
+
+		return(all);
 	}
 
 
@@ -366,6 +396,8 @@ export class FormEvents
 
 		if (lsnr.filter != null)
 		{
+			if (lsnr.filter.key != null && lsnr.filter.key != event.key) return(false);
+			if (lsnr.filter.mouse != null && lsnr.filter.mouse != event.mouse) return(false);
 			if (lsnr.filter.block != null && lsnr.filter.block != event.blockname) return(false);
 			if (lsnr.filter.field != null && lsnr.filter.field != event.fieldname) return(false);
 		}
@@ -374,14 +406,19 @@ export class FormEvents
 	}
 
 
-	private static add(type:EventType, lsnr:EventListener, map:Map<EventType,EventListener[]>) : void
+	private static add(type:EventType, lsnr:EventListener, map:Map<EventType|number,EventListener[]>) : void
 	{
-		let listeners:EventListener[] = map.get(type);
+		let listeners:EventListener[];
+
+		if (type == null) listeners = map.get(-1);
+		else			  listeners = map.get(type);
 
 		if (listeners == null)
 		{
 			listeners = [];
-			map.set(type,listeners);
+
+			if (type == null) map.set(-1,listeners);
+			else			  map.set(type,listeners);
 		}
 
 		listeners.push(lsnr);

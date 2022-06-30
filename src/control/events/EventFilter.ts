@@ -16,7 +16,7 @@ import { EventType } from "./EventType.js";
 
 export interface EventFilter
 {
-	type:EventType;
+	type?:EventType;
 
 	key?:KeyMap;
 	field?:string;

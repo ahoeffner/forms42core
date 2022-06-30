@@ -49,9 +49,9 @@ export class FormEvent
 		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
 	}
 
-	public static MouseEvent(form:Form, cause:Event, inst?:ViewFieldInstance, block?:string) : FormEvent
+	public static MouseEvent(form:Form, event:MouseEvent, inst?:ViewFieldInstance, block?:string) : FormEvent
 	{
-		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,new MouseEvent(cause)));
+		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,event));
 	}
 
 	private block$:Block = null;

@@ -10,10 +10,18 @@
  * accompanied this code).
  */
 
+import { BrowserEvent } from "../../view/BrowserEvent.js";
+
 export class MouseEvent
 {
-	constructor(event:Event)
+	public static Click:MouseEvent = new MouseEvent();
+	public static DBLClick:MouseEvent = new MouseEvent();
+	public static ContextMenu:MouseEvent = new MouseEvent();
+
+	public static parseBrowserEvent(event:BrowserEvent) : MouseEvent
 	{
-		null;
+		if (event.type == "click") return(MouseEvent.Click);
+		else if (event.type == "dblclick") return(MouseEvent.DBLClick);
+		else if (event.type == "contextmenu") return(MouseEvent.ContextMenu);
 	}
 }

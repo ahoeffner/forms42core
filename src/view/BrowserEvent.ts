@@ -81,6 +81,7 @@ export class BrowserEvent
 
         if (this.isMouseEvent) this.mouseEvent();
 
+		// Reset alt,... in case button has been released in another window
         if (this.type == "blur") {this.focus = false; this.alt = false; this.ctrl = false; this.meta = false}
         if (this.type == "focus") {this.focus = true; this.alt = false; this.ctrl = false; this.meta = false}
     }

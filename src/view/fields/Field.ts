@@ -237,6 +237,8 @@ export class Field
 		if (brwevent.type == "change")
 		{
 			this.dirty = false;
+			let value:any = inst.getValue();
+			if (value == this.value$) return;
 
 			this.row.invalidate();
 			this.value$ = inst.getValue();

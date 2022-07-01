@@ -25,6 +25,7 @@ export interface FieldImplementation
 	apply(properties:HTMLProperties) : void
 	create(eventhandler:FieldEventHandler, tag:string) : HTMLElement;
 
+	clear() : void;
 	getValue() : any;
     setValue(value:any) : boolean;
 

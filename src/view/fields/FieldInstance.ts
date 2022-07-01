@@ -94,6 +94,11 @@ export class FieldInstance implements FieldEventHandler
 		return(this.element$);
 	}
 
+	public clear() : void
+	{
+		this.impl.clear();
+	}
+
 	public getValue() : any
 	{
 		return(this.impl.getValue());

@@ -53,6 +53,11 @@ export class Radio implements FieldImplementation, EventListenerObject
 		}
 	}
 
+	public clear() : void
+	{
+		this.element.checked = false;
+	}
+
 	public getValue() : any
 	{
 		if (this.dataconverter != null)

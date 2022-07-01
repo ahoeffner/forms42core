@@ -46,6 +46,11 @@ export class Textarea implements FieldImplementation, EventListenerObject
 		}
 	}
 
+	public clear() : void
+	{
+		this.element.value = "";
+	}
+
 	public getValue() : any
 	{
 		let value = this.element.value;

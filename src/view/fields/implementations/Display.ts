@@ -51,6 +51,15 @@ export class Display implements FieldImplementation, EventListenerObject
 		}
 	}
 
+	public clear() : void
+	{
+		if (this.value$ != null)
+		{
+			if (this.value$ instanceof HTMLElement) this.element.firstChild?.remove;
+			else this.element.textContent = "";
+		}
+	}
+
 	public getValue() : any
 	{
 		if (this.dataconverter != null)
@@ -100,15 +109,6 @@ export class Display implements FieldImplementation, EventListenerObject
 		}
 
 		return(true);
-	}
-
-	private clear() : void
-	{
-		if (this.value$ != null)
-		{
-			if (this.value$ instanceof HTMLElement) this.element.firstChild?.remove;
-			else this.element.textContent = "";
-		}
 	}
 
 	public getIntermediateValue() : string

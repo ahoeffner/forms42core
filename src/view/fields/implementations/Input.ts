@@ -100,6 +100,11 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 	}
 
+	public clear() : void
+	{
+		this.setElementValue(null);
+	}
+
     public getValue() : any
     {
 		let value:string = this.getElementValue();
@@ -156,10 +161,11 @@ export class Input implements FieldImplementation, EventListenerObject
 				value = null;
 		}
 
-		if (this.pattern != null && (value+"").length > 0)
+		if (this.pattern != null)
 		{
 			this.pattern.setValue(value);
-			value = this.pattern.getValue();
+			if (this.pattern.isNull()) value = "";
+			else  value = this.pattern.getValue();
 		}
 
         if (value == null)
@@ -407,10 +413,7 @@ export class Input implements FieldImplementation, EventListenerObject
         }
 
         if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
-		{
-			console.log("1 set placeholder")
             this.element.setAttribute("placeholder",this.placeholder);
-		}
 
         if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)
             this.element.removeAttribute("placeholder");
@@ -1029,11 +1032,6 @@ export class Input implements FieldImplementation, EventListenerObject
 	private get disabled() : boolean
 	{
 		return(this.element.disabled);
-	}
-
-	private clear() : void
-	{
-		this.setElementValue(null);
 	}
 
     private addEvents(element:HTMLElement) : void

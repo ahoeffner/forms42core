@@ -269,7 +269,7 @@ export class Row
 
 	public clear() : void
 	{
-		this.getFieldInstances().forEach((inst) => {inst.setValue(null)});
+		this.getFieldInstances().forEach((inst) => {inst.clear()});
 	}
 
 	public distribute(field:string, value:any, dirty:boolean) : void

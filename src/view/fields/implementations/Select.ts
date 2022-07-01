@@ -52,6 +52,11 @@ export class Select implements FieldImplementation, EventListenerObject
 		}
 	}
 
+	public clear() : void
+	{
+		this.element.options.selectedIndex = 0;
+	}
+
 	public getValue() : any
 	{
 		if (this.dataconverter != null)

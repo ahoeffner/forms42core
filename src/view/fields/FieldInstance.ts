@@ -29,6 +29,7 @@ export class FieldInstance implements FieldEventHandler
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
 	private properties$:HTMLProperties = null;
+	private defproperties$:HTMLProperties = null;
 
 	constructor(form:Form,tag:HTMLElement)
 	{
@@ -41,6 +42,7 @@ export class FieldInstance implements FieldEventHandler
 
 		this.impl.create(this,this.properties$.tag);
 
+		this.defproperties$ = this.properties;
 		this.element$ = this.impl.getElement();
 		this.properties$["tag$"] = this.element;
 
@@ -77,11 +79,15 @@ export class FieldInstance implements FieldEventHandler
 		return(this.field$);
 	}
 
+	public get default() : boolean
+	{
+		return(this.properties$ == this.defproperties$);
+	}
+
 	public set valid(flag:boolean)
 	{
 		if (!flag) this.element.classList.add("invalid");
 		else       this.element.classList.remove("invalid");
-
 	}
 
 	public get properties() : HTMLProperties

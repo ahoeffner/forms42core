@@ -32,7 +32,7 @@ export class Block
 	private row$:number = -1;
 	private form$:Form = null;
 	private name$:string = null;
-	private mdlblk:ModelBlock = null;
+	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private properties:FieldProperties = new FieldProperties();
@@ -71,9 +71,14 @@ export class Block
 		return(this.form$);
 	}
 
+	public get block() : InterfaceBlock
+	{
+		return(this.model.block);
+	}
+
 	public get model() : ModelBlock
 	{
-		return(this.mdlblk);
+		return(this.model$);
 	}
 
 	public getField(field:string) : Field
@@ -158,7 +163,7 @@ export class Block
 			this.endEventTransaction(success);
 
 			if (success)
-				this.mdlblk.setValue(inst.name,value);
+				this.model$.setValue(inst.name,value);
 
 			return(success);
 		}
@@ -270,7 +275,7 @@ export class Block
 		if (rownum == this.row || rownum == -1)
 			return;
 
-		this.mdlblk.move(rownum-this.row);
+		this.model$.move(rownum-this.row);
 
 		// disable autofill
 		this.getRow(this.row).setFieldState(FieldState.READONLY);
@@ -334,7 +339,7 @@ export class Block
 		if (current != null)
 		{
 			current.clear();
-			let record:Record = this.mdlblk.getRecord();
+			let record:Record = this.model$.getRecord();
 			record.values.forEach((field) => {current.distribute(field.name,field.value,false)});
 		}
 	}
@@ -441,7 +446,7 @@ export class Block
 
 	public linkModel() : void
 	{
-		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
+		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);
 	}
 
 	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>

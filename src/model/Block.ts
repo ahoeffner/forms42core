@@ -53,7 +53,7 @@ export class Block
 	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
-	private vwblk:ViewBlock = null;
+	private view$:ViewBlock = null;
 	private columns$:string[] = null;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
@@ -79,13 +79,18 @@ export class Block
 
 	public get view() : ViewBlock
 	{
-		return(this.vwblk);
+		return(this.view$);
+	}
+
+	public get block() : InterfaceBlock
+	{
+		return(this.intblk);
 	}
 
 	public get columns() : string[]
 	{
 		if (this.columns$ == null)
-			this.columns$ = this.vwblk.getFieldNames();
+			this.columns$ = this.view$.getFieldNames();
 
 		return(this.columns$);
 	}
@@ -147,7 +152,7 @@ export class Block
 
 		if (recs == null)
 		{
-			recs = this.vwblk.rows;
+			recs = this.view$.rows;
 			columns = this.columns;
 		}
 
@@ -269,12 +274,12 @@ export class Block
 		if (!await wrapper.query()) return(false);
 		let record:Record = await wrapper.fetch();
 
-		for (let i = 0; i < this.vwblk.rows && record != null; i++)
+		for (let i = 0; i < this.view$.rows && record != null; i++)
 		{
-			this.vwblk.display(i,record);
+			this.view$.display(i,record);
 
 			if (i == 0)
-				this.vwblk.setCurrentRow(0)
+				this.view$.setCurrentRow(0)
 
 			record = await wrapper.fetch();
 		}
@@ -301,12 +306,12 @@ export class Block
 
 	public linkView() : void
 	{
-		this.vwblk = ViewForm.getForm(this.form$.parent).getBlock(this.name);
+		this.view$ = ViewForm.getForm(this.form$.parent).getBlock(this.name);
 	}
 
 	public unlinkView() : void
 	{
-		this.vwblk = null;
+		this.view$ = null;
 	}
 
 	public isLinked() : boolean

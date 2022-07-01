@@ -31,7 +31,7 @@ export class Field
 
 	public get block() : Block
 	{
-		return(this.form.get)
+		return(this.fields$[0].block.block);
 	}
 
 	public getInstances() : FieldInstance[]
@@ -97,13 +97,16 @@ export class Field
 
 	public getValue() : any
 	{
-		let block:string = this.fields$[0].block.name;
-		return(this.form.getValue(block,this.name));
+		return(this.form.getValue(this.blockname,this.name));
 	}
 
 	public setValue(value:any) : void
 	{
-		let block:string = this.fields$[0].block.name;
-		this.form.setValue(block,this.name,value);
+		this.form.setValue(this.blockname,this.name,value);
+	}
+
+	private get blockname() : string
+	{
+		return(this.fields$[0].block.name);
 	}
 }

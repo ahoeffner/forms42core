@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
+import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
-import { Form } from './Form.js';
 
 export class FieldInstance
 {

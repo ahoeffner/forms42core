@@ -27,6 +27,21 @@ export class FieldProperties
 		this.overrides$.clear();
 	}
 
+	public clone(props:HTMLProperties) : HTMLProperties
+	{
+		let clone:HTMLProperties = new HTMLProperties();
+
+		for(let attr in props)
+		{
+			let name:string = attr;
+			clone[name] = this[name];
+		}
+
+		clone["changes"] = {};
+		return(clone);
+
+	}
+
 	public setDefault(inst:FieldInstance, properties:HTMLProperties) : void
 	{
 		this.defaults$.set(inst,properties);

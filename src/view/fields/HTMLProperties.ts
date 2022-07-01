@@ -31,7 +31,7 @@ export class HTMLProperties
 	private tagname$:string = null;
 	private classes$:string[] = [];
 
-	private init$:boolean = true;
+	private init:boolean = true;
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
 	private readonly$:boolean = false;
@@ -171,18 +171,6 @@ export class HTMLProperties
 	public get value() : string
 	{
 		return(this.value$);
-	}
-
-	public get init() : boolean
-	{
-		let init:boolean = this.init$;
-		this.init$ = false;
-		return(init);
-	}
-
-	public set init(flag:boolean)
-	{
-		this.init$ = flag;
 	}
 
 	public get enabled() : boolean

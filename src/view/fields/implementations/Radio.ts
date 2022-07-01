@@ -45,7 +45,12 @@ export class Radio implements FieldImplementation, EventListenerObject
 		properties.apply(this.element);
 		this.checked = properties.value;
 		this.setAttributes(properties.getAttributes());
-		if (properties.init) this.addEvents(this.element);
+
+		if (properties["init"])
+		{
+			properties["init"] = false;
+			this.addEvents(this.element);
+		}
 	}
 
 	public getValue() : any

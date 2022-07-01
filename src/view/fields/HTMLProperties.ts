@@ -31,7 +31,10 @@ export class HTMLProperties
 	private tagname$:string = null;
 	private classes$:string[] = [];
 
-	private init:boolean = true;
+	// Hidden for end users
+	private init$:boolean = true;
+	private tag$:HTMLElement = null;
+
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
 	private readonly$:boolean = false;
@@ -408,22 +411,8 @@ export class HTMLProperties
 		this.values.forEach((val,key) => {this.valmap.set(val,key)});
     }
 
-	public clone() : HTMLProperties
+	public apply() : void
 	{
-		let clone:HTMLProperties = new HTMLProperties();
-
-		for(let attr in this)
-		{
-			let name:string = attr;
-			clone[name] = this[name];
-		}
-
-		clone.changes = {};
-		return(clone);
-	}
-
-	public apply(tag:HTMLElement) : void
-	{
-		FieldProperties.apply(tag,this);
+		FieldProperties.apply(this.tag$,this);
 	}
 }

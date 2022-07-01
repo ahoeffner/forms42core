@@ -60,13 +60,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public apply(properties:HTMLProperties) : void
 	{
+		properties.apply();
 		this.properties = properties;
-		properties.apply(this.element);
 		this.setAttributes(properties.getAttributes());
 
-		if (properties["init"])
+		if (properties["init$"])
 		{
-			properties["init"] = false;
+			properties["init$"] = false;
 			this.addEvents(this.element);
 		}
 	}
@@ -407,7 +407,10 @@ export class Input implements FieldImplementation, EventListenerObject
         }
 
         if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
+		{
+			console.log("1 set placeholder")
             this.element.setAttribute("placeholder",this.placeholder);
+		}
 
         if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)
             this.element.removeAttribute("placeholder");

@@ -40,7 +40,9 @@ export class FieldInstance implements FieldEventHandler
 		this.impl = new clazz();
 
 		this.impl.create(this,this.properties$.tag);
+
 		this.element$ = this.impl.getElement();
+		this.properties$["tag$"] = this.element;
 
 		this.field$.addInstance(this);
 	}

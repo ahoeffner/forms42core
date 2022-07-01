@@ -15,19 +15,39 @@ import { Field as ViewField } from '../view/fields/Field.js';
 
 export class Field
 {
-	constructor(private field$:ViewField) {}
+	constructor(private fields$:ViewField[]) {}
 
 	public get name() : string
 	{
-		return(this.field$.name);
+		return(this.fields$[0].name);
 	}
 
 	public getInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
 
-		this.field$.getInstances().forEach((inst) =>
-		{instances.push(new FieldInstance(inst))});
+		this.fields$.forEach((field) =>
+		{
+			field.getInstances().forEach((inst) =>
+			{instances.push(new FieldInstance(inst))});
+		})
+
+		return(instances);
+	}
+
+	public getInstancesByName(name:string) : FieldInstance[]
+	{
+		name = name.toLowerCase();
+		let instances:FieldInstance[] = [];
+
+		this.fields$.forEach((field) =>
+		{
+			field.getInstances().forEach((inst) =>
+			{
+				if (inst.name == name)
+					instances.push(new FieldInstance(inst));
+			});
+		})
 
 		return(instances);
 	}
@@ -37,20 +57,23 @@ export class Field
 		clazz = clazz?.toLowerCase();
 		let instances:FieldInstance[] = [];
 
-		this.field$.getInstancesByClass(clazz).forEach((inst) =>
-		{instances.push(new FieldInstance(inst))});
+		this.fields$.forEach((field) =>
+		{
+			field.getInstancesByClass(clazz).forEach((inst) =>
+			{instances.push(new FieldInstance(inst));});
+		})
 
 		return(instances);
 	}
 
 	public getValue() : any
 	{
-		return(this.field$.getValue());
+		return(this.fields$[0].getValue());
 	}
 
 	public setValue(value:any) : void
 	{
-		this.field$.setValue(value);
-		this.field$.block.model.setValue(this.field$.name,value);
+		this.fields$[0].setValue(value);
+		this.fields$[0].block.model.setValue(this.fields$[0].name,value);
 	}
 }

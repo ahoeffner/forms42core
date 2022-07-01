@@ -85,23 +85,46 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-	public getFields(block:string, field:string) : Field[]
+	public getField(block:string, field:string) : Field
 	{
-		let fields:Field[] = [];
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
 
-		View.getForm(this).getBlock(block)?.getFields(field).
-		forEach((fld) => {fields.push(new Field(fld))});
+		let flds:ViewField[] = View.getForm(this).getBlock(block)?.getFields(field);
 
-		return(fields);
+		if (flds.length == 0)
+			return(null);
+
+		return(new Field(flds));
 	}
 
-	public getFieldInstances(block:string, field:string) : FieldInstance[]
+	public getFields(block:string) : Field[]
+	{
+		let flds:ViewField[] = View.getForm(this).getBlock(block)?.getFields();
+		flds = flds.sort((f1,f2) => {return(f1.name > f2.name ? 1 : -1)});
+
+		let name:string = null;
+		for (let i = 0; i < flds.length; i++)
+		{
+			null;
+		}
+
+		return(null);
+	}
+
+	public getFieldInstancesByName(block:string, field:string) : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
-		let fields:Field[] = this.getFields(block,field);
-		fields.forEach((fld) => {instances.push(...fld.getInstances());})
+		let fld:Field = this.getField(block,field);
+		fld.getInstancesByName(field).forEach((inst) => {instances.push(inst);})
+		return(instances);
+	}
+
+	public getFieldInstancesByClass(block:string, clazz:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+		let flds:Field[] = this.getFields(block);
+		flds.forEach().getInstancesByName(clazz).forEach((inst) => {instances.push(inst);})
 		return(instances);
 	}
 

@@ -223,10 +223,10 @@ export class Field
 
 				if (!await this.validate(inst))
 					return;
-
-				if (!await this.block.validate())
-					return;
 			}
+
+			if (!await this.block.validate())
+				return;
 
 			key = KeyMapping.checkBrowserEvent(brwevent);
 			if (key != null) await this.block.onKey(inst,key);

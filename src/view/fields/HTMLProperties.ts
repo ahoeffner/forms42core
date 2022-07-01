@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from "../../application/Alert.js";
 import { FieldProperties } from "../FieldProperties.js";
 
 export interface Style
@@ -40,7 +41,21 @@ export class HTMLProperties
     private values:Map<string,string> = null;
     private valmap:Map<string,string> = null;
 
+	private fixed:string[] = ["id","name","block","row"];
 	private attrs:Map<string,string> = new Map<string,string>();
+
+	private changes:
+	{
+		all?:boolean,
+
+		styles?:boolean,
+		classes?:boolean,
+
+		hidden?:boolean,
+		enabled?:boolean,
+		readonly?:boolean,
+		required?:boolean,
+	};
 
 	public get id() : string
 	{
@@ -49,6 +64,12 @@ export class HTMLProperties
 
 	public set id(id:string)
 	{
+		if (this.changes != null)
+		{
+			Alert.fatal("@HTMLProperties: 'id' cannot be changed at runtime","Properties");
+			return;
+		}
+
 		this.id$ = null;
 
 		if (id != null)
@@ -65,6 +86,12 @@ export class HTMLProperties
 
 	public set name(name:string)
 	{
+		if (this.changes != null)
+		{
+			Alert.fatal("@HTMLProperties: 'name' cannot be changed at runtime","Properties");
+			return;
+		}
+
 		this.name$ = null;
 
 		if (name != null)
@@ -81,6 +108,12 @@ export class HTMLProperties
 
 	public set block(block:string)
 	{
+		if (this.changes != null)
+		{
+			Alert.fatal("@HTMLProperties: 'block' cannot be changed at runtime","Properties");
+			return;
+		}
+
 		this.block$ = null;
 
 		if (block != null)
@@ -97,6 +130,12 @@ export class HTMLProperties
 
 	public set row(row:number)
 	{
+		if (this.changes != null)
+		{
+			Alert.fatal("@HTMLProperties: 'row' cannot be changed at runtime","Properties");
+			return;
+		}
+
 		if (row < 0) this.row$ = -1;
 		else		 this.row$ = row;
 	}
@@ -109,6 +148,9 @@ export class HTMLProperties
 	public set tag(tag:string)
 	{
 		this.tagname$ = tag?.toLowerCase();
+
+		if (this.changes != null)
+			this.changes.all = true;
 	}
 
 	public set value(value:string)
@@ -121,6 +163,9 @@ export class HTMLProperties
 			if (this.value$.length == 0)
 				this.value$ = null;
 		}
+
+		if (this.changes != null)
+			this.changes.all = true;
 	}
 
 	public get value() : string
@@ -147,6 +192,9 @@ export class HTMLProperties
 
 	public set enabled(flag:boolean)
 	{
+		if (this.changes != null)
+			this.changes.enabled = true;
+
 		this.enabled$ = flag;
 	}
 
@@ -157,6 +205,9 @@ export class HTMLProperties
 
 	public set readonly(flag:boolean)
 	{
+		if (this.changes != null)
+			this.changes.readonly = true;
+
 		this.readonly$ = flag;
 	}
 
@@ -167,6 +218,9 @@ export class HTMLProperties
 
 	public set required(flag:boolean)
 	{
+		if (this.changes != null)
+			this.changes.required = true;
+
 		this.required$ = flag;
 	}
 
@@ -177,6 +231,9 @@ export class HTMLProperties
 
 	public set hidden(flag:boolean)
 	{
+		if (this.changes != null)
+			this.changes.hidden = true;
+
 		this.hidden$ = flag;
 	}
 
@@ -187,6 +244,9 @@ export class HTMLProperties
 
 	public setStyles(styles:string) : void
 	{
+		if (this.changes != null)
+			this.changes.styles = true;
+
 		let elements:string[] = styles.split(";")
 
 		for (let i = 0; i < elements.length; i++)
@@ -210,6 +270,9 @@ export class HTMLProperties
 
 	public setStyle(style:string, value:string) : void
 	{
+		if (this.changes != null)
+			this.changes.styles = true;
+
 		value = value.toLowerCase();
 		style = style.toLowerCase();
 
@@ -219,6 +282,9 @@ export class HTMLProperties
 
 	public removeStyle(style:string) : void
 	{
+		if (this.changes != null)
+			this.changes.styles = true;
+
 		style = style.toLowerCase();
 
 		for (let i = 0; i < this.styles$.length; i++)
@@ -233,6 +299,9 @@ export class HTMLProperties
 
 	public setClass(clazz:any) : void
 	{
+		if (this.changes != null)
+			this.changes.classes = true;
+
 		clazz = clazz.toLowerCase();
 
 		if (this.classes$[clazz] == null)
@@ -252,6 +321,9 @@ export class HTMLProperties
 
 	public removeClass(clazz:any) : void
 	{
+		if (this.changes != null)
+			this.changes.classes = true;
+
 		clazz = clazz.toLowerCase();
 		delete this.classes$[this.classes$.indexOf(clazz)];
 	}
@@ -259,6 +331,10 @@ export class HTMLProperties
 	public setClasses(classes:string|string[]) : void
 	{
 		this.classes$ = [];
+
+		if (this.changes != null)
+			this.changes.classes = true;
+
 
 		if (!Array.isArray(classes))
 			classes = classes.split(" ,;");
@@ -282,6 +358,18 @@ export class HTMLProperties
 
 	public setAttribute(attr:string, value:any) : void
 	{
+		if (this.changes != null)
+		{
+			if (this.fixed.includes(attr.toLowerCase()))
+			{
+				Alert.fatal("@HTMLProperties: '"+attr+"' cannot be changed at runtime","Properties");
+				return;
+			}
+		}
+
+		if (this.changes != null)
+			this.changes.all = true;
+
 		let val:string = "";
 		attr = attr.toLowerCase();
 
@@ -293,6 +381,9 @@ export class HTMLProperties
 
 	public removeAttribute(attr:string) : void
 	{
+		if (this.changes != null)
+			this.changes.all = true;
+
 		attr = attr.toLowerCase();
 		this.attrs.delete(attr.toLowerCase());
 	}
@@ -312,6 +403,9 @@ export class HTMLProperties
 
     public setValidValues(values: Set<string> | Map<string,string>) : void
 	{
+		if (this.changes != null)
+			this.changes.all = true;
+
 		if (values instanceof Set)
 		{
 			this.values = new Map<string,string>();
@@ -319,9 +413,26 @@ export class HTMLProperties
 		}
         else this.values = values;
 
+		if (this.changes != null)
+			this.changes.all = true;
+
 		this.valmap = new Map<string,string>();
 		this.values.forEach((val,key) => {this.valmap.set(val,key)});
     }
+
+	public clone() : HTMLProperties
+	{
+		let clone:HTMLProperties = new HTMLProperties();
+
+		for(let attr in this)
+		{
+			let name:string = attr;
+			clone[name] = this[name];
+		}
+
+		clone.changes = {};
+		return(clone);
+	}
 
 	public apply(tag:HTMLElement) : void
 	{

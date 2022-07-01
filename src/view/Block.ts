@@ -24,7 +24,6 @@ import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { findSourceMap } from "module";
 
 
 export class Block
@@ -443,19 +442,6 @@ export class Block
 	public linkModel() : void
 	{
 		this.mdlblk = ModelForm.getForm(this.form.parent).getBlock(this.name);
-	}
-
-	public dumpFieldInstances() : void
-	{
-		this.getFields().forEach((field) =>
-		{console.log(field.name+"["+field.row.rownum+"] dirty: "+field.dirty);})
-
-		this.getFieldInstances().forEach((inst) =>
-		{
-			let value:any = inst.getValue();
-			if (value == null) console.log(inst.name+" "+null);
-			else console.log(inst.name+" "+value+" "+value.constructor.name);
-		});
 	}
 
 	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>

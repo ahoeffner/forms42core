@@ -59,14 +59,49 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
-	public getFields(name:string) : Field[]
+	public getFields() : Field[]
 	{
-		return(this.form$.getFields(this.name$,name));
+		return(this.form$.getFields(this.name$));
 	}
 
-	public getFieldInstances(name:string) : FieldInstance[]
+	public getFieldInstances() : FieldInstance[]
 	{
-		return(this.form$.getFieldInstances(this.name$,name));
+		let instances:FieldInstance[] = [];
+
+		this.getFields().forEach((fld) =>
+		{instances.push(...fld.getInstances());})
+
+		return(instances);
+	}
+
+	public getFieldInstancesById(id:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+
+		this.getFields().forEach((fld) =>
+		{instances.push(...fld.getInstancesById(id));})
+
+		return(instances);
+	}
+
+	public getFieldInstancesByName(name:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+
+		this.getFields().forEach((fld) =>
+		{instances.push(...fld.getInstancesByName(name));})
+
+		return(instances);
+	}
+
+	public getFieldInstancesByClass(clazz:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+
+		this.getFields().forEach((fld) =>
+		{instances.push(...fld.getInstancesByClass(clazz));})
+
+		return(instances);
 	}
 
 	public getValue(field:string) : any

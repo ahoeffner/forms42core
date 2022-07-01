@@ -12,6 +12,7 @@
 
 import { Field } from './Field.js';
 import { Form as View } from '../view/Form.js';
+import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Block as ViewBlock } from '../view/Block.js';
@@ -22,7 +23,6 @@ import { Canvas } from '../application/interfaces/Canvas.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { Alert } from '../application/Alert.js';
 
 
 export class Form implements CanvasComponent
@@ -40,6 +40,11 @@ export class Form implements CanvasComponent
 
 		Model.getForm(this);
     }
+
+	public get valid() : boolean
+	{
+		return(View.getForm(this).validated());
+	}
 
     public getView() : HTMLElement
     {
@@ -100,16 +105,41 @@ export class Form implements CanvasComponent
 
 	public getFields(block:string) : Field[]
 	{
+		let fields:Field[] = [];
+
 		let flds:ViewField[] = View.getForm(this).getBlock(block)?.getFields();
+		if (flds.length == 0) return([]);
+
 		flds = flds.sort((f1,f2) => {return(f1.name > f2.name ? 1 : -1)});
 
-		let name:string = null;
+		let vfld:ViewField[] = [];
+		let name:string = flds[0].name;
+
 		for (let i = 0; i < flds.length; i++)
 		{
-			null;
+			if (name != flds[i].name || i == flds.length - 1)
+			{
+				fields.push(new Field(vfld));
+				name = flds[i].name;
+				vfld = [];
+			}
 		}
 
 		return(null);
+	}
+
+	public getFieldInstancesById(block:string, id:string) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+		let flds:Field[] = this.getFields(block);
+
+		flds.forEach((fld) =>
+		{
+			fld.getInstancesById(id).
+			forEach((inst) => {instances.push(inst)})
+		})
+
+		return(instances);
 	}
 
 	public getFieldInstancesByName(block:string, field:string) : FieldInstance[]
@@ -124,8 +154,31 @@ export class Form implements CanvasComponent
 	{
 		let instances:FieldInstance[] = [];
 		let flds:Field[] = this.getFields(block);
-		flds.forEach().getInstancesByName(clazz).forEach((inst) => {instances.push(inst);})
+
+		flds.forEach((fld) =>
+		{
+			fld.getInstancesByClass(clazz).
+			forEach((inst) => {instances.push(inst)})
+		})
+
 		return(instances);
+	}
+
+	public getValue(block:string, field:string) : any
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		let blk:ViewBlock = View.getForm(this).getBlock(block);
+
+		if (blk == null) return(null);
+
+		if (blk.model.eventTransaction)
+			return(blk.model.eventTransaction.getValue(blk,field));
+
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
+
+		return(blk.model.getValue(field));
 	}
 
 	public setValue(block:string, field:string, value:any) : void
@@ -146,28 +199,6 @@ export class Form implements CanvasComponent
 		blk.getField(field)?.setValue(value);
 	}
 
-	public getValue(block:string, field:string) : any
-	{
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-		let blk:ViewBlock = View.getForm(this).getBlock(block);
-
-		if (blk == null) return(null);
-
-		if (blk.model.eventTransaction)
-			return(blk.model.eventTransaction.getValue(blk,field));
-
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) return(blk.getValue(field));
-
-		return(blk.model.getValue(field));
-	}
-
-	public get valid() : boolean
-	{
-		return(View.getForm(this).validated());
-	}
-
     public async close() : Promise<boolean>
     {
 		let vform:View = View.getForm(this);
@@ -185,10 +216,5 @@ export class Form implements CanvasComponent
 	public addEventListener(method:Function, filter?:EventFilter|EventFilter[]) : void
 	{
 		FormEvents.addListener(this,this,method,filter);
-	}
-
-	public dumpFieldInstances() : void
-	{
-		View.getForm(this).dumpFieldInstances();
 	}
 }

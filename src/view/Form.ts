@@ -323,11 +323,6 @@ export class Form
 		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 
-	public dumpFieldInstances() : void
-	{
-		this.block.dumpFieldInstances();
-	}
-
 	private setURL() : void
 	{
 		let location:Location = window.location;

@@ -12,6 +12,7 @@
 
 import { Field } from './Field.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
+import { Form } from './Form.js';
 
 export class FieldInstance
 {
@@ -22,9 +23,14 @@ export class FieldInstance
 		return(this.field.name);
 	}
 
+	public get form() : Form
+	{
+		return(this.inst$.form);
+	}
+
 	public get field() : Field
 	{
-		return(new Field(this.inst$.field));
+		return(this.form.getField(this.inst$.block,this.name));
 	}
 
 	public getValue() : any
@@ -34,7 +40,6 @@ export class FieldInstance
 
 	public setValue(value:any) : void
 	{
-		this.inst$.field.setValue(value);
-		this.inst$.field.block.model.setValue(this.inst$.name,value);
+		this.field.setValue(value);
 	}
 }

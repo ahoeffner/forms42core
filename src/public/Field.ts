@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { Form } from './Form.js';
+import { Block } from './Block.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
@@ -22,6 +24,16 @@ export class Field
 		return(this.fields$[0].name);
 	}
 
+	public get form() : Form
+	{
+		return(this.fields$[0].block.form.parent);
+	}
+
+	public get block() : Block
+	{
+		return(this.form.get)
+	}
+
 	public getInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
@@ -30,6 +42,23 @@ export class Field
 		{
 			field.getInstances().forEach((inst) =>
 			{instances.push(new FieldInstance(inst))});
+		})
+
+		return(instances);
+	}
+
+	public getInstancesById(id:string) : FieldInstance[]
+	{
+		id = id.toLowerCase();
+		let instances:FieldInstance[] = [];
+
+		this.fields$.forEach((field) =>
+		{
+			field.getInstances().forEach((inst) =>
+			{
+				if (inst.id == id)
+					instances.push(new FieldInstance(inst));
+			});
 		})
 
 		return(instances);
@@ -68,12 +97,13 @@ export class Field
 
 	public getValue() : any
 	{
-		return(this.fields$[0].getValue());
+		let block:string = this.fields$[0].block.name;
+		return(this.form.getValue(block,this.name));
 	}
 
 	public setValue(value:any) : void
 	{
-		this.fields$[0].setValue(value);
-		this.fields$[0].block.model.setValue(this.fields$[0].name,value);
+		let block:string = this.fields$[0].block.name;
+		this.form.setValue(block,this.name,value);
 	}
 }

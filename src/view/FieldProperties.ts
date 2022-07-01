@@ -38,8 +38,9 @@ export class FieldProperties
 		}
 
 		clone["changes"] = {};
-		return(clone);
+		clone["init$"] = false;
 
+		return(clone);
 	}
 
 	public setDefault(inst:FieldInstance, properties:HTMLProperties) : void
@@ -113,9 +114,16 @@ export class FieldProperties
 		return(props);
 	}
 
-	public static apply(tag:HTMLElement, props:HTMLProperties) : void
+	public static apply(inst:FieldInstance, props:HTMLProperties) : void
 	{
 		let styles:string = "";
+		let tag:HTMLElement = inst.element;
+
+		if (!inst.isDefault(props))
+		{
+			FieldProperties.applyChanges(inst,props);
+			return;
+		}
 
 		tag.setAttribute("name",props.name);
 		tag.setAttribute("block",props.block);
@@ -153,6 +161,13 @@ export class FieldProperties
 			tag.required = props.required;
 			FieldProperties.setSelectOptions(tag,props);
 		}
+	}
+
+	public static applyChanges(inst:FieldInstance, props:HTMLProperties)
+	{
+		let tag:HTMLElement = inst.element;
+		tag.classList.add("green");
+		inst.properties = props;
 	}
 
 	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void

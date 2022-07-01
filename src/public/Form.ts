@@ -94,7 +94,7 @@ export class Form implements CanvasComponent
 		return(null);
 	}
 
-	public getFieldInstance(id:string) : FieldInstance
+	public getFieldInstanceById(block:string, field:string, id:string) : FieldInstance
 	{
 		return(null);
 	}

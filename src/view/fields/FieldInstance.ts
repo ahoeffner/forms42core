@@ -42,9 +42,9 @@ export class FieldInstance implements FieldEventHandler
 
 		this.impl.create(this,this.properties$.tag);
 
+		this.properties$["inst$"] = this;
 		this.defproperties$ = this.properties;
 		this.element$ = this.impl.getElement();
-		this.properties$["tag$"] = this.element;
 
 		this.field$.addInstance(this);
 	}
@@ -79,9 +79,9 @@ export class FieldInstance implements FieldEventHandler
 		return(this.field$);
 	}
 
-	public get default() : boolean
+	public isDefault(props:HTMLProperties) : boolean
 	{
-		return(this.properties$ == this.defproperties$);
+		return(props == this.defproperties$);
 	}
 
 	public set valid(flag:boolean)
@@ -93,6 +93,12 @@ export class FieldInstance implements FieldEventHandler
 	public get properties() : HTMLProperties
 	{
 		return(this.properties$);
+	}
+
+	public set properties(props:HTMLProperties)
+	{
+		this.properties$ = props;
+		this.impl.apply(props);
 	}
 
 	public get element() : HTMLElement

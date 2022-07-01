@@ -12,6 +12,7 @@
 
 import { Alert } from "../../application/Alert.js";
 import { FieldProperties } from "../FieldProperties.js";
+import { FieldInstance } from "./FieldInstance.js";
 
 export interface Style
 {
@@ -33,7 +34,7 @@ export class HTMLProperties
 
 	// Hidden for end users
 	private init$:boolean = true;
-	private tag$:HTMLElement = null;
+	private inst$:FieldInstance = null;
 
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
@@ -413,6 +414,6 @@ export class HTMLProperties
 
 	public apply() : void
 	{
-		FieldProperties.apply(this.tag$,this);
+		FieldProperties.apply(this.inst$,this);
 	}
 }

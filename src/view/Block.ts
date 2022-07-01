@@ -24,6 +24,7 @@ import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { findSourceMap } from "module";
 
 
 export class Block
@@ -83,7 +84,7 @@ export class Block
 		return(fld);
 	}
 
-	public getFields() : Field[]
+	public getFields(name?:string) : Field[]
 	{
 		let row:Row = null;
 		let fields:Field[] = [];
@@ -93,6 +94,20 @@ export class Block
 
 		row = this.getRow(-1);
 		if (row != null) fields.push(...row.getFields());
+
+		if (name != null)
+		{
+			let named:Field[] = [];
+			name = name.toLowerCase();
+
+			fields.forEach((fld) =>
+			{
+				if (fld.name == name)
+					named.push(fld);
+			})
+
+			fields = named;
+		}
 
 		return(fields);
 	}

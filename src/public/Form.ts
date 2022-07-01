@@ -85,18 +85,24 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-	public getField(block:string, field:string) : Field
+	public getFields(block:string, field:string) : Field[]
 	{
+		let fields:Field[] = [];
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
-		let fld:ViewField = View.getForm(this).getBlock(block)?.getField(field);
-		if (fld != null) return(new Field(fld));
-		return(null);
+
+		View.getForm(this).getBlock(block)?.getFields(field).
+		forEach((fld) => {fields.push(new Field(fld))});
+
+		return(fields);
 	}
 
-	public getFieldInstanceById(block:string, field:string, id:string) : FieldInstance
+	public getFieldInstances(block:string, field:string) : FieldInstance[]
 	{
-		return(null);
+		let instances:FieldInstance[] = [];
+		let fields:Field[] = this.getFields(block,field);
+		fields.forEach((fld) => {instances.push(...fld.getInstances());})
+		return(instances);
 	}
 
 	public setValue(block:string, field:string, value:any) : void

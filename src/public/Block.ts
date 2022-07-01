@@ -17,6 +17,7 @@ import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Field as ViewField } from '../view/fields/Field';
 import { DataSource } from '../model/interfaces/DataSource.js';
+import { FieldInstance } from './FieldInstance.js';
 
 export class Block
 {
@@ -58,9 +59,14 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
-	public getField(name:string) : Field
+	public getFields(name:string) : Field[]
 	{
-		return(this.form$.getField(this.name$,name));
+		return(this.form$.getFields(this.name$,name));
+	}
+
+	public getFieldInstances(name:string) : FieldInstance[]
+	{
+		return(this.form$.getFieldInstances(this.name$,name));
 	}
 
 	public getValue(field:string) : any

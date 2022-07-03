@@ -15,7 +15,7 @@ import { Block } from './Block.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
-export class Field
+export class Dummy
 {
 	constructor(private fields$:ViewField[]) {}
 

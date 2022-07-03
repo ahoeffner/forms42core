@@ -1,6 +1,7 @@
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 export { Field } from './src/public/Field.js';
+export { FieldBox } from './src/public/FieldBox.js';
 
 export { dates } from './src/model/dates/dates.js';
 export { DataConverter, Tier } from "./src/view/fields/DataConverter.js";

@@ -16,7 +16,7 @@ import { Form as View } from '../view/Form.js';
 import { Field } from './Field.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
-export class FieldCan
+export class FieldBox
 {
 	private fields$:ViewField[] = [];
 
@@ -24,16 +24,6 @@ export class FieldCan
 	{
 		this.fields$ = View.getForm(form).getBlock(block)?.getAllFields(field);
 
-	}
-
-	public get name() : string
-	{
-		return(this.fields$[0].name);
-	}
-
-	public get form() : Form
-	{
-		return(this.fields$[0].block.form.parent);
 	}
 
 	public getInstances() : Field[]

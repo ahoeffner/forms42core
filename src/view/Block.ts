@@ -14,7 +14,6 @@ import { Row } from "./Row.js";
 import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
-import { FieldFeatures } from "./FieldFeatures.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -22,6 +21,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
@@ -35,7 +35,7 @@ export class Block
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private properties:FieldFeatures = new FieldFeatures();
+	private factory:FieldFeatureFactory = new FieldFeatureFactory();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -193,7 +193,7 @@ export class Block
 		if (!this.validated)
 			return(false);
 
-		this.properties.clear();
+		this.factory.clear();
 		this.rows$.forEach((row) => {row.clear()});
 
 		return(true);
@@ -201,7 +201,7 @@ export class Block
 
 	public addInstance(inst:FieldInstance) : void
 	{
-		this.properties.setDefault(inst,inst.properties);
+		this.factory.setDefault(inst,inst.properties);
 
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);

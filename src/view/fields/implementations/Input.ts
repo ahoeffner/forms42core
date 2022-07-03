@@ -16,8 +16,8 @@ import { Section } from "../interfaces/Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { HTMLProperties } from "../HTMLProperties.js";
 import { Alert } from "../../../application/Alert.js";
-import { FieldFeatures } from "../../FieldFeatures.js";
 import { DataConverter, Tier } from "../DataConverter.js";
+import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -80,17 +80,17 @@ export class Input implements FieldImplementation, EventListenerObject
 		switch(state)
 		{
 			case FieldState.OPEN:
-				if (enabled) FieldFeatures.setEnabledState(this.element,this.properties,true);
-				if (!readonly) FieldFeatures.setReadOnlyState(this.element,this.properties,false);
+				if (enabled) FieldFeatureFactory.setEnabledState(this.element,this.properties,true);
+				if (!readonly) FieldFeatureFactory.setReadOnlyState(this.element,this.properties,false);
 				break;
 
 			case FieldState.READONLY:
-				if (enabled) FieldFeatures.setEnabledState(this.element,this.properties,true);
-				FieldFeatures.setReadOnlyState(this.element,this.properties,true);
+				if (enabled) FieldFeatureFactory.setEnabledState(this.element,this.properties,true);
+				FieldFeatureFactory.setReadOnlyState(this.element,this.properties,true);
 				break;
 
 			case FieldState.DISABLED:
-				FieldFeatures.setEnabledState(this.element,this.properties,false);
+				FieldFeatureFactory.setEnabledState(this.element,this.properties,false);
 				break;
 			}
 	}

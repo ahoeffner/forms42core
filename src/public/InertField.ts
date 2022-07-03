@@ -22,7 +22,7 @@ export class InertField
 
 	constructor(form:Form, block:string, field:string)
 	{
-		let flds:ViewField[] = View.getForm(form).getBlock(block)?.getFields(field);
+		this.fields$ = View.getForm(form).getBlock(block)?.getAllFields(field);
 
 	}
 

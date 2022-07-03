@@ -12,7 +12,7 @@
 
 import { Alert } from "../../application/Alert.js";
 import { FieldInstance } from "./FieldInstance.js";
-import { FieldFeatures } from "../FieldFeatures.js";
+import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 
 export interface Style
 {
@@ -421,6 +421,6 @@ export class HTMLProperties
 
 	public apply() : void
 	{
-		FieldFeatures.apply(this.inst$,this);
+		FieldFeatureFactory.apply(this.inst$,this);
 	}
 }

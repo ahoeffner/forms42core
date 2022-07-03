@@ -14,7 +14,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { HTMLProperties } from "./fields/HTMLProperties.js";
 
 
-export class FieldFeatures
+export class FieldFeatureFactory
 {
 	private defaults$:Map<FieldInstance,HTMLProperties> =
 		new Map<FieldInstance,HTMLProperties>();
@@ -27,7 +27,7 @@ export class FieldFeatures
 		this.overrides$.clear();
 	}
 
-	public clone(props:HTMLProperties) : HTMLProperties
+	public static clone(props:HTMLProperties) : HTMLProperties
 	{
 		let clone:HTMLProperties = new HTMLProperties();
 
@@ -83,7 +83,7 @@ export class FieldFeatures
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
-			props.setValidValues(FieldFeatures.getSelectOptions(tag));
+			props.setValidValues(FieldFeatureFactory.getSelectOptions(tag));
 		}
 
 		else
@@ -118,7 +118,7 @@ export class FieldFeatures
 
 		if (!inst.isDefault(props))
 		{
-			FieldFeatures.applyChanges(inst,props);
+			FieldFeatureFactory.applyChanges(inst,props);
 			return;
 		}
 
@@ -156,7 +156,7 @@ export class FieldFeatures
 			tag.hidden = props.hidden;
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
-			FieldFeatures.setSelectOptions(tag,props);
+			FieldFeatureFactory.setSelectOptions(tag,props);
 		}
 	}
 
@@ -169,14 +169,14 @@ export class FieldFeatures
 
 	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
 	{
-		if (flag) FieldFeatures.setReadOnly(tag,props,flag);
-		else if (!props.readonly) FieldFeatures.setReadOnly(tag,props,flag);
+		if (flag) FieldFeatureFactory.setReadOnly(tag,props,flag);
+		else if (!props.readonly) FieldFeatureFactory.setReadOnly(tag,props,flag);
 	}
 
 	public static setEnabledState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
 	{
-		if (!flag) FieldFeatures.setEnabled(tag,props,flag);
-		else if (props.enabled) FieldFeatures.setEnabled(tag,props,flag);
+		if (!flag) FieldFeatureFactory.setEnabled(tag,props,flag);
+		else if (props.enabled) FieldFeatureFactory.setEnabled(tag,props,flag);
 	}
 
 	public static setReadOnly(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
@@ -214,7 +214,7 @@ export class FieldFeatures
 				for (let i = 0; i < tag.options.length; i++)
 					values.push(tag.options.item(i).value);
 
-				FieldFeatures.setSelectOptions(tag,props);
+				FieldFeatureFactory.setSelectOptions(tag,props);
 
 				for (let i = 0; i < tag.options.length; i++)
 				{

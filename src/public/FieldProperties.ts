@@ -14,5 +14,15 @@ import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class FieldProperties
 {
-	constructor(private inst$:ViewInstance) {}
+	constructor(private inst$:ViewInstance, private def$:boolean) {}
+
+	public get name() : string
+	{
+		return(this.inst$.name);
+	}
+
+	public get block() : string
+	{
+		return(this.inst$.block);
+	}
 }

@@ -12,6 +12,7 @@
 
 import { Form } from './Form.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
+import { FieldProperties } from './FieldProperties.js';
 
 export class Field
 {
@@ -22,9 +23,24 @@ export class Field
 		return(this.inst$.name);
 	}
 
+	public get block() : string
+	{
+		return(this.inst$.block);
+	}
+
 	public get form() : Form
 	{
 		return(this.inst$.form);
+	}
+
+	public getProperties() : FieldProperties
+	{
+		return(new FieldProperties(this.inst$,true));
+	}
+
+	public getRecordProperties() : FieldProperties
+	{
+		return(new FieldProperties(this.inst$,false));
 	}
 
 	public getValue() : any

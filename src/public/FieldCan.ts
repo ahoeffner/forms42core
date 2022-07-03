@@ -16,7 +16,7 @@ import { Form as View } from '../view/Form.js';
 import { Field } from './Field.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
-export class InertField
+export class FieldCan
 {
 	private fields$:ViewField[] = [];
 

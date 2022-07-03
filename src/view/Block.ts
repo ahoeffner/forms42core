@@ -14,9 +14,9 @@ import { Row } from "./Row.js";
 import { Form } from "./Form.js";
 import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
+import { FieldFeatures } from "./FieldFeatures.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
-import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -35,7 +35,7 @@ export class Block
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private properties:FieldProperties = new FieldProperties();
+	private properties:FieldFeatures = new FieldFeatures();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -90,7 +90,7 @@ export class Block
 
 	public getAllFields(field:string) : Field[]
 	{
-		
+		null;
 	}
 
 	public getFields(name?:string) : Field[]

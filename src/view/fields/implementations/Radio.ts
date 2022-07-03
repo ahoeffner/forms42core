@@ -14,8 +14,8 @@ import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
 import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldFeatures } from "../../FieldFeatures.js";
 import { DataConverter, Tier } from "../DataConverter.js";
-import { FieldProperties } from "../../FieldProperties.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
@@ -130,17 +130,17 @@ export class Radio implements FieldImplementation, EventListenerObject
 		switch(state)
 		{
 			case FieldState.OPEN:
-				if (enabled) FieldProperties.setEnabledState(this.element,this.properties,true);
-				if (!readonly) FieldProperties.setReadOnlyState(this.element,this.properties,false);
+				if (enabled) FieldFeatures.setEnabledState(this.element,this.properties,true);
+				if (!readonly) FieldFeatures.setReadOnlyState(this.element,this.properties,false);
 				break;
 
 			case FieldState.READONLY:
-				if (enabled) FieldProperties.setEnabledState(this.element,this.properties,true);
-				FieldProperties.setReadOnlyState(this.element,this.properties,true);
+				if (enabled) FieldFeatures.setEnabledState(this.element,this.properties,true);
+				FieldFeatures.setReadOnlyState(this.element,this.properties,true);
 				break;
 
 			case FieldState.DISABLED:
-				FieldProperties.setEnabledState(this.element,this.properties,false);
+				FieldFeatures.setEnabledState(this.element,this.properties,false);
 				break;
 			}
 	}

@@ -14,9 +14,9 @@ import { Field } from "./Field.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
+import { FieldFeatures } from "../FieldFeatures.js";
 import { HTMLProperties } from "./HTMLProperties.js";
 import { Display } from "./implementations/Display.js";
-import { FieldProperties } from "../FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
@@ -34,7 +34,7 @@ export class FieldInstance implements FieldEventHandler
 	constructor(form:Form,tag:HTMLElement)
 	{
 		this.form$ = form;
-		this.properties$ = FieldProperties.consume(tag);
+		this.properties$ = FieldFeatures.consume(tag);
 		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName,this.properties$.getAttribute("type"));

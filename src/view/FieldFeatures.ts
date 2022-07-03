@@ -14,7 +14,7 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { HTMLProperties } from "./fields/HTMLProperties.js";
 
 
-export class FieldProperties
+export class FieldFeatures
 {
 	private defaults$:Map<FieldInstance,HTMLProperties> =
 		new Map<FieldInstance,HTMLProperties>();
@@ -83,7 +83,7 @@ export class FieldProperties
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
-			props.setValidValues(FieldProperties.getSelectOptions(tag));
+			props.setValidValues(FieldFeatures.getSelectOptions(tag));
 		}
 
 		else
@@ -118,7 +118,7 @@ export class FieldProperties
 
 		if (!inst.isDefault(props))
 		{
-			FieldProperties.applyChanges(inst,props);
+			FieldFeatures.applyChanges(inst,props);
 			return;
 		}
 
@@ -156,7 +156,7 @@ export class FieldProperties
 			tag.hidden = props.hidden;
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
-			FieldProperties.setSelectOptions(tag,props);
+			FieldFeatures.setSelectOptions(tag,props);
 		}
 	}
 
@@ -169,14 +169,14 @@ export class FieldProperties
 
 	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
 	{
-		if (flag) FieldProperties.setReadOnly(tag,props,flag);
-		else if (!props.readonly) FieldProperties.setReadOnly(tag,props,flag);
+		if (flag) FieldFeatures.setReadOnly(tag,props,flag);
+		else if (!props.readonly) FieldFeatures.setReadOnly(tag,props,flag);
 	}
 
 	public static setEnabledState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
 	{
-		if (!flag) FieldProperties.setEnabled(tag,props,flag);
-		else if (props.enabled) FieldProperties.setEnabled(tag,props,flag);
+		if (!flag) FieldFeatures.setEnabled(tag,props,flag);
+		else if (props.enabled) FieldFeatures.setEnabled(tag,props,flag);
 	}
 
 	public static setReadOnly(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
@@ -214,7 +214,7 @@ export class FieldProperties
 				for (let i = 0; i < tag.options.length; i++)
 					values.push(tag.options.item(i).value);
 
-				FieldProperties.setSelectOptions(tag,props);
+				FieldFeatures.setSelectOptions(tag,props);
 
 				for (let i = 0; i < tag.options.length; i++)
 				{

@@ -90,7 +90,16 @@ export class Block
 
 	public getAllFields(field:string) : Field[]
 	{
-		null;
+		let fields:Field[] = [];
+		let current:Row = this.getRow(-1);
+
+		if (current != null)
+			fields.push(current.getField(field));
+
+		for (let i = 0; i < this.rows; i++)
+			fields.push(this.getRow(i).getField(field));
+
+		return(fields);
 	}
 
 	public getFields(name?:string) : Field[]

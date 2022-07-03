@@ -12,12 +12,19 @@
 
 import { Form } from './Form.js';
 import { Block } from './Block.js';
+import { Form as View } from '../view/Form.js';
 import { FieldInstance } from './FieldInstance.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
-export class Dummy
+export class InertField
 {
-	constructor(private fields$:ViewField[]) {}
+	private fields$:ViewField[] = [];
+
+	constructor(form:Form, block:string, field:string)
+	{
+		let flds:ViewField[] = View.getForm(form).getBlock(block)?.getFields(field);
+
+	}
 
 	public get name() : string
 	{
@@ -29,11 +36,6 @@ export class Dummy
 		return(this.fields$[0].block.form.parent);
 	}
 
-	public get block() : Block
-	{
-		return(this.fields$[0].block.block);
-	}
-
 	public getInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
@@ -42,40 +44,6 @@ export class Dummy
 		{
 			field.getInstances().forEach((inst) =>
 			{instances.push(new FieldInstance(inst))});
-		})
-
-		return(instances);
-	}
-
-	public getInstancesById(id:string) : FieldInstance[]
-	{
-		id = id.toLowerCase();
-		let instances:FieldInstance[] = [];
-
-		this.fields$.forEach((field) =>
-		{
-			field.getInstances().forEach((inst) =>
-			{
-				if (inst.id == id)
-					instances.push(new FieldInstance(inst));
-			});
-		})
-
-		return(instances);
-	}
-
-	public getInstancesByName(name:string) : FieldInstance[]
-	{
-		name = name.toLowerCase();
-		let instances:FieldInstance[] = [];
-
-		this.fields$.forEach((field) =>
-		{
-			field.getInstances().forEach((inst) =>
-			{
-				if (inst.name == name)
-					instances.push(new FieldInstance(inst));
-			});
 		})
 
 		return(instances);
@@ -93,20 +61,5 @@ export class Dummy
 		})
 
 		return(instances);
-	}
-
-	public getValue() : any
-	{
-		return(this.form.getValue(this.blockname,this.name));
-	}
-
-	public setValue(value:any) : void
-	{
-		this.form.setValue(this.blockname,this.name,value);
-	}
-
-	private get blockname() : string
-	{
-		return(this.fields$[0].block.name);
 	}
 }

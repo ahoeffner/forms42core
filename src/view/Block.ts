@@ -88,6 +88,11 @@ export class Block
 		return(fld);
 	}
 
+	public getAllFields(field:string) : Field[]
+	{
+		
+	}
+
 	public getFields(name?:string) : Field[]
 	{
 		let row:Row = null;

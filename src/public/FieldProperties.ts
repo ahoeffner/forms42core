@@ -10,7 +10,9 @@
  * accompanied this code).
  */
 
+import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
+
 export class FieldProperties
 {
-	
+	constructor(private inst$:ViewInstance) {}
 }

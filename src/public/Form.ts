@@ -11,11 +11,11 @@
  */
 
 import { Field } from './Field.js';
-import { FieldBox } from './FieldBox.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
+import { FieldProperties } from './FieldProperties.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
@@ -106,9 +106,9 @@ export class Form implements CanvasComponent
 		return(flds);
 	}
 
-	public getFieldDefinitions(block:string, field:string, clazz?:string) : FieldBox[]
+	public getFieldDefinitions(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
-		let flds:FieldBox[] = [];
+		let flds:FieldProperties[] = [];
 		let vflds:ViewField[] = [];
 
 		block = block?.toLowerCase();
@@ -117,7 +117,7 @@ export class Form implements CanvasComponent
 		vflds = View.getForm(this).getBlock(block).getAllFields(field);
 
 		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldBox(inst))})
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst))})
 
 		return(flds);
 	}

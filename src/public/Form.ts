@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Field } from './Field.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
@@ -90,6 +89,7 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
+	/*
 	public getField(block:string, field:string) : Field
 	{
 		block = block?.toLowerCase();
@@ -163,6 +163,7 @@ export class Form implements CanvasComponent
 
 		return(instances);
 	}
+	*/
 
 	public getValue(block:string, field:string) : any
 	{

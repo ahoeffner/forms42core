@@ -11,7 +11,6 @@
  */
 
 import { Form } from './Form.js';
-import { Field } from './Field.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class FieldInstance
@@ -20,7 +19,7 @@ export class FieldInstance
 
 	public get name() : string
 	{
-		return(this.field.name);
+		return(this.inst$.name);
 	}
 
 	public get form() : Form
@@ -28,18 +27,13 @@ export class FieldInstance
 		return(this.inst$.form);
 	}
 
-	public get field() : Field
-	{
-		return(this.form.getField(this.inst$.block,this.name));
-	}
-
 	public getValue() : any
 	{
-		return(this.field.getValue());
+		return(this.form.getValue(this.inst$.block,this.name));
 	}
 
 	public setValue(value:any) : void
 	{
-		this.field.setValue(value);
+		this.form.setValue(this.inst$.block,this.name,value);
 	}
 }

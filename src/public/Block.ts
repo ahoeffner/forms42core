@@ -11,13 +11,10 @@
  */
 
 import { Form } from './Form.js';
-import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
-import { Block as ViewBlock } from '../view/Block.js';
-import { Block as ModelBlock } from '../model/Block.js';
-import { Field as ViewField } from '../view/fields/Field';
-import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from './FieldInstance.js';
+import { Block as ModelBlock } from '../model/Block.js';
+import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
 {
@@ -59,6 +56,7 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
+	/*
 	public getFields() : Field[]
 	{
 		return(this.form$.getFields(this.name$));
@@ -103,6 +101,7 @@ export class Block
 
 		return(instances);
 	}
+	*/
 
 	public getValue(field:string) : any
 	{

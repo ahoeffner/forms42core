@@ -14,7 +14,6 @@ import { KeyMap } from "./KeyMap.js";
 import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
-import { Field } from "../../public/Field.js";
 import { Block } from "../../public/Block.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
@@ -105,11 +104,6 @@ export class FormEvent
 	public get blockname() : string
 	{
 		return(this.blockname$);
-	}
-
-	public get field() : Field
-	{
-		return(this.source?.field);
 	}
 
 	public get key() : KeyMap

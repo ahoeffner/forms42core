@@ -10,46 +10,9 @@
  * accompanied this code).
  */
 
-import { Form } from './Form.js';
-import { Block } from './Block.js';
-import { Form as View } from '../view/Form.js';
-import { Field } from './Field.js';
-import { Field as ViewField } from '../view/fields/Field.js';
+import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class FieldBox
 {
-	private fields$:ViewField[] = [];
-
-	constructor(form:Form, block:string, field:string)
-	{
-		this.fields$ = View.getForm(form).getBlock(block)?.getAllFields(field);
-
-	}
-
-	public getInstances() : Field[]
-	{
-		let instances:Field[] = [];
-
-		this.fields$.forEach((field) =>
-		{
-			field.getInstances().forEach((inst) =>
-			{instances.push(new Field(inst))});
-		})
-
-		return(instances);
-	}
-
-	public getInstancesByClass(clazz:string) : Field[]
-	{
-		clazz = clazz?.toLowerCase();
-		let instances:Field[] = [];
-
-		this.fields$.forEach((field) =>
-		{
-			field.getInstancesByClass(clazz).forEach((inst) =>
-			{instances.push(new Field(inst));});
-		})
-
-		return(instances);
-	}
+	constructor(private inst$:ViewInstance) {}
 }

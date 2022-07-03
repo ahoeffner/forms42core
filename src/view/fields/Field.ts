@@ -163,11 +163,21 @@ export class Field
 	{
 		let instances:FieldInstance[] = [];
 
-		this.instances$.forEach((inst) =>
+		if (clazz == null)
 		{
-			if (inst.properties.hasClass(clazz))
-				instances.push(inst);
-		});
+			this.instances$.forEach((inst) =>
+			{instances.push(inst);});
+		}
+
+		else
+
+		{
+			this.instances$.forEach((inst) =>
+			{
+				if (inst.properties.hasClass(clazz))
+					instances.push(inst);
+			});
+		}
 
 		return(instances)
 	}

@@ -11,14 +11,15 @@
  */
 
 import { Field } from './Field.js';
+import { FieldBox } from './FieldBox.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
-import { Field as ViewField } from '../view/fields/Field.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
+import { Field as ViewField } from '../view/fields/Field.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -89,81 +90,37 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-	/*
-	public getField(block:string, field:string) : Field
+	public getFields(block:string, field:string, clazz?:string) : Field[]
 	{
+		let flds:Field[] = [];
+		let vflds:ViewField[] = [];
+
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
 
-		let flds:ViewField[] = View.getForm(this).getBlock(block)?.getFields(field);
+		vflds = View.getForm(this).getBlock(block).getFields(field);
 
-		if (flds.length == 0)
-			return(null);
+		for (let i = 0; i < vflds.length; i++)
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new Field(inst))})
 
-		return(new Field(flds));
+		return(flds);
 	}
 
-	public getFields(block:string) : Field[]
+	public getFieldDefinitions(block:string, field:string, clazz?:string) : FieldBox[]
 	{
-		let fields:Field[] = [];
+		let flds:FieldBox[] = [];
+		let vflds:ViewField[] = [];
 
-		let flds:ViewField[] = View.getForm(this).getBlock(block)?.getFields();
-		if (flds.length == 0) return([]);
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
 
-		flds = flds.sort((f1,f2) => {return(f1.name > f2.name ? 1 : -1)});
+		vflds = View.getForm(this).getBlock(block).getAllFields(field);
 
-		let vfld:ViewField[] = [];
-		let name:string = flds[0].name;
+		for (let i = 0; i < vflds.length; i++)
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldBox(inst))})
 
-		for (let i = 0; i < flds.length; i++)
-		{
-			if (name != flds[i].name || i == flds.length - 1)
-			{
-				fields.push(new Field(vfld));
-				name = flds[i].name;
-				vfld = [];
-			}
-		}
-
-		return(fields);
+		return(flds);
 	}
-
-	public getFieldInstancesById(block:string, id:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-		let flds:Field[] = this.getFields(block);
-
-		flds.forEach((fld) =>
-		{
-			fld.getInstancesById(id).
-			forEach((inst) => {instances.push(inst)})
-		})
-
-		return(instances);
-	}
-
-	public getFieldInstancesByName(block:string, field:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-		let fld:Field = this.getField(block,field);
-		fld.getInstancesByName(field).forEach((inst) => {instances.push(inst);})
-		return(instances);
-	}
-
-	public getFieldInstancesByClass(block:string, clazz:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-		let flds:Field[] = this.getFields(block);
-
-		flds.forEach((fld) =>
-		{
-			fld.getInstancesByClass(clazz).
-			forEach((inst) => {instances.push(inst)})
-		})
-
-		return(instances);
-	}
-	*/
 
 	public getValue(block:string, field:string) : any
 	{

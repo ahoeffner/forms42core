@@ -42,7 +42,7 @@ export class FieldInstance implements FieldEventHandler
 
 		this.impl.create(this,this.properties$.tag);
 
-		this.properties$["inst$"] = this;
+		this.properties.inst = this;
 		this.defproperties$ = this.properties;
 		this.element$ = this.impl.getElement();
 
@@ -98,7 +98,7 @@ export class FieldInstance implements FieldEventHandler
 	public set properties(props:HTMLProperties)
 	{
 		this.properties$ = props;
-		this.impl.apply(props);
+		this.impl.apply(props,false);
 	}
 
 	public get element() : HTMLElement
@@ -160,7 +160,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public initialize() : void
 	{
-		this.impl.apply(this.properties$);
+		this.impl.apply(this.properties$,true);
 	}
 
 	public setInstanceType(type:string) : void

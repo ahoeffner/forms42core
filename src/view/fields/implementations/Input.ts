@@ -58,17 +58,12 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	public apply(properties:HTMLProperties) : void
+	public apply(properties:HTMLProperties, init:boolean) : void
 	{
 		properties.apply();
 		this.properties = properties;
+		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());
-
-		if (properties["init$"])
-		{
-			properties["init$"] = false;
-			this.addEvents(this.element);
-		}
 	}
 
 	public getFieldState() : FieldState

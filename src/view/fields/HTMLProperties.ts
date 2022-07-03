@@ -11,8 +11,8 @@
  */
 
 import { Alert } from "../../application/Alert.js";
-import { FieldProperties } from "../FieldProperties.js";
 import { FieldInstance } from "./FieldInstance.js";
+import { FieldProperties } from "../FieldProperties.js";
 
 export interface Style
 {
@@ -27,14 +27,11 @@ export class HTMLProperties
 	private id$:string = null;
 	private name$:string = null;
 	private block$:string = null;
+	private inst$:FieldInstance = null;
 
 	private styles$:Style[] = [];
 	private tagname$:string = null;
 	private classes$:string[] = [];
-
-	// Hidden for end users
-	private init$:boolean = true;
-	private inst$:FieldInstance = null;
 
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
@@ -170,6 +167,16 @@ export class HTMLProperties
 
 		if (this.changes != null)
 			this.changes.all = true;
+	}
+
+	public get inst() : FieldInstance
+	{
+		return(this.inst$);
+	}
+
+	public set inst(inst:FieldInstance)
+	{
+		this.inst$ = inst;
 	}
 
 	public get value() : string

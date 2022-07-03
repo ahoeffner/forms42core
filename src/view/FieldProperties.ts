@@ -37,9 +37,6 @@ export class FieldProperties
 			clone[name] = this[name];
 		}
 
-		clone["changes"] = {};
-		clone["init$"] = false;
-
 		return(clone);
 	}
 

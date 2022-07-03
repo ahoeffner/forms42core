@@ -11,8 +11,8 @@
  */
 
 import { Form } from './Form.js';
+import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
-import { FieldInstance } from './FieldInstance.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 

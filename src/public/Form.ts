@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
+import { Field } from './Field.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
-import { FieldInstance } from './FieldInstance.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';

@@ -13,7 +13,7 @@
 import { Form } from './Form.js';
 import { Block } from './Block.js';
 import { Form as View } from '../view/Form.js';
-import { FieldInstance } from './FieldInstance.js';
+import { Field } from './Field.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 
 export class InertField
@@ -36,28 +36,28 @@ export class InertField
 		return(this.fields$[0].block.form.parent);
 	}
 
-	public getInstances() : FieldInstance[]
+	public getInstances() : Field[]
 	{
-		let instances:FieldInstance[] = [];
+		let instances:Field[] = [];
 
 		this.fields$.forEach((field) =>
 		{
 			field.getInstances().forEach((inst) =>
-			{instances.push(new FieldInstance(inst))});
+			{instances.push(new Field(inst))});
 		})
 
 		return(instances);
 	}
 
-	public getInstancesByClass(clazz:string) : FieldInstance[]
+	public getInstancesByClass(clazz:string) : Field[]
 	{
 		clazz = clazz?.toLowerCase();
-		let instances:FieldInstance[] = [];
+		let instances:Field[] = [];
 
 		this.fields$.forEach((field) =>
 		{
 			field.getInstancesByClass(clazz).forEach((inst) =>
-			{instances.push(new FieldInstance(inst));});
+			{instances.push(new Field(inst));});
 		})
 
 		return(instances);

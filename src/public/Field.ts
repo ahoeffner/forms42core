@@ -13,7 +13,7 @@
 import { Form } from './Form.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
-export class FieldInstance
+export class Field
 {
 	constructor(private inst$:ViewInstance) {}
 

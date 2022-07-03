@@ -2,7 +2,7 @@ const version = "2.1.1";
 console.log("Version "+version);
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
-export { FieldInstance } from './src/public/FieldInstance.js';
+export { Field as FieldInstance } from './src/public/Field.js';
 
 export { dates } from './src/model/dates/dates.js';
 export { DataConverter, Tier } from "./src/view/fields/DataConverter.js";

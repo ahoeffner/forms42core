@@ -15,10 +15,10 @@ import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
 import { Block } from "../../public/Block.js";
+import { Field } from "../../public/Field.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
 import { Form as ModelForm } from "../../model/Form.js";
-import { FieldInstance } from "../../public/FieldInstance.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 
 export class KeyEventSource
@@ -54,7 +54,7 @@ export class FormEvent
 	}
 
 	private block$:Block = null;
-	private instance$:FieldInstance = null;
+	private instance$:Field = null;
 
 	private bevaluated:boolean = false;
 	private ievaluated:boolean = false;
@@ -80,12 +80,12 @@ export class FormEvent
 		return(this.form$);
 	}
 
-	public get source() : FieldInstance
+	public get source() : Field
 	{
 		if (this.ievaluated) return(this.instance$);
 
 		if (this.inst != null)
-			this.instance$ = new FieldInstance(this.inst);
+			this.instance$ = new Field(this.inst);
 
 		this.ievaluated = true;
 		return(this.instance$);

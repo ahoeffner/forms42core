@@ -13,7 +13,6 @@
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
-import { FieldProperties as PublicProperties } from "../public/FieldProperties.js";
 
 
 export class FieldFeatureFactory
@@ -26,8 +25,6 @@ export class FieldFeatureFactory
 		// Add $ ending of properties
 		for (let i = 0; i < ignore.length; i++)
 			ignore[i] = ignore[i]+"$";
-
-		ignore.push("inst$");
 
 		for(let attr in exist)
 		{
@@ -47,7 +44,7 @@ export class FieldFeatureFactory
 		for(let attr in props)
 		{
 			let name:string = attr;
-			clone[name] = this[name];
+			clone[name] = props[name];
 		}
 
 		return(clone);
@@ -55,8 +52,6 @@ export class FieldFeatureFactory
 
 	public static merge(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
 	{
-		console.log("Merge properties");
-
 		let fprops:FieldProperties = inst$.properties;
 
 		if (!default$ && inst$.isDefault())
@@ -68,17 +63,12 @@ export class FieldFeatureFactory
 		for (let i = 0; i < ignore.length; i++)
 			ignore[i] = ignore[i]+"$";
 
-		ignore.push("inst$");
-		ignore.push("default$");
-
 		for(let attr in props)
 		{
 			let name:string = attr;
 
 			if (ignore.includes(name))
 				continue;
-
-			console.log("copy "+name)
 
 			fprops[name] = props[name];
 		}

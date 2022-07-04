@@ -21,6 +21,7 @@ export class FieldProperties extends BasicProperties
 	private id$:string = null;
 	private name$:string = null;
 	private block$:string = null;
+	private inst$:FieldInstance = null;
 
 	public get id() : string
 	{
@@ -88,7 +89,7 @@ export class FieldProperties extends BasicProperties
 
 	public set inst(inst:FieldInstance)
 	{
-		this["inst$"] = inst;
+		this.inst$ = inst;
 	}
 
 	public apply() : void

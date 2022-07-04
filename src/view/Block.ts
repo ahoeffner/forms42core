@@ -98,10 +98,16 @@ export class Block
 		let current:Row = this.getRow(-1);
 
 		if (current != null)
-			fields.push(current.getField(field));
+		{
+			let fld:Field = current.getField(field);
+			if (fld != null) fields.push(fld);
+		}
 
 		for (let i = 0; i < this.rows; i++)
-			fields.push(this.getRow(i).getField(field));
+		{
+			let fld:Field = current.getField(field);
+			if (fld != null) fields.push(fld);
+		}
 
 		return(fields);
 	}

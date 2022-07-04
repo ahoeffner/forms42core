@@ -108,8 +108,8 @@ export class Form implements CanvasComponent
 
 	public getFieldProperties(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
-		let flds:FieldProperties[] = [];
 		let vflds:ViewField[] = [];
+		let flds:FieldProperties[] = [];
 
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();

@@ -113,7 +113,6 @@ export class FieldInstance implements FieldEventHandler
 
 	public set properties(props:FieldProperties)
 	{
-		console.log("changed ? "+(props != this.properties$))
 		this.properties$ = props;
 		this.impl.apply(props,false);
 	}
@@ -125,7 +124,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public set defaultProperties(props:FieldProperties)
 	{
-		console.log("changed ? "+(props != this.defproperties$))
+		console.log("def changed ? "+(props != this.defproperties$))
 		this.defproperties$ = props;
 		this.impl.apply(props,false);
 	}

@@ -15,7 +15,7 @@ import { BasicProperties } from "./BasicProperties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 
 
-export class HTMLProperties extends BasicProperties
+export class FieldProperties extends BasicProperties
 {
 	private row$:number = -1;
 	private id$:string = null;

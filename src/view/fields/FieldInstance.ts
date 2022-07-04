@@ -14,8 +14,8 @@ import { Field } from "./Field.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
-import { HTMLProperties } from "./HTMLProperties.js";
 import { Display } from "./implementations/Display.js";
+import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
@@ -28,8 +28,8 @@ export class FieldInstance implements FieldEventHandler
 	private field$:Field = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
-	private properties$:HTMLProperties = null;
-	private defproperties$:HTMLProperties = null;
+	private properties$:FieldProperties = null;
+	private defproperties$:FieldProperties = null;
 
 	constructor(form:Form,tag:HTMLElement)
 	{
@@ -79,7 +79,7 @@ export class FieldInstance implements FieldEventHandler
 		return(this.field$);
 	}
 
-	public isDefault(props:HTMLProperties) : boolean
+	public isDefault(props:FieldProperties) : boolean
 	{
 		return(props == this.defproperties$);
 	}
@@ -90,12 +90,12 @@ export class FieldInstance implements FieldEventHandler
 		else       this.element.classList.remove("invalid");
 	}
 
-	public get properties() : HTMLProperties
+	public get properties() : FieldProperties
 	{
 		return(this.properties$);
 	}
 
-	public set properties(props:HTMLProperties)
+	public set properties(props:FieldProperties)
 	{
 		this.properties$ = props;
 		this.impl.apply(props,false);

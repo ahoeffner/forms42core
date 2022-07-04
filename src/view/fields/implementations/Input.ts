@@ -14,8 +14,8 @@ import { Pattern } from "../Pattern.js";
 import { DataType } from "./DataType.js";
 import { Section } from "../interfaces/Pattern.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
-import { HTMLProperties } from "../HTMLProperties.js";
 import { Alert } from "../../../application/Alert.js";
+import { FieldProperties } from "../FieldProperties.js";
 import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
@@ -43,7 +43,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private state:FieldState = null;
     private placeholder:string = null;
 	private datetokens:FormatToken[] = null;
-	private properties:HTMLProperties = null;
+	private properties:FieldProperties = null;
 	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
@@ -58,7 +58,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	public apply(properties:HTMLProperties, init:boolean) : void
+	public apply(properties:FieldProperties, init:boolean) : void
 	{
 		properties.apply();
 		this.properties = properties;

@@ -20,8 +20,8 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
-import { HTMLProperties } from "./fields/HTMLProperties.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { FieldProperties } from "./fields/FieldProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
@@ -38,8 +38,8 @@ export class Block
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private factory:FieldFeatureFactory = new FieldFeatureFactory();
 
-	private recprops$:Map<object,Map<FieldInstance,HTMLProperties>> =
-		new Map<object,Map<FieldInstance,HTMLProperties>>();
+	private recprops$:Map<object,Map<FieldInstance,FieldProperties>> =
+		new Map<object,Map<FieldInstance,FieldProperties>>();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{

@@ -11,7 +11,7 @@
  */
 
 import { BrowserEvent } from "../../BrowserEvent.js";
-import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldProperties } from "../FieldProperties.js";
 import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
@@ -20,7 +20,7 @@ import { FieldImplementation, FieldState } from "../interfaces/FieldImplementati
 export class Textarea implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
-	private properties:HTMLProperties = null;
+	private properties:FieldProperties = null;
 	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
@@ -34,7 +34,7 @@ export class Textarea implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	public apply(properties:HTMLProperties, init:boolean) : void
+	public apply(properties:FieldProperties, init:boolean) : void
 	{
 		properties.apply();
 		this.properties = properties;

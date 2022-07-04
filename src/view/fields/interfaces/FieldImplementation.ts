@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldProperties } from "../FieldProperties.js";
 import { FieldEventHandler } from "./FieldEventHandler.js";
 
 export enum FieldState
@@ -22,7 +22,7 @@ export enum FieldState
 
 export interface FieldImplementation
 {
-	apply(properties:HTMLProperties, init:boolean) : void
+	apply(properties:FieldProperties, init:boolean) : void
 	create(eventhandler:FieldEventHandler, tag:string) : HTMLElement;
 
 	clear() : void;

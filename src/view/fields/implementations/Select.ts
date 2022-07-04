@@ -13,7 +13,7 @@
 import { DataType } from "./DataType.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
-import { HTMLProperties } from "../HTMLProperties.js";
+import { FieldProperties } from "../FieldProperties.js";
 import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
@@ -22,7 +22,7 @@ import { FieldImplementation, FieldState } from "../interfaces/FieldImplementati
 export class Select implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
-	private properties:HTMLProperties = null;
+	private properties:FieldProperties = null;
 	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
@@ -39,7 +39,7 @@ export class Select implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	public apply(properties:HTMLProperties) : void
+	public apply(properties:FieldProperties) : void
 	{
 		properties.apply();
 		this.properties = properties;

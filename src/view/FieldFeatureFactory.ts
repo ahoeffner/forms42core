@@ -11,15 +11,15 @@
  */
 
 import { FieldInstance } from "./fields/FieldInstance.js";
-import { HTMLProperties } from "./fields/HTMLProperties.js";
-import { FieldProperties } from "../public/FieldProperties.js";
+import { FieldProperties } from "./fields/FieldProperties.js";
+import { FieldProperties as PublicProperties } from "../public/FieldProperties.js";
 
 
 export class FieldFeatureFactory
 {
-	public static clone(props:HTMLProperties) : HTMLProperties
+	public static clone(props:FieldProperties) : FieldProperties
 	{
-		let clone:HTMLProperties = new HTMLProperties();
+		let clone:FieldProperties = new FieldProperties();
 
 		for(let attr in props)
 		{
@@ -30,14 +30,14 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public static merge(props:FieldProperties, default$:boolean) : void
+	public static merge(props:PublicProperties, default$:boolean) : void
 	{
 		console.log("Merge properties");
 	}
 
-	public static consume(tag:HTMLElement) : HTMLProperties
+	public static consume(tag:HTMLElement) : FieldProperties
 	{
-		let props:HTMLProperties = new HTMLProperties();
+		let props:FieldProperties = new FieldProperties();
 		let skip:string[] = ["id","name","block","row","value"];
 
 		props.tag = tag.tagName;
@@ -101,7 +101,7 @@ export class FieldFeatureFactory
 		return(props);
 	}
 
-	public static apply(inst:FieldInstance, props:HTMLProperties) : void
+	public static apply(inst:FieldInstance, props:FieldProperties) : void
 	{
 		let styles:string = "";
 		let tag:HTMLElement = inst.element;
@@ -144,19 +144,19 @@ export class FieldFeatureFactory
 		}
 	}
 
-	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	public static setReadOnlyState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
 		if (flag) FieldFeatureFactory.setReadOnly(tag,props,flag);
 		else if (!props.readonly) FieldFeatureFactory.setReadOnly(tag,props,flag);
 	}
 
-	public static setEnabledState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	public static setEnabledState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
 		if (!flag) FieldFeatureFactory.setEnabled(tag,props,flag);
 		else if (props.enabled) FieldFeatureFactory.setEnabled(tag,props,flag);
 	}
 
-	public static setReadOnly(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void
+	public static setReadOnly(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
 		let ignore:boolean = true;
 
@@ -202,7 +202,7 @@ export class FieldFeatureFactory
 		}
 	}
 
-	public static setEnabled(tag:HTMLElement, _props:HTMLProperties, flag:boolean) : void
+	public static setEnabled(tag:HTMLElement, _props:FieldProperties, flag:boolean) : void
 	{
 		if (tag instanceof HTMLInputElement) tag.disabled = !flag;
 		if (tag instanceof HTMLSelectElement) tag.disabled = !flag;
@@ -231,7 +231,7 @@ export class FieldFeatureFactory
 		return(options);
 	}
 
-	private static setSelectOptions(tag:HTMLSelectElement, props:HTMLProperties) : void
+	private static setSelectOptions(tag:HTMLSelectElement, props:FieldProperties) : void
 	{
 		while(tag.options.length > 0)
 			tag.options.remove(0);

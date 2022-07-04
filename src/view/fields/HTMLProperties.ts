@@ -29,9 +29,10 @@ export class HTMLProperties
 	private block$:string = null;
 	private inst$:FieldInstance = null;
 
+	private tag$:string = null;
 	private styles$:Style[] = [];
-	private tagname$:string = null;
 	private classes$:string[] = [];
+	private attrs:Map<string,string> = new Map<string,string>();
 
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
@@ -40,10 +41,8 @@ export class HTMLProperties
 
 	private value$:string = null;
     private values:Map<string,string> = null;
-    private valmap:Map<string,string> = null;
 
 	private fixed:string[] = ["id","name","block","row"];
-	private attrs:Map<string,string> = new Map<string,string>();
 
 	private changes:
 	{
@@ -143,15 +142,20 @@ export class HTMLProperties
 
 	public get tag() : string
 	{
-		return(this.tagname$);
+		return(this.tag$);
 	}
 
 	public set tag(tag:string)
 	{
-		this.tagname$ = tag?.toLowerCase();
+		this.tag$ = tag?.toLowerCase();
 
 		if (this.changes != null)
 			this.changes.all = true;
+	}
+
+	public get value() : string
+	{
+		return(this.value$);
 	}
 
 	public set value(value:string)
@@ -177,11 +181,6 @@ export class HTMLProperties
 	public set inst(inst:FieldInstance)
 	{
 		this.inst$ = inst;
-	}
-
-	public get value() : string
-	{
-		return(this.value$);
 	}
 
 	public get enabled() : boolean
@@ -389,10 +388,10 @@ export class HTMLProperties
 
     public getValidValue(key:string) : string
 	{
-		if (this.valmap == null)
+		if (this.values == null)
 			return(null);
 
-		return(this.valmap.get(key));
+		return(this.values.get(key));
     }
 
     public getValidValues() : Map<string,string>
@@ -414,9 +413,6 @@ export class HTMLProperties
 
 		if (this.changes != null)
 			this.changes.all = true;
-
-		this.valmap = new Map<string,string>();
-		this.values.forEach((val,key) => {this.valmap.set(val,key)});
     }
 
 	public apply() : void

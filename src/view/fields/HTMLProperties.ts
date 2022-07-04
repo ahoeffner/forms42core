@@ -11,21 +11,16 @@
  */
 
 import { FieldInstance } from "./FieldInstance.js";
+import { BasicProperties } from "./BasicProperties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
-import { FieldProperties } from "../../public/FieldProperties.js";
 
 
-export class HTMLProperties extends FieldProperties
+export class HTMLProperties extends BasicProperties
 {
 	private row$:number = -1;
 	private id$:string = null;
 	private name$:string = null;
 	private block$:string = null;
-
-	public constructor()
-	{
-		super(null,true);
-	}
 
 
 	public get id() : string

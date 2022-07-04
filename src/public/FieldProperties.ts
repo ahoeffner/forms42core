@@ -11,8 +11,8 @@
  */
 
 import { Form } from './Form.js';
+import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
-import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export interface Style
 {
@@ -22,10 +22,13 @@ export interface Style
 
 export class FieldProperties
 {
+	private default$:boolean = true;
+	private inst$:FieldInstance = null;
+
 	private tag$:string = null;
 	private styles$:Style[] = [];
 	private classes$:string[] = [];
-	private attrs$:Map<string,string> = new Map<string,string>();
+	private attribss$:Map<string,string> = new Map<string,string>();
 
 	private hidden$:boolean = false;
 	private enabled$:boolean = false;
@@ -39,7 +42,11 @@ export class FieldProperties
 	private structured$:string[] = ["hidden","enabled","readonly","required","value","class","style"];
 
 
-	constructor(private inst$:ViewInstance, private default$:boolean) {}
+	constructor(inst$:FieldInstance, default$:boolean)
+	{
+		this.inst$ = inst$;
+		this.default$ = default$;
+	}
 
 	public get name() : string
 	{
@@ -72,6 +79,12 @@ export class FieldProperties
 		this.tag$ = tag?.toLowerCase();
 	}
 
+	public setTag(tag:string) : FieldProperties
+	{
+		this.tag = tag;
+		return(this);
+	}
+
 	public get enabled() : boolean
 	{
 		return(this.enabled$);
@@ -80,6 +93,12 @@ export class FieldProperties
 	public set enabled(flag:boolean)
 	{
 		this.enabled$ = flag;
+	}
+
+	public setEnabled(flag:boolean) : FieldProperties
+	{
+		this.enabled = flag;
+		return(this);
 	}
 
 	public get readonly() : boolean
@@ -92,6 +111,12 @@ export class FieldProperties
 		this.readonly$ = flag;
 	}
 
+	public setReadOnly(flag:boolean) : FieldProperties
+	{
+		this.readonly = flag;
+		return(this);
+	}
+
 	public get required() : boolean
 	{
 		return(this.required$);
@@ -100,6 +125,12 @@ export class FieldProperties
 	public set required(flag:boolean)
 	{
 		this.required$ = flag;
+	}
+
+	public setRequired(flag:boolean) : FieldProperties
+	{
+		this.required = flag;
+		return(this);
 	}
 
 	public get hidden() : boolean
@@ -112,12 +143,18 @@ export class FieldProperties
 		this.hidden$ = flag;
 	}
 
+	public setHidden(flag:boolean) : FieldProperties
+	{
+		this.hidden = flag;
+		return(this);
+	}
+
 	public getStyles() : Style[]
 	{
 		return(this.styles$);
 	}
 
-	public setStyles(styles:string) : void
+	public setStyles(styles:string) : FieldProperties
 	{
 		let elements:string[] = styles.split(";")
 
@@ -138,18 +175,22 @@ export class FieldProperties
 				}
 			}
 		}
+
+		return(this);
 	}
 
-	public setStyle(style:string, value:string) : void
+	public setStyle(style:string, value:string) : FieldProperties
 	{
 		value = value.toLowerCase();
 		style = style.toLowerCase();
 
 		this.removeStyle(style);
 		this.styles$.push({style: style, value: value});
+
+		return(this);
 	}
 
-	public removeStyle(style:string) : void
+	public removeStyle(style:string) : FieldProperties
 	{
 		style = style.toLowerCase();
 
@@ -161,14 +202,18 @@ export class FieldProperties
 				break;
 			}
 		}
+
+		return(this);
 	}
 
-	public setClass(clazz:any) : void
+	public setClass(clazz:any) : FieldProperties
 	{
 		clazz = clazz.toLowerCase();
 
 		if (this.classes$[clazz] == null)
 			this.classes$.push(clazz);
+
+		return(this);
 	}
 
 	public getClasses() : string[]
@@ -182,13 +227,14 @@ export class FieldProperties
 		return(this.classes$.includes(clazz));
 	}
 
-	public removeClass(clazz:any) : void
+	public removeClass(clazz:any) : FieldProperties
 	{
 		clazz = clazz.toLowerCase();
 		delete this.classes$[this.classes$.indexOf(clazz)];
+		return(this);
 	}
 
-	public setClasses(classes:string|string[]) : void
+	public setClasses(classes:string|string[]) : FieldProperties
 	{
 		this.classes$ = [];
 
@@ -200,19 +246,21 @@ export class FieldProperties
 			if (clazz.length > 0)
 				this.classes$.push(clazz.toLowerCase());
 		}
+
+		return(this);
 	}
 
 	public getAttributes() : Map<string,string>
 	{
-		return(this.attrs$);
+		return(this.attribss$);
 	}
 
 	public getAttribute(attr:string) : string
 	{
-		return(this.attrs$.get(attr.toLowerCase()));
+		return(this.attribss$.get(attr.toLowerCase()));
 	}
 
-	public setAttribute(attr:string, value:any) : void
+	public setAttribute(attr:string, value:any) : FieldProperties
 	{
 		attr = attr.toLowerCase();
 
@@ -246,13 +294,14 @@ export class FieldProperties
 		if (value != null)
 			val += value;
 
-		this.attrs$.set(attr,val);
+		this.attribss$.set(attr,val);
 	}
 
-	public removeAttribute(attr:string) : void
+	public removeAttribute(attr:string) : FieldProperties
 	{
 		attr = attr.toLowerCase();
-		this.attrs$.delete(attr.toLowerCase());
+		this.attribss$.delete(attr.toLowerCase());
+		return(this);
 	}
 
 	public get value() : string
@@ -272,12 +321,18 @@ export class FieldProperties
 		}
 	}
 
+	public setValue(value:string) : FieldProperties
+	{
+		this.value = value;
+		return(this);
+	}
+
     public getValidValues() : Map<string,string>
 	{
 		return(this.values$);
     }
 
-    public setValidValues(values: Set<string> | Map<string,string>) : void
+    public setValidValues(values: Set<string> | Map<string,string>) : FieldProperties
 	{
 		if (values instanceof Set)
 		{
@@ -285,6 +340,8 @@ export class FieldProperties
 			values.forEach((value) => {this.values$.set(value,value)});
 		}
         else this.values$ = values;
+
+		return(this);
     }
 
 	public apply() : void

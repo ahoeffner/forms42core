@@ -20,6 +20,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
+import { HTMLProperties } from "./fields/HTMLProperties.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
@@ -36,6 +37,9 @@ export class Block
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private factory:FieldFeatureFactory = new FieldFeatureFactory();
+
+	private recprops$:Map<object,Map<FieldInstance,HTMLProperties>> =
+		new Map<object,Map<FieldInstance,HTMLProperties>>();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -193,7 +197,7 @@ export class Block
 		if (!this.validated)
 			return(false);
 
-		this.factory.clear();
+		this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear()});
 
 		return(true);
@@ -201,8 +205,6 @@ export class Block
 
 	public addInstance(inst:FieldInstance) : void
 	{
-		this.factory.setDefault(inst,inst.properties);
-
 		if (this.fieldnames$.indexOf(inst.name) < 0)
 			this.fieldnames$.push(inst.name);
 	}

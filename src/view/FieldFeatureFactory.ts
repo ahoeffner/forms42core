@@ -12,21 +12,11 @@
 
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { HTMLProperties } from "./fields/HTMLProperties.js";
+import { FieldProperties } from "../public/FieldProperties.js";
 
 
 export class FieldFeatureFactory
 {
-	private defaults$:Map<FieldInstance,HTMLProperties> =
-		new Map<FieldInstance,HTMLProperties>();
-
-	private overrides$:Map<object,Map<FieldInstance,HTMLProperties>> =
-		new Map<object,Map<FieldInstance,HTMLProperties>>();
-
-	public clear() : void
-	{
-		this.overrides$.clear();
-	}
-
 	public static clone(props:HTMLProperties) : HTMLProperties
 	{
 		let clone:HTMLProperties = new HTMLProperties();
@@ -40,9 +30,9 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public setDefault(inst:FieldInstance, properties:HTMLProperties) : void
+	public static merge(props:FieldProperties, default$:boolean) : void
 	{
-		this.defaults$.set(inst,properties);
+		console.log("Merge properties");
 	}
 
 	public static consume(tag:HTMLElement) : HTMLProperties
@@ -116,12 +106,6 @@ export class FieldFeatureFactory
 		let styles:string = "";
 		let tag:HTMLElement = inst.element;
 
-		if (!inst.isDefault(props))
-		{
-			FieldFeatureFactory.applyChanges(inst,props);
-			return;
-		}
-
 		tag.setAttribute("name",props.name);
 		tag.setAttribute("block",props.block);
 
@@ -158,13 +142,6 @@ export class FieldFeatureFactory
 			tag.required = props.required;
 			FieldFeatureFactory.setSelectOptions(tag,props);
 		}
-	}
-
-	public static applyChanges(inst:FieldInstance, props:HTMLProperties)
-	{
-		let tag:HTMLElement = inst.element;
-		tag.classList.add("green");
-		inst.properties = props;
 	}
 
 	public static setReadOnlyState(tag:HTMLElement, props:HTMLProperties, flag:boolean) : void

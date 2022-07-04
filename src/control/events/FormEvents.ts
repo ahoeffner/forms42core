@@ -54,10 +54,10 @@ export class FormEvent
 	}
 
 	private block$:Block = null;
-	private instance$:Field = null;
+	private field$:Field = null;
 
 	private bevaluated:boolean = false;
-	private ievaluated:boolean = false;
+	private fevaluated:boolean = false;
 
 	private constructor
 		(
@@ -80,15 +80,15 @@ export class FormEvent
 		return(this.form$);
 	}
 
-	public get source() : Field
+	public get field() : Field
 	{
-		if (this.ievaluated) return(this.instance$);
+		if (this.fevaluated) return(this.field$);
 
 		if (this.inst != null)
-			this.instance$ = new Field(this.inst);
+			this.field$ = new Field(this.inst);
 
-		this.ievaluated = true;
-		return(this.instance$);
+		this.fevaluated = true;
+		return(this.field$);
 	}
 
 	public get block() : Block

@@ -10,11 +10,13 @@
  * accompanied this code).
  */
 
+import { Form } from './Form.js';
+import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class FieldProperties
 {
-	constructor(private inst$:ViewInstance, private def$:boolean) {}
+	constructor(private inst$:ViewInstance, private default$:boolean) {}
 
 	public get name() : string
 	{
@@ -24,5 +26,21 @@ export class FieldProperties
 	public get block() : string
 	{
 		return(this.inst$.block);
+	}
+
+	public get row() : number
+	{
+		if (this.inst$.row < 0) return(null);
+		else 					return(this.inst$.row);
+	}
+
+	public get form() : Form
+	{
+		return(this.inst$.form);
+	}
+
+	public apply() : void
+	{
+		FieldFeatureFactory.merge(this,this.default$);
 	}
 }

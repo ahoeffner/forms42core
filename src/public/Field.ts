@@ -11,8 +11,8 @@
  */
 
 import { Form } from './Form.js';
-import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 import { FieldProperties } from './FieldProperties.js';
+import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
 export class Field
 {
@@ -26,6 +26,12 @@ export class Field
 	public get block() : string
 	{
 		return(this.inst$.block);
+	}
+
+	public get row() : number
+	{
+		if (this.inst$.row < 0) return(null);
+		else 					return(this.inst$.row);
 	}
 
 	public get form() : Form

@@ -30,6 +30,7 @@ export class FieldInstance implements FieldEventHandler
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
 	private defproperties$:FieldProperties = null;
+	private clazz:Class<FieldImplementation> = null;
 
 	constructor(form:Form,tag:HTMLElement)
 	{
@@ -37,9 +38,9 @@ export class FieldInstance implements FieldEventHandler
 		this.properties$ = FieldFeatureFactory.consume(tag);
 		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);
 
-		let clazz:Class<FieldImplementation> = FieldTypes.get(tag.tagName,this.properties$.getAttribute("type"));
-		this.impl = new clazz();
+		this.clazz = FieldTypes.get(tag.tagName,this.properties$.getAttribute("type"));
 
+		this.impl = new this.clazz();
 		this.impl.create(this,this.properties$.tag);
 
 		this.properties.inst = this;
@@ -124,7 +125,6 @@ export class FieldInstance implements FieldEventHandler
 
 	public set defaultProperties(props:FieldProperties)
 	{
-		console.log("def changed ? "+(props != this.defproperties$))
 		this.defproperties$ = props;
 		this.impl.apply(props,false);
 	}

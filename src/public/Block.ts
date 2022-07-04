@@ -13,6 +13,7 @@
 import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Form as Forms } from '../model/Form.js';
+import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
@@ -56,52 +57,16 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
-	/*
-	public getFields() : Field[]
+	public getFields(field:string, clazz?:string) : Field[]
 	{
-		return(this.form$.getFields(this.name$));
+		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getFieldInstances() : FieldInstance[]
+	public getFieldProperties(field:string, clazz?:string) : FieldProperties[]
 	{
-		let instances:FieldInstance[] = [];
-
-		this.getFields().forEach((fld) =>
-		{instances.push(...fld.getInstances());})
-
-		return(instances);
+		return(this.form.getFieldProperties(this.name,field,clazz));
 	}
 
-	public getFieldInstancesById(id:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-
-		this.getFields().forEach((fld) =>
-		{instances.push(...fld.getInstancesById(id));})
-
-		return(instances);
-	}
-
-	public getFieldInstancesByName(name:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-
-		this.getFields().forEach((fld) =>
-		{instances.push(...fld.getInstancesByName(name));})
-
-		return(instances);
-	}
-
-	public getFieldInstancesByClass(clazz:string) : FieldInstance[]
-	{
-		let instances:FieldInstance[] = [];
-
-		this.getFields().forEach((fld) =>
-		{instances.push(...fld.getInstancesByClass(clazz));})
-
-		return(instances);
-	}
-	*/
 
 	public getValue(field:string) : any
 	{

@@ -33,25 +33,25 @@ export class Alert
 	public static warning(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
-			type = Type.Popup;
+			type = Type.PopAndLog;
 
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);
 
 		if (type == Type.PopAndLog)
-			console.log(title+": "+msg);
+			console.log(title+": "+msg+" "+(new Error()).stack);
 	}
 
 	public static message(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
-			type = Type.Popup;
+			type = Type.PopAndLog;
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);
 
 		if (type == Type.PopAndLog)
-			console.log(title+": "+msg);
+			console.log(title+": "+msg+" "+(new Error()).stack);
 	}
 }

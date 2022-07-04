@@ -3,7 +3,7 @@ console.log("Version "+version);
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 export { Field } from './src/public/Field.js';
-export { FieldProperties as FieldBox } from './src/public/FieldProperties.js';
+export { FieldProperties } from './src/public/FieldProperties.js';
 
 export { dates } from './src/model/dates/dates.js';
 export { DataConverter, Tier } from "./src/view/fields/DataConverter.js";

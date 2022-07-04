@@ -28,7 +28,7 @@ export class Alert
 			window.alert(msg);
 
 		if (type == Type.PopAndLog)
-			console.log(title+": "+msg);
+			console.log(title+": "+msg+" "+(new Error()).stack);
 	}
 	public static warning(msg:string, title:string, type?:Type)
 	{

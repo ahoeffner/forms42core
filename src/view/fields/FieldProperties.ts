@@ -22,7 +22,6 @@ export class FieldProperties extends BasicProperties
 	private name$:string = null;
 	private block$:string = null;
 
-
 	public get id() : string
 	{
 		return(this.id$);

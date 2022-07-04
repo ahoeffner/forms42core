@@ -12,8 +12,8 @@
 
 import { Form } from './Form.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
-import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
+import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 
 
 export class FieldProperties extends BasicProperties
@@ -26,6 +26,7 @@ export class FieldProperties extends BasicProperties
 		super();
 		this.inst$ = inst$;
 		this.default$ = default$;
+		FieldFeatureFactory.initialize(this,inst$,default$);
 	}
 
 	public get name() : string
@@ -141,6 +142,6 @@ export class FieldProperties extends BasicProperties
 
 	public apply() : void
 	{
-		FieldFeatureFactory.merge(this,this.default$);
+		FieldFeatureFactory.merge(this,this.inst$,this.default$);
 	}
 }

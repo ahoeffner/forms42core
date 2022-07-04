@@ -12,11 +12,34 @@
 
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
+import { BasicProperties } from "./fields/BasicProperties.js";
 import { FieldProperties as PublicProperties } from "../public/FieldProperties.js";
 
 
 export class FieldFeatureFactory
 {
+	public static initialize(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
+	{
+		let ignore:string[] = props["fixed$"];
+		let exist:BasicProperties = default$ ? inst$.defaultProperties : inst$.properties;
+
+		// Add $ ending of properties
+		for (let i = 0; i < ignore.length; i++)
+			ignore[i] = ignore[i]+"$";
+
+		ignore.push("inst$");
+
+		for(let attr in exist)
+		{
+			let name:string = attr;
+
+			if (ignore.includes(name))
+				continue;
+
+			props[name] = exist[name];
+		}
+	}
+
 	public static clone(props:FieldProperties) : FieldProperties
 	{
 		let clone:FieldProperties = new FieldProperties();
@@ -30,9 +53,38 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public static merge(props:PublicProperties, default$:boolean) : void
+	public static merge(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
 	{
 		console.log("Merge properties");
+
+		let fprops:FieldProperties = inst$.properties;
+
+		if (!default$ && inst$.isDefault())
+			fprops = FieldFeatureFactory.clone(inst$.defaultProperties);
+
+		let ignore:string[] = props["fixed$"];
+
+		// Add $ ending of properties
+		for (let i = 0; i < ignore.length; i++)
+			ignore[i] = ignore[i]+"$";
+
+		ignore.push("inst$");
+		ignore.push("default$");
+
+		for(let attr in props)
+		{
+			let name:string = attr;
+
+			if (ignore.includes(name))
+				continue;
+
+			console.log("copy "+name)
+
+			fprops[name] = props[name];
+		}
+
+		if (!default$) inst$.properties = fprops;
+		else		   inst$.defaultProperties = fprops;
 	}
 
 	public static consume(tag:HTMLElement) : FieldProperties

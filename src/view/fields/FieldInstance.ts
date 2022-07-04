@@ -49,6 +49,27 @@ export class FieldInstance implements FieldEventHandler
 		this.field$.addInstance(this);
 	}
 
+	public isDefault() : boolean
+	{
+		return(this.properties$ == this.defproperties$);
+	}
+
+	public initialize() : void
+	{
+		this.impl.apply(this.properties$,true);
+	}
+
+	public changeInstanceType(type:string) : void
+	{
+		let element:HTMLElement = this.element;
+		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
+
+		this.impl = new clazz();
+		//this.impl.initialize(this.element$,this);
+
+		this.element$ = this.impl.getElement();
+	}
+
 	public get row() : number
 	{
 		return(this.properties$.row);
@@ -79,11 +100,6 @@ export class FieldInstance implements FieldEventHandler
 		return(this.field$);
 	}
 
-	public isDefault(props:FieldProperties) : boolean
-	{
-		return(props == this.defproperties$);
-	}
-
 	public set valid(flag:boolean)
 	{
 		if (!flag) this.element.classList.add("invalid");
@@ -97,7 +113,20 @@ export class FieldInstance implements FieldEventHandler
 
 	public set properties(props:FieldProperties)
 	{
+		console.log("changed ? "+(props != this.properties$))
 		this.properties$ = props;
+		this.impl.apply(props,false);
+	}
+
+	public get defaultProperties() : FieldProperties
+	{
+		return(this.defproperties$);
+	}
+
+	public set defaultProperties(props:FieldProperties)
+	{
+		console.log("changed ? "+(props != this.defproperties$))
+		this.defproperties$ = props;
 		this.impl.apply(props,false);
 	}
 
@@ -156,22 +185,6 @@ export class FieldInstance implements FieldEventHandler
 	public setFieldState(state:FieldState) : void
 	{
 		this.impl.setFieldState(state);
-	}
-
-	public initialize() : void
-	{
-		this.impl.apply(this.properties$,true);
-	}
-
-	public setInstanceType(type:string) : void
-	{
-		let element:HTMLElement = this.element;
-		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
-
-		this.impl = new clazz();
-		//this.impl.initialize(this.element$,this);
-
-		this.element$ = this.impl.getElement();
 	}
 
 	public async handleEvent(event:Event) : Promise<void>

@@ -19,21 +19,21 @@ export interface Style
 
 export class BasicProperties
 {
-	private tag$:string = null;
-	private styles$:Style[] = [];
-	private classes$:string[] = [];
-	private attribss$:Map<string,string> = new Map<string,string>();
+	protected tag$:string = null;
+	protected styles$:Style[] = [];
+	protected classes$:string[] = [];
+	protected attribs$:Map<string,string> = new Map<string,string>();
 
-	private hidden$:boolean = false;
-	private enabled$:boolean = false;
-	private readonly$:boolean = false;
-	private required$:boolean = false;
+	protected hidden$:boolean = false;
+	protected enabled$:boolean = false;
+	protected readonly$:boolean = false;
+	protected required$:boolean = false;
 
-	private value$:string = null;
-    private values$:Map<string,string> = null;
+	protected value$:string = null;
+    protected values$:Map<string,string> = null;
 
-	private fixed$:string[] = ["id","name","block","row","invalid"];
-	private structured$:string[] = ["hidden","enabled","readonly","required","value","class","style"];
+	protected fixed$:string[] = ["id","name","block","row","invalid"];
+	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style"];
 
 	public get tag() : string
 	{
@@ -187,12 +187,12 @@ export class BasicProperties
 
 	public getAttributes() : Map<string,string>
 	{
-		return(this.attribss$);
+		return(this.attribs$);
 	}
 
 	public getAttribute(attr:string) : string
 	{
-		return(this.attribss$.get(attr.toLowerCase()));
+		return(this.attribs$.get(attr.toLowerCase()));
 	}
 
 	public setAttribute(attr:string, value:any) : any
@@ -229,13 +229,13 @@ export class BasicProperties
 		if (value != null)
 			val += value;
 
-		this.attribss$.set(attr,val);
+		this.attribs$.set(attr,val);
 	}
 
 	public removeAttribute(attr:string) : any
 	{
 		attr = attr.toLowerCase();
-		this.attribss$.delete(attr.toLowerCase());
+		this.attribs$.delete(attr.toLowerCase());
 		return(this);
 	}
 

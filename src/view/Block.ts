@@ -384,13 +384,10 @@ export class Block
 	{
 		let props:Map<FieldInstance,FieldProperties> = this.recprops$.get(record.id);
 
-		if (props == null)
-			return;
-
 		record.values.forEach((field) =>
 		{
 			row.getField(field.name).getInstances().
-			forEach((inst) => {inst.properties = props.get(inst)})
+			forEach((inst) => {inst.applyProperties(props?.get(inst))})
 		})
 	}
 

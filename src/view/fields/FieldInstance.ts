@@ -97,6 +97,7 @@ export class FieldInstance implements FieldEventHandler
 			else
 			{
 				let value:any = null;
+				let valid:boolean = this.valid;
 
 				if (!this.field.dirty) value = this.impl.getValue();
 				else				   value = this.impl.getIntermediateValue();
@@ -112,6 +113,7 @@ export class FieldInstance implements FieldEventHandler
 				this.impl.apply(newprops,true);
 				before.replaceWith(this.element);
 
+				this.valid = valid;
 				if (!this.field.dirty) this.impl.setValue(value);
 				else				   this.impl.setIntermediateValue(value);
 			}

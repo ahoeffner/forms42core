@@ -180,7 +180,13 @@ export class Select implements FieldImplementation, EventListenerObject
 		this.multiple = false;
 		this.datatype = DataType.string;
 
-		this.element.setAttribute("size",this.element.options.length+"");
+		let dsize:string = attributes.get("size");
+		let msize:number = this.element.options.length;
+
+		if (dsize == null) dsize = msize+"";
+		else if (+dsize > msize) dsize = msize+"";
+
+		this.element.setAttribute("size",dsize);
 
         attributes.forEach((_value,attr) =>
         {

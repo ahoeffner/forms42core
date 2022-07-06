@@ -55,6 +55,12 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.apply(this.properties$,true);
 	}
 
+	public updateDefaultProperties()
+	{
+		FieldFeatureFactory.reset(this.element);
+		this.impl.apply(this.defaultProperties,false);
+	}
+
 	public applyProperties(props:FieldProperties) : void
 	{
 		let change:boolean = false;
@@ -76,7 +82,8 @@ export class FieldInstance implements FieldEventHandler
 
 		if (change)
 		{
-			console.log("change")
+			console.log("change "+props.type)
+
 			FieldFeatureFactory.reset(this.element);
 			this.impl.apply(props,false);
 		}
@@ -132,11 +139,6 @@ export class FieldInstance implements FieldEventHandler
 	public get defaultProperties() : FieldProperties
 	{
 		return(this.defproperties$);
-	}
-
-	public updateDefaultProperties()
-	{
-		this.impl.apply(this.defaultProperties,false);
 	}
 
 	public hasDefaultProperties() : boolean

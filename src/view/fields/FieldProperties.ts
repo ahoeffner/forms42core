@@ -39,6 +39,11 @@ export class FieldProperties extends BasicProperties
 		}
 	}
 
+	public get type() : string
+	{
+		return(this.inst$.element.getAttribute("type"));
+	}
+
 	public get name() : string
 	{
 		return(this.name$);

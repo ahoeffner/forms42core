@@ -228,7 +228,6 @@ export class Select implements FieldImplementation, EventListenerObject
 		{
 			bubble = true;
 			this.value$ = this.getSelected();
-			console.log("change "+this.value$)
 		}
 
 		if (this.event.accept || this.event.cancel)

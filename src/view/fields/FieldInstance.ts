@@ -20,6 +20,7 @@ import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { Alert } from "../../application/Alert.js";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -58,8 +59,17 @@ export class FieldInstance implements FieldEventHandler
 
 	public updateDefaultProperties()
 	{
+		let newprops:FieldProperties = this.defaultProperties;
+		let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
+
+		if (clazz != this.clazz)
+		{
+			Alert.fatal("Cannot change field-type as default","Default Properties");
+			return;
+		}
+
 		FieldFeatureFactory.reset(this.element);
-		this.impl.apply(this.defaultProperties,false);
+		this.impl.apply(newprops,false);
 	}
 
 	public applyProperties(newprops:FieldProperties) : void

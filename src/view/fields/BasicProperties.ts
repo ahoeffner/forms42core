@@ -147,7 +147,7 @@ export class BasicProperties
 		{
 			if (this.styles$[i].style == style)
 			{
-				delete this.styles$[i];
+				this.styles$ = this.styles$.splice(i,1);
 				break;
 			}
 		}

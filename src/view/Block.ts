@@ -22,7 +22,6 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
-import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
@@ -36,7 +35,6 @@ export class Block
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-	private factory:FieldFeatureFactory = new FieldFeatureFactory();
 
 	private recprops$:Map<object,Map<FieldInstance,FieldProperties>> =
 		new Map<object,Map<FieldInstance,FieldProperties>>();
@@ -162,6 +160,20 @@ export class Block
 	public getFieldNames() : string[]
 	{
 		return(this.fieldnames$);
+	}
+
+	public setProperties(inst:FieldInstance, props:FieldProperties) : void
+	{
+		let id:object = this.model.getRecord(0).id;
+		let map:Map<FieldInstance,FieldProperties> = this.recprops$.get(id);
+
+		if (map == null)
+		{
+			map = new Map<FieldInstance,FieldProperties>();
+			this.recprops$.set(id,map);
+		}
+
+		map.set(inst,props);
 	}
 
 	public setEventTransaction(event:EventType, offset:number) : void
@@ -362,8 +374,24 @@ export class Block
 		{
 			current.clear();
 			let record:Record = this.model$.getRecord();
-			record.values.forEach((field) => {current.distribute(field.name,field.value,false)});
+
+			this.applyProperties(current,record);
+			record.values.forEach((field) => {current.distribute(field.name,field.value,false);});
 		}
+	}
+
+	private applyProperties(row:Row, record:Record) : void
+	{
+		let props:Map<FieldInstance,FieldProperties> = this.recprops$.get(record.id);
+
+		if (props == null)
+			return;
+
+		record.values.forEach((field) =>
+		{
+			row.getField(field.name).getInstances().
+			forEach((inst) => {inst.properties = props.get(inst)})
+		})
 	}
 
 	private async scroll(inst:FieldInstance, offset:number) : Promise<FieldInstance>
@@ -447,7 +475,7 @@ export class Block
 
 		this.rows$.forEach((row) =>
 		{
-			row.initialize();
+			row.finalize();
 
 			if (row.rownum > 0)
 				row.setFieldState(FieldState.DISABLED);

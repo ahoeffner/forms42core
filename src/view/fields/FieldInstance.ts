@@ -50,25 +50,21 @@ export class FieldInstance implements FieldEventHandler
 		this.field$.addInstance(this);
 	}
 
-	public isDefault() : boolean
-	{
-		return(this.properties$ == this.defproperties$);
-	}
-
-	public initialize() : void
+	public finalize() : void
 	{
 		this.impl.apply(this.properties$,true);
 	}
 
-	public changeInstanceType(type:string) : void
+	public applyProperties(props:FieldProperties) : void
 	{
-		let element:HTMLElement = this.element;
-		let clazz:Class<FieldImplementation> = FieldTypes.get(type);
+		if (props == null)
+			props = this.defaultProperties;
 
-		this.impl = new clazz();
-		//this.impl.initialize(this.element$,this);
+		if (props == this.properties)
+			return;
 
-		this.element$ = this.impl.getElement();
+		this.properties$ = props;
+		this.impl.apply(props,false);
 	}
 
 	public get row() : number
@@ -107,6 +103,11 @@ export class FieldInstance implements FieldEventHandler
 		else       this.element.classList.remove("invalid");
 	}
 
+	public isDefault() : boolean
+	{
+		return(this.properties$ == this.defproperties$);
+	}
+
 	public get properties() : FieldProperties
 	{
 		return(this.properties$);
@@ -114,8 +115,8 @@ export class FieldInstance implements FieldEventHandler
 
 	public set properties(props:FieldProperties)
 	{
-		this.properties$ = props;
-		this.impl.apply(props,false);
+		this.applyProperties(props);
+		this.field.block.setProperties(props.inst,props);
 	}
 
 	public get defaultProperties() : FieldProperties

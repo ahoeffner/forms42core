@@ -106,7 +106,7 @@ export class Form implements CanvasComponent
 		return(flds);
 	}
 
-	public getFieldProperties(block:string, field:string, clazz?:string) : FieldProperties[]
+	public getProperties(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
 		let vflds:ViewField[] = [];
 		let flds:FieldProperties[] = [];
@@ -118,6 +118,22 @@ export class Form implements CanvasComponent
 
 		for (let i = 0; i < vflds.length; i++)
 			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,true))})
+
+		return(flds);
+	}
+
+	public getRecordProperties(block:string, field:string, clazz?:string) : FieldProperties[]
+	{
+		let vflds:ViewField[] = [];
+		let flds:FieldProperties[] = [];
+
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
+		vflds = View.getForm(this).getBlock(block).getFields(field);
+
+		for (let i = 0; i < vflds.length; i++)
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,false))})
 
 		return(flds);
 	}

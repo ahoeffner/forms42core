@@ -62,9 +62,14 @@ export class Block
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getFieldProperties(field:string, clazz?:string) : FieldProperties[]
+	public getProperties(field:string, clazz?:string) : FieldProperties[]
 	{
-		return(this.form.getFieldProperties(this.name,field,clazz));
+		return(this.form.getProperties(this.name,field,clazz));
+	}
+
+	public getRecordProperties(field:string, clazz?:string) : FieldProperties[]
+	{
+		return(this.form.getRecordProperties(this.name,field,clazz));
 	}
 
 

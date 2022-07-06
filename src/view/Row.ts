@@ -55,12 +55,12 @@ export class Row
 		});
 	}
 
-	public initialize() : void
+	public finalize() : void
 	{
 		this.getFields().forEach((fld) =>
 		{
 			fld.getInstances().forEach((inst) =>
-			{inst.initialize();})
+			{inst.finalize();})
 		});
 	}
 

@@ -10,9 +10,11 @@
  * accompanied this code).
  */
 
+import { Block } from "../model/Block.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
+import { EventTransaction } from "../model/EventTransaction.js";
 
 
 export class FieldFeatureFactory
@@ -37,17 +39,26 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public static merge(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
+	public static merge(props:BasicProperties, inst$:FieldInstance, defprops:boolean) : void
 	{
 		let fprops:FieldProperties = inst$.properties;
-		if (default$) fprops = inst$.defaultProperties;
+		if (defprops) fprops = inst$.defaultProperties;
 
-		if (inst$.hasDefaultProperties() && !default$)
+		if (inst$.hasDefaultProperties() && !defprops)
 			fprops = FieldFeatureFactory.clone(fprops);
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (!default$) inst$.applyProperties(fprops);
+		let model:Block = inst$.field.block.model;
+		let trx:EventTransaction = model?.eventTransaction;
+
+		if (trx != null)
+		{
+			trx.addPropertyChange(inst$,fprops,defprops);
+			return;
+		}
+
+		if (!defprops) inst$.applyProperties(fprops);
 		else		   inst$.updateDefaultProperties();
 	}
 

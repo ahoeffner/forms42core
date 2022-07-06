@@ -98,14 +98,4 @@ export class FieldProperties extends BasicProperties
 	{
 		this.inst$ = inst;
 	}
-
-	public apply() : void
-	{
-		let model:ModelBlock = this.inst$.field.block.model;
-
-		if (model != null)
-			console.log("transaction: "+model.eventTransaction)
-
-		this.inst$.applyProperties(this);
-	}
 }

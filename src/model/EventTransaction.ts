@@ -16,6 +16,8 @@ import { Alert } from "../application/Alert.js";
 import { Field } from "../view/fields/Field.js";
 import { Block as ViewBlock } from "../view/Block.js";
 import { EventType } from "../control/events/EventType.js";
+import { FieldInstance } from "../view/fields/FieldInstance.js";
+import { FieldProperties } from "../view/fields/FieldProperties.js";
 
 /*
 	When transactions is blocked, it protects against changes
@@ -25,6 +27,13 @@ import { EventType } from "../control/events/EventType.js";
 	During form operations, all blocks are initially blocked using an anonymous block.
 */
 
+export interface PropertyChange
+{
+	defprops:boolean;
+	inst:FieldInstance;
+	props:FieldProperties;
+}
+
 export class EventTransaction
 {
 	private event$:EventType;
@@ -33,6 +42,9 @@ export class EventTransaction
 
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
+
+	private props:Map<string,InstanceProperties> =
+		new Map<string,InstanceProperties>();
 
 	public constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
@@ -64,6 +76,37 @@ export class EventTransaction
 	public get event() : string
 	{
 		return(EventType[this.event$]);
+	}
+
+	public getProperties(inst:FieldInstance) : FieldProperties
+	{
+		let instprop:InstanceProperties = this.props.get(inst.block);
+
+		if (instprop == null)
+		{
+			instprop = new InstanceProperties(inst);
+			this.props.set(inst.block,instprop);
+		}
+
+		return(instprop.properties);
+	}
+
+	public getDefaultProperties(inst:FieldInstance) : FieldProperties
+	{
+		let instprop:InstanceProperties = this.props.get(inst.block);
+
+		if (instprop == null)
+		{
+			instprop = new InstanceProperties(inst);
+			this.props.set(inst.block,instprop);
+		}
+
+		return(instprop.defproperties);
+	}
+
+	public addPropertyChange(inst:FieldInstance, props:FieldProperties, defprops:boolean) : void
+	{
+		null;
 	}
 
 	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
@@ -193,5 +236,35 @@ class BlockTransaction
 			let rownum:number = this.block.view.row;
 			this.block.view.refresh(rownum+this.offset,this.record);
 		}
+	}
+}
+
+class BlockProperties
+{
+	private instances:Map<FieldInstance,InstanceProperties> =
+		new Map<FieldInstance,InstanceProperties>();
+
+	constructor(inst:FieldInstance)
+	{
+		this.instances.set(inst,new InstanceProperties(inst));
+	}
+
+	public add(inst:FieldInstance) : void
+	{
+		this.instances.set(inst,new InstanceProperties(inst));
+	}
+}
+
+class InstanceProperties
+{
+	inst:FieldInstance;
+	properties:FieldProperties = null;
+	defproperties:FieldProperties = null;
+
+	constructor(inst:FieldInstance)
+	{
+		this.inst = inst;
+		this.properties = inst.properties;
+		this.defproperties = inst.defaultProperties;
 	}
 }

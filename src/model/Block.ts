@@ -199,7 +199,8 @@ export class Block
 				if (this.keys$[i].primary)
 					throw "@Block: Cannot delete primary key";
 
-				delete this.keys$[i];
+				this.keys$ = this.keys$.splice(i,1);
+
 				return(true);
 			}
 		}

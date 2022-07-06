@@ -208,7 +208,7 @@ export class FormEvents
 
 			if (lsnr.id == id)
 			{
-				delete FormEvents.listeners[i];
+				FormEvents.listeners = FormEvents.listeners.splice(i,1)
 				break;
 			}
 		}
@@ -231,7 +231,7 @@ export class FormEvents
 				{
 					if (listeners[i].id == id)
 					{
-						delete listeners[i];
+						listeners = listeners.splice(i,1);
 						map.set(key,listeners);
 
 						if (listeners.length == 0)

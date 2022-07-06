@@ -203,7 +203,8 @@ export class BasicProperties
 	public removeClass(clazz:any) : void
 	{
 		clazz = clazz.toLowerCase();
-		delete this.classes$[this.classes$.indexOf(clazz)];
+		let idx:number = this.classes$.indexOf(clazz);
+		if (idx >= 0) this.classes$ = this.classes$.splice(idx,1)
 	}
 
 	public getAttributes() : Map<string,string>

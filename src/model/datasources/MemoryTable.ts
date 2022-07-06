@@ -109,10 +109,10 @@ export class MemoryTable implements DataSource
 		let ins:number = this.indexOf(this.inserted$,record.id);
 
 		if (ins >= 0)
-			delete this.inserted$[ins];
+			this.inserted$ = this.inserted$.splice(ins,1);
 
 		if (rec >= 0)
-			delete this.records[rec];
+			this.records = this.records.splice(rec,1);
 
 		return(ins >= 0 || rec >= 0);
 	}

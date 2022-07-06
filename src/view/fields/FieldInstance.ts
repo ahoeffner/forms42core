@@ -97,16 +97,12 @@ export class FieldInstance implements FieldEventHandler
 				this.impl = new this.clazz();
 				this.impl.create(this,newprops.tag);
 
-				console.log(this.impl.getElement())
-
 				let before:HTMLElement = this.element;
 				this.element$ = this.impl.getElement();
-
-				this.impl.apply(newprops,true);
 				FieldFeatureFactory.apply(this,newprops);
 
+				this.impl.apply(newprops,true);
 				before.replaceWith(this.element);
-				console.log(this.element)
 			}
 		}
 	}

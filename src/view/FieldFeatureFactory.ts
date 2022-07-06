@@ -47,7 +47,7 @@ export class FieldFeatureFactory
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (!default$) inst$.properties = fprops;
+		if (!default$) inst$.applyProperties(fprops);
 		else		   inst$.updateDefaultProperties();
 	}
 

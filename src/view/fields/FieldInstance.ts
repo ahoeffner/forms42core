@@ -80,6 +80,7 @@ export class FieldInstance implements FieldEventHandler
 		}
 
 		this.properties$ = newprops;
+		this.field.block.setProperties(this,newprops);
 
 		if (change)
 		{
@@ -146,12 +147,6 @@ export class FieldInstance implements FieldEventHandler
 	public get properties() : FieldProperties
 	{
 		return(this.properties$);
-	}
-
-	public set properties(props:FieldProperties)
-	{
-		this.applyProperties(props);
-		this.field.block.setProperties(props.inst,props);
 	}
 
 	public get defaultProperties() : FieldProperties

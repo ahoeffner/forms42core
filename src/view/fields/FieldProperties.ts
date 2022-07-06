@@ -12,7 +12,9 @@
 
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
+import { Block as ModelBlock } from "../../model/Block.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
+import { EventTransaction } from "../../model/EventTransaction.js";
 
 
 export class FieldProperties extends BasicProperties
@@ -99,6 +101,11 @@ export class FieldProperties extends BasicProperties
 
 	public apply() : void
 	{
+		let model:ModelBlock = this.inst$.field.block.model;
+
+		if (model != null)
+			console.log("transaction: "+model.eventTransaction)
+
 		this.inst$.applyProperties(this);
 	}
 }

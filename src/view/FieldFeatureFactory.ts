@@ -42,13 +42,13 @@ export class FieldFeatureFactory
 		let fprops:FieldProperties = inst$.properties;
 		if (default$) fprops = inst$.defaultProperties;
 
-		if (inst$.isDefault() && !default$)
+		if (inst$.hasDefaultProperties() && !default$)
 			fprops = FieldFeatureFactory.clone(fprops);
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
 		if (!default$) inst$.properties = fprops;
-		else		   inst$.defaultProperties = fprops;
+		else		   inst$.updateDefaultProperties();
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void

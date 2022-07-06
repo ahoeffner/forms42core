@@ -118,11 +118,6 @@ export class FieldInstance implements FieldEventHandler
 		else       this.element.classList.remove("invalid");
 	}
 
-	public isDefault() : boolean
-	{
-		return(this.properties$ == this.defproperties$);
-	}
-
 	public get properties() : FieldProperties
 	{
 		return(this.properties$);
@@ -139,10 +134,14 @@ export class FieldInstance implements FieldEventHandler
 		return(this.defproperties$);
 	}
 
-	public set defaultProperties(props:FieldProperties)
+	public updateDefaultProperties()
 	{
-		this.defproperties$ = props;
-		this.impl.apply(props,false);
+		this.impl.apply(this.defaultProperties,false);
+	}
+
+	public hasDefaultProperties() : boolean
+	{
+		return(this.properties$ == this.defproperties$);
 	}
 
 	public get element() : HTMLElement

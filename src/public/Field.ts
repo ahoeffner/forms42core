@@ -18,6 +18,11 @@ export class Field
 {
 	constructor(private inst$:ViewInstance) {}
 
+	public get id() : string
+	{
+		return(this.inst$.id);
+	}
+
 	public get name() : string
 	{
 		return(this.inst$.name);

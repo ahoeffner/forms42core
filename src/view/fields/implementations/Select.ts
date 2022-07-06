@@ -180,6 +180,8 @@ export class Select implements FieldImplementation, EventListenerObject
 		this.multiple = false;
 		this.datatype = DataType.string;
 
+		this.element.setAttribute("size",this.element.options.length+"");
+
         attributes.forEach((_value,attr) =>
         {
 			if (attr == "date")

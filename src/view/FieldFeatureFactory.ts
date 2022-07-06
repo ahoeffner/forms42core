@@ -264,7 +264,7 @@ export class FieldFeatureFactory
 			{
 
 				if (label.length == 0 && value.length != null)
-				label = value;
+					label = value;
 
 				options.set(label,value);
 			}
@@ -278,16 +278,20 @@ export class FieldFeatureFactory
 		while(tag.options.length > 0)
 			tag.options.remove(0);
 
+		tag.options.add(new Option())
 		let options:HTMLOptionElement[] = [];
 
 		props.getValidValues().forEach((value:string,label:string) =>
 		{
-			let option:HTMLOptionElement = new Option();
+			if (label.length > 0 || value.length > 0)
+			{
+				let option:HTMLOptionElement = new Option();
 
-			option.label = label;
-			option.value = value;
+				option.label = label;
+				option.value = value;
 
-			options.push(option);
+				options.push(option);
+			}
 		})
 
 		options.forEach((option) => tag.options.add(option));

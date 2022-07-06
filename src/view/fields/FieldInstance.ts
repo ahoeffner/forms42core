@@ -57,21 +57,29 @@ export class FieldInstance implements FieldEventHandler
 
 	public applyProperties(props:FieldProperties) : void
 	{
-		if (this.id == "cr-cn1")
-			console.log("null: "+(props == null));
+		let change:boolean = false;
 
-		if (props == this.properties)
-			return;
+		if (props != null)
+		{
+			if (props != this.properties)
+				change = true;
+		}
+		else
+		{
+			props = this.defaultProperties;
 
-		if (props != null) this.properties$ = props;
-		else			   props = this.defaultProperties;
+			if (this.properties != this.defaultProperties)
+				change = true;
+		}
 
-		if (this.id == "cr-cn1")
-			console.log("props: "+props.getClasses()+" "+this.defaultProperties.getClasses())
+		this.properties$ = props;
 
-
-		FieldFeatureFactory.reset(this.element);
-		this.impl.apply(props,false);
+		if (change)
+		{
+			console.log("change")
+			FieldFeatureFactory.reset(this.element);
+			this.impl.apply(props,false);
+		}
 	}
 
 	public get row() : number

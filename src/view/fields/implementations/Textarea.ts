@@ -36,7 +36,6 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	public apply(properties:FieldProperties, init:boolean) : void
 	{
-		properties.apply();
 		this.properties = properties;
 		if (init) this.addEvents(this.element);
 	}

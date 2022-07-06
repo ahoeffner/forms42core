@@ -41,7 +41,6 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public apply(properties:FieldProperties) : void
 	{
-		properties.apply();
 		this.properties = properties;
 		this.setAttributes(properties.getAttributes());
 

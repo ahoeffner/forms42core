@@ -60,7 +60,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public apply(properties:FieldProperties, init:boolean) : void
 	{
-		properties.apply();
 		this.properties = properties;
 		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());

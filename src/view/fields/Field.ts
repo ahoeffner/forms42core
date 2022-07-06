@@ -217,6 +217,14 @@ export class Field
 
 		if (brwevent.type == "blur")
 		{
+			if (this.dirty)
+			{
+				let value:string = inst.getIntermediateValue();
+				
+				this.distribute(inst,value,this.dirty);
+				this.block.distribute(this,value,this.dirty);
+			}
+
 			await this.block.form.leave(inst);
 			return;
 		}

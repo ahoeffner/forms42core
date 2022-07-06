@@ -407,10 +407,10 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.element.removeAttribute("placeholder");
         }
 
-        if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null && !this.event.focus)
+        if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null)
             this.element.setAttribute("placeholder",this.placeholder);
 
-        if (this.event.type == "mouseout" && this.placeholder != null && !this.event.focus)
+        if (this.event.type == "mouseout" && this.placeholder != null)
             this.element.removeAttribute("placeholder");
 
         this.event.preventDefault();
@@ -723,12 +723,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
         if (this.event.type == "change")
             return(true);
-
-        if (this.event.type == "mouseout" && this.pattern.isNull() && !this.event.focus)
-		{
-			this.clear();
-            return(true);
-		}
 
 		if (this.event.type.startsWith("mouse") || this.event.type == "wheel")
 			return(true);

@@ -52,6 +52,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public finalize() : void
 	{
+		FieldFeatureFactory.apply(this,this.properties$);
 		this.impl.apply(this.properties$,true);
 	}
 
@@ -61,31 +62,52 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.apply(this.defaultProperties,false);
 	}
 
-	public applyProperties(props:FieldProperties) : void
+	public applyProperties(newprops:FieldProperties) : void
 	{
 		let change:boolean = false;
 
-		if (props != null)
+		if (newprops != null)
 		{
-			if (props != this.properties)
+			if (newprops != this.properties)
 				change = true;
 		}
 		else
 		{
-			props = this.defaultProperties;
+			newprops = this.defaultProperties;
 
 			if (this.properties != this.defaultProperties)
 				change = true;
 		}
 
-		this.properties$ = props;
+		this.properties$ = newprops;
 
 		if (change)
 		{
-			console.log("change "+props.type)
+			let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
 
-			FieldFeatureFactory.reset(this.element);
-			this.impl.apply(props,false);
+			if (clazz == this.clazz)
+			{
+				this.impl.apply(newprops,false);
+				FieldFeatureFactory.reset(this.element);
+				FieldFeatureFactory.apply(this,newprops);
+			}
+			else
+			{
+				this.clazz = clazz;
+				this.impl = new this.clazz();
+				this.impl.create(this,newprops.tag);
+
+				console.log(this.impl.getElement())
+
+				let before:HTMLElement = this.element;
+				this.element$ = this.impl.getElement();
+
+				this.impl.apply(newprops,true);
+				FieldFeatureFactory.apply(this,newprops);
+
+				before.replaceWith(this.element);
+				console.log(this.element)
+			}
 		}
 	}
 

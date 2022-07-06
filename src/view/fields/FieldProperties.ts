@@ -89,7 +89,7 @@ export class FieldProperties extends BasicProperties
 
 	public get inst() : FieldInstance
 	{
-		return(this["inst$"]);
+		return(this.inst$);
 	}
 
 	public set inst(inst:FieldInstance)
@@ -99,6 +99,6 @@ export class FieldProperties extends BasicProperties
 
 	public apply() : void
 	{
-		FieldFeatureFactory.apply(this["inst$"],this);
+		this.inst$.applyProperties(this);
 	}
 }

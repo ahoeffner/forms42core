@@ -28,7 +28,6 @@ export class BrowserEvent
     public undo:boolean = false;
     public copy:boolean = false;
     public paste:boolean = false;
-	public focus:boolean = false;
     public accept:boolean = false;
     public cancel:boolean = false;
     public ignore:boolean = false;
@@ -81,8 +80,8 @@ export class BrowserEvent
         if (this.isMouseEvent) this.mouseEvent();
 
 		// Reset alt,... in case button has been released in another window
-        if (this.type == "blur") {this.focus = false; this.alt = false; this.ctrl = false; this.meta = false}
-        if (this.type == "focus") {this.focus = true; this.alt = false; this.ctrl = false; this.meta = false}
+        if (this.type == "blur") {this.alt = false; this.ctrl = false; this.meta = false}
+        if (this.type == "focus") {this.alt = false; this.ctrl = false; this.meta = false}
     }
 
     public get event() : any

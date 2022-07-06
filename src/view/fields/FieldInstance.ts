@@ -57,19 +57,20 @@ export class FieldInstance implements FieldEventHandler
 
 	public applyProperties(props:FieldProperties) : void
 	{
-		if (this.name == "country_name")
-			console.log("apply, default: "+(props == this.defaultProperties));
-
-		if (props == null)
-			props = this.defaultProperties;
+		if (this.id == "cr-cn1")
+			console.log("null: "+(props == null));
 
 		if (props == this.properties)
 			return;
 
-		if (this.name == "country_name")
-			console.log("classes: "+props.getClasses())
+		if (props != null) this.properties$ = props;
+		else			   props = this.defaultProperties;
 
-		this.properties$ = props;
+		if (this.id == "cr-cn1")
+			console.log("props: "+props.getClasses()+" "+this.defaultProperties.getClasses())
+
+
+		FieldFeatureFactory.reset(this.element);
 		this.impl.apply(props,false);
 	}
 

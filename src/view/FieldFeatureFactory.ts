@@ -19,33 +19,20 @@ export class FieldFeatureFactory
 {
 	public static initialize(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
 	{
-		let ignore:string[] = props["fixed$"];
 		let exist:BasicProperties = default$ ? inst$.defaultProperties : inst$.properties;
-
-		// Add $ ending of properties
-		for (let i = 0; i < ignore.length; i++)
-			ignore[i] = ignore[i]+"$";
-
-		for(let attr in exist)
-		{
-			let name:string = attr;
-
-			if (ignore.includes(name))
-				continue;
-
-			props[name] = exist[name];
-		}
+		FieldFeatureFactory.copyBasic(exist,props);
 	}
 
 	public static clone(props:FieldProperties) : FieldProperties
 	{
 		let clone:FieldProperties = new FieldProperties();
+		FieldFeatureFactory.copyBasic(props,clone);
 
-		for(let attr in props)
-		{
-			let name:string = attr;
-			clone[name] = props[name];
-		}
+		clone.id = props.id;
+		clone.row = props.row;
+		clone.name = props.name;
+		clone.inst = props.inst;
+		clone.block = props.block;
 
 		return(clone);
 	}
@@ -53,28 +40,41 @@ export class FieldFeatureFactory
 	public static merge(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
 	{
 		let fprops:FieldProperties = inst$.properties;
+		if (default$) fprops = inst$.defaultProperties;
 
-		if (!default$ && inst$.isDefault())
-			fprops = FieldFeatureFactory.clone(inst$.defaultProperties);
+		if (inst$.isDefault() && !default$)
+			fprops = FieldFeatureFactory.clone(fprops);
 
-		let ignore:string[] = props["fixed$"];
-
-		// Add $ ending of properties
-		for (let i = 0; i < ignore.length; i++)
-			ignore[i] = ignore[i]+"$";
-
-		for(let attr in props)
-		{
-			let name:string = attr;
-
-			if (ignore.includes(name))
-				continue;
-
-			fprops[name] = props[name];
-		}
+		FieldFeatureFactory.copyBasic(props,fprops);
 
 		if (!default$) inst$.properties = fprops;
 		else		   inst$.defaultProperties = fprops;
+	}
+
+	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void
+	{
+		let list:Map<string,string> = new Map<string,string>();
+		exist.getValidValues().forEach((value,key) => {list.set(key,value)});
+
+		props.tag = exist.tag;
+		props.validValues = list;
+		props.value = exist.value;
+		props.hidden = exist.hidden;
+		props.enabled = exist.enabled;
+		props.readonly = exist.readonly;
+		props.required = exist.required;
+
+		exist.getClasses().forEach((clazz) => {props.setClass(clazz)});
+		exist.getAttributes().forEach((value,name) => {props.setAttribute(name,value)});
+		exist.getStyles().forEach((element) => {props.setStyle(element.style,element.value)});
+	}
+
+	public static reset(tag:HTMLElement) : void
+	{
+		tag.style.cssText = "";
+		tag.classList.value = "";
+		let attrs:string[] = tag.getAttributeNames();
+		attrs.forEach((attr) => {tag.removeAttribute(attr)});
 	}
 
 	public static consume(tag:HTMLElement) : FieldProperties

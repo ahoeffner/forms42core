@@ -30,7 +30,7 @@ export class BasicProperties
 	protected required$:boolean = false;
 
 	protected value$:string = null;
-    protected values$:Map<string,string> = null;
+    protected values$:Map<string,string> = new Map<string,string>();
 
 	protected fixed$:string[] = ["id","name","block","row","invalid"];
 	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style"];
@@ -95,6 +95,13 @@ export class BasicProperties
 		return(this.styles$);
 	}
 
+	public get style() : string
+	{
+		let style:string = "";
+		this.styles$.forEach((element) => {style += element.style+":"+element.value+";"});
+		return(style)
+	}
+
 	public set styles(styles:string)
 	{
 		let elements:string[] = styles.split(";")
@@ -146,8 +153,19 @@ export class BasicProperties
 		}
 	}
 
-	public setClass(clazz:any) : void
+	public setClass(clazz:string) : void
 	{
+		if (clazz == null)
+			return;
+
+		clazz = clazz.trim();
+
+		if (clazz.includes(' '))
+		{
+			this.setClasses(clazz);
+			return;
+		}
+
 		clazz = clazz.toLowerCase();
 
 		if (this.classes$[clazz] == null)
@@ -158,8 +176,11 @@ export class BasicProperties
 	{
 		this.classes$ = [];
 
+		if (classes == null)
+			return;
+
 		if (!Array.isArray(classes))
-			classes = classes.split(" ,;");
+			classes = classes.split(" ,");
 
 		for(let clazz in classes)
 		{

@@ -69,7 +69,10 @@ export class FieldInstance implements FieldEventHandler
 		if (newprops != null)
 		{
 			if (newprops != this.properties)
+			{
 				change = true;
+				this.field.block.setProperties(this,newprops);
+			}
 		}
 		else
 		{
@@ -80,7 +83,6 @@ export class FieldInstance implements FieldEventHandler
 		}
 
 		this.properties$ = newprops;
-		this.field.block.setProperties(this,newprops);
 
 		if (change)
 		{

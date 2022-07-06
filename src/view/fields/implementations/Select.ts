@@ -39,16 +39,12 @@ export class Select implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	public apply(properties:FieldProperties) : void
+	public apply(properties:FieldProperties, init:boolean) : void
 	{
 		this.properties = properties;
+		if (init) this.addEvents(this.element);
+		this.element.options.selectedIndex = -1;
 		this.setAttributes(properties.getAttributes());
-
-		if (properties["init$"])
-		{
-			properties["init$"] = false;
-			this.addEvents(this.element);
-		}
 	}
 
 	public clear() : void
@@ -224,6 +220,7 @@ export class Select implements FieldImplementation, EventListenerObject
 		{
 			bubble = true;
 			this.value$ = this.getSelected();
+			console.log("change "+this.value$)
 		}
 
 		if (this.event.accept || this.event.cancel)

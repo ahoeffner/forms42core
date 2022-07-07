@@ -226,6 +226,7 @@ export class BrowserEvent
         {
             case "keyup" :
 
+				this.ignore = true;
                 this.useq = this.dseq;
 
                 if (!this.alt && !this.ctrl && !this.meta)

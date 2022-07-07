@@ -77,6 +77,7 @@ export class EventStack
 
 		try
 		{
+			console.log(cmd.brwevent.type+" on "+cmd.inst.name)
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
 
 			EventStack.running = false;
@@ -86,7 +87,7 @@ export class EventStack
 		{
 			EventStack.stack$ = [];
 			EventStack.running = false;
-			Alert.warning(""+error,"Fatal Error");
+			Alert.fatal(error.stack+" Performing "+cmd.brwevent.type+" on "+cmd.inst.name,"Fatal Error");
 		}
 	}
 }

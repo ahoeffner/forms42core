@@ -91,11 +91,6 @@ export class FieldFeatureFactory
 		exist.getStyles().forEach((element) => {props.setStyle(element.style,element.value)});
 	}
 
-	public static dump(props:FieldProperties) : void
-	{
-		props.getAttributes().forEach((value,name) => {console.log(name+"="+value)})
-	}
-
 	public static reset(tag:HTMLElement) : void
 	{
 		tag.style.cssText = "";

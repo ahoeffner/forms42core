@@ -18,6 +18,7 @@ import { Block as ViewBlock } from "../view/Block.js";
 import { EventType } from "../control/events/EventType.js";
 import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FieldProperties } from "../view/fields/FieldProperties.js";
+import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 
 /*
 	When transactions is blocked, it protects against changes
@@ -43,8 +44,8 @@ export class EventTransaction
 	private trx:Map<string,BlockTransaction> =
 		new Map<string,BlockTransaction>();
 
-	private props:Map<string,InstanceProperties> =
-		new Map<string,InstanceProperties>();
+	private blkprops:Map<string,BlockProperties> =
+		new Map<string,BlockProperties>();
 
 	public constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
@@ -80,33 +81,39 @@ export class EventTransaction
 
 	public getProperties(inst:FieldInstance) : FieldProperties
 	{
-		let instprop:InstanceProperties = this.props.get(inst.block);
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
 
-		if (instprop == null)
+		if (blkprop == null)
 		{
-			instprop = new InstanceProperties(inst);
-			this.props.set(inst.block,instprop);
+			blkprop = new BlockProperties(inst);
+			this.blkprops.set(inst.block,blkprop);
 		}
 
+		let instprop:InstanceProperties = blkprop.get(inst);
 		return(instprop.properties);
 	}
 
 	public getDefaultProperties(inst:FieldInstance) : FieldProperties
 	{
-		let instprop:InstanceProperties = this.props.get(inst.block);
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
 
-		if (instprop == null)
+		if (blkprop == null)
 		{
-			instprop = new InstanceProperties(inst);
-			this.props.set(inst.block,instprop);
+			blkprop = new BlockProperties(inst);
+			this.blkprops.set(inst.block,blkprop);
 		}
 
+		let instprop:InstanceProperties = blkprop.get(inst);
 		return(instprop.defproperties);
 	}
 
 	public addPropertyChange(inst:FieldInstance, props:FieldProperties, defprops:boolean) : void
 	{
-		null;
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
+		let instprop:InstanceProperties = blkprop.get(inst);
+
+		if (!defprops) instprop.properties = props;
+		else		   instprop.defproperties = props;
 	}
 
 	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
@@ -165,11 +172,17 @@ export class EventTransaction
 		{
 			this.trx.get(block.name)?.apply();
 			this.trx.delete(block.name);
+
+			this.blkprops.get(block.name)?.apply();
+			this.blkprops.delete(block.name);
 		}
 		else
 		{
 			this.trx.forEach((trx) => {trx.apply()});
 			this.trx.clear();
+
+			this.blkprops.forEach((blkprop) => {blkprop.apply()});
+			this.blkprops.clear();
 		}
 	}
 
@@ -249,22 +262,70 @@ class BlockProperties
 		this.instances.set(inst,new InstanceProperties(inst));
 	}
 
-	public add(inst:FieldInstance) : void
+	get(inst:FieldInstance) : InstanceProperties
 	{
-		this.instances.set(inst,new InstanceProperties(inst));
+		let instprop:InstanceProperties = this.instances.get(inst);
+
+		if (instprop == null)
+		{
+			instprop = new InstanceProperties(inst);
+			this.instances.set(inst,instprop);
+		}
+
+		return(instprop);
+	}
+
+	apply() : void
+	{
+		this.instances.forEach((instprop) => {instprop.apply()})
 	}
 }
 
 class InstanceProperties
 {
 	inst:FieldInstance;
-	properties:FieldProperties = null;
-	defproperties:FieldProperties = null;
+	pchange:boolean = false;
+	dchange:boolean = false;
+	properties$:FieldProperties = null;
+	defproperties$:FieldProperties = null;
 
 	constructor(inst:FieldInstance)
 	{
 		this.inst = inst;
 		this.properties = inst.properties;
-		this.defproperties = inst.defaultProperties;
+		this.defproperties$ = FieldFeatureFactory.clone(inst.defaultProperties);
+	}
+
+	set properties(props:FieldProperties)
+	{
+		this.pchange = true;
+		this.properties$ = props;
+	}
+
+	set defproperties(props:FieldProperties)
+	{
+		this.dchange = true;
+		this.defproperties$ = props;
+	}
+
+	get properties() : FieldProperties
+	{
+		return(this.properties$);
+	}
+
+	get defproperties() : FieldProperties
+	{
+		return(this.defproperties$);
+	}
+
+	apply() : void
+	{
+		if (this.pchange) this.inst.applyProperties(this.properties$);
+
+		if (this.dchange)
+		{
+			FieldFeatureFactory.copyBasic(this.defproperties$,this.inst.defaultProperties);
+			this.inst.updateDefaultProperties();
+		}
 	}
 }

@@ -41,25 +41,36 @@ export class FieldFeatureFactory
 
 	public static merge(props:BasicProperties, inst$:FieldInstance, defprops:boolean) : void
 	{
-		let fprops:FieldProperties = inst$.properties;
-		if (defprops) fprops = inst$.defaultProperties;
+		let fprops:FieldProperties = null;
+
+		let model:Block = inst$.field.block.model;
+		let trx:EventTransaction = model?.eventTransaction;
+
+		if (trx == null)
+		{
+			fprops = inst$.properties;
+			if (defprops) fprops = inst$.defaultProperties;
+		}
+		else
+		{
+			fprops = trx.getProperties(inst$);
+			if (defprops) fprops = trx.getDefaultProperties(inst$);
+		}
 
 		if (inst$.hasDefaultProperties() && !defprops)
 			fprops = FieldFeatureFactory.clone(fprops);
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		let model:Block = inst$.field.block.model;
-		let trx:EventTransaction = model?.eventTransaction;
-
 		if (trx != null)
 		{
 			trx.addPropertyChange(inst$,fprops,defprops);
-			return;
 		}
-
-		if (!defprops) inst$.applyProperties(fprops);
-		else		   inst$.updateDefaultProperties();
+		else
+		{
+			if (!defprops) inst$.applyProperties(fprops);
+			else		   inst$.updateDefaultProperties();
+		}
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void
@@ -78,6 +89,11 @@ export class FieldFeatureFactory
 		exist.getClasses().forEach((clazz) => {props.setClass(clazz)});
 		exist.getAttributes().forEach((value,name) => {props.setAttribute(name,value)});
 		exist.getStyles().forEach((element) => {props.setStyle(element.style,element.value)});
+	}
+
+	public static dump(props:FieldProperties) : void
+	{
+		props.getAttributes().forEach((value,name) => {console.log(name+"="+value)})
 	}
 
 	public static reset(tag:HTMLElement) : void

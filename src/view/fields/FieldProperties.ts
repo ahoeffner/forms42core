@@ -13,8 +13,6 @@
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
 import { Block as ModelBlock } from "../../model/Block.js";
-import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
-import { EventTransaction } from "../../model/EventTransaction.js";
 
 
 export class FieldProperties extends BasicProperties

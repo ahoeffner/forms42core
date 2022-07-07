@@ -69,6 +69,8 @@ export class FieldInstance implements FieldEventHandler
 		}
 
 		FieldFeatureFactory.reset(this.element);
+		FieldFeatureFactory.apply(this,newprops);
+		
 		this.impl.apply(newprops,false);
 	}
 

@@ -92,7 +92,17 @@ export class KeyMap
 
 	public toString() : string
 	{
-		return(this.signature$);
+		let str:string = "";
+
+		if (this.shift$) str += "shift|";
+		if (this.ctrl$) str += "ctrl|";
+		if (this.alt$) str += "alt|";
+		if (this.meta$) str += "meta|";
+
+		if (str.endsWith("|"))
+			str = str.substring(0,str.length-1)+" ";
+
+		return("{"+str+this.key$+"}");
 	}
 }
 
@@ -212,10 +222,10 @@ export class KeyMapping
 			return(null);
 		}
 
-		let a:string = signature.substring(pos,pos+1);
-		let c:string = signature.substring(pos,pos+2);
-		let m:string = signature.substring(pos,pos+3);
-		let s:string = signature.substring(pos,pos+4);
+		let a:string = signature.substring(pos+1,pos+2);
+		let c:string = signature.substring(pos+2,pos+3);
+		let m:string = signature.substring(pos+3,pos+4);
+		let s:string = signature.substring(pos+4,pos+5);
 
 		let def:KeyDefinition =
 		{

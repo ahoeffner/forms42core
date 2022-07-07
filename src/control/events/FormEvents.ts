@@ -375,6 +375,7 @@ export class FormEvents
 	private static async execute(lsnr:EventListener, event:FormEvent) : Promise<boolean>
 	{
 		let cont:boolean = true;
+		Logger.log(Type.eventhandling,"Execute: "+lsnr);
 		let response:Promise<boolean> = lsnr.clazz[lsnr.method](event);
 
 		if (response instanceof Promise)

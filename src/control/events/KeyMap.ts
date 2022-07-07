@@ -43,7 +43,7 @@ export class KeyMap
 
 	private signature$:string = null;
 
-	constructor(def:KeyDefinition)
+	public constructor(def:KeyDefinition)
 	{
 		if (def.shift == null && def.key == def.key.toUpperCase())
 			def.shift = true;

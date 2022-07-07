@@ -139,12 +139,7 @@ export class BrowserEvent
 
     public get onFuncKey() : boolean
     {
-        return(this.funckey != null);
-    }
-
-    public get onCtrlKeyUp() : boolean
-    {
-        return(this.ctrlkey != null && this.type == "keyup");
+        return(this.funckey != null && this.event.key.startsWith("F"));
     }
 
     public get onScrollUp() : boolean

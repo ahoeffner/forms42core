@@ -262,7 +262,7 @@ export class Field
 			if (!await this.block.validate())
 				return;
 
-			key = KeyMapping.checkBrowserEvent(brwevent);
+			key = KeyMapping.parseBrowserEvent(brwevent);
 			if (key != null) await this.block.onKey(inst,key);
 
 			return;
@@ -299,23 +299,15 @@ export class Field
 
 		if (brwevent.type.startsWith("key") && !brwevent.navigation)
 		{
-			if (brwevent.ctrlkey != null || brwevent.funckey != null)
-			{
-				if (brwevent.undo) key = KeyMap.undo;
-				else if (brwevent.copy) key = KeyMap.copy;
-				else if (brwevent.paste) key = KeyMap.paste;
-				else key = KeyMapping.parseBrowserEvent(brwevent);
+			key = KeyMapping.parseBrowserEvent(brwevent);
 
-				if (key != null) await this.block.onKey(inst,key);
-				return;
-			}
-			else
-			{
-				key = KeyMapping.checkBrowserEvent(brwevent);
-				if (key != null) await this.block.onKey(inst,key);
-				return;
-			}
-		}
+			if (brwevent.undo) key = KeyMap.undo;
+			else if (brwevent.copy) key = KeyMap.copy;
+			else if (brwevent.paste) key = KeyMap.paste;
+
+			if (key != null) await this.block.onKey(inst,key);
+			return;
+	}
 
 		if (brwevent.onScrollUp) {brwevent.navigation = true; key = KeyMap.nextrecord;}
 		if (brwevent.onScrollDown) {brwevent.navigation = true; key = KeyMap.prevrecord;}

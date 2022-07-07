@@ -129,13 +129,13 @@ export class FormEvent
 
 		if (this.type != null) str += " type: " + EventType[this.type];
 
-		if (this.blockname != null) str += " block: "+this.blockname;
-		if (this.fieldname != null) str += " field: "+this.fieldname;
+		if (this.blockname != null) str += ", block: "+this.blockname;
+		if (this.fieldname != null) str += ", field: "+this.fieldname;
 
-		if (this.key != null) str += " key: "+this.key.toString();
-		if (this.mouse != null) str += " mouse: "+MouseMap[this.mouse];
+		if (this.key != null) str += ", key: "+this.key.toString();
+		if (this.mouse != null) str += ", mouse: "+MouseMap[this.mouse];
 
-		return(str.substring(1));
+		return(str.substring(1).trim());
 	}
 }
 

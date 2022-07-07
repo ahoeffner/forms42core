@@ -43,8 +43,26 @@ export class KeyCodes
 	{
 		if (char == null) return(null);
 		let numval:number = KeyCodes[char];
+		if (!numval) numval = KeyCodes[char.toLowerCase()];
 
 		if (numval) return(numval);
 		else return(char.charCodeAt(0));
+	}
+
+	static keyname(key:number) : string
+	{
+		let defined:string[] = Object.getOwnPropertyNames(KeyCodes);
+		let ignore:string[] = ['length', 'name', 'prototype', 'code', 'keyname'];
+
+		for (let i = 0; i < defined.length; i++)
+		{
+			if (ignore.includes(defined[i]))
+				continue;
+
+			if (KeyCodes[defined[i]] == key)
+				return(defined[i]);
+		}
+
+		return(String.fromCharCode(key));
 	}
 }

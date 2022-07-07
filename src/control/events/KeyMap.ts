@@ -65,6 +65,11 @@ export class KeyMap
 		return(this.key$);
 	}
 
+	public get keyname() : string
+	{
+		return(KeyCodes.keyname(this.key$));
+	}
+
 	public get alt() : boolean
 	{
 		return(this.alt$);
@@ -93,6 +98,7 @@ export class KeyMap
 	public toString() : string
 	{
 		let str:string = "";
+		let name:string = this.keyname;
 
 		if (this.shift$) str += "shift|";
 		if (this.ctrl$) str += "ctrl|";
@@ -102,7 +108,10 @@ export class KeyMap
 		if (str.endsWith("|"))
 			str = str.substring(0,str.length-1)+" ";
 
-		return("{"+str+this.key$+"}");
+		str += "["+this.key$+"] ";
+		str += "['"+name+"']";
+
+		return("{"+str+"}");
 	}
 }
 
@@ -166,12 +175,6 @@ export class KeyMapping
 		if (event.key == null) return(null);
 		let key:number = KeyCodes.code(event.key);
 
-		if (key == null)
-		{
-			console.error("@KeyMapping: invalid key signature '"+event.key+"' in "+event.type);
-			return(null);
-		}
-
 		let signature:string = key+"|";
 		signature += event.alt ? 't' : 'f';
 		signature += event.ctrl ? 't' : 'f';
@@ -179,20 +182,6 @@ export class KeyMapping
 		signature += event.shift ? 't' : 'f';
 
 		return(KeyMapping.get(signature,true));
-	}
-
-	public static checkBrowserEvent(event:BrowserEvent) : KeyMap
-	{
-		let key:number = KeyCodes.code(event.key);
-		if (key == null) return(null);
-
-		let signature:string = key+"|";
-		signature += event.alt ? 't' : 'f';
-		signature += event.ctrl ? 't' : 'f';
-		signature += event.meta ? 't' : 'f';
-		signature += event.shift ? 't' : 'f';
-
-		return(KeyMapping.map.get(signature));
 	}
 
 	private static complete(signature:string) : string
@@ -215,12 +204,6 @@ export class KeyMapping
 	{
 		let pos:number = signature.indexOf('|');
 		let key:string = signature.substring(0,pos);
-
-		if (isNaN(+key))
-		{
-			console.error("@KeyMapping: invalid key signature '"+signature+"'. Key: '"+key+"' is not a number and not mapped");
-			return(null);
-		}
 
 		let a:string = signature.substring(pos+1,pos+2);
 		let c:string = signature.substring(pos+2,pos+3);

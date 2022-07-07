@@ -16,9 +16,9 @@ import { BrowserEvent } from "../../view/BrowserEvent.js";
 
 export class KeyMap
 {
-	public static copy:KeyMap = new KeyMap({key: -1});
-	public static undo:KeyMap = new KeyMap({key: -2});
-	public static paste:KeyMap = new KeyMap({key: -3});
+	public static copy:KeyMap = new KeyMap({key: 99, ctrl: true});
+	public static undo:KeyMap = new KeyMap({key: 122, ctrl: true});
+	public static paste:KeyMap = new KeyMap({key: 118, ctrl: true});
 
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});

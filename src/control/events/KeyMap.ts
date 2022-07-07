@@ -106,10 +106,10 @@ export class KeyMap
 		if (this.meta$) str += "meta|";
 
 		if (str.endsWith("|"))
-			str = str.substring(0,str.length-1)+" ";
+			str = "mod: "+str.substring(0,str.length-1)+", ";
 
-		str += "["+this.key$+"] ";
-		str += "['"+name+"']";
+		str += "code: ["+this.key$+"], ";
+		str += "key: ['"+name+"']";
 
 		return("{"+str+"}");
 	}

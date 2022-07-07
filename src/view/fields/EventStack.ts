@@ -87,6 +87,8 @@ export class EventStack
 		{
 			EventStack.stack$ = [];
 			EventStack.running = false;
+			console.log(error)
+
 			Alert.fatal(error.stack+" Performing "+cmd.brwevent.type+" on "+cmd.inst.name,"Fatal Error");
 		}
 	}

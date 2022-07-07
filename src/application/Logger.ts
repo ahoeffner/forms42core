@@ -3,7 +3,8 @@ export enum Type
     htmlparser,
     eventparser,
     classloader,
-	formbinding
+	formbinding,
+	eventhandling
 }
 
 export class Logger
@@ -12,6 +13,7 @@ export class Logger
     public static eventparser:boolean = false;
     public static classloader:boolean = false;
     public static formbinding:boolean = false;
+    public static eventhandling:boolean = true;
 
     public static log(type:Type, msg:string) : void
     {

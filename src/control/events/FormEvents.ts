@@ -19,7 +19,9 @@ import { Field } from "../../public/Field.js";
 import { EventFilter } from "./EventFilter.js";
 import { EventListener } from "./EventListener.js";
 import { Form as ModelForm } from "../../model/Form.js";
+import { Logger, Type } from "../../application/Logger.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
+import { Alert } from "../../application/Alert.js";
 
 export class KeyEventSource
 {
@@ -265,7 +267,10 @@ export class FormEvents
 				done.add(lsnr.id);
 
 				if (!(await FormEvents.execute(lsnr,event)))
+				{
+					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
+				}
 			}
 		}
 
@@ -284,7 +289,10 @@ export class FormEvents
 				done.add(lsnr.id);
 
 				if (!(await FormEvents.execute(lsnr,event)))
+				{
+					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
+				}
 			}
 		}
 
@@ -303,7 +311,10 @@ export class FormEvents
 				done.add(lsnr.id);
 
 				if (!(await FormEvents.execute(lsnr,event)))
+				{
+					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
+				}
 			}
 		}
 
@@ -322,7 +333,10 @@ export class FormEvents
 				done.add(lsnr.id);
 
 				if (!(await FormEvents.execute(lsnr,event)))
+				{
+					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
+				}
 			}
 		}
 
@@ -334,7 +348,10 @@ export class FormEvents
 				done.add(lsnr.id);
 
 				if (!(await FormEvents.execute(lsnr,event)))
+				{
+					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
+				}
 			}
 		}
 
@@ -365,7 +382,10 @@ export class FormEvents
 			await response.then((value) =>
 			{
 				if (typeof value !== "boolean")
-					throw "@FormEvents: EventListner '"+lsnr.method+"' did not return boolean";
+				{
+					Alert.fatal("@FormEvents: EventListner '"+lsnr+"' did not return Promise<boolean>, but '"+value+"'","EventListener");
+					value = true;
+				}
 
 				cont = value;
 			});
@@ -373,7 +393,10 @@ export class FormEvents
 		else
 		{
 			if (response != null && typeof response !== "boolean")
-				throw "@FormEvents: EventListner '"+lsnr.method+"' did not return boolean";
+			{
+				Alert.fatal("@FormEvents: EventListner '"+lsnr+"' did not return boolean, but '"+response+"'","EventListener");
+				cont = true;
+			}
 
 			if (typeof response === "boolean")
 				cont = response;

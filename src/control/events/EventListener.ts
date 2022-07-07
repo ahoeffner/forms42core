@@ -41,8 +41,8 @@ export class EventListener
 
 	public toString() : string
 	{
-		let str:string = this.method;
-		if (this.filter) str += JSON.stringify(this.filter);
+		let str:string = this.clazz.constructor.name + "." + this.method;
+		if (this.filter) str += " : " + JSON.stringify(this.filter);
 		return(str);
 	}
 }

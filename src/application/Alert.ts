@@ -19,10 +19,23 @@ export enum Type
 
 export class Alert
 {
-	public static fatal(msg:string, title:string, type?:Type)
+	public static async fatal(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
 			type = Type.PopAndLog;
+
+		//if (type == Type.Popup || type == Type.PopAndLog)
+			//window.alert(msg);
+
+		if (type == Type.PopAndLog)
+			console.log(title+": "+msg+" "+(new Error()).stack);
+	}
+
+	public static async warning(msg:string, title:string, type?:Type)
+	{
+		if (type == null)
+			type = Type.PopAndLog;
+
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);
@@ -30,20 +43,8 @@ export class Alert
 		if (type == Type.PopAndLog)
 			console.log(title+": "+msg+" "+(new Error()).stack);
 	}
-	public static warning(msg:string, title:string, type?:Type)
-	{
-		if (type == null)
-			type = Type.PopAndLog;
 
-
-		if (type == Type.Popup || type == Type.PopAndLog)
-			window.alert(msg);
-
-		if (type == Type.PopAndLog)
-			console.log(title+": "+msg+" "+(new Error()).stack);
-	}
-
-	public static message(msg:string, title:string, type?:Type)
+	public static async message(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
 			type = Type.PopAndLog;

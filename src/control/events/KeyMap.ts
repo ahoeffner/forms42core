@@ -16,9 +16,10 @@ import { BrowserEvent } from "../../view/BrowserEvent.js";
 
 export class KeyMap
 {
-	public static copy:KeyMap = new KeyMap({key: 99, ctrl: true});
-	public static undo:KeyMap = new KeyMap({key: 122, ctrl: true});
-	public static paste:KeyMap = new KeyMap({key: 118, ctrl: true});
+	public static copy:KeyMap = new KeyMap({key: 'c', ctrl: true});
+	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
+	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
+	public static keyW:KeyMap = new KeyMap({key: 'W', ctrl: true});
 
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
@@ -35,7 +36,7 @@ export class KeyMap
 	public static scrollup:KeyMap = new KeyMap({key: KeyCodes.ArrowUp, shift: true});
 	public static scrolldown:KeyMap = new KeyMap({key: KeyCodes.ArrowDown, shift: true});
 
-	private key$:number;
+	private key$:string;
 	private alt$:boolean;
 	private ctrl$:boolean;
 	private meta$:boolean;
@@ -45,7 +46,10 @@ export class KeyMap
 
 	constructor(def:KeyDefinition)
 	{
-		this.key$ = def.key;
+		if (def.shift == null && def.key == def.key.toUpperCase())
+			def.shift = true;
+
+		this.key$ = def.key.toLowerCase();
 
 		this.alt$ = (def.alt ? true : false);
 		this.ctrl$ = (def.ctrl ? true : false);
@@ -60,14 +64,9 @@ export class KeyMap
 		this.signature$ += (this.shift$ ? 't' : 'f');
 	}
 
-	public get key() : number
+	public get key() : string
 	{
 		return(this.key$);
-	}
-
-	public get keyname() : string
-	{
-		return(KeyCodes.keyname(this.key$));
 	}
 
 	public get alt() : boolean
@@ -98,7 +97,6 @@ export class KeyMap
 	public toString() : string
 	{
 		let str:string = "";
-		let name:string = this.keyname;
 
 		if (this.shift$) str += "shift|";
 		if (this.ctrl$) str += "ctrl|";
@@ -108,8 +106,7 @@ export class KeyMap
 		if (str.endsWith("|"))
 			str = "mod: "+str.substring(0,str.length-1)+", ";
 
-		str += "code: ["+this.key$+"], ";
-		str += "key: ['"+name+"']";
+		str += "key: ["+this.key$+"]";
 
 		return("{"+str+"}");
 	}
@@ -117,7 +114,7 @@ export class KeyMap
 
 export interface KeyDefinition
 {
-	key:number;
+	key:string;
 	alt?:boolean;
 	ctrl?:boolean;
 	meta?:boolean;
@@ -173,7 +170,7 @@ export class KeyMapping
 	public static parseBrowserEvent(event:BrowserEvent) : KeyMap
 	{
 		if (event.key == null) return(null);
-		let key:number = KeyCodes.code(event.key);
+		let key:string = event.key.toLowerCase();
 
 		let signature:string = key+"|";
 		signature += event.alt ? 't' : 'f';
@@ -212,7 +209,7 @@ export class KeyMapping
 
 		let def:KeyDefinition =
 		{
-			key: +key,
+			key: key,
 			alt: (a == 't' ? true : false),
 			ctrl: (c == 't' ? true : false),
 			meta: (m == 't' ? true : false),

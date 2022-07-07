@@ -12,57 +12,30 @@
 
 export class KeyCodes
 {
-    static Backspace    : number =  8;
-    static Tab          : number =  9;
-    static Enter        : number = 13;
-    static Escape       : number = 27;
-    static PageUp       : number = 33;
-    static PageDown     : number = 34;
-    static End          : number = 35;
-    static Home         : number = 36;
-    static ArrowUp      : number = 38;
-    static ArrowDown    : number = 40;
-    static ArrowLeft    : number = 37;
-    static ArrowRight   : number = 39;
-    static Insert       : number = 45;
-    static Delete       : number = 46;
-    static f1           : number = 112;
-    static f2           : number = 113;
-    static f3           : number = 114;
-    static f4           : number = 115;
-    static f5           : number = 116;
-    static f6           : number = 117;
-    static f7           : number = 118;
-    static f8           : number = 119;
-    static f9           : number = 120;
-    static f10          : number = 121;
-    static f11          : number = 122;
-    static f12          : number = 123;
-
-	static code(char:string) : number
-	{
-		if (char == null) return(null);
-		let numval:number = KeyCodes[char];
-		if (!numval) numval = KeyCodes[char.toLowerCase()];
-
-		if (numval) return(numval);
-		else return(char.charCodeAt(0));
-	}
-
-	static keyname(key:number) : string
-	{
-		let defined:string[] = Object.getOwnPropertyNames(KeyCodes);
-		let ignore:string[] = ['length', 'name', 'prototype', 'code', 'keyname'];
-
-		for (let i = 0; i < defined.length; i++)
-		{
-			if (ignore.includes(defined[i]))
-				continue;
-
-			if (KeyCodes[defined[i]] == key)
-				return(defined[i]);
-		}
-
-		return(String.fromCharCode(key));
-	}
+    static Backspace    : string = 'Backspace'
+    static Tab          : string = 'Tab'
+    static Enter        : string = 'Enter'
+    static Escape       : string = 'Escape'
+    static PageUp       : string = 'PageUp'
+    static PageDown     : string = 'PageDown'
+    static End          : string = 'End'
+    static Home         : string = 'Home'
+    static ArrowUp      : string = 'ArrowUp'
+    static ArrowDown    : string = 'ArrowDown'
+    static ArrowLeft    : string = 'ArrowLeft'
+    static ArrowRight   : string = 'ArrowRight'
+    static Insert       : string = 'Insert'
+    static Delete       : string = 'Delete'
+    static f1           : string = 'f1';
+    static f2           : string = 'f2';
+    static f3           : string = 'f3';
+    static f4           : string = 'f4';
+    static f5           : string = 'f5';
+    static f6           : string = 'f6';
+    static f7           : string = 'f7';
+    static f8           : string = 'f8';
+    static f9           : string = 'f9';
+    static f10          : string = 'f10';
+    static f11          : string = 'f11';
+    static f12          : string = 'f12';
 }

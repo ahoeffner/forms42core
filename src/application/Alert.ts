@@ -24,8 +24,8 @@ export class Alert
 		if (type == null)
 			type = Type.PopAndLog;
 
-		//if (type == Type.Popup || type == Type.PopAndLog)
-			//window.alert(msg);
+		if (type == Type.Popup || type == Type.PopAndLog)
+			window.alert(msg);
 
 		if (type == Type.PopAndLog)
 			console.log(title+": "+msg+" "+(new Error()).stack);

@@ -62,16 +62,8 @@ export class FieldInstance implements FieldEventHandler
 		let newprops:FieldProperties = this.defaultProperties;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
 
-		if (clazz != this.clazz)
-		{
-			Alert.fatal("Cannot change field-type as default","Default Properties");
-			return;
-		}
-
-		FieldFeatureFactory.reset(this.element);
-		FieldFeatureFactory.apply(this,newprops);
-		
-		this.impl.apply(newprops,false);
+		if (clazz == this.clazz) this.updateField(newprops);
+		else					 this.changeFieldType(clazz,newprops);
 	}
 
 	public applyProperties(newprops:FieldProperties) : void
@@ -83,6 +75,7 @@ export class FieldInstance implements FieldEventHandler
 			if (newprops != this.properties)
 			{
 				change = true;
+				// Update record dependent props
 				this.field.block.setProperties(this,newprops);
 			}
 		}
@@ -100,36 +93,41 @@ export class FieldInstance implements FieldEventHandler
 		{
 			let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
 
-			if (clazz == this.clazz)
-			{
-				this.impl.apply(newprops,false);
-				FieldFeatureFactory.reset(this.element);
-				FieldFeatureFactory.apply(this,newprops);
-			}
-			else
-			{
-				let value:any = null;
-				let valid:boolean = this.valid;
-
-				if (!this.field.dirty) value = this.impl.getValue();
-				else				   value = this.impl.getIntermediateValue();
-
-				this.clazz = clazz;
-				this.impl = new this.clazz();
-				this.impl.create(this,newprops.tag);
-
-				let before:HTMLElement = this.element;
-				this.element$ = this.impl.getElement();
-				FieldFeatureFactory.apply(this,newprops);
-
-				this.impl.apply(newprops,true);
-				before.replaceWith(this.element);
-
-				this.valid = valid;
-				if (!this.field.dirty) this.impl.setValue(value);
-				else				   this.impl.setIntermediateValue(value);
-			}
+			if (clazz == this.clazz) this.updateField(newprops);
+			else					 this.changeFieldType(clazz,newprops);
 		}
+	}
+
+	private updateField(newprops:FieldProperties) : void
+	{
+		this.impl.apply(newprops,false);
+		FieldFeatureFactory.reset(this.element);
+		FieldFeatureFactory.apply(this,newprops);
+	}
+
+	private changeFieldType(clazz:Class<FieldImplementation>, newprops:FieldProperties) : void
+	{
+		let value:any = null;
+		let valid:boolean = this.valid;
+
+		if (!this.field.dirty) value = this.impl.getValue();
+		else				   value = this.impl.getIntermediateValue();
+
+		this.clazz = clazz;
+		this.impl = new this.clazz();
+		this.impl.create(this,newprops.tag);
+
+		let before:HTMLElement = this.element;
+		this.element$ = this.impl.getElement();
+		FieldFeatureFactory.apply(this,newprops);
+
+		this.impl.apply(newprops,true);
+		before.replaceWith(this.element);
+
+		this.valid = valid;
+
+		if (!this.field.dirty) this.impl.setValue(value);
+		else				   this.impl.setIntermediateValue(value);
 	}
 
 	public get row() : number

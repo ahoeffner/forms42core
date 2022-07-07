@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { MouseMap } from "./MouseMap.js";
+import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
 import { EventFilter } from "./EventFilter.js";
 
@@ -41,8 +43,23 @@ export class EventListener
 
 	public toString() : string
 	{
-		let str:string = this.clazz.constructor.name + "." + this.method;
-		if (this.filter) str += " : " + JSON.stringify(this.filter);
+		let filter:string = "{}";
+
+		if (this.filter)
+		{
+			filter = "{";
+			if (this.filter.type != null) filter += "type: "+EventType[this.filter.type]+", ";
+
+			if (this.filter.block != null) filter += "block: "+this.filter.block+", ";
+			if (this.filter.field != null) filter += "field: "+this.filter.field+", ";
+
+			if (this.filter.key != null) filter += "key: "+this.filter.key+", ";
+			if (this.filter.mouse != null) filter += "key: "+MouseMap[this.filter.mouse]+", ";
+
+			filter = filter.substring(0,filter.length-2)+"}";
+		}
+
+		let str:string = this.clazz.constructor.name + "." + this.method + " filter: " + filter;
 		return(str);
 	}
 }

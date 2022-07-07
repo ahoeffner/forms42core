@@ -16,7 +16,7 @@ import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
-import { EventType } from '../../index.js';
+import { EventType } from '../control/events/EventType.js';
 
 
 export class Form

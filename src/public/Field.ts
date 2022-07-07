@@ -44,7 +44,7 @@ export class Field
 		return(this.inst$.form);
 	}
 
-	public getProperties() : FieldProperties
+	public getDefaultProperties() : FieldProperties
 	{
 		return(new FieldProperties(this.inst$,true));
 	}

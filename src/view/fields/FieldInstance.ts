@@ -20,7 +20,6 @@ import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
-import { Alert } from "../../application/Alert.js";
 
 
 export class FieldInstance implements FieldEventHandler

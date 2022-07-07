@@ -266,7 +266,7 @@ export class FormEvents
 			{
 				done.add(lsnr.id);
 
-				if (!(await FormEvents.execute(lsnr,event)))
+				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
@@ -288,7 +288,7 @@ export class FormEvents
 			{
 				done.add(lsnr.id);
 
-				if (!(await FormEvents.execute(lsnr,event)))
+				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
@@ -310,7 +310,7 @@ export class FormEvents
 			{
 				done.add(lsnr.id);
 
-				if (!(await FormEvents.execute(lsnr,event)))
+				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
@@ -332,7 +332,7 @@ export class FormEvents
 			{
 				done.add(lsnr.id);
 
-				if (!(await FormEvents.execute(lsnr,event)))
+				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
@@ -347,7 +347,7 @@ export class FormEvents
 			{
 				done.add(lsnr.id);
 
-				if (!(await FormEvents.execute(lsnr,event)))
+				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
 					return(false);
@@ -372,10 +372,11 @@ export class FormEvents
 	}
 
 
-	private static async execute(lsnr:EventListener, event:FormEvent) : Promise<boolean>
+	private static async execute(type:EventType,lsnr:EventListener, event:FormEvent) : Promise<boolean>
 	{
 		let cont:boolean = true;
-		Logger.log(Type.eventhandling,"Execute: "+lsnr);
+		Logger.log(Type.eventhandling,EventType[type]+" Invoking eventhandler: "+lsnr);
+
 		let response:Promise<boolean> = lsnr.clazz[lsnr.method](event);
 
 		if (response instanceof Promise)

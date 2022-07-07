@@ -106,7 +106,24 @@ export class Form implements CanvasComponent
 		return(flds);
 	}
 
-	public getProperties(block:string, field:string, clazz?:string) : FieldProperties[]
+	public getFieldById(block:string, field:string, id:string) : Field
+	{
+		let flds:Field[] = [];
+		let vflds:ViewField[] = [];
+
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
+		vflds = View.getForm(this).getBlock(block).getFields(field);
+
+		for (let i = 0; i < vflds.length; i++)
+			vflds[i].getInstancesById(id).forEach((inst) => {flds.push(new Field(inst))})
+
+		if (flds.length == 0) return(null);
+		else				  return(flds[0]);
+	}
+
+	public getDefaultProperties(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
 		let vflds:ViewField[] = [];
 		let flds:FieldProperties[] = [];

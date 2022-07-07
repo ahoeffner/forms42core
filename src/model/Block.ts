@@ -179,15 +179,9 @@ export class Block
 		return(this.keys$);
 	}
 
-	public addKey(name:string, fields:string|string[], primary?:boolean) : void
+	public addKey(name:string, fields:string|string[]) : void
 	{
-		if (primary)
-		{
-			for (let i = 0; i < this.keys$.length; i++)
-				this.keys$[i].primary = false;
-		}
-
-		this.keys$.push(new Key(name,this,fields,primary));
+		this.keys$.push(new Key(name,this,fields));
 	}
 
 	public removeKey(name:string) : boolean
@@ -196,11 +190,7 @@ export class Block
 		{
 			if (name == this.keys$[i].name)
 			{
-				if (this.keys$[i].primary)
-					throw "@Block: Cannot delete primary key";
-
 				this.keys$ = this.keys$.splice(i,1);
-
 				return(true);
 			}
 		}

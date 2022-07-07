@@ -77,7 +77,6 @@ export class EventStack
 
 		try
 		{
-			//console.log(cmd.brwevent.type+" on "+cmd.inst.name)
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
 
 			EventStack.running = false;

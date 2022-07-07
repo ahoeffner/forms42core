@@ -159,6 +159,22 @@ export class Field
 		return(-1);
 	}
 
+	public getInstancesById(id:string) : FieldInstance[]
+	{
+		if (id == null) return([]);
+		let instances:FieldInstance[] = [];
+
+		id = id.toLowerCase();
+
+		this.instances$.forEach((inst) =>
+		{
+			if (inst.properties.id == id)
+				instances.push(inst);
+		});
+
+		return(instances)
+	}
+
 	public getInstancesByClass(clazz:string) : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];
@@ -220,7 +236,7 @@ export class Field
 			if (this.dirty)
 			{
 				let value:string = inst.getIntermediateValue();
-				
+
 				this.distribute(inst,value,this.dirty);
 				this.block.distribute(this,value,this.dirty);
 			}

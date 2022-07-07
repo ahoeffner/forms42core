@@ -45,11 +45,11 @@ export class Block
 		ModelBlock.getBlock(this).datasource = source;
 	}
 
-	public addKey(name:string, fields:string|string[], primary?:boolean) : void
+	public addKey(name:string, fields:string|string[]) : void
 	{
 		if (name == null) throw "@Block: Key name is madatory";
 		if (fields == null) throw "@Block: Key fields is madatory";
-		ModelBlock.getBlock(this).addKey(name,fields,primary);
+		ModelBlock.getBlock(this).addKey(name,fields);
 	}
 
 	public removeKey(name:string) : boolean
@@ -57,14 +57,19 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
+	public getFieldById(field:string, id:string) : Field
+	{
+		return(this.form.getFieldById(this.name,field,id));
+	}
+
 	public getFields(field:string, clazz?:string) : Field[]
 	{
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getProperties(field:string, clazz?:string) : FieldProperties[]
+	public getDefaultProperties(field:string, clazz?:string) : FieldProperties[]
 	{
-		return(this.form.getProperties(this.name,field,clazz));
+		return(this.form.getDefaultProperties(this.name,field,clazz));
 	}
 
 	public getRecordProperties(field:string, clazz?:string) : FieldProperties[]

@@ -212,7 +212,7 @@ export class DataSourceWrapper
 			possible = this.cache$.length - record - 1;
 			if (possible > records) possible = records;
 
-			while(possible <= records)
+			while(possible < records)
 			{
 				if (await this.fetch() == null)
 					break;

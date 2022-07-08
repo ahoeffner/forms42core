@@ -356,6 +356,23 @@ export class Block
 		{row.distribute(field.name,field.value,false);})
 	}
 
+	public lockUnused()
+	{
+		let row:Row = this.getRow(0);
+
+		if (row.unused)
+		{
+			row.setFieldState(FieldState.READONLY);
+			this.getRow(-1).setFieldState(FieldState.READONLY);
+		}
+
+		for (let i = 1; i < this.rows; i++)
+		{
+			row = this.getRow(i);
+			if (row.unused) row.setFieldState(FieldState.DISABLED);
+		}
+	}
+
 	public refresh(rownum:number, record:Record) : void
 	{
 		this.display(rownum,record);
@@ -440,6 +457,9 @@ export class Block
 
 		if (inst.row < 0)
 		{
+			if (this.getRow(this.row+scroll).unused)
+				return(inst);
+
 			if (!await this.form.LeaveField(inst))
 				return(next);
 
@@ -456,7 +476,8 @@ export class Block
 		}
 		else
 		{
-			next = this.getRow(this.row+scroll).getFieldByIndex(idx);
+			let row:Row = this.getRow(this.row+scroll);
+			if (!row.unused) next = row.getFieldByIndex(idx);
 		}
 
 		return(next);

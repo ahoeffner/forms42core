@@ -20,6 +20,7 @@ export class Row
 {
 	private block$:Block = null;
 	private rownum$:number = null;
+	private unused$:boolean = true;
 	private validated$:boolean = true;
 	private instances:FieldInstance[] = [];
 	private state$:FieldState = FieldState.DISABLED;
@@ -64,6 +65,11 @@ export class Row
 		});
 	}
 
+	public get unused() : boolean
+	{
+		return(this.unused$);
+	}
+
 	public getFieldState() : FieldState
 	{
 		return(this.state$);
@@ -72,6 +78,7 @@ export class Row
 	public setFieldState(state:FieldState) : void
 	{
 		this.state$ = state;
+		if (state == FieldState.DISABLED) this.unused$ = true;
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
@@ -269,11 +276,13 @@ export class Row
 
 	public clear() : void
 	{
+		this.unused$ = true;
 		this.getFieldInstances().forEach((inst) => {inst.clear()});
 	}
 
 	public distribute(field:string, value:any, dirty:boolean) : void
 	{
+		this.unused$ = false;
 		this.fields.get(field)?.distribute(null,value,dirty);
 	}
 

@@ -311,7 +311,7 @@ export class Block
 		if (!await this.preQuery())
 			return(false);
 
-		if (!this.view.clear()) return(false);
+		if (!this.view.clear(true)) return(false);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
@@ -333,20 +333,22 @@ export class Block
 		return(true);
 	}
 
-	public scroll(scroll:number) : boolean
+	public scroll(records:number, offset:number) : boolean
 	{
-		if (!this.view.clear())
+		if (!this.view.clear(false))
 			return(false);
 
-		this.move(scroll);
 		let pos:number = this.record;
+		let view:number = this.view.rows;
 
-		if (scroll < 0) scroll = -scroll;
-		else			pos -= this.view.rows;
+		if (records < 0) pos -= offset;
+		else			 pos += records - (view - offset);
+
+		this.move(records);
 
 		let wrapper:DataSourceWrapper = this.wrapper;
 
-		for (let i = 0; i < scroll; i++)
+		for (let i = 0; i < view; i++)
 			this.view$.display(i,wrapper.getRecord(pos++));
 
 		this.view.lockUnused();
@@ -359,9 +361,14 @@ export class Block
 		return(true);
 	}
 
-	public async scrollable(records:number) : Promise<number>
+	public async scrollable(records:number, offset:number) : Promise<number>
 	{
-		return(this.wrapper.scrollable(this.record,records));
+		let pos:number = this.record;
+
+		if (records > 0) pos += offset;
+		else			 pos -= offset;
+
+		return(this.wrapper.scrollable(pos,records));
 	}
 
 	public getRecord(offset?:number) : Record

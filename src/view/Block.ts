@@ -210,12 +210,12 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public clear() : boolean
+	public clear(props:boolean) : boolean
 	{
 		if (!this.validated)
 			return(false);
 
-		this.recprops$.clear();
+		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear()});
 
 		return(true);
@@ -430,7 +430,11 @@ export class Block
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
-			let moveable:number = await this.model.scrollable(scroll);
+			let offset:number = this.row;
+			if (scroll > 0) offset = this.rows - this.row - 1;
+			// Offset to first or last row, dependingon scroll
+
+			let moveable:number = await this.model.scrollable(scroll,offset);
 
 			if (moveable == 0) return(next);
 			scroll = scroll < 0 ? -moveable : moveable;
@@ -441,7 +445,7 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			this.model.scroll(scroll);
+			this.model.scroll(scroll,offset);
 
 			await this.form.enterRecord(this,0);
 			await this.form.enterField(inst,0);

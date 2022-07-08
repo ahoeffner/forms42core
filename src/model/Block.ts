@@ -156,7 +156,7 @@ export class Block
 			columns = this.columns;
 		}
 
-		for (let r = 0; r < recs; r++)
+		for (let r = 0; r < 2*recs; r++)
 		{
 			let row:any[] = [];
 
@@ -196,6 +196,60 @@ export class Block
 		}
 
 		return(false);
+	}
+
+	public async preInsert() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PreInsert,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
+	}
+
+	public async postInsert() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PostInsert,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
+	}
+
+	public async preUpdate() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PreUpdate,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
+	}
+
+	public async postUpdate() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PostUpdate,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
+	}
+
+	public async preDelete() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PreDelete,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
+	}
+
+	public async postDelete() : Promise<boolean>
+	{
+		let record:Record = new Record(null);
+		this.setModelEventTransaction(EventType.PostDelete,record);
+		let success:boolean = await this.fire(EventType.PreQuery);
+		this.endModelEventTransaction(success);
+		return(success);
 	}
 
 	public async preQuery() : Promise<boolean>
@@ -278,10 +332,32 @@ export class Block
 		return(true);
 	}
 
+	public scroll(scroll:number) : boolean
+	{
+		if (!this.view.clear())
+			return(false);
+
+		this.move(scroll);
+
+		let pos:number = this.record + scroll;
+		if (scroll > 0) pos -= this.view.rows;
+		let wrapper:DataSourceWrapper = this.wrapper;
+
+		for (let i = 0; i < this.view$.rows; i++)
+			this.view$.display(i,wrapper.getRecord(pos++));
+
+		return(true);
+	}
+
 	public async queryDetails() : Promise<boolean>
 	{
 		console.log("queryDetails");
 		return(true);
+	}
+
+	public async scrollable(records:number) : Promise<number>
+	{
+		return(this.wrapper.scrollable(this.record,records));
 	}
 
 	public getRecord(offset?:number) : Record

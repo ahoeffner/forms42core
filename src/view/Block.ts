@@ -338,6 +338,7 @@ export class Block
 			row.setFieldState(FieldState.READONLY);
 
 		row.clear();
+		this.applyProperties(row,record);
 
 		record.values.forEach((field) =>
 		{row.distribute(field.name,field.value,false);})
@@ -373,7 +374,7 @@ export class Block
 		if (current != null)
 		{
 			current.clear();
-			let record:Record = this.model$.getRecord();
+			let record:Record = this.model.getRecord();
 
 			this.applyProperties(current,record);
 			record.values.forEach((field) => {current.distribute(field.name,field.value,false);});
@@ -386,27 +387,35 @@ export class Block
 
 		record.values.forEach((field) =>
 		{
-			row.getField(field.name).getInstances().
+			row.getField(field.name)?.getInstances().
 			forEach((inst) => {inst.applyProperties(props?.get(inst))})
 		})
 	}
 
-	private async scroll(inst:FieldInstance, offset:number) : Promise<FieldInstance>
+	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>
 	{
 		let next:FieldInstance = inst;
 
 		if (!await this.validate())
 			return(next);
 
-		if (this.row + offset < 0)
+		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
-			console.log("try fetc backwards");
-			return(next);
-		}
+			let moveable:number = await this.model.scrollable(scroll);
+			if (moveable == 0) return(next);
 
-		if (this.row + offset >= this.rows)
-		{
-			console.log("try fetc forwards");
+			if (!await this.form.LeaveField(inst))
+				return(next);
+
+			if (!await this.form.leaveRecord(this))
+				return(next);
+
+			this.model.scroll(scroll);
+
+			await this.form.enterRecord(this,0);
+			await this.form.enterField(inst,0);
+
+			this.setCurrentRow(this.row);
 			return(next);
 		}
 
@@ -421,17 +430,17 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			if (!await this.form.enterRecord(this,offset))
+			if (!await this.form.enterRecord(this,scroll))
 				return(next);
 
-			if (!await this.form.enterField(inst,offset))
+			if (!await this.form.enterField(inst,scroll))
 				return(next);
 
-			this.setCurrentRow(this.row+offset);
+			this.setCurrentRow(this.row+scroll);
 		}
 		else
 		{
-			next = this.getRow(this.row+offset).getFieldByIndex(idx);
+			next = this.getRow(this.row+scroll).getFieldByIndex(idx);
 		}
 
 		return(next);

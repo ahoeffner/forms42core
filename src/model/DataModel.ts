@@ -11,11 +11,8 @@
  */
 
 import { Record } from "./Record.js";
-import { Form } from "../public/Form.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
-import { EventType } from "../control/events/EventType.js";
-import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 export class DataModel
 {
@@ -44,14 +41,12 @@ export class DataSourceWrapper
 {
 	private eof$:boolean;
 	private cache$:Record[];
-	private form:Form = null;
 	private winpos$:number[] = [0,-1];
 
 	constructor(private block:ModelBlock)
 	{
 		this.cache$ = [];
 		this.eof$ = false;
-		this.form = block.form.parent;
 	}
 
 	public get window() : number
@@ -111,13 +106,13 @@ export class DataSourceWrapper
 		if (!this.source.insertable)
 			return(false);
 
-		if (!await this.fire(EventType.PreInsert))
+		if (!await this.block.preInsert())
 			return(false);
 
 		if (!this.source.insert(record))
 			return(false);
 
-		return(!await this.fire(EventType.PostInsert));
+		return(!await this.block.postInsert());
 	}
 
 	public async update(record:Record) : Promise<boolean>
@@ -125,13 +120,13 @@ export class DataSourceWrapper
 		if (!this.source.updateable)
 			return(false);
 
-		if (!await this.fire(EventType.PreUpdate))
+		if (!await this.block.preUpdate())
 			return(false);
 
 		if (!this.source.update(record))
 			return(false);
 
-		return(!await this.fire(EventType.PostUpdate));
+		return(!await this.block.postUpdate());
 	}
 
 	public async delete(record:Record) : Promise<boolean>
@@ -139,13 +134,13 @@ export class DataSourceWrapper
 		if (!this.source.deleteable)
 			return(false);
 
-		if (!await this.fire(EventType.PreDelete))
+		if (!await this.block.preDelete())
 			return(false);
 
 		if (!this.source.delete(record))
 			return(false);
 
-		return(!await this.fire(EventType.PostDelete));
+		return(!await this.block.postDelete());
 	}
 
 	public getRecord(record:number) : Record
@@ -204,6 +199,32 @@ export class DataSourceWrapper
 		}
 	}
 
+	public async scrollable(record:number,records:number) : Promise<number>
+	{
+		let possible:number = 0;
+
+		if (records < 0)
+		{
+			let recs:number = -records;
+			possible = record > recs ? records : record;
+		}
+		else
+		{
+			possible = this.cache$.length - record - 1;
+			if (possible > records) possible = records;
+
+			while(possible < records)
+			{
+				if (await this.fetch() == null)
+					break;
+
+				possible++;
+			}
+		}
+
+		return(possible);
+	}
+
 	private indexOf(record:Record) : number
 	{
 		if (record == null)
@@ -216,10 +237,5 @@ export class DataSourceWrapper
 		}
 
 		return(0);
-	}
-
-	private async fire(type:EventType) : Promise<boolean>
-	{
-		return(FormEvents.raise(FormEvent.BlockEvent(type,this.form,this.block.name)));
 	}
 }

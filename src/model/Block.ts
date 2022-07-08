@@ -339,8 +339,9 @@ export class Block
 
 		this.move(scroll);
 
-		let pos:number = this.record + scroll;
+		let pos:number = this.record;
 		if (scroll > 0) pos -= this.view.rows;
+
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		for (let i = 0; i < this.view$.rows; i++)

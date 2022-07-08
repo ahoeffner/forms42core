@@ -205,7 +205,7 @@ export class DataSourceWrapper
 
 		if (records < 0)
 		{
-			possible = record > -records ? records : record;
+			possible = record > -records ? -records : record;
 		}
 		else
 		{

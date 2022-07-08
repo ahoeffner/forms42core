@@ -190,6 +190,11 @@ export class Form implements CanvasComponent
 		blk.getField(field)?.setValue(value);
 	}
 
+	public copy(block:string, all?:boolean, header?:boolean) : string[][]
+	{
+		View.getForm(this).getBlock(block).model.copy(all,header)
+	}
+
     public async close() : Promise<boolean>
     {
 		let vform:View = View.getForm(this);

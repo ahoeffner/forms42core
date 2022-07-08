@@ -366,6 +366,13 @@ export class Block
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
+	public copy(all?:boolean, header?:boolean) : string[][]
+	{
+		let table:string[][] = this.wrapper?.copy(all,header);
+		navigator.clipboard.writeText(table.toString());
+		return(table);
+	}
+
 	public link(block:InterfaceBlock) : void
 	{
 		this.intblk = block;

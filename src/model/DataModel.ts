@@ -225,6 +225,31 @@ export class DataSourceWrapper
 		return(possible);
 	}
 
+	public async copy(all?:boolean, header?:boolean) : Promise<string[][]>
+	{
+		let table:string[][] = [];
+		if (all) while(this.fetch() != null);
+
+		if (header && this.cache$.length > 0)
+		{
+			let head:string[] = [];
+			this.cache$[0].values.forEach((col) => head.push(col.name))
+		}
+
+		this.cache$.forEach((record,index) =>
+		{
+			let data:string[] = [];
+
+			data.push(index+"");
+			record.values.forEach((col)=>
+			{data.push(col.value+"");})
+
+			table.push(data);
+		})
+
+		return(table);
+	}
+
 	private indexOf(record:Record) : number
 	{
 		if (record == null)

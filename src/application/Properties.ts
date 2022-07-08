@@ -25,6 +25,11 @@ import { Field } from './tags/Field.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
 
+export enum ScrollDirection
+{
+	Up,
+	Down
+}
 
 export class Properties
 {
@@ -41,6 +46,8 @@ export class Properties
 
     public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
     public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
+
+	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
 
     public static getTagLibrary() : Map<string,Class<Tag>>
     {

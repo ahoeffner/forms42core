@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { Properties, ScrollDirection } from "../application/Properties.js";
+
 export class BrowserEvent
 {
     private event$:any;
@@ -144,12 +146,24 @@ export class BrowserEvent
 
     public get onScrollUp() : boolean
     {
-        return(this.type == "wheel" && this.event.deltaY > 0);
+		if (this.type != "wheel" || this.event.deltaY == 0)
+			return(false);
+
+		if (this.event.deltaY > 0 && Properties.MouseScrollDirection == ScrollDirection.Up) return(true);
+		if (this.event.deltaY < 0 && Properties.MouseScrollDirection == ScrollDirection.Down) return(true);
+
+		return(false);
     }
 
     public get onScrollDown() : boolean
     {
-        return(this.type == "wheel" && this.event.deltaY < 0);
+		if (this.type != "wheel" || this.event.deltaY == 0)
+			return(false);
+
+		if (this.event.deltaY < 0 && Properties.MouseScrollDirection == ScrollDirection.Up) return(true);
+		if (this.event.deltaY > 0 && Properties.MouseScrollDirection == ScrollDirection.Down) return(true);
+
+		return(false);
     }
 
     public get onCtrlKeyDown() : boolean

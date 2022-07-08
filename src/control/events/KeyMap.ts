@@ -20,6 +20,8 @@ export class KeyMap
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
 
+	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
+
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
 
@@ -32,8 +34,6 @@ export class KeyMap
     public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 
-	public static scrollup:KeyMap = new KeyMap({key: KeyCodes.ArrowUp, shift: true});
-	public static scrolldown:KeyMap = new KeyMap({key: KeyCodes.ArrowDown, shift: true});
 
 	private key$:string;
 	private alt$:boolean;
@@ -45,8 +45,11 @@ export class KeyMap
 
 	public constructor(def:KeyDefinition)
 	{
-		if (def.shift == null && def.key == def.key.toUpperCase())
-			def.shift = true;
+		if (def.shift == null)
+		{
+			if (def.key == def.key.toUpperCase() && def.key != def.key.toLowerCase())
+				def.shift = true;
+		}
 
 		this.key$ = def.key.toLowerCase();
 

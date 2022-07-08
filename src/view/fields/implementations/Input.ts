@@ -19,6 +19,7 @@ import { FieldProperties } from "../FieldProperties.js";
 import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
+import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
@@ -803,11 +804,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(true);
 		}
 
-        if (this.event.printable)
-        {
-            let sel:number[] = this.getSelection();
-
-			if (this.datetokens != null && this.event.key == ' ' && this.pattern.isNull())
+		if (this.datetokens != null)
+		{
+			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.sysdate)
 			{
 				this.pattern.setValue(this.getCurrentDate());
 				this.setElementValue(this.pattern.getValue());
@@ -817,6 +816,11 @@ export class Input implements FieldImplementation, EventListenerObject
 
 				return(true);
 			}
+		}
+
+        if (this.event.printable)
+        {
+            let sel:number[] = this.getSelection();
 
             if (sel[0] != sel[1])
             {

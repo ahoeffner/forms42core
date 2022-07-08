@@ -415,7 +415,9 @@ export class Block
 			await this.form.enterRecord(this,0);
 			await this.form.enterField(inst,0);
 
-			this.setCurrentRow(this.row);
+			this.displaycurrent();
+			this.model.queryDetails();
+
 			return(next);
 		}
 

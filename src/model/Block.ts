@@ -366,11 +366,9 @@ export class Block
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
-	public copy(all?:boolean, header?:boolean) : string[][]
+	public async copy(all?:boolean, header?:boolean) : Promise<string[][]>
 	{
-		let table:string[][] = this.wrapper?.copy(all,header);
-		navigator.clipboard.writeText(table.toString());
-		return(table);
+		return(this.wrapper?.copy(all,header));
 	}
 
 	public link(block:InterfaceBlock) : void

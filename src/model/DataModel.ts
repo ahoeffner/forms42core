@@ -205,15 +205,14 @@ export class DataSourceWrapper
 
 		if (records < 0)
 		{
-			let recs:number = -records;
-			possible = record > recs ? records : record;
+			possible = record > -records ? records : record;
 		}
 		else
 		{
 			possible = this.cache$.length - record - 1;
 			if (possible > records) possible = records;
 
-			while(possible < records)
+			while(possible <= records)
 			{
 				if (await this.fetch() == null)
 					break;
@@ -222,6 +221,7 @@ export class DataSourceWrapper
 			}
 		}
 
+		if (possible < 0) possible = 0;
 		return(possible);
 	}
 

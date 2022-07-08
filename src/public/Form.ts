@@ -190,9 +190,11 @@ export class Form implements CanvasComponent
 		blk.getField(field)?.setValue(value);
 	}
 
-	public copy(block:string, all?:boolean, header?:boolean) : string[][]
+	public async copy(block:string, all?:boolean, header?:boolean, clipboard?:boolean) : Promise<string[][]>
 	{
-		View.getForm(this).getBlock(block).model.copy(all,header)
+		let table:string[][] =  await View.getForm(this).getBlock(block).model.copy(all,header);
+		if (clipboard) navigator.clipboard.writeText(table.toString());
+		return(table);
 	}
 
     public async close() : Promise<boolean>

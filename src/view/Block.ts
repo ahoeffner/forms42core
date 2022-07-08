@@ -269,6 +269,18 @@ export class Block
 				next = await this.scroll(inst,-1);
 				break;
 			}
+
+			case KeyMap.pageup :
+			{
+				next = await this.scroll(inst,-this.rows);
+				break;
+			}
+
+			case KeyMap.pagedown :
+			{
+				next = await this.scroll(inst,this.rows);
+				break;
+			}
 		}
 
 		if (next != inst)
@@ -402,7 +414,9 @@ export class Block
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
 			let moveable:number = await this.model.scrollable(scroll);
+
 			if (moveable == 0) return(next);
+			scroll = scroll < 0 ? -moveable : moveable;
 
 			if (!await this.form.LeaveField(inst))
 				return(next);

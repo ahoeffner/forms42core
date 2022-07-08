@@ -25,6 +25,9 @@ export class KeyMap
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
 
+	public static pageup:KeyMap = new KeyMap({key: KeyCodes.ArrowUp, shift:true});
+	public static pagedown:KeyMap = new KeyMap({key: KeyCodes.ArrowDown, shift:true});
+
 	public static nextfield:KeyMap = new KeyMap({key: KeyCodes.Tab});
 	public static prevfield:KeyMap = new KeyMap({key: KeyCodes.Tab, shift: true});
 

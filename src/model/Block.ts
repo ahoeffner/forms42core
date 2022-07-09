@@ -343,10 +343,8 @@ export class Block
 
 		if (records > 0)
 		{
+			let displayed:number = 0;
 			let pos:number = this.record + records - offset;
-			this.move(records);
-
-			console.log("display from "+pos+" -> "+(pos+this.view.rows-1))
 
 			for (let i = 0; i < this.view.rows; i++)
 			{
@@ -355,15 +353,19 @@ export class Block
 				if (rec == null)
 					break;
 
+				displayed++;
 				this.view$.display(i,rec);
 			}
 
-			console.log("record: "+this.record+" "+this.getRecord(0)+" pos: "+pos)
+			if (offset >= displayed)
+				records = records - offset + displayed - 1;
+
+			this.move(records);
 		}
 		else
 		{
 			let pos:number = this.record + records - offset;
-			console.log("start: "+pos);
+			console.log("display from "+pos+" -> "+(pos+this.view.rows-1))
 		}
 
 		this.view.lockUnused();

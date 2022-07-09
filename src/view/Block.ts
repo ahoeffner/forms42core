@@ -428,6 +428,8 @@ export class Block
 		if (!await this.validate())
 			return(next);
 
+		console.log("scroll "+scroll+" row: "+inst.row)
+
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
 			let available:number = 0;
@@ -442,7 +444,6 @@ export class Block
 			if (move)
 			{
 				inst.ignore = "blur";
-				console.log("Move "+this.row+" "+this.rows)
 
 				let idx:number = this.getCurrentRow().getFieldIndex(inst);
 				next = this.getRow(available-1).getFieldByIndex(idx);

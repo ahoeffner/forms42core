@@ -314,6 +314,7 @@ export class Block
 			this.openrow();
 			this.displaycurrent();
 			this.model.queryDetails();
+			this.setIndicators(null,rownum);
 
 			return;
 		}
@@ -323,8 +324,9 @@ export class Block
 
 		this.model$.move(rownum-this.row);
 
-		// disable autofill
+		this.setIndicators(this.row$,rownum);
 		this.getRow(this.row).setFieldState(FieldState.READONLY);
+
 		this.row$ = rownum;
 
 		this.openrow();
@@ -410,6 +412,11 @@ export class Block
 		}
 	}
 
+	private setIndicators(prev:number, next:number) : void
+	{
+		console.log("setIndicators "+prev+" -> "+next)
+	}
+
 	private applyProperties(row:Row, record:Record) : void
 	{
 		let props:Map<FieldInstance,FieldProperties> = this.recprops$.get(record.id);
@@ -461,7 +468,11 @@ export class Block
 			await this.form.enterRecord(this,0);
 			await this.form.enterField(inst,0);
 
-			if (move) this.row$ = next.row;
+			if (move)
+			{
+				this.setIndicators(this.row$,next.row);
+				this.row$ = next.row;
+			}
 
 			this.displaycurrent();
 			this.model.queryDetails();
@@ -541,6 +552,7 @@ export class Block
 				row.setFieldState(FieldState.DISABLED);
 		});
 
+		this.setIndicators(null,0);
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 	}

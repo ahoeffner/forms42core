@@ -176,7 +176,7 @@ export class Framework
                     element.remove();
                     element = null;
                 }
-                else
+                else if (replace != element)
                 {
                     if (typeof replace === "string")
                     {

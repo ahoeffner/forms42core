@@ -199,9 +199,10 @@ export class DataSourceWrapper
 		}
 	}
 
-	public async scrollable(record:number,records:number) : Promise<number>
+	public async prefetch(record:number,records:number) : Promise<number>
 	{
 		let possible:number = 0;
+		console.log("prefetch "+records+" from "+record)
 
 		if (records < 0)
 		{

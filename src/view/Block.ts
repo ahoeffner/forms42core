@@ -434,7 +434,7 @@ export class Block
 			if (scroll > 0) offset = this.rows - this.row - 1;
 			// Offset to first or last row, dependingon scroll
 
-			let available:number = await this.model.scrollable(scroll,offset);
+			let available:number = await this.model.prefetch(scroll,offset);
 			console.log("moveable: "+available)
 
 			if (available == 0) return(next);
@@ -446,7 +446,7 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			this.model.scroll(scroll,available,offset);
+			this.model.scroll(scroll,offset);
 
 			await this.form.enterRecord(this,0);
 			await this.form.enterField(inst,0);

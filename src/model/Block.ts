@@ -333,19 +333,20 @@ export class Block
 		return(true);
 	}
 
-	public scroll(records:number, available:number, offset:number) : boolean
+	public scroll(records:number, offset:number) : boolean
 	{
 		if (!this.view.clear(false))
 			return(false);
 
+		this.move(records);
+
 		let pos:number = this.record;
 		let view:number = this.view.rows;
 
-		if (records < 0) pos -= offset;
-		else			 pos += records - (view - offset);
+		//if (records < 0) pos -= offset;
+		//else			 pos += records - (view - offset);
 
-		this.move(records);
-		console.log("display "+pos+" - "+(pos+available)+" curr: "+this.record)
+		console.log("page "+pos+"  curr: "+this.record+" offset: "+offset+" id: "+this.getRecord(0).getValue("country_id"))
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		for (let i = 0; i < view; i++)
@@ -355,7 +356,8 @@ export class Block
 			if (rec == null)
 				break;
 
-			this.view$.display(i,wrapper.getRecord(pos++));
+			console.log("display "+(pos-1)+" "+rec.getValue("country_id"))
+			this.view$.display(i,rec);
 		}
 
 		this.view.lockUnused();
@@ -368,14 +370,14 @@ export class Block
 		return(true);
 	}
 
-	public async scrollable(records:number, offset:number) : Promise<number>
+	public async prefetch(records:number, offset:number) : Promise<number>
 	{
 		let pos:number = this.record;
 
 		if (records > 0) pos += offset;
 		else			 pos -= offset;
 
-		return(this.wrapper.scrollable(pos,records));
+		return(this.wrapper.prefetch(pos,records));
 	}
 
 	public getRecord(offset?:number) : Record

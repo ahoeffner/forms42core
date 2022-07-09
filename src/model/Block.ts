@@ -338,49 +338,27 @@ export class Block
 		if (!this.view.clear(false))
 			return(false);
 
+		let displayed:number = 0;
 		let wrapper:DataSourceWrapper = this.wrapper;
-		console.log("scroll("+records+","+offset+")")
+		let pos:number = this.record + records - offset;
 
-		if (records > 0)
+		for (let i = 0; i < this.view.rows; i++)
 		{
-			let displayed:number = 0;
-			let pos:number = this.record + records - offset;
+			let rec:Record = wrapper.getRecord(pos++);
 
-			for (let i = 0; i < this.view.rows; i++)
-			{
-				let rec:Record = wrapper.getRecord(pos++);
+			if (rec == null)
+				break;
 
-				if (rec == null)
-					break;
-
-				displayed++;
-				this.view$.display(i,rec);
-			}
-
-			if (offset >= displayed)
-				records = records - offset + displayed - 1;
-
-			this.move(records);
-		}
-		else
-		{
-			let pos:number = this.record + records - offset;
-			console.log("display from "+pos+" -> "+(pos+this.view.rows-1))
-
-			for (let i = 0; i < this.view.rows; i++)
-			{
-				let rec:Record = wrapper.getRecord(pos++);
-
-				if (rec == null)
-					break;
-
-				this.view$.display(i,rec);
-			}
-
-			this.move(records);
+			displayed++;
+			this.view$.display(i,rec);
 		}
 
+		if (offset >= displayed)
+			records = records - offset + displayed - 1;
+
+		this.move(records);
 		this.view.lockUnused();
+		
 		return(true);
 	}
 

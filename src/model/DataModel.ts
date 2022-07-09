@@ -202,7 +202,6 @@ export class DataSourceWrapper
 	public async prefetch(record:number,records:number) : Promise<number>
 	{
 		let possible:number = 0;
-		console.log("prefetch "+records+" from "+record)
 
 		if (records < 0)
 		{

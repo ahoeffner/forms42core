@@ -428,8 +428,6 @@ export class Block
 		if (!await this.validate())
 			return(next);
 
-		console.log("scroll "+scroll+" inst.row: "+inst.row+" row: "+this.row+" rows: "+this.rows)
-
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
 			let available:number = 0;

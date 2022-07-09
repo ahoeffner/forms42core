@@ -16,8 +16,8 @@ import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
-import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { FormsModule } from '../application/FormsModule.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form
 {

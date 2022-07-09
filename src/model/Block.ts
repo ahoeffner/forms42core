@@ -358,7 +358,7 @@ export class Block
 
 		this.move(records);
 		this.view.lockUnused();
-		
+
 		return(true);
 	}
 

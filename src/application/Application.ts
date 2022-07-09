@@ -34,7 +34,7 @@ export class Application
         this.state.module = module;
     }
 
-    public showform(form:Class<Form>|string, container?:HTMLElement) : Form
+    public async showform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
     {
 		if (typeof form === "string")
 		{
@@ -61,8 +61,8 @@ export class Application
         container.appendChild(canvas.getElement());
 
 		ModelForm.getForm(instance).setEventTransaction(EventType.FormInit);
-		FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
-		ModelForm.getForm(instance).endEventTransaction();
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
+		ModelForm.getForm(instance).endEventTransaction(success);
 
 		return(instance);
     }

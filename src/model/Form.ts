@@ -118,7 +118,7 @@ export class Form
 		this.eventTransaction = evttrx;
 	}
 
-	public endEventTransaction() : void
+	public endEventTransaction(apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 

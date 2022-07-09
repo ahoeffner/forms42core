@@ -227,7 +227,11 @@ export class Field
 		{
 			this.instance$ = inst;
 			this.value$ = inst.getValue();
-			await this.block.form.enter(inst);
+
+			if (inst.ignore != "focus")
+				await this.block.form.enter(inst);
+
+			inst.ignore = null;
 			return;
 		}
 
@@ -241,7 +245,10 @@ export class Field
 				this.block.distribute(this,value,this.dirty);
 			}
 
-			await this.block.form.leave(inst);
+			if (inst.ignore != "blur")
+				await this.block.form.leave(inst);
+
+			inst.ignore = null;
 			return;
 		}
 

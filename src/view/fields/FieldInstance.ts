@@ -26,6 +26,7 @@ export class FieldInstance implements FieldEventHandler
 {
 	private form$:Form = null;
 	private field$:Field = null;
+	private ignore$:string = null;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
@@ -159,6 +160,21 @@ export class FieldInstance implements FieldEventHandler
 		return(this.field$);
 	}
 
+	public get element() : HTMLElement
+	{
+		return(this.element$);
+	}
+
+	public get ignore() : string
+	{
+		return(this.ignore$);
+	}
+
+	public set ignore(value:string)
+	{
+		this.ignore$ = value;
+	}
+
 	public set valid(flag:boolean)
 	{
 		if (!flag) this.element.classList.add("invalid");
@@ -178,11 +194,6 @@ export class FieldInstance implements FieldEventHandler
 	public hasDefaultProperties() : boolean
 	{
 		return(this.properties$ == this.defproperties$);
-	}
-
-	public get element() : HTMLElement
-	{
-		return(this.element$);
 	}
 
 	public clear() : void

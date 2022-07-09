@@ -437,8 +437,17 @@ export class Block
 			else			available = await this.model.prefetch(scroll,this.rows-this.row-1);
 
 			if (available <= 0) return(next);
-
 			let move:boolean = (scroll > 0 && available <= this.row);
+
+			if (move)
+			{
+				inst.ignore = "blur";
+
+				let idx:number = this.getCurrentRow().getFieldIndex(inst);
+				next = this.getRow(available-1).getFieldByIndex(idx);
+
+				next.ignore = "focus";
+			}
 
 			if (!await this.form.LeaveField(inst))
 				return(next);
@@ -448,19 +457,11 @@ export class Block
 
 			this.model.scroll(scroll,this.row);
 
-			if (move)
-			{
-				let idx:number = inst.field.row.getFieldIndex(inst);
-				next = this.getRow(available-1).getFieldByIndex(idx);
-			}
-			else
-			{
-				await this.form.enterRecord(this,0);
-				await this.form.enterField(inst,0);
+			await this.form.enterRecord(this,0);
+			await this.form.enterField(inst,0);
 
-				this.displaycurrent();
-				this.model.queryDetails();
-			}
+			this.displaycurrent();
+			this.model.queryDetails();
 
 			return(next);
 		}

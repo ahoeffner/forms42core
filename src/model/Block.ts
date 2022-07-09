@@ -355,8 +355,6 @@ export class Block
 				this.move(1);
 				this.view$.display(i,rec);
 			}
-
-			console.log("record: "+this.record)
 		}
 		else
 		{

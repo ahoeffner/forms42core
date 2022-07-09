@@ -344,6 +344,9 @@ export class Block
 		if (records > 0)
 		{
 			let pos:number = this.record + records - offset;
+			this.move(records);
+
+			console.log("display from "+pos+" -> "+(pos+this.view.rows-1))
 
 			for (let i = 0; i < this.view.rows; i++)
 			{
@@ -352,9 +355,10 @@ export class Block
 				if (rec == null)
 					break;
 
-				this.move(1);
 				this.view$.display(i,rec);
 			}
+
+			console.log("record: "+this.record+" "+this.getRecord(0)+" pos: "+pos)
 		}
 		else
 		{

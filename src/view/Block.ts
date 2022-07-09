@@ -437,11 +437,12 @@ export class Block
 			else			available = await this.model.prefetch(scroll,this.rows-this.row-1);
 
 			if (available <= 0) return(next);
-			let move:boolean = (scroll > 0 && available <= this.row);
+			let move:boolean = (scroll > 1 && available <= this.row);
 
 			if (move)
 			{
 				inst.ignore = "blur";
+				console.log("Move "+this.row+" "+this.rows)
 
 				let idx:number = this.getCurrentRow().getFieldIndex(inst);
 				next = this.getRow(available-1).getFieldByIndex(idx);

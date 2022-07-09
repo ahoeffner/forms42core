@@ -111,7 +111,7 @@ export class Form
 			return;
 		}
 
-		if (evttrx) evttrx.join();
+		if (evttrx) evttrx.join(event);
 		else evttrx = new EventTransaction(event);
 
 		evttrx.blocked = true;
@@ -128,7 +128,8 @@ export class Form
 			return;
 		}
 
-		evttrx.remove();
+		if (!apply) evttrx.remove();
+		else evttrx.applyDefaultProperties();
 
 		if (evttrx.done())
 			this.eventTransaction = null;

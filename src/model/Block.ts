@@ -414,7 +414,7 @@ export class Block
 			return;
 		}
 
-		if (evttrx) evttrx.join(this,record,0,false);
+		if (evttrx) evttrx.join(event,this,record,0,false);
 		else evttrx = new EventTransaction(event,this,record,0,false,true);
 
 		this.form.eventTransaction = evttrx;

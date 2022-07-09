@@ -66,6 +66,12 @@ export class FieldInstance implements FieldEventHandler
 		else					 this.changeFieldType(clazz,newprops);
 	}
 
+	public resetProperties()
+	{
+		this.properties$ = this.defproperties$;
+		this.applyProperties(this.defaultProperties);
+	}
+
 	public applyProperties(newprops:FieldProperties) : void
 	{
 		let change:boolean = false;

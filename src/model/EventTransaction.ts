@@ -50,6 +50,7 @@ export class EventTransaction
 	public constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
 		this.event$ = event;
+		console.log("start "+EventType[event])
 
 		if (block != null)
 		{
@@ -116,8 +117,10 @@ export class EventTransaction
 		else		   instprop.defproperties = props;
 	}
 
-	public join(block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
+	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
+		console.log("join "+EventType[event])
+
 		if (block != null)
 		{
 			if (offset == null) offset = 0;
@@ -184,6 +187,11 @@ export class EventTransaction
 			this.blkprops.forEach((blkprop) => {blkprop.apply()});
 			this.blkprops.clear();
 		}
+	}
+
+	public applyDefaultProperties() : void
+	{
+		console.log("trx: "+this.trx.size+" anonymous: "+this.anonymous)
 	}
 
 	public remove(block?:Block|ViewBlock) : void

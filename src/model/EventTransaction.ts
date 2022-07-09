@@ -169,8 +169,10 @@ export class EventTransaction
 		return(trx.setValue(field,value));
 	}
 
-	public apply(block?:Block|ViewBlock) : void
+	public apply(event:EventType, block?:Block|ViewBlock) : void
 	{
+		console.log("apply "+EventType[event])
+
 		if (block)
 		{
 			this.trx.get(block.name)?.apply();
@@ -189,13 +191,15 @@ export class EventTransaction
 		}
 	}
 
-	public applyDefaultProperties() : void
+	public applyDefaultProperties(event:EventType) : void
 	{
+		console.log("applyDefaultProperties "+EventType[event])
 		console.log("trx: "+this.trx.size+" anonymous: "+this.anonymous)
 	}
 
-	public remove(block?:Block|ViewBlock) : void
+	public remove(event:EventType, block?:Block|ViewBlock) : void
 	{
+		console.log("remove "+EventType[event])
 		if (block == null) this.anonymous--;
 		else               this.trx.delete(block.name);
 	}

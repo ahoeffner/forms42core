@@ -181,9 +181,9 @@ export class Block
 		this.model.setEventTransaction(event,offset);
 	}
 
-	public endEventTransaction(apply:boolean) : void
+	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
-		this.model.endEventTransaction(apply);
+		this.model.endEventTransaction(event,apply);
 	}
 
 	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
@@ -196,7 +196,7 @@ export class Block
 		{
 			this.setEventTransaction(EventType.ValidateField,0);
 			let success:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
-			this.endEventTransaction(success);
+			this.endEventTransaction(EventType.ValidateField,success);
 
 			if (success)
 				this.model$.setValue(inst.name,value);
@@ -236,7 +236,7 @@ export class Block
 	{
 		this.setEventTransaction(EventType.Editing,0);
 		let success:boolean = await	this.fireFieldEvent(EventType.Editing,inst);
-		this.endEventTransaction(success);
+		this.endEventTransaction(EventType.Editing,success);
 		return(success);
 	}
 

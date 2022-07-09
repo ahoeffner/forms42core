@@ -118,7 +118,7 @@ export class Form
 		this.eventTransaction = evttrx;
 	}
 
-	public endEventTransaction(apply:boolean) : void
+	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
@@ -128,8 +128,8 @@ export class Form
 			return;
 		}
 
-		if (!apply) evttrx.remove();
-		else evttrx.applyDefaultProperties();
+		if (!apply) evttrx.remove(event);
+		else evttrx.applyDefaultProperties(event);
 
 		if (evttrx.done())
 			this.eventTransaction = null;

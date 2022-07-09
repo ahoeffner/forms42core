@@ -114,7 +114,7 @@ export class Block
 		this.form.eventTransaction = evttrx;
 	}
 
-	public endEventTransaction(apply:boolean) : void
+	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
@@ -125,7 +125,7 @@ export class Block
 		}
 
 		if (apply)
-			evttrx.apply();
+			evttrx.apply(event);
 
 		this.form.eventTransaction = null;
 	}
@@ -203,7 +203,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreInsert,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PreInsert,success);
 		return(success);
 	}
 
@@ -212,7 +212,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostInsert,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PostInsert,success);
 		return(success);
 	}
 
@@ -221,7 +221,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreUpdate,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PreUpdate,success);
 		return(success);
 	}
 
@@ -230,7 +230,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostUpdate,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PostUpdate,success);
 		return(success);
 	}
 
@@ -239,7 +239,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreDelete,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PreDelete,success);
 		return(success);
 	}
 
@@ -248,7 +248,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostDelete,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PostDelete,success);
 		return(success);
 	}
 
@@ -257,7 +257,7 @@ export class Block
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PreQuery,success);
 		return(success);
 	}
 
@@ -265,7 +265,7 @@ export class Block
 	{
 		this.setModelEventTransaction(EventType.PostQuery,record);
 		let success:boolean = await this.fire(EventType.PostQuery);
-		this.endModelEventTransaction(success);
+		this.endModelEventTransaction(EventType.PostQuery,success);
 		return(success);
 	}
 
@@ -273,7 +273,7 @@ export class Block
 	{
 		this.setEventTransaction(EventType.ValidateRecord,0);
 		let success:boolean = await this.fire(EventType.ValidateRecord);
-		this.endEventTransaction(success);
+		this.endEventTransaction(EventType.ValidateRecord,success);
 		return(success);
 	}
 
@@ -420,7 +420,7 @@ export class Block
 		this.form.eventTransaction = evttrx;
 	}
 
-	private endModelEventTransaction(apply:boolean) : void
+	private endModelEventTransaction(event:EventType, apply:boolean) : void
 	{
 		let evttrx:EventTransaction = this.eventTransaction;
 
@@ -430,8 +430,8 @@ export class Block
 			return;
 		}
 
-		if (apply) evttrx.apply(this);
-		else 	   evttrx.remove(this);
+		if (apply) evttrx.apply(event,this);
+		else 	   evttrx.remove(event,this);
 
 		if (evttrx.done())
 			this.form.eventTransaction = null;

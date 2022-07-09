@@ -205,7 +205,7 @@ export class Form implements CanvasComponent
 
 		mform.setEventTransaction(EventType.FormClose);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormClose,this));
-		mform.endEventTransaction(success);
+		mform.endEventTransaction(EventType.FormClose,success);
 
         this.canvas.close();
         return(true);

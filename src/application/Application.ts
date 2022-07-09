@@ -62,7 +62,7 @@ export class Application
 
 		ModelForm.getForm(instance).setEventTransaction(EventType.FormInit);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
-		ModelForm.getForm(instance).endEventTransaction(success);
+		ModelForm.getForm(instance).endEventTransaction(EventType.FormInit,success);
 
 		return(instance);
     }

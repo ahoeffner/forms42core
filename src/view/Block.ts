@@ -428,7 +428,7 @@ export class Block
 		if (!await this.validate())
 			return(next);
 
-		console.log("scroll "+scroll+" row: "+inst.row)
+		console.log("scroll "+scroll+" inst.row: "+inst.row+" row: "+this.row+" rows: "+this.rows)
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
@@ -446,6 +446,7 @@ export class Block
 				inst.ignore = "blur";
 
 				let idx:number = this.getCurrentRow().getFieldIndex(inst);
+				//this.row$ = available-1;
 				next = this.getRow(available-1).getFieldByIndex(idx);
 
 				next.ignore = "focus";
@@ -461,6 +462,8 @@ export class Block
 
 			await this.form.enterRecord(this,0);
 			await this.form.enterField(inst,0);
+
+			if (move) this.row$ = next.row;
 
 			this.displaycurrent();
 			this.model.queryDetails();

@@ -366,6 +366,18 @@ export class Block
 		{
 			let pos:number = this.record + records - offset;
 			console.log("display from "+pos+" -> "+(pos+this.view.rows-1))
+
+			for (let i = 0; i < this.view.rows; i++)
+			{
+				let rec:Record = wrapper.getRecord(pos++);
+
+				if (rec == null)
+					break;
+
+				this.view$.display(i,rec);
+			}
+
+			this.move(records);
 		}
 
 		this.view.lockUnused();

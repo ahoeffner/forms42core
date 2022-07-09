@@ -430,15 +430,15 @@ export class Block
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
-			let offset:number = this.row;
-			if (scroll > 0) offset = this.rows - this.row - 1;
-			// Offset to first or last row, dependingon scroll
+			let available:number = 0;
 
-			let available:number = await this.model.prefetch(scroll,offset);
-			console.log("moveable: "+available)
+			// fetch up from first, down from last
+			if (scroll < 0) available = await this.model.prefetch(scroll,-this.row);
+			else			available = await this.model.prefetch(scroll,this.rows-this.row-1);
 
-			if (available == 0) return(next);
-			if (scroll < 0) available = -available;
+			if (available <= 0) return(next);
+
+			let move:boolean = (scroll > 0 && available <= this.row);
 
 			if (!await this.form.LeaveField(inst))
 				return(next);
@@ -446,13 +446,21 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			this.model.scroll(scroll,offset);
+			this.model.scroll(scroll,this.row);
 
-			await this.form.enterRecord(this,0);
-			await this.form.enterField(inst,0);
+			if (move)
+			{
+				let idx:number = inst.field.row.getFieldIndex(inst);
+				next = this.getRow(available-1).getFieldByIndex(idx);
+			}
+			else
+			{
+				await this.form.enterRecord(this,0);
+				await this.form.enterField(inst,0);
 
-			this.displaycurrent();
-			this.model.queryDetails();
+				this.displaycurrent();
+				this.model.queryDetails();
+			}
 
 			return(next);
 		}

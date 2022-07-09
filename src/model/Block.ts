@@ -338,26 +338,30 @@ export class Block
 		if (!this.view.clear(false))
 			return(false);
 
-		this.move(records);
-
-		let pos:number = this.record;
-		let view:number = this.view.rows;
-
-		//if (records < 0) pos -= offset;
-		//else			 pos += records - (view - offset);
-
-		console.log("page "+pos+"  curr: "+this.record+" offset: "+offset+" id: "+this.getRecord(0).getValue("country_id"))
 		let wrapper:DataSourceWrapper = this.wrapper;
+		console.log("scroll("+records+","+offset+")")
 
-		for (let i = 0; i < view; i++)
+		if (records > 0)
 		{
-			let rec:Record = wrapper.getRecord(pos++);
+			let pos:number = this.record + records - offset;
 
-			if (rec == null)
-				break;
+			for (let i = 0; i < this.view.rows; i++)
+			{
+				let rec:Record = wrapper.getRecord(pos++);
 
-			console.log("display "+(pos-1)+" "+rec.getValue("country_id"))
-			this.view$.display(i,rec);
+				if (rec == null)
+					break;
+
+				this.move(1);
+				this.view$.display(i,rec);
+			}
+
+			console.log("record: "+this.record)
+		}
+		else
+		{
+			let pos:number = this.record + records - offset;
+			console.log("start: "+pos);
 		}
 
 		this.view.lockUnused();
@@ -372,12 +376,7 @@ export class Block
 
 	public async prefetch(records:number, offset:number) : Promise<number>
 	{
-		let pos:number = this.record;
-
-		if (records > 0) pos += offset;
-		else			 pos -= offset;
-
-		return(this.wrapper.prefetch(pos,records));
+		return(this.wrapper.prefetch(this.record+offset,records));
 	}
 
 	public getRecord(offset?:number) : Record

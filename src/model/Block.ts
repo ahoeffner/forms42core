@@ -156,7 +156,7 @@ export class Block
 			columns = this.columns;
 		}
 
-		for (let r = 0; r < 3*recs; r++)
+		for (let r = 0; r < 3*recs+3; r++)
 		{
 			let row:any[] = [];
 
@@ -333,7 +333,7 @@ export class Block
 		return(true);
 	}
 
-	public scroll(records:number, offset:number) : boolean
+	public scroll(records:number, available:number, offset:number) : boolean
 	{
 		if (!this.view.clear(false))
 			return(false);
@@ -345,11 +345,18 @@ export class Block
 		else			 pos += records - (view - offset);
 
 		this.move(records);
-
+		console.log("display "+pos+" - "+(pos+available)+" curr: "+this.record)
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		for (let i = 0; i < view; i++)
+		{
+			let rec:Record = wrapper.getRecord(pos++);
+
+			if (rec == null)
+				break;
+
 			this.view$.display(i,wrapper.getRecord(pos++));
+		}
 
 		this.view.lockUnused();
 		return(true);

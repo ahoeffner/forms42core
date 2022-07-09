@@ -128,8 +128,10 @@ export class Form
 			return;
 		}
 
-		if (!apply) evttrx.remove(event);
-		else evttrx.applyDefaultProperties(event);
+		if (!apply)
+			evttrx.applyDefaultProperties(event);
+			
+		evttrx.remove(event);
 
 		if (evttrx.done())
 			this.eventTransaction = null;

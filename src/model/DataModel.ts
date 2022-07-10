@@ -184,9 +184,6 @@ export class DataSourceWrapper
 				if (recs.length < this.source.arrayfecth)
 					this.eof$ = true;
 
-				for (let i = 0; i < recs.length; i++)
-					await this.block.postQuery(recs[i]);
-
 				this.cache$.push(...recs);
 			}
 
@@ -195,7 +192,10 @@ export class DataSourceWrapper
 			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
 				this.winpos$[0]++;
 
-			return(this.cache$[this.winpos$[1]]);
+			let record:Record = this.cache$[this.winpos$[1]];
+			await this.block.postQuery(record);
+			
+			return(record);
 		}
 	}
 

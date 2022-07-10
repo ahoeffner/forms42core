@@ -156,7 +156,7 @@ export class Block
 			columns = this.columns;
 		}
 
-		for (let r = 0; r < 3*recs+3; r++)
+		for (let r = 0; r < recs; r++)
 		{
 			let row:any[] = [];
 
@@ -315,18 +315,20 @@ export class Block
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
+		let record:Record = null;
 
-		if (!await wrapper.query()) return(false);
-		let record:Record = await wrapper.fetch();
+		if (!await wrapper.query())
+			return(false);
 
-		for (let i = 0; i < this.view.rows && record != null; i++)
+		for (let i = 0; i < this.view.rows; i++)
 		{
-			this.view.display(i,record);
-
-			if (i == 0)
-				this.view$.setCurrentRow(0)
-
 			record = await wrapper.fetch();
+
+			if (record == null)
+				break;
+
+			this.view.display(i,record);
+			if (i == 0)	this.view$.setCurrentRow(0)
 		}
 
 		this.view.lockUnused();
@@ -345,8 +347,7 @@ export class Block
 		if (pos < 0)
 		{
 			pos = 0;
-			this.move(-this.record);
-			records = this.view.rows - 1;
+			records = offset - this.record;
 		}
 
 		for (let i = 0; i < this.view.rows; i++)

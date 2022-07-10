@@ -17,6 +17,7 @@ import { Class } from "../../types/Class.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
+import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
@@ -186,8 +187,8 @@ export class FieldInstance implements FieldEventHandler
 
 	public set valid(flag:boolean)
 	{
-		if (!flag) this.element.classList.add("invalid");
-		else       this.element.classList.remove("invalid");
+		if (!flag) this.element.classList.add(Properties.Classes.Invalid);
+		else       this.element.classList.remove(Properties.Classes.Invalid);
 	}
 
 	public get properties() : FieldProperties

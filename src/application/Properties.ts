@@ -31,6 +31,12 @@ export enum ScrollDirection
 	Down
 }
 
+export interface ClassNames
+{
+	Invalid:string;
+	RowIndicator:string;
+}
+
 export class Properties
 {
     public static RootTag:string = "forms";
@@ -43,6 +49,8 @@ export class Properties
 
     public static ParseTags:boolean = true;
     public static ParseEvents:boolean = true;
+
+	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator"};
 
     public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
     public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();

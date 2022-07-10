@@ -12,6 +12,7 @@
 
 import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
+import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Indicator } from "../application/tags/Indicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
@@ -67,8 +68,8 @@ export class Row
 	{
 		this.indicators.forEach((ind) =>
 		{
-			if (flag) ind.element.classList.add("current-row");
-			else      ind.element.classList.remove("current-row");
+			if (flag) ind.element.classList.add(Properties.Classes.RowIndicator);
+			else      ind.element.classList.remove(Properties.Classes.RowIndicator);
 		})
 	}
 

@@ -202,7 +202,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreInsert,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PreInsert);
 		this.endModelEventTransaction(EventType.PreInsert,success);
 		return(success);
 	}
@@ -211,7 +211,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostInsert,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endModelEventTransaction(EventType.PostInsert,success);
 		return(success);
 	}
@@ -220,7 +220,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreUpdate,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PreUpdate);
 		this.endModelEventTransaction(EventType.PreUpdate,success);
 		return(success);
 	}
@@ -229,7 +229,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostUpdate,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PostUpdate);
 		this.endModelEventTransaction(EventType.PostUpdate,success);
 		return(success);
 	}
@@ -238,7 +238,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PreDelete,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PreDelete);
 		this.endModelEventTransaction(EventType.PreDelete,success);
 		return(success);
 	}
@@ -247,7 +247,7 @@ export class Block
 	{
 		let record:Record = new Record(null);
 		this.setModelEventTransaction(EventType.PostDelete,record);
-		let success:boolean = await this.fire(EventType.PreQuery);
+		let success:boolean = await this.fire(EventType.PostDelete);
 		this.endModelEventTransaction(EventType.PostDelete,success);
 		return(success);
 	}

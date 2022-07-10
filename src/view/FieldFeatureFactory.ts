@@ -222,10 +222,14 @@ export class FieldFeatureFactory
 			let list:string = props.getAttribute("list");
 
 			if (list == null)
+				list = inst.defaultProperties.getAttribute("values");
+
+			if (list == null)
 			{
 				list = (new Date()).getTime()+"";
 				props.setAttribute("list",list);
 				tag.setAttribute("list",list);
+				inst.defaultProperties.setAttribute("values",list);
 			}
 
 			list = list.toLowerCase();

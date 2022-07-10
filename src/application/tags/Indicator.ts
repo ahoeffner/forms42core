@@ -11,10 +11,14 @@
  */
 
 import { Tag } from "./Tag.js";
+import { Form } from "../../view/Form.js";
 
 export class Indicator implements Tag
 {
-    public parse(_component:any, tag:HTMLElement, attr:string) : HTMLElement
+	public row:number = -1;
+	public block:string = null;
+
+    public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
     {
 		let row:string = tag.getAttribute("row");
 		let block:string = tag.getAttribute(attr);
@@ -26,8 +30,10 @@ export class Indicator implements Tag
 		if (isNaN(+row))
 			throw "@Indicator: row attribute is not a number";
 
-		console.log("indicator block: "+block+" row: "+row);
+		this.row = +row;
+		this.block = block;
 
+		Form.getForm(component)?.addIndicator(this);
 		return(tag);
     }
 }

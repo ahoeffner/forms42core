@@ -17,6 +17,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
+import { Indicator } from '../application/tags/Indicator.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form
@@ -56,6 +57,7 @@ export class Form
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
+	private indicators:Map<string,Indicator[]> = new Map<string,Indicator[]>();
 
 	private constructor(parent:InterfaceForm)
 	{
@@ -88,6 +90,27 @@ export class Form
 	{
 		this.blocks.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
+	}
+
+	public getIndicators(block:string) : Indicator[]
+	{
+		let indicators:Indicator[] = this.indicators.get(block);
+		if (indicators == null) return([]);
+		return(indicators);
+	}
+
+	public addIndicator(ind:Indicator) : void
+	{
+		let block:string = ind.block.toLowerCase();
+		let indicators:Indicator[] = this.indicators.get(block);
+
+		if (indicators == null)
+		{
+			indicators = [];
+			this.indicators.set(block,indicators);
+		}
+
+		indicators.push(ind);
 	}
 
 	public getField(block:string, field:string) : Field

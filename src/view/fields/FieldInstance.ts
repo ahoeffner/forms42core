@@ -66,8 +66,11 @@ export class FieldInstance implements FieldEventHandler
 		else					 this.changeFieldType(clazz,newprops);
 	}
 
-	public resetProperties()
+	public resetProperties() : void
 	{
+		if (this.hasDefaultProperties())
+			return;
+
 		this.properties$ = this.defproperties$;
 		this.applyProperties(this.defaultProperties);
 	}

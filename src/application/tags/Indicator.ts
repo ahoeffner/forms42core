@@ -17,6 +17,7 @@ export class Indicator implements Tag
 {
 	public row:number = -1;
 	public block:string = null;
+	public element:HTMLElement = null;
 
     public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
     {
@@ -32,6 +33,7 @@ export class Indicator implements Tag
 
 		this.row = +row;
 		this.block = block;
+		this.element = tag;
 
 		Form.getForm(component)?.addIndicator(this);
 		return(tag);

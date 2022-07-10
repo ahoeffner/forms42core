@@ -13,6 +13,7 @@
 import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
+import { Indicator } from "../application/tags/Indicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
 
@@ -22,6 +23,7 @@ export class Row
 	private rownum$:number = null;
 	private unused$:boolean = true;
 	private validated$:boolean = true;
+	private indicators:Indicator[] = [];
 	private instances:FieldInstance[] = [];
 	private state$:FieldState = FieldState.DISABLED;
 	private fields:Map<string,Field> = new Map<string,Field>();
@@ -54,6 +56,20 @@ export class Row
 			fld.getInstances().forEach((inst) =>
 			{inst.properties.row = rownum;})
 		});
+	}
+
+	public setIndicator(ind:Indicator) : void
+	{
+		this.indicators.push(ind);
+	}
+
+	public avtivateIndicators(flag:boolean) : void
+	{
+		this.indicators.forEach((ind) =>
+		{
+			if (flag) ind.element.classList.add("current-row");
+			else      ind.element.classList.remove("current-row");
+		})
 	}
 
 	public finalize() : void

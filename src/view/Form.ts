@@ -50,6 +50,7 @@ export class Form
 	{
 		let form:Form = Form.views.get(parent);
 		form.blocks.forEach((blk) => {blk.finalize();});
+		form.indicators.clear();
 		form.linkModels();
 	}
 

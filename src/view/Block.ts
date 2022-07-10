@@ -24,6 +24,7 @@ import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { Indicator } from "../application/tags/Indicator.js";
 
 
 export class Block
@@ -414,7 +415,8 @@ export class Block
 
 	private setIndicators(prev:number, next:number) : void
 	{
-		console.log("setIndicators "+prev+" -> "+next)
+		if (next != null) this.getRow(next).avtivateIndicators(true);
+		if (prev != null) this.getRow(prev).avtivateIndicators(false);
 	}
 
 	private applyProperties(row:Row, record:Record) : void
@@ -515,6 +517,7 @@ export class Block
 	{
 		let rows:Row[] = [];
 		this.rows$.forEach((row) => {rows.push(row)});
+		this.form.getIndicators(this.name).forEach((ind) => this.getRow(ind.row)?.setIndicator(ind));
 
 		/*
 		 * If only 1 row, set rownum to 0;

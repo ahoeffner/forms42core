@@ -40,7 +40,7 @@ export class Field implements Tag, FormField
 		let type:string = tag.tagName.toLowerCase();
 		if (type == "input" || type == "select") this.editable$ = true;
 
-		if (tag.getAttribute("type")?.toLowerCase() == "indicator")
+		if (tag.getAttribute("type")?.toLowerCase() == "row-indicator")
 			return(new Indicator().parse(component,tag,attr));
 
 		if (attr != "block") tag.removeAttribute(attr);

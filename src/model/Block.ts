@@ -342,6 +342,13 @@ export class Block
 		let wrapper:DataSourceWrapper = this.wrapper;
 		let pos:number = this.record + records - offset;
 
+		if (pos < 0)
+		{
+			pos = 0;
+			this.move(-this.record);
+			records = this.view.rows - 1;
+		}
+
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			let rec:Record = wrapper.getRecord(pos++);
@@ -356,9 +363,10 @@ export class Block
 		if (offset >= displayed)
 			records = records - offset + displayed - 1;
 
+		console.log("move "+records)
 		this.move(records);
-		this.view.lockUnused();
 
+		this.view.lockUnused();
 		return(true);
 	}
 

@@ -187,14 +187,21 @@ export class DataSourceWrapper
 				this.cache$.push(...recs);
 			}
 
+			let undo:number[] = this.winpos$;
+
 			this.winpos$[1]++;
 
 			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
 				this.winpos$[0]++;
 
 			let record:Record = this.cache$[this.winpos$[1]];
-			await this.block.postQuery(record);
-			
+
+			if (!await this.block.postQuery(record))
+			{
+				this.winpos$ = undo;
+				return(null);
+			}
+
 			return(record);
 		}
 	}

@@ -25,8 +25,17 @@ import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 	in blocks not participating in the transaction.
 
 	This happens during CRUD operations. But also when forms are created or closed.
-	During form operations, all blocks are initially blocked using an anonymous block.
+	Form operations only allows for changes in default properties for fields.
 */
+
+class State
+{
+	trx:Map<string,BlockTransaction> =
+		new Map<string,BlockTransaction>();
+
+	blkprops:Map<string,BlockProperties> =
+		new Map<string,BlockProperties>();
+}
 
 export interface PropertyChange
 {

@@ -102,32 +102,13 @@ export class Block
 
 	public setEventTransaction(event:EventType, offset:number) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx != null)
-		{
-			Alert.fatal("Cannot start transaction: "+EventType[event]+". Form in transaction "+evttrx.event,"Transaction Failure");
-			return;
-		}
-
-		evttrx = new EventTransaction(event,this,null,offset,true);
-		this.form.eventTransaction = evttrx;
+		this.eventTransaction.join(event,this,null,offset,true);
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx == null || evttrx.blocked)
-		{
-			Alert.fatal("Block not in transaction","Transaction Failure");
-			return;
-		}
-
-		if (apply)
-			evttrx.apply(event);
-
-		this.form.eventTransaction = null;
+		if (!apply) this.eventTransaction.undoChanges(event)
+		else		this.eventTransaction.applyBlockChanges(event,this);
 	}
 
 	public get datasource() : DataSource
@@ -415,35 +396,13 @@ export class Block
 
 	private setModelEventTransaction(event:EventType, record:Record) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx != null && !evttrx.blocked)
-		{
-			Alert.fatal("Already in transaction","Transaction Failure");
-			return;
-		}
-
-		if (evttrx) evttrx.join(event,this,record,0,false);
-		else evttrx = new EventTransaction(event,this,record,0,false,true);
-
-		this.form.eventTransaction = evttrx;
+		this.eventTransaction.join(event,this,record,0,false);
 	}
 
 	private endModelEventTransaction(event:EventType, apply:boolean) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx == null || !evttrx.blocked)
-		{
-			Alert.fatal("Model not in transaction","Transaction Failure");
-			return;
-		}
-
-		if (apply) evttrx.apply(event,this);
-		else 	   evttrx.remove(event,this);
-
-		if (evttrx.done())
-			this.form.eventTransaction = null;
+		if (!apply) this.eventTransaction.undoChanges(event)
+		else		this.eventTransaction.applyBlockChanges(event,this);
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

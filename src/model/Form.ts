@@ -62,9 +62,9 @@ export class Form
 	private block$:Block = null;
 	private intfrm:InterfaceForm = null;
 	private page$:string|HTMLElement = null;
-	private evttrans$:EventTransaction = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
+	private evttrans$:EventTransaction = new EventTransaction(this);
 
 	private constructor(parent:InterfaceForm, page:string|HTMLElement)
 	{
@@ -110,38 +110,13 @@ export class Form
 
 	public setEventTransaction(event:EventType) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx != null && !evttrx.blocked)
-		{
-			Alert.fatal("Already in transaction","Transaction Failure");
-			return;
-		}
-
-		if (evttrx) evttrx.join(event);
-		else evttrx = new EventTransaction(event);
-
-		evttrx.blocked = true;
-		this.eventTransaction = evttrx;
+		this.eventTransaction.join(event);
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
-		let evttrx:EventTransaction = this.eventTransaction;
-
-		if (evttrx == null || !evttrx.blocked)
-		{
-			Alert.fatal("Form not in transaction ","Transaction Failure");
-			return;
-		}
-
-		if (!apply)
-			evttrx.applyDefaultProperties(event);
-
-		evttrx.remove(event);
-
-		if (evttrx.done())
-			this.eventTransaction = null;
+		if (!apply) this.eventTransaction.undoChanges(event)
+		else		this.eventTransaction.applyFormChanges(event);
 	}
 
 	public addBlock(block:Block) : void

@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Form } from "./Form.js";
 import { Block } from "./Block.js";
 import { Record } from "./Record.js";
 import { Alert } from "../application/Alert.js";
@@ -54,10 +55,16 @@ export interface PropertyChange
 
 export class EventTransaction
 {
+	private form:Form = null;
 	private frmtrx:Transaction = null;
 
 	private blocktrxs:Map<string,Transaction> =
 		new Map<string,Transaction>();
+
+	constructor(form:Form)
+	{
+		this.form = form;
+	}
 
 	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
@@ -179,6 +186,13 @@ export class EventTransaction
 		return(trx.setValue(field,value));
 	}
 
+	public applyFormChanges(event:EventType) : void
+	{
+		this.frmtrx.blocktrx.apply();
+		this.frmtrx.blkprops.forEach((props) => props.apply());
+		this.frmtrx = null;
+	}
+
 	public applyBlockChanges(event:EventType, block:Block|ViewBlock) : void
 	{
 		console.log("apply "+EventType[event])
@@ -196,10 +210,11 @@ export class EventTransaction
 		this.blocktrxs.delete(block.name);
 	}
 
-	public undoBlockChanges(event:EventType, block?:Block|ViewBlock) : void
+	public undoChanges(event:EventType, block?:Block|ViewBlock) : void
 	{
-		console.log("remove "+EventType[event])
-		this.blocktrxs.delete(block.name);
+		console.log("remove "+EventType[event]);
+		if (block == null) this.frmtrx = null;
+		else this.blocktrxs.delete(block.name);
 	}
 
 	private getActive(block?:string) : Transaction

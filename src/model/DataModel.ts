@@ -196,10 +196,14 @@ export class DataSourceWrapper
 
 			let record:Record = this.cache$[this.winpos$[1]];
 
-			if (!await this.block.postQuery(record))
+			if (!record.prepared)
 			{
-				this.winpos$ = undo;
-				return(null);
+				if (!await this.block.postQuery(record))
+				{
+					this.winpos$ = undo;
+					return(null);
+				}
+				record.prepared = true;
 			}
 
 			return(record);

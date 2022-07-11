@@ -30,9 +30,9 @@ export interface DataSource
 	post() : Promise<boolean>;
 	query() : Promise<boolean>;
 	fetch() : Promise<Record[]>;
+	refresh(record:Record) : Promise<void>;
 	lock(record:Record) : Promise<boolean>;
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
-	refresh(record:Record) : Promise<Record>;
 }

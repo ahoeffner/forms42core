@@ -87,9 +87,9 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public async refresh(record:Record) : Promise<Record>
+	public async refresh(_record:Record) : Promise<void>
 	{
-		return(record);
+		null;
 	}
 
 	public async insert(record:Record) : Promise<boolean>

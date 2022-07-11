@@ -27,6 +27,7 @@ export class Record
 	private keys$:any[] = [];
 	private values$:any[] = [];
 	private columns$:string[] = null;
+	private prepared$:boolean = false;
 	private wrapper$:DataSourceWrapper;
 	private status$:RecordStatus = RecordStatus.Query;
 
@@ -65,6 +66,16 @@ export class Record
 	public get keys() : any[]
 	{
 		return(this.keys$);
+	}
+
+	public get prepared() : boolean
+	{
+		return(this.prepared$);
+	}
+
+	public set prepared(flag:boolean)
+	{
+		this.prepared$ = flag;
 	}
 
 	public get columns() : string[]

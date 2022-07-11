@@ -247,19 +247,17 @@ export class FormEvents
 	}
 
 
-	private static running:boolean = true;
+	private static running:boolean = false;
+	// So javascript is single-threaded huh
 	public static async raise(event:FormEvent) : Promise<boolean>
 	{
 		let listeners:EventListener[] = null;
 		let done:Set<object> = new Set<object>();
 
-		if (FormEvents.running)
-		{
-			console.log("Running 1 "+new Date());
-			await FormEvents.sleep(1000);
-			console.log("Running 2 "+new Date()+" "+FormEvents.running);
-		}
+		while(FormEvents.running)
+			await FormEvents.sleep(10);
 
+		FormEvents.running = true;
 		console.log("Raise "+EventType[event.type]);
 
 		// Field Listeners

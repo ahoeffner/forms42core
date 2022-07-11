@@ -54,7 +54,7 @@ export class Application
         let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
         let canvas:Canvas = new canvasimpl();
-        let instance:Form = factory.createForm(form);
+        let instance:Form = await factory.createForm(form);
 
         instance.canvas = canvas;
         canvas.setComponent(instance);

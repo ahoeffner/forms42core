@@ -35,10 +35,7 @@ export class Form implements CanvasComponent
 
     constructor(page?:string|HTMLElement)
     {
-        if (page != null)
-			this.setView(page);
-
-		Model.getForm(this);
+		Model.createForm(this,page);
     }
 
 	public get valid() : boolean
@@ -51,7 +48,7 @@ export class Form implements CanvasComponent
         return(this.view$);
     }
 
-    public setView(page:string|HTMLElement) : void
+    public async setView(page:string|HTMLElement) : Promise<void>
     {
 		let replace:boolean = false;
 
@@ -87,7 +84,7 @@ export class Form implements CanvasComponent
 			this.canvas.refresh();
 
 		View.finalize(this);
-		Model.finalize(this);
+		await Model.finalize(this);
     }
 
 	public getFields(block:string, field:string, clazz?:string) : Field[]

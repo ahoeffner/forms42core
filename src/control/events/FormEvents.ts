@@ -247,10 +247,20 @@ export class FormEvents
 	}
 
 
+	private static running:boolean = true;
 	public static async raise(event:FormEvent) : Promise<boolean>
 	{
 		let listeners:EventListener[] = null;
 		let done:Set<object> = new Set<object>();
+
+		if (FormEvents.running)
+		{
+			console.log("Running 1 "+new Date());
+			await FormEvents.sleep(1000);
+			console.log("Running 2 "+new Date()+" "+FormEvents.running);
+		}
+
+		console.log("Raise "+EventType[event.type]);
 
 		// Field Listeners
 		listeners = FormEvents.merge(FormEvents.fldlisteners,event.type);
@@ -269,6 +279,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
+					FormEvents.running = false;
 					return(false);
 				}
 			}
@@ -291,6 +302,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
+					FormEvents.running = false;
 					return(false);
 				}
 			}
@@ -313,6 +325,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
+					FormEvents.running = false;
 					return(false);
 				}
 			}
@@ -335,6 +348,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
+					FormEvents.running = false;
 					return(false);
 				}
 			}
@@ -350,11 +364,14 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
+					FormEvents.running = false;
 					return(false);
 				}
 			}
 		}
 
+		console.log("Raise "+EventType[event.type]+" done");
+		FormEvents.running = false;
 		return(true);
 	}
 
@@ -442,4 +459,9 @@ export class FormEvents
 
 		listeners.push(lsnr);
 	}
+
+	private static sleep(ms:number) : Promise<void>
+    {
+        return(new Promise(resolve => setTimeout(resolve,ms)));
+    }
 }

@@ -40,34 +40,36 @@ export class Form
 		remove.forEach((name) => {form.blocks.delete(name)});
 	}
 
-	public static getForm(parent:InterfaceForm) : Form
+	public static createForm(parent:InterfaceForm, page:string|HTMLElement) : void
 	{
-		let frm:Form = Form.models.get(parent);
-
-		if (frm == null)
-			frm = new Form(parent);
-
-		return(frm);
+		let form:Form = new Form(parent,page);
+		Form.models.set(parent,form);
 	}
 
-	public static finalize(parent:InterfaceForm) : void
+	public static getForm(parent:InterfaceForm) : Form
+	{
+		return(Form.models.get(parent));
+	}
+
+	public static async finalize(parent:InterfaceForm) : Promise<void>
 	{
 		let form:Form = Form.models.get(parent);
 
 		form.linkViews();
-		form.autoquery();
+		await form.autoquery();
 	}
 
 	private block$:Block = null;
 	private intfrm:InterfaceForm = null;
+	private page$:string|HTMLElement = null;
 	private evttrans$:EventTransaction = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
 
-	private constructor(parent:InterfaceForm)
+	private constructor(parent:InterfaceForm, page:string|HTMLElement)
 	{
+		this.page$ = page;
 		this.intfrm = parent;
-		Form.models.set(parent,this);
 		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.constructor.name);
 	}
 
@@ -89,6 +91,11 @@ export class Form
 	public get datamodel() : DataModel
 	{
 		return(this.datamodel$);
+	}
+
+	public get page() : string|HTMLElement
+	{
+		return(this.page$);
 	}
 
 	public get eventTransaction() : EventTransaction
@@ -130,7 +137,7 @@ export class Form
 
 		if (!apply)
 			evttrx.applyDefaultProperties(event);
-			
+
 		evttrx.remove(event);
 
 		if (evttrx.done())

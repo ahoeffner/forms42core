@@ -135,6 +135,12 @@ export class EventTransaction
 	{
 		let trx:Transaction = this.getActive(inst.block);
 
+		if (trx == null || (this.formtrx && !defprops))
+		{
+			Alert.fatal("Block "+inst.block+" is not in transaction","setProperties");
+			return;
+		}
+
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
 
@@ -161,63 +167,39 @@ export class EventTransaction
 
 	public setValue(block:Block|ViewBlock, field:string, value:any) : boolean
 	{
-		let trx:BlockTransaction = this.trx.get(block.name);
+		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
 		if (block instanceof ViewBlock) block = block.model;
 
 		if (trx == null)
 		{
-			if (this.blocked)
-			{
-				Alert.warning("Changes is not allowed to this block, while in blocking event","Warning");
-				return(false);
-			}
-
-			let record:Record = block.getRecord(0);
-			trx = new BlockTransaction(block,record,0,true);
-			this.trx.set(block.name,trx);
+			Alert.fatal("Block '"+block.name+"' is not in transaction","setProperties");
+			return(false);
 		}
 
 		return(trx.setValue(field,value));
 	}
 
-	public apply(event:EventType, block?:Block|ViewBlock) : void
+	public applyBlockChanges(event:EventType, block:Block|ViewBlock) : void
 	{
 		console.log("apply "+EventType[event])
+		let trx:Transaction = this.blocktrxs.get(block.name);
 
-		if (block)
+		if (trx == null)
 		{
-			this.trx.get(block.name)?.apply();
-			this.trx.delete(block.name);
-
-			this.blkprops.get(block.name)?.apply();
-			this.blkprops.delete(block.name);
+			Alert.fatal("Block '"+block.name+"' is not in transaction","setProperties");
+			return;
 		}
-		else
-		{
-			this.trx.forEach((trx) => {trx.apply()});
-			this.trx.clear();
 
-			this.blkprops.forEach((blkprop) => {blkprop.apply()});
-			this.blkprops.clear();
-		}
+		trx.blocktrx.apply();
+		trx.blkprops.forEach((props) => props.apply());
+
+		this.blocktrxs.delete(block.name);
 	}
 
-	public applyDefaultProperties(event:EventType) : void
-	{
-		console.log("applyDefaultProperties "+EventType[event])
-		console.log("trx: "+this.trx.size+" anonymous: "+this.anonymous)
-	}
-
-	public remove(event:EventType, block?:Block|ViewBlock) : void
+	public undoBlockChanges(event:EventType, block?:Block|ViewBlock) : void
 	{
 		console.log("remove "+EventType[event])
-		if (block == null) this.anonymous--;
-		else               this.trx.delete(block.name);
-	}
-
-	public done() : boolean
-	{
-		return(this.trx.size == 0 && this.anonymous == 0);
+		this.blocktrxs.delete(block.name);
 	}
 
 	private getActive(block?:string) : Transaction

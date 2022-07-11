@@ -200,7 +200,7 @@ export class Form implements CanvasComponent
 		if (!vform.validated) return(false);
 		let mform:Model = Model.getForm(this);
 
-		mform.setEventTransaction(EventType.FormClose);
+		await mform.setEventTransaction(EventType.FormClose);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormClose,this));
 		mform.endEventTransaction(EventType.FormClose,success);
 

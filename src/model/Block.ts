@@ -100,8 +100,9 @@ export class Block
 		return(this.form.eventTransaction);
 	}
 
-	public setEventTransaction(event:EventType, offset:number) : void
+	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
 	{
+		await this.eventTransaction.ready(event);
 		this.eventTransaction.join(event,this,null,offset,true);
 	}
 
@@ -182,7 +183,7 @@ export class Block
 	public async preInsert() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PreInsert,record);
+		await this.setModelEventTransaction(EventType.PreInsert,record);
 		let success:boolean = await this.fire(EventType.PreInsert);
 		this.endModelEventTransaction(EventType.PreInsert,success);
 		return(success);
@@ -191,7 +192,7 @@ export class Block
 	public async postInsert() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PostInsert,record);
+		await this.setModelEventTransaction(EventType.PostInsert,record);
 		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endModelEventTransaction(EventType.PostInsert,success);
 		return(success);
@@ -200,7 +201,7 @@ export class Block
 	public async preUpdate() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PreUpdate,record);
+		await this.setModelEventTransaction(EventType.PreUpdate,record);
 		let success:boolean = await this.fire(EventType.PreUpdate);
 		this.endModelEventTransaction(EventType.PreUpdate,success);
 		return(success);
@@ -209,7 +210,7 @@ export class Block
 	public async postUpdate() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PostUpdate,record);
+		await this.setModelEventTransaction(EventType.PostUpdate,record);
 		let success:boolean = await this.fire(EventType.PostUpdate);
 		this.endModelEventTransaction(EventType.PostUpdate,success);
 		return(success);
@@ -218,7 +219,7 @@ export class Block
 	public async preDelete() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PreDelete,record);
+		await this.setModelEventTransaction(EventType.PreDelete,record);
 		let success:boolean = await this.fire(EventType.PreDelete);
 		this.endModelEventTransaction(EventType.PreDelete,success);
 		return(success);
@@ -227,7 +228,7 @@ export class Block
 	public async postDelete() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PostDelete,record);
+		await this.setModelEventTransaction(EventType.PostDelete,record);
 		let success:boolean = await this.fire(EventType.PostDelete);
 		this.endModelEventTransaction(EventType.PostDelete,success);
 		return(success);
@@ -236,7 +237,7 @@ export class Block
 	public async preQuery() : Promise<boolean>
 	{
 		let record:Record = new Record(null);
-		this.setModelEventTransaction(EventType.PreQuery,record);
+		await this.setModelEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
 		this.endModelEventTransaction(EventType.PreQuery,success);
 		return(success);
@@ -244,7 +245,7 @@ export class Block
 
 	public async postQuery(record:Record) : Promise<boolean>
 	{
-		this.setModelEventTransaction(EventType.PostQuery,record);
+		await this.setModelEventTransaction(EventType.PostQuery,record);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		this.endModelEventTransaction(EventType.PostQuery,success);
 		return(success);
@@ -252,7 +253,7 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		this.setEventTransaction(EventType.ValidateRecord,0);
+		await this.setEventTransaction(EventType.ValidateRecord,0);
 		let success:boolean = await this.fire(EventType.ValidateRecord);
 		this.endEventTransaction(EventType.ValidateRecord,success);
 		return(success);
@@ -394,8 +395,9 @@ export class Block
 		return(this.intblk != null);
 	}
 
-	private setModelEventTransaction(event:EventType, record:Record) : void
+	private async setModelEventTransaction(event:EventType, record:Record) : Promise<void>
 	{
+		await this.eventTransaction.ready(event);
 		this.eventTransaction.join(event,this,record,0,false);
 	}
 

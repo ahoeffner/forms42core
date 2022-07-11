@@ -84,7 +84,22 @@ export class EventTransaction
 		{
 			this.frmtrx = new Transaction(event);
 		}
+	}
 
+	public async ready(event:EventType) : Promise<void>
+	{
+		let form:boolean = EventType[event].includes("Form");
+
+		if (form)
+		{
+			while(this.blocktrxs.size > 0)
+				await this.sleep(10);
+		}
+		else
+		{
+			while(this.frmtrx != null)
+				await this.sleep(10);
+		}
 	}
 
 	public get active() : boolean
@@ -230,6 +245,11 @@ export class EventTransaction
 		block = this.blocktrxs.keys().next().value;
 		return(this.blocktrxs.get(block));
 	}
+
+	private sleep(ms:number) : Promise<void>
+    {
+        return(new Promise(resolve => setTimeout(resolve,ms)));
+    }
 }
 
 class BlockTransaction

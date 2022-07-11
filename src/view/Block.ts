@@ -177,9 +177,9 @@ export class Block
 		map.set(inst,props);
 	}
 
-	public setEventTransaction(event:EventType, offset:number) : void
+	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
 	{
-		this.model.setEventTransaction(event,offset);
+		await this.model.setEventTransaction(event,offset);
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
@@ -195,7 +195,7 @@ export class Block
 		}
 		else
 		{
-			this.setEventTransaction(EventType.ValidateField,0);
+			await this.setEventTransaction(EventType.ValidateField,0);
 			let success:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
 			this.endEventTransaction(EventType.ValidateField,success);
 
@@ -235,7 +235,7 @@ export class Block
 
 	public async onEditing(inst:FieldInstance) : Promise<boolean>
 	{
-		this.setEventTransaction(EventType.Editing,0);
+		await this.setEventTransaction(EventType.Editing,0);
 		let success:boolean = await	this.fireFieldEvent(EventType.Editing,inst);
 		this.endEventTransaction(EventType.Editing,success);
 		return(success);

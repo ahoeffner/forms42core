@@ -103,13 +103,9 @@ export class Form
 		return(this.evttrans$);
 	}
 
-	public set eventTransaction(evttrans:EventTransaction)
+	public async setEventTransaction(event:EventType) : Promise<void>
 	{
-		this.evttrans$ = evttrans;
-	}
-
-	public setEventTransaction(event:EventType) : void
-	{
+		await this.eventTransaction.ready(event);
 		this.eventTransaction.join(event);
 	}
 

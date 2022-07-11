@@ -279,7 +279,7 @@ export class Form
 
 	public async enterForm(form:Form, block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setEventTransaction(EventType.PreForm,offset);
+		await block.model.setEventTransaction(EventType.PreForm,offset);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		block.model.endEventTransaction(EventType.PreForm,success);
 		if (success) this.setURL();
@@ -288,7 +288,7 @@ export class Form
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setEventTransaction(EventType.PreBlock,offset);
+		await block.model.setEventTransaction(EventType.PreBlock,offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
 		block.model.endEventTransaction(EventType.PreBlock,success);
 		return(success);
@@ -296,7 +296,7 @@ export class Form
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		block.model.setEventTransaction(EventType.PreRecord,offset);
+		await block.model.setEventTransaction(EventType.PreRecord,offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
 		return(success);
@@ -304,7 +304,7 @@ export class Form
 
 	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
 	{
-		inst.field.block.model.setEventTransaction(EventType.PreField,offset);
+		await inst.field.block.model.setEventTransaction(EventType.PreField,offset);
 		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);
 		inst.field.block.model.endEventTransaction(EventType.PreField,success);
 		return(success);
@@ -312,7 +312,7 @@ export class Form
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		form.block.model.setEventTransaction(EventType.PostForm,0);
+		await form.block.model.setEventTransaction(EventType.PostForm,0);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		form.block.model.endEventTransaction(EventType.PostForm,success);
 		return(success);
@@ -320,7 +320,7 @@ export class Form
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		block.model.setEventTransaction(EventType.PostBlock,0);
+		await block.model.setEventTransaction(EventType.PostBlock,0);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
 		block.model.endEventTransaction(EventType.PostBlock,success);
 		return(success);
@@ -328,7 +328,7 @@ export class Form
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
-		block.model.setEventTransaction(EventType.PostRecord,0);
+		await block.model.setEventTransaction(EventType.PostRecord,0);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
 		block.model.endEventTransaction(EventType.PostRecord,success);
 		return(success);
@@ -336,7 +336,7 @@ export class Form
 
 	public async LeaveField(inst:FieldInstance) : Promise<boolean>
 	{
-		inst.field.block.model.setEventTransaction(EventType.PostField,0);
+		await inst.field.block.model.setEventTransaction(EventType.PostField,0);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		inst.field.block.model.endEventTransaction(EventType.PostField,success);
 		return(success);

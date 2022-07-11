@@ -69,7 +69,6 @@ export class EventTransaction
 	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
 		let trx:Transaction = null;
-		console.log("Start "+EventType[event])
 
 		if (block != null)
 		{
@@ -86,13 +85,14 @@ export class EventTransaction
 		}
 	}
 
+	// Either a Form or multiple Block trx
 	public async ready(event:EventType) : Promise<void>
 	{
 		let form:boolean = EventType[event].includes("Form");
 
 		if (form)
 		{
-			while(this.blocktrxs.size > 0)
+			while(this.formtrx || this.blocktrxs.size > 0)
 				await this.sleep(10);
 		}
 		else
@@ -105,19 +105,6 @@ export class EventTransaction
 	public get active() : boolean
 	{
 		return(this.frmtrx != null || this.blocktrxs.size > 0);
-	}
-
-	public get formtrx() : boolean
-	{
-		return(this.frmtrx != null)
-	}
-
-	public get event() : string
-	{
-		let type:EventType = null;
-		type = this.getActive()?.event;
-		if (type == null) return(null);
-		else   return(EventType[type]);
 	}
 
 	public getProperties(inst:FieldInstance) : FieldProperties
@@ -202,17 +189,15 @@ export class EventTransaction
 		return(trx.setValue(field,value));
 	}
 
-	public applyFormChanges(event:EventType) : void
+	public applyFormChanges(_event:EventType) : void
 	{
-		console.log("apply "+EventType[event])
 		this.frmtrx.blocktrx?.apply();
-		this.frmtrx.blkprops.forEach((props) => props.apply());
+		this.frmtrx.blkprops.forEach((props) => props.apply(false));
 		this.frmtrx = null;
 	}
 
-	public applyBlockChanges(event:EventType, block:Block|ViewBlock) : void
+	public applyBlockChanges(_event:EventType, block:Block|ViewBlock) : void
 	{
-		console.log("apply "+EventType[event])
 		let trx:Transaction = this.blocktrxs.get(block.name);
 
 		if (trx == null)
@@ -222,28 +207,32 @@ export class EventTransaction
 		}
 
 		trx.blocktrx.apply();
-		trx.blkprops.forEach((props) => props.apply());
+		trx.blkprops.forEach((props) => props.apply(true));
 
 		this.blocktrxs.delete(block.name);
 	}
 
-	public undoChanges(event:EventType, block?:Block|ViewBlock) : void
+	public undoChanges(_event:EventType, block?:Block|ViewBlock) : void
 	{
-		console.log("remove "+EventType[event]);
 		if (block == null) this.frmtrx = null;
 		else this.blocktrxs.delete(block.name);
 	}
 
 	private getActive(block?:string) : Transaction
 	{
-		if (block != null)
-			return(this.blocktrxs.get(block));
-
 		if (this.frmtrx != null)
 			return(this.frmtrx);
 
+		if (block != null)
+			return(this.blocktrxs.get(block));
+
 		block = this.blocktrxs.keys().next().value;
 		return(this.blocktrxs.get(block));
+	}
+
+	private get formtrx() : boolean
+	{
+		return(this.frmtrx != null)
 	}
 
 	private sleep(ms:number) : Promise<void>
@@ -324,9 +313,10 @@ class BlockProperties
 		return(instprop);
 	}
 
-	apply() : void
+	apply(all:boolean) : void
 	{
-		this.instances.forEach((instprop) => {instprop.apply()})
+		this.instances.forEach((instprop) =>
+			{instprop.apply(all)})
 	}
 }
 
@@ -367,9 +357,10 @@ class InstanceProperties
 		return(this.defproperties$);
 	}
 
-	apply() : void
+	apply(all:boolean) : void
 	{
-		if (this.pchange) this.inst.applyProperties(this.properties$);
+		if (all && this.pchange)
+			this.inst.applyProperties(this.properties$);
 
 		if (this.dchange)
 		{

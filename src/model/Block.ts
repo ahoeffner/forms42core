@@ -13,7 +13,6 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
-import { Alert } from "../application/Alert.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -55,6 +54,7 @@ export class Block
 	private record$:number = -1;
 	private view$:ViewBlock = null;
 	private columns$:string[] = null;
+	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
@@ -85,6 +85,16 @@ export class Block
 	public get block() : InterfaceBlock
 	{
 		return(this.intblk);
+	}
+
+	public get ctrlblk() : boolean
+	{
+		return(this.ctrlblk$);
+	}
+
+	public set ctrlblk(flag:boolean)
+	{
+		this.ctrlblk$ = flag;
 	}
 
 	public get columns() : string[]
@@ -125,6 +135,7 @@ export class Block
 			this.form$.datamodel.setWrapper(this);
 		}
 
+		this.ctrlblk = false;
 		this.source$ = source;
 	}
 
@@ -148,6 +159,7 @@ export class Block
 			data.push(row);
 		}
 
+		this.ctrlblk = true;
 		return(new MemoryTable(columns,data));
 	}
 

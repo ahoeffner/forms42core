@@ -247,18 +247,20 @@ export class FormEvents
 	}
 
 
-	private static running:boolean = false;
-	// So javascript is single-threaded huh
+	private static running:number = 0;
+	// So javascript is single-threaded, huh !!
 	public static async raise(event:FormEvent) : Promise<boolean>
 	{
 		let listeners:EventListener[] = null;
 		let done:Set<object> = new Set<object>();
 
-		while(FormEvents.running)
-			await FormEvents.sleep(10);
+		if (EventType[event.type].includes("Form"))
+		{
+			while(FormEvents.running)
+				await FormEvents.sleep(10);
+		}
 
-		FormEvents.running = true;
-		console.log("Raise "+EventType[event.type]);
+		FormEvents.running++;
 
 		// Field Listeners
 		listeners = FormEvents.merge(FormEvents.fldlisteners,event.type);
@@ -277,7 +279,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
-					FormEvents.running = false;
+					FormEvents.running--;
 					return(false);
 				}
 			}
@@ -300,7 +302,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
-					FormEvents.running = false;
+					FormEvents.running--;
 					return(false);
 				}
 			}
@@ -323,7 +325,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
-					FormEvents.running = false;
+					FormEvents.running--;
 					return(false);
 				}
 			}
@@ -346,7 +348,7 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
-					FormEvents.running = false;
+					FormEvents.running--;
 					return(false);
 				}
 			}
@@ -362,14 +364,13 @@ export class FormEvents
 				if (!(await FormEvents.execute(event.type,lsnr,event)))
 				{
 					Logger.log(Type.eventhandling,lsnr+" returned false");
-					FormEvents.running = false;
+					FormEvents.running--;
 					return(false);
 				}
 			}
 		}
 
-		console.log("Raise "+EventType[event.type]+" done");
-		FormEvents.running = false;
+		FormEvents.running--;
 		return(true);
 	}
 
@@ -458,7 +459,7 @@ export class FormEvents
 		listeners.push(lsnr);
 	}
 
-	private static sleep(ms:number) : Promise<void>
+	public static sleep(ms:number) : Promise<void>
     {
         return(new Promise(resolve => setTimeout(resolve,ms)));
     }

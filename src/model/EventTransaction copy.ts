@@ -21,93 +21,82 @@ import { FieldProperties } from "../view/fields/FieldProperties.js";
 import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 
 /*
-	The EventTransaction ensures that changes to records only gets applied if all
-	eventhandlers returns true. When a transaction is active, it is only possible
-	to do changes to records participating in the transction.
+	When transactions is blocked, it protects against changes
+	in blocks not participating in the transaction.
 
-	During FormEvents, only changes to default properties is possible.
+	This happens during CRUD operations. But also when forms are created or closed.
+	Form operations only allows for changes in default properties for fields.
 */
 
-class Transaction
+class State
 {
-	event:EventType = null;
-	blocktrx:BlockTransaction = null;
+	trx:Map<string,BlockTransaction> =
+		new Map<string,BlockTransaction>();
 
 	blkprops:Map<string,BlockProperties> =
 		new Map<string,BlockProperties>();
-
-	constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean)
-	{
-		this.event = event;
-
-		if (block != null)
-			this.blocktrx = new BlockTransaction(block,record,offset,applyvw);
-	}
 }
 
-export interface PropertyChange
+export interface PropertyChangeXX
 {
 	defprops:boolean;
 	inst:FieldInstance;
 	props:FieldProperties;
 }
 
-export class EventTransaction
+export class EventTransactionXX
 {
-	private frmtrx:Transaction = null;
+	private event$:EventType;
+	private anonymous:number = 0;
+	private blocked$:boolean = false;
 
-	private blocktrxs:Map<string,Transaction> =
-		new Map<string,Transaction>();
+	private trx:Map<string,BlockTransaction> =
+		new Map<string,BlockTransaction>();
 
-	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
+	private blkprops:Map<string,BlockProperties> =
+		new Map<string,BlockProperties>();
+
+	public constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean, shared?:boolean)
 	{
-		let trx:Transaction = null;
+		this.event$ = event;
+		console.log("start "+EventType[event])
 
 		if (block != null)
 		{
+			this.blocked$ = shared;
 			if (offset == null) offset = 0;
 			if (applyvw == null) applyvw = true;
 			if (record == null) record = block.getRecord(offset);
-
-			trx = new Transaction(event,block,record,offset,applyvw);
-			this.blocktrxs.set(block.name,trx);
-		}
-		else
-		{
-			this.frmtrx = new Transaction(event);
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw));
+			return;
 		}
 
+		this.anonymous++;
 	}
 
-	public get active() : boolean
+	public get blocked() : boolean
 	{
-		return(this.frmtrx != null || this.blocktrxs.size > 0);
+		return(this.blocked$);
 	}
 
-	public get formtrx() : boolean
+	public set blocked(shared:boolean)
 	{
-		return(this.frmtrx != null)
+		this.blocked$ = shared;
 	}
 
 	public get event() : string
 	{
-		let type:EventType = null;
-		type = this.getActive()?.event;
-		if (type == null) return(null);
-		else   return(EventType[type]);
+		return(EventType[this.event$]);
 	}
 
 	public getProperties(inst:FieldInstance) : FieldProperties
 	{
-		let trx:Transaction = this.getActive(inst.block);
-
-		let propmap:Map<string,BlockProperties> = trx.blkprops;
-		let blkprop:BlockProperties = propmap.get(inst.block);
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
 
 		if (blkprop == null)
 		{
-			blkprop = new BlockProperties();
-			propmap.set(inst.block,blkprop);
+			blkprop = new BlockProperties(inst);
+			this.blkprops.set(inst.block,blkprop);
 		}
 
 		let instprop:InstanceProperties = blkprop.get(inst);
@@ -116,15 +105,12 @@ export class EventTransaction
 
 	public getDefaultProperties(inst:FieldInstance) : FieldProperties
 	{
-		let trx:Transaction = this.getActive(inst.block);
-
-		let propmap:Map<string,BlockProperties> = trx.blkprops;
-		let blkprop:BlockProperties = propmap.get(inst.block);
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
 
 		if (blkprop == null)
 		{
-			blkprop = new BlockProperties();
-			propmap.set(inst.block,blkprop);
+			blkprop = new BlockProperties(inst);
+			this.blkprops.set(inst.block,blkprop);
 		}
 
 		let instprop:InstanceProperties = blkprop.get(inst);
@@ -133,20 +119,32 @@ export class EventTransaction
 
 	public addPropertyChange(inst:FieldInstance, props:FieldProperties, defprops:boolean) : void
 	{
-		let trx:Transaction = this.getActive(inst.block);
-
-		let propmap:Map<string,BlockProperties> = trx.blkprops;
-		let blkprop:BlockProperties = propmap.get(inst.block);
-
+		let blkprop:BlockProperties = this.blkprops.get(inst.block);
 		let instprop:InstanceProperties = blkprop.get(inst);
 
 		if (!defprops) instprop.properties = props;
 		else		   instprop.defproperties = props;
 	}
 
+	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
+	{
+		console.log("join "+EventType[event])
+
+		if (block != null)
+		{
+			if (offset == null) offset = 0;
+			if (applyvw == null) applyvw = true;
+			if (record == null) record = block.getRecord(offset);
+			this.trx.set(block.name,new BlockTransaction(block,record,offset,applyvw));
+			return;
+		}
+
+		this.anonymous++;
+	}
+
 	public getValue(block:Block|ViewBlock, field:string) : any
 	{
-		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
+		let trx:BlockTransaction = this.trx.get(block.name);
 		if (block instanceof ViewBlock) block = block.model;
 
 		if (trx == null)
@@ -219,13 +217,6 @@ export class EventTransaction
 	{
 		return(this.trx.size == 0 && this.anonymous == 0);
 	}
-
-	private getActive(block?:string) : Transaction
-	{
-		if (this.frmtrx != null) return(this.frmtrx);
-		if (block == null) block = this.blocktrxs.keys().next().value;
-		return(this.blocktrxs.get(block));
-	}
 }
 
 class BlockTransaction
@@ -286,6 +277,11 @@ class BlockProperties
 {
 	private instances:Map<FieldInstance,InstanceProperties> =
 		new Map<FieldInstance,InstanceProperties>();
+
+	constructor(inst:FieldInstance)
+	{
+		this.instances.set(inst,new InstanceProperties(inst));
+	}
 
 	get(inst:FieldInstance) : InstanceProperties
 	{

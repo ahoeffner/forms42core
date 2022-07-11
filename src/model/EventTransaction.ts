@@ -69,6 +69,7 @@ export class EventTransaction
 	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
 		let trx:Transaction = null;
+		console.log("Start "+EventType[event])
 
 		if (block != null)
 		{
@@ -188,7 +189,8 @@ export class EventTransaction
 
 	public applyFormChanges(event:EventType) : void
 	{
-		this.frmtrx.blocktrx.apply();
+		console.log("apply "+EventType[event])
+		this.frmtrx.blocktrx?.apply();
 		this.frmtrx.blkprops.forEach((props) => props.apply());
 		this.frmtrx = null;
 	}
@@ -219,8 +221,13 @@ export class EventTransaction
 
 	private getActive(block?:string) : Transaction
 	{
-		if (this.frmtrx != null) return(this.frmtrx);
-		if (block == null) block = this.blocktrxs.keys().next().value;
+		if (block != null)
+			return(this.blocktrxs.get(block));
+
+		if (this.frmtrx != null)
+			return(this.frmtrx);
+
+		block = this.blocktrxs.keys().next().value;
 		return(this.blocktrxs.get(block));
 	}
 }

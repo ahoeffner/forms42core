@@ -160,7 +160,7 @@ export class Form implements CanvasComponent
 
 		if (blk == null) return(null);
 
-		if (blk.model.eventTransaction)
+		if (blk.model.eventTransaction.active)
 			return(blk.model.eventTransaction.getValue(blk,field));
 
 		let fld:ViewField = blk.getField(field);
@@ -177,7 +177,7 @@ export class Form implements CanvasComponent
 
 		if (blk == null) return(null);
 
-		if (blk.model.eventTransaction)
+		if (blk.model.eventTransaction.active)
 		{
 			blk.model.eventTransaction.setValue(blk,field,value);
 			return;

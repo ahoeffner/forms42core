@@ -44,17 +44,17 @@ export class FieldFeatureFactory
 		let fprops:FieldProperties = null;
 
 		let model:Block = inst$.field.block.model;
-		let trx:EventTransaction = model?.eventTransaction;
+		let trx:EventTransaction = model.eventTransaction;
 
-		if (trx == null)
-		{
-			fprops = inst$.properties;
-			if (defprops) fprops = inst$.defaultProperties;
-		}
-		else
+		if (trx.active)
 		{
 			fprops = trx.getProperties(inst$);
 			if (defprops) fprops = trx.getDefaultProperties(inst$);
+		}
+		else
+		{
+			fprops = inst$.properties;
+			if (defprops) fprops = inst$.defaultProperties;
 		}
 
 		if (inst$.hasDefaultProperties() && !defprops)

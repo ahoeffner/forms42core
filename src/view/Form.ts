@@ -126,12 +126,15 @@ export class Form
 
 	public validated() : boolean
 	{
-		if (this.curinst$ == null)
-			return(true);
+		let valid:boolean = true;
 
-		let block:Block = this.getBlock(this.curinst$.block);
+		this.blocks.forEach((blk) =>
+		{
+			if (!blk.validated)
+				valid = false;
+		})
 
-		if (!block.validated)
+		if (!valid)
 		{
 			this.focus();
 			return(false);

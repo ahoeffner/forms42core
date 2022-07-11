@@ -180,6 +180,8 @@ export class EventTransaction
 		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
 		if (block instanceof ViewBlock) block = block.model;
 
+		// If control-block
+
 		if (trx == null)
 		{
 			Alert.fatal("Block '"+block.name+"' is not in transaction","setProperties");

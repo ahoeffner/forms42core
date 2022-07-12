@@ -26,6 +26,7 @@ import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 	eventhandlers returns true. When a transaction is active, it is only possible
 	to do changes to records participating in the transction.
 
+	Properties can be changed for any fieldinstance, except in Formevents.
 	During FormEvents, only changes to default properties is possible.
 */
 

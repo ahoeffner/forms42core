@@ -60,6 +60,9 @@ export class FieldInstance implements FieldEventHandler
 
 	public updateDefaultProperties()
 	{
+		if (!this.hasDefaultProperties())
+			return;
+
 		let newprops:FieldProperties = this.defaultProperties;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
 

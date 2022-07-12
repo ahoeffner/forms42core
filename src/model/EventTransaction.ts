@@ -61,6 +61,9 @@ export class EventTransaction
 	private blocktrxs:Map<string,Transaction> =
 		new Map<string,Transaction>();
 
+	private ctrlblks:Map<string,Transaction> =
+		new Map<string,Transaction>();
+
 	constructor(form:Form)
 	{
 		this.form = form;
@@ -109,7 +112,20 @@ export class EventTransaction
 
 	public getProperties(inst:FieldInstance) : FieldProperties
 	{
+		let block:Block = inst.field.block.model;
 		let trx:Transaction = this.getActive(inst.block);
+
+		if (trx == null && block.ctrlblk)
+		{
+			trx = this.ctrlblks.get(block.name);
+
+			if (trx == null)
+			{
+				let event:EventType = this.getActive().event;
+				trx = new Transaction(event,block,null,0,true);
+				this.ctrlblks.set(block.name,trx);
+			}
+		}
 
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
@@ -126,7 +142,20 @@ export class EventTransaction
 
 	public getDefaultProperties(inst:FieldInstance) : FieldProperties
 	{
+		let block:Block = inst.field.block.model;
 		let trx:Transaction = this.getActive(inst.block);
+
+		if (trx == null && block.ctrlblk)
+		{
+			trx = this.ctrlblks.get(block.name);
+
+			if (trx == null)
+			{
+				let event:EventType = this.getActive().event;
+				trx = new Transaction(event,block,null,0,true);
+				this.ctrlblks.set(block.name,trx);
+			}
+		}
 
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
@@ -165,6 +194,9 @@ export class EventTransaction
 		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
 		if (block instanceof ViewBlock) block = block.model;
 
+		if (trx == null && block.ctrlblk)
+			trx = this.ctrlblks.get(block.name)?.blocktrx;
+
 		if (trx == null)
 		{
 			let fld:Field = block.view.getField(field);
@@ -180,7 +212,19 @@ export class EventTransaction
 		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
 		if (block instanceof ViewBlock) block = block.model;
 
-		// If control-block
+		if (trx == null && block.ctrlblk)
+		{
+			trx = this.ctrlblks.get(block.name)?.blocktrx;
+
+			if (trx == null)
+			{
+				let event:EventType = this.getActive().event;
+				let ctrl:Transaction = new Transaction(event,block,null,0,true);
+
+				this.ctrlblks.set(block.name,ctrl);
+				trx = ctrl.blocktrx;
+			}
+		}
 
 		if (trx == null)
 		{

@@ -159,7 +159,6 @@ export class Block
 			data.push(row);
 		}
 
-		this.ctrlblk = true;
 		return(new MemoryTable(columns,data));
 	}
 

@@ -128,6 +128,7 @@ export class Form
 		{
 			if (!block.isLinked())
 			{
+				block.ctrlblk = true;
 				block.datasource = block.createMemorySource();
 
 				await block.executequery();

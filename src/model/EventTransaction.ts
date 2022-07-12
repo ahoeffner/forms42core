@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Form } from "./Form.js";
 import { Block } from "./Block.js";
 import { Record } from "./Record.js";
 import { Alert } from "../application/Alert.js";
@@ -26,8 +25,7 @@ import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 	eventhandlers returns true. When a transaction is active, it is only possible
 	to do changes to records participating in the transction.
 
-	Properties can be changed for any fieldinstance, except in Formevents.
-	During FormEvents, only changes to default properties is possible.
+	During FormEvents, only changes to control-blocks is possible.
 */
 
 class Transaction
@@ -216,6 +214,11 @@ export class EventTransaction
 	public applyFormChanges(_event:EventType) : void
 	{
 		this.frmtrx.blkprops.forEach((props) => props.apply(false));
+
+		this.nontrxblks?.forEach((trx) =>
+		{trx.blocktrx.apply();})
+
+		this.nontrxblks?.clear();
 		this.frmtrx = null;
 	}
 
@@ -234,7 +237,7 @@ export class EventTransaction
 
 		this.blocktrxs.delete(block.name);
 
-		if (this.blocktrxs.size == 0 && this.nontrxblks != null)
+		if (this.blocktrxs.size == 0)
 		{
 			this.nontrxblks?.forEach((trx) =>
 			{trx.blocktrx.apply();})

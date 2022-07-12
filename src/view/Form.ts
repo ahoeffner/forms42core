@@ -271,7 +271,6 @@ export class Form
 
 	public async leave(inst:FieldInstance) : Promise<boolean>
 	{
-		//let recoffset:number = inst.field.block.offset(inst);
 		if (!await this.LeaveField(inst))
 		{
 			Form.curform$.focus();

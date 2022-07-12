@@ -64,7 +64,7 @@ export class Form
 	private page$:string|HTMLElement = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks:Map<string,Block> = new Map<string,Block>();
-	private evttrans$:EventTransaction = new EventTransaction(this);
+	private evttrans$:EventTransaction = new EventTransaction();
 
 	private constructor(parent:InterfaceForm, page:string|HTMLElement)
 	{

@@ -56,23 +56,20 @@ export interface PropertyChange
 
 export class EventTransaction
 {
-	private form:Form = null;
 	private frmtrx:Transaction = null;
 
 	private blocktrxs:Map<string,Transaction> =
 		new Map<string,Transaction>();
 
-	private ctrlblks:Map<string,Transaction> =
+	private nontrxblks:Map<string,Transaction> =
 		new Map<string,Transaction>();
-
-	constructor(form:Form)
-	{
-		this.form = form;
-	}
 
 	public join(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean) : void
 	{
 		let trx:Transaction = null;
+
+		if (this.nontrxblks == null)
+			this.nontrxblks = new Map<string,Transaction>();
 
 		if (block != null)
 		{
@@ -113,20 +110,7 @@ export class EventTransaction
 
 	public getProperties(inst:FieldInstance) : FieldProperties
 	{
-		let block:Block = inst.field.block.model;
 		let trx:Transaction = this.getActive(inst.block);
-
-		if (trx == null && block.ctrlblk)
-		{
-			trx = this.ctrlblks.get(block.name);
-
-			if (trx == null)
-			{
-				let event:EventType = this.getActive().event;
-				trx = new Transaction(event,block,null,0,true);
-				this.ctrlblks.set(block.name,trx);
-			}
-		}
 
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
@@ -143,20 +127,7 @@ export class EventTransaction
 
 	public getDefaultProperties(inst:FieldInstance) : FieldProperties
 	{
-		let block:Block = inst.field.block.model;
 		let trx:Transaction = this.getActive(inst.block);
-
-		if (trx == null && block.ctrlblk)
-		{
-			trx = this.ctrlblks.get(block.name);
-
-			if (trx == null)
-			{
-				let event:EventType = this.getActive().event;
-				trx = new Transaction(event,block,null,0,true);
-				this.ctrlblks.set(block.name,trx);
-			}
-		}
 
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
@@ -175,9 +146,15 @@ export class EventTransaction
 	{
 		let trx:Transaction = this.getActive(inst.block);
 
-		if (trx == null || (this.formtrx && !defprops))
+		if (trx == null)
 		{
 			Alert.fatal("Block "+inst.block+" is not in transaction","setProperties");
+			return;
+		}
+
+		if (this.formtrx && !defprops)
+		{
+			Alert.fatal("Only default properties can be set during form-events","setProperties");
 			return;
 		}
 
@@ -196,7 +173,7 @@ export class EventTransaction
 		if (block instanceof ViewBlock) block = block.model;
 
 		if (trx == null && block.ctrlblk)
-			trx = this.ctrlblks.get(block.name)?.blocktrx;
+			trx = this.nontrxblks?.get(block.name)?.blocktrx;
 
 		if (trx == null)
 		{
@@ -213,21 +190,21 @@ export class EventTransaction
 		let trx:BlockTransaction = this.getActive(block.name)?.blocktrx;
 		if (block instanceof ViewBlock) block = block.model;
 
-		if (trx == null && block.ctrlblk)
+		if (trx == null && block.ctrlblk && this.nontrxblks != null)
 		{
-			trx = this.ctrlblks.get(block.name)?.blocktrx;
+			trx = this.nontrxblks.get(block.name)?.blocktrx;
 
 			if (trx == null)
 			{
 				let event:EventType = this.getActive().event;
 				let ctrl:Transaction = new Transaction(event,block,null,0,true);
 
-				this.ctrlblks.set(block.name,ctrl);
+				this.nontrxblks.set(block.name,ctrl);
 				trx = ctrl.blocktrx;
 			}
 		}
 
-		if (trx == null)
+		if (trx == null && !block.ctrlblk)
 		{
 			Alert.fatal("Block '"+block.name+"' is not in transaction","setProperties");
 			return(false);
@@ -238,7 +215,6 @@ export class EventTransaction
 
 	public applyFormChanges(_event:EventType) : void
 	{
-		this.frmtrx.blocktrx?.apply();
 		this.frmtrx.blkprops.forEach((props) => props.apply(false));
 		this.frmtrx = null;
 	}
@@ -257,12 +233,21 @@ export class EventTransaction
 		trx.blkprops.forEach((props) => props.apply(true));
 
 		this.blocktrxs.delete(block.name);
+
+		if (this.blocktrxs.size == 0 && this.nontrxblks != null)
+		{
+			this.nontrxblks?.forEach((trx) =>
+			{trx.blocktrx.apply();})
+
+			this.nontrxblks?.clear();
+		}
 	}
 
 	public undoChanges(_event:EventType, block?:Block|ViewBlock) : void
 	{
 		if (block == null) this.frmtrx = null;
 		else this.blocktrxs.delete(block.name);
+		this.nontrxblks = null;
 	}
 
 	private getActive(block?:string) : Transaction

@@ -48,7 +48,7 @@ class Transaction
 
 	apply() : void
 	{
-		this.blocktrx.apply();
+		this.blocktrx?.apply();
 
 		this.blkprops.forEach((props) =>
 			props.apply(true));
@@ -228,7 +228,6 @@ export class EventTransaction
 
 	public applyBlockChanges(_event:EventType, block:Block|ViewBlock) : void
 	{
-		console.log("applyBlockChanges "+EventType[_event])
 		let trx:Transaction = this.blocktrxs.get(block.name);
 
 		if (trx == null)

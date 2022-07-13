@@ -252,6 +252,7 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		let record:Record = new Record(null);
 		await this.setModelEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
@@ -259,8 +260,19 @@ export class Block
 		return(success);
 	}
 
-	public async postQuery(record:Record) : Promise<boolean>
+	public async postFetch(record:Record) : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
+		await this.setModelEventTransaction(EventType.PostFetch,record);
+		let success:boolean = await this.fire(EventType.PostFetch);
+		this.endModelEventTransaction(EventType.PostFetch,success);
+		return(success);
+	}
+
+	public async postQuery() : Promise<boolean>
+	{
+		if (this.ctrlblk) return(true);
+		let record:Record = new Record(null);
 		await this.setModelEventTransaction(EventType.PostQuery,record);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		this.endModelEventTransaction(EventType.PostQuery,success);
@@ -316,6 +328,9 @@ export class Block
 		let record:Record = null;
 
 		if (!await wrapper.query())
+			return(false);
+
+		if (!await this.postQuery())
 			return(false);
 
 		for (let i = 0; i < this.view.rows; i++)

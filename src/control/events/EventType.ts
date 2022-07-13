@@ -25,7 +25,8 @@ export enum EventType
     PostRecord,
 
 	PreQuery,
-    PostQuery,
+    PostFetch,
+	PostQuery,
 
     PreInsert,
     PostInsert,

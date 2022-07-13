@@ -153,7 +153,6 @@ export class DataSourceWrapper
 		return(this.source.query());
 	}
 
-
 	public async fetch(previous?:boolean) : Promise<Record>
 	{
 		if (previous)
@@ -198,7 +197,7 @@ export class DataSourceWrapper
 
 			if (!record.prepared)
 			{
-				if (!await this.block.postQuery(record))
+				if (!await this.block.postFetch(record))
 				{
 					this.winpos$ = undo;
 					return(null);

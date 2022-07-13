@@ -150,6 +150,7 @@ export class FieldFeatureFactory
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
 			props.readonly = tag.getAttribute("readonly") != null;
+			console.log("readonly: "+props.readonly)
 			props.setValidValues(FieldFeatureFactory.getSelectOptions(tag));
 		}
 
@@ -222,6 +223,7 @@ export class FieldFeatureFactory
 			tag.required = props.required;
 			FieldFeatureFactory.setSelectOptions(tag,props);
 			FieldFeatureFactory.setReadOnly(tag,props.readonly)
+			if (props.readonly) tag.setAttribute("readonly","");
 		}
 	}
 
@@ -283,7 +285,7 @@ export class FieldFeatureFactory
 	public static setReadOnlyState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
 		if (flag) FieldFeatureFactory.setReadOnly(tag,flag);
-		else if (!props.readonly) FieldFeatureFactory.setReadOnly(tag,flag);
+		else if (!props.readonly && props.enabled) FieldFeatureFactory.setReadOnly(tag,flag);
 	}
 
 	public static setEnabledState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
@@ -301,10 +303,10 @@ export class FieldFeatureFactory
 			tag.disabled = flag;
 	}
 
-	public static setEnabled(tag:HTMLElement, _props:FieldProperties, flag:boolean) : void
+	public static setEnabled(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
 		if (tag instanceof HTMLInputElement) tag.disabled = !flag;
-		if (tag instanceof HTMLSelectElement) tag.disabled = !flag;
+		if (tag instanceof HTMLSelectElement && !props.readonly) tag.disabled = !flag;
 	}
 
 	private static getSelectOptions(tag:HTMLSelectElement) : Map<string,string>

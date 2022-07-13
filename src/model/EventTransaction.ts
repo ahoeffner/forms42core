@@ -22,8 +22,10 @@ import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 
 /*
 	The EventTransaction ensures that changes to records only gets applied if all
-	eventhandlers returns true. When a transaction is active, it is only possible
-	to do changes to records participating in the transction.
+	eventhandlers returns true.
+
+	When a transaction is active, it is only possible to do changes to records
+	participating in the transction and to control-blocks.
 
 	During FormEvents, only changes to control-blocks is possible.
 */
@@ -42,6 +44,14 @@ class Transaction
 
 		if (block != null)
 			this.blocktrx = new BlockTransaction(block,record,offset,applyvw);
+	}
+
+	apply() : void
+	{
+		this.blocktrx.apply();
+
+		this.blkprops.forEach((props) =>
+			props.apply(true));
 	}
 }
 
@@ -84,7 +94,7 @@ export class EventTransaction
 		}
 	}
 
-	// Either a Form or multiple Block trx
+	// Either a Form or multiple Block trx's
 	public async ready(event:EventType) : Promise<void>
 	{
 		let form:boolean = EventType[event].includes("Form");
@@ -144,17 +154,11 @@ export class EventTransaction
 	{
 		let trx:Transaction = this.getActive(inst.block);
 
-		if (trx == null)
-		{
-			Alert.fatal("Block "+inst.block+" is not in transaction","setProperties");
-			return;
-		}
+		if (trx == null && this.nontrxblks != null)
+			trx = this.nontrxblks.get(props.inst.block);
 
-		if (this.formtrx && !defprops)
-		{
-			Alert.fatal("Only default properties can be set during form-events","setProperties");
+		if (trx == null)
 			return;
-		}
 
 		let propmap:Map<string,BlockProperties> = trx.blkprops;
 		let blkprop:BlockProperties = propmap.get(inst.block);
@@ -213,10 +217,10 @@ export class EventTransaction
 
 	public applyFormChanges(_event:EventType) : void
 	{
-		this.frmtrx.blkprops.forEach((props) => props.apply(false));
+		this.frmtrx.apply();
 
 		this.nontrxblks?.forEach((trx) =>
-		{trx.blocktrx.apply();})
+			{trx.blocktrx.apply()})
 
 		this.nontrxblks?.clear();
 		this.frmtrx = null;
@@ -232,15 +236,13 @@ export class EventTransaction
 			return;
 		}
 
-		trx.blocktrx.apply();
-		trx.blkprops.forEach((props) => props.apply(true));
-
+		trx.apply();
 		this.blocktrxs.delete(block.name);
 
 		if (this.blocktrxs.size == 0)
 		{
 			this.nontrxblks?.forEach((trx) =>
-			{trx.blocktrx.apply();})
+				{trx.apply();})
 
 			this.nontrxblks?.clear();
 		}

@@ -77,6 +77,11 @@ export class Block
 		return(this.form$);
 	}
 
+	public get empty() : boolean
+	{
+		return(this.record$ < 0);
+	}
+
 	public get view() : ViewBlock
 	{
 		return(this.view$);
@@ -320,6 +325,7 @@ export class Block
 			if (record == null)
 				break;
 
+			this.record$ = 0;
 			this.view.display(i,record);
 			if (i == 0)	this.view$.setCurrentRow(0)
 		}
@@ -357,7 +363,6 @@ export class Block
 		if (offset >= displayed)
 			records = records - offset + displayed - 1;
 
-		console.log("move "+records)
 		this.move(records);
 
 		this.view.lockUnused();

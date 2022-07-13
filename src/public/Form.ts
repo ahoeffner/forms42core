@@ -144,6 +144,9 @@ export class Form implements CanvasComponent
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
 
+		if (Model.getForm(this).getBlock(block).empty)
+			return(flds);
+
 		vflds = View.getForm(this).getBlock(block).getFields(field);
 
 		for (let i = 0; i < vflds.length; i++)

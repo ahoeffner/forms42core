@@ -284,7 +284,7 @@ export class Form
 		await block.model.setEventTransaction(EventType.PreForm,offset);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		block.model.endEventTransaction(EventType.PreForm,success);
-		if (success) this.setURL();
+		if (success && form.parent.navigable) this.setURL();
 		return(success);
 	}
 

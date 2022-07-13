@@ -11,6 +11,7 @@
  */
 
 import { Field } from "./Field.js";
+import { Status } from "../Row.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
@@ -21,7 +22,6 @@ import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
-import { Status } from "../Row.js";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -120,9 +120,21 @@ export class FieldInstance implements FieldEventHandler
 
 	private updateField(newprops:FieldProperties) : void
 	{
+		let value:any = null;
+		let valid:boolean = this.valid;
+
+		if (!this.field.dirty) value = this.impl.getValue();
+		else				   value = this.impl.getIntermediateValue();
+
 		this.impl.apply(newprops,false);
 		FieldFeatureFactory.reset(this.element);
 		FieldFeatureFactory.apply(this,newprops);
+
+		console.log(this.name+" value: "+value+" valid: "+valid)
+		this.valid = valid;
+
+		if (!this.field.dirty) this.impl.setValue(value);
+		else				   this.impl.setIntermediateValue(value);
 	}
 
 	private changeFieldType(clazz:Class<FieldImplementation>, newprops:FieldProperties) : void
@@ -193,6 +205,19 @@ export class FieldInstance implements FieldEventHandler
 	public set ignore(value:string)
 	{
 		this.ignore$ = value;
+	}
+
+	public get valid() : boolean
+	{
+		let valid:boolean = true;
+
+		this.element.classList.forEach((clazz) =>
+		{
+			if (clazz == Properties.Classes.Invalid)
+				valid = false;
+		})
+
+		return(valid);
 	}
 
 	public set valid(flag:boolean)

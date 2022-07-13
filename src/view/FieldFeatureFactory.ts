@@ -146,10 +146,10 @@ export class FieldFeatureFactory
 
 		if (tag instanceof HTMLSelectElement)
 		{
-			props.readonly = false;
 			props.hidden = tag.hidden;
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
+			props.readonly = tag.getAttribute("readonly") != null;
 			props.setValidValues(FieldFeatureFactory.getSelectOptions(tag));
 		}
 
@@ -221,6 +221,7 @@ export class FieldFeatureFactory
 			tag.disabled = !props.enabled;
 			tag.required = props.required;
 			FieldFeatureFactory.setSelectOptions(tag,props);
+			FieldFeatureFactory.setReadOnly(tag,props.readonly)
 		}
 	}
 
@@ -281,8 +282,8 @@ export class FieldFeatureFactory
 
 	public static setReadOnlyState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
-		if (flag) FieldFeatureFactory.setReadOnly(tag,props,flag);
-		else if (!props.readonly) FieldFeatureFactory.setReadOnly(tag,props,flag);
+		if (flag) FieldFeatureFactory.setReadOnly(tag,flag);
+		else if (!props.readonly) FieldFeatureFactory.setReadOnly(tag,flag);
 	}
 
 	public static setEnabledState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
@@ -291,50 +292,13 @@ export class FieldFeatureFactory
 		else if (props.enabled) FieldFeatureFactory.setEnabled(tag,props,flag);
 	}
 
-	public static setReadOnly(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
+	public static setReadOnly(tag:HTMLElement, flag:boolean) : void
 	{
-		let ignore:boolean = true;
-
 		if (tag instanceof HTMLInputElement)
 			tag.readOnly = flag;
 
-		if (tag instanceof HTMLSelectElement && !ignore)
-		{
-			if (flag)
-			{
-				let options:HTMLOptionElement[] = [];
-
-				for (let i = 0; i < tag.options.length; i++)
-				{
-					let option:HTMLOptionElement = tag.options.item(i);
-					if (option.selected && option.value.length > 0) options.push(option);
-				}
-
-				while(tag.options.length > 0)
-					tag.options.remove(0);
-
-				if (options.length == 0)
-					options.push(new Option());
-
-				for (let i = 0; i < options.length; i++)
-					tag.options.add(options[i]);
-			}
-			else
-			{
-				let values:string[] = [];
-
-				for (let i = 0; i < tag.options.length; i++)
-					values.push(tag.options.item(i).value);
-
-				FieldFeatureFactory.setSelectOptions(tag,props);
-
-				for (let i = 0; i < tag.options.length; i++)
-				{
-					let option:HTMLOptionElement = tag.options.item(i);
-					if (values.includes(option.value)) option.selected = true;
-				}
-			}
-		}
+		if (tag instanceof HTMLSelectElement)
+			tag.disabled = flag;
 	}
 
 	public static setEnabled(tag:HTMLElement, _props:FieldProperties, flag:boolean) : void

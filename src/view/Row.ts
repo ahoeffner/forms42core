@@ -17,13 +17,21 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { Indicator } from "../application/tags/Indicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
+export enum Status
+{
+	na,
+	qbe,
+	update,
+	insert,
+}
+
 
 export class Row
 {
 	private block$:Block = null;
 	private rownum$:number = null;
-	private unused$:boolean = true;
 	private validated$:boolean = true;
+	private status$:Status = Status.na;
 	private indicators:Indicator[] = [];
 	private instances:FieldInstance[] = [];
 	private state$:FieldState = FieldState.DISABLED;
@@ -38,6 +46,16 @@ export class Row
 	public get block() : Block
 	{
 		return(this.block$);
+	}
+
+	public get status() : Status
+	{
+		return(this.status$);
+	}
+
+	public set status(status:Status)
+	{
+		this.status$ = status;
 	}
 
 	public get rownum() : number
@@ -82,11 +100,6 @@ export class Row
 		});
 	}
 
-	public get unused() : boolean
-	{
-		return(this.unused$);
-	}
-
 	public getFieldState() : FieldState
 	{
 		return(this.state$);
@@ -95,7 +108,7 @@ export class Row
 	public setFieldState(state:FieldState) : void
 	{
 		this.state$ = state;
-		if (state == FieldState.DISABLED) this.unused$ = true;
+		if (state == FieldState.DISABLED) this.status$ = Status.na;
 		this.getFieldInstances().forEach((inst) => {inst.setFieldState(state)});
 	}
 
@@ -293,13 +306,13 @@ export class Row
 
 	public clear() : void
 	{
-		this.unused$ = true;
+		this.status = Status.na;
 		this.getFieldInstances().forEach((inst) => {inst.clear()});
 	}
 
 	public distribute(field:string, value:any, dirty:boolean) : void
 	{
-		this.unused$ = false;
+		this.status$ = Status.update;
 		this.fields.get(field)?.distribute(null,value,dirty);
 	}
 

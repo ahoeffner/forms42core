@@ -23,6 +23,7 @@ import { Field as ViewField } from '../view/fields/Field.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { Status } from '../view/Row.js';
 
 
 export class Form implements CanvasComponent
@@ -172,6 +173,44 @@ export class Form implements CanvasComponent
 		}
 	}
 
+	public getQBEProperties(block:string, field:string, clazz?:string) : FieldProperties[]
+	{
+		let vflds:ViewField[] = [];
+		let flds:FieldProperties[] = [];
+
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
+		vflds = View.getForm(this).getBlock(block).getAllFields(field);
+
+		for (let i = 0; i < vflds.length; i++)
+		{
+			vflds[i].getInstancesByClass(clazz).forEach((inst) =>
+			{
+				if (inst.row <= 0)
+					flds.push(new FieldProperties(inst,true,Status.insert))
+			})
+		}
+
+		return(flds);
+	}
+
+	public getInsertProperties(block:string, field:string, clazz?:string) : FieldProperties[]
+	{
+		let vflds:ViewField[] = [];
+		let flds:FieldProperties[] = [];
+
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
+		vflds = View.getForm(this).getBlock(block).getAllFields(field);
+
+		for (let i = 0; i < vflds.length; i++)
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,true,Status.insert))})
+
+		return(flds);
+	}
+
 	public getDefaultProperties(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
 		let vflds:ViewField[] = [];
@@ -183,7 +222,7 @@ export class Form implements CanvasComponent
 		vflds = View.getForm(this).getBlock(block).getAllFields(field);
 
 		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,true))})
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,true,Status.update))})
 
 		return(flds);
 	}
@@ -196,13 +235,10 @@ export class Form implements CanvasComponent
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
 
-		if (Model.getForm(this).getBlock(block).empty)
-			return(flds);
-
 		vflds = View.getForm(this).getBlock(block).getFields(field);
 
 		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,false))})
+			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,false,null))})
 
 		return(flds);
 	}

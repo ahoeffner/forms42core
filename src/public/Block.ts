@@ -77,7 +77,6 @@ export class Block
 		return(this.form.getRecordProperties(this.name,field,clazz));
 	}
 
-
 	public getValue(field:string) : any
 	{
 		return(this.form.getValue(this.name,field));

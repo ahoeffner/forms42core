@@ -11,6 +11,7 @@
  */
 
 import { Form } from './Form.js';
+import { Status } from '../view/Row.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
@@ -18,15 +19,15 @@ import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 
 export class FieldProperties extends BasicProperties
 {
-	private default$:boolean = true;
+	private status:Status = null;
 	private inst$:FieldInstance = null;
 
-	constructor(inst$:FieldInstance, default$:boolean)
+	constructor(inst$:FieldInstance, deflt:boolean, status:Status)
 	{
 		super();
 		this.inst$ = inst$;
-		this.default$ = default$;
-		FieldFeatureFactory.initialize(this,inst$,default$);
+		this.status = status;
+		FieldFeatureFactory.initialize(this,inst$,deflt,status);
 	}
 
 	public get name() : string
@@ -142,6 +143,6 @@ export class FieldProperties extends BasicProperties
 
 	public apply() : void
 	{
-		FieldFeatureFactory.merge(this,this.inst$,this.default$);
+		FieldFeatureFactory.merge(this,this.inst$,this.status == null);
 	}
 }

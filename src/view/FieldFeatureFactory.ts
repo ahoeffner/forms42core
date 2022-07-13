@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Status } from "./Row.js";
 import { Block } from "../model/Block.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
@@ -19,9 +20,21 @@ import { EventTransaction } from "../model/EventTransaction.js";
 
 export class FieldFeatureFactory
 {
-	public static initialize(props:BasicProperties, inst$:FieldInstance, default$:boolean) : void
+	public static initialize(props:BasicProperties, inst:FieldInstance, deflt:boolean, type:Status) : void
 	{
-		let exist:BasicProperties = default$ ? inst$.defaultProperties : inst$.properties;
+		let exist:BasicProperties = inst.properties;
+
+		if (deflt)
+		{
+			switch(type)
+			{
+				case Status.qbe: exist = inst.qbeProperties; break;
+				case Status.insert: exist = inst.insertProperties; break;
+				case Status.update: exist = inst.updateProperties; break;
+				default: exist = inst.defaultProperties;
+			}
+		}
+
 		FieldFeatureFactory.copyBasic(exist,props);
 	}
 

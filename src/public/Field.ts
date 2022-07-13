@@ -11,6 +11,7 @@
  */
 
 import { Form } from './Form.js';
+import { Status } from '../view/Row.js';
 import { FieldProperties } from './FieldProperties.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
@@ -59,13 +60,23 @@ export class Field
 		this.inst$.resetProperties();
 	}
 
+	public getQBEProperties() : FieldProperties
+	{
+		return(new FieldProperties(this.inst$,true,Status.qbe));
+	}
+
+	public getInsertProperties() : FieldProperties
+	{
+		return(new FieldProperties(this.inst$,true,Status.insert));
+	}
+
 	public getDefaultProperties() : FieldProperties
 	{
-		return(new FieldProperties(this.inst$,true));
+		return(new FieldProperties(this.inst$,true,Status.update));
 	}
 
 	public getRecordProperties() : FieldProperties
 	{
-		return(new FieldProperties(this.inst$,false));
+		return(new FieldProperties(this.inst$,false,null));
 	}
 }

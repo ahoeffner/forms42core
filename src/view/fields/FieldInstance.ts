@@ -21,6 +21,7 @@ import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { Status } from "../Row.js";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -32,6 +33,8 @@ export class FieldInstance implements FieldEventHandler
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
 	private defproperties$:FieldProperties = null;
+	private insproperties$:FieldProperties = null;
+	private qbeproperties$:FieldProperties = null;
 	private clazz:Class<FieldImplementation> = null;
 
 	constructor(form:Form,tag:HTMLElement)
@@ -46,7 +49,11 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.create(this,this.properties$.tag);
 
 		this.properties.inst = this;
+
 		this.defproperties$ = this.properties;
+		this.insproperties$ = this.properties;
+		this.qbeproperties$ = this.properties;
+
 		this.element$ = this.impl.getElement();
 
 		this.field$.addInstance(this);
@@ -75,7 +82,7 @@ export class FieldInstance implements FieldEventHandler
 		if (this.hasDefaultProperties())
 			return;
 
-		this.properties$ = this.defproperties$;
+		this.properties$ = this.defaultProperties;
 		this.applyProperties(this.defaultProperties);
 	}
 
@@ -201,12 +208,53 @@ export class FieldInstance implements FieldEventHandler
 
 	public get defaultProperties() : FieldProperties
 	{
+		switch(this.field.row.status)
+		{
+			case Status.na:
+				return(this.defproperties$);
+
+			case Status.qbe:
+				return(this.qbeproperties$);
+
+			case Status.insert:
+				return(this.insproperties$);
+
+			case Status.update:
+				return(this.defproperties$);
+		}
+	}
+
+	public get qbeProperties() : FieldProperties
+	{
+		return(this.qbeproperties$);
+	}
+
+	public get updateProperties() : FieldProperties
+	{
 		return(this.defproperties$);
+	}
+
+	public get insertProperties() : FieldProperties
+	{
+		return(this.insproperties$);
 	}
 
 	public hasDefaultProperties() : boolean
 	{
-		return(this.properties$ == this.defproperties$);
+		switch(this.field.row.status)
+		{
+			case Status.na:
+				return(this.properties == this.defproperties$);
+
+			case Status.qbe:
+				return(this.properties == this.qbeproperties$);
+
+			case Status.insert:
+				return(this.properties == this.insproperties$);
+
+			case Status.update:
+				return(this.properties == this.defproperties$);
+		}
 	}
 
 	public clear() : void

@@ -23,8 +23,8 @@ export class Framework
 {
     private component:any = null;
 	private root:HTMLElement = null;
-    private static taglib:Map<string,Tag> = Framework.initTaglib();
-    private static attrlib:Map<string,Tag> = Framework.initAttrlib();
+    private static taglib:Map<string,Tag> = null;
+    private static attrlib:Map<string,Tag> = null;
 
     public eventhandler:EventHandler = null;
     public events:Map<Element,string[][]> = new Map<Element,string[][]>();
@@ -101,6 +101,12 @@ export class Framework
     {
         this.component = component;
         this.eventhandler = new EventHandler(component);
+
+		if (Framework.taglib == null)
+			Framework.taglib = Framework.initTaglib();
+
+		if (Framework.attrlib == null)
+			Framework.attrlib = Framework.initAttrlib();
 
         if (!Properties.ParseTags && !Properties.ParseEvents)
             return;

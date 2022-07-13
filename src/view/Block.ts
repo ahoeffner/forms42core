@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Row } from "./Row.js";
 import { Form } from "./Form.js";
+import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
@@ -24,7 +24,6 @@ import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { Indicator } from "../application/tags/Indicator.js";
 
 
 export class Block
@@ -126,6 +125,9 @@ export class Block
 	{
 		let row:Row = null;
 		let fields:Field[] = [];
+
+		if (this.model.empty)
+			return(fields);
 
 		row = this.getRow(this.row);
 		if (row != null) fields.push(...row.getFields());
@@ -374,7 +376,7 @@ export class Block
 	{
 		let row:Row = this.getRow(0);
 
-		if (row.unused)
+		if (row.status == Status.na)
 		{
 			row.setFieldState(FieldState.READONLY);
 			this.getRow(-1).setFieldState(FieldState.READONLY);
@@ -383,7 +385,7 @@ export class Block
 		for (let i = 1; i < this.rows; i++)
 		{
 			row = this.getRow(i);
-			if (row.unused) row.setFieldState(FieldState.DISABLED);
+			if (row.status == Status.na) row.setFieldState(FieldState.DISABLED);
 		}
 	}
 
@@ -498,7 +500,7 @@ export class Block
 
 		if (inst.row < 0)
 		{
-			if (this.getRow(this.row+scroll).unused)
+			if (this.getRow(this.row+scroll).status == Status.na)
 				return(inst);
 
 			if (!await this.form.LeaveField(inst))
@@ -518,7 +520,7 @@ export class Block
 		else
 		{
 			let row:Row = this.getRow(this.row+scroll);
-			if (!row.unused) next = row.getFieldByIndex(idx);
+			if (row.status != Status.na) next = row.getFieldByIndex(idx);
 		}
 
 		return(next);

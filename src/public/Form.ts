@@ -48,6 +48,41 @@ export class Form implements CanvasComponent
         return(this.view$);
     }
 
+	public getValue(block:string, field:string) : any
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		let blk:ViewBlock = View.getForm(this).getBlock(block);
+
+		if (blk == null) return(null);
+
+		if (blk.model.eventTransaction.active)
+			return(blk.model.eventTransaction.getValue(blk,field));
+
+		let fld:ViewField = blk.getField(field);
+		if (fld != null) return(blk.getValue(field));
+
+		return(blk.model.getValue(field));
+	}
+
+	public setValue(block:string, field:string, value:any) : void
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		let blk:ViewBlock = View.getForm(this).getBlock(block);
+
+		if (blk == null) return(null);
+
+		if (blk.model.eventTransaction.active)
+		{
+			blk.model.eventTransaction.setValue(blk,field,value);
+			return;
+		}
+
+		blk.model.setValue(field,value);
+		blk.getField(field)?.setValue(value);
+	}
+
     public async setView(page:string|HTMLElement) : Promise<void>
     {
 		let replace:boolean = false;
@@ -120,6 +155,23 @@ export class Form implements CanvasComponent
 		else				  return(flds[0]);
 	}
 
+	public resetProperties(block?:string) : void
+	{
+		if (block != null)
+		{
+			View.getForm(this).getBlock(block).getAllFields().forEach((fld) =>
+			{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
+		}
+		else
+		{
+			View.getForm(this).getBlocks().forEach((block) =>
+			{
+				View.getForm(this).getBlock(block.name).getAllFields().forEach((fld) =>
+				{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
+			})
+		}
+	}
+
 	public getDefaultProperties(block:string, field:string, clazz?:string) : FieldProperties[]
 	{
 		let vflds:ViewField[] = [];
@@ -153,41 +205,6 @@ export class Form implements CanvasComponent
 			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,false))})
 
 		return(flds);
-	}
-
-	public getValue(block:string, field:string) : any
-	{
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-		let blk:ViewBlock = View.getForm(this).getBlock(block);
-
-		if (blk == null) return(null);
-
-		if (blk.model.eventTransaction.active)
-			return(blk.model.eventTransaction.getValue(blk,field));
-
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) return(blk.getValue(field));
-
-		return(blk.model.getValue(field));
-	}
-
-	public setValue(block:string, field:string, value:any) : void
-	{
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-		let blk:ViewBlock = View.getForm(this).getBlock(block);
-
-		if (blk == null) return(null);
-
-		if (blk.model.eventTransaction.active)
-		{
-			blk.model.eventTransaction.setValue(blk,field,value);
-			return;
-		}
-
-		blk.model.setValue(field,value);
-		blk.getField(field)?.setValue(value);
 	}
 
 	public async copy(block:string, all?:boolean, header?:boolean, clipboard?:boolean) : Promise<string[][]>

@@ -87,6 +87,16 @@ export class Form
 		return(this.blocks.get(name));
 	}
 
+	public getBlocks() : Block[]
+	{
+		let blocks:Block[] = [];
+
+		this.blocks.forEach((block) =>
+			{blocks.push(block)})
+
+		return(blocks);
+	}
+
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);

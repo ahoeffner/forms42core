@@ -44,6 +44,16 @@ export class Field
 		return(this.inst$.form);
 	}
 
+	public getValue() : any
+	{
+		return(this.form.getValue(this.inst$.block,this.name));
+	}
+
+	public setValue(value:any) : void
+	{
+		this.form.setValue(this.inst$.block,this.name,value);
+	}
+
 	public resetProperties() : void
 	{
 		this.inst$.resetProperties();
@@ -57,15 +67,5 @@ export class Field
 	public getRecordProperties() : FieldProperties
 	{
 		return(new FieldProperties(this.inst$,false));
-	}
-
-	public getValue() : any
-	{
-		return(this.form.getValue(this.inst$.block,this.name));
-	}
-
-	public setValue(value:any) : void
-	{
-		this.form.setValue(this.inst$.block,this.name,value);
 	}
 }

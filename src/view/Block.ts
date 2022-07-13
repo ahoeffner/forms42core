@@ -91,21 +91,32 @@ export class Block
 		return(fld);
 	}
 
-	public getAllFields(field:string) : Field[]
+	public getAllFields(field?:string) : Field[]
 	{
 		let fields:Field[] = [];
 		let current:Row = this.getRow(-1);
 
-		if (current != null)
+		if (field == null)
 		{
-			let fld:Field = current.getField(field);
-			if (fld != null) fields.push(fld);
-		}
+			if (current != null)
+				fields.push(...current.getFields());
 
-		for (let i = 0; i < this.rows; i++)
+			for (let i = 0; i < this.rows; i++)
+				fields.push(...this.getRow(i).getFields());
+		}
+		else
 		{
-			let fld:Field = current.getField(field);
-			if (fld != null) fields.push(fld);
+			if (current != null)
+			{
+				let fld:Field = current.getField(field);
+				if (fld != null) fields.push(fld);
+			}
+
+			for (let i = 0; i < this.rows; i++)
+			{
+				let fld:Field = current.getField(field);
+				if (fld != null) fields.push(fld);
+			}
 		}
 
 		return(fields);

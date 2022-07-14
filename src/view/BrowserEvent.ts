@@ -141,7 +141,7 @@ export class BrowserEvent
 
     public get onFuncKey() : boolean
     {
-        return(this.funckey != null && this.event.key.startsWith("F"));
+        return(this.funckey != null && this.event.key.startsWith("F") && this.event.key.length > 1);
     }
 
     public get onScrollUp() : boolean
@@ -273,7 +273,9 @@ export class BrowserEvent
                 if (this.event.key == "Escape") {this.cancel = true; this.ignore = false;}
 
                 if (this.ctrlkey != null) this.ignore = false;
-                if (this.key != null && this.key.startsWith("F")) this.ignore = false;
+
+                if (this.key != null && this.key.startsWith("F") && this.event.key.length > 1)
+					this.ignore = false;
             break;
 
             case "keypress":
@@ -351,7 +353,7 @@ export class BrowserEvent
 				if (this.key == "ArrowUp" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
 				if (this.key == "ArrowDown" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
 
-                if (this.key.startsWith("F"))
+                if (this.key.startsWith("F") && this.event.key.length > 1)
                 {
                     this.prevent = true;
                     this.funckey = this.key;

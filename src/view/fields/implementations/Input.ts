@@ -119,7 +119,20 @@ export class Input implements FieldImplementation, EventListenerObject
 			let date:Date = dates.parse(value);
 
 			if (date == null && !this.pattern.isNull())
-				this.setElementValue(null);
+			{
+				let fine:string = this.finishDate();
+				date = dates.parse(fine);
+
+				if (date != null)
+				{
+					this.pattern.setValue(fine);
+					this.setElementValue(this.pattern.getValue());
+				}
+				else
+				{
+					this.setElementValue(null);
+				}
+			}
 
 			return(date);
 		}
@@ -889,6 +902,31 @@ export class Input implements FieldImplementation, EventListenerObject
 
         return(true);
     }
+
+	private finishDate() : string
+	{
+		let empty:boolean = false;
+		let input:string = this.getElementValue();
+		let today:string = dates.format(new Date());
+
+		this.datetokens.forEach((part) =>
+		{
+			empty = true;
+
+			for (let i = part.pos; i < part.pos + part.length; i++)
+				if (input.charAt(i) != ' ') empty = false;
+
+			if (empty)
+			{
+				input = input.substring(0,part.pos) +
+						today.substring(part.pos,part.pos+part.length) +
+						input.substring(part.pos+part.length);
+
+			}
+		})
+
+		return(input);
+	}
 
 	private validateDateField(pos:number) : void
 	{

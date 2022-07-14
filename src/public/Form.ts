@@ -11,6 +11,7 @@
  */
 
 import { Field } from './Field.js';
+import { Status } from '../view/Row.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
@@ -23,7 +24,6 @@ import { Field as ViewField } from '../view/fields/Field.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { Status } from '../view/Row.js';
 
 
 export class Form implements CanvasComponent
@@ -87,6 +87,14 @@ export class Form implements CanvasComponent
     public async setView(page:string|HTMLElement) : Promise<void>
     {
 		let replace:boolean = false;
+
+		if (page == null)
+		{
+			page = "";
+			
+			if (this.view$ == null)
+				return;
+		}
 
 		if (this.view$ == null)
 		{

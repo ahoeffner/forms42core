@@ -61,7 +61,7 @@ export class dates
 		return(valid);
 	}
 
-	public static parse(datestr:string, withtime?:boolean, format?:string) : Date
+	public static parse(datestr:string, format?:string, withtime?:boolean) : Date
     {
 		if (withtime == null)
 			withtime = datestr.includes(' ');

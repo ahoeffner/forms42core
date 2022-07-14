@@ -224,6 +224,17 @@ export class Select implements FieldImplementation, EventListenerObject
 		if (this.event.type == "blur")
 			bubble = true;
 
+		if (this.event.type == "click")
+		{
+			bubble = true;
+
+			if (this.state == FieldState.READONLY && this.properties.enabled)
+			{
+				this.element.disabled = false;
+				this.element.focus();
+			}
+		}
+
 		if (this.event.type == "change")
 		{
 			bubble = true;

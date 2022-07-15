@@ -326,11 +326,11 @@ export class BasicProperties
 	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : void
 	{
 		let factory:ComponentFactory = Properties.FactoryImplementationClass;
-		
+
 		if (typeof mapper === "string") mapper = FormsModule.get().getComponent(mapper);
 		if (!('getIntermediateValue' in mapper)) this.mapper$ = factory.createBean(mapper) as DataMapper;
 
-		if (this.mapper$ != null && !('getIntermediateValue' in this.mapper$))
+		if (this.mapper$ != null && this.mapper$["getIntermediateValue"] == null)
 			Alert.fatal("'"+this.mapper$.constructor.name+"' is not a DataMapper","DataMapper");
 	}
 }

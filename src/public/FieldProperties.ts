@@ -143,7 +143,7 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setMapper(mapper:Class<DataMapper>|string) : FieldProperties
+	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : FieldProperties
 	{
 		super.setMapper(mapper);
 		return(this);

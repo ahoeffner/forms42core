@@ -379,14 +379,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.waiting)
 			return;
 
-		if (this.maxlen != null && this.event.type.startsWith("key") && this.pattern == null)
-		{
-			let value:string = this.getElementValue();
-
-			if (value.length > this.maxlen)
-				this.setElementValue(value.substring(0,this.maxlen));
-		}
-
         if (this.event.type == "focus")
         {
 			bubble = true;
@@ -550,12 +542,15 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "keydown" && this.event.isPrintableKey)
 		{
 			if (this.event.ctrlkey != null || this.event.funckey != null)
-				return(false);
+				return(true);
 
 			this.event.preventDefault(true);
 			let pos:number = this.getPosition();
 			let sel:number[] = this.getSelection();
 			let value:string = this.getElementValue();
+
+			if (this.maxlen != null && value.length >= this.maxlen)
+				return(true);
 
 			if (sel[1] - sel[0] > 0)
 				value = value.substring(0,sel[0]) + value.substring(sel[1])
@@ -617,6 +612,9 @@ export class Input implements FieldImplementation, EventListenerObject
                 if (this.event.key == "-" && !this.getElementValue().includes("-"))
                     pass = true;
 
+				if (this.maxlen != null && this.getElementValue().length >= this.maxlen)
+					pass = false;
+
                 if (!pass)
                 {
                     this.event.preventDefault(true);
@@ -661,6 +659,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 				if (this.event.key == "-" && !this.getElementValue().includes("-"))
                     pass = true;
+
+				if (this.maxlen != null && this.getElementValue().length >= this.maxlen)
+					pass = false;
 
                 if (!pass)
                 {

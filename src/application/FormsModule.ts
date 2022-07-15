@@ -119,16 +119,26 @@ export class FormsModule
 
     public mapComponent(clazz:Class<any>, path?:string) : void
     {
-        if (path == null) path = clazz.name.toLowerCase();
-        State.components.set(path,clazz);
+        if (clazz == null)
+			return;
+
+		if (path == null)
+			path = clazz.name;
+
+		path = path.toLowerCase();
+		State.components.set(path,clazz);
+		State.classes.set(clazz.name,path);
     }
 
     public static getFormPath(clazz:Class<any>|string) : string
     {
+		if (clazz == null)
+			return(null);
+
 		if (typeof clazz != "string")
 			clazz = clazz.name;
 
-        return(State.classes.get(clazz));
+        return(State.classes.get(clazz.toLowerCase()));
     }
 
     public getComponent(path:string) : Class<any>

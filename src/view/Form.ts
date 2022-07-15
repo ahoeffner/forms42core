@@ -365,9 +365,9 @@ export class Form
 		let params:URLSearchParams = new URLSearchParams(location.search);
 		let path:string = location.protocol + '//' + location.host + location.pathname;
 
-		let map:string = FormsModule.getFormPath(this.parent.constructor.name)
+		let map:string = FormsModule.getFormPath(this.parent.constructor.name);
 
-		if (map != null)
+		if (map != null && this.parent.navigable)
 		{
 			params.set("form",map)
 			window.history.replaceState('', '',path+"?"+params);

@@ -14,3 +14,8 @@ export type Class<T> =
 {
     new(...args: any[]) : T;
 };
+
+export function isClass(clazz:any) : clazz is Class<any>
+{
+	return((clazz+"").startsWith("class"));
+}

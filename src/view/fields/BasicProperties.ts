@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { Class } from "../../types/Class.js";
 import { DataMapper } from "./DataMapper.js";
 import { Alert } from "../../application/Alert.js";
+import { Class, isClass } from "../../types/Class.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
 import { ComponentFactory } from "../../application/ComponentFactory.js";
@@ -328,9 +328,12 @@ export class BasicProperties
 		let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
 		if (typeof mapper === "string") mapper = FormsModule.get().getComponent(mapper);
-		if (!('getIntermediateValue' in mapper)) this.mapper$ = factory.createBean(mapper) as DataMapper;
+		else if (isClass(mapper)) this.mapper$ = factory.createBean(mapper) as DataMapper;
 
-		if (this.mapper$ != null && this.mapper$["getIntermediateValue"] == null)
+		if (this.mapper$ != null && !("getIntermediateValue" in this.mapper$))
+		{
 			Alert.fatal("'"+this.mapper$.constructor.name+"' is not a DataMapper","DataMapper");
+			this.mapper$ = null;
+		}
 	}
 }

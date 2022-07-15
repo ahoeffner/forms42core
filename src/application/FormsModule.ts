@@ -24,7 +24,7 @@ export interface Component
     class:Class<any>;
 }
 
-function isComponent(object: any): object is Component
+function isComponent(object: any) : object is Component
 {
     return('path' in object && 'class' in object);
 }
@@ -127,7 +127,7 @@ export class FormsModule
     {
 		if (typeof clazz != "string")
 			clazz = clazz.name;
-			
+
         return(State.classes.get(clazz));
     }
 

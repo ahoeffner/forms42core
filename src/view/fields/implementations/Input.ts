@@ -349,6 +349,11 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.pattern = new Pattern(datepattern);
 			this.placeholder = this.placeholder.toLowerCase();
 		}
+		else if (this.pattern != null)
+		{
+			if (this.element.getAttribute("size") == null)
+				this.element.setAttribute("size",""+this.pattern.getPlaceholder().length);
+		}
 
 		this.element.removeAttribute("placeholder");
     }

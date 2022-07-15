@@ -39,6 +39,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private initial:string = "";
     private int:boolean = false;
     private dec:boolean = false;
+	private maxlen:number = null;
 	private cse:Case = Case.mixed;
 	private pattern:Pattern = null;
 	private state:FieldState = null;
@@ -334,6 +335,14 @@ export class Input implements FieldImplementation, EventListenerObject
 				})
 			}
 
+			if (attr == "maxlength")
+			{
+				this.maxlen = +value;
+
+				if (isNaN(this.maxlen))
+					this.maxlen = null;
+			}
+
 			if (attr == "format")
 				this.pattern = new Pattern(value);
 
@@ -369,6 +378,14 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.waiting)
 			return;
+
+		if (this.maxlen != null && this.event.type.startsWith("key") && this.pattern == null)
+		{
+			let value:string = this.getElementValue();
+
+			if (value.length > this.maxlen)
+				this.setElementValue(value.substring(0,this.maxlen));
+		}
 
         if (this.event.type == "focus")
         {

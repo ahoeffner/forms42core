@@ -43,6 +43,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		this.checked = properties.value;
+		this.datamapper = properties.mapper;
 		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());
 	}

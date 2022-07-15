@@ -123,8 +123,11 @@ export class FormsModule
         State.components.set(path,clazz);
     }
 
-    public static getFormPath(clazz:string) : string
+    public static getFormPath(clazz:Class<any>|string) : string
     {
+		if (typeof clazz != "string")
+			clazz = clazz.name;
+			
         return(State.classes.get(clazz));
     }
 

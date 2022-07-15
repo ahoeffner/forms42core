@@ -16,7 +16,7 @@ export enum Tier
 	Frontend
 }
 
-export interface DataConverter
+export interface DataMapper
 {
 	getValue(tier:Tier) : any;
     setValue(tier:Tier,value:any) : void;

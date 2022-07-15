@@ -6,7 +6,7 @@ export { Field } from './src/public/Field.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
 export { dates } from './src/model/dates/dates.js';
-export { DataConverter, Tier } from "./src/view/fields/DataConverter.js";
+export { DataMapper as DataConverter, Tier } from "./src/view/fields/DataMapper.js";
 
 export { MouseMap } from './src/control/events/MouseMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';

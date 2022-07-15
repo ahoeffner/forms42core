@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
+import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldProperties } from "../FieldProperties.js";
-import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -20,8 +20,8 @@ import { FieldImplementation, FieldState } from "../interfaces/FieldImplementati
 export class Textarea implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
+	private datamapper:DataMapper = null;
 	private properties:FieldProperties = null;
-	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLTextAreaElement = null;
@@ -49,9 +49,9 @@ export class Textarea implements FieldImplementation, EventListenerObject
 	{
 		let value = this.element.value;
 
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			value = this.dataconverter.getValue(Tier.Backend);
+			value = this.datamapper.getValue(Tier.Backend);
 			if (value == null) this.element.value = "";
 			return(value);
 		}
@@ -61,10 +61,10 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			this.dataconverter.setValue(Tier.Backend,value);
-			value = this.dataconverter.getValue(Tier.Frontend);
+			this.datamapper.setValue(Tier.Backend,value);
+			value = this.datamapper.getValue(Tier.Frontend);
 		}
 
 		this.element.value = value;

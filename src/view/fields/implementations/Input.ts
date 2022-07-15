@@ -13,10 +13,10 @@
 import { Pattern } from "../Pattern.js";
 import { DataType } from "./DataType.js";
 import { Section } from "../interfaces/Pattern.js";
+import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { Alert } from "../../../application/Alert.js";
 import { FieldProperties } from "../FieldProperties.js";
-import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
@@ -43,9 +43,9 @@ export class Input implements FieldImplementation, EventListenerObject
 	private pattern:Pattern = null;
 	private state:FieldState = null;
     private placeholder:string = null;
+	private datamapper:DataMapper = null;
 	private datetokens:FormatToken[] = null;
 	private properties:FieldProperties = null;
-	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
@@ -104,9 +104,9 @@ export class Input implements FieldImplementation, EventListenerObject
     {
 		let value:string = this.getElementValue();
 
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			value = this.dataconverter.getValue(Tier.Backend);
+			value = this.datamapper.getValue(Tier.Backend);
 			if (value == null) this.setElementValue(null);
 			return(value);
 		}
@@ -148,10 +148,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
     public setValue(value:any) : boolean
     {
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			this.dataconverter.setValue(Tier.Backend,value);
-			value = this.dataconverter.getValue(Tier.Frontend);
+			this.datamapper.setValue(Tier.Backend,value);
+			value = this.datamapper.getValue(Tier.Frontend);
 		}
 
 		if (DataType[this.datatype].startsWith("date"))
@@ -189,8 +189,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public getIntermediateValue(): string
 	{
-		if (this.dataconverter != null)
-			return(this.dataconverter.getIntermediateValue(Tier.Backend));
+		if (this.datamapper != null)
+			return(this.datamapper.getIntermediateValue(Tier.Backend));
 
 		let value:string = this.getElementValue();
 		if (this.pattern == null) value = value.trim();
@@ -199,10 +199,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public setIntermediateValue(value:string) : void
 	{
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			this.dataconverter.setIntermediateValue(Tier.Backend,value);
-			value = this.dataconverter.getIntermediateValue(Tier.Frontend);
+			this.datamapper.setIntermediateValue(Tier.Backend,value);
+			value = this.datamapper.getIntermediateValue(Tier.Frontend);
 		}
 
         if (value == null)
@@ -504,8 +504,8 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.before = after;
 				this.event.modified = true;
 
-				if (this.dataconverter != null)
-					this.dataconverter.setIntermediateValue(Tier.Frontend,after);
+				if (this.datamapper != null)
+					this.datamapper.setIntermediateValue(Tier.Frontend,after);
 			}
 		}
 

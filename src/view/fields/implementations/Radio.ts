@@ -11,10 +11,10 @@
  */
 
 import { DataType } from "./DataType.js";
+import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
 import { FieldProperties } from "../FieldProperties.js";
-import { DataConverter, Tier } from "../DataConverter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
@@ -22,8 +22,8 @@ import { FieldImplementation, FieldState } from "../interfaces/FieldImplementati
 export class Radio implements FieldImplementation, EventListenerObject
 {
 	private state:FieldState = null;
+	private datamapper:DataMapper = null;
 	private properties:FieldProperties = null;
-	private dataconverter:DataConverter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private value$:string = null;
@@ -54,9 +54,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			this.value$ = this.dataconverter.getValue(Tier.Backend);
+			this.value$ = this.datamapper.getValue(Tier.Backend);
 			if (this.value$ == null) this.element.checked = false;
 			return(this.value$);
 		}
@@ -76,10 +76,10 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
-		if (this.dataconverter != null)
+		if (this.datamapper != null)
 		{
-			this.dataconverter.setValue(Tier.Backend,value);
-			value = this.dataconverter.getValue(Tier.Frontend);
+			this.datamapper.setValue(Tier.Backend,value);
+			value = this.datamapper.getValue(Tier.Frontend);
 		}
 
 		if (DataType[this.datatype].startsWith("date"))

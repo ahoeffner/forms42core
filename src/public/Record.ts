@@ -10,7 +10,11 @@
  * accompanied this code).
  */
 
-export class Record
+
+export interface Record
 {
-	
+	keys:any;
+	getValue(column:string) : any;
+	values:{name:string,value:any}[];
+	setValue(column:string,value:any) : void
 }

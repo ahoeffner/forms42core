@@ -10,7 +10,8 @@
  * accompanied this code).
  */
 
-import { DataSourceWrapper } from "./DataModel";
+import { DataSourceWrapper } from "./DataModel.js";
+import { Record as RecordType } from "../public/Record.js";
 
 export enum RecordStatus
 {
@@ -21,7 +22,7 @@ export enum RecordStatus
 	Delete
 }
 
-export class Record
+export class Record implements RecordType
 {
 	private id$:any;
 	private keys$:any[] = [];

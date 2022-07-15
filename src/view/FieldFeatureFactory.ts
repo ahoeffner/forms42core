@@ -48,6 +48,7 @@ export class FieldFeatureFactory
 		clone.name = props.name;
 		clone.inst = props.inst;
 		clone.block = props.block;
+		clone.mapper = props.mapper;
 
 		return(clone);
 	}
@@ -94,6 +95,7 @@ export class FieldFeatureFactory
 		props.tag = exist.tag;
 		props.validValues = list;
 		props.value = exist.value;
+		props.mapper = exist.mapper;
 		props.hidden = exist.hidden;
 		props.enabled = exist.enabled;
 		props.readonly = exist.readonly;
@@ -150,7 +152,6 @@ export class FieldFeatureFactory
 			props.enabled = !tag.disabled;
 			props.required = tag.required;
 			props.readonly = tag.getAttribute("readonly") != null;
-			console.log("readonly: "+props.readonly)
 			props.setValidValues(FieldFeatureFactory.getSelectOptions(tag));
 		}
 

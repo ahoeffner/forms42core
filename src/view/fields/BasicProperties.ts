@@ -10,6 +10,13 @@
  * accompanied this code).
  */
 
+import { Class } from "../../types/Class.js";
+import { DataMapper } from "./DataMapper.js";
+import { Alert } from "../../application/Alert.js";
+import { Properties } from "../../application/Properties.js";
+import { FormsModule } from "../../application/FormsModule.js";
+import { ComponentFactory } from "../../application/ComponentFactory.js";
+
 
 export interface Style
 {
@@ -22,6 +29,7 @@ export class BasicProperties
 	protected tag$:string = null;
 	protected styles$:Style[] = [];
 	protected classes$:string[] = [];
+	protected mapper$:DataMapper = null;
 	protected attribs$:Map<string,string> = new Map<string,string>();
 
 	protected hidden$:boolean = false;
@@ -32,8 +40,8 @@ export class BasicProperties
 	protected value$:string = null;
     protected values$:Map<string,string> = new Map<string,string>();
 
-	protected fixed$:string[] = ["id","name","block","row","invalid"];
-	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style"];
+	protected handled$:string[] = ["id","name","block","row","invalid"];
+	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style","mapper"];
 
 	public get tag() : string
 	{
@@ -221,7 +229,7 @@ export class BasicProperties
 	{
 		attr = attr.toLowerCase();
 
-		if (this.fixed$.includes(attr))
+		if (this.handled$.includes(attr))
 			return;
 
 		if (this.structured$.includes(attr))
@@ -240,6 +248,8 @@ export class BasicProperties
 
 				case "style": this.setStyles(value); break;
 				case "class": this.setClasses(value); break;
+
+				case "mapper": this.setMapper(value); break;
 			}
 
 			return;
@@ -302,4 +312,26 @@ export class BasicProperties
 	{
 		return(this.values$);
     }
+
+	public get mapper() : DataMapper
+	{
+		return(this.mapper$);
+	}
+
+	public set mapper(mapper:DataMapper)
+	{
+		this.mapper$ = mapper;
+	}
+
+	public setMapper(mapper:Class<DataMapper>|string) : void
+	{
+		let factory:ComponentFactory = Properties.FactoryImplementationClass;
+		if (typeof mapper === "string") mapper = FormsModule.get().getComponent(mapper);
+        this.mapper$ = factory.createBean(mapper) as DataMapper;
+
+		if (this.mapper$ != null && !('getIntermediateValue' in this.mapper$))
+		{
+			Alert.fatal("'"+mapper.name+"' is not a DataMapper","DataMapper");
+		}
+	}
 }

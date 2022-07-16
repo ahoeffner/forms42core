@@ -94,22 +94,31 @@ export class Display implements FieldImplementation, EventListenerObject
 				value = dates.format(value);
 		}
 
+		if (value == this.value$)
+			return(true);
+
 		this.clear();
 		this.value$ = value;
 
-		if (value != null)
+		if (value instanceof HTMLElement)
 		{
-			if (value instanceof HTMLElement)
-			{
-				let elem:HTMLElement = this.element.firstChild as HTMLElement;
+			let elem:HTMLElement = this.element.firstChild as HTMLElement;
 
-				if (elem != null) elem.replaceWith(value);
-				else			  this.element.appendChild(value);
+			if (value == null)
+			{
+				if (elem != null)
+					elem.remove();
 			}
 			else
 			{
-				this.element.textContent = value;
+				if (elem != null) elem.replaceWith(value);
+				else			  this.element.appendChild(value);
 			}
+		}
+		else
+		{
+			if (value == null) value = "";
+			this.element.textContent = value;
 		}
 
 		return(true);

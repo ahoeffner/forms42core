@@ -119,15 +119,21 @@ export class MenuHandler implements EventListenerObject
 			if (entries[i].disabled != null && entries[i].disabled)
 				continue;
 
+			let cmd:string = "";
 			let classes:string = this.menucls;
-			if (entries[i].command) classes = this.linkcls;
+
+			if (entries[i].command)
+			{
+				classes = this.linkcls;
+				cmd = "command='"+entries[i].command+"'";
+			}
 
 			let npath:string = path+entries[i].id;
 
 			if (this.open.has(npath))
 			{
 				classes += " "+this.options.classes.open;
-				page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
+				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 			}
 			else

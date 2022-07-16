@@ -91,7 +91,7 @@ export class Form implements CanvasComponent
 		if (page == null)
 		{
 			page = "";
-			
+
 			if (this.view$ == null)
 				return;
 		}
@@ -264,9 +264,9 @@ export class Form implements CanvasComponent
 		if (!vform.validated) return(false);
 		let mform:Model = Model.getForm(this);
 
-		await mform.setEventTransaction(EventType.FormClose);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormClose,this));
-		mform.endEventTransaction(EventType.FormClose,success);
+		await mform.setEventTransaction(EventType.PreCloseForm);
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PreCloseForm,this));
+		mform.endEventTransaction(EventType.PreCloseForm,success);
 
         this.canvas.close();
         return(true);

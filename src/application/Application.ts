@@ -60,9 +60,9 @@ export class Application
         canvas.setComponent(instance);
         container.appendChild(canvas.getElement());
 
-		await ModelForm.getForm(instance).setEventTransaction(EventType.FormInit);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.FormInit,instance));
-		ModelForm.getForm(instance).endEventTransaction(EventType.FormInit,success);
+		await ModelForm.getForm(instance).setEventTransaction(EventType.PostViewInit);
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
+		ModelForm.getForm(instance).endEventTransaction(EventType.PostViewInit,success);
 
 		return(instance);
     }

@@ -6,8 +6,8 @@ export enum EventType
 	Connect,
 	Disconnect,
 
-	FormInit,
-	FormClose,
+	PostViewInit,
+	PreCloseForm,
 
 	PreForm,
 	PostForm,

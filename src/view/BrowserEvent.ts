@@ -75,6 +75,7 @@ export class BrowserEvent
     {
         this.event$ = event;
 		this.type$ = event.type;
+		event.stopPropagation();
 
         if (!this.isKeyEvent) this.reset();
         else                  this.KeyEvent();

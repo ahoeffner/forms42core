@@ -20,7 +20,7 @@ import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
-export class Form
+export class Form implements EventListenerObject
 {
 	private static views:Map<InterfaceForm,Form> =
 		new Map<InterfaceForm,Form>();
@@ -50,6 +50,7 @@ export class Form
 	{
 		let form:Form = Form.views.get(parent);
 		form.blocks.forEach((blk) => {blk.finalize();});
+		form.addEvents(parent.getView());
 		form.indicators.clear();
 		form.linkModels();
 	}
@@ -354,6 +355,12 @@ export class Form
 		return(success);
 	}
 
+	public async handleEvent(event:Event) : Promise<void>
+	{
+		if (event.type == "contextmenu") console.log(event.type);
+		else							 console.log("hostlistener");
+	}
+
 	private linkModels() : void
 	{
 		this.blocks.forEach((blk) => {blk.linkModel();});
@@ -391,4 +398,10 @@ export class Form
 		let frmevent:FormEvent = FormEvent.FieldEvent(type,inst);
 		return(FormEvents.raise(frmevent));
 	}
+
+    private addEvents(element:HTMLElement) : void
+    {
+        element.addEventListener("keyup",this);
+        element.addEventListener("contextmenu",this);
+    }
 }

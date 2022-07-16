@@ -138,7 +138,7 @@ export class MenuHandler implements EventListenerObject
 			}
 			else
 			{
-				page += "<a class='"+classes+"' path='"+npath+"'>"+entries[i].text+"</a>";
+				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 			}
 
 		}

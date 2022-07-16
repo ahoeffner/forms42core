@@ -99,8 +99,17 @@ export class Display implements FieldImplementation, EventListenerObject
 
 		if (value != null)
 		{
-			if (value instanceof HTMLElement) this.element.appendChild(value);
-			else this.element.textContent = value;
+			if (value instanceof HTMLElement)
+			{
+				let elem:HTMLElement = this.element.firstChild as HTMLElement;
+
+				if (elem != null) elem.replaceWith(value);
+				else			  this.element.appendChild(value);
+			}
+			else
+			{
+				this.element.textContent = value;
+			}
 		}
 
 		return(true);

@@ -126,12 +126,31 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public getIntermediateValue() : string
 	{
-		return(this.getValue());
+		if (this.datamapper != null)
+		{
+			this.value$ = this.datamapper.getValue(Tier.Backend);
+			if (this.value$ == null) this.clear();
+		}
+
+		return(this.value$);
 	}
 
 	public setIntermediateValue(value:string) : void
 	{
-		this.setValue(value);
+		if (this.datamapper != null)
+		{
+			this.datamapper.setIntermediateValue(Tier.Backend,value);
+			let ivalue:string = this.datamapper.getIntermediateValue(Tier.Frontend);
+			if (ivalue == value) return;
+			value = ivalue;
+		}
+
+		if (value == this.value$)
+			return;
+
+		this.clear();
+		if (value == null) value = "";
+		this.element.textContent = value;
 	}
 
 	public getElement() : HTMLElement

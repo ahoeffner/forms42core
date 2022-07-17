@@ -311,15 +311,7 @@ export class Field
 			if (brwevent.undo) key = KeyMap.undo;
 			else if (brwevent.copy) key = KeyMap.copy;
 			else if (brwevent.paste) key = KeyMap.paste;
-
-			if (key != null)
-			{
-				if (!await this.block.onKey(inst,key))
-					return;
-
-				this.block.form.handleEvent(brwevent.event);
-			}
-
+			if (key != null) await this.block.onKey(inst,key);
 			return;
 	}
 
@@ -359,12 +351,7 @@ export class Field
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
 				let fevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,mevent,inst);
-
-				if (!await FormEvents.raise(fevent))
-					return;
-
-				if (brwevent.type == "contextmenu")
-					this.block.form.handleEvent(brwevent.event);
+				await FormEvents.raise(fevent);
 			}
 
 			return;

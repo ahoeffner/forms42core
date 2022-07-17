@@ -19,6 +19,7 @@ import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { MouseClick } from './MouseClick.js';
 
 export class Form implements EventListenerObject
 {
@@ -355,10 +356,25 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
+	private mousehdl:MouseClick = new MouseClick();
 	public async handleEvent(event:Event) : Promise<void>
 	{
-		if (event.type == "contextmenu") console.log(event.type);
-		else							 console.log("hostlistener");
+		let etype:EventType = EventType.Mouse;
+
+		if (event.type.startsWith("key")) etype = EventType.Key;
+
+		if (event.type.includes("click"))
+		{
+			this.mousehdl.setEvent(event);
+
+			if (this.mousehdl.type == "wait")
+				await this.mousehdl.wait();
+
+			if (this.mousehdl.waiting)
+				return;
+		}
+
+		console.log(event.type);
 	}
 
 	private linkModels() : void
@@ -402,6 +418,8 @@ export class Form implements EventListenerObject
     private addEvents(element:HTMLElement) : void
     {
         element.addEventListener("keyup",this);
+        element.addEventListener("click",this);
+        element.addEventListener("dblclick",this);
         element.addEventListener("contextmenu",this);
     }
 }

@@ -69,8 +69,6 @@ export class BrowserEvent
 		return(BrowserEvent.instance);
 	}
 
-	private constructor() {null;}
-
     public setEvent(event:any) : void
     {
         this.event$ = event;

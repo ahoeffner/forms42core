@@ -12,6 +12,7 @@
 
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
+import { BrowserEvent } from './BrowserEvent.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
@@ -19,7 +20,6 @@ import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { MouseClick } from './MouseClick.js';
 
 export class Form implements EventListenerObject
 {
@@ -356,29 +356,40 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	private mousehdl:MouseClick = new MouseClick();
-	public async handleEvent(event:Event) : Promise<void>
+	private event:BrowserEvent = new BrowserEvent();
+	public async handleEvent(event:any) : Promise<void>
 	{
-		if (event.type.includes("click"))
-		{
-			this.mousehdl.setEvent(event);
+        let bubble:boolean = false;
+		this.event.setEvent(event);
 
-			if (this.mousehdl.type == "wait")
-				await this.mousehdl.wait();
+		if (this.event.type == "wait")
+			await this.event.wait();
 
-			if (this.mousehdl.waiting)
-				return;
+		if (this.event.waiting)
+			return;
 
-			console.log("done: "+this.mousehdl.type);
-		}
-		else if (event.type == "contextmenu")
-		{
-			console.log("contextmenu")
-		}
-		else
-		{
-			console.log("key")
-		}
+		if (this.event.accept || this.event.cancel)
+			bubble = true;
+
+		if (this.event.bubbleMouseEvent)
+			bubble = true;
+
+		if (this.event.onScrollUp)
+			bubble = true;
+
+        if (this.event.onScrollDown)
+			bubble = true;
+
+        if (this.event.onCtrlKeyDown)
+			bubble = true;
+
+        if (this.event.onFuncKey)
+			bubble = true;
+
+		this.event.preventDefault();
+
+		if (bubble)
+			console.log("event: "+this.event.type);
 	}
 
 	private linkModels() : void
@@ -422,6 +433,9 @@ export class Form implements EventListenerObject
     private addEvents(element:HTMLElement) : void
     {
         element.addEventListener("keyup",this);
+        element.addEventListener("keydown",this);
+        element.addEventListener("keypress",this);
+
         element.addEventListener("click",this);
         element.addEventListener("dblclick",this);
         element.addEventListener("contextmenu",this);

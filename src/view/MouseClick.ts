@@ -17,7 +17,7 @@ export class MouseClick
 	public type:string = null;
 	private event:Event = null;
 	private wait$:boolean = false;
-	private static DBLClickDetection:number = 200;
+	private static DBLClickDetection:number = 250;
 
 	public setEvent(event:Event)
 	{

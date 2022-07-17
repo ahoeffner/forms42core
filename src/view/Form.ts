@@ -359,10 +359,6 @@ export class Form implements EventListenerObject
 	private mousehdl:MouseClick = new MouseClick();
 	public async handleEvent(event:Event) : Promise<void>
 	{
-		let etype:EventType = EventType.Mouse;
-
-		if (event.type.startsWith("key")) etype = EventType.Key;
-
 		if (event.type.includes("click"))
 		{
 			this.mousehdl.setEvent(event);
@@ -372,9 +368,17 @@ export class Form implements EventListenerObject
 
 			if (this.mousehdl.waiting)
 				return;
-		}
 
-		console.log(event.type);
+			console.log("done: "+this.mousehdl.type);
+		}
+		else if (event.type == "contextmenu")
+		{
+			console.log("contextmenu")
+		}
+		else
+		{
+			console.log("key")
+		}
 	}
 
 	private linkModels() : void

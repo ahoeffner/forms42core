@@ -47,7 +47,7 @@ export class BrowserEvent
     public shift:boolean = false;
 
 	private static instance:BrowserEvent = null;
-	private static DBLClickDetection:number = 200;
+	private static DBLClickDetection:number = 250;
 	private static ctrmod:string = BrowserEvent.detect();
 
 	private static detect() : string

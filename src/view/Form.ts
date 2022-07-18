@@ -191,7 +191,7 @@ export class Form implements EventListenerObject
 				}
 			}
 
-			if (!await this.enterForm(this,nxtblock,recoffset))
+			if (!await this.enterForm(this))
 			{
 				preform.focus();
 				return(false);
@@ -294,11 +294,11 @@ export class Form implements EventListenerObject
 		return(true);
 	}
 
-	public async enterForm(form:Form, block:Block, offset:number) : Promise<boolean>
+	public async enterForm(form:Form) : Promise<boolean>
 	{
-		await block.model.setEventTransaction(EventType.PreForm,offset);
+		await ModelForm.getForm(this.parent).setEventTransaction(EventType.PreForm);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		block.model.endEventTransaction(EventType.PreForm,success);
+		ModelForm.getForm(this.parent).endEventTransaction(EventType.PreForm,success);
 		if (success && form.parent.navigable) this.setURL();
 		return(success);
 	}

@@ -17,11 +17,11 @@ import { Form } from "../../public/Form.js";
 import { Block } from "../../public/Block.js";
 import { Field } from "../../public/Field.js";
 import { EventFilter } from "./EventFilter.js";
+import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
-import { Alert } from "../../application/Alert.js";
 
 export class KeyEventSource
 {
@@ -377,6 +377,12 @@ export class FormEvents
 		let cont:boolean = true;
 		Logger.log(Type.eventhandling,EventType[type]+" Invoking eventhandler: "+lsnr);
 
+		let ekey:KeyMap = event.key;
+		let lkey:KeyMap = lsnr.filter?.key;
+		let swap:boolean = lkey != null && ekey != null;
+		// Make sure event.key not only matches, but is identical
+
+		if (swap) event["key$"] = lkey;
 		let response:Promise<boolean> = lsnr.clazz[lsnr.method](event);
 
 		if (response instanceof Promise)
@@ -404,6 +410,7 @@ export class FormEvents
 				cont = response;
 		}
 
+		if (swap) event["key$"] = ekey;
 		return(cont);
 	}
 
@@ -415,10 +422,10 @@ export class FormEvents
 
 		if (lsnr.filter != null)
 		{
-			if (lsnr.filter.key != null && lsnr.filter.key != event.key) return(false);
 			if (lsnr.filter.mouse != null && lsnr.filter.mouse != event.mouse) return(false);
 			if (lsnr.filter.block != null && lsnr.filter.block != event.blockname) return(false);
 			if (lsnr.filter.field != null && lsnr.filter.field != event.fieldname) return(false);
+			if (lsnr.filter.key != null && lsnr.filter.key.signature != event.key.signature) return(false);
 		}
 
 		return(true);

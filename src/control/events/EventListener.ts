@@ -18,7 +18,6 @@ import { EventFilter } from "./EventFilter.js";
 export class EventListener
 {
 	public method:string;
-	public filters:EventFilter;
 
 	constructor(public id:object, public form:Form, public clazz:any, method:Function|string, public filter:EventFilter)
 	{

@@ -150,10 +150,6 @@ export class Display implements FieldImplementation, EventListenerObject
 
 		this.clear();
 
-		test if text or element
-		don't apply properties if not view..
-		Event test on sign and subs with the current key
-
 		if (value == null) value = "";
 		this.element.textContent = value;
 	}

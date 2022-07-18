@@ -51,7 +51,7 @@ class Transaction
 		this.blocktrx?.apply();
 
 		this.blkprops.forEach((props) =>
-			props.apply(true));
+			props.apply(this.blocktrx?.applyvw));
 	}
 }
 
@@ -396,6 +396,9 @@ class InstanceProperties
 
 	apply(all:boolean) : void
 	{
+		if (all == null)
+			all = true;
+			
 		if (all && this.pchange)
 			this.inst.applyProperties(this.properties$);
 

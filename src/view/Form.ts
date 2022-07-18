@@ -13,13 +13,16 @@
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
 import { BrowserEvent } from './BrowserEvent.js';
+import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
+import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
 export class Form implements EventListenerObject
 {
@@ -326,9 +329,9 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		await form.block.model.setEventTransaction(EventType.PostForm,0);
+		await ModelForm.getForm(this.parent).setEventTransaction(EventType.PostForm);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
-		form.block.model.endEventTransaction(EventType.PostForm,success);
+		ModelForm.getForm(this.parent).endEventTransaction(EventType.PostForm,success);
 		return(success);
 	}
 
@@ -389,7 +392,26 @@ export class Form implements EventListenerObject
 		this.event.preventDefault();
 
 		if (bubble)
-			console.log("event: "+this.event.type);
+		{
+			if (this.event.type.startsWith("key"))
+			{
+				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
+				let keyevent:FormEvent = FormEvent.KeyEvent(this.parent,null,key);
+
+				ModelForm.getForm(this.parent).setEventTransaction(EventType.Key);
+				let success:boolean = await FormEvents.raise(keyevent);
+				ModelForm.getForm(this.parent).endEventTransaction(EventType.Key,success);
+			}
+			else
+			{
+				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
+				let mouseevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent);
+
+				ModelForm.getForm(this.parent).setEventTransaction(EventType.Mouse);
+				let success:boolean = await FormEvents.raise(mouseevent);
+				ModelForm.getForm(this.parent).endEventTransaction(EventType.Mouse,success);
+			}
+		}
 	}
 
 	private linkModels() : void

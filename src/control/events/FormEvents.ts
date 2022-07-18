@@ -47,7 +47,7 @@ export class FormEvent
 
 	public static KeyEvent(form:Form, inst:ViewFieldInstance, key:KeyMap) : FormEvent
 	{
-		return(new FormEvent(EventType.Key,form,inst,inst.block,key));
+		return(new FormEvent(EventType.Key,form,inst,inst?.block,key));
 	}
 
 	public static MouseEvent(form:Form, event:MouseMap, inst?:ViewFieldInstance, block?:string) : FormEvent

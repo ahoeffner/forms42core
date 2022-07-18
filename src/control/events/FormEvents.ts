@@ -425,7 +425,7 @@ export class FormEvents
 			if (lsnr.filter.mouse != null && lsnr.filter.mouse != event.mouse) return(false);
 			if (lsnr.filter.block != null && lsnr.filter.block != event.blockname) return(false);
 			if (lsnr.filter.field != null && lsnr.filter.field != event.fieldname) return(false);
-			if (lsnr.filter.key != null && lsnr.filter.key.signature != event.key.signature) return(false);
+			if (lsnr.filter.key != null && lsnr.filter.key.signature != event.key?.signature) return(false);
 		}
 
 		return(true);

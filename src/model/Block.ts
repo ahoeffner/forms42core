@@ -88,6 +88,11 @@ export class Block
 		return(this.view$);
 	}
 
+	public getBlock() : InterfaceBlock
+	{
+		return(this.intblk);
+	}
+
 	public get ctrlblk() : boolean
 	{
 		return(this.ctrlblk$);

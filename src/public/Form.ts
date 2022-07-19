@@ -24,6 +24,7 @@ import { Field as ViewField } from '../view/fields/Field.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { Block } from './Block.js';
 
 
 export class Form implements CanvasComponent
@@ -48,6 +49,11 @@ export class Form implements CanvasComponent
     {
         return(this.view$);
     }
+
+	public getBlock(name:string) : Block
+	{
+		return(Model.getForm(this).getBlock(name.toLowerCase())?.getBlock());
+	}
 
 	public getValue(block:string, field:string) : any
 	{

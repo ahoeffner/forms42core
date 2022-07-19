@@ -133,12 +133,12 @@ export class MenuHandler implements EventListenerObject
 			if (this.open.has(npath))
 			{
 				classes += " "+this.options.classes.open;
-				page += "<a style='white-space: nowrap;' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
+				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 			}
 			else
 			{
-				page += "<a style='white-space: nowrap;' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
+				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 			}
 
 		}

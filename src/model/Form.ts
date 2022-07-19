@@ -12,7 +12,6 @@
 
 import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
-import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -54,6 +53,7 @@ export class Form
 	public static async finalize(parent:InterfaceForm) : Promise<void>
 	{
 		let form:Form = Form.models.get(parent);
+		form.blocks.forEach((block) => {block.finalize()})
 
 		form.linkViews();
 		await form.autoquery();

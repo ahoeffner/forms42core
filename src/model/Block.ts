@@ -38,6 +38,9 @@ export class Block
 			blk = new Block(form,block.name);
 
 		if (block instanceof InterfaceBlock)
+			console.log("link "+block.name)
+
+		if (block instanceof InterfaceBlock)
 			blk.link(block);
 
 		return(blk);
@@ -53,6 +56,7 @@ export class Block
 	private name$:string = null;
 	private record$:number = -1;
 	private view$:ViewBlock = null;
+	private linked$:boolean = false;
 	private columns$:string[] = null;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
@@ -85,11 +89,6 @@ export class Block
 	public get view() : ViewBlock
 	{
 		return(this.view$);
-	}
-
-	public get block() : InterfaceBlock
-	{
-		return(this.intblk);
 	}
 
 	public get ctrlblk() : boolean
@@ -406,6 +405,7 @@ export class Block
 	public link(block:InterfaceBlock) : void
 	{
 		this.intblk = block;
+		this.linked$ = true;
 	}
 
 	public linkView() : void
@@ -420,7 +420,16 @@ export class Block
 
 	public isLinked() : boolean
 	{
-		return(this.intblk != null);
+		return(this.linked$);
+	}
+
+	public finalize() : void
+	{
+		if (this.intblk == null)
+		{
+			this.intblk = new InterfaceBlock(this.intfrm,this.name);
+			this.linked$ = false;
+		}
 	}
 
 	private async setModelEventTransaction(event:EventType, record:Record) : Promise<void>

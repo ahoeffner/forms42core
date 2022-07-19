@@ -6,6 +6,8 @@ export { Field } from './src/public/Field.js';
 export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
+export { MemoryTable } from './src/model/datasources/MemoryTable.js';
+
 export { dates } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";
 

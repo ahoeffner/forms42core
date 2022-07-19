@@ -73,11 +73,6 @@ export class Block
 		return(this.form$);
 	}
 
-	public get block() : InterfaceBlock
-	{
-		return(this.model.block);
-	}
-
 	public get model() : ModelBlock
 	{
 		return(this.model$);
@@ -325,9 +320,13 @@ export class Block
 			if (rownum > 0)
 				this.row$ = rownum;
 
-			this.openrow();
-			this.displaycurrent();
-			this.model.queryDetails();
+			if (this.getRow(this.row).status != Status.na)
+			{
+				this.openrow();
+				this.displaycurrent();
+				this.model.queryDetails();
+			}
+
 			this.setIndicators(null,rownum);
 
 			return;
@@ -343,9 +342,13 @@ export class Block
 
 		this.row$ = rownum;
 
-		this.openrow();
+		if (this.getRow(this.row).status != Status.na)
+		{
+			this.openrow();
+			this.model.queryDetails();
+		}
+
 		this.displaycurrent();
-		this.model.queryDetails();
 	}
 
 	public addRow(row:Row) : void

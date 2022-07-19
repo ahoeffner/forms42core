@@ -38,9 +38,6 @@ export class Block
 			blk = new Block(form,block.name);
 
 		if (block instanceof InterfaceBlock)
-			console.log("link "+block.name)
-
-		if (block instanceof InterfaceBlock)
 			blk.link(block);
 
 		return(blk);

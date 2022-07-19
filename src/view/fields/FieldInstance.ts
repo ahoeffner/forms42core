@@ -130,7 +130,6 @@ export class FieldInstance implements FieldEventHandler
 		FieldFeatureFactory.reset(this.element);
 		FieldFeatureFactory.apply(this,newprops);
 
-		console.log(this.name+" value: "+value+" valid: "+valid)
 		this.valid = valid;
 
 		if (!this.field.dirty) this.impl.setValue(value);

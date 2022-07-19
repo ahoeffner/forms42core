@@ -204,10 +204,13 @@ export class FormsModule
         canvas.setComponent(instance);
         container.appendChild(canvas.getElement());
 
-		await ModelForm.getForm(instance).setEventTransaction(EventType.PostViewInit);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
-		ModelForm.getForm(instance).endEventTransaction(EventType.PostViewInit,success);
+		let mform:ModelForm = ModelForm.getForm(instance);
 
+		await mform.setEventTransaction(EventType.PostViewInit);
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
+		mform.endEventTransaction(EventType.PostViewInit,success);
+
+		await mform.initControlBlocks();
 		return(instance);
     }
 }

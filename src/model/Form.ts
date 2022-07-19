@@ -50,13 +50,11 @@ export class Form
 		return(Form.models.get(parent));
 	}
 
-	public static async finalize(parent:InterfaceForm) : Promise<void>
+	public static finalize(parent:InterfaceForm) : void
 	{
 		let form:Form = Form.models.get(parent);
 		form.blocks.forEach((block) => {block.finalize()})
-
 		form.linkViews();
-		await form.autoquery();
 	}
 
 	private block$:Block = null;
@@ -122,7 +120,7 @@ export class Form
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
 	}
 
-	private async autoquery()
+	public async initControlBlocks()
 	{
 		for(let block of this.blocks.values())
 		{

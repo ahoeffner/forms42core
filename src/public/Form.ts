@@ -128,7 +128,7 @@ export class Form implements CanvasComponent
 			this.canvas.refresh();
 
 		View.finalize(this);
-		await Model.finalize(this);
+		Model.finalize(this);
     }
 
 	public getFields(block:string, field:string, clazz?:string) : Field[]

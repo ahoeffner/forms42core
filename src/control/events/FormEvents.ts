@@ -22,7 +22,6 @@ import { EventListener } from "./EventListener.js";
 import { Form as ModelForm } from "../../model/Form.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
-import { cachedDataVersionTag } from "v8";
 
 export class KeyEventSource
 {

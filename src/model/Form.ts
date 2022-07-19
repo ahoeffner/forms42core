@@ -126,9 +126,9 @@ export class Form
 		{
 			if (!block.isLinked())
 			{
-				block.ctrlblk = true;
 				block.datasource = block.createMemorySource();
 
+				block.ctrlblk = true;
 				await block.executequery();
 				block.datasource.queryable = false;
 				block.datasource.insertable = false;

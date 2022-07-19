@@ -420,6 +420,8 @@ export class FormEvents
 		if (lsnr.form != null && lsnr.form != event.form)
 			return(false);
 
+		Logger.log(Type.eventlisteners," match: "+EventType[event.type]+" "+lsnr.form.constructor.name+" event: "+event.form.constructor.name);
+
 		if (lsnr.filter != null)
 		{
 			if (lsnr.filter.mouse != null && lsnr.filter.mouse != event.mouse) return(false);

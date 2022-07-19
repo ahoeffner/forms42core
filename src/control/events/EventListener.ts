@@ -14,6 +14,7 @@ import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
 import { EventFilter } from "./EventFilter.js";
+import { Logger, Type } from "../../application/Logger.js";
 
 export class EventListener
 {
@@ -38,6 +39,8 @@ export class EventListener
 			if (form[this.method] != method)
 				throw "@EventListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
 		}
+
+		Logger.log(Type.eventlisteners,"form: "+form.constructor.name+" "+this.method);
 	}
 
 	public toString() : string
@@ -48,6 +51,8 @@ export class EventListener
 		{
 			filter = "{";
 			if (this.filter.type != null) filter += "type: "+EventType[this.filter.type]+", ";
+
+			filter += "form: "+this.form?.constructor.name+", ";
 
 			if (this.filter.block != null) filter += "block: "+this.filter.block+", ";
 			if (this.filter.field != null) filter += "field: "+this.filter.field+", ";

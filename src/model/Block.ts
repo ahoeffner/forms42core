@@ -443,7 +443,6 @@ export class Block
 
 	private async fire(type:EventType) : Promise<boolean>
 	{
-		console.log("fire "+EventType[type]+" "+this.intfrm.constructor.name+"."+this.name)
 		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.intfrm,this.name);
 		return(FormEvents.raise(frmevent));
 	}

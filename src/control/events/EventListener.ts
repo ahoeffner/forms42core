@@ -40,7 +40,7 @@ export class EventListener
 				throw "@EventListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
 		}
 
-		Logger.log(Type.eventlisteners,"form: "+form.constructor.name+" "+this.method);
+		Logger.log(Type.eventlisteners,"eventlistener : "+this.toString());
 	}
 
 	public toString() : string

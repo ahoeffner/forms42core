@@ -115,7 +115,7 @@ export class Form
 
 	public async setEventTransaction(event:EventType) : Promise<void>
 	{
-		await this.eventTransaction.ready(event);
+		await this.eventTransaction.ready(null,event);
 		this.eventTransaction.join(event);
 	}
 

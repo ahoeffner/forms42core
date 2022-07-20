@@ -136,7 +136,14 @@ export class Form implements EventListenerObject
 
 	public focus() : void
 	{
-		this.curinst$?.focus();
+		if (this.curinst$)
+		{
+			this.curinst$?.focus();
+			return;
+		}
+
+		let fblk:Block = this.blocks.values[0];
+		console.log("first block : "+fblk.name);
 	}
 
 	public validated() : boolean

@@ -95,12 +95,12 @@ export class EventTransaction
 	}
 
 	// Either a Form or multiple Block trx's
-	public async ready(event:EventType) : Promise<void>
+	public async ready(block:Block, event:EventType) : Promise<void>
 	{
 		let tries:number = 0;
 		let maxtries:number = 300;
 
-		if (EventType[event].includes("Form"))
+		if (EventType[event].includes("Form") || event == EventType.PostViewInit)
 		{
 			while(tries++ < maxtries && (this.formtrx || this.blocktrxs.size > 0))
 				await this.sleep(10);
@@ -108,6 +108,9 @@ export class EventTransaction
 		else
 		{
 			while(tries++ < maxtries && this.frmtrx != null)
+				await this.sleep(10);
+
+			while(tries++ < maxtries && this.blocktrxs.get(block.name))
 				await this.sleep(10);
 		}
 

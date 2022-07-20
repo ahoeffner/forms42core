@@ -119,7 +119,7 @@ export class Block
 
 	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
 	{
-		await this.eventTransaction.ready(event);
+		await this.eventTransaction.ready(this,event);
 		this.eventTransaction.join(event,this,null,offset,true);
 	}
 
@@ -437,7 +437,7 @@ export class Block
 
 	private async setModelEventTransaction(event:EventType, record:Record) : Promise<void>
 	{
-		await this.eventTransaction.ready(event);
+		await this.eventTransaction.ready(this,event);
 		this.eventTransaction.join(event,this,record,0,false);
 	}
 

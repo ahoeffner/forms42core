@@ -16,9 +16,11 @@ import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Properties } from './Properties.js';
 import { dates } from '../model/dates/dates.js';
+import { Hook } from '../control/hooks/Hook.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { EventType } from '../control/events/EventType.js';
+import { HookEvents } from '../control/hooks/HookEvents.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -211,7 +213,7 @@ export class FormsModule
 		mform.endEventTransaction(EventType.PostViewInit,success);
 
 		await mform.initControlBlocks();
-		await FormEvents.raise(FormEvent.FormEvent(EventType.Running,instance));
+		HookEvents.raise(instance,Hook.AfterCreate);
 
 		return(instance);
     }

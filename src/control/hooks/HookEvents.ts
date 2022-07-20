@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Hook } from "./Hook";
-import { Form } from "../../public/Form";
-import { HookListener } from "./HookListener";
-import { Logger, Type } from "../../application/Logger";
+import { Hook } from "./Hook.js";
+import { Form } from "../../public/Form.js";
+import { HookListener } from "./HookListener.js";
+import { Logger, Type } from "../../application/Logger.js";
 
 export class HookEvents
 {

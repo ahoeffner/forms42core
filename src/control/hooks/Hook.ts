@@ -12,6 +12,6 @@
 
 export enum Hook
 {
-	start,
-	focus
+	OnFocus,
+	AfterCreate
 }

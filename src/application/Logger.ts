@@ -12,7 +12,7 @@ export enum Type
 export class Logger
 {
     public static all:boolean = false;
-    public static formhooks:boolean = true;
+    public static formhooks:boolean = false;
     public static htmlparser:boolean = false;
     public static eventparser:boolean = false;
     public static classloader:boolean = false;

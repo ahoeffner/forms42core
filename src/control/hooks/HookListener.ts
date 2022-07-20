@@ -90,6 +90,12 @@ export class HookListener
 				throw "@HookListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
 		}
 
-		Logger.log(Type.formhooks,"eventlistener : "+this.toString());
+		Logger.log(Type.formhooks,"formhook : "+this.toString());
+	}
+
+	public toString() : string
+	{
+		let str:string = this.form.constructor.name + "." + this.method;
+		return(str);
 	}
 }

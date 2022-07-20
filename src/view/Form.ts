@@ -12,6 +12,7 @@
 
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
+import { Hook } from '../control/hooks/Hook.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
@@ -19,6 +20,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
+import { HookEvents } from '../control/hooks/HookEvents.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -169,6 +171,7 @@ export class Form implements EventListenerObject
 
 	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
+		let preform:Form = null;
 		let nxtblock:Block = inst.field.block;
 		let recoffset:number = nxtblock.offset(inst);
 		let preblock:Block = this.curinst$?.field.block;
@@ -179,13 +182,11 @@ export class Form implements EventListenerObject
 
 		if (this != Form.curform$)
 		{
-			let preform:Form = this;
+			preform = this;
 
 			if (Form.curform$ != null)
 			{
 				preform = Form.curform$;
-
-				// If not in call and not valid => return(false);
 
 				if (!preform.validated)
 				{
@@ -289,6 +290,9 @@ export class Form implements EventListenerObject
 		Form.curform$ = this;
 		this.curinst$ = inst;
 		nxtblock.setCurrentRow(inst.row);
+
+		if (preform)
+			HookEvents.raise(this.parent,Hook.OnFocus);
 
 		return(true);
 	}

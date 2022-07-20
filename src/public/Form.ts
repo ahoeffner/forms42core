@@ -14,6 +14,7 @@ import { Field } from './Field.js';
 import { Block } from './Block.js';
 import { Status } from '../view/Row.js';
 import { Form as View } from '../view/Form.js';
+import { Hook } from '../control/hooks/Hook.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
@@ -24,10 +25,9 @@ import { Canvas } from '../application/interfaces/Canvas.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
+import { HookListener } from '../control/hooks/HookListener.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { Hook } from '../control/hooks/Hook.js';
-import { HookListener } from '../control/hooks/HookListener.js';
 
 
 export class Form implements CanvasComponent

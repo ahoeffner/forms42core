@@ -34,10 +34,14 @@ export class Form
 		form.blocks.forEach((blk) =>
 		{
 			if (!blk.isLinked())
+			{
 				remove.push(blk.name);
+				form.datamodel.clear(blk);
+			}
 		});
 
-		remove.forEach((name) => {form.blocks.delete(name)});
+		remove.forEach((name) =>
+		{form.blocks.delete(name)});
 	}
 
 	public static createForm(parent:InterfaceForm, page:string|HTMLElement) : void
@@ -132,7 +136,7 @@ export class Form
 	{
 		for(let block of this.blocks.values())
 		{
-			if (!block.isLinked())
+			if (block.datasource == null)
 			{
 				block.datasource = block.createMemorySource();
 

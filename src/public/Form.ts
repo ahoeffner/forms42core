@@ -11,6 +11,7 @@
  */
 
 import { Field } from './Field.js';
+import { Block } from './Block.js';
 import { Status } from '../view/Row.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
@@ -21,10 +22,10 @@ import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { Field as ViewField } from '../view/fields/Field.js';
+import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { Block } from './Block.js';
 
 
 export class Form implements CanvasComponent
@@ -53,6 +54,12 @@ export class Form implements CanvasComponent
 	public getBlock(name:string) : Block
 	{
 		return(Model.getForm(this).getBlock(name.toLowerCase())?.getBlock());
+	}
+
+	public setDataSource(block:string,source:DataSource) : void
+	{
+		block = block?.toLowerCase();
+		Model.getForm(this).setDataSource(block,source);
 	}
 
 	public getValue(block:string, field:string) : any

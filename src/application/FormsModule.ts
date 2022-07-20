@@ -211,6 +211,8 @@ export class FormsModule
 		mform.endEventTransaction(EventType.PostViewInit,success);
 
 		await mform.initControlBlocks();
+		await FormEvents.raise(FormEvent.FormEvent(EventType.Running,instance));
+
 		return(instance);
     }
 }

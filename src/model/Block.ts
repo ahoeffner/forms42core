@@ -66,6 +66,7 @@ export class Block
 		this.name$ = name;
 		this.form$.addBlock(this);
 		this.intfrm = form.parent;
+		this.datasource = form.datamodel.getDataSource(this.name);
 	}
 
 	public get name() : string

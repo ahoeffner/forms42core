@@ -16,6 +16,9 @@ import { DataSource } from "./interfaces/DataSource.js";
 
 export class DataModel
 {
+	private defined$:Map<string,DataSource> =
+		new Map<string,DataSource>();
+
 	private sources$:Map<ModelBlock,DataSourceWrapper> =
 		new Map<ModelBlock,DataSourceWrapper>();
 
@@ -34,6 +37,18 @@ export class DataModel
 		let wrapper:DataSourceWrapper = new DataSourceWrapper(block);
 		this.sources$.set(block,wrapper);
 		return(wrapper);
+	}
+
+	public getDataSource(block:string) : DataSource
+	{
+		let src:DataSource = this.defined$.get(block);
+		if (src != null) this.defined$.delete(block);
+		return(src);
+	}
+
+	public setDataSource(block:string, source:DataSource) : void
+	{
+		this.defined$.set(block,source);
 	}
 }
 

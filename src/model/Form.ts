@@ -13,6 +13,7 @@
 import { Block } from './Block.js';
 import { DataModel } from './DataModel.js';
 import { Logger, Type } from '../application/Logger.js';
+import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
@@ -94,6 +95,13 @@ export class Form
 	public get page() : string|HTMLElement
 	{
 		return(this.page$);
+	}
+
+	public setDataSource(blk:string,source:DataSource) : void
+	{
+		let block:Block = this.getBlock(blk);
+		if (block) block.datasource = source;
+		else this.datamodel.setDataSource(blk,source);
 	}
 
 	public get eventTransaction() : EventTransaction

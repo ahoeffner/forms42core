@@ -97,17 +97,34 @@ export class EventTransaction
 	// Either a Form or multiple Block trx's
 	public async ready(event:EventType) : Promise<void>
 	{
+		let tries:number = 0;
+		let maxtries:number = 300;
+
+		let allow:boolean = true;
 		let form:boolean = EventType[event].includes("Form");
 
-		if (form)
+		if (this.frmtrx?.event == EventType.PostForm)
+			allow = false;
+
+		if (!allow)
 		{
-			while(this.formtrx || this.blocktrxs.size > 0)
-				await this.sleep(10);
-		}
-		else
-		{
-			while(this.frmtrx != null)
-				await this.sleep(10);
+			if (form)
+			{
+				while(tries++ < maxtries && (this.formtrx || this.blocktrxs.size > 0))
+					await this.sleep(10);
+			}
+			else
+			{
+				while(tries++ < maxtries && this.frmtrx != null)
+					await this.sleep(10);
+			}
+
+			if (tries >= maxtries)
+			{
+				let str:string = "form: "+EventType[this.frmtrx?.event];
+				this.blocktrxs.forEach((trx,blk) => {str += " "+blk+": "+EventType[trx.event]})
+				Alert.fatal("could not start transaction "+EventType[event]+", running: "+str,"EventTransaction");
+			}
 		}
 	}
 
@@ -398,7 +415,7 @@ class InstanceProperties
 	{
 		if (all == null)
 			all = true;
-			
+
 		if (all && this.pchange)
 			this.inst.applyProperties(this.properties$);
 

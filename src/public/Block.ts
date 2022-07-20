@@ -86,4 +86,9 @@ export class Block
 	{
 		this.form.setValue(this.name,field,value);
 	}
+
+	public async executeQuery() : Promise<boolean>
+	{
+		return(ModelBlock.getBlock(this).executeQuery());
+	}
 }

@@ -314,7 +314,7 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
-	public async executequery() : Promise<boolean>
+	public async executeQuery() : Promise<boolean>
 	{
 		if (!await this.preQuery())
 			return(false);

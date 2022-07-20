@@ -129,7 +129,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executequery();
+				await block.executeQuery();
 				block.datasource.queryable = false;
 				block.datasource.insertable = false;
 				block.datasource.deleteable = false;

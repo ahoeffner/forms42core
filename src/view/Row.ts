@@ -325,4 +325,17 @@ export class Row
 
 		return(instances);
 	}
+
+	public getFirstInstance() : FieldInstance
+	{
+		let flds:Field[] = this.getFields();
+
+		for (let i = 0; i < flds.length; i++)
+		{
+			let inst:FieldInstance = flds[i].getInstance(i);
+			if (inst.focusable) return(inst);
+		}
+
+		return(null);
+	}
 }

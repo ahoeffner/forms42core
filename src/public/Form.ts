@@ -26,6 +26,8 @@ import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { Hook } from '../control/hooks/Hook.js';
+import { HookListener } from '../control/hooks/HookListener.js';
 
 
 export class Form implements CanvasComponent
@@ -40,6 +42,11 @@ export class Form implements CanvasComponent
     {
 		Model.createForm(this,page);
     }
+
+	public focus() : void
+	{
+		View.getForm(this).focus();
+	}
 
 	public get valid() : boolean
 	{
@@ -284,6 +291,11 @@ export class Form implements CanvasComponent
         this.canvas.close();
         return(true);
     }
+
+	public addRuntimeHook(method:Function, hook:Hook) : void
+	{
+		HookListener.addHook(this,hook,method);
+	}
 
 	public addEventListener(method:Function, filter?:EventFilter|EventFilter[]) : void
 	{

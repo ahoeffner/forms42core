@@ -1,16 +1,18 @@
 export enum Type
 {
+	formhooks,
     htmlparser,
     eventparser,
     classloader,
 	formbinding,
 	eventhandling,
-	eventlisteners
+	eventlisteners,
 }
 
 export class Logger
 {
     public static all:boolean = false;
+    public static formhooks:boolean = true;
     public static htmlparser:boolean = false;
     public static eventparser:boolean = false;
     public static classloader:boolean = false;

@@ -78,6 +78,11 @@ export class Block
 		return(this.model$);
 	}
 
+	public focus() : void
+	{
+		this.getRow(0)?.getFirstInstance()?.focus();
+	}
+
 	public getField(field:string) : Field
 	{
 		let fld:Field = this.getRow(this.row)?.getField(field);

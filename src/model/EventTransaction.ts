@@ -110,7 +110,7 @@ export class EventTransaction
 			while(tries++ < maxtries && this.frmtrx != null)
 				await this.sleep(10);
 
-			while(tries++ < maxtries && block != null && this.blocktrxs.get(block.name))
+			while(tries++ < maxtries && this.blocktrxs.get(block.name))
 				await this.sleep(10);
 		}
 

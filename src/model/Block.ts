@@ -263,9 +263,9 @@ export class Block
 
 	public async postFetch(record:Record) : Promise<boolean>
 	{
-		await this.setModelEventTransaction(EventType.PostFetch,record);
-		let success:boolean = await this.fire(EventType.PostFetch);
-		this.endModelEventTransaction(EventType.PostFetch,success);
+		await this.setModelEventTransaction(EventType.OnFetch,record);
+		let success:boolean = await this.fire(EventType.OnFetch);
+		this.endModelEventTransaction(EventType.OnFetch,success);
 		return(success);
 	}
 
@@ -280,9 +280,9 @@ export class Block
 
 	public async validateRecord() : Promise<boolean>
 	{
-		await this.setEventTransaction(EventType.ValidateRecord,0);
-		let success:boolean = await this.fire(EventType.ValidateRecord);
-		this.endEventTransaction(EventType.ValidateRecord,success);
+		await this.setEventTransaction(EventType.WhenValidateRecord,0);
+		let success:boolean = await this.fire(EventType.WhenValidateRecord);
+		this.endEventTransaction(EventType.WhenValidateRecord,success);
 		return(success);
 	}
 

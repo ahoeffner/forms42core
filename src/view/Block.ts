@@ -208,9 +208,9 @@ export class Block
 		}
 		else
 		{
-			await this.setEventTransaction(EventType.ValidateField,0);
-			let success:boolean = await this.fireFieldEvent(EventType.ValidateField,inst);
-			this.endEventTransaction(EventType.ValidateField,success);
+			await this.setEventTransaction(EventType.WhenValidateField,0);
+			let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
+			this.endEventTransaction(EventType.WhenValidateField,success);
 
 			if (success)
 				this.model$.setValue(inst.name,value);

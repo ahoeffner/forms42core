@@ -20,6 +20,7 @@ export enum EventType
 
 	PostViewInit,
 	PreCloseForm,
+	PostFormFocus,
 
 	PreForm,
 	PostForm,
@@ -31,13 +32,13 @@ export enum EventType
     PostField,
 
 	Editing,
-	ValidateField,
+	WhenValidateField,
 
     PreRecord,
     PostRecord,
 
+    OnFetch,
 	PreQuery,
-    PostFetch,
 	PostQuery,
 
     PreInsert,
@@ -49,6 +50,6 @@ export enum EventType
     PreDelete,
     PostDelete,
 
-    LockRecord,
-	ValidateRecord
+    WhenLockRecord,
+	WhenValidateRecord
 }

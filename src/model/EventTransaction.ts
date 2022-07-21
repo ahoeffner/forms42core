@@ -95,7 +95,7 @@ export class EventTransaction
 	}
 
 	// Either a Form or multiple Block trx's
-	public async ready(block:Block, event:EventType) : Promise<void>
+	public async ready(block:Block, event:EventType) : Promise<boolean>
 	{
 		let tries:number = 0;
 		let maxtries:number = 300;
@@ -110,7 +110,7 @@ export class EventTransaction
 			while(tries++ < maxtries && this.frmtrx != null)
 				await this.sleep(10);
 
-			while(tries++ < maxtries && this.blocktrxs.get(block.name))
+			while(tries++ < maxtries && block != null && this.blocktrxs.get(block.name))
 				await this.sleep(10);
 		}
 
@@ -119,7 +119,10 @@ export class EventTransaction
 			let str:string = "form: "+EventType[this.frmtrx?.event];
 			this.blocktrxs.forEach((trx,blk) => {str += " "+blk+": "+EventType[trx.event]})
 			Alert.fatal("could not start transaction "+EventType[event]+", running: "+str,"EventTransaction");
+			return(false);
 		}
+
+		return(true);
 	}
 
 	public get active() : boolean

@@ -113,10 +113,18 @@ export class Form
 		return(this.evttrans$);
 	}
 
-	public async setEventTransaction(event:EventType) : Promise<void>
+	public async setEventTransaction(event:EventType) : Promise<boolean>
 	{
-		await this.eventTransaction.ready(null,event);
+		if (!await this.eventTransaction.ready(null,event))
+			return(false);
+
 		this.eventTransaction.join(event);
+		return(true);
+	}
+
+	public async waitForEventTransaction(event:EventType) : Promise<boolean>
+	{
+		return(this.eventTransaction.ready(null,event));
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void

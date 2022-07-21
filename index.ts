@@ -11,7 +11,6 @@ export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { dates } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";
 
-export { Hook } from './src/control/hooks/Hook.js';
 export { MouseMap } from './src/control/events/MouseMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';
 export { EventType } from './src/control/events/EventType.js';

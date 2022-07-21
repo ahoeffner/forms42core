@@ -284,18 +284,11 @@ export class Form implements CanvasComponent
 		if (!vform.validated) return(false);
 		let mform:Model = Model.getForm(this);
 
-		await mform.setEventTransaction(EventType.PreCloseForm);
+		await mform.waitForEventTransaction(EventType.PreCloseForm);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PreCloseForm,this));
-		mform.endEventTransaction(EventType.PreCloseForm,success);
-
-        this.canvas.close();
-        return(true);
+        if (success) this.canvas.close();
+        return(success);
     }
-
-	public addRuntimeHook(method:Function, hook:Hook) : void
-	{
-		HookListener.addHook(this,hook,method);
-	}
 
 	public addEventListener(method:Function, filter?:EventFilter|EventFilter[]) : void
 	{

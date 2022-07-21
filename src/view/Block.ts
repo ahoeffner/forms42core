@@ -24,6 +24,7 @@ import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { MouseMap } from "../control/events/MouseMap.js";
 
 
 export class Block
@@ -243,14 +244,20 @@ export class Block
 
 	public async onKey(inst:FieldInstance, key:KeyMap) : Promise<boolean>
 	{
+		if (key == null) return(true);
 		return(this.fireKeyEvent(inst,key));
+	}
+
+	public async onMouse(inst:FieldInstance, mevent:MouseMap) : Promise<boolean>
+	{
+		return(this.fireMouseEvent(inst,mevent));
 	}
 
 	public async onEditing(inst:FieldInstance) : Promise<boolean>
 	{
-		await this.setEventTransaction(EventType.Editing,0);
-		let success:boolean = await	this.fireFieldEvent(EventType.Editing,inst);
-		this.endEventTransaction(EventType.Editing,success);
+		await this.setEventTransaction(EventType.OnEditing,0);
+		let success:boolean = await	this.fireFieldEvent(EventType.OnEditing,inst);
+		this.endEventTransaction(EventType.OnEditing,success);
 		return(success);
 	}
 
@@ -474,7 +481,6 @@ export class Block
 				inst.ignore = "blur";
 
 				let idx:number = this.getCurrentRow().getFieldIndex(inst);
-				//this.row$ = available-1;
 				next = this.getRow(available-1).getFieldByIndex(idx);
 
 				next.ignore = "focus";
@@ -598,6 +604,12 @@ export class Block
 	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.form.parent,inst,key);
+		return(FormEvents.raise(frmevent));
+	}
+
+	private async fireMouseEvent(inst:FieldInstance, mevent:MouseMap) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.MouseEvent(this.form.parent,mevent,inst);
 		return(FormEvents.raise(frmevent));
 	}
 

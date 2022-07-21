@@ -292,7 +292,12 @@ export class Form implements EventListenerObject
 		nxtblock.setCurrentRow(inst.row);
 
 		if (preform)
-			HookEvents.raise(this.parent,Hook.OnFocus);
+		{
+			// Successfully navigated from preform to this form
+			await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.PostFormFocus);
+			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
+			return(success);
+		}
 
 		return(true);
 	}
@@ -342,33 +347,29 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		await ModelForm.getForm(this.parent).setEventTransaction(EventType.PostForm);
+		await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.PostForm);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
-		ModelForm.getForm(this.parent).endEventTransaction(EventType.PostForm,success);
 		return(success);
 	}
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		await block.model.setEventTransaction(EventType.PostBlock,0);
+		await block.model.waitForEventTransaction(EventType.PostBlock);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
-		block.model.endEventTransaction(EventType.PostBlock,success);
 		return(success);
 	}
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
-		await block.model.setEventTransaction(EventType.PostRecord,0);
+		await block.model.waitForEventTransaction(EventType.PostRecord);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
-		block.model.endEventTransaction(EventType.PostRecord,success);
 		return(success);
 	}
 
 	public async LeaveField(inst:FieldInstance) : Promise<boolean>
 	{
-		await inst.field.block.model.setEventTransaction(EventType.PostField,0);
+		await inst.field.block.model.waitForEventTransaction(EventType.PostField);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
-		inst.field.block.model.endEventTransaction(EventType.PostField,success);
 		return(success);
 	}
 
@@ -411,18 +412,16 @@ export class Form implements EventListenerObject
 				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
 				let keyevent:FormEvent = FormEvent.KeyEvent(this.parent,null,key);
 
-				ModelForm.getForm(this.parent).setEventTransaction(EventType.Key);
-				let success:boolean = await FormEvents.raise(keyevent);
-				ModelForm.getForm(this.parent).endEventTransaction(EventType.Key,success);
+				if (await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.Key))
+					await FormEvents.raise(keyevent);
 			}
 			else
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
 				let mouseevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent);
 
-				ModelForm.getForm(this.parent).setEventTransaction(EventType.Mouse);
-				let success:boolean = await FormEvents.raise(mouseevent);
-				ModelForm.getForm(this.parent).endEventTransaction(EventType.Mouse,success);
+				if (ModelForm.getForm(this.parent).waitForEventTransaction(EventType.Mouse))
+					await FormEvents.raise(mouseevent);
 			}
 		}
 	}

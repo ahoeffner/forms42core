@@ -117,10 +117,13 @@ export class Block
 		return(this.form.eventTransaction);
 	}
 
-	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
+	public async setEventTransaction(event:EventType, offset:number) : Promise<boolean>
 	{
-		await this.eventTransaction.ready(this,event);
+		if (!await this.eventTransaction.ready(this,event))
+			return(false);
+
 		this.eventTransaction.join(event,this,null,offset,true);
+		return(true);
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
@@ -209,8 +212,7 @@ export class Block
 
 	public async postInsert() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PostInsert,record);
+		await this.waitForEventTransaction(EventType.PostInsert);
 		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endModelEventTransaction(EventType.PostInsert,success);
 		return(success);
@@ -227,10 +229,8 @@ export class Block
 
 	public async postUpdate() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PostUpdate,record);
+		await this.waitForEventTransaction(EventType.PostUpdate);
 		let success:boolean = await this.fire(EventType.PostUpdate);
-		this.endModelEventTransaction(EventType.PostUpdate,success);
 		return(success);
 	}
 
@@ -245,10 +245,8 @@ export class Block
 
 	public async postDelete() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PostDelete,record);
+		await this.waitForEventTransaction(EventType.PostDelete);
 		let success:boolean = await this.fire(EventType.PostDelete);
-		this.endModelEventTransaction(EventType.PostDelete,success);
 		return(success);
 	}
 
@@ -261,7 +259,7 @@ export class Block
 		return(success);
 	}
 
-	public async postFetch(record:Record) : Promise<boolean>
+	public async onFetch(record:Record) : Promise<boolean>
 	{
 		await this.setModelEventTransaction(EventType.OnFetch,record);
 		let success:boolean = await this.fire(EventType.OnFetch);
@@ -271,10 +269,8 @@ export class Block
 
 	public async postQuery() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PostQuery,record);
+		await this.waitForEventTransaction(EventType.PostQuery);
 		let success:boolean = await this.fire(EventType.PostQuery);
-		this.endModelEventTransaction(EventType.PostQuery,success);
 		return(success);
 	}
 
@@ -435,10 +431,18 @@ export class Block
 		}
 	}
 
-	private async setModelEventTransaction(event:EventType, record:Record) : Promise<void>
+	private async setModelEventTransaction(event:EventType, record:Record) : Promise<boolean>
 	{
-		await this.eventTransaction.ready(this,event);
+		if (!await this.eventTransaction.ready(this,event))
+			return(false);
+
 		this.eventTransaction.join(event,this,record,0,false);
+		return(true);
+	}
+
+	public async waitForEventTransaction(event:EventType) : Promise<boolean>
+	{
+		return(this.eventTransaction.ready(null,event));
 	}
 
 	private endModelEventTransaction(event:EventType, apply:boolean) : void

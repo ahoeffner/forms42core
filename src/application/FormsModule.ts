@@ -208,12 +208,9 @@ export class FormsModule
 
 		let mform:ModelForm = ModelForm.getForm(instance);
 
-		await mform.setEventTransaction(EventType.PostViewInit);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
-		mform.endEventTransaction(EventType.PostViewInit,success);
-
 		await mform.initControlBlocks();
-		HookEvents.raise(instance,Hook.AfterCreate);
+		await mform.waitForEventTransaction(EventType.PostViewInit);
+		await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
 
 		return(instance);
     }

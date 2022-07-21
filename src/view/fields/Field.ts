@@ -270,7 +270,7 @@ export class Field
 				return;
 
 			key = KeyMapping.parseBrowserEvent(brwevent);
-			if (key != null) await this.block.onKey(inst,key);
+			await this.block.onKey(inst,key);
 
 			return;
 		}
@@ -311,7 +311,8 @@ export class Field
 			if (brwevent.undo) key = KeyMap.undo;
 			else if (brwevent.copy) key = KeyMap.copy;
 			else if (brwevent.paste) key = KeyMap.paste;
-			if (key != null) await this.block.onKey(inst,key);
+			
+			await this.block.onKey(inst,key);
 			return;
 	}
 
@@ -350,8 +351,7 @@ export class Field
 			if (brwevent.event.type.includes("click") || brwevent.type == "contextmenu")
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-				let fevent:FormEvent = FormEvent.MouseEvent(this.block.form.parent,mevent,inst);
-				await FormEvents.raise(fevent);
+				await this.block.onMouse(inst,mevent);
 			}
 
 			return;

@@ -31,7 +31,7 @@ export enum EventType
     PreField,
     PostField,
 
-	Editing,
+	OnEditing,
 	WhenValidateField,
 
     PreRecord,

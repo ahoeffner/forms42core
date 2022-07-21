@@ -212,7 +212,7 @@ export class DataSourceWrapper
 
 			if (!record.prepared)
 			{
-				if (!await this.block.postFetch(record))
+				if (!await this.block.onFetch(record))
 				{
 					this.winpos$ = undo;
 					return(null);

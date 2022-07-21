@@ -191,6 +191,8 @@ export class EventTransaction
 		if (trx == null && block.ctrlblk)
 			trx = this.nontrxblks?.get(block.name)?.blocktrx;
 
+		console.log("getValue("+block.name+","+field+") trx: "+trx);
+
 		if (trx == null)
 		{
 			let fld:Field = block.view.getField(field);
@@ -310,8 +312,18 @@ class BlockTransaction
 
 	public getValue(field:string) : any
 	{
+		console.log("record "+this.record.toString())
+
 		if (this.wrkcpy == null)
+		{
+			if (this.applyvw)
+			{
+				let fld:Field = this.block.view.getField(field);
+				if (fld != null) return(fld.getValue());
+			}
+			
 			return(this.record.getValue(field));
+		}
 
 		return(this.wrkcpy.getValue(field));
 	}

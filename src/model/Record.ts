@@ -130,4 +130,14 @@ export class Record implements RecordType
 
 		this.values$[idx] = value;
 	}
+
+	public toString() : string
+	{
+		let str:string = "";
+
+		for (let i = 0; i < this.columns.length; i++)
+			str += ", "+this.columns[i]+"="+this.getValue(this.columns[i]);
+
+		return(str.substring(2));
+	}
 }

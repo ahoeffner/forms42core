@@ -17,6 +17,7 @@ import { Record } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { MouseMap } from "../control/events/MouseMap.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
@@ -24,7 +25,6 @@ import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { MouseMap } from "../control/events/MouseMap.js";
 
 
 export class Block
@@ -35,6 +35,7 @@ export class Block
 	private name$:string = null;
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
+	private volatile$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 
 	private recprops$:Map<object,Map<FieldInstance,FieldProperties>> =
@@ -82,6 +83,11 @@ export class Block
 	public focus() : void
 	{
 		this.getRow(0)?.getFirstInstance()?.focus();
+	}
+
+	public getVolatileInstance() : FieldInstance
+	{
+		return(this.volatile$);
 	}
 
 	public getField(field:string) : Field
@@ -253,11 +259,13 @@ export class Block
 		return(this.fireMouseEvent(inst,mevent));
 	}
 
-	public async onEditing(inst:FieldInstance) : Promise<boolean>
+	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
-		await this.setEventTransaction(EventType.OnEditing,0);
-		let success:boolean = await	this.fireFieldEvent(EventType.OnEditing,inst);
-		this.endEventTransaction(EventType.OnEditing,success);
+		this.volatile$ = inst;
+		await this.setEventTransaction(EventType.OnTyping,0);
+		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
+		this.endEventTransaction(EventType.OnTyping,success);
+		this.volatile$ = null;
 		return(success);
 	}
 

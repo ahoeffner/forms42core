@@ -43,7 +43,7 @@ class Transaction
 		this.event = event;
 
 		if (block != null)
-			this.blocktrx = new BlockTransaction(block,record,offset,applyvw);
+			this.blocktrx = new BlockTransaction(event,block,record,offset,applyvw);
 	}
 
 	apply() : void
@@ -168,6 +168,8 @@ export class EventTransaction
 	{
 		let trx:Transaction = this.getActive(inst.block);
 
+		console.log("addPropertyChange("+inst.name+"....) "+trx)
+
 		if (trx == null && this.nontrxblks != null)
 			trx = this.nontrxblks.get(props.inst.block);
 
@@ -190,8 +192,6 @@ export class EventTransaction
 
 		if (trx == null && block.ctrlblk)
 			trx = this.nontrxblks?.get(block.name)?.blocktrx;
-
-		console.log("getValue("+block.name+","+field+") trx: "+trx);
 
 		if (trx == null)
 		{
@@ -300,10 +300,12 @@ class BlockTransaction
 	block:Block = null;
 	record:Record = null;
 	wrkcpy:Record = null;
+	event:EventType = null;
 	applyvw:boolean = true;
 
-	constructor(block:Block, record:Record, offset:number, applyvw:boolean)
+	constructor(event:EventType, block:Block, record:Record, offset:number, applyvw:boolean)
 	{
+		this.event = event;
 		this.block = block;
 		this.offset = offset;
 		this.record = record;
@@ -312,7 +314,8 @@ class BlockTransaction
 
 	public getValue(field:string) : any
 	{
-		console.log("record "+this.record.toString())
+		if (this.event == EventType.OnTyping && this.block.view.getVolatileInstance().name == field)
+			return(this.block.view.getField(field).getValue());
 
 		if (this.wrkcpy == null)
 		{
@@ -321,7 +324,7 @@ class BlockTransaction
 				let fld:Field = this.block.view.getField(field);
 				if (fld != null) return(fld.getValue());
 			}
-			
+
 			return(this.record.getValue(field));
 		}
 
@@ -376,10 +379,10 @@ class BlockProperties
 		return(instprop);
 	}
 
-	apply(all:boolean) : void
+	apply(applyvw:boolean) : void
 	{
 		this.instances.forEach((instprop) =>
-			{instprop.apply(all)})
+			{instprop.apply(applyvw)})
 	}
 }
 
@@ -420,13 +423,15 @@ class InstanceProperties
 		return(this.defproperties$);
 	}
 
-	apply(all:boolean) : void
+	apply(applyvw:boolean) : void
 	{
-		if (all == null)
-			all = true;
+		if (applyvw == null)
+			applyvw = true;
 
-		if (all && this.pchange)
-			this.inst.applyProperties(this.properties$);
+		if (this.pchange)
+		{
+			if (applyvw) this.inst.applyProperties(this.properties$);
+		}
 
 		if (this.dchange)
 		{

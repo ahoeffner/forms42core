@@ -300,7 +300,7 @@ export class Field
 			this.distribute(inst,value,true);
 			this.block.distribute(this,value,true);
 
-			await this.block.onEditing(inst);
+			await this.block.onTyping(inst);
 			return;
 		}
 
@@ -311,7 +311,7 @@ export class Field
 			if (brwevent.undo) key = KeyMap.undo;
 			else if (brwevent.copy) key = KeyMap.copy;
 			else if (brwevent.paste) key = KeyMap.paste;
-			
+
 			await this.block.onKey(inst,key);
 			return;
 	}

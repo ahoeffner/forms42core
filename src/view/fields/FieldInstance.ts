@@ -96,7 +96,7 @@ export class FieldInstance implements FieldEventHandler
 			{
 				change = true;
 				// Update record dependent props
-				this.field.block.setProperties(this,newprops);
+				this.field.block.setProperties(null,this,newprops);
 			}
 		}
 		else

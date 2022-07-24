@@ -51,7 +51,7 @@ class Transaction
 		this.blocktrx?.apply();
 
 		this.blkprops.forEach((props) =>
-			props.apply(this.blocktrx?.applyvw));
+			props.apply(this.blocktrx?.applyvw,this.blocktrx?.record));
 	}
 }
 
@@ -167,8 +167,6 @@ export class EventTransaction
 	public addPropertyChange(inst:FieldInstance, props:FieldProperties, defprops:boolean) : void
 	{
 		let trx:Transaction = this.getActive(inst.block);
-
-		console.log("addPropertyChange("+inst.name+"....) "+trx)
 
 		if (trx == null && this.nontrxblks != null)
 			trx = this.nontrxblks.get(props.inst.block);
@@ -379,10 +377,10 @@ class BlockProperties
 		return(instprop);
 	}
 
-	apply(applyvw:boolean) : void
+	apply(applyvw:boolean, record:Record) : void
 	{
 		this.instances.forEach((instprop) =>
-			{instprop.apply(applyvw)})
+			{instprop.apply(applyvw,record)})
 	}
 }
 
@@ -423,14 +421,17 @@ class InstanceProperties
 		return(this.defproperties$);
 	}
 
-	apply(applyvw:boolean) : void
+	apply(applyvw:boolean, record:Record) : void
 	{
 		if (applyvw == null)
 			applyvw = true;
 
 		if (this.pchange)
 		{
+			console.log("apply "+applyvw)
 			if (applyvw) this.inst.applyProperties(this.properties$);
+			else this.inst.field.block.setProperties(record,this.inst,this.properties$);
+
 		}
 
 		if (this.dchange)

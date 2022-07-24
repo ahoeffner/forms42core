@@ -17,6 +17,7 @@ import { Record } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { RecordProperties } from "./RecordProperties.js";
 import { MouseMap } from "../control/events/MouseMap.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -37,9 +38,7 @@ export class Block
 	private fieldnames$:string[] = null;
 	private volatile$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
-
-	private recprops$:Map<object,Map<FieldInstance,FieldProperties>> =
-		new Map<object,Map<FieldInstance,FieldProperties>>();
+	private recprops$:RecordProperties = new RecordProperties(this);
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -183,18 +182,11 @@ export class Block
 		return(this.fieldnames$);
 	}
 
-	public setProperties(inst:FieldInstance, props:FieldProperties) : void
+	public setProperties(record:Record, inst:FieldInstance, props:FieldProperties) : void
 	{
-		let id:object = this.model.getRecord(0).id;
-		let map:Map<FieldInstance,FieldProperties> = this.recprops$.get(id);
-
-		if (map == null)
-		{
-			map = new Map<FieldInstance,FieldProperties>();
-			this.recprops$.set(id,map);
-		}
-
-		map.set(inst,props);
+		if (record == null) record = this.model.getRecord(0);
+		let row:Row = this.getRow(inst.row);
+		this.recprops$.set(row,inst,record,props);
 	}
 
 	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
@@ -457,12 +449,10 @@ export class Block
 
 	private applyProperties(row:Row, record:Record) : void
 	{
-		let props:Map<FieldInstance,FieldProperties> = this.recprops$.get(record.id);
-
 		record.values.forEach((field) =>
 		{
 			row.getField(field.name)?.getInstances().
-			forEach((inst) => {inst.applyProperties(props?.get(inst))})
+			forEach((inst) => {inst.applyProperties(this.recprops$.get(row,inst,record))})
 		})
 	}
 

@@ -14,10 +14,8 @@ import { Field } from './Field.js';
 import { Block } from './Block.js';
 import { Status } from '../view/Row.js';
 import { Form as View } from '../view/Form.js';
-import { Hook } from '../control/hooks/Hook.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
-import { Block as ViewBlock } from '../view/Block.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
@@ -25,7 +23,6 @@ import { Canvas } from '../application/interfaces/Canvas.js';
 import { Field as ViewField } from '../view/fields/Field.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
-import { HookListener } from '../control/hooks/HookListener.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
@@ -69,39 +66,14 @@ export class Form implements CanvasComponent
 		Model.getForm(this).setDataSource(block,source);
 	}
 
-	public getValue(block:string, field:string) : any
+	public getValue(block:string, field:string, dirty?:boolean) : any
 	{
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-		let blk:ViewBlock = View.getForm(this).getBlock(block);
-
-		if (blk == null) return(null);
-
-		if (blk.model.eventTransaction.active)
-			return(blk.model.eventTransaction.getValue(blk,field));
-
-		let fld:ViewField = blk.getField(field);
-		if (fld != null) return(blk.getValue(field));
-
-		return(blk.model.getValue(field));
+		return(this.getBlock(block)?.getValue(field,dirty));
 	}
 
 	public setValue(block:string, field:string, value:any) : void
 	{
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-		let blk:ViewBlock = View.getForm(this).getBlock(block);
-
-		if (blk == null) return(null);
-
-		if (blk.model.eventTransaction.active)
-		{
-			blk.model.eventTransaction.setValue(blk,field,value);
-			return;
-		}
-
-		blk.model.setValue(field,value);
-		blk.getField(field)?.setValue(value);
+		this.getBlock(block)?.setValue(field,value);
 	}
 
     public async setView(page:string|HTMLElement) : Promise<void>
@@ -251,22 +223,6 @@ export class Form implements CanvasComponent
 
 		for (let i = 0; i < vflds.length; i++)
 			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,true,Status.update))})
-
-		return(flds);
-	}
-
-	public getRecordProperties(block:string, field:string, clazz?:string) : FieldProperties[]
-	{
-		let vflds:ViewField[] = [];
-		let flds:FieldProperties[] = [];
-
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-
-		vflds = View.getForm(this).getBlock(block).getFields(field);
-
-		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new FieldProperties(inst,false,null))})
 
 		return(flds);
 	}

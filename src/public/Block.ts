@@ -12,9 +12,11 @@
 
 import { Form } from './Form.js';
 import { Field } from './Field.js';
+import { Record } from './Record.js';
 import { Form as Forms } from '../model/Form.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { Record as ModelRecord } from '../model/Record.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
@@ -45,6 +47,23 @@ export class Block
 		ModelBlock.getBlock(this).datasource = source;
 	}
 
+	public getValue(field:string, dirty?:boolean) : any
+	{
+		return(this.getRecord(0)?.getValue(field,dirty));
+	}
+
+	public setValue(field:string, value:any) : void
+	{
+		this.getRecord(0)?.setValue(field,value);
+	}
+
+	public getRecord(offset?:number) : Record
+	{
+		if (offset == null) offset = 0;
+		let intrec:ModelRecord = ModelBlock.getBlock(this).getRecord(offset);
+		return(intrec == null ? null : new Record(intrec));
+	}
+
 	public addKey(name:string, fields:string|string[]) : void
 	{
 		if (name == null) throw "@Block: Key name is madatory";
@@ -70,21 +89,6 @@ export class Block
 	public getDefaultProperties(field:string, clazz?:string) : FieldProperties[]
 	{
 		return(this.form.getDefaultProperties(this.name,field,clazz));
-	}
-
-	public getRecordProperties(field:string, clazz?:string) : FieldProperties[]
-	{
-		return(this.form.getRecordProperties(this.name,field,clazz));
-	}
-
-	public getValue(field:string) : any
-	{
-		return(this.form.getValue(this.name,field));
-	}
-
-	public setValue(field:string, value:any) : void
-	{
-		this.form.setValue(this.name,field,value);
 	}
 
 	public async executeQuery() : Promise<boolean>

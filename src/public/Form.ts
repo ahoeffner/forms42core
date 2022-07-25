@@ -15,6 +15,7 @@ import { Block } from './Block.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
 import { Form as Model } from '../model/Form.js';
+import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
@@ -169,7 +170,7 @@ export class Form implements CanvasComponent
         return(success);
     }
 
-	public addEventListener(method:Function, filter?:EventFilter|EventFilter[]) : void
+	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
 	{
 		FormEvents.addListener(this,this,method,filter);
 	}

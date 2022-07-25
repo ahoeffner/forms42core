@@ -183,7 +183,7 @@ export class Block
 		return(this.fieldnames$);
 	}
 
-	public setProperties(record:Record, inst:FieldInstance, props:FieldProperties) : void
+	public setRecordProperties(record:Record, inst:FieldInstance, props:FieldProperties) : void
 	{
 		if (record == null) record = this.model.getRecord(0);
 		let row:Row = this.getRow(inst.row);

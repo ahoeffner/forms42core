@@ -428,9 +428,8 @@ class InstanceProperties
 
 		if (this.pchange)
 		{
-			console.log("apply "+applyvw)
 			if (applyvw) this.inst.applyProperties(this.properties$);
-			else this.inst.field.block.setProperties(record,this.inst,this.properties$);
+			else this.inst.field.block.setRecordProperties(record,this.inst,this.properties$);
 
 		}
 

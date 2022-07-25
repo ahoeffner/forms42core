@@ -13,8 +13,10 @@
 import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Record } from './Record.js';
-import { Form as Forms } from '../model/Form.js';
+import { Status } from '../view/Row.js';
+import { Form as ModelForm } from '../model/Form.js';
 import { FieldProperties } from './FieldProperties.js';
+import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
@@ -29,7 +31,7 @@ export class Block
 		this.form$ = form;
 		if (name == null) name = "";
 		this.name$ = name.toLowerCase();
-		ModelBlock.create(Forms.getForm(form),this);
+		ModelBlock.create(ModelForm.getForm(form),this);
 	}
 
 	public get form() : Form
@@ -86,9 +88,58 @@ export class Block
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
+	public getQBEProperties(field:string, clazz?:string) : FieldProperties[]
+	{
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+
+		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
+		{
+			vfld.getInstancesByClass(clazz).forEach((inst) =>
+			{
+				props.push(new FieldProperties(inst,true,Status.qbe));
+			})
+		})
+
+		return(props);
+	}
+
 	public getDefaultProperties(field:string, clazz?:string) : FieldProperties[]
 	{
-		return(this.form.getDefaultProperties(this.name,field,clazz));
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+
+		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
+		{
+			vfld.getInstancesByClass(clazz).forEach((inst) =>
+			{
+				props.push(new FieldProperties(inst,true,Status.update));
+			})
+		})
+
+		return(props);
+	}
+
+	public getInsertProperties(field:string, clazz?:string) : FieldProperties[]
+	{
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+
+		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
+		{
+			vfld.getInstancesByClass(clazz).forEach((inst) =>
+			{
+				props.push(new FieldProperties(inst,true,Status.insert));
+			})
+		})
+
+		return(props);
+	}
+
+	public resetRecordProperties() : void
+	{
+		ViewBlock.getBlock(this).getAllFields().forEach((fld) =>
+		{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
 	}
 
 	public async executeQuery() : Promise<boolean>

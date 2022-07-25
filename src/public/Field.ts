@@ -45,7 +45,7 @@ export class Field
 		return(this.inst$.form);
 	}
 
-	public resetProperties() : void
+	public resetRecordProperties() : void
 	{
 		this.inst$.resetProperties();
 	}

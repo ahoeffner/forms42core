@@ -53,23 +53,24 @@ export class Form implements CanvasComponent
         return(this.view$);
     }
 
-	public getBlock(name:string) : Block
+	public getBlock(block:Block|string) : Block
 	{
-		return(Model.getForm(this).getBlock(name.toLowerCase())?.getBlock());
+		if (typeof block != "string") block = block.name;
+		return(Model.getForm(this).getBlock(block.toLowerCase())?.getBlock());
 	}
 
-	public setDataSource(block:string,source:DataSource) : void
+	public setDataSource(block:Block|string,source:DataSource) : void
 	{
-		block = block?.toLowerCase();
-		Model.getForm(this).setDataSource(block,source);
+		if (typeof block != "string") block = block.name;
+		Model.getForm(this).setDataSource(block.toLowerCase(),source);
 	}
 
-	public getValue(block:string, field:string, dirty?:boolean) : any
+	public getValue(block:Block|string, field:string, dirty?:boolean) : any
 	{
 		return(this.getBlock(block)?.getValue(field,dirty));
 	}
 
-	public setValue(block:string, field:string, value:any) : void
+	public setValue(block:Block|string, field:string, value:any) : void
 	{
 		this.getBlock(block)?.setValue(field,value);
 	}
@@ -121,10 +122,11 @@ export class Form implements CanvasComponent
 		Model.finalize(this);
     }
 
-	public getFields(block:string, field:string, clazz?:string) : Field[]
+	public getFields(block:Block|string, field:string, clazz?:string) : Field[]
 	{
 		let flds:Field[] = [];
 		let vflds:ViewField[] = [];
+		if (typeof block != "string") block = block.name;
 
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
@@ -137,10 +139,11 @@ export class Form implements CanvasComponent
 		return(flds);
 	}
 
-	public getFieldById(block:string, field:string, id:string) : Field
+	public getFieldById(block:Block|string, field:string, id:string) : Field
 	{
 		let flds:Field[] = [];
 		let vflds:ViewField[] = [];
+		if (typeof block != "string") block = block.name;
 
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();

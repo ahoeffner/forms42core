@@ -136,12 +136,6 @@ export class Block
 		return(props);
 	}
 
-	public resetRecordProperties() : void
-	{
-		ViewBlock.getBlock(this).getAllFields().forEach((fld) =>
-		{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
-	}
-
 	public async executeQuery() : Promise<boolean>
 	{
 		return(ModelBlock.getBlock(this).executeQuery());

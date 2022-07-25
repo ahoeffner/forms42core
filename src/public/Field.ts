@@ -45,11 +45,6 @@ export class Field
 		return(this.inst$.form);
 	}
 
-	public resetRecordProperties() : void
-	{
-		this.inst$.resetProperties();
-	}
-
 	public getQBEProperties() : FieldProperties
 	{
 		return(new FieldProperties(this.inst$,true,Status.qbe));

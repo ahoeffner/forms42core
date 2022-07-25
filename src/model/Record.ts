@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
+import { Block } from "./Block.js";
 import { DataSourceWrapper } from "./DataModel.js";
-import { Record as RecordType } from "../public/Record.js";
 
 export enum RecordStatus
 {
@@ -22,7 +22,7 @@ export enum RecordStatus
 	Delete
 }
 
-export class Record implements RecordType
+export class Record
 {
 	private id$:any;
 	private keys$:any[] = [];
@@ -67,6 +67,11 @@ export class Record implements RecordType
 	public get keys() : any[]
 	{
 		return(this.keys$);
+	}
+
+	public get block() : Block
+	{
+		return(this.wrapper$?.block);
 	}
 
 	public get prepared() : boolean

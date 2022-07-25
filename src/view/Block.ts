@@ -38,6 +38,7 @@ export class Block
 	private fieldnames$:string[] = null;
 	private volatile$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
+	private displayed$:Map<object,Row> = new Map<object,Row>();
 	private recprops$:RecordProperties = new RecordProperties(this);
 
 	public static getBlock(block:InterfaceBlock) : Block
@@ -228,6 +229,7 @@ export class Block
 		if (!this.validated)
 			return(false);
 
+		this.displayed$.clear();
 		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear()});
 
@@ -373,9 +375,15 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
+	public displayed(record:Record) : Row
+	{
+		return(this.displayed$.get(record.id));
+	}
+
 	public display(rownum:number, record:Record) : void
 	{
 		let row:Row = this.getRow(rownum);
+		this.displayed$.set(record.id,row);
 
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);

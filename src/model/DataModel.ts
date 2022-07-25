@@ -58,7 +58,7 @@ export class DataSourceWrapper
 	private cache$:Record[];
 	private winpos$:number[] = [0,-1];
 
-	constructor(private block:ModelBlock)
+	constructor(public block:ModelBlock)
 	{
 		this.cache$ = [];
 		this.eof$ = false;

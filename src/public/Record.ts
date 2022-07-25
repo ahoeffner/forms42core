@@ -10,11 +10,53 @@
  * accompanied this code).
  */
 
+import { Row } from "../view/Row.js";
+import { Block } from "../model/Block.js";
+import { Field } from "../view/fields/Field.js";
+import { Record as Internal } from "../model/Record.js"
 
-export interface Record
+export class Record
 {
-	keys:any;
-	getValue(column:string) : any;
-	values:{name:string,value:any}[];
-	setValue(column:string,value:any) : void
+	private rec$:Internal = null;
+
+	constructor(rec:Internal)
+	{
+		this.rec$ = rec;
+	}
+
+	public getValue(field:string, dirty?:boolean) : any
+	{
+		field = field?.toLowerCase();
+		let blk:Block = this.rec$.block;
+		if (dirty == null) dirty = false;
+
+		if (this.rec$.block?.eventTransaction.active)
+			return(blk.eventTransaction.getValue(blk,field));
+
+		if (dirty)
+		{
+
+			let fld:Field = blk.view.getField(field);
+			if (fld != null) return(blk.getValue(field));
+		}
+
+		return(blk?.getValue(field));
+	}
+
+	public setValue(field:string, value:any) : void
+	{
+		field = field?.toLowerCase();
+		let blk:Block = this.rec$.block;
+
+		if (blk?.eventTransaction.active)
+		{
+			this.rec$.block.eventTransaction.setValue(blk,field,value);
+		}
+		else
+		{
+			this.rec$.setValue(field,value);
+			let row:Row = blk?.view.displayed(this.rec$);
+			if (row != null) row.getField(field)?.setValue(value);
+		}
+	}
 }

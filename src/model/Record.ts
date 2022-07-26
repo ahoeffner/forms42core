@@ -74,6 +74,16 @@ export class Record
 		return(this.wrapper$?.block);
 	}
 
+	public get wrapper() : DataSourceWrapper
+	{
+		return(this.wrapper$);
+	}
+
+	public set wrapper(wrapper:DataSourceWrapper)
+	{
+		this.wrapper$ = wrapper;
+	}
+
 	public get prepared() : boolean
 	{
 		return(this.prepared$);

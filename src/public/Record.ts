@@ -36,11 +36,11 @@ export class Record
 		{
 			let row:Row = blk?.view.displayed(this.rec$);
 
-			let fld:Field = row.getField(field);
-			if (fld != null) return(blk.getValue(field));
+			let fld:Field = row?.getField(field);
+			if (fld != null) return(fld.getValue());
 		}
 
-		return(blk?.getValue(field));
+		return(this.rec$.getValue(field));
 	}
 
 	public setValue(field:string, value:any) : void

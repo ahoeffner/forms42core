@@ -250,10 +250,8 @@ export class Block
 
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
-		console.log("fire onTyping")
 		await this.setEventTransaction(EventType.OnTyping);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
-		console.log("onTyping returned "+success)
 		this.endEventTransaction(EventType.OnTyping,success);
 		return(success);
 	}
@@ -372,6 +370,7 @@ export class Block
 
 	public displayed(record:Record) : Row
 	{
+		console.log("test "+record+" "+this.displayed$.size)
 		return(this.displayed$.get(record.id));
 	}
 

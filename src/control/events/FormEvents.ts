@@ -405,26 +405,31 @@ export class FormEvents
 		}
 		catch (error)
 		{
-			Alert.fatal(lsnr.clazz+"."+lsnr.method+" returned "+error,"EventListener");
-			return(false);
-		}
-		finally
-		{
+			Alert.fatal(lsnr.clazz.constructor.name+"."+lsnr.method+" returned "+error,"EventListener");
 			if (swap) event["key$"] = ekey;
+			return(false);
 		}
 
 		if (response instanceof Promise)
 		{
-			await response.then((value) =>
+			try
 			{
-				if (typeof value !== "boolean")
+				await response.then((value) =>
 				{
-					Alert.fatal("@FormEvents: EventListner '"+lsnr+"' did not return Promise<boolean>, but '"+value+"'","EventListener");
-					value = true;
-				}
+					if (typeof value !== "boolean")
+					{
+						Alert.fatal("@FormEvents: EventListner '"+lsnr+"' did not return Promise<boolean>, but '"+value+"'","EventListener");
+						value = true;
+					}
 
-				cont = value;
-			});
+					cont = value;
+				});
+			}
+			catch(error)
+			{
+				Alert.fatal(lsnr.clazz.constructor.name+"."+lsnr.method+" returned "+error,"EventListener");
+				cont = false;
+			}
 		}
 		else
 		{
@@ -438,6 +443,7 @@ export class FormEvents
 				cont = response;
 		}
 
+		if (swap) event["key$"] = ekey;
 		return(cont);
 	}
 

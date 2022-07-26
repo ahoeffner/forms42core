@@ -217,6 +217,8 @@ export class DataSourceWrapper
 					this.winpos$ = undo;
 					return(null);
 				}
+				
+				record.wrapper = this;
 				record.prepared = true;
 			}
 

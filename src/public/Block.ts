@@ -53,7 +53,6 @@ export class Block
 
 	public getValue(field:string, dirty?:boolean) : any
 	{
-		console.log("block getValue")
 		return(this.getRecord(0)?.getValue(field,dirty));
 	}
 
@@ -82,7 +81,6 @@ export class Block
 				return(null);
 			}
 
-			console.log("In trx")
 			intrec = ModelForm.getForm(this.form).eventTransaction.getRecord(block);
 		}
 

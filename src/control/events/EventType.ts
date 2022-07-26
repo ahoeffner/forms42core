@@ -11,27 +11,8 @@
  */
 
 /*
-	PreForm has block null
-
+	OBS !!
 	Pre- On- and When- cannot start new transaction in same block
-
-	Key 		-> All
-	Mouse 		-> All
-	Connect 	-> All
-	DisConnect 	-> All
-
-	OnCloseForm	-> change values and properties
-	OnTyping 	-> change values and properties
-	OnFetch 	-> change values and properties
-    OnLockRecord -> change values and properties
-
-	WhenValidateField -> change values and properties
-	WhenValidateRecord -> change values and properties
-
-	PreQuery	-> change values ?
-	PreDelete	-> change values
-	PreUpdate 	-> change values
-	PreInsert 	-> change values
 */
 
 export enum EventType

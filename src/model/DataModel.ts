@@ -74,11 +74,6 @@ export class DataSourceWrapper
 		return(this.block.datasource);
 	}
 
-	public get columns() : string[]
-	{
-		return(this.block.columns);
-	}
-
 	public clear() : void
 	{
 		this.source.post();
@@ -217,7 +212,7 @@ export class DataSourceWrapper
 					this.winpos$ = undo;
 					return(null);
 				}
-				
+
 				record.wrapper = this;
 				record.prepared = true;
 			}

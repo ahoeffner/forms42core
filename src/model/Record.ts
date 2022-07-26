@@ -96,8 +96,7 @@ export class Record
 
 	public get columns() : string[]
 	{
-		if (this.wrapper$ == null) return(this.columns$);
-		else 					   return(this.wrapper$.columns);
+		return(this.columns$);
 	}
 
 	public get values() : {name:string,value:any}[]

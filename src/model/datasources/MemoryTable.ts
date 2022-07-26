@@ -38,6 +38,8 @@ export class MemoryTable implements DataSource
 		if (columns == null) columns = [];
 		if (records == null) records = [];
 
+		this.columns$ = columns;
+
 		records.forEach((rec) =>
 		{
 			let data:{[name:string]: any} = {};
@@ -47,8 +49,6 @@ export class MemoryTable implements DataSource
 
 			this.records$.push(new Record(this,data));
 		});
-
-		this.columns$ = columns;
 	}
 
 	public get columns() : string[]

@@ -17,7 +17,6 @@ import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
-import { EventTransaction } from "./EventTransaction.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
@@ -112,24 +111,20 @@ export class Block
 		return(this.columns$);
 	}
 
-	public get eventTransaction() : EventTransaction
+	public async wait4EventTransaction(event:EventType, ) : Promise<boolean>
 	{
-		return(this.form.eventTransaction);
+		return(this.form.wait4EventTransaction(event,this));
 	}
 
-	public async setEventTransaction(event:EventType, offset:number) : Promise<boolean>
+	public async setEventTransaction(event:EventType, record:Record) : Promise<boolean>
 	{
-		if (!await this.eventTransaction.ready(this,event))
-			return(false);
-
-		this.eventTransaction.join(event,this,null,offset,true);
+		this.form.setEventTransaction(event,this,record);
 		return(true);
 	}
 
-	public endEventTransaction(event:EventType, apply:boolean) : void
+	public endEventTransaction(event:EventType, success:boolean) : void
 	{
-		if (!apply) this.eventTransaction.undoChanges(event)
-		else		this.eventTransaction.applyBlockChanges(event,this);
+		this.form.endEventTransaction(event,this,success);
 	}
 
 	public get datasource() : DataSource
@@ -201,82 +196,82 @@ export class Block
 		return(false);
 	}
 
-	public async preInsert() : Promise<boolean>
+	public async preInsert(record:Record) : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PreInsert,record);
+		await this.setEventTransaction(EventType.PreInsert,record);
 		let success:boolean = await this.fire(EventType.PreInsert);
-		this.endModelEventTransaction(EventType.PreInsert,success);
+		this.endEventTransaction(EventType.PreInsert,success);
 		return(success);
 	}
 
 	public async postInsert() : Promise<boolean>
 	{
-		await this.waitForEventTransaction(EventType.PostInsert);
+		await this.wait4EventTransaction(EventType.PostInsert);
 		let success:boolean = await this.fire(EventType.PostInsert);
-		this.endModelEventTransaction(EventType.PostInsert,success);
+		this.endEventTransaction(EventType.PostInsert,success);
 		return(success);
 	}
 
 	public async preUpdate() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PreUpdate,record);
+		let record:Record = this.getRecord();
+		await this.setEventTransaction(EventType.PreUpdate,record);
 		let success:boolean = await this.fire(EventType.PreUpdate);
-		this.endModelEventTransaction(EventType.PreUpdate,success);
+		this.endEventTransaction(EventType.PreUpdate,success);
 		return(success);
 	}
 
 	public async postUpdate() : Promise<boolean>
 	{
-		await this.waitForEventTransaction(EventType.PostUpdate);
+		await this.wait4EventTransaction(EventType.PostUpdate);
 		let success:boolean = await this.fire(EventType.PostUpdate);
 		return(success);
 	}
 
 	public async preDelete() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PreDelete,record);
+		let record:Record = this.getRecord();
+		await this.setEventTransaction(EventType.PreDelete,record);
 		let success:boolean = await this.fire(EventType.PreDelete);
-		this.endModelEventTransaction(EventType.PreDelete,success);
+		this.endEventTransaction(EventType.PreDelete,success);
 		return(success);
 	}
 
 	public async postDelete() : Promise<boolean>
 	{
-		await this.waitForEventTransaction(EventType.PostDelete);
+		await this.wait4EventTransaction(EventType.PostDelete);
 		let success:boolean = await this.fire(EventType.PostDelete);
 		return(success);
 	}
 
 	public async preQuery() : Promise<boolean>
 	{
-		let record:Record = new Record(null);
-		await this.setModelEventTransaction(EventType.PreQuery,record);
+		let record:Record = this.getRecord();
+		await this.setEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
-		this.endModelEventTransaction(EventType.PreQuery,success);
+		this.endEventTransaction(EventType.PreQuery,success);
 		return(success);
 	}
 
 	public async onFetch(record:Record) : Promise<boolean>
 	{
-		await this.setModelEventTransaction(EventType.OnFetch,record);
+		await this.setEventTransaction(EventType.OnFetch,record);
 		let success:boolean = await this.fire(EventType.OnFetch);
-		this.endModelEventTransaction(EventType.OnFetch,success);
+		this.endEventTransaction(EventType.OnFetch,success);
 		return(success);
 	}
 
 	public async postQuery() : Promise<boolean>
 	{
-		await this.waitForEventTransaction(EventType.PostQuery);
+		await this.wait4EventTransaction(EventType.PostQuery);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		return(success);
 	}
 
 	public async validateRecord() : Promise<boolean>
 	{
-		await this.setEventTransaction(EventType.WhenValidateRecord,0);
+		let record:Record = this.getRecord();
+		await this.setEventTransaction(EventType.WhenValidateRecord,record);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
 		return(success);
@@ -429,26 +424,6 @@ export class Block
 			this.intblk = new InterfaceBlock(this.intfrm,this.name);
 			this.linked$ = false;
 		}
-	}
-
-	private async setModelEventTransaction(event:EventType, record:Record) : Promise<boolean>
-	{
-		if (!await this.eventTransaction.ready(this,event))
-			return(false);
-
-		this.eventTransaction.join(event,this,record,0,false);
-		return(true);
-	}
-
-	public async waitForEventTransaction(event:EventType) : Promise<boolean>
-	{
-		return(this.eventTransaction.ready(null,event));
-	}
-
-	private endModelEventTransaction(event:EventType, apply:boolean) : void
-	{
-		if (!apply) this.eventTransaction.undoChanges(event)
-		else		this.eventTransaction.applyBlockChanges(event,this);
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

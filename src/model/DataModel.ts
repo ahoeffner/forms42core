@@ -121,7 +121,7 @@ export class DataSourceWrapper
 		if (!this.source.insertable)
 			return(false);
 
-		if (!await this.block.preInsert())
+		if (!await this.block.preInsert(record))
 			return(false);
 
 		if (!this.source.insert(record))

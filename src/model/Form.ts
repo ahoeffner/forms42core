@@ -11,7 +11,9 @@
  */
 
 import { Block } from './Block.js';
+import { Record } from './Record.js';
 import { DataModel } from './DataModel.js';
+import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
@@ -30,6 +32,7 @@ export class Form
 		let form:Form = Form.models.get(parent);
 
 		form.unlinkViews();
+		form.clearEventTransactions();
 
 		form.blocks.forEach((blk) =>
 		{
@@ -113,24 +116,36 @@ export class Form
 		return(this.evttrans$);
 	}
 
-	public async setEventTransaction(event:EventType) : Promise<boolean>
+	public hasEventTransaction(block:Block) : boolean
 	{
-		if (!await this.eventTransaction.ready(null,event))
-			return(false);
+		return(this.eventTransaction.getEvent(block) != null);
+	}
 
-		this.eventTransaction.join(event);
+	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
+	{
+		if (!await this.eventTransaction.wait4slot(block))
+		{
+			let running:EventType = this.eventTransaction.getEvent(block);
+			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			return(false);
+		}
+
 		return(true);
 	}
 
-	public async waitForEventTransaction(event:EventType) : Promise<boolean>
+	public async setEventTransaction(event:EventType, block:Block, record:Record) : Promise<boolean>
 	{
-		return(this.eventTransaction.ready(null,event));
+		if (!await this.eventTransaction.start(event,block,record))
+		{
+			let running:EventType = this.eventTransaction.getEvent(block);
+			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			return(false);
+		}
 	}
 
-	public endEventTransaction(event:EventType, apply:boolean) : void
+	public endEventTransaction(_event:EventType, block:Block, _success:boolean) : void
 	{
-		if (!apply) this.eventTransaction.undoChanges(event)
-		else		this.eventTransaction.applyFormChanges(event);
+		this.eventTransaction.finish(block);
 	}
 
 	public addBlock(block:Block) : void
@@ -155,6 +170,11 @@ export class Form
 				block.datasource.deleteable = false;
 			}
 		}
+	}
+
+	private clearEventTransactions() : void
+	{
+		this.eventTransaction.clear();
 	}
 
 	private linkViews() : void

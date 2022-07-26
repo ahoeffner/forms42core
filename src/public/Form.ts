@@ -46,6 +46,9 @@ export class Form implements CanvasComponent
 
 	public get valid() : boolean
 	{
+		if (Model.getForm(this).eventTransaction.running() > 0)
+			return(false);
+
 		return(View.getForm(this).validated());
 	}
 
@@ -164,7 +167,7 @@ export class Form implements CanvasComponent
 		if (!vform.validated) return(false);
 		let mform:Model = Model.getForm(this);
 
-		await mform.waitForEventTransaction(EventType.OnCloseForm);
+		await mform.wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
         if (success) this.canvas.close();
         return(success);

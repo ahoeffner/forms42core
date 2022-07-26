@@ -14,6 +14,7 @@ import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
+import { EventType } from '../../index.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { FieldProperties } from './FieldProperties.js';
@@ -66,19 +67,20 @@ export class Block
 		if (offset == null) offset = 0;
 		let block:ModelBlock = ModelBlock.getBlock(this);
 
-		if (!block.eventTransaction.active)
+		if (!ModelForm.getForm(this.form).hasEventTransaction(block))
 		{
 			intrec = block.getRecord(offset);
 		}
 		else
 		{
-			intrec = block.eventTransaction.getTrxRecord(this.name);
-
-			if (intrec != null && offset != 0)
+			if (offset != 0)
 			{
-				Alert.fatal("Only current record can be accessed when block is in transaction","Transaction Violation");
+				let running:EventType = ModelForm.getForm(this.form).eventTransaction.getEvent(block);
+				Alert.fatal("During transaction "+EventType[running]+" only current record can be accessed","Transaction Violation");
 				return(null);
 			}
+
+			intrec = ModelForm.getForm(this.form).eventTransaction.getRecord(block);
 		}
 
 		return(intrec == null ? null : new Record(intrec));

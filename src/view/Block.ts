@@ -24,6 +24,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "./fields/FieldProperties.js";
+import { DataType } from "./fields/implementations/DataType.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
@@ -114,7 +115,7 @@ export class Block
 
 			for (let i = 0; i < this.rows; i++)
 			{
-				let fld:Field = current.getField(field);
+				let fld:Field = this.getRow(i).getField(field);
 				if (fld != null) fields.push(fld);
 			}
 		}
@@ -585,6 +586,34 @@ export class Block
 		this.setIndicators(null,0);
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
+
+		this.getFieldNames().forEach((name) =>
+		{
+			let diff:boolean = false;
+			let date:boolean = false;
+			let type:DataType = null;
+
+			this.getAllFields(name).forEach((fld) =>
+			{
+				if (type == null)
+				{
+					type = fld.getInstance(0).datatype;
+
+					if (DataType[type].startsWith("date"))
+						date = true;
+				}
+
+				fld.getInstances().forEach((inst) =>
+				{
+					if (inst.datatype != type)
+					{
+						if (date && DataType[inst.datatype].startsWith("date"))
+							console.log("skip");
+					}
+				})
+			})
+		})
+
 	}
 
 	public distribute(field:Field, value:any, dirty:boolean) : void

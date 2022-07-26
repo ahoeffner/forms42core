@@ -25,7 +25,6 @@ export class FieldTypes
 	private static implementations:Map<string,Class<FieldImplementation>> =
 		FieldTypes.init();
 
-
 	private static init() : Map<string,Class<FieldImplementation>>
 	{
 		let map:Map<string,Class<FieldImplementation>> =

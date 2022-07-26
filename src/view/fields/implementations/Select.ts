@@ -29,8 +29,18 @@ export class Select implements FieldImplementation, EventListenerObject
 	private value$:string = null;
 	private multiple:boolean = false;
 	private element:HTMLSelectElement = null;
-	private datatype:DataType = DataType.string;
+	private datatype$:DataType = DataType.string;
     private event:BrowserEvent = BrowserEvent.get();
+
+	public get datatype() : DataType
+	{
+		return(this.datatype$);
+	}
+
+	public set datatype(type:DataType)
+	{
+		this.datatype = type;
+	}
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLSelectElement
 	{
@@ -62,14 +72,14 @@ export class Select implements FieldImplementation, EventListenerObject
 			return(this.value$);
 		}
 
-		if (DataType[this.datatype].startsWith("date"))
+		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let value:Date = dates.parse(this.value$);
 			if (value == null) this.element.options.selectedIndex = 0;
 			return(value);
 		}
 
-		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+		if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			return(+this.value$);
 
 		return(this.value$);
@@ -83,7 +93,7 @@ export class Select implements FieldImplementation, EventListenerObject
 			value = this.datamapper.getValue(Tier.Frontend);
 		}
 
-		if (DataType[this.datatype].startsWith("date"))
+		if (DataType[this.datatype$].startsWith("date"))
 		{
 			if (typeof value === "number")
 				value = new Date(+value);
@@ -144,7 +154,7 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public getDataType() : DataType
 	{
-		return(this.datatype);
+		return(this.datatype$);
 	}
 
 	public getFieldState() : FieldState
@@ -179,7 +189,7 @@ export class Select implements FieldImplementation, EventListenerObject
 	public setAttributes(attributes:Map<string,string>) : void
 	{
 		this.multiple = false;
-		this.datatype = DataType.string;
+		this.datatype$ = DataType.string;
 
 		let dsize:string = attributes.get("size");
 		let msize:number = this.element.options.length;
@@ -192,16 +202,16 @@ export class Select implements FieldImplementation, EventListenerObject
         attributes.forEach((_value,attr) =>
         {
 			if (attr == "date")
-				this.datatype = DataType.date;
+				this.datatype$ = DataType.date;
 
 			if (attr == "datetime")
-				this.datatype = DataType.datetime;
+				this.datatype$ = DataType.datetime;
 
 			if (attr == "integer")
-				this.datatype = DataType.integer;
+				this.datatype$ = DataType.integer;
 
 			if (attr == "decimal")
-				this.datatype = DataType.decimal;
+				this.datatype$ = DataType.decimal;
 
 			if (attr == "multiple")
 				this.multiple = true;

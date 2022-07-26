@@ -50,8 +50,18 @@ export class Input implements FieldImplementation, EventListenerObject
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
-	private datatype:DataType = DataType.string;
+	private datatype$:DataType = DataType.string;
     private event:BrowserEvent = BrowserEvent.get();
+
+	public get datatype() : DataType
+	{
+		return(this.datatype$);
+	}
+
+	public set datatype(type:DataType)
+	{
+		this.datatype = type;
+	}
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{
@@ -116,7 +126,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (value.trim().length == 0)
 			return(null);
 
-		if (DataType[this.datatype].startsWith("date"))
+		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let date:Date = dates.parse(value);
 
@@ -139,7 +149,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(date);
 		}
 
-		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+		if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			return(+value);
 
 		if (this.pattern != null)
@@ -156,7 +166,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			value = this.datamapper.getValue(Tier.Frontend);
 		}
 
-		if (DataType[this.datatype].startsWith("date"))
+		if (DataType[this.datatype$].startsWith("date"))
 		{
 			if (typeof value === "number")
 				value = new Date(+value);
@@ -165,9 +175,9 @@ export class Input implements FieldImplementation, EventListenerObject
 				value = dates.format(value);
 		}
 
-		if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+		if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 		{
-			if (isNaN(+value) || (this.datatype == DataType.integer && (value+"").includes(".")))
+			if (isNaN(+value) || (this.datatype$ == DataType.integer && (value+"").includes(".")))
 				value = null;
 		}
 
@@ -236,7 +246,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.pattern = null;
 		this.cse = Case.mixed;
 		this.placeholder = null;
-		this.datatype = DataType.string;
+		this.datatype$ = DataType.string;
 
 		let datesize:number = 0;
 		let datepattern:string = "";
@@ -246,13 +256,13 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.type == null) this.type = "text";
 
 		if (this.type == "number")
-			this.datatype = DataType.integer;
+			this.datatype$ = DataType.integer;
 
 		if (this.type == "date")
-			this.datatype = DataType.date;
+			this.datatype$ = DataType.date;
 
 		if (this.type == "datetime")
-			this.datatype = DataType.datetime;
+			this.datatype$ = DataType.datetime;
 
         attributes.forEach((value,attr) =>
         {
@@ -268,13 +278,13 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "integer")
 			{
 				this.int = true;
-				this.datatype = DataType.integer;
+				this.datatype$ = DataType.integer;
 			}
 
 			if (attr == "decimal")
 			{
 				this.dec = true;
-				this.datatype = DataType.decimal;
+				this.datatype$ = DataType.decimal;
 			}
 
 			if (attr == "date" || attr == "datetime")
@@ -283,7 +293,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				let parts:number = 3;
 				this.placeholder = "";
 
-				this.datatype = DataType.date;
+				this.datatype$ = DataType.date;
 				types = dates.tokenizeFormat();
 
 				types.forEach((type) =>
@@ -309,7 +319,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "datetime")
 			{
 				let parts:number = 3;
-				this.datatype = DataType.datetime;
+				this.datatype$ = DataType.datetime;
 
 				datesize++;
 				datepattern += " ";
@@ -468,7 +478,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			bubble = false;
 
-			if (this.datatype == DataType.integer || this.datatype == DataType.decimal)
+			if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			{
 				let num:string = this.getElementValue();
 				if (num.trim().length > 0) this.setElementValue((+num)+"");

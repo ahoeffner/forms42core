@@ -16,6 +16,7 @@ import { FieldProperties } from "../FieldProperties.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { DataType } from "./DataType.js";
 
 export class Textarea implements FieldImplementation, EventListenerObject
 {
@@ -26,6 +27,16 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	private element:HTMLTextAreaElement = null;
     private event:BrowserEvent = BrowserEvent.get();
+
+	public get datatype() : DataType
+	{
+		return(DataType.string);
+	}
+
+	public set datatype(_type:DataType)
+	{
+		null;
+	}
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLElement
 	{

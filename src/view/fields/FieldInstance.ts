@@ -17,6 +17,7 @@ import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
+import { DataType } from "./implementations/DataType.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
 import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
@@ -192,6 +193,16 @@ export class FieldInstance implements FieldEventHandler
 	public get element() : HTMLElement
 	{
 		return(this.element$);
+	}
+
+	public get datatype() : DataType
+	{
+		return(this.impl.datatype);
+	}
+
+	public set datatype(type:DataType)
+	{
+		this.impl.datatype = type;
 	}
 
 	public get ignore() : string

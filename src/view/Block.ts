@@ -370,7 +370,6 @@ export class Block
 
 	public displayed(record:Record) : Row
 	{
-		console.log("test "+record+" "+this.displayed$.size)
 		return(this.displayed$.get(record.id));
 	}
 

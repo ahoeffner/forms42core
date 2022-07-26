@@ -53,7 +53,6 @@ export class Block
 	private record$:number = -1;
 	private view$:ViewBlock = null;
 	private linked$:boolean = false;
-	private columns$:string[] = null;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
@@ -103,14 +102,6 @@ export class Block
 		this.ctrlblk$ = flag;
 	}
 
-	public get columns() : string[]
-	{
-		if (this.columns$ == null)
-			this.columns$ = this.view$.getFieldNames();
-
-		return(this.columns$);
-	}
-
 	public async wait4EventTransaction(event:EventType, ) : Promise<boolean>
 	{
 		return(this.form.wait4EventTransaction(event,this));
@@ -151,7 +142,7 @@ export class Block
 		if (recs == null)
 		{
 			recs = this.view$.rows;
-			columns = this.columns;
+			columns = this.view$.getFieldNames();
 		}
 
 		for (let r = 0; r < recs; r++)
@@ -300,9 +291,6 @@ export class Block
 
 	public setValue(field:string, value:any) : boolean
 	{
-		if (this.columns.indexOf(field) < 0)
-			this.columns.push(field);
-
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 

@@ -383,6 +383,7 @@ export class Block
 			row.setFieldState(FieldState.READONLY);
 
 		row.clear();
+		row.status = Status.update;
 		this.applyProperties(row,record);
 
 		record.values.forEach((field) =>
@@ -396,7 +397,7 @@ export class Block
 		if (row.status == Status.na)
 		{
 			row.setFieldState(FieldState.READONLY);
-			this.getRow(-1).setFieldState(FieldState.READONLY);
+			this.getRow(-1)?.setFieldState(FieldState.READONLY);
 		}
 
 		for (let i = 1; i < this.rows; i++)

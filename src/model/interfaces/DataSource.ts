@@ -22,6 +22,8 @@ export interface DataSource
 	updateable:boolean;
 	deleteable:boolean;
 
+	columns:string[];
+
 	getFilters() : Filter[];
 	addFilter(filter:Filter) : void;
 	setFilters(filters:Filter[]) : void;

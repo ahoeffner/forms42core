@@ -318,7 +318,6 @@ export class Row
 
 	public distribute(field:string, value:any, dirty:boolean) : void
 	{
-		this.status$ = Status.update;
 		this.fields.get(field)?.distribute(null,value,dirty);
 	}
 

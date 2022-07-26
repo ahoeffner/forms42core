@@ -18,7 +18,10 @@ export class MemoryTable implements DataSource
 {
 	private pos$:number = 0;
 	private rows$:number = -1;
-	private records:Record[] = [];
+
+	private columns$:string[] = [];
+	private records$:Record[] = [];
+
 	private filters:Filter[] = [];
 	private cursor:Record[] = null;
 	private inserted$:Record[] = [];
@@ -30,20 +33,27 @@ export class MemoryTable implements DataSource
 	public updateable:boolean = true;
 	public deleteable:boolean = true;
 
-	public constructor(columns?:string[], records?:any[][])
+	public constructor(columns:string[], records:any[][])
 	{
-		if (columns != null && records != null)
+		if (columns == null) columns = [];
+		if (records == null) records = [];
+
+		records.forEach((rec) =>
 		{
-			records.forEach((rec) =>
-			{
-				let data:{[name:string]: any} = {};
+			let data:{[name:string]: any} = {};
 
-				for (let i = 0; i < rec.length && i < columns.length; i++)
-					data[columns[i]] = rec[i];
+			for (let i = 0; i < rec.length && i < columns.length; i++)
+				data[columns[i]] = rec[i];
 
-				this.records.push(new Record(null,data));
-			});
-		}
+			this.records$.push(new Record(this,data));
+		});
+
+		this.columns$ = columns;
+	}
+
+	public get columns() : string[]
+	{
+		return(this.columns$);
 	}
 
 	public set maxrows(rows:number)
@@ -53,7 +63,7 @@ export class MemoryTable implements DataSource
 
 	public get insertable() : boolean
 	{
-		return(this.insertable$ && this.records.length < this.rows$);
+		return(this.insertable$ && this.records$.length < this.rows$);
 	}
 
 	public set insertable(flag:boolean)
@@ -83,7 +93,7 @@ export class MemoryTable implements DataSource
 
 	public async post() : Promise<boolean>
 	{
-		this.records.push(...this.inserted$);
+		this.records$.push(...this.inserted$);
 		return(true);
 	}
 
@@ -105,14 +115,14 @@ export class MemoryTable implements DataSource
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		let rec:number = this.indexOf(this.records,record.id);
+		let rec:number = this.indexOf(this.records$,record.id);
 		let ins:number = this.indexOf(this.inserted$,record.id);
 
 		if (ins >= 0)
 			this.inserted$ = this.inserted$.splice(ins,1);
 
 		if (rec >= 0)
-			this.records = this.records.splice(rec,1);
+			this.records$ = this.records$.splice(rec,1);
 
 		return(ins >= 0 || rec >= 0);
 	}
@@ -131,7 +141,7 @@ export class MemoryTable implements DataSource
 		if (!this.queryable)
 			return(false);
 
-		this.cursor = this.records;
+		this.cursor = this.records$;
 		return(true);
 	}
 

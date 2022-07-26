@@ -74,6 +74,11 @@ export class DataSourceWrapper
 		return(this.block.datasource);
 	}
 
+	public get columns() : string[]
+	{
+		return(this.source.columns);
+	}
+
 	public clear() : void
 	{
 		this.source.post();
@@ -102,8 +107,11 @@ export class DataSourceWrapper
 		let pos:number = this.indexOf(record);
 		if (before && pos > 0) pos--;
 
-		let inserted:Record = new Record(this);
+		let inserted:Record = new Record(this.source);
 		this.cache$.splice(pos,0,record);
+
+		inserted.wrapper = this;
+		inserted.prepared = true;
 
 		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)
 			this.winpos$[1]--;

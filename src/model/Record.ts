@@ -12,6 +12,7 @@
 
 import { Block } from "./Block.js";
 import { DataSourceWrapper } from "./DataModel.js";
+import { DataSource } from "./interfaces/DataSource.js";
 
 export enum RecordStatus
 {
@@ -27,18 +28,15 @@ export class Record
 	private id$:any;
 	private keys$:any[] = [];
 	private values$:any[] = [];
-	private columns$:string[] = null;
 	private prepared$:boolean = false;
-	private wrapper$:DataSourceWrapper;
+	private source$:DataSource = null;
+	private wrapper$:DataSourceWrapper = null;
 	private status$:RecordStatus = RecordStatus.Query;
 
-	constructor(wrapper:DataSourceWrapper, columns?:{[name:string]: any})
+	constructor(source:DataSource, columns?:{[name:string]: any})
 	{
+		this.source$ = source;
 		this.id$ = new Object();
-		this.wrapper$ = wrapper;
-
-		if (wrapper == null)
-			this.columns$ = [];
 
 		if (columns == null)
 		{
@@ -49,9 +47,6 @@ export class Record
 			Object.keys(columns).forEach((col) =>
 			{
 				col = col.toLowerCase();
-
-				if (wrapper == null)
-					this.columns$.push(col);
 
 				let idx:number = this.columns.indexOf(col);
 				if (idx >= 0) this.values$[idx] = columns[col];
@@ -72,6 +67,11 @@ export class Record
 	public get block() : Block
 	{
 		return(this.wrapper$?.block);
+	}
+
+	public get source() : DataSource
+	{
+		return(this.source$);
 	}
 
 	public get wrapper() : DataSourceWrapper
@@ -96,7 +96,7 @@ export class Record
 
 	public get columns() : string[]
 	{
-		return(this.columns$);
+		return(this.source$.columns);
 	}
 
 	public get values() : {name:string,value:any}[]

@@ -24,10 +24,11 @@ export class EventTransaction
 
 	public async start(event:EventType, block:Block, record:Record) : Promise<boolean>
 	{
-		if (!await this.wait4slot(block))
+		if (!await this.getTrxSlot(block))
 			return(false);
 
-		this.transactions.set(block.name,new Transaction(event,block,record));
+		this.transactions.set(block?.name,new Transaction(event,block,record));
+		return(true);
 	}
 
 	public running() : number
@@ -42,33 +43,33 @@ export class EventTransaction
 
 	public finish(block:Block) : void
 	{
-		this.transactions.delete(block.name);
+		this.transactions.delete(block?.name);
 	}
 
 	public getEvent(block:Block) : EventType
 	{
-		return(this.transactions.get(block.name)?.event);
+		return(this.transactions.get(block?.name)?.event);
 	}
 
 	public getRecord(block:Block) : Record
 	{
-		return(this.transactions.get(block.name)?.record);
+		return(this.transactions.get(block?.name)?.record);
 	}
 
-	public async wait4slot(block:Block) : Promise<boolean>
+	public async getTrxSlot(block:Block) : Promise<boolean>
 	{
 		let start:number = new Date().getTime();
-		let trx:Transaction = this.transactions.get(block.name);
+		let trx:Transaction = this.transactions.get(block?.name);
 
 		while(trx != null)
 		{
 			await this.sleep(this.NAP);
 			let now:number = new Date().getTime();
 			if (now - start > this.TIMEOUT) break;
-			trx = this.transactions.get(block.name);
+			trx = this.transactions.get(block?.name);
 		}
 
-		return(trx != null);
+		return(trx == null);
 	}
 
 	private sleep(ms:number) : Promise<void>

@@ -123,7 +123,7 @@ export class Form
 
 	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
 	{
-		if (!await this.eventTransaction.wait4slot(block))
+		if (!await this.eventTransaction.getTrxSlot(block))
 		{
 			let running:EventType = this.eventTransaction.getEvent(block);
 			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");

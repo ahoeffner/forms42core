@@ -250,8 +250,10 @@ export class Block
 
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
+		console.log("fire onTyping")
 		await this.setEventTransaction(EventType.OnTyping);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
+		console.log("onTyping returned "+success)
 		this.endEventTransaction(EventType.OnTyping,success);
 		return(success);
 	}

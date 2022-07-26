@@ -397,7 +397,21 @@ export class FormEvents
 		// Make sure event.key not only matches, but is identical
 
 		if (swap) event["key$"] = lkey;
-		let response:Promise<boolean> = lsnr.clazz[lsnr.method](event);
+		let response:Promise<boolean> = null;
+
+		try
+		{
+			response = lsnr.clazz[lsnr.method](event);
+		}
+		catch (error)
+		{
+			Alert.fatal(lsnr.clazz+"."+lsnr.method+" returned "+error,"EventListener");
+			return(false);
+		}
+		finally
+		{
+			if (swap) event["key$"] = ekey;
+		}
 
 		if (response instanceof Promise)
 		{
@@ -424,7 +438,6 @@ export class FormEvents
 				cont = response;
 		}
 
-		if (swap) event["key$"] = ekey;
 		return(cont);
 	}
 

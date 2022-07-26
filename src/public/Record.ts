@@ -10,13 +10,12 @@
  * accompanied this code).
  */
 
-import { Row, Status } from "../view/Row.js";
 import { Block } from "../model/Block.js";
+import { Row, Status } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { Record as Internal } from "../model/Record.js"
 import { FieldInstance } from "../view/fields/FieldInstance.js";
-import { FieldProperties as Properties } from "../view/fields/FieldProperties";
 
 export class Record
 {
@@ -33,9 +32,6 @@ export class Record
 		let blk:Block = this.rec$.block;
 		if (dirty == null) dirty = false;
 
-		if (this.rec$.block?.eventTransaction.active)
-			return(blk.eventTransaction.getValue(blk,field));
-
 		if (dirty)
 		{
 			let row:Row = blk?.view.displayed(this.rec$);
@@ -51,17 +47,9 @@ export class Record
 	{
 		field = field?.toLowerCase();
 		let blk:Block = this.rec$.block;
-
-		if (blk?.eventTransaction.active)
-		{
-			this.rec$.block.eventTransaction.setValue(blk,field,value);
-		}
-		else
-		{
-			this.rec$.setValue(field,value);
-			let row:Row = blk?.view.displayed(this.rec$);
-			if (row != null) row.getField(field)?.setValue(value);
-		}
+		this.rec$.setValue(field,value);
+		let row:Row = blk?.view.displayed(this.rec$);
+		if (row != null) row.getField(field)?.setValue(value);
 	}
 
 	public getProperties(field:string, clazz?:string) : FieldProperties[]
@@ -76,20 +64,10 @@ export class Record
 		let instances:FieldInstance[] = [];
 		row?.getField(field)?.getInstancesByClass(clazz).forEach((inst) => instances.push(inst));
 
-		if (blk?.eventTransaction.active)
+		instances.forEach((inst) =>
 		{
-			instances.forEach((inst) =>
-			{
-				let tprops:Properties = blk.eventTransaction.getProperties(inst);
-			})
-		}
-		else
-		{
-			instances.forEach((inst) =>
-			{
-				props.push(new FieldProperties(inst,false,Status.update));
-			})
-		}
+			props.push(new FieldProperties(inst,false,Status.update));
+		})
 
 		return(props);
 	}

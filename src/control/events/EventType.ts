@@ -10,6 +10,30 @@
  * accompanied this code).
  */
 
+/*
+	PreForm has block null
+
+	Pre- On- and When- cannot start new transaction in same block
+
+	Key 		-> All
+	Mouse 		-> All
+	Connect 	-> All
+	DisConnect 	-> All
+
+	OnCloseForm	-> change values and properties
+	OnTyping 	-> change values and properties
+	OnFetch 	-> change values and properties
+    OnLockRecord -> change values and properties
+
+	WhenValidateField -> change values and properties
+	WhenValidateRecord -> change values and properties
+
+	PreQuery	-> change values ?
+	PreDelete	-> change values
+	PreUpdate 	-> change values
+	PreInsert 	-> change values
+*/
+
 export enum EventType
 {
 	Key,
@@ -18,8 +42,8 @@ export enum EventType
 	Connect,
 	Disconnect,
 
+	OnCloseForm,
 	PostViewInit,
-	PreCloseForm,
 	PostFormFocus,
 
 	PreForm,
@@ -28,14 +52,14 @@ export enum EventType
 	PreBlock,
 	PostBlock,
 
+    PreRecord,
+    PostRecord,
+
     PreField,
     PostField,
 
 	OnTyping,
 	WhenValidateField,
-
-    PreRecord,
-    PostRecord,
 
     OnFetch,
 	PreQuery,
@@ -50,6 +74,6 @@ export enum EventType
     PreDelete,
     PostDelete,
 
-    WhenLockRecord,
+    OnLockRecord,
 	WhenValidateRecord
 }

@@ -30,38 +30,6 @@ import { FieldFeatureFactory } from "../view/FieldFeatureFactory.js";
 	During FormEvents, only changes to control-blocks is possible.
 */
 
-class Transaction
-{
-	event:EventType = null;
-	blocktrx:BlockTransaction = null;
-
-	blkprops:Map<string,BlockProperties> =
-		new Map<string,BlockProperties>();
-
-	constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean)
-	{
-		this.event = event;
-
-		if (block != null)
-			this.blocktrx = new BlockTransaction(event,block,record,offset,applyvw);
-	}
-
-	apply() : void
-	{
-		this.blocktrx?.apply();
-
-		this.blkprops.forEach((props) =>
-			props.apply(this.blocktrx?.applyvw,this.blocktrx?.record));
-	}
-}
-
-export interface PropertyChange
-{
-	defprops:boolean;
-	inst:FieldInstance;
-	props:FieldProperties;
-}
-
 export class EventTransaction
 {
 	private frmtrx:Transaction = null;
@@ -128,6 +96,11 @@ export class EventTransaction
 	public get active() : boolean
 	{
 		return(this.frmtrx != null || this.blocktrxs.size > 0);
+	}
+
+	public getTrxRecord(block:string) : Record
+	{
+		return(this.blocktrxs.get(block)?.blocktrx.record);
 	}
 
 	public getProperties(inst:FieldInstance) : FieldProperties
@@ -291,6 +264,39 @@ export class EventTransaction
         return(new Promise(resolve => setTimeout(resolve,ms)));
     }
 }
+
+class Transaction
+{
+	event:EventType = null;
+	blocktrx:BlockTransaction = null;
+
+	blkprops:Map<string,BlockProperties> =
+		new Map<string,BlockProperties>();
+
+	constructor(event:EventType, block?:Block, record?:Record, offset?:number, applyvw?:boolean)
+	{
+		this.event = event;
+
+		if (block != null)
+			this.blocktrx = new BlockTransaction(event,block,record,offset,applyvw);
+	}
+
+	apply() : void
+	{
+		this.blocktrx?.apply();
+
+		this.blkprops.forEach((props) =>
+			props.apply(this.blocktrx?.applyvw,this.blocktrx?.record));
+	}
+}
+
+export interface PropertyChange
+{
+	defprops:boolean;
+	inst:FieldInstance;
+	props:FieldProperties;
+}
+
 
 class BlockTransaction
 {

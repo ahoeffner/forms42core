@@ -10,10 +10,13 @@
  * accompanied this code).
  */
 
-import { Row } from "../view/Row.js";
+import { Row, Status } from "../view/Row.js";
 import { Block } from "../model/Block.js";
 import { Field } from "../view/fields/Field.js";
+import { FieldProperties } from "./FieldProperties.js";
 import { Record as Internal } from "../model/Record.js"
+import { FieldInstance } from "../view/fields/FieldInstance.js";
+import { FieldProperties as Properties } from "../view/fields/FieldProperties";
 
 export class Record
 {
@@ -35,8 +38,9 @@ export class Record
 
 		if (dirty)
 		{
+			let row:Row = blk?.view.displayed(this.rec$);
 
-			let fld:Field = blk.view.getField(field);
+			let fld:Field = row.getField(field);
 			if (fld != null) return(blk.getValue(field));
 		}
 
@@ -58,5 +62,35 @@ export class Record
 			let row:Row = blk?.view.displayed(this.rec$);
 			if (row != null) row.getField(field)?.setValue(value);
 		}
+	}
+
+	public getProperties(field:string, clazz?:string) : FieldProperties[]
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+
+		let blk:Block = this.rec$.block;
+		let row:Row = blk?.view.displayed(this.rec$);
+
+		let props:FieldProperties[] = [];
+		let instances:FieldInstance[] = [];
+		row?.getField(field)?.getInstancesByClass(clazz).forEach((inst) => instances.push(inst));
+
+		if (blk?.eventTransaction.active)
+		{
+			instances.forEach((inst) =>
+			{
+				let tprops:Properties = blk.eventTransaction.getProperties(inst);
+			})
+		}
+		else
+		{
+			instances.forEach((inst) =>
+			{
+				props.push(new FieldProperties(inst,false,Status.update));
+			})
+		}
+
+		return(props);
 	}
 }

@@ -76,7 +76,7 @@ export class FieldFeatureFactory
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (trx != null)
+		if (trx.active)
 		{
 			trx.addPropertyChange(inst$,fprops,defprops);
 		}

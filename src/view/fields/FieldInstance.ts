@@ -86,14 +86,13 @@ export class FieldInstance implements FieldEventHandler
 	{
 		let change:boolean = false;
 
+		if (newprops == null)
+			newprops = this.defaultProperties;
+
 		if (newprops != null)
 		{
 			if (newprops != this.properties)
-			{
 				change = true;
-				// Update record dependent props
-				this.field.block.setRecordProperties(null,this,newprops);
-			}
 		}
 		else
 		{
@@ -102,6 +101,9 @@ export class FieldInstance implements FieldEventHandler
 			if (this.properties != this.defaultProperties)
 				change = true;
 		}
+
+		if (newprops != this.properties)
+			change = true;
 
 		this.properties$ = newprops;
 

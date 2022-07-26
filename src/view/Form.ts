@@ -12,7 +12,7 @@
 
 import { Block } from './Block.js';
 import { Field } from './fields/Field.js';
-import { Hook } from '../control/hooks/Hook.js';
+import { Record } from '../model/Record.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
@@ -20,7 +20,6 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
-import { HookEvents } from '../control/hooks/HookEvents.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -294,7 +293,7 @@ export class Form implements EventListenerObject
 		if (preform)
 		{
 			// Successfully navigated from preform to this form
-			await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.PostFormFocus);
+			await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.PostFormFocus,null);
 			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
 			return(success);
 		}
@@ -314,16 +313,16 @@ export class Form implements EventListenerObject
 
 	public async enterForm(form:Form) : Promise<boolean>
 	{
-		await ModelForm.getForm(this.parent).setEventTransaction(EventType.PreForm);
+		await this.setEventTransaction(EventType.PreForm);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		ModelForm.getForm(this.parent).endEventTransaction(EventType.PreForm,success);
+		ModelForm.getForm(this.parent).endEventTransaction(EventType.PreForm,null,success);
 		if (success && form.parent.navigable) this.setURL();
 		return(success);
 	}
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
-		await block.model.setEventTransaction(EventType.PreBlock,offset);
+		await this.setEventTransaction(EventType.PreForm,block,offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
 		block.model.endEventTransaction(EventType.PreBlock,success);
 		return(success);
@@ -331,7 +330,7 @@ export class Form implements EventListenerObject
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		await block.model.setEventTransaction(EventType.PreRecord,offset);
+		await this.setEventTransaction(EventType.PreRecord,block,offset);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
 		return(success);
@@ -339,7 +338,7 @@ export class Form implements EventListenerObject
 
 	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
 	{
-		await inst.field.block.model.setEventTransaction(EventType.PreField,offset);
+		await this.setEventTransaction(EventType.PreField,inst.field.block,offset);
 		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);
 		inst.field.block.model.endEventTransaction(EventType.PreField,success);
 		return(success);
@@ -347,30 +346,43 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.PostForm);
+		await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.PostForm,null);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		return(success);
 	}
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		await block.model.waitForEventTransaction(EventType.PostBlock);
+		await block.model.wait4EventTransaction(EventType.PostBlock);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
 		return(success);
 	}
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
-		await block.model.waitForEventTransaction(EventType.PostRecord);
+		await block.model.wait4EventTransaction(EventType.PostRecord);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
 		return(success);
 	}
 
 	public async LeaveField(inst:FieldInstance) : Promise<boolean>
 	{
-		await inst.field.block.model.waitForEventTransaction(EventType.PostField);
+		await inst.field.block.model.wait4EventTransaction(EventType.PostField);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		return(success);
+	}
+
+	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>
+	{
+		let record:Record = null;
+
+		if (block != null)
+		{
+			if (offset == null) offset = 0;
+			record = block.model.getRecord(offset);
+		}
+
+		return(ModelForm.getForm(this.parent).setEventTransaction(event,block?.model,record));
 	}
 
 	private event:BrowserEvent = new BrowserEvent();
@@ -412,7 +424,7 @@ export class Form implements EventListenerObject
 				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
 				let keyevent:FormEvent = FormEvent.KeyEvent(this.parent,null,key);
 
-				if (await ModelForm.getForm(this.parent).waitForEventTransaction(EventType.Key))
+				if (await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.Key,null))
 					await FormEvents.raise(keyevent);
 			}
 			else
@@ -420,7 +432,7 @@ export class Form implements EventListenerObject
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
 				let mouseevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent);
 
-				if (ModelForm.getForm(this.parent).waitForEventTransaction(EventType.Mouse))
+				if (ModelForm.getForm(this.parent).wait4EventTransaction(EventType.Mouse,null))
 					await FormEvents.raise(mouseevent);
 			}
 		}

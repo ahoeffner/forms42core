@@ -36,7 +36,6 @@ export class Block
 	private name$:string = null;
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
-	private volatile$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private displayed$:Map<object,Row> = new Map<object,Row>();
 	private recprops$:RecordProperties = new RecordProperties(this);
@@ -83,11 +82,6 @@ export class Block
 	public focus() : void
 	{
 		this.getRow(0)?.getFirstInstance()?.focus();
-	}
-
-	public getVolatileInstance() : FieldInstance
-	{
-		return(this.volatile$);
 	}
 
 	public getField(field:string) : Field
@@ -190,9 +184,10 @@ export class Block
 		this.recprops$.set(row,inst,record,props);
 	}
 
-	public async setEventTransaction(event:EventType, offset:number) : Promise<void>
+	public async setEventTransaction(event:EventType) : Promise<void>
 	{
-		await this.model.setEventTransaction(event,offset);
+		let record:Record = this.model.getRecord();
+		await this.model.setEventTransaction(event,record);
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
@@ -208,7 +203,7 @@ export class Block
 		}
 		else
 		{
-			await this.setEventTransaction(EventType.WhenValidateField,0);
+			await this.setEventTransaction(EventType.WhenValidateField);
 			let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 			this.endEventTransaction(EventType.WhenValidateField,success);
 
@@ -255,11 +250,9 @@ export class Block
 
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
-		this.volatile$ = inst;
-		await this.setEventTransaction(EventType.OnTyping,0);
+		await this.setEventTransaction(EventType.OnTyping);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
 		this.endEventTransaction(EventType.OnTyping,success);
-		this.volatile$ = null;
 		return(success);
 	}
 

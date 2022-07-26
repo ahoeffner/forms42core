@@ -11,11 +11,9 @@
  */
 
 import { Status } from "./Row.js";
-import { Block } from "../model/Block.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
-import { EventTransaction } from "../model/EventTransaction.js";
 
 
 export class FieldFeatureFactory
@@ -56,35 +54,17 @@ export class FieldFeatureFactory
 	public static merge(props:BasicProperties, inst$:FieldInstance, defprops:boolean) : void
 	{
 		let fprops:FieldProperties = null;
+		fprops = inst$.properties;
+		if (defprops) fprops = inst$.defaultProperties;
 
-		let model:Block = inst$.field.block.model;
-		let trx:EventTransaction = model.eventTransaction;
-
-		if (trx.active)
-		{
-			fprops = trx.getProperties(inst$);
-			if (defprops) fprops = trx.getDefaultProperties(inst$);
-		}
-		else
-		{
-			fprops = inst$.properties;
-			if (defprops) fprops = inst$.defaultProperties;
-		}
-
+		// Don't change default props
 		if (inst$.hasDefaultProperties() && !defprops)
 			fprops = FieldFeatureFactory.clone(fprops);
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (trx.active)
-		{
-			trx.addPropertyChange(inst$,fprops,defprops);
-		}
-		else
-		{
-			if (!defprops) inst$.applyProperties(fprops);
-			else		   inst$.updateDefaultProperties();
-		}
+		if (!defprops) inst$.applyProperties(fprops);
+		else		   inst$.updateDefaultProperties();
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void

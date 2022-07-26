@@ -12,7 +12,7 @@ export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";
 export { MouseMap } from './src/control/events/MouseMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';
 export { EventType } from './src/control/events/EventType.js';
-export { FormEvent } from './src/control/events/FormEvents.js';
+export { FormEvent } from './src/control/events/FormEvent.js';
 export { EventFilter } from './src/control/events/EventFilter.js';
 export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
 

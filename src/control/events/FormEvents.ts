@@ -19,7 +19,7 @@ import { Field } from "../../public/Field.js";
 import { EventFilter } from "./EventFilter.js";
 import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
-import { Form as ModelForm } from "../../model/Form.js";
+import { FormEvent as Interface } from "./FormEvent.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 
@@ -28,7 +28,7 @@ export class KeyEventSource
 	constructor(public key:KeyMap, public field:string, public block:string, public record:number, public form:Form) {}
 }
 
-export class FormEvent
+export class FormEvent implements Interface
 {
 	public static FormEvent(type:EventType, form:Form) : FormEvent
 	{
@@ -55,21 +55,15 @@ export class FormEvent
 		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,event));
 	}
 
-	private block$:Block = null;
-	private field$:Field = null;
-
-	private bevaluated:boolean = false;
-	private fevaluated:boolean = false;
-
 	private constructor
 		(
 			private type$:EventType,
 			private form$:Form, private inst?:ViewFieldInstance,
-			private blockname$?:string, private key$?:KeyMap,private mevent$?:MouseMap
+			private block$?:string, private key$?:KeyMap,private mevent$?:MouseMap
 		)
 	{
 		if (inst != null)
-			this.blockname$ = inst.block;
+			this.block$ = inst.block;
 	}
 
 	public get type() : EventType
@@ -82,30 +76,9 @@ export class FormEvent
 		return(this.form$);
 	}
 
-	public get field() : Field
+	public get block() : string
 	{
-		if (this.fevaluated) return(this.field$);
-
-		if (this.inst != null)
-			this.field$ = new Field(this.inst);
-
-		this.fevaluated = true;
-		return(this.field$);
-	}
-
-	public get block() : Block
-	{
-		if (this.bevaluated) return(this.block$);
-
-		this.bevaluated = true;
-		this.block$ = ModelForm.getForm(this.form$)?.getBlock(this.blockname$)?.interface;
-
 		return(this.block$);
-	}
-
-	public get blockname() : string
-	{
-		return(this.blockname$);
 	}
 
 	public get key() : KeyMap
@@ -113,7 +86,7 @@ export class FormEvent
 		return(this.key$);
 	}
 
-	public get fieldname() : string
+	public get field() : string
 	{
 		return(this.inst?.name);
 	}
@@ -130,8 +103,8 @@ export class FormEvent
 		str += "form: "+this.form$?.constructor.name;
 		if (this.type != null) str += ", type: " + EventType[this.type];
 
-		if (this.blockname != null) str += ", block: "+this.blockname;
-		if (this.fieldname != null) str += ", field: "+this.fieldname;
+		if (this.block != null) str += ", block: "+this.block;
+		if (this.field != null) str += ", field: "+this.field;
 
 		if (this.key != null) str += ", key: "+this.key.toString();
 		if (this.mouse != null) str += ", mouse: "+MouseMap[this.mouse];
@@ -458,8 +431,8 @@ export class FormEvents
 		if (lsnr.filter != null)
 		{
 			if (lsnr.filter.mouse != null && lsnr.filter.mouse != event.mouse) return(false);
-			if (lsnr.filter.block != null && lsnr.filter.block != event.blockname) return(false);
-			if (lsnr.filter.field != null && lsnr.filter.field != event.fieldname) return(false);
+			if (lsnr.filter.block != null && lsnr.filter.block != event.block) return(false);
+			if (lsnr.filter.field != null && lsnr.filter.field != event.field) return(false);
 			if (lsnr.filter.key != null && lsnr.filter.key.signature != event.key?.signature) return(false);
 		}
 

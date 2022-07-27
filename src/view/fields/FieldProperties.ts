@@ -12,7 +12,7 @@
 
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
-import { Block as ModelBlock } from "../../model/Block.js";
+import { DataType } from "./implementations/DataType.js";
 
 
 export class FieldProperties extends BasicProperties
@@ -95,5 +95,21 @@ export class FieldProperties extends BasicProperties
 	public set inst(inst:FieldInstance)
 	{
 		this.inst$ = inst;
+	}
+
+	public setType(type:DataType) : void
+	{
+		this.removeClass("date");
+		this.removeClass("integer");
+		this.removeClass("decimal");
+		this.removeClass("datetime");
+
+		switch(type)
+		{
+			case DataType.date 	  : this.setClass("date"); break;
+			case DataType.integer : this.setClass("integer"); break;
+			case DataType.integer : this.setClass("integer"); break;
+			case DataType.integer : this.setClass("integer"); break;
+		}
 	}
 }

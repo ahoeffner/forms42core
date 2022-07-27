@@ -607,11 +607,63 @@ export class Block
 				{
 					if (inst.datatype != type)
 					{
-						if (date && DataType[inst.datatype].startsWith("date"))
-							console.log("skip");
+						switch(type)
+						{
+							case DataType.string :
+							{
+								if (inst.datatype != DataType.string)
+								{
+									diff = true;
+									type = inst.datatype;
+								}
+							}
+							break;
+
+							case DataType.integer :
+							{
+								if (inst.datatype != DataType.integer)
+									diff = true;
+							}
+							break;
+
+							case DataType.decimal :
+							{
+								if (inst.datatype != DataType.integer)
+									type = DataType.integer;
+
+								if (inst.datatype != DataType.decimal)
+									diff = true;
+							}
+							break;
+
+							case DataType.date :
+							case DataType.datetime :
+							{
+								if (inst.datatype == DataType.string)
+									diff = true;
+
+								if (inst.datatype == DataType.integer)
+									diff = true;
+
+								if (inst.datatype == DataType.decimal)
+									diff = true;
+							} break;
+						}
 					}
 				})
-			})
+			});
+
+			if (diff)
+			{
+				this.getAllFields(name).forEach((fld) =>
+				{
+					fld.getInstances().forEach((inst) =>
+					{
+						inst.datatype = type;
+						inst.defaultProperties.block
+					});
+				});
+			}
 		})
 
 	}

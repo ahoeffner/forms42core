@@ -99,6 +99,9 @@ export class FieldProperties extends BasicProperties
 
 	public setType(type:DataType) : void
 	{
+		let date:boolean = this.hasClass("date");
+		let datetime:boolean = this.hasClass("datetime");
+
 		this.removeClass("date");
 		this.removeClass("integer");
 		this.removeClass("decimal");
@@ -106,10 +109,22 @@ export class FieldProperties extends BasicProperties
 
 		switch(type)
 		{
-			case DataType.date 	  : this.setClass("date"); break;
+			case DataType.date :
+			{
+				if (!datetime) this.setClass("date");
+				else 		   this.setClass("datetime");
+			}
+			break;
+
+			case DataType.datetime :
+			{
+				if (date) this.setClass("date");
+				else 	  this.setClass("datetime");
+			}
+			break;
+
 			case DataType.integer : this.setClass("integer"); break;
-			case DataType.integer : this.setClass("integer"); break;
-			case DataType.integer : this.setClass("integer"); break;
+			case DataType.decimal : this.setClass("decimal"); break;
 		}
 	}
 }

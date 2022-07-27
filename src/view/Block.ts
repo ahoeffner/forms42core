@@ -27,6 +27,7 @@ import { FieldProperties } from "./fields/FieldProperties.js";
 import { DataType } from "./fields/implementations/DataType.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 
 export class Block
@@ -587,21 +588,16 @@ export class Block
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 
+		// set most restrictive datatype
 		this.getFieldNames().forEach((name) =>
 		{
 			let diff:boolean = false;
-			let date:boolean = false;
 			let type:DataType = null;
 
 			this.getAllFields(name).forEach((fld) =>
 			{
 				if (type == null)
-				{
 					type = fld.getInstance(0).datatype;
-
-					if (DataType[type].startsWith("date"))
-						date = true;
-				}
 
 				fld.getInstances().forEach((inst) =>
 				{
@@ -660,12 +656,12 @@ export class Block
 					fld.getInstances().forEach((inst) =>
 					{
 						inst.datatype = type;
-						inst.defaultProperties.block
+						inst.defaultProperties.setType(type);
+						FieldFeatureFactory.applyType(inst);
 					});
 				});
 			}
-		})
-
+		});
 	}
 
 	public distribute(field:Field, value:any, dirty:boolean) : void

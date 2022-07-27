@@ -208,6 +208,24 @@ export class FieldFeatureFactory
 		}
 	}
 
+	public static applyType(inst:FieldInstance) : void
+	{
+		let type:string = null;
+		let props:FieldProperties = inst.defaultProperties;
+
+		if (props.hasClass("date")) type = "date";
+		if (props.hasClass("integer")) type = "integer";
+		if (props.hasClass("decimal")) type = "decimal";
+		if (props.hasClass("datetime")) type = "datetime";
+
+		inst.element.classList.remove("date");
+		inst.element.classList.remove("integer");
+		inst.element.classList.remove("decimal");
+		inst.element.classList.remove("datetime");
+
+		inst.element.classList.add(type);
+	}
+
 	public static createDataList(inst:FieldInstance, props:FieldProperties) : void
 	{
 		let tag:HTMLElement = inst.element;

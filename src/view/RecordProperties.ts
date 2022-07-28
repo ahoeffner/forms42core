@@ -10,18 +10,19 @@
  * accompanied this code).
  */
 
-import { Record } from "../model/Record.js";
+import { Row } from "./Row.js";
 import { Block } from "./Block";
+import { Record } from "../model/Record.js";
 import { FieldInstance } from "./fields/FieldInstance";
 import { FieldProperties } from "./fields/FieldProperties";
-import { Row } from "./Row.js";
+import { Field } from "./fields/Field.js";
 
 export class RecordProperties
 {
 	private block:Block = null;
 
-	propmap$:Map<object,Map<string,FieldProperties>> =
-		new Map<object,Map<string,FieldProperties>>();
+	propmap$:Map<object,Map<string,Pattern>> =
+		new Map<object,Map<string,Pattern>>();
 
 	constructor(block:Block)
 	{
@@ -33,8 +34,9 @@ export class RecordProperties
 		this.propmap$.clear();
 	}
 
-	public set(row:Row, inst:FieldInstance, record:Record, props:FieldProperties) : void
+	public set(row:Row, record:Record, field:string, clazz:string, props:FieldProperties) : void
 	{
+		/*
 		let rmap:Map<string,FieldProperties> = this.propmap$.get(record.id);
 
 		if (rmap == null)
@@ -47,10 +49,17 @@ export class RecordProperties
 		let field:string = idx+";"+inst.name;
 		rmap.set(field,props);
 		console.log("setting props, inst: "+inst.name+"["+inst.row+"] field: "+field);
+		*/
 	}
 
-	public get(row:Row, inst:FieldInstance, record:Record) : FieldProperties
+	public apply(row:Row, record:Record) : void
 	{
+		row.getFields().forEach((fld) =>
+		{
+
+		});
+
+		/*
 		let props:FieldProperties = null;
 		let rmap:Map<string,FieldProperties> = this.propmap$.get(record.id);
 
@@ -63,5 +72,12 @@ export class RecordProperties
 		}
 
 		return(props);
+		*/
 	}
+}
+
+class Pattern
+{
+	clazz:string;
+	props:FieldProperties;
 }

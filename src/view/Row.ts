@@ -184,12 +184,6 @@ export class Row
 		return(false);
 	}
 
-	public getInstanceIndex(inst:FieldInstance) : number
-	{
-		console.log(inst.name+" -> "+this.getField(inst.name).getInstances().length)
-		return(this.getField(inst.name).getInstances().indexOf(inst));
-	}
-
 	public getFieldIndex(inst:FieldInstance) : number
 	{
 		return(this.getFieldInstances().indexOf(inst));

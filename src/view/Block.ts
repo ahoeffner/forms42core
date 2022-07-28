@@ -183,7 +183,7 @@ export class Block
 	{
 		if (record == null) record = this.model.getRecord(0);
 		let row:Row = this.getRow(inst.row);
-		this.recprops$.set(row,inst,record,props);
+		//this.recprops$.set(row,inst,record,props);
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>
@@ -453,11 +453,13 @@ export class Block
 
 	private applyProperties(row:Row, record:Record) : void
 	{
+		/*
 		record.values.forEach((field) =>
 		{
 			row.getField(field.name)?.getInstances().
 			forEach((inst) => {inst.applyProperties(this.recprops$.get(row,inst,record))})
 		})
+		*/
 	}
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>

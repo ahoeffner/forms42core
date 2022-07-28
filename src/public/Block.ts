@@ -17,10 +17,10 @@ import { Status } from '../view/Row.js';
 import { EventType } from '../../index.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
-import { FieldProperties } from './FieldProperties.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
+import { DefaultProperties } from './DefaultProperties.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
@@ -109,48 +109,48 @@ export class Block
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getQBEProperties(field:string, clazz?:string) : FieldProperties[]
+	public getQBEProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
-		let props:FieldProperties[] = [];
+		let props:DefaultProperties[] = [];
 
 		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
 		{
 			vfld.getInstancesByClass(clazz).forEach((inst) =>
 			{
-				props.push(new FieldProperties(inst,true,Status.qbe));
+				props.push(new DefaultProperties(inst,Status.qbe));
 			})
 		})
 
 		return(props);
 	}
 
-	public getDefaultProperties(field:string, clazz?:string) : FieldProperties[]
+	public getDefaultProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
-		let props:FieldProperties[] = [];
+		let props:DefaultProperties[] = [];
 
 		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
 		{
 			vfld.getInstancesByClass(clazz).forEach((inst) =>
 			{
-				props.push(new FieldProperties(inst,true,Status.update));
+				props.push(new DefaultProperties(inst,Status.update));
 			})
 		})
 
 		return(props);
 	}
 
-	public getInsertProperties(field:string, clazz?:string) : FieldProperties[]
+	public getInsertProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
-		let props:FieldProperties[] = [];
+		let props:DefaultProperties[] = [];
 
 		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
 		{
 			vfld.getInstancesByClass(clazz).forEach((inst) =>
 			{
-				props.push(new FieldProperties(inst,true,Status.insert));
+				props.push(new DefaultProperties(inst,Status.insert));
 			})
 		})
 

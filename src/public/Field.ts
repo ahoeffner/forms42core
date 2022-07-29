@@ -12,6 +12,7 @@
 
 import { Form } from './Form.js';
 import { Status } from '../view/Row.js';
+import { Properties } from './Properties.js';
 import { DefaultProperties } from './DefaultProperties.js';
 import { FieldInstance as ViewInstance } from '../view/fields/FieldInstance.js';
 
@@ -45,7 +46,7 @@ export class Field
 		return(this.inst$.form);
 	}
 
-	public getQBEProperties() : DefaultProperties
+	public getQBEProperties() : Properties
 	{
 		return(new DefaultProperties(this.inst$,Status.qbe));
 	}
@@ -55,7 +56,7 @@ export class Field
 		return(new DefaultProperties(this.inst$,Status.insert));
 	}
 
-	public getDefaultProperties() : DefaultProperties
+	public getDefaultProperties() : Properties
 	{
 		return(new DefaultProperties(this.inst$,Status.update));
 	}

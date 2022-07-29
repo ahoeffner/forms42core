@@ -70,7 +70,6 @@ export class Block
 
 		if (!ModelForm.getForm(this.form).hasEventTransaction(block))
 		{
-			console.log("No trx")
 			intrec = block.getRecord(offset);
 		}
 		else

@@ -14,7 +14,6 @@ import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
-import { Properties } from './Properties.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
@@ -109,7 +108,7 @@ export class Block
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getQBEProperties(field:string, clazz?:string) : Properties[]
+	public getQBEProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];
@@ -125,7 +124,7 @@ export class Block
 		return(props);
 	}
 
-	public getDefaultProperties(field:string, clazz?:string) : Properties[]
+	public getDefaultProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];
@@ -141,7 +140,7 @@ export class Block
 		return(props);
 	}
 
-	public getInsertProperties(field:string, clazz?:string) : Properties[]
+	public getInsertProperties(field:string, clazz?:string) : DefaultProperties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];

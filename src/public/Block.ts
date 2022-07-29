@@ -14,13 +14,14 @@ import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
-import { EventType } from '../../index.js';
+import { Properties } from './Properties.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { DefaultProperties } from './DefaultProperties.js';
+import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
 export class Block
@@ -109,7 +110,7 @@ export class Block
 		return(this.form.getFields(this.name,field,clazz));
 	}
 
-	public getQBEProperties(field:string, clazz?:string) : DefaultProperties[]
+	public getQBEProperties(field:string, clazz?:string) : Properties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];
@@ -125,7 +126,7 @@ export class Block
 		return(props);
 	}
 
-	public getDefaultProperties(field:string, clazz?:string) : DefaultProperties[]
+	public getDefaultProperties(field:string, clazz?:string) : Properties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];
@@ -141,7 +142,7 @@ export class Block
 		return(props);
 	}
 
-	public getInsertProperties(field:string, clazz?:string) : DefaultProperties[]
+	public getInsertProperties(field:string, clazz?:string) : Properties[]
 	{
 		field = field?.toLowerCase();
 		let props:DefaultProperties[] = [];

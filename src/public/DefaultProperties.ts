@@ -33,6 +33,11 @@ export class DefaultProperties extends BasicProperties implements Properties
 		FieldFeatureFactory.initialize(this,inst$,true,status);
 	}
 
+	public get id() : string
+	{
+		return(this.inst$.id);
+	}
+
 	public get name() : string
 	{
 		return(this.inst$.name);

@@ -13,9 +13,7 @@
 import { Row } from "./Row.js";
 import { Block } from "./Block";
 import { Record } from "../model/Record.js";
-import { FieldInstance } from "./fields/FieldInstance";
-import { FieldProperties } from "./fields/FieldProperties";
-import { Field } from "./fields/Field.js";
+import { FieldProperties } from "../public/FieldProperties.js";
 
 export class RecordProperties
 {

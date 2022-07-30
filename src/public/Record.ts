@@ -10,12 +10,12 @@
  * accompanied this code).
  */
 
-import { Block } from "../model/Block.js";
-import { Row, Status } from "../view/Row.js";
+import { Row } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
+import { Block as ViewBlock } from "../view/Block.js";
 import { Record as Internal } from "../model/Record.js"
-import { DefaultProperties } from "./DefaultProperties.js";
-import { FieldInstance } from "../view/fields/FieldInstance.js";
+import { FieldProperties } from "./FieldProperties.js";
+import { Block as ModelBlock } from "../model/Block.js";
 
 export class Record
 {
@@ -29,8 +29,8 @@ export class Record
 	public getValue(field:string, dirty?:boolean) : any
 	{
 		field = field?.toLowerCase();
-		let blk:Block = this.rec$.block;
 		if (dirty == null) dirty = false;
+		let blk:ModelBlock = this.rec$.block;
 
 		if (dirty)
 		{
@@ -46,16 +46,19 @@ export class Record
 	public setValue(field:string, value:any) : void
 	{
 		field = field?.toLowerCase();
-		let blk:Block = this.rec$.block;
 		this.rec$.setValue(field,value);
+		let blk:ModelBlock = this.rec$.block;
 		let row:Row = blk?.view.displayed(this.rec$);
 		if (row != null) row.getField(field)?.setValue(value);
 	}
 
-	public getProperties(field:string, clazz?:string) : DefaultProperties[]
+	public getProperties(field:string, clazz?:string) : FieldProperties
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
+		let blk:ViewBlock = this.rec$.block.view;
+
+		blk.setRecordProperties
 
 		/*
 

@@ -23,11 +23,11 @@ import { FieldInstance } from "./fields/FieldInstance.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
-import { FieldProperties } from "./fields/FieldProperties.js";
+import { FieldProperties } from "../public/FieldProperties.js";
+import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { DataType } from "./fields/implementations/DataType.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 
 export class Block
@@ -179,10 +179,15 @@ export class Block
 		return(this.fieldnames$);
 	}
 
-	public setRecordProperties(record:Record, inst:FieldInstance, props:FieldProperties) : void
+	public getRecordProperties(record:Record, field:string, clazz:string) : FieldProperties
+	{
+		//this.recprops$.
+		return(null);
+	}
+
+	public setRecordProperties(record:Record, field:string, clazz:string, props:FieldProperties) : void
 	{
 		if (record == null) record = this.model.getRecord(0);
-		let row:Row = this.getRow(inst.row);
 		//this.recprops$.set(row,inst,record,props);
 	}
 

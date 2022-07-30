@@ -35,60 +35,52 @@ export class RecordProperties
 
 	public get(record:Record, field:string, clazz:string) : FieldProperties
 	{
-		let fmap:Map<string,Pattern[]> = this.propmap$.get(record.id);
+		return(this.propmap$.get(record.id)?.get(field)?.get(clazz));
 
-		if (fmap)
-		{
-			for(let [clazz,pattern] of fmap)
-			{
-			}
-		}
 	}
 
-	public set(row:Row, record:Record, field:string, clazz:string, props:FieldProperties) : void
+	public set(record:Record, field:string, clazz:string, props:FieldProperties) : void
 	{
-		/*
-		let rmap:Map<string,FieldProperties> = this.propmap$.get(record.id);
+		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
 
 		if (rmap == null)
 		{
-			rmap = new Map<string,FieldProperties>();
+			rmap = new Map<string,Map<string,FieldProperties>>();
 			this.propmap$.set(record.id,rmap);
 		}
 
-		let idx:number = row.getInstanceIndex(inst);
-		let field:string = idx+";"+inst.name;
-		rmap.set(field,props);
-		console.log("setting props, inst: "+inst.name+"["+inst.row+"] field: "+field);
-		*/
+		let fmap:Map<string,FieldProperties> = rmap.get(field);
+
+		if (fmap == null)
+		{
+			fmap = new Map<string,FieldProperties>();
+			rmap.set(field,fmap);
+		}
+
+		fmap.set(clazz,props);
 	}
 
 	public apply(row:Row, record:Record) : void
 	{
+		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
+		if (rmap == null) return;
+
 		row.getFields().forEach((fld) =>
 		{
-			null;
+			let fmap:Map<string,FieldProperties> = rmap.get(fld.name);
+
+			if (fmap != null)
+			{
+				let classes:string[] = [...fmap.keys()];
+
+				fld.getInstances().forEach((inst) =>
+				{
+					for (let i = 0; i < classes.length; i++)
+					{
+						null;
+					}
+				})
+			}
 		});
-
-		/*
-		let props:FieldProperties = null;
-		let rmap:Map<string,FieldProperties> = this.propmap$.get(record.id);
-
-		if (rmap != null)
-		{
-			let idx:number = row.getInstanceIndex(inst);
-			let field:string = idx+";"+inst.name;
-			props = rmap.get(field);
-			console.log("getting props, inst: "+inst.name+"["+inst.row+"] field: "+field+" "+props);
-		}
-
-		return(props);
-		*/
 	}
-}
-
-class Pattern
-{
-	clazz:string;
-	props:FieldProperties;
 }

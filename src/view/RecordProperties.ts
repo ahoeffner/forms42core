@@ -19,8 +19,9 @@ export class RecordProperties
 {
 	private block:Block = null;
 
-	propmap$:Map<object,Map<string,Pattern>> =
-		new Map<object,Map<string,Pattern>>();
+	// record -> field -> clazz -> props
+	propmap$:Map<object,Map<string,Map<string,FieldProperties>>> =
+		new Map<object,Map<string,Map<string,FieldProperties>>>();
 
 	constructor(block:Block)
 	{
@@ -30,6 +31,18 @@ export class RecordProperties
 	public clear() : void
 	{
 		this.propmap$.clear();
+	}
+
+	public get(record:Record, field:string, clazz:string) : FieldProperties
+	{
+		let fmap:Map<string,Pattern[]> = this.propmap$.get(record.id);
+
+		if (fmap)
+		{
+			for(let [clazz,pattern] of fmap)
+			{
+			}
+		}
 	}
 
 	public set(row:Row, record:Record, field:string, clazz:string, props:FieldProperties) : void
@@ -54,7 +67,7 @@ export class RecordProperties
 	{
 		row.getFields().forEach((fld) =>
 		{
-
+			null;
 		});
 
 		/*

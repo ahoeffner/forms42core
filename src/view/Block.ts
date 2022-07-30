@@ -181,6 +181,7 @@ export class Block
 
 	public getRecordProperties(record:Record, field:string, clazz:string) : FieldProperties
 	{
+		let row:Row = this.displayed(record);
 		//this.recprops$.
 		return(null);
 	}

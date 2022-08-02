@@ -77,7 +77,8 @@ export class RecordProperties
 				{
 					for (let i = 0; i < classes.length; i++)
 					{
-						null;
+						if (inst.properties.hasClass(classes[i]))
+							console.log("Apply record props");
 					}
 				})
 			}

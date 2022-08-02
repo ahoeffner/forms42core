@@ -12,7 +12,6 @@
 
 import { Row } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
-import { Block as ViewBlock } from "../view/Block.js";
 import { Record as Internal } from "../model/Record.js"
 import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from "../model/Block.js";
@@ -52,30 +51,11 @@ export class Record
 		if (row != null) row.getField(field)?.setValue(value);
 	}
 
-	public getProperties(field:string, clazz?:string) : FieldProperties
+	public setProperties(props:FieldProperties, field:string, clazz?:string) : void
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
-		let blk:ViewBlock = this.rec$.block.view;
-
-		blk.setRecordProperties
-
-		/*
-
-		let blk:Block = this.rec$.block;
-		let row:Row = blk?.view.displayed(this.rec$);
-
-		let props:DefaultProperties[] = [];
-		let instances:FieldInstance[] = [];
-		row?.getField(field)?.getInstancesByClass(clazz).forEach((inst) => instances.push(inst));
-
-		instances.forEach((inst) =>
-		{
-			props.push(new DefaultProperties(inst,false,Status.update));
-		})
-
-		*/
-
-		return(null);
+		let blk:ModelBlock = this.rec$.block;
+		blk.view.setRecordProperties(this.rec$,field,clazz,props);
 	}
 }

@@ -53,6 +53,12 @@ export class BasicProperties
 		this.tag$ = tag?.toLowerCase();
 	}
 
+	public setTag(tag:string) : BasicProperties
+	{
+		this.tag = tag;
+		return(this);
+	}
+
 	public get enabled() : boolean
 	{
 		return(this.enabled$);
@@ -61,6 +67,12 @@ export class BasicProperties
 	public set enabled(flag:boolean)
 	{
 		this.enabled$ = flag;
+	}
+
+	public setEnabled(flag:boolean) : BasicProperties
+	{
+		this.enabled = flag;
+		return(this);
 	}
 
 	public get readonly() : boolean
@@ -73,6 +85,12 @@ export class BasicProperties
 		this.readonly$ = flag;
 	}
 
+	public setReadOnly(flag:boolean) : BasicProperties
+	{
+		this.readonly = flag;
+		return(this);
+	}
+
 	public get required() : boolean
 	{
 		return(this.required$);
@@ -83,6 +101,12 @@ export class BasicProperties
 		this.required$ = flag;
 	}
 
+	public setRequired(flag:boolean) : BasicProperties
+	{
+		this.required = flag;
+		return(this);
+	}
+
 	public get hidden() : boolean
 	{
 		return(this.hidden$);
@@ -91,6 +115,12 @@ export class BasicProperties
 	public set hidden(flag:boolean)
 	{
 		this.hidden$ = flag;
+	}
+
+	public setHidden(flag:boolean) : BasicProperties
+	{
+		this.hidden = flag;
+		return(this);
 	}
 
 	public get styleElements() : Style[]
@@ -133,21 +163,24 @@ export class BasicProperties
 		}
 	}
 
-	public setStyles(styles:string) : void
+	public setStyles(styles:string) : BasicProperties
 	{
 		this.styles = styles;
+		return(this);
 	}
 
-	public setStyle(style:string, value:string) : void
+	public setStyle(style:string, value:string) : BasicProperties
 	{
 		value = value.toLowerCase();
 		style = style.toLowerCase();
 
 		this.removeStyle(style);
 		this.styles$.push({style: style, value: value});
+
+		return(this);
 	}
 
-	public removeStyle(style:string) : void
+	public removeStyle(style:string) : BasicProperties
 	{
 		style = style.toLowerCase();
 
@@ -159,33 +192,37 @@ export class BasicProperties
 				break;
 			}
 		}
+
+		return(this);
 	}
 
-	public setClass(clazz:string) : void
+	public setClass(clazz:string) : BasicProperties
 	{
 		if (clazz == null)
-			return;
+			return(this);
 
 		clazz = clazz.trim();
 
 		if (clazz.includes(' '))
 		{
 			this.setClasses(clazz);
-			return;
+			return(this);
 		}
 
 		clazz = clazz.toLowerCase();
 
 		if (this.classes$[clazz] == null)
 			this.classes$.push(clazz);
+
+		return(this);
 	}
 
-	public setClasses(classes:string|string[]) : void
+	public setClasses(classes:string|string[]) : BasicProperties
 	{
 		this.classes$ = [];
 
 		if (classes == null)
-			return;
+			return(this);
 
 		if (!Array.isArray(classes))
 			classes = classes.split(" ,");
@@ -195,6 +232,8 @@ export class BasicProperties
 			if (clazz.length > 0)
 				this.classes$.push(clazz.toLowerCase());
 		}
+
+		return(this);
 	}
 
 	public getClasses() : string[]
@@ -208,11 +247,12 @@ export class BasicProperties
 		return(this.classes$.includes(clazz));
 	}
 
-	public removeClass(clazz:any) : void
+	public removeClass(clazz:any) : BasicProperties
 	{
 		clazz = clazz.toLowerCase();
 		let idx:number = this.classes$.indexOf(clazz);
 		if (idx >= 0) this.classes$ = this.classes$.splice(idx,1)
+		return(this);
 	}
 
 	public getAttributes() : Map<string,string>
@@ -225,12 +265,12 @@ export class BasicProperties
 		return(this.attribs$.get(attr.toLowerCase()));
 	}
 
-	public setAttribute(attr:string, value:any) : any
+	public setAttribute(attr:string, value:any) : BasicProperties
 	{
 		attr = attr.toLowerCase();
 
 		if (this.handled$.includes(attr))
-			return;
+			return(this);
 
 		if (this.structured$.includes(attr))
 		{
@@ -252,7 +292,7 @@ export class BasicProperties
 				case "mapper": this.setMapper(value); break;
 			}
 
-			return;
+			return(this);
 		}
 
 		let val:string = "";
@@ -262,9 +302,10 @@ export class BasicProperties
 			val += value;
 
 		this.attribs$.set(attr,val);
+		return(this);
 	}
 
-	public removeAttribute(attr:string) : any
+	public removeAttribute(attr:string) : BasicProperties
 	{
 		attr = attr.toLowerCase();
 		this.attribs$.delete(attr.toLowerCase());
@@ -288,6 +329,13 @@ export class BasicProperties
 		}
 	}
 
+	public setValue(value:string) : BasicProperties
+	{
+		this.value = value;
+		return(this);
+	}
+
+
     public get validValues() : Map<string,string>
 	{
 		return(this.values$);
@@ -303,9 +351,10 @@ export class BasicProperties
         else this.values$ = values;
     }
 
-    public setValidValues(values: Set<string> | Map<string,string>) : void
+    public setValidValues(values: Set<string> | Map<string,string>) : BasicProperties
 	{
 		this.validValues = values;
+		return(this);
 	}
 
     public getValidValues() : Map<string,string>
@@ -323,7 +372,7 @@ export class BasicProperties
 		this.mapper$ = mapper;
 	}
 
-	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : void
+	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : BasicProperties
 	{
 		let factory:ComponentFactory =
 			Properties.FactoryImplementationClass;
@@ -339,5 +388,7 @@ export class BasicProperties
 			Alert.fatal("'"+this.mapper$.constructor.name+"' is not a DataMapper","DataMapper");
 			this.mapper$ = null;
 		}
+
+		return(this);
 	}
 }

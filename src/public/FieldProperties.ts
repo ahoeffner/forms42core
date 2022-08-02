@@ -11,17 +11,17 @@
  */
 
 import { Class } from '../types/Class.js';
-import { Properties } from './Properties.js';
 import { DataMapper } from '../view/fields/DataMapper.js';
-import { FieldInstance } from '../view/fields/FieldInstance.js';
+import { DefaultProperties } from './DefaultProperties.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 
-export class FieldProperties extends BasicProperties implements Properties
+export class FieldProperties extends BasicProperties
 {
-	constructor(inst$:FieldInstance)
+	constructor(properties:DefaultProperties)
 	{
 		super();
+		FieldFeatureFactory.copyBasic(properties,this);
 	}
 
 	public setTag(tag:string) : FieldProperties
@@ -118,10 +118,5 @@ export class FieldProperties extends BasicProperties implements Properties
 	{
 		super.setMapper(mapper);
 		return(this);
-	}
-
-	public apply() : void
-	{
-		null;
 	}
 }

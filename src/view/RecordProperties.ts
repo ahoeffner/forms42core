@@ -11,22 +11,14 @@
  */
 
 import { Row } from "./Row.js";
-import { Block } from "./Block";
 import { Record } from "../model/Record.js";
 import { FieldProperties } from "../public/FieldProperties.js";
 
 export class RecordProperties
 {
-	private block:Block = null;
-
 	// record -> field -> clazz -> props
 	propmap$:Map<object,Map<string,Map<string,FieldProperties>>> =
 		new Map<object,Map<string,Map<string,FieldProperties>>>();
-
-	constructor(block:Block)
-	{
-		this.block = block;
-	}
 
 	public clear() : void
 	{
@@ -36,7 +28,6 @@ export class RecordProperties
 	public get(record:Record, field:string, clazz:string) : FieldProperties
 	{
 		return(this.propmap$.get(record.id)?.get(field)?.get(clazz));
-
 	}
 
 	public set(record:Record, field:string, clazz:string, props:FieldProperties) : void
@@ -58,6 +49,11 @@ export class RecordProperties
 		}
 
 		fmap.set(clazz,props);
+	}
+
+	public delete(record:Record, field:string, clazz:string) : void
+	{
+		this.propmap$.get(record.id)?.get(field)?.delete(clazz);
 	}
 
 	public apply(row:Row, record:Record) : void

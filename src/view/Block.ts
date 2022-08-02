@@ -40,7 +40,7 @@ export class Block
 	private fieldnames$:string[] = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private displayed$:Map<object,Row> = new Map<object,Row>();
-	private recprops$:RecordProperties = new RecordProperties(this);
+	private recprops$:RecordProperties = new RecordProperties();
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
@@ -181,15 +181,13 @@ export class Block
 
 	public getRecordProperties(record:Record, field:string, clazz:string) : FieldProperties
 	{
-		let row:Row = this.displayed(record);
-		//this.recprops$.
-		return(null);
+		return(this.recprops$.get(record,field,clazz));
 	}
 
 	public setRecordProperties(record:Record, field:string, clazz:string, props:FieldProperties) : void
 	{
-		if (record == null) record = this.model.getRecord(0);
-		//this.recprops$.set(row,inst,record,props);
+		if (props == null) this.recprops$.delete(record,field,clazz);
+		else			   this.recprops$.set(record,field,clazz,props);
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>

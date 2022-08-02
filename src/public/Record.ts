@@ -12,8 +12,8 @@
 
 import { Row } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
-import { Record as Internal } from "../model/Record.js"
 import { FieldProperties } from "./FieldProperties.js";
+import { Record as Internal } from "../model/Record.js";
 import { Block as ModelBlock } from "../model/Block.js";
 
 export class Record
@@ -57,5 +57,13 @@ export class Record
 		clazz = clazz?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
 		blk.view.setRecordProperties(this.rec$,field,clazz,props);
+	}
+
+	public clearProperties(field:string, clazz?:string) : void
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+		let blk:ModelBlock = this.rec$.block;
+		blk.view.setRecordProperties(this.rec$,field,clazz,null);
 	}
 }

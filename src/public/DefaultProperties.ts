@@ -12,8 +12,6 @@
 
 import { Form } from './Form.js';
 import { Status } from '../view/Row.js';
-import { Class } from '../types/Class.js';
-import { DataMapper } from '../view/fields/DataMapper.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';

@@ -13,13 +13,10 @@
 import { Form } from './Form.js';
 import { Field } from './Field.js';
 import { Record } from './Record.js';
-import { Status } from '../view/Row.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
-import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
-import { DefaultProperties } from './DefaultProperties.js';
 import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
@@ -106,54 +103,6 @@ export class Block
 	public getFields(field:string, clazz?:string) : Field[]
 	{
 		return(this.form.getFields(this.name,field,clazz));
-	}
-
-	public getQBEProperties(field:string, clazz?:string) : DefaultProperties[]
-	{
-		field = field?.toLowerCase();
-		let props:DefaultProperties[] = [];
-
-		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
-		{
-			vfld.getInstancesByClass(clazz).forEach((inst) =>
-			{
-				props.push(new DefaultProperties(inst,Status.qbe));
-			})
-		})
-
-		return(props);
-	}
-
-	public getDefaultProperties(field:string, clazz?:string) : DefaultProperties[]
-	{
-		field = field?.toLowerCase();
-		let props:DefaultProperties[] = [];
-
-		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
-		{
-			vfld.getInstancesByClass(clazz).forEach((inst) =>
-			{
-				props.push(new DefaultProperties(inst,Status.update));
-			})
-		})
-
-		return(props);
-	}
-
-	public getInsertProperties(field:string, clazz?:string) : DefaultProperties[]
-	{
-		field = field?.toLowerCase();
-		let props:DefaultProperties[] = [];
-
-		ViewBlock.getBlock(this).getAllFields(field).forEach((vfld) =>
-		{
-			vfld.getInstancesByClass(clazz).forEach((inst) =>
-			{
-				props.push(new DefaultProperties(inst,Status.insert));
-			})
-		})
-
-		return(props);
 	}
 
 	public async executeQuery() : Promise<boolean>

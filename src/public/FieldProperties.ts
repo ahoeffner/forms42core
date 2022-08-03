@@ -21,7 +21,9 @@ export class FieldProperties extends BasicProperties
 	constructor(properties:DefaultProperties)
 	{
 		super();
-		FieldFeatureFactory.copyBasic(properties,this);
+		
+		if (properties != null)
+			FieldFeatureFactory.copyBasic(properties,this);
 	}
 
 	public setTag(tag:string) : FieldProperties

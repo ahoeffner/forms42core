@@ -215,13 +215,13 @@ export class DataSourceWrapper
 
 			if (!record.prepared)
 			{
+				record.wrapper = this;
+				
 				if (!await this.block.onFetch(record))
 				{
 					this.winpos$ = undo;
 					return(null);
 				}
-
-				record.wrapper = this;
 				record.prepared = true;
 			}
 

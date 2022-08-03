@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Field } from './Field.js';
 import { Block } from './Block.js';
 import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
@@ -19,7 +18,6 @@ import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
-import { Field as ViewField } from '../view/fields/Field.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
@@ -125,41 +123,6 @@ export class Form implements CanvasComponent
 		View.finalize(this);
 		Model.finalize(this);
     }
-
-	public getFields(block:Block|string, field:string, clazz?:string) : Field[]
-	{
-		let flds:Field[] = [];
-		let vflds:ViewField[] = [];
-		if (typeof block != "string") block = block.name;
-
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-
-		vflds = View.getForm(this).getBlock(block).getFields(field);
-
-		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesByClass(clazz).forEach((inst) => {flds.push(new Field(inst))})
-
-		return(flds);
-	}
-
-	public getFieldById(block:Block|string, field:string, id:string) : Field
-	{
-		let flds:Field[] = [];
-		let vflds:ViewField[] = [];
-		if (typeof block != "string") block = block.name;
-
-		block = block?.toLowerCase();
-		field = field?.toLowerCase();
-
-		vflds = View.getForm(this).getBlock(block).getFields(field);
-
-		for (let i = 0; i < vflds.length; i++)
-			vflds[i].getInstancesById(id).forEach((inst) => {flds.push(new Field(inst))})
-
-		if (flds.length == 0) return(null);
-		else				  return(flds[0]);
-	}
 
     public async close() : Promise<boolean>
     {

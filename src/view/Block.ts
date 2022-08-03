@@ -86,13 +86,6 @@ export class Block
 		this.getRow(0)?.getFirstInstance()?.focus();
 	}
 
-	public getField(field:string) : Field
-	{
-		let fld:Field = this.getRow(this.row)?.getField(field);
-		if (fld == null) fld = this.getRow(-1)?.getField(field);
-		return(fld);
-	}
-
 	public getAllFields(field?:string) : Field[]
 	{
 		let fields:Field[] = [];
@@ -124,7 +117,7 @@ export class Block
 		return(fields);
 	}
 
-	public getFields(name?:string) : Field[]
+	public getCurrentFields(name?:string) : Field[]
 	{
 		let row:Row = null;
 		let fields:Field[] = [];
@@ -153,6 +146,50 @@ export class Block
 		}
 
 		return(fields);
+	}
+
+	public getFieldById(field:string, id:string) : FieldInstance
+	{
+		let fields:Field[] = this.getAllFields(field);
+
+		for (let f = 0; f < fields.length; f++)
+		{
+			let instances:FieldInstance[] = fields[f].getInstances();
+
+			for (let i = 0; i < instances.length; i++)
+			{
+				if (instances[i].id == id)
+					return(instances[i]);
+			}
+		}
+
+		return(null);
+	}
+
+	public getFieldsByClass(field:string, clazz:string) : FieldInstance[]
+	{
+		let matched:FieldInstance[] = [];
+		let fields:Field[] = this.getAllFields(field);
+
+		for (let f = 0; f < fields.length; f++)
+		{
+			let instances:FieldInstance[] = fields[f].getInstances();
+
+			if (clazz == null)
+			{
+				matched.push(...instances);
+			}
+			else
+			{
+				for (let i = 0; i < instances.length; i++)
+				{
+					if (instances[i].properties.hasClass(clazz))
+						matched.push(instances[i]);
+				}
+			}
+		}
+
+		return(matched);
 	}
 
 	public getFieldInstances() : FieldInstance[]

@@ -2,7 +2,7 @@ export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 export { Field } from './src/public/Field.js';
 export { Record } from './src/public/Record.js';
-export { Properties } from './src/public/Properties.js';
+export { FieldProperties } from './src/public/FieldProperties.js';
 export { DefaultProperties } from './src/public/DefaultProperties.js';
 
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';

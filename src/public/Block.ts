@@ -15,10 +15,12 @@ import { Field } from './Field.js';
 import { Record } from './Record.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
+import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
+import { FieldInstance } from '../view/fields/FieldInstance.js';
 
 export class Block
 {
@@ -97,12 +99,23 @@ export class Block
 
 	public getFieldById(field:string, id:string) : Field
 	{
-		return(this.form.getFieldById(this.name,field,id));
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		return(inst == null ? null : new Field(inst));
 	}
 
 	public getFields(field:string, clazz?:string) : Field[]
 	{
-		return(this.form.getFields(this.name,field,clazz));
+		let fields:Field[] = [];
+
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz)
+		.forEach((inst) => {fields.push(new Field(inst))});
+
+		return(fields);
 	}
 
 	public async executeQuery() : Promise<boolean>

@@ -130,11 +130,6 @@ export class Form implements EventListenerObject
 		indicators.push(ind);
 	}
 
-	public getField(block:string, field:string) : Field
-	{
-		return(this.getBlock(block)?.getField(field));
-	}
-
 	public focus() : void
 	{
 		if (this.curinst$)

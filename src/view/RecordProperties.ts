@@ -11,9 +11,10 @@
  */
 
 import { Row } from "./Row.js";
+import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
 import { FieldProperties } from "../public/FieldProperties.js";
-import { Field } from "./fields/Field.js";
+import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 export class RecordProperties
 {
@@ -76,7 +77,7 @@ export class RecordProperties
 					for (let i = 0; i < classes.length; i++)
 					{
 						if (classes[i] == null || inst.properties.hasClass(classes[i]))
-							console.log("Apply record props to class "+classes[i]);
+							FieldFeatureFactory.merge(fmap.get(classes[i]),inst,false);
 					}
 				})
 			}
@@ -96,7 +97,7 @@ export class RecordProperties
 						for (let i = 0; i < classes.length; i++)
 						{
 							if (classes[i] == null || inst.properties.hasClass(classes[i]))
-								console.log("Apply record props to class "+classes[i]);
+								FieldFeatureFactory.merge(fmap.get(classes[i]),inst,false);
 						}
 					})
 				}

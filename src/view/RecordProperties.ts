@@ -61,7 +61,15 @@ export class RecordProperties
 	public apply(row:Row, record:Record, field?:string) : void
 	{
 		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
-		if (rmap == null) return;
+
+		if (row.rownum < 0)
+		{
+			row.getFields().forEach((fld) =>
+			{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
+		}
+
+		if (rmap == null)
+			return;
 
 		if (field != null)
 		{

@@ -58,15 +58,37 @@ export class RecordProperties
 		this.propmap$.get(record.id)?.get(field)?.delete(clazz);
 	}
 
+	public reset(row:Row, field?:string, clazz?:string) : void
+	{
+		if (field != null)
+		{
+			let fld:Field = row.getField(field);
+
+			fld.getInstances().forEach((inst) =>
+			{
+				if (clazz == null || inst.properties.hasClass(clazz))
+					inst.resetProperties();
+			})
+		}
+		else
+		{
+			row.getFields().forEach((fld) =>
+			{
+				fld.getInstances().forEach((inst) =>
+				{
+					if (clazz == null || inst.properties.hasClass(clazz))
+						inst.resetProperties();
+				})
+			})
+		}
+	}
+
 	public apply(row:Row, record:Record, field?:string) : void
 	{
 		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
 
 		if (row.rownum < 0)
-		{
-			row.getFields().forEach((fld) =>
-			{fld.getInstances().forEach((inst) => {inst.resetProperties()})})
-		}
+			this.reset(row);
 
 		if (rmap == null)
 			return;
@@ -110,7 +132,6 @@ export class RecordProperties
 					})
 				}
 			});
-
 		}
 	}
 }

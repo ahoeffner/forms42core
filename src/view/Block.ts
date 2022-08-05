@@ -226,7 +226,17 @@ export class Block
 		if (props == null)
 		{
 			this.recprops$.delete(record,field,clazz);
-			// Reset to default
+
+			let row:Row = this.displayed(record);
+			this.recprops$.reset(row,field,clazz);
+
+			if (this.row == row.rownum)
+			{
+				row = this.getRow(-1);
+				
+				if (row != null)
+					this.recprops$.reset(row,field,clazz);
+			}
 		}
 		else
 		{

@@ -66,6 +66,11 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.apply(this.properties$,true);
 	}
 
+	public resetProperties() : void
+	{
+		this.applyProperties(null);
+	}
+
 	public updateDefaultProperties()
 	{
 		if (!this.hasDefaultProperties())
@@ -76,11 +81,6 @@ export class FieldInstance implements FieldEventHandler
 
 		if (clazz == this.clazz) this.updateField(newprops);
 		else					 this.changeFieldType(clazz,newprops);
-	}
-
-	public resetProperties() : void
-	{
-		this.applyProperties(null);
 	}
 
 	public applyProperties(newprops:FieldProperties) : void
@@ -117,6 +117,7 @@ export class FieldInstance implements FieldEventHandler
 		}
 	}
 
+	// Properties changed, minor adjustments
 	private updateField(newprops:FieldProperties) : void
 	{
 		let value:any = null;
@@ -135,6 +136,7 @@ export class FieldInstance implements FieldEventHandler
 		else				   this.impl.setIntermediateValue(value);
 	}
 
+	// Properties changed, build new field
 	private changeFieldType(clazz:Class<FieldImplementation>, newprops:FieldProperties) : void
 	{
 		let value:any = null;

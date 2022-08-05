@@ -233,7 +233,7 @@ export class Block
 			if (this.row == row.rownum)
 			{
 				row = this.getRow(-1);
-				
+
 				if (row != null)
 					this.recprops$.reset(row,field,clazz);
 			}

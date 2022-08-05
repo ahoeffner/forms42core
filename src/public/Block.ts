@@ -50,9 +50,9 @@ export class Block
 		ModelBlock.getBlock(this).datasource = source;
 	}
 
-	public getValue(field:string, dirty?:boolean) : any
+	public getValue(field:string) : any
 	{
-		return(this.getRecord(0)?.getValue(field,dirty));
+		return(this.getRecord(0)?.getValue(field));
 	}
 
 	public setValue(field:string, value:any) : void

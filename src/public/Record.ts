@@ -25,19 +25,14 @@ export class Record
 		this.rec$ = rec;
 	}
 
-	public getValue(field:string, dirty?:boolean) : any
+	public getValue(field:string) : any
 	{
 		field = field?.toLowerCase();
-		if (dirty == null) dirty = false;
 		let blk:ModelBlock = this.rec$.block;
+		let row:Row = blk?.view.displayed(this.rec$);
 
-		if (dirty)
-		{
-			let row:Row = blk?.view.displayed(this.rec$);
-
-			let fld:Field = row?.getField(field);
-			if (fld != null) return(fld.getValue());
-		}
+		let fld:Field = row?.getField(field);
+		if (fld != null) return(fld.getValue());
 
 		return(this.rec$.getValue(field));
 	}

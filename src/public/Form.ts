@@ -67,9 +67,9 @@ export class Form implements CanvasComponent
 		Model.getForm(this).setDataSource(block.toLowerCase(),source);
 	}
 
-	public getValue(block:Block|string, field:string, dirty?:boolean) : any
+	public getValue(block:Block|string, field:string) : any
 	{
-		return(this.getBlock(block)?.getValue(field,dirty));
+		return(this.getBlock(block)?.getValue(field));
 	}
 
 	public setValue(block:Block|string, field:string, value:any) : void

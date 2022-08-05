@@ -13,6 +13,7 @@
 import { Row } from "./Row.js";
 import { Record } from "../model/Record.js";
 import { FieldProperties } from "../public/FieldProperties.js";
+import { Field } from "./fields/Field.js";
 
 export class RecordProperties
 {
@@ -56,28 +57,51 @@ export class RecordProperties
 		this.propmap$.get(record.id)?.get(field)?.delete(clazz);
 	}
 
-	public apply(row:Row, record:Record) : void
+	public apply(row:Row, record:Record, field?:string) : void
 	{
 		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
 		if (rmap == null) return;
 
-		row.getFields().forEach((fld) =>
+		if (field != null)
 		{
-			let fmap:Map<string,FieldProperties> = rmap.get(fld.name);
+			let fmap:Map<string,FieldProperties> = rmap.get(field);
 
 			if (fmap != null)
 			{
+				let fld:Field = row.getField(field);
 				let classes:string[] = [...fmap.keys()];
 
 				fld.getInstances().forEach((inst) =>
 				{
 					for (let i = 0; i < classes.length; i++)
 					{
-						if (inst.properties.hasClass(classes[i]))
-							console.log("Apply record props");
+						if (classes[i] == null || inst.properties.hasClass(classes[i]))
+							console.log("Apply record props to class "+classes[i]);
 					}
 				})
 			}
-		});
+		}
+		else
+		{
+			row.getFields().forEach((fld) =>
+			{
+				let fmap:Map<string,FieldProperties> = rmap.get(fld.name);
+
+				if (fmap != null)
+				{
+					let classes:string[] = [...fmap.keys()];
+
+					fld.getInstances().forEach((inst) =>
+					{
+						for (let i = 0; i < classes.length; i++)
+						{
+							if (classes[i] == null || inst.properties.hasClass(classes[i]))
+								console.log("Apply record props to class "+classes[i]);
+						}
+					})
+				}
+			});
+
+		}
 	}
 }

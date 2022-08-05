@@ -171,8 +171,8 @@ export class BasicProperties
 
 	public setStyle(style:string, value:string) : BasicProperties
 	{
-		value = value.toLowerCase();
-		style = style.toLowerCase();
+		value = value?.toLowerCase();
+		style = style?.toLowerCase();
 
 		this.removeStyle(style);
 		this.styles$.push({style: style, value: value});
@@ -182,7 +182,7 @@ export class BasicProperties
 
 	public removeStyle(style:string) : BasicProperties
 	{
-		style = style.toLowerCase();
+		style = style?.toLowerCase();
 
 		for (let i = 0; i < this.styles$.length; i++)
 		{
@@ -209,7 +209,7 @@ export class BasicProperties
 			return(this);
 		}
 
-		clazz = clazz.toLowerCase();
+		clazz = clazz?.toLowerCase();
 
 		if (this.classes$[clazz] == null)
 			this.classes$.push(clazz);
@@ -230,7 +230,7 @@ export class BasicProperties
 		for(let clazz in classes)
 		{
 			if (clazz.length > 0)
-				this.classes$.push(clazz.toLowerCase());
+				this.classes$.push(clazz?.toLowerCase());
 		}
 
 		return(this);
@@ -243,13 +243,13 @@ export class BasicProperties
 
 	public hasClass(clazz:string) : boolean
 	{
-		clazz = clazz.toLowerCase();
+		clazz = clazz?.toLowerCase();
 		return(this.classes$.includes(clazz));
 	}
 
 	public removeClass(clazz:any) : BasicProperties
 	{
-		clazz = clazz.toLowerCase();
+		clazz = clazz?.toLowerCase();
 		let idx:number = this.classes$.indexOf(clazz);
 		if (idx >= 0) this.classes$ = this.classes$.splice(idx,1)
 		return(this);
@@ -262,12 +262,12 @@ export class BasicProperties
 
 	public getAttribute(attr:string) : string
 	{
-		return(this.attribs$.get(attr.toLowerCase()));
+		return(this.attribs$.get(attr?.toLowerCase()));
 	}
 
 	public setAttribute(attr:string, value:any) : BasicProperties
 	{
-		attr = attr.toLowerCase();
+		attr = attr?.toLowerCase();
 
 		if (this.handled$.includes(attr))
 			return(this);
@@ -296,7 +296,7 @@ export class BasicProperties
 		}
 
 		let val:string = "";
-		attr = attr.toLowerCase();
+		attr = attr?.toLowerCase();
 
 		if (value != null)
 			val += value;
@@ -307,8 +307,8 @@ export class BasicProperties
 
 	public removeAttribute(attr:string) : BasicProperties
 	{
-		attr = attr.toLowerCase();
-		this.attribs$.delete(attr.toLowerCase());
+		attr = attr?.toLowerCase();
+		this.attribs$.delete(attr);
 		return(this);
 	}
 

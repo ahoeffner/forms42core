@@ -223,8 +223,30 @@ export class Block
 
 	public setRecordProperties(record:Record, field:string, clazz:string, props:FieldProperties) : void
 	{
-		if (props == null) this.recprops$.delete(record,field,clazz);
-		else			   this.recprops$.set(record,field,clazz,props);
+		if (props == null)
+		{
+			this.recprops$.delete(record,field,clazz);
+			// Reset to default
+		}
+		else
+		{
+			this.recprops$.set(record,field,clazz,props);
+
+			if (this.displayed(record))
+			{
+				this.applyRecordProperties(record,true,field);
+				this.applyRecordProperties(record,false,field);
+			}
+		}
+	}
+
+	public applyRecordProperties(record:Record, baserec:boolean, field?:string) : void
+	{
+		let row:Row = this.displayed(record);
+		if (!baserec) row = this.getRow(-1);
+
+		if (row != null)
+			this.recprops$.apply(row,record,field);
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>
@@ -426,7 +448,7 @@ export class Block
 
 		row.clear();
 		row.status = Status.update;
-		this.applyProperties(row,record);
+		this.applyRecordProperties(record,true);
 
 		record.values.forEach((field) =>
 		{row.distribute(field.name,field.value,false);})
@@ -481,7 +503,7 @@ export class Block
 			current.clear();
 			let record:Record = this.model.getRecord();
 
-			this.applyProperties(current,record);
+			this.applyRecordProperties(record,false);
 			record.values.forEach((field) => {current.distribute(field.name,field.value,false);});
 		}
 	}
@@ -490,17 +512,6 @@ export class Block
 	{
 		if (next != null) this.getRow(next).avtivateIndicators(true);
 		if (prev != null) this.getRow(prev).avtivateIndicators(false);
-	}
-
-	private applyProperties(row:Row, record:Record) : void
-	{
-		/*
-		record.values.forEach((field) =>
-		{
-			row.getField(field.name)?.getInstances().
-			forEach((inst) => {inst.applyProperties(this.recprops$.get(row,inst,record))})
-		})
-		*/
 	}
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>

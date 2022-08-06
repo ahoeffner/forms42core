@@ -41,6 +41,8 @@ export class Properties
 {
     public static BindTag:string = "bind";
     public static RootTag:string = "forms";
+    public static IncludeTag:string = "include";
+    public static ForeachTag:string = "foreach";
 
 	public static AttributePrefix:string = "$";
     public static RequireAttributePrefix:boolean = false;
@@ -65,8 +67,8 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    ["include",Include],
-                    [Properties.RootTag,Root]
+                    [Properties.RootTag,Root],
+                    [Properties.IncludeTag,Include]
                 ]
             ));
     }
@@ -77,8 +79,8 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    ["foreach",Foreach],
-                    [Properties.BindTag,Field]
+                    [Properties.BindTag,Field],
+                    [Properties.ForeachTag,Foreach]
                 ]
             ));
     }

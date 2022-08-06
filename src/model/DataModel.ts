@@ -168,7 +168,9 @@ export class DataSourceWrapper
 
 	public async query() : Promise<boolean>
 	{
-		return(this.source.query());
+		let success:boolean = await this.source.query();
+		if (success) this.winpos$ = [0,-1];
+		return(success);
 	}
 
 	public async fetch(previous?:boolean) : Promise<Record>
@@ -216,7 +218,7 @@ export class DataSourceWrapper
 			if (!record.prepared)
 			{
 				record.wrapper = this;
-				
+
 				if (!await this.block.onFetch(record))
 				{
 					this.winpos$ = undo;

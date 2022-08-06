@@ -24,17 +24,13 @@ export interface DataSource
 
 	columns:string[];
 
-	getFilters() : Filter[];
-	addFilter(filter:Filter) : void;
-	setFilters(filters:Filter[]) : void;
-
 	closeCursor() : void;
 	post() : Promise<boolean>;
-	query() : Promise<boolean>;
 	fetch() : Promise<Record[]>;
-	refresh(record:Record) : Promise<void>;
 	lock(record:Record) : Promise<boolean>;
+	refresh(record:Record) : Promise<void>;
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
+	query(filters:Filter|Filter[]) : Promise<boolean>;
 }

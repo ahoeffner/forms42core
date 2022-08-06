@@ -23,7 +23,6 @@ export class MemoryTable implements DataSource
 	private records$:Record[] = [];
 
 	private filters:Filter[] = [];
-	private cursor:Record[] = null;
 	private inserted$:Record[] = [];
 
 	public arrayfecth:number = 1;
@@ -71,21 +70,6 @@ export class MemoryTable implements DataSource
 		this.insertable$ = flag;
 	}
 
-	public getFilters() : Filter[]
-	{
-		return(this.filters);
-	}
-
-	public addFilter(filter:Filter) : void
-	{
-		this.filters.push(filter);
-	}
-
-	public setFilters(filters:Filter[]) : void
-	{
-		this.filters = filters;
-	}
-
 	public async lock(_record:Record) : Promise<boolean>
 	{
 		return(true);
@@ -129,25 +113,27 @@ export class MemoryTable implements DataSource
 
 	public async fetch() : Promise<Record[]>
 	{
-		let cursor:Record[] = this.cursor;
-		if (this.pos$ >= cursor.length) return([]);
-		return([cursor[this.pos$++]]);
+		if (this.pos$ >= this.records$.length) return([]);
+		return([this.records$[this.pos$++]]);
 	}
 
-	public async query() : Promise<boolean>
+	public async query(filters:Filter|Filter[]) : Promise<boolean>
 	{
 		this.post();
 
 		if (!this.queryable)
 			return(false);
 
-		this.cursor = this.records$;
+		this.filters = [];
+		if (Array.isArray(filters)) this.filters = filters;
+		else						this.filters.push(filters);
+
 		return(true);
 	}
 
 	public closeCursor(): void
 	{
-		this.cursor = null;
+		null;
 	}
 
 	private indexOf(records:Record[],oid:any) : number

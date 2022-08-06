@@ -11,6 +11,7 @@
  */
 
 import { Record } from "./Record.js";
+import { Filter } from "./interfaces/Filter.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 
@@ -166,7 +167,7 @@ export class DataSourceWrapper
 		return(this.cache$[record]);
 	}
 
-	public async query() : Promise<boolean>
+	public async query(filters:Filter|Filter[]) : Promise<boolean>
 	{
 		let success:boolean = await this.source.query();
 		if (success) this.winpos$ = [0,-1];

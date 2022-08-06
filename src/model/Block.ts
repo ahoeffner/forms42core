@@ -13,6 +13,7 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
+import { Filter } from "./interfaces/Filter.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -294,7 +295,7 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		if (!await this.preQuery())
 			return(false);
@@ -305,7 +306,7 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
-		if (!await wrapper.query())
+		if (!await wrapper.query(filters))
 			return(false);
 
 		if (!await this.postQuery())

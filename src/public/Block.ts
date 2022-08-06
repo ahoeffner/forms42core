@@ -121,6 +121,6 @@ export class Block
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
-		return(ModelBlock.getBlock(this).executeQuery());
+		return(ModelBlock.getBlock(this).executeQuery(filters));
 	}
 }

@@ -170,7 +170,14 @@ export class DataSourceWrapper
 	public async query(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		let success:boolean = await this.source.query(filters);
-		if (success) this.winpos$ = [0,-1];
+
+		if (success)
+		{
+			this.cache$ = [];
+			this.eof$ = false;
+			this.winpos$ = [0,-1];
+		}
+		
 		return(success);
 	}
 

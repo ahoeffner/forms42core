@@ -32,5 +32,5 @@ export interface DataSource
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
-	query(filters:Filter|Filter[]) : Promise<boolean>;
+	query(filters?:Filter|Filter[]) : Promise<boolean>;
 }

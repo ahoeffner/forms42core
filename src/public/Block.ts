@@ -16,6 +16,7 @@ import { Record } from './Record.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
+import { Filter } from '../model/interfaces/Filter.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
@@ -118,7 +119,7 @@ export class Block
 		return(fields);
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		return(ModelBlock.getBlock(this).executeQuery());
 	}

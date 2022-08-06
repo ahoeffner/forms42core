@@ -113,20 +113,41 @@ export class MemoryTable implements DataSource
 
 	public async fetch() : Promise<Record[]>
 	{
-		if (this.pos$ >= this.records$.length) return([]);
-		return([this.records$[this.pos$++]]);
+		if (this.pos$ >= this.records$.length)
+			return([]);
+
+		if (this.filters.length == 0)
+			return([this.records$[this.pos$++]]);
+
+		while(this.pos$ < this.records$.length)
+		{
+			for (let f = 0; f < this.filters.length; f++)
+			{
+				if (this.filters[f].matches(this.records$[this.pos$]))
+					return([this.records$[this.pos$++]]);
+			}
+
+			this.pos$++;
+		}
+
+		return([]);
 	}
 
-	public async query(filters:Filter|Filter[]) : Promise<boolean>
+	public async query(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		this.post();
 
 		if (!this.queryable)
 			return(false);
 
+		this.pos$ = 0;
 		this.filters = [];
-		if (Array.isArray(filters)) this.filters = filters;
-		else						this.filters.push(filters);
+
+		if (filters != null)
+		{
+			if (Array.isArray(filters)) this.filters = filters;
+			else						this.filters.push(filters);
+		}
 
 		return(true);
 	}

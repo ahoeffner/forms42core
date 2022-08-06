@@ -7,6 +7,8 @@ export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 export { DefaultProperties } from './src/public/DefaultProperties.js';
 
+export { Filter } from './src/model/interfaces/Filter.js';
+export { Contains } from './src/model/filters/Contains.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
 export { dates } from './src/model/dates/dates.js';

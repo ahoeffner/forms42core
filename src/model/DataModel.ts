@@ -167,9 +167,9 @@ export class DataSourceWrapper
 		return(this.cache$[record]);
 	}
 
-	public async query(filters:Filter|Filter[]) : Promise<boolean>
+	public async query(filters?:Filter|Filter[]) : Promise<boolean>
 	{
-		let success:boolean = await this.source.query();
+		let success:boolean = await this.source.query(filters);
 		if (success) this.winpos$ = [0,-1];
 		return(success);
 	}

@@ -10,9 +10,10 @@
  * accompanied this code).
  */
 
+import { Record } from "../Record.js";
 
 export interface Filter
 {
-	column:string;
-	values() : any;
+	contraint?:string;
+	matches(record:Record) : Promise<boolean>;
 }

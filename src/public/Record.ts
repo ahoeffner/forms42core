@@ -32,7 +32,15 @@ export class Record
 		let row:Row = blk?.view.displayed(this.rec$);
 
 		let fld:Field = row?.getField(field);
-		if (fld != null) return(fld.getValue());
+
+		if (fld == null && row != null)
+		{
+			if (blk.view.row == row.rownum)
+				fld = blk.view.getRow(-1)?.getField(field);
+		}
+
+		if (fld != null)
+			return(fld.getValue());
 
 		return(this.rec$.getValue(field));
 	}

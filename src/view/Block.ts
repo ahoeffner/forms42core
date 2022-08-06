@@ -206,11 +206,6 @@ export class Block
 		return(instances);
 	}
 
-	public getValue(field:string) : any
-	{
-		return(this.rows$.get(this.row).getField(field)?.getValue());
-	}
-
 	public getFieldNames() : string[]
 	{
 		return(this.fieldnames$);

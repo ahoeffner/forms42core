@@ -87,9 +87,6 @@ export class RecordProperties
 	{
 		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
 
-		if (row.rownum < 0)
-			this.reset(row);
-
 		if (rmap == null)
 			return;
 

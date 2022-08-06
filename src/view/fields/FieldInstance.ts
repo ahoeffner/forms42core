@@ -295,6 +295,7 @@ export class FieldInstance implements FieldEventHandler
 	public clear() : void
 	{
 		this.impl.clear();
+		this.resetProperties();
 	}
 
 	public getValue() : any

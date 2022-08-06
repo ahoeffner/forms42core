@@ -289,12 +289,16 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
+	public reset() : void
+	{
+		this.row$ = -1;
+	}
+
 	public clear(props:boolean) : boolean
 	{
 		if (!this.validated)
 			return(false);
 
-		this.row$ = -1;
 		this.displayed$.clear();
 		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear()});

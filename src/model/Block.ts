@@ -304,6 +304,7 @@ export class Block
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
+		this.view.reset();
 		let record:Record = null;
 
 		if (!await wrapper.query(filters))

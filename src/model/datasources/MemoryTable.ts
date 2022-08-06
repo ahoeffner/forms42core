@@ -143,6 +143,9 @@ export class MemoryTable implements DataSource
 		this.pos$ = 0;
 		this.filters = [];
 
+		this.records$.forEach((record) =>
+			{record.prepared = false})
+
 		if (filters != null)
 		{
 			if (Array.isArray(filters)) this.filters = filters;

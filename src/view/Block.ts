@@ -294,6 +294,7 @@ export class Block
 		if (!this.validated)
 			return(false);
 
+		this.row$ = -1;
 		this.displayed$.clear();
 		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear()});

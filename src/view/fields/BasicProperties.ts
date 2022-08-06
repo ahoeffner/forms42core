@@ -40,7 +40,7 @@ export class BasicProperties
 	protected value$:string = null;
     protected values$:Map<string,string> = new Map<string,string>();
 
-	protected handled$:string[] = ["id","name","block","row","invalid"];
+	protected handled$:string[] = ["id","name",Properties.BindTag,"row","invalid"];
 	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style","mapper"];
 
 	public get tag() : string

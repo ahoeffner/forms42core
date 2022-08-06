@@ -11,11 +11,11 @@
  */
 
 import { Tag } from "./Tag.js";
+import { Indicator } from "./Indicator.js";
 import { FormField } from "./FormField.js";
 import { Form } from "../../public/Form.js";
 import { Properties } from "../Properties.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
-import { Indicator } from "./Indicator.js";
 
 export class Field implements Tag, FormField
 {
@@ -29,12 +29,12 @@ export class Field implements Tag, FormField
 		if (!(component instanceof Form))
 			throw "@Field: Fields cannot be placed on non-forms "+component.constructor.name;
 
-		let block:string = tag.getAttribute(attr);
+		let binding:string = tag.getAttribute(attr);
 
-		if (block == null)
+		if (binding == null)
 		{
 			attr = Properties.AttributePrefix+attr;
-			tag.setAttribute("block",tag.getAttribute(attr));
+			tag.setAttribute(Properties.BindTag,tag.getAttribute(attr));
 		}
 
 		let type:string = tag.tagName.toLowerCase();
@@ -43,7 +43,7 @@ export class Field implements Tag, FormField
 		if (tag.getAttribute("type")?.toLowerCase() == "row-indicator")
 			return(new Indicator().parse(component,tag,attr));
 
-		if (attr != "block") tag.removeAttribute(attr);
+		if (attr != Properties.BindTag) tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,tag);
 
         return(field.element);

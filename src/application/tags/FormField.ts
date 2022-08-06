@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-export function isFormField(object: any): object is FormField
+export function isFormField(object:any) : object is FormField
 {
     return('editable' in object);
 }

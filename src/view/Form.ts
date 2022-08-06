@@ -118,7 +118,7 @@ export class Form implements EventListenerObject
 
 	public addIndicator(ind:Indicator) : void
 	{
-		let block:string = ind.block.toLowerCase();
+		let block:string = ind.binding.toLowerCase();
 		let indicators:Indicator[] = this.indicators.get(block);
 
 		if (indicators == null)

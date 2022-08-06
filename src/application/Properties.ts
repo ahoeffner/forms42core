@@ -39,8 +39,10 @@ export interface ClassNames
 
 export class Properties
 {
+    public static BindTag:string = "bind";
     public static RootTag:string = "forms";
-    public static AttributePrefix:string = "$";
+
+	public static AttributePrefix:string = "$";
     public static RequireAttributePrefix:boolean = false;
 
 	public static DateDelimitors:string = "./-: ";
@@ -75,8 +77,8 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    ["block",Field],
-                    ["foreach",Foreach]
+                    ["foreach",Foreach],
+                    [Properties.BindTag,Field]
                 ]
             ));
     }

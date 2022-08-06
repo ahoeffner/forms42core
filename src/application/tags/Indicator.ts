@@ -12,18 +12,19 @@
 
 import { Tag } from "./Tag.js";
 import { Form } from "../../view/Form.js";
+import { Properties } from "../Properties.js";
 
 export class Indicator implements Tag
 {
 	public row:number = -1;
-	public block:string = null;
+	public binding:string = null;
 	public element:HTMLElement = null;
 
     public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
     {
 		let row:string = tag.getAttribute("row");
-		let block:string = tag.getAttribute(attr);
-		if (attr != "block") tag.removeAttribute(attr);
+		let binding:string = tag.getAttribute(attr);
+		if (attr != Properties.BindTag) tag.removeAttribute(attr);
 
 		if (row == null)
 			throw "@Indicator: row attribute missing";
@@ -32,8 +33,8 @@ export class Indicator implements Tag
 			throw "@Indicator: row attribute is not a number";
 
 		this.row = +row;
-		this.block = block;
 		this.element = tag;
+		this.binding = binding;
 
 		Form.getForm(component)?.addIndicator(this);
 		return(tag);

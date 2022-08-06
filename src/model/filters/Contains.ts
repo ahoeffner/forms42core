@@ -29,12 +29,14 @@ export class Contains implements Filter
 
 	public set value(value:string)
 	{
-		this.values$ = [value];
+		if (value != null)
+			this.values$ = [value.toLowerCase()];
 	}
 
 	public set values(values:string[])
 	{
-		this.values$ = values;
+		this.values$ = [];
+		values.forEach((value) => {this.values$.push(value?.toLowerCase())})
 	}
 
 	public async matches(record:Record) : Promise<boolean>
@@ -44,7 +46,7 @@ export class Contains implements Filter
 			for (let v = 0; v < this.values$.length; v++)
 			{
 				let val:any = record.getValue(this.columns$[c]);
-				if (val != null && (val+"").includes(this.values$[v]))
+				if (val != null && (val+"").toLowerCase().includes(this.values$[v]))
 					return(true);
 			}
 		}

@@ -123,7 +123,7 @@ export class MemoryTable implements DataSource
 		{
 			for (let f = 0; f < this.filters.length; f++)
 			{
-				if (this.filters[f].matches(this.records$[this.pos$]))
+				if (await this.filters[f].matches(this.records$[this.pos$]))
 					return([this.records$[this.pos$++]]);
 			}
 

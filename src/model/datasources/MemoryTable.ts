@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Record, RecordStatus } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { Record, RecordStatus } from "../Record.js";
 import { DataSource } from "../interfaces/DataSource.js";
 
 export class MemoryTable implements DataSource
@@ -23,7 +23,6 @@ export class MemoryTable implements DataSource
 	private records$:Record[] = [];
 
 	private filters:Filter[] = [];
-	private inserted$:Record[] = [];
 
 	public arrayfecth:number = 1;
 	private insertable$:boolean = true;
@@ -77,7 +76,6 @@ export class MemoryTable implements DataSource
 
 	public async post() : Promise<boolean>
 	{
-		this.records$.push(...this.inserted$);
 		return(true);
 	}
 
@@ -88,7 +86,14 @@ export class MemoryTable implements DataSource
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		this.inserted$.push(record);
+		let nrecs:Record[] = [];
+
+		nrecs.push(...this.records$.slice(0,this.pos$));
+		nrecs.push(record);
+		nrecs.push(...this.records$.slice(this.pos$));
+
+		this.records$ = nrecs;
+
 		return(true);
 	}
 
@@ -100,15 +105,11 @@ export class MemoryTable implements DataSource
 	public async delete(record:Record) : Promise<boolean>
 	{
 		let rec:number = this.indexOf(this.records$,record.id);
-		let ins:number = this.indexOf(this.inserted$,record.id);
-
-		if (ins >= 0)
-			this.inserted$ = this.inserted$.splice(ins,1);
 
 		if (rec >= 0)
 			this.records$ = this.records$.splice(rec,1);
 
-		return(ins >= 0 || rec >= 0);
+		return(rec >= 0);
 	}
 
 	public async fetch() : Promise<Record[]>

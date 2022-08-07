@@ -51,6 +51,11 @@ export class Block
 		ModelBlock.getBlock(this).datasource = source;
 	}
 
+	public async insert(before?:boolean) : Promise<boolean>
+	{
+		return(ModelBlock.getBlock(this).insert(before));
+	}
+
 	public getValue(field:string) : any
 	{
 		return(this.getRecord(0)?.getValue(field));

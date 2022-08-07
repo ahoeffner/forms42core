@@ -106,15 +106,17 @@ export class DataSourceWrapper
 		return(this.source.lock(record));
 	}
 
-	public async create(record?:Record, before?:boolean) : Promise<Record>
+	public async create(current:Record, before?:boolean) : Promise<Record>
 	{
-		if (!this.source.insertable) return(null);
+		if (!this.source.insertable)
+			return(null);
 
-		let pos:number = this.indexOf(record);
+		let pos:number = this.indexOf(current);
 		if (before && pos > 0) pos--;
 
+		console.log("insert after "+pos)
 		let inserted:Record = new Record(this.source);
-		this.cache$.splice(pos,0,record);
+		this.cache$.splice(pos,0,inserted);
 
 		inserted.wrapper = this;
 		inserted.prepared = true;

@@ -303,7 +303,12 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		return(true);
+		let record:Record = await this.wrapper.create(this.getRecord(0),before);
+
+		if (record != null)
+			this.scroll(0,0);
+
+		return(record != null);
 	}
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>

@@ -61,7 +61,7 @@ export class MemoryTable implements DataSource
 
 	public get insertable() : boolean
 	{
-		return(this.insertable$ && this.records$.length < this.rows$);
+		return(this.insertable$ && (this.rows$ < 0 || this.records$.length < this.rows$));
 	}
 
 	public set insertable(flag:boolean)
@@ -86,14 +86,7 @@ export class MemoryTable implements DataSource
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		let nrecs:Record[] = [];
-
-		nrecs.push(...this.records$.slice(0,this.pos$));
-		nrecs.push(record);
-		nrecs.push(...this.records$.slice(this.pos$));
-
-		this.records$ = nrecs;
-
+		this.records$.splice(this.pos$,0,record);
 		return(true);
 	}
 

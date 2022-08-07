@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Record } from "../Record.js";
+import { Record, RecordStatus } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataSource } from "../interfaces/DataSource.js";
 
@@ -116,11 +116,14 @@ export class MemoryTable implements DataSource
 		if (this.pos$ >= this.records$.length)
 			return([]);
 
-		if (this.filters.length == 0)
-			return([this.records$[this.pos$++]]);
-
 		while(this.pos$ < this.records$.length)
 		{
+			if (this.records$[this.pos$].status == RecordStatus.Delete)
+				continue;
+
+			if (this.filters.length == 0)
+				return([this.records$[this.pos$++]]);
+
 			for (let f = 0; f < this.filters.length; f++)
 			{
 				if (await this.filters[f].matches(this.records$[this.pos$]))

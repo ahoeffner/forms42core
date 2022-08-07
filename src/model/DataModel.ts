@@ -101,7 +101,12 @@ export class DataSourceWrapper
 		return(true);
 	}
 
-	public create(record?:Record, before?:boolean) : Record
+	public async lock(record?:Record) : Promise<boolean>
+	{
+		return(this.source.lock(record));
+	}
+
+	public async create(record?:Record, before?:boolean) : Promise<Record>
 	{
 		if (!this.source.insertable) return(null);
 
@@ -177,7 +182,7 @@ export class DataSourceWrapper
 			this.eof$ = false;
 			this.winpos$ = [0,-1];
 		}
-		
+
 		return(success);
 	}
 

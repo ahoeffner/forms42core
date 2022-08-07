@@ -16,7 +16,6 @@ import { DataSource } from "./interfaces/DataSource.js";
 
 export enum RecordStatus
 {
-	New,
 	Query,
 	Insert,
 	Update,
@@ -41,7 +40,7 @@ export class Record
 
 		if (columns == null)
 		{
-			this.status$ = RecordStatus.New;
+			this.status$ = RecordStatus.Insert;
 		}
 		else
 		{
@@ -140,6 +139,9 @@ export class Record
 		column = column.toLowerCase();
 		let idx:number = this.indexOf(column);
 
+		if (this.status == RecordStatus.Query)
+			this.status = RecordStatus.Update;
+
 		if (idx < 0)
 		{
 			idx = this.cols;
@@ -147,16 +149,6 @@ export class Record
 		}
 
 		this.values$[idx] = value;
-	}
-
-	public toString() : string
-	{
-		let str:string = "";
-
-		for (let i = 0; i < this.cols; i++)
-			str += ", "+this.column(i)+"="+this.getValue(this.column(i));
-
-		return(str.substring(2));
 	}
 
 	private get cols() : number
@@ -188,5 +180,15 @@ export class Record
 		let len:number = this.source.columns.length;
 		if (pos >= len) return(this.columns$[pos-len]);
 		else    		return(this.source.columns[pos]);
+	}
+
+	public toString() : string
+	{
+		let str:string = "";
+
+		for (let i = 0; i < this.cols; i++)
+			str += ", "+this.column(i)+"="+this.getValue(this.column(i));
+
+		return(str.substring(2));
 	}
 }

@@ -295,6 +295,17 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
+	public async lock(record?:Record) : Promise<boolean>
+	{
+		if (record == null)	record = this.getRecord(0);
+		return(this.wrapper.lock(record));
+	}
+
+	public async insert(before?:boolean) : Promise<boolean>
+	{
+		return(true);
+	}
+
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		if (!await this.preQuery())

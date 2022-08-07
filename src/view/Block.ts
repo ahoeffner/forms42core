@@ -273,8 +273,18 @@ export class Block
 		}
 		else
 		{
+			await this.setEventTransaction(EventType.OnLockRecord);
+			let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
+			this.endEventTransaction(EventType.OnLockRecord,success);
+
+			if (!success)
+				return(false);
+
+			if (!this.model.lock())
+				return(false);
+
 			await this.setEventTransaction(EventType.WhenValidateField);
-			let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
+			success = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 			this.endEventTransaction(EventType.WhenValidateField,success);
 
 			if (success)

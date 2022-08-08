@@ -32,6 +32,7 @@ export class Record
 		let row:Row = blk?.view.displayed(this.rec$);
 
 		let fld:Field = row?.getField(field);
+		console.log("fld = "+fld.row.rownum+" "+fld.getValue())
 
 		if (fld == null && row != null)
 		{

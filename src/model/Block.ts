@@ -238,7 +238,7 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
-		let record:Record = this.getRecord();
+		let record:Record = new Record(null);
 		await this.setEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
 		this.endEventTransaction(EventType.PreQuery,success);
@@ -303,10 +303,18 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
+		//before = true;
+
+		let scroll:number = 0;
+
+		if (this.view.row == this.view.rows - 1)
+			scroll = 1;
+
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
+		console.log("scroll to fit")
 
 		if (record != null)
-			this.scroll(0,0);
+			this.scroll(scroll,this.view.row);
 
 		return(record != null);
 	}
@@ -347,6 +355,7 @@ export class Block
 
 	public scroll(records:number, offset:number) : boolean
 	{
+		console.log("scroll: "+records+" offset: "+offset)
 		if (!this.view.clear(false))
 			return(false);
 

@@ -361,7 +361,7 @@ export class Field
 	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
 		this.dirty = dirty;
-		this.value$ = value;
+		if (!dirty) this.value$ = value;
 
 		this.instances$.forEach((fi) =>
 		{

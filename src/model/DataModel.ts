@@ -114,15 +114,23 @@ export class DataSourceWrapper
 		let pos:number = this.indexOf(current);
 		if (before && pos > 0) pos--;
 
-		console.log("insert after "+pos)
 		let inserted:Record = new Record(this.source);
-		this.cache$.splice(pos,0,inserted);
+		this.cache$.splice(pos+1,0,inserted);
+
+		for (let i = 0; i < 10; i++)
+		{
+			console.log(this.cache$[i].getValue("first_name")+" "+this.cache$[i].getValue("last_name"))
+		}
 
 		inserted.wrapper = this;
 		inserted.prepared = true;
 
-		if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)
-			this.winpos$[1]--;
+		console.log("before: "+this.winpos$)
+
+		//if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)
+			//this.winpos$[1]--;
+
+		console.log("after: "+this.winpos$)
 
 		return(inserted);
 	}

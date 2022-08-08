@@ -307,7 +307,7 @@ export class Row
 	public clear() : void
 	{
 		this.status = Status.na;
-		this.getFieldInstances().forEach((inst) => {inst.clear()});
+		this.getFields().forEach((fld) => {fld.clear()});
 	}
 
 	public distribute(field:string, value:any, dirty:boolean) : void

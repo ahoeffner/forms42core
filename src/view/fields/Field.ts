@@ -19,7 +19,6 @@ import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
-import { FormEvent, FormEvents } from "../../control/events/FormEvents.js";
 import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
 
 
@@ -129,6 +128,14 @@ export class Field
 	public set valid(flag:boolean)
 	{
 		this.valid$ = flag;
+	}
+
+	public clear() : void
+	{
+		this.valid = true;
+		this.dirty = false;
+		this.value$ = null;
+		this.instances$.forEach((inst) => {inst.clear()});
 	}
 
 	public addInstance(instance:FieldInstance) : void

@@ -748,6 +748,26 @@ export class Block
 		else		 this.getRow(cr)?.distribute(field.name,value,dirty);
 	}
 
+	public dump() : void
+	{
+		let row:Row = this.getRow(-1);
+
+		if (row != null)
+		{
+			console.log("current: ");
+			row.getFields().forEach((fld) => {console.log(fld.name+" "+fld.getValue())});
+			console.log();
+		}
+
+		for (let i = 0; i < this.rows; i++)
+		{
+			row = this.getRow(i);
+			console.log("row: "+i);
+			row.getFields().forEach((fld) => {console.log(fld.name+" "+fld.getValue())});
+			console.log();
+		}
+	}
+
 	public linkModel() : void
 	{
 		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);

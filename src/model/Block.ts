@@ -355,10 +355,10 @@ export class Block
 
 	public scroll(records:number, offset:number) : boolean
 	{
-		console.log("scroll: "+records+" offset: "+offset)
 		if (!this.view.clear(false))
 			return(false);
 
+		this.view.dump();
 		let displayed:number = 0;
 		let wrapper:DataSourceWrapper = this.wrapper;
 		let pos:number = this.record + records - offset;

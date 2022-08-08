@@ -267,7 +267,6 @@ export class Block
 
 	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
 	{
-		console.log("validate("+inst+","+value+")")
 		if (inst == null)
 		{
 			return(this.getRow(this.row).validate());

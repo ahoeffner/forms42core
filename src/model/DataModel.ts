@@ -103,13 +103,20 @@ export class DataSourceWrapper
 
 	public locked(record:Record) : boolean
 	{
+		if (record.status == RecordStatus.Insert)
+			return(true);
+
 		return(record.locked);
 	}
 
 	public async lock(record:Record) : Promise<boolean>
 	{
+		if (record.status == RecordStatus.Insert)
+			return(true);
+
 		let success:boolean = await this.source.lock(record);
 		if (success) record.locked = true;
+
 		return(success);
 	}
 

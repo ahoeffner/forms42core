@@ -121,6 +121,16 @@ export class Form
 		return(this.eventTransaction.getEvent(block) != null);
 	}
 
+	public checkEventTransaction(event:EventType, block:Block) : boolean
+	{
+		let running:EventType = this.eventTransaction.getEvent(block);
+
+		if (running != null)
+			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+
+		return(running == null);
+	}
+
 	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
 	{
 		if (!await this.eventTransaction.getTrxSlot(block))

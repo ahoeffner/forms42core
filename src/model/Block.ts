@@ -103,6 +103,11 @@ export class Block
 		this.ctrlblk$ = flag;
 	}
 
+	public checkEventTransaction(event:EventType, ) : boolean
+	{
+		return(this.form.checkEventTransaction(event,this));
+	}
+
 	public async wait4EventTransaction(event:EventType, ) : Promise<boolean>
 	{
 		return(this.form.wait4EventTransaction(event,this));
@@ -306,6 +311,15 @@ export class Block
 	{
 		let scroll:number = 0;
 
+		if (!this.view.validated)
+		{
+			if (!await this.view.validate())
+				return(false);
+		}
+
+		if (!this.checkEventTransaction(EventType.PreInsert))
+			return(false);
+
 		if (this.view.row == this.view.rows - 1)
 			scroll = 1;
 
@@ -322,6 +336,12 @@ export class Block
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
+		if (!this.view.validated)
+		{
+			if (!await this.view.validate())
+				return(false);
+		}
+
 		if (!await this.preQuery())
 			return(false);
 

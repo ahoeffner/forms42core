@@ -28,6 +28,7 @@ export class Record
 	private keys$:any[] = [];
 	private values$:any[] = [];
 	private columns$:string[] = [];
+	private locked$:boolean = false;
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
@@ -84,6 +85,16 @@ export class Record
 		this.wrapper$ = wrapper;
 	}
 
+	public get locked() : boolean
+	{
+		return(this.locked$);
+	}
+
+	public set locked(flag:boolean)
+	{
+		this.locked$ = flag;
+	}
+
 	public get prepared() : boolean
 	{
 		return(this.prepared$);
@@ -130,6 +141,7 @@ export class Record
 	public getValue(column:string) : any
 	{
 		column = column.toLowerCase();
+		if (this.source == null) return(null);
 		let idx:number = this.indexOf(column);
 		return(this.values$[idx]);
 	}
@@ -165,7 +177,7 @@ export class Record
 	{
 		let idx:number = this.source.columns.indexOf(column);
 
-		if (idx < 0)
+		if (idx < 0 && this.columns$ != null)
 		{
 			idx = this.columns$.indexOf(column);
 			if (idx >= 0) idx += this.source.columns.length;

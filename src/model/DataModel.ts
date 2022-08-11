@@ -101,9 +101,16 @@ export class DataSourceWrapper
 		return(true);
 	}
 
+	public locked(record:Record) : boolean
+	{
+		return(record.locked);
+	}
+
 	public async lock(record:Record) : Promise<boolean>
 	{
-		return(this.source.lock(record));
+		let success:boolean = await this.source.lock(record);
+		if (success) record.locked = true;
+		return(success);
 	}
 
 	public async post(record?:Record) : Promise<boolean>

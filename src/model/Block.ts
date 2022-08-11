@@ -301,6 +301,12 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
+	public locked(record?:Record) : boolean
+	{
+		if (record == null)	record = this.getRecord(0);
+		return(this.wrapper.locked(record));
+	}
+
 	public async lock(record?:Record) : Promise<boolean>
 	{
 		if (record == null)	record = this.getRecord(0);

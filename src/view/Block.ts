@@ -279,6 +279,20 @@ export class Block
 		this.model.endEventTransaction(event,apply);
 	}
 
+	public async lock(inst?:FieldInstance) : Promise<boolean>
+	{
+		if (this.model.locked()) return(true);
+		
+		await this.setEventTransaction(EventType.OnLockRecord);
+		let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
+		this.endEventTransaction(EventType.OnLockRecord,success);
+
+		if (!success)
+			return(false);
+
+		return(this.model.lock());
+	}
+
 	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
 	{
 		if (inst == null)
@@ -287,18 +301,8 @@ export class Block
 		}
 		else
 		{
-			await this.setEventTransaction(EventType.OnLockRecord);
-			let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
-			this.endEventTransaction(EventType.OnLockRecord,success);
-
-			if (!success)
-				return(false);
-
-			if (!this.model.lock())
-				return(false);
-
 			await this.setEventTransaction(EventType.WhenValidateField);
-			success = await this.fireFieldEvent(EventType.WhenValidateField,inst);
+			let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 			this.endEventTransaction(EventType.WhenValidateField,success);
 
 			if (success)
@@ -349,6 +353,8 @@ export class Block
 
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
+		if (!this.lock(inst)) return(false);
+
 		await this.setEventTransaction(EventType.OnTyping);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
 		this.endEventTransaction(EventType.OnTyping,success);

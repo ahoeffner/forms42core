@@ -266,7 +266,7 @@ export class Block
 		await this.setEventTransaction(EventType.WhenValidateRecord,record);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
-		if (success) this.wrapper.post(record);
+		if (success) success = await this.wrapper.post(record);
 		return(success);
 	}
 

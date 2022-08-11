@@ -38,6 +38,7 @@ export class Block
 	private name$:string = null;
 	private model$:ModelBlock = null;
 	private fieldnames$:string[] = null;
+	private curinst$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private displayed$:Map<object,Row> = new Map<object,Row>();
 	private recprops$:RecordProperties = new RecordProperties();
@@ -79,6 +80,16 @@ export class Block
 	public get model() : ModelBlock
 	{
 		return(this.model$);
+	}
+
+	public get current() : FieldInstance
+	{
+		return(this.curinst$);
+	}
+
+	public set current(inst:FieldInstance)
+	{
+		this.curinst$ = inst;
 	}
 
 	public focus() : void
@@ -339,6 +350,11 @@ export class Block
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
 		this.endEventTransaction(EventType.OnTyping,success);
 		return(success);
+	}
+
+	public async nextrecord() : Promise<FieldInstance>
+	{
+		return(this.navigate(KeyMap.nextrecord,this.current));
 	}
 
 	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<FieldInstance>

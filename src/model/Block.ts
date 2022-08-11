@@ -303,18 +303,18 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		//before = true;
-
 		let scroll:number = 0;
 
 		if (this.view.row == this.view.rows - 1)
 			scroll = 1;
 
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
-		console.log("scroll to fit")
 
 		if (record != null)
+		{
 			this.scroll(scroll,this.view.row);
+			if (!before) this.view.nextrecord();
+		}
 
 		return(record != null);
 	}
@@ -371,6 +371,7 @@ export class Block
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			let rec:Record = wrapper.getRecord(pos++);
+			if (rec == null) console.log("rec "+(pos-1)+" null")
 
 			if (rec == null)
 				break;

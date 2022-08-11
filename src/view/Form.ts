@@ -11,7 +11,6 @@
  */
 
 import { Block } from './Block.js';
-import { Field } from './fields/Field.js';
 import { Record } from '../model/Record.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
@@ -283,6 +282,7 @@ export class Form implements EventListenerObject
 
 		Form.curform$ = this;
 		this.curinst$ = inst;
+		inst.field.block.current = inst;
 		nxtblock.setCurrentRow(inst.row);
 
 		if (preform)

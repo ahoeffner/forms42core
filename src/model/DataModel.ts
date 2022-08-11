@@ -112,16 +112,13 @@ export class DataSourceWrapper
 			return(null);
 
 		let pos:number = this.indexOf(current);
-		if (before && pos > 0) pos--;
+		if (before && pos >= 0) pos--;
 
 		let inserted:Record = new Record(this.source);
 		this.cache$.splice(pos+1,0,inserted);
 
 		inserted.wrapper = this;
 		inserted.prepared = true;
-
-		//if (this.winpos$[1] - this.winpos$[0] + 1 >= this.window)
-			//this.winpos$[1]--;
 
 		return(inserted);
 	}
@@ -258,7 +255,7 @@ export class DataSourceWrapper
 			possible = this.cache$.length - record - 1;
 			if (possible > records) possible = records;
 
-			while(possible < records)
+			while(possible <= records)
 			{
 				if (await this.fetch() == null)
 					break;

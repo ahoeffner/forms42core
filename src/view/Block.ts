@@ -84,6 +84,9 @@ export class Block
 
 	public get current() : FieldInstance
 	{
+		if (this.curinst$ == null)
+			this.curinst$ = this.getCurrentRow().getFirstInstance();
+
 		return(this.curinst$);
 	}
 

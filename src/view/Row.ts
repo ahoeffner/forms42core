@@ -307,6 +307,7 @@ export class Row
 	public clear() : void
 	{
 		this.status = Status.na;
+		this.avtivateIndicators(false);
 		this.getFields().forEach((fld) => {fld.clear()});
 	}
 

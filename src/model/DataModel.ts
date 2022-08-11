@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Record } from "./Record.js";
+import { Record, RecordStatus } from "./Record.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
@@ -101,9 +101,19 @@ export class DataSourceWrapper
 		return(true);
 	}
 
-	public async lock(record?:Record) : Promise<boolean>
+	public async lock(record:Record) : Promise<boolean>
 	{
 		return(this.source.lock(record));
+	}
+
+	public async post(record?:Record) : Promise<boolean>
+	{
+		switch(record.status)
+		{
+			case RecordStatus.Insert : return(await this.source.insert(record));
+			case RecordStatus.Update : return(await this.source.update(record));
+			case RecordStatus.Delete : return(await this.source.delete(record));
+		}
 	}
 
 	public async create(current:Record, before?:boolean) : Promise<Record>

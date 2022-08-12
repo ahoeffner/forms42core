@@ -304,10 +304,10 @@ export class Row
 		return(fields);
 	}
 
-	public clear() : void
+	public clear(state:boolean) : void
 	{
-		this.status = Status.na;
 		this.avtivateIndicators(false);
+		if (state) this.status = Status.na;
 		this.getFields().forEach((fld) => {fld.clear()});
 	}
 

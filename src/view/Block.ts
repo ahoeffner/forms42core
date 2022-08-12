@@ -327,7 +327,7 @@ export class Block
 
 		this.displayed$.clear();
 		if (props) this.recprops$.clear();
-		this.rows$.forEach((row) => {row.clear()});
+		this.rows$.forEach((row) => {row.clear(true)});
 
 		return(true);
 	}
@@ -497,7 +497,7 @@ export class Block
 			case RecordStatus.Inserted : row.status = Status.insert; break;
 		}
 
-		row.clear();
+		row.clear(false);
 		this.applyRecordProperties(record,true);
 
 		record.values.forEach((field) =>
@@ -550,9 +550,17 @@ export class Block
 
 		if (current != null)
 		{
-			current.clear();
 			let record:Record = this.model.getRecord();
 
+			switch(record.status)
+			{
+				case RecordStatus.New : current.status = Status.insert; break;
+				case RecordStatus.Query : current.status = Status.update; break;
+				case RecordStatus.Updated : current.status = Status.update; break;
+				case RecordStatus.Inserted : current.status = Status.insert; break;
+			}
+
+			current.clear(false);
 			this.applyRecordProperties(record,false);
 			record.values.forEach((field) => {current.distribute(field.name,field.value,false);});
 		}

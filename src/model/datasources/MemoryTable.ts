@@ -112,7 +112,7 @@ export class MemoryTable implements DataSource
 
 		while(this.pos$ < this.records$.length)
 		{
-			if (this.records$[this.pos$].status == RecordStatus.Delete)
+			if (this.records$[this.pos$].status == RecordStatus.Deleted)
 				continue;
 
 			if (this.filters.length == 0)

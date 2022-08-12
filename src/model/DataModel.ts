@@ -103,7 +103,7 @@ export class DataSourceWrapper
 
 	public locked(record:Record) : boolean
 	{
-		if (record.status == RecordStatus.Insert)
+		if (record.status == RecordStatus.New || record.status == RecordStatus.Inserted)
 			return(true);
 
 		return(record.locked);
@@ -111,7 +111,7 @@ export class DataSourceWrapper
 
 	public async lock(record:Record) : Promise<boolean>
 	{
-		if (record.status == RecordStatus.Insert)
+		if (record.status == RecordStatus.New || record.status == RecordStatus.Inserted)
 			return(true);
 
 		let success:boolean = await this.source.lock(record);
@@ -124,9 +124,15 @@ export class DataSourceWrapper
 	{
 		switch(record.status)
 		{
-			case RecordStatus.Insert : return(await this.source.insert(record));
-			case RecordStatus.Update : return(await this.source.update(record));
-			case RecordStatus.Delete : return(await this.source.delete(record));
+			case RecordStatus.New :
+
+				if (await this.source.insert(record))
+					record.status = RecordStatus.Inserted;
+				break;
+
+			case RecordStatus.Deleted : return(await this.source.delete(record));
+			case RecordStatus.Updated : return(await this.source.update(record));
+			case RecordStatus.Inserted : return(await this.source.update(record));
 		}
 	}
 

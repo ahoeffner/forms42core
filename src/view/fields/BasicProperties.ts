@@ -13,6 +13,7 @@
 import { DataMapper } from "./DataMapper.js";
 import { Alert } from "../../application/Alert.js";
 import { Class, isClass } from "../../types/Class.js";
+import { DataType } from "./implementations/DataType.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
 import { ComponentFactory } from "../../application/ComponentFactory.js";
@@ -131,6 +132,39 @@ export class BasicProperties
 	public getStyles() : Style[]
 	{
 		return(this.styles$);
+	}
+
+	public setType(type:DataType) : BasicProperties
+	{
+		let date:boolean = this.hasClass("date");
+		let datetime:boolean = this.hasClass("datetime");
+
+		this.removeClass("date");
+		this.removeClass("integer");
+		this.removeClass("decimal");
+		this.removeClass("datetime");
+
+		switch(type)
+		{
+			case DataType.date :
+			{
+				if (!datetime) this.setClass("date");
+				else 		   this.setClass("datetime");
+			}
+			break;
+
+			case DataType.datetime :
+			{
+				if (date) this.setClass("date");
+				else 	  this.setClass("datetime");
+			}
+			break;
+
+			case DataType.integer : this.setClass("integer"); break;
+			case DataType.decimal : this.setClass("decimal"); break;
+		}
+
+		return(this);
 	}
 
 	public get style() : string

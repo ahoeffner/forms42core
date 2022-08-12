@@ -12,9 +12,12 @@
 
 import { Form } from './Form.js';
 import { Status } from '../view/Row.js';
+import { Class } from '../types/Class.js';
+import { DataMapper } from '../view/fields/DataMapper.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
+import { DataType } from '../view/fields/implementations/DataType.js';
 
 
 export class DefaultProperties extends BasicProperties
@@ -54,6 +57,102 @@ export class DefaultProperties extends BasicProperties
 	public get form() : Form
 	{
 		return(this.inst$.form);
+	}
+
+	public setTag(tag:string) : DefaultProperties
+	{
+		this.tag = tag;
+		return(this);
+	}
+
+	public setType(type:DataType) : DefaultProperties
+	{
+		super.setType(type);
+		return(this);
+	}
+
+	public setEnabled(flag:boolean) : DefaultProperties
+	{
+		this.enabled = flag;
+		return(this);
+	}
+
+	public setReadOnly(flag:boolean) : DefaultProperties
+	{
+		this.readonly = flag;
+		return(this);
+	}
+
+	public setRequired(flag:boolean) : DefaultProperties
+	{
+		this.required = flag;
+		return(this);
+	}
+
+	public setHidden(flag:boolean) : DefaultProperties
+	{
+		this.hidden = flag;
+		return(this);
+	}
+
+	public setStyles(styles:string) : DefaultProperties
+	{
+		this.styles = styles;
+		return(this);
+	}
+
+	public removeStyle(style:string) : DefaultProperties
+	{
+		super.removeStyle(style);
+		return(this);
+	}
+
+	public setClass(clazz:string) : DefaultProperties
+	{
+		super.setClass(clazz);
+		return(this);
+	}
+
+	public setClasses(classes:string|string[]) : DefaultProperties
+	{
+		super.setClasses(classes);
+		return(this);
+	}
+
+	public removeClass(clazz:any) : DefaultProperties
+	{
+		super.removeClass(clazz);
+		return(this);
+	}
+
+	public setAttribute(attr:string, value:any) : DefaultProperties
+	{
+		super.setAttribute(attr,value);
+		return(this);
+	}
+
+	public removeAttribute(attr:string) : DefaultProperties
+	{
+		super.removeAttribute(attr);
+		return(this);
+	}
+
+	public setValue(value:string) : DefaultProperties
+	{
+		this.value = value;
+		return(this);
+	}
+
+    public setValidValues(values: Set<string> | Map<string,string>) : DefaultProperties
+	{
+		this.validValues = values;
+		return(this);
+	}
+
+	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : DefaultProperties
+	{
+		super.setMapper(mapper);
+		return(this);
 	}
 
 	public apply() : void

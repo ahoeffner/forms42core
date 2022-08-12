@@ -16,10 +16,11 @@ import { DataSource } from "./interfaces/DataSource.js";
 
 export enum RecordStatus
 {
+	New,
 	Query,
-	Insert,
-	Update,
-	Delete
+	Deleted,
+	Updated,
+	Inserted
 }
 
 export class Record
@@ -41,7 +42,7 @@ export class Record
 
 		if (columns == null)
 		{
-			this.status$ = RecordStatus.Insert;
+			this.status$ = RecordStatus.New;
 		}
 		else
 		{
@@ -152,7 +153,7 @@ export class Record
 		let idx:number = this.indexOf(column);
 
 		if (this.status == RecordStatus.Query)
-			this.status = RecordStatus.Update;
+			this.status = RecordStatus.Updated;
 
 		if (idx < 0)
 		{

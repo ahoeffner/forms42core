@@ -21,7 +21,7 @@ export class FieldProperties extends BasicProperties
 	constructor(properties:DefaultProperties)
 	{
 		super();
-		
+
 		if (properties != null)
 			FieldFeatureFactory.copyBasic(properties,this);
 	}
@@ -29,6 +29,12 @@ export class FieldProperties extends BasicProperties
 	public setTag(tag:string) : FieldProperties
 	{
 		this.tag = tag;
+		return(this);
+	}
+
+	public setType(type:DataType) : FieldProperties
+	{
+		super.setType(type);
 		return(this);
 	}
 
@@ -58,13 +64,7 @@ export class FieldProperties extends BasicProperties
 
 	public setStyles(styles:string) : FieldProperties
 	{
-		super.setStyles(styles);
-		return(this);
-	}
-
-	public setStyle(style:string, value:string) : FieldProperties
-	{
-		super.setStyle(style,value);
+		this.styles = styles;
 		return(this);
 	}
 
@@ -74,21 +74,21 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setClass(clazz:any) : FieldProperties
+	public setClass(clazz:string) : FieldProperties
 	{
 		super.setClass(clazz);
-		return(this);
-	}
-
-	public removeClass(clazz:any) : FieldProperties
-	{
-		super.removeClass(clazz);
 		return(this);
 	}
 
 	public setClasses(classes:string|string[]) : FieldProperties
 	{
 		super.setClasses(classes);
+		return(this);
+	}
+
+	public removeClass(clazz:any) : FieldProperties
+	{
+		super.removeClass(clazz);
 		return(this);
 	}
 
@@ -110,7 +110,7 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setValidValues(values: Set<string> | Map<string,string>) : FieldProperties
+    public setValidValues(values: Set<string> | Map<string,string>) : FieldProperties
 	{
 		this.validValues = values;
 		return(this);

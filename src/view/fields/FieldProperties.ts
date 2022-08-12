@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { Class } from "../../types/Class.js";
+import { DataMapper } from "./DataMapper.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
 import { DataType } from "./implementations/DataType.js";
@@ -97,34 +99,99 @@ export class FieldProperties extends BasicProperties
 		this.inst$ = inst;
 	}
 
-	public setType(type:DataType) : void
+	public setTag(tag:string) : FieldProperties
 	{
-		let date:boolean = this.hasClass("date");
-		let datetime:boolean = this.hasClass("datetime");
+		this.tag = tag;
+		return(this);
+	}
 
-		this.removeClass("date");
-		this.removeClass("integer");
-		this.removeClass("decimal");
-		this.removeClass("datetime");
+	public setType(type:DataType) : FieldProperties
+	{
+		super.setType(type);
+		return(this);
+	}
 
-		switch(type)
-		{
-			case DataType.date :
-			{
-				if (!datetime) this.setClass("date");
-				else 		   this.setClass("datetime");
-			}
-			break;
+	public setEnabled(flag:boolean) : FieldProperties
+	{
+		this.enabled = flag;
+		return(this);
+	}
 
-			case DataType.datetime :
-			{
-				if (date) this.setClass("date");
-				else 	  this.setClass("datetime");
-			}
-			break;
+	public setReadOnly(flag:boolean) : FieldProperties
+	{
+		this.readonly = flag;
+		return(this);
+	}
 
-			case DataType.integer : this.setClass("integer"); break;
-			case DataType.decimal : this.setClass("decimal"); break;
-		}
+	public setRequired(flag:boolean) : FieldProperties
+	{
+		this.required = flag;
+		return(this);
+	}
+
+	public setHidden(flag:boolean) : FieldProperties
+	{
+		this.hidden = flag;
+		return(this);
+	}
+
+	public setStyles(styles:string) : FieldProperties
+	{
+		this.styles = styles;
+		return(this);
+	}
+
+	public removeStyle(style:string) : FieldProperties
+	{
+		super.removeStyle(style);
+		return(this);
+	}
+
+	public setClass(clazz:string) : FieldProperties
+	{
+		super.setClass(clazz);
+		return(this);
+	}
+
+	public setClasses(classes:string|string[]) : FieldProperties
+	{
+		super.setClasses(classes);
+		return(this);
+	}
+
+	public removeClass(clazz:any) : FieldProperties
+	{
+		super.removeClass(clazz);
+		return(this);
+	}
+
+	public setAttribute(attr:string, value:any) : FieldProperties
+	{
+		super.setAttribute(attr,value);
+		return(this);
+	}
+
+	public removeAttribute(attr:string) : FieldProperties
+	{
+		super.removeAttribute(attr);
+		return(this);
+	}
+
+	public setValue(value:string) : FieldProperties
+	{
+		this.value = value;
+		return(this);
+	}
+
+    public setValidValues(values: Set<string> | Map<string,string>) : FieldProperties
+	{
+		this.validValues = values;
+		return(this);
+	}
+
+	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : FieldProperties
+	{
+		super.setMapper(mapper);
+		return(this);
 	}
 }

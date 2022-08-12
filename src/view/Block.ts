@@ -13,7 +13,7 @@
 import { Form } from "./Form.js";
 import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
-import { Record } from "../model/Record.js";
+import { Record, RecordStatus } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -263,9 +263,7 @@ export class Block
 	{
 		let row:Row = this.displayed(record);
 		if (!baserec) row = this.getRow(-1);
-
-		if (row != null)
-			this.recprops$.apply(row,record,field);
+		this.recprops$.apply(row,record,field);
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>
@@ -282,7 +280,7 @@ export class Block
 	public async lock(inst?:FieldInstance) : Promise<boolean>
 	{
 		if (this.model.locked()) return(true);
-		
+
 		await this.setEventTransaction(EventType.OnLockRecord);
 		let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
 		this.endEventTransaction(EventType.OnLockRecord,success);
@@ -491,12 +489,19 @@ export class Block
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);
 
+		switch(record.status)
+		{
+			case RecordStatus.New : row.status = Status.insert; break;
+			case RecordStatus.Query : row.status = Status.update; break;
+			case RecordStatus.Updated : row.status = Status.update; break;
+			case RecordStatus.Inserted : row.status = Status.insert; break;
+		}
+
 		row.clear();
-		row.status = Status.update;
 		this.applyRecordProperties(record,true);
 
 		record.values.forEach((field) =>
-		{row.distribute(field.name,field.value,false);})
+		{row.distribute(field.name,field.value,false)});
 	}
 
 	public lockUnused()

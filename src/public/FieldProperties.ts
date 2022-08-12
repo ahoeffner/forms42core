@@ -15,6 +15,7 @@ import { DataMapper } from '../view/fields/DataMapper.js';
 import { DefaultProperties } from './DefaultProperties.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
+import { DataType } from '../view/fields/implementations/DataType.js';
 
 export class FieldProperties extends BasicProperties
 {

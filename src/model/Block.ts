@@ -398,7 +398,6 @@ export class Block
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			let rec:Record = wrapper.getRecord(pos++);
-			if (rec == null) console.log("rec "+(pos-1)+" null")
 
 			if (rec == null)
 				break;

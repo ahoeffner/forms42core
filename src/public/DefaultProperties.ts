@@ -22,14 +22,14 @@ import { DataType } from '../view/fields/implementations/DataType.js';
 
 export class DefaultProperties extends BasicProperties
 {
-	private status:Status = null;
+	private status$:Status = null;
 	private inst$:FieldInstance = null;
 
 	constructor(inst$:FieldInstance, status:Status)
 	{
 		super();
 		this.inst$ = inst$;
-		this.status = status;
+		this.status$ = status;
 		FieldFeatureFactory.initialize(this,inst$,true,status);
 	}
 

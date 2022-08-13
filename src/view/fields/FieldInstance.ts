@@ -243,9 +243,6 @@ export class FieldInstance implements FieldEventHandler
 
 	public get defaultProperties() : FieldProperties
 	{
-		if (this.field.row.status == Status.insert)
-			console.log("insProperties: "+this.name+" enabled: "+this.insproperties$.enabled)
-
 		switch(this.field.row.status)
 		{
 			case Status.na:

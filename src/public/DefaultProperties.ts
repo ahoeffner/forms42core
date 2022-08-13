@@ -157,6 +157,6 @@ export class DefaultProperties extends BasicProperties
 
 	public apply() : void
 	{
-		FieldFeatureFactory.merge(this,this.inst$,this.status == null);
+		FieldFeatureFactory.merge(this,this.inst$,true);
 	}
 }

@@ -68,53 +68,42 @@ export class FieldInstance implements FieldEventHandler
 
 	public resetProperties() : void
 	{
-		this.applyProperties(null);
+		if (this.properties != this.defproperties$)
+			this.applyProperties(this.defproperties$);
 	}
 
-	public updateDefaultProperties()
+	public updateDefaultProperties(props:FieldProperties, status:Status) : void
 	{
+		console.log("updateDefaultProperties "+Status[status])
+
+		switch(status)
+		{
+			case Status.qbe : this.qbeproperties$ = props; break;
+			case Status.insert : this.insproperties$ = props; break;
+			default : this.defproperties$ = props;
+		}
+
 		if (!this.hasDefaultProperties())
 			return;
 
-		let newprops:FieldProperties = this.defaultProperties;
-		let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
+		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
-		if (clazz == this.clazz) this.updateField(newprops);
-		else					 this.changeFieldType(clazz,newprops);
+		if (clazz == this.clazz) this.updateField(props);
+		else					 this.changeFieldType(clazz,props);
+
+		console.log("def "+this.defproperties$.enabled)
+		console.log("ins "+this.insproperties$.enabled)
 	}
 
-	public applyProperties(newprops:FieldProperties) : void
+	public applyProperties(props:FieldProperties) : void
 	{
-		let change:boolean = false;
+		this.properties$ = props;
+		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
-		if (newprops == null)
-			newprops = this.defaultProperties;
+		console.log("applyProperties "+this)
 
-		if (newprops != null)
-		{
-			if (newprops != this.properties)
-				change = true;
-		}
-		else
-		{
-			newprops = this.defaultProperties;
-
-			if (this.properties != this.defaultProperties)
-				change = true;
-		}
-
-		if (newprops != this.properties)
-			change = true;
-
-		this.properties$ = newprops;
-
-		if (change)
-		{
-			let clazz:Class<FieldImplementation> = FieldTypes.get(newprops.tag,newprops.type);
-
-			if (clazz == this.clazz) this.updateField(newprops);
-			else					 this.changeFieldType(clazz,newprops);
-		}
+		if (clazz == this.clazz) this.updateField(props);
+		else					 this.changeFieldType(clazz,props);
 	}
 
 	// Properties changed, minor adjustments
@@ -243,20 +232,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public get defaultProperties() : FieldProperties
 	{
-		switch(this.field.row.status)
-		{
-			case Status.na:
-				return(this.defproperties$);
-
-			case Status.qbe:
-				return(this.qbeproperties$);
-
-			case Status.insert:
-				return(this.insproperties$);
-
-			case Status.update:
-				return(this.defproperties$);
-		}
+		return(this.defproperties$);
 	}
 
 	public get qbeProperties() : FieldProperties

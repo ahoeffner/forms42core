@@ -52,20 +52,23 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public static merge(props:BasicProperties, inst$:FieldInstance, defprops:boolean) : void
+	public static replace(props:BasicProperties, inst$:FieldInstance, status:Status) : void
 	{
 		let fprops:FieldProperties = null;
-		fprops = inst$.properties;
-		if (defprops) fprops = inst$.defaultProperties;
+		// If default props or properties still points to default => clone
 
-		// Don't change default props
-		if (inst$.hasDefaultProperties() && !defprops)
-			fprops = FieldFeatureFactory.clone(fprops);
+		switch(status)
+		{
+			case Status.qbe : fprops = FieldFeatureFactory.clone(inst$.qbeProperties); break;
+			case Status.insert : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
+			case Status.update : fprops = FieldFeatureFactory.clone(inst$.updateProperties); break;
+			default: if (inst$.hasDefaultProperties()) fprops = FieldFeatureFactory.clone(inst$.properties);
+		}
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (!defprops) inst$.applyProperties(fprops);
-		else		   inst$.updateDefaultProperties();
+		if (status == null) inst$.applyProperties(fprops);
+		else		   		inst$.updateDefaultProperties(fprops,status);
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void

@@ -104,7 +104,7 @@ export class RecordProperties
 					for (let i = 0; i < classes.length; i++)
 					{
 						if (classes[i] == null || inst.properties.hasClass(classes[i]))
-							FieldFeatureFactory.merge(fmap.get(classes[i]),inst,false);
+							FieldFeatureFactory.replace(fmap.get(classes[i]),inst,null);
 					}
 				})
 			}
@@ -124,7 +124,7 @@ export class RecordProperties
 						for (let i = 0; i < classes.length; i++)
 						{
 							if (classes[i] == null || inst.properties.hasClass(classes[i]))
-								FieldFeatureFactory.merge(fmap.get(classes[i]),inst,false);
+								FieldFeatureFactory.replace(fmap.get(classes[i]),inst,null);
 						}
 					})
 				}

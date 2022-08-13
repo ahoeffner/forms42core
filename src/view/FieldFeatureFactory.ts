@@ -55,14 +55,13 @@ export class FieldFeatureFactory
 	public static replace(props:BasicProperties, inst$:FieldInstance, status:Status) : void
 	{
 		let fprops:FieldProperties = null;
-		// If default props or properties still points to default => clone
 
 		switch(status)
 		{
 			case Status.qbe : fprops = FieldFeatureFactory.clone(inst$.qbeProperties); break;
 			case Status.insert : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
 			case Status.update : fprops = FieldFeatureFactory.clone(inst$.updateProperties); break;
-			default: if (inst$.hasDefaultProperties()) fprops = FieldFeatureFactory.clone(inst$.properties);
+			default: fprops = FieldFeatureFactory.clone(inst$.properties);
 		}
 
 		FieldFeatureFactory.copyBasic(props,fprops);

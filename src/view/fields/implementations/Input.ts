@@ -76,8 +76,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.datamapper = properties.mapper;
 		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());
-		if (properties.name == "first_name" && properties.row == 1)
-			console.log("apply "+properties.enabled)
 	}
 
 	public getFieldState() : FieldState

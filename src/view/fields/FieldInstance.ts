@@ -23,6 +23,7 @@ import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { stat } from "fs";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -68,14 +69,22 @@ export class FieldInstance implements FieldEventHandler
 
 	public resetProperties() : void
 	{
-		if (this.properties != this.defproperties$)
-			this.applyProperties(this.defproperties$);
+		let props:FieldProperties = null;
+
+		switch(this.field.row.status)
+		{
+			case Status.na :
+			case Status.update 	: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
+			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
+			case Status.qbe 	: if (this.properties$ != this.qbeproperties$) props = this.qbeproperties$; break;
+		}
+
+		if (props != null)
+			this.applyProperties(props);
 	}
 
 	public updateDefaultProperties(props:FieldProperties, status:Status) : void
 	{
-		console.log("updateDefaultProperties "+Status[status])
-
 		switch(status)
 		{
 			case Status.qbe : this.qbeproperties$ = props; break;
@@ -83,16 +92,13 @@ export class FieldInstance implements FieldEventHandler
 			default : this.defproperties$ = props;
 		}
 
-		if (!this.hasDefaultProperties())
+		if (status != this.field.row.status)
 			return;
 
 		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
 		if (clazz == this.clazz) this.updateField(props);
 		else					 this.changeFieldType(clazz,props);
-
-		console.log("def "+this.defproperties$.enabled)
-		console.log("ins "+this.insproperties$.enabled)
 	}
 
 	public applyProperties(props:FieldProperties) : void
@@ -248,24 +254,6 @@ export class FieldInstance implements FieldEventHandler
 	public get insertProperties() : FieldProperties
 	{
 		return(this.insproperties$);
-	}
-
-	public hasDefaultProperties() : boolean
-	{
-		switch(this.field.row.status)
-		{
-			case Status.na:
-				return(this.properties == this.defproperties$);
-
-			case Status.qbe:
-				return(this.properties == this.qbeproperties$);
-
-			case Status.insert:
-				return(this.properties == this.insproperties$);
-
-			case Status.update:
-				return(this.properties == this.defproperties$);
-		}
 	}
 
 	public clear() : void

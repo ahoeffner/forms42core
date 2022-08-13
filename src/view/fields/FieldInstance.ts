@@ -106,8 +106,6 @@ export class FieldInstance implements FieldEventHandler
 		this.properties$ = props;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
-		console.log("applyProperties "+this)
-
 		if (clazz == this.clazz) this.updateField(props);
 		else					 this.changeFieldType(clazz,props);
 	}

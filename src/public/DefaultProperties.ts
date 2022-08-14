@@ -155,8 +155,16 @@ export class DefaultProperties extends BasicProperties
 		return(this);
 	}
 
-	public apply() : void
+	public apply(clazz?:string) : void
 	{
+		this.inst$.field.block.getFieldsByClass(this.inst$.name,clazz).forEach((inst) =>
+		{
+			if (inst == this.inst$) console.log("Hit myself")
+			let dprops:DefaultProperties = new DefaultProperties(inst,this.status$);
+			FieldFeatureFactory.copyBasic(this,dprops);
+			console.log("set "+dprops.name+"["+dprops.row+"]");
+		})
+
 		FieldFeatureFactory.replace(this,this.inst$,this.status$);
 	}
 }

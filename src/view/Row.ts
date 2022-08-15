@@ -330,11 +330,14 @@ export class Row
 	{
 		let flds:Field[] = this.getFields();
 
-		for (let i = 0; i < flds.length; i++)
+		for (let f = 0; f < flds.length; f++)
 		{
-			let inst:FieldInstance = flds[i].getInstance(i);
-			console.log("check "+flds[i].name+" "+inst)
-			if (inst.focusable()) return(inst);
+			for (let i = 0; i < flds[f].getInstances().length; i++)
+			{
+				let inst:FieldInstance = flds[f].getInstance(i);
+				console.log("check "+flds[f].name+" "+inst)
+				if (inst.focusable()) return(inst);
+			}
 		}
 
 		return(null);

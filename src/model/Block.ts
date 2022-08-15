@@ -316,6 +316,7 @@ export class Block
 	public async insert(before?:boolean) : Promise<boolean>
 	{
 		let scroll:number = 0;
+		before = true;
 
 		if (!this.view.validated)
 		{

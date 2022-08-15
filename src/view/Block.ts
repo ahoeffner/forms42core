@@ -659,7 +659,6 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
-		console.log(RecordStatus[record.status]+" "+row.rownum+" curr: "+curr)
 
 		if (curr)
 		{

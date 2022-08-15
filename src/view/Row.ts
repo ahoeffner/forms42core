@@ -335,7 +335,6 @@ export class Row
 			for (let i = 0; i < flds[f].getInstances().length; i++)
 			{
 				let inst:FieldInstance = flds[f].getInstance(i);
-				console.log("check "+flds[f].name+" "+inst)
 				if (inst.focusable()) return(inst);
 			}
 		}

@@ -673,6 +673,27 @@ export class Block
 		return(inst);
 	}
 
+	public findFirstEditable(record:Record) : FieldInstance
+	{
+		let inst:FieldInstance = null;
+		let row:Row = this.displayed(record);
+		let curr:boolean = this.current.row < 0;
+		let status:Status = this.convert(record.status);
+
+		if (curr)
+		{
+			inst = this.getRow(-1).getFirstEditableInstance(status);
+			if (inst == null) inst = row.getFirstEditableInstance();
+		}
+		else
+		{
+			inst = row.getFirstEditableInstance();
+			if (inst == null) inst = this.getRow(-1).getFirstEditableInstance();
+		}
+
+		return(inst);
+	}
+
 	public finalize() : void
 	{
 		let rows:Row[] = [];

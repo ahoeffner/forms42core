@@ -338,7 +338,7 @@ export class Block
 			if (!before) await this.view.nextrecord();
 
 			this.view.setCurrentStatus(record);
-			this.view.findFirst(record)?.focus();
+			this.view.findFirstEditable(record)?.focus();
 		}
 
 		return(record != null);

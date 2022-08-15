@@ -341,4 +341,20 @@ export class Row
 
 		return(null);
 	}
+
+	public getFirstEditableInstance(status?:Status) : FieldInstance
+	{
+		let flds:Field[] = this.getFields();
+
+		for (let f = 0; f < flds.length; f++)
+		{
+			for (let i = 0; i < flds[f].getInstances().length; i++)
+			{
+				let inst:FieldInstance = flds[f].getInstance(i);
+				if (inst.editable(status)) return(inst);
+			}
+		}
+
+		return(null);
+	}
 }

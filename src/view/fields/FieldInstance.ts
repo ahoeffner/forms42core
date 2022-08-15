@@ -314,6 +314,27 @@ export class FieldInstance implements FieldEventHandler
 		return(props.enabled);
 	}
 
+	public editable(status?:Status) : boolean
+	{
+		if (this.impl instanceof Display)
+			return(false);
+
+		let props:FieldProperties = this.properties$;
+
+		if (status != null)
+		{
+			switch(status)
+			{
+				case Status.na : props = this.defproperties$; break;
+				case Status.qbe : props = this.qbeproperties$; break;
+				case Status.insert : props = this.insproperties$; break;
+				case Status.update : props = this.defproperties$; break;
+			}
+		}
+
+		return(!props.readonly);
+	}
+
 	public setFieldState(state:FieldState) : void
 	{
 		this.impl.setFieldState(state);

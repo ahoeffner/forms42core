@@ -333,7 +333,8 @@ export class Row
 		for (let i = 0; i < flds.length; i++)
 		{
 			let inst:FieldInstance = flds[i].getInstance(i);
-			if (inst.focusable) return(inst);
+			console.log("check "+flds[i].name+" "+inst)
+			if (inst.focusable()) return(inst);
 		}
 
 		return(null);

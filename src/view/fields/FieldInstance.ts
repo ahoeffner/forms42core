@@ -299,6 +299,7 @@ export class FieldInstance implements FieldEventHandler
 		if (this.impl instanceof Display)
 			return(false);
 
+		console.log("insert? "+(this.properties == this.insertProperties))
 		return(this.properties.enabled);
 	}
 

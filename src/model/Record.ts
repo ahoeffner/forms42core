@@ -17,6 +17,7 @@ import { DataSource } from "./interfaces/DataSource.js";
 export enum RecordStatus
 {
 	New,
+	QBE,
 	Query,
 	Deleted,
 	Updated,

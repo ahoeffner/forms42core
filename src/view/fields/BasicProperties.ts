@@ -261,10 +261,10 @@ export class BasicProperties
 		if (!Array.isArray(classes))
 			classes = classes.split(" ,");
 
-		for(let clazz in classes)
+		for (let i = 0; i < classes.length; i++)
 		{
-			if (clazz.length > 0)
-				this.classes$.push(clazz?.toLowerCase());
+			if (classes[i]?.length > 0)
+				this.classes$.push(classes[i].toLowerCase());
 		}
 
 		return(this);

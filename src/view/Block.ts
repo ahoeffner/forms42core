@@ -13,14 +13,14 @@
 import { Form } from "./Form.js";
 import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
-import { Record, RecordStatus } from "../model/Record.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
 import { MouseMap } from "../control/events/MouseMap.js";
-import { FieldInstance } from "./fields/FieldInstance.js";
+import { Record, RecordStatus } from "../model/Record.js";
 import { Form as InterfaceForm } from '../public/Form.js';
+import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "../public/FieldProperties.js";
@@ -97,7 +97,7 @@ export class Block
 
 	public focus() : void
 	{
-		this.getRow(0)?.getFirstInstance()?.focus();
+		this.current?.focus();
 	}
 
 	public getAllFields(field?:string) : Field[]
@@ -421,6 +421,17 @@ export class Block
 		return(row-this.row$);
 	}
 
+	public setCurrentStatus(record:Record) : void
+	{
+		let current:Row = this.getRow(-1);
+
+		if (current)
+		{
+			current.status = this.convert(record.status);
+			current.clear(false);
+		}
+	}
+
 	public getCurrentRow() : Row
 	{
 		return(this.rows$.get(this.row));
@@ -489,13 +500,7 @@ export class Block
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);
 
-		switch(record.status)
-		{
-			case RecordStatus.New : row.status = Status.insert; break;
-			case RecordStatus.Query : row.status = Status.update; break;
-			case RecordStatus.Updated : row.status = Status.update; break;
-			case RecordStatus.Inserted : row.status = Status.insert; break;
-		}
+		row.status = this.convert(record.status);
 
 		row.clear(false);
 		this.applyRecordProperties(record,true);
@@ -551,14 +556,7 @@ export class Block
 		if (current != null)
 		{
 			let record:Record = this.model.getRecord();
-
-			switch(record.status)
-			{
-				case RecordStatus.New : current.status = Status.insert; break;
-				case RecordStatus.Query : current.status = Status.update; break;
-				case RecordStatus.Updated : current.status = Status.update; break;
-				case RecordStatus.Inserted : current.status = Status.insert; break;
-			}
+			current.status = this.convert(record.status);
 
 			current.clear(false);
 			this.applyRecordProperties(record,false);
@@ -659,17 +657,17 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
+		let status:Status = this.convert(record.status);
 
 		if (curr)
 		{
-			inst = this.getRow(-1).getFirstInstance();
+			inst = this.getRow(-1).getFirstInstance(status);
 			if (inst == null) inst = row.getFirstInstance();
 		}
 		else
 		{
 			inst = row.getFirstInstance();
 			if (inst == null) inst = this.getRow(-1).getFirstInstance();
-			console.log("inst "+inst)
 		}
 
 		return(inst);
@@ -804,6 +802,18 @@ export class Block
 
 		if (fr >= 0) this.getRow(-1)?.distribute(field.name,value,dirty);
 		else		 this.getRow(cr)?.distribute(field.name,value,dirty);
+	}
+
+	public convert(status:RecordStatus) : Status
+	{
+		switch(status)
+		{
+			case RecordStatus.QBE 		: return(Status.qbe);
+			case RecordStatus.New 		: return(Status.insert);
+			case RecordStatus.Query 	: return(Status.update);
+			case RecordStatus.Updated 	: return(Status.update);
+			case RecordStatus.Inserted 	: return(Status.insert);
+		}
 	}
 
 	public dump() : void

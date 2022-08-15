@@ -23,7 +23,6 @@ import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
-import { stat } from "fs";
 
 
 export class FieldInstance implements FieldEventHandler
@@ -294,13 +293,25 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.getElement().focus();
 	}
 
-	public focusable() : boolean
+	public focusable(status?:Status) : boolean
 	{
 		if (this.impl instanceof Display)
 			return(false);
 
-		console.log("insert? "+(this.properties == this.insertProperties))
-		return(this.properties.enabled);
+		let props:FieldProperties = this.properties$;
+
+		if (status != null)
+		{
+			switch(status)
+			{
+				case Status.na : props = this.defproperties$; break;
+				case Status.qbe : props = this.qbeproperties$; break;
+				case Status.insert : props = this.insproperties$; break;
+				case Status.update : props = this.defproperties$; break;
+			}
+		}
+
+		return(props.enabled);
 	}
 
 	public setFieldState(state:FieldState) : void

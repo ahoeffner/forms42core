@@ -326,7 +326,7 @@ export class Row
 		return(instances);
 	}
 
-	public getFirstInstance() : FieldInstance
+	public getFirstInstance(status?:Status) : FieldInstance
 	{
 		let flds:Field[] = this.getFields();
 
@@ -335,7 +335,7 @@ export class Row
 			for (let i = 0; i < flds[f].getInstances().length; i++)
 			{
 				let inst:FieldInstance = flds[f].getInstance(i);
-				if (inst.focusable()) return(inst);
+				if (inst.focusable(status)) return(inst);
 			}
 		}
 

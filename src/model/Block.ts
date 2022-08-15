@@ -336,9 +336,11 @@ export class Block
 		{
 			this.scroll(scroll,this.view.row);
 			if (!before) await this.view.nextrecord();
+
+			this.view.setCurrentStatus(record);
+			this.view.findFirst(record)?.focus();
 		}
 
-		this.view.findFirst(record)?.focus();
 		return(record != null);
 	}
 

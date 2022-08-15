@@ -654,6 +654,28 @@ export class Block
 		return(next);
 	}
 
+	public findFirst(record:Record) : FieldInstance
+	{
+		let inst:FieldInstance = null;
+		let row:Row = this.displayed(record);
+		let curr:boolean = this.current.row < 0;
+		console.log(RecordStatus[record.status]+" "+row.rownum+" curr: "+curr)
+
+		if (curr)
+		{
+			inst = this.getRow(-1).getFirstInstance();
+			if (inst == null) inst = row.getFirstInstance();
+		}
+		else
+		{
+			inst = row.getFirstInstance();
+			if (inst == null) inst = this.getRow(-1).getFirstInstance();
+			console.log("inst "+inst)
+		}
+
+		return(inst);
+	}
+
 	public finalize() : void
 	{
 		let rows:Row[] = [];

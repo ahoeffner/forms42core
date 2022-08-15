@@ -334,9 +334,10 @@ export class Block
 		if (record != null)
 		{
 			this.scroll(scroll,this.view.row);
-			if (!before) this.view.nextrecord();
+			if (!before) await this.view.nextrecord();
 		}
 
+		this.view.findFirst(record)?.focus();
 		return(record != null);
 	}
 

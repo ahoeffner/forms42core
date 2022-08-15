@@ -14,8 +14,6 @@ import { KeyMap } from "./KeyMap.js";
 import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
-import { Block } from "../../public/Block.js";
-import { Field } from "../../public/Field.js";
 import { EventFilter } from "./EventFilter.js";
 import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";

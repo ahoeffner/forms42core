@@ -11,17 +11,19 @@
  */
 
 import { Form } from './Form.js';
-import { Field } from './Field.js';
 import { Record } from './Record.js';
+import { Status } from '../view/Row.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
+import { FieldProperties } from './FieldProperties.js';
 import { Filter } from '../model/interfaces/Filter.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
+import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 
 export class Block
 {
@@ -103,25 +105,85 @@ export class Block
 		return(ModelBlock.getBlock(this).removeKey(name));
 	}
 
-	public getFieldById(field:string, id:string) : Field
+	public getQBEPropertiesById(field:string, id:string) : FieldProperties
 	{
 		id = id?.toLowerCase();
 		field = field?.toLowerCase();
 		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
-		return(inst == null ? null : new Field(inst));
+		if (inst != null) return(new FieldProperties(inst.qbeProperties));
+		return(null);
 	}
 
-	public getFields(field:string, clazz?:string) : Field[]
+	public getInsertPropertiesById(field:string, id:string) : FieldProperties
 	{
-		let fields:Field[] = [];
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		if (inst != null) return(new FieldProperties(inst.insertProperties));
+		return(null);
+	}
 
+	public getDefaultPropertiesById(field:string, id:string) : FieldProperties
+	{
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		if (inst != null) return(new FieldProperties(inst.updateProperties));
+		return(null);
+	}
+
+	public getQBEPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	{
+		clazz = clazz?.toLowerCase();
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {props.push(new FieldProperties(inst.qbeProperties))})
+		return(props);
+	}
+
+	public getInsertPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	{
+		clazz = clazz?.toLowerCase();
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {props.push(new FieldProperties(inst.insertProperties))})
+		return(props);
+	}
+
+	public getDefaultPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	{
+		clazz = clazz?.toLowerCase();
+		field = field?.toLowerCase();
+		let props:FieldProperties[] = [];
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {props.push(new FieldProperties(inst.updateProperties))})
+		return(props);
+	}
+
+	public setQBEProperties(props:FieldProperties, field:string, clazz?:string) : void
+	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.qbe);})
+	}
 
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz)
-		.forEach((inst) => {fields.push(new Field(inst))});
+	public setInsertProperties(props:FieldProperties, field:string, clazz?:string) : void
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.insert);})
+	}
 
-		return(fields);
+	public setDefaultProperties(props:FieldProperties, field:string, clazz?:string) : void
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.update);})
 	}
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>

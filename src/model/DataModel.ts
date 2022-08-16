@@ -134,6 +134,8 @@ export class DataSourceWrapper
 			case RecordStatus.Updated : return(await this.source.update(record));
 			case RecordStatus.Inserted : return(await this.source.update(record));
 		}
+
+		return(true);
 	}
 
 	public async create(current:Record, before?:boolean) : Promise<Record>

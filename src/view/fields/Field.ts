@@ -304,7 +304,7 @@ export class Field
 
 			inst.valid = true;
 			this.row.invalidate();
-			
+
 			this.distribute(inst,value,true);
 			this.block.distribute(this,value,true);
 

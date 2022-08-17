@@ -328,7 +328,7 @@ export class FieldInstance implements FieldEventHandler
 			{
 				case Status.na : props = this.defproperties$; break;
 				case Status.qbe : props = this.qbeproperties$; break;
-				case Status.new : props = this.qbeproperties$; break;
+				case Status.new : props = this.insproperties$; break;
 				case Status.insert : props = this.insproperties$; break;
 				case Status.update : props = this.defproperties$; break;
 			}

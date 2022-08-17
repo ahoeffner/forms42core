@@ -306,6 +306,7 @@ export class FieldInstance implements FieldEventHandler
 			{
 				case Status.na : props = this.defproperties$; break;
 				case Status.qbe : props = this.qbeproperties$; break;
+				case Status.new : props = this.insproperties$; break;
 				case Status.insert : props = this.insproperties$; break;
 				case Status.update : props = this.defproperties$; break;
 			}
@@ -320,7 +321,6 @@ export class FieldInstance implements FieldEventHandler
 			return(false);
 
 		let props:FieldProperties = this.properties$;
-		console.log("editable "+Status[status])
 
 		if (status != null)
 		{

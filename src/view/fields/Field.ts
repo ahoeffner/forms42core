@@ -312,7 +312,7 @@ export class Field
 			return;
 		}
 
-		if (brwevent.type.startsWith("key") && !brwevent.navigation)
+		if (brwevent.type.startsWith("key") && !brwevent.custom)
 		{
 			key = KeyMapping.parseBrowserEvent(brwevent);
 
@@ -324,10 +324,10 @@ export class Field
 			return;
 	}
 
-		if (brwevent.onScrollUp) {brwevent.navigation = true; key = KeyMap.nextrecord;}
-		if (brwevent.onScrollDown) {brwevent.navigation = true; key = KeyMap.prevrecord;}
+		if (brwevent.onScrollUp) {brwevent.custom = true; key = KeyMap.nextrecord;}
+		if (brwevent.onScrollDown) {brwevent.custom = true; key = KeyMap.prevrecord;}
 
-		if (brwevent.navigation)
+		if (brwevent.custom)
 		{
 			if (key == null)
 				key = KeyMapping.parseBrowserEvent(brwevent);

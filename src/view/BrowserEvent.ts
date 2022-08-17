@@ -31,6 +31,7 @@ export class BrowserEvent
     public copy:boolean = false;
     public paste:boolean = false;
     public accept:boolean = false;
+    public custom:boolean = false;
     public cancel:boolean = false;
     public ignore:boolean = false;
     public prevent:boolean = false;
@@ -38,7 +39,6 @@ export class BrowserEvent
     public mousedown:boolean = false;
     public mouseinit:boolean = false;
     public mousemark:boolean = false;
-    public navigation:boolean = false;
     public printable$:boolean = false;
 
     public alt:boolean = false;
@@ -103,7 +103,7 @@ export class BrowserEvent
         this.prevent = false;
         this.modified = false;
         this.mouseinit = false;
-        this.navigation = false;
+        this.custom = false;
         this.printable$ = false;
 
         this.ctrlkey = null;
@@ -227,7 +227,7 @@ export class BrowserEvent
         this.paste = false;
 		this.accept = false;
 		this.cancel = false;
-		this.navigation = false;
+		this.custom = false;
         this.printable$ = false;
 
         switch(this.event.type)
@@ -243,7 +243,7 @@ export class BrowserEvent
                     {
                         this.ignore = false;
                         this.printable$ = true;
-						this.navigation = false;
+						this.custom = false;
                         this.key = this.event.key;
                     }
                 }
@@ -255,13 +255,13 @@ export class BrowserEvent
                 if (this.event.key == "ArrowLeft") this.ignore = false;
                 if (this.event.key == "ArrowRight") this.ignore = false;
 
-                if (this.event.key == "Tab") this.navigation = true;
+                if (this.event.key == "Tab") {this.custom = true; this.ignore = false;}
 
-                if (this.event.key == "PageUp") this.navigation = true;
-                if (this.event.key == "PageDown") this.navigation = true;
+                if (this.event.key == "PageUp") {this.custom = true; this.ignore = false;}
+                if (this.event.key == "PageDown") {this.custom = true; this.ignore = false;}
 
-                if (this.event.key == "ArrowUp") this.navigation = true;
-                if (this.event.key == "ArrowDown") this.navigation = true;
+                if (this.event.key == "ArrowUp") {this.custom = true; this.ignore = false;}
+                if (this.event.key == "ArrowDown") {this.custom = true; this.ignore = false;}
 
                 if (this.event.key == "Alt") {this.ignore = true; this.alt = false;}
                 if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}
@@ -280,7 +280,7 @@ export class BrowserEvent
             case "keypress":
 
                 this.ignore = true;
-				this.navigation = false;
+				this.custom = false;
                 this.key = this.event.key;
 
                 if (this.event.key.length == 1)
@@ -292,7 +292,7 @@ export class BrowserEvent
 
                 this.ignore = true;
                 this.prevent = false;
-				this.navigation = false;
+				this.custom = false;
                 this.printable$ = false;
 
                 this.repeat$ = (this.dseq != this.useq && this.event.key == this.key);
@@ -348,9 +348,9 @@ export class BrowserEvent
                 if (this.key == "ArrowUp") this.prevent = true;
                 if (this.key == "ArrowDown") this.prevent = true;
 
-				if (this.key == "Tab" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
-				if (this.key == "ArrowUp" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
-				if (this.key == "ArrowDown" && this.repeat$) {this.ignore = false; this.navigation = true; this.prevent = true}
+				if (this.key == "Tab" && this.repeat$) {this.ignore = false; this.custom = true; this.prevent = true}
+				if (this.key == "ArrowUp" && this.repeat$) {this.ignore = false; this.custom = true; this.prevent = true}
+				if (this.key == "ArrowDown" && this.repeat$) {this.ignore = false; this.custom = true; this.prevent = true}
 
                 if (this.key.startsWith("F") && this.event.key.length > 1)
                 {
@@ -364,7 +364,7 @@ export class BrowserEvent
                 this.key = null;
                 this.ignore = true;
                 this.prevent = false;
-				this.navigation = false;
+				this.custom = false;
                 this.printable$ = false;
             break;
         }
@@ -435,6 +435,6 @@ export class BrowserEvent
 
     public toString() : string
     {
-        return(this.type+" prevent: "+this.prevent+" ignore: "+this.ignore+" printable: "+this.printable+" key: "+this.key+" navigation: "+this.navigation);
+        return(this.type+" prevent: "+this.prevent+" ignore: "+this.ignore+" printable: "+this.printable+" key: "+this.key+" navigation: "+this.custom);
     }
 }

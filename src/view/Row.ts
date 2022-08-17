@@ -57,7 +57,6 @@ export class Row
 
 	public set status(status:Status)
 	{
-		console.log("set status "+Status[status]);
 		if (this.rownum >= 0) this.status$ = status;
 		else this.block.getCurrentRow().status$ = status;
 	}
@@ -118,6 +117,7 @@ export class Row
 
 	public get validated() : boolean
 	{
+		if (this.status == Status.new) return(false);
 		if (this.rownum >= 0) return(this.validated$);
 		else return(this.block.getCurrentRow().validated$);
 	}

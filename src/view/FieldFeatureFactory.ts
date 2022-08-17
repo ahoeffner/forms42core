@@ -69,7 +69,7 @@ export class FieldFeatureFactory
 		FieldFeatureFactory.copyBasic(props,fprops);
 
 		if (status == null) inst$.applyProperties(fprops);
-		else		   		inst$.updateDefaultProperties(fprops,status);
+		else		   		inst$.setDefaultProperties(fprops,status);
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void

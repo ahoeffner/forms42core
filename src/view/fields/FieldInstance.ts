@@ -72,21 +72,23 @@ export class FieldInstance implements FieldEventHandler
 
 		switch(this.field.row.status)
 		{
-			case Status.na :
+			case Status.na 		: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
+			case Status.qbe 	: if (this.properties$ != this.qbeproperties$) props = this.qbeproperties$; break;
+			case Status.new 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
 			case Status.update 	: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
 			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
-			case Status.qbe 	: if (this.properties$ != this.qbeproperties$) props = this.qbeproperties$; break;
 		}
 
 		if (props != null)
 			this.applyProperties(props);
 	}
 
-	public updateDefaultProperties(props:FieldProperties, status:Status) : void
+	public setDefaultProperties(props:FieldProperties, status:Status) : void
 	{
 		switch(status)
 		{
 			case Status.qbe : this.qbeproperties$ = props; break;
+			case Status.new : this.insproperties$ = props; break;
 			case Status.insert : this.insproperties$ = props; break;
 			default : this.defproperties$ = props;
 		}

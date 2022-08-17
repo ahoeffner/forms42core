@@ -51,12 +51,14 @@ export class Row
 
 	public get status() : Status
 	{
-		return(this.status$);
+		if (this.rownum >= 0) return(this.status$);
+		else return(this.block.getCurrentRow().status$);
 	}
 
 	public set status(status:Status)
 	{
-		this.status$ = status;
+		if (this.rownum >= 0) this.status$ = status;
+		else this.block.getCurrentRow().status$ = status;
 	}
 
 	public get rownum() : number
@@ -115,7 +117,6 @@ export class Row
 
 	public get validated() : boolean
 	{
-		console.log("row["+this.rownum+"] "+Status[this.status])
 		if (this.rownum >= 0) return(this.validated$);
 		else return(this.block.getCurrentRow().validated$);
 	}
@@ -124,6 +125,12 @@ export class Row
 	{
 		if (this.rownum >= 0) this.validated$ = false;
 		else this.block.getCurrentRow().invalidate();
+	}
+
+	public changestate() : void
+	{
+		if (this.status == Status.new)
+			this.status = Status.insert;
 	}
 
 	public async validate() : Promise<boolean>

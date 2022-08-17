@@ -316,11 +316,10 @@ export class Block
 	public async insert(before?:boolean) : Promise<boolean>
 	{
 		let scroll:number = 0;
-		before = true;
 
 		if (!this.view.validated)
 		{
-			if (!await this.view.validate())
+			if (!await this.view.validateRow())
 				return(false);
 		}
 
@@ -348,7 +347,7 @@ export class Block
 	{
 		if (!this.view.validated)
 		{
-			if (!await this.view.validate())
+			if (!await this.view.validateBlock())
 				return(false);
 		}
 

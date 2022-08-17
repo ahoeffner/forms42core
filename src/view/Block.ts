@@ -85,7 +85,7 @@ export class Block
 	public get current() : FieldInstance
 	{
 		if (this.curinst$ == null)
-			this.curinst$ = this.getCurrentRow().getFirstInstance();
+			this.curinst$ = this.getCurrentRow().getFirstInstance(Status.na);
 
 		return(this.curinst$);
 	}
@@ -291,23 +291,38 @@ export class Block
 		return(this.model.lock());
 	}
 
-	public async validate(inst?:FieldInstance, value?:any) : Promise<boolean>
+	public async validateField(inst?:FieldInstance, value?:any) : Promise<boolean>
 	{
-		if (inst == null)
-		{
-			return(this.getRow(this.row).validate());
-		}
-		else
-		{
-			await this.setEventTransaction(EventType.WhenValidateField);
-			let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
-			this.endEventTransaction(EventType.WhenValidateField,success);
+		await this.setEventTransaction(EventType.WhenValidateField);
+		let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
+		this.endEventTransaction(EventType.WhenValidateField,success);
 
-			if (success)
-				this.model$.setValue(inst.name,value);
+		if (success)
+			this.model$.setValue(inst.name,value);
 
-			return(success);
+		return(success);
+	}
+
+	public async validateRow() : Promise<boolean>
+	{
+		if (!await this.current.field.validate(this.current))
+			return(false);
+
+		return(this.getRow(this.row).validate());
+	}
+
+	public async validateBlock() : Promise<boolean>
+	{
+		if (!await this.current.field.validate(this.current))
+			return(false);
+
+			for (let i = 0; i < this.rows; i++)
+		{
+			if (!this.getRow(i).validate())
+				return(false);
 		}
+
+		return(true);
 	}
 
 	public get validated() : boolean
@@ -351,57 +366,75 @@ export class Block
 
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
+		this.curinst$ = inst;
 		if (!this.lock(inst)) return(false);
-
 		await this.setEventTransaction(EventType.OnTyping);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
 		this.endEventTransaction(EventType.OnTyping,success);
 		return(success);
 	}
 
-	public async nextrecord() : Promise<FieldInstance>
+	public async prevrecord() : Promise<boolean>
+	{
+		return(this.navigate(KeyMap.prevrecord,this.current));
+	}
+
+	public async nextrecord() : Promise<boolean>
 	{
 		return(this.navigate(KeyMap.nextrecord,this.current));
 	}
 
-	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<FieldInstance>
+	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<boolean>
 	{
+		let nav:boolean = false;
 		let next:FieldInstance = inst;
+
+		if (!await inst.field.validate(inst))
+		{
+			next.focus();
+			return(false);
+		}
 
 		switch(key)
 		{
 			case KeyMap.nextfield :
 			{
-				next = inst.field.row.nextField(inst)
+				nav = true;
+				next = inst.field.row.nextField(inst);
 				break;
 			}
 
 			case KeyMap.prevfield :
 			{
-				next = inst.field.row.prevField(inst)
+				nav = true;
+				next = inst.field.row.prevField(inst);
 				break;
 			}
 
 			case KeyMap.nextrecord :
 			{
+				nav = true;
 				next = await this.scroll(inst,1);
 				break;
 			}
 
 			case KeyMap.prevrecord :
 			{
+				nav = true;
 				next = await this.scroll(inst,-1);
 				break;
 			}
 
 			case KeyMap.pageup :
 			{
+				nav = true;
 				next = await this.scroll(inst,-this.rows);
 				break;
 			}
 
 			case KeyMap.pagedown :
 			{
+				nav = true;
 				next = await this.scroll(inst,this.rows);
 				break;
 			}
@@ -411,7 +444,7 @@ export class Block
 			inst.blur();
 
 		next.focus();
-		return(next);
+		return(nav);
 	}
 
 	public offset(inst:FieldInstance) : number
@@ -574,7 +607,7 @@ export class Block
 	{
 		let next:FieldInstance = inst;
 
-		if (!await this.validate())
+		if (!await this.validateRow())
 			return(next);
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
@@ -662,12 +695,12 @@ export class Block
 		if (curr)
 		{
 			inst = this.getRow(-1).getFirstInstance(status);
-			if (inst == null) inst = row.getFirstInstance();
+			if (inst == null) inst = row.getFirstInstance(status);
 		}
 		else
 		{
-			inst = row.getFirstInstance();
-			if (inst == null) inst = this.getRow(-1).getFirstInstance();
+			inst = row.getFirstInstance(status);
+			if (inst == null) inst = this.getRow(-1).getFirstInstance(status);
 		}
 
 		return(inst);
@@ -683,12 +716,12 @@ export class Block
 		if (curr)
 		{
 			inst = this.getRow(-1).getFirstEditableInstance(status);
-			if (inst == null) inst = row.getFirstEditableInstance();
+			if (inst == null) inst = row.getFirstEditableInstance(status);
 		}
 		else
 		{
-			inst = row.getFirstEditableInstance();
-			if (inst == null) inst = this.getRow(-1).getFirstEditableInstance();
+			inst = row.getFirstEditableInstance(status);
+			if (inst == null) inst = this.getRow(-1).getFirstEditableInstance(status);
 		}
 
 		return(inst);
@@ -829,31 +862,11 @@ export class Block
 	{
 		switch(status)
 		{
+			case RecordStatus.New 		: return(Status.new);
 			case RecordStatus.QBE 		: return(Status.qbe);
-			case RecordStatus.New 		: return(Status.insert);
 			case RecordStatus.Query 	: return(Status.update);
 			case RecordStatus.Updated 	: return(Status.update);
 			case RecordStatus.Inserted 	: return(Status.insert);
-		}
-	}
-
-	public dump() : void
-	{
-		let row:Row = this.getRow(-1);
-
-		if (row != null)
-		{
-			console.log("current: ");
-			row.getFields().forEach((fld) => {console.log(fld.name+" "+fld.getValue())});
-			console.log();
-		}
-
-		for (let i = 0; i < this.rows; i++)
-		{
-			row = this.getRow(i);
-			console.log("row: "+i);
-			row.getFields().forEach((fld) => {console.log(fld.name+" "+fld.getValue())});
-			console.log();
 		}
 	}
 

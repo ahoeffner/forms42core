@@ -211,7 +211,7 @@ export class Form implements EventListenerObject
 
 			if (preblock != nxtblock)
 			{
-				if (!await preblock.validate())
+				if (!await preblock.validateBlock())
 				{
 					this.focus();
 					return(false);
@@ -231,7 +231,7 @@ export class Form implements EventListenerObject
 			}
 			else if (recoffset != 0)
 			{
-				if (!await nxtblock.validate())
+				if (!await nxtblock.validateRow())
 				{
 					this.focus();
 					return(false);
@@ -365,6 +365,17 @@ export class Form implements EventListenerObject
 		await inst.field.block.model.wait4EventTransaction(EventType.PostField);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		return(success);
+	}
+
+	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
+	{
+		if (!await this.block.onKey(inst,key))
+			return(false);
+
+		if (key == KeyMap.enter)
+			console.log("accept");
+
+		return(this.block.navigate(key,inst));
 	}
 
 	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>

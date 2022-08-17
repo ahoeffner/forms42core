@@ -268,8 +268,8 @@ export class BrowserEvent
                 if (this.event.key == "Shift") {this.ignore = true; this.shift = false;}
                 if (this.event.key == "Control") {this.ignore = true; this.ctrl = false;}
 
-                if (this.event.key == "Enter") {this.accept = true; this.ignore = false;}
-                if (this.event.key == "Escape") {this.cancel = true; this.ignore = false;}
+                if (this.event.key == "Enter") {this.custom = true; this.accept = true; this.ignore = false;}
+                if (this.event.key == "Escape") {this.custom = true; this.cancel = true; this.ignore = false;}
 
                 if (this.ctrlkey != null) this.ignore = false;
 

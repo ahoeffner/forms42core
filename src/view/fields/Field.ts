@@ -259,6 +259,7 @@ export class Field
 			return;
 		}
 
+		/*
 		if (brwevent.accept)
 		{
 			if (this.dirty)
@@ -281,6 +282,7 @@ export class Field
 
 			return;
 		}
+		*/
 
 		if (brwevent.type == "change")
 		{
@@ -302,16 +304,42 @@ export class Field
 		{
 			let value:string = inst.getIntermediateValue();
 
+			this.dirty = true;
 			inst.valid = true;
+			this.valid = false;
 			this.row.invalidate();
 
-			this.distribute(inst,value,true);
-			this.block.distribute(this,value,true);
+			this.distribute(inst,value,this.dirty);
+			this.block.distribute(this,value,this.dirty);
 
 			await this.block.onTyping(inst);
 			return;
 		}
 
+		if (brwevent.onScrollUp) {key = KeyMap.nextrecord; inst = this.block.form.instance;}
+		if (brwevent.onScrollDown) {key = KeyMap.nextrecord; inst = this.block.form.instance;}
+
+		if (brwevent.type.startsWith("key") || key != null)
+		{
+			if (brwevent.undo) key = KeyMap.undo;
+			else if (brwevent.copy) key = KeyMap.copy;
+			else if (brwevent.paste) key = KeyMap.paste;
+
+			if (key == null)
+				key = KeyMapping.parseBrowserEvent(brwevent);
+
+			if (this.dirty)
+			{
+				this.value$ = inst.getValue();
+				this.distribute(inst,this.value$,this.dirty);
+				this.block.distribute(this,this.value$,this.dirty);
+			}
+
+			this.block.form.keyhandler(key,inst);
+			return;
+		}
+
+		/*
 		if (brwevent.type.startsWith("key") && !brwevent.custom)
 		{
 			key = KeyMapping.parseBrowserEvent(brwevent);
@@ -322,7 +350,7 @@ export class Field
 
 			await this.block.onKey(inst,key);
 			return;
-	}
+		}
 
 		if (brwevent.onScrollUp) {brwevent.custom = true; key = KeyMap.nextrecord;}
 		if (brwevent.onScrollDown) {brwevent.custom = true; key = KeyMap.prevrecord;}
@@ -353,6 +381,7 @@ export class Field
 
 			return;
 		}
+		*/
 
 		if (brwevent.isMouseEvent)
 		{
@@ -383,7 +412,10 @@ export class Field
 
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
-		if (!await this.block.validate(inst,this.value$))
+		if (this.valid)
+			return(true);
+
+		if (!await this.block.validateField(inst,this.value$))
 		{
 			inst.focus();
 			inst.valid = false;
@@ -394,6 +426,8 @@ export class Field
 		{
 			inst.valid = true;
 			this.valid = true;
+			this.dirty = false;
+
 			return(true);
 		}
 	}

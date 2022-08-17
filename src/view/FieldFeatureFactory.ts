@@ -28,6 +28,7 @@ export class FieldFeatureFactory
 			switch(type)
 			{
 				case Status.qbe: exist = inst.qbeProperties; break;
+				case Status.new: exist = inst.insertProperties; break;
 				case Status.insert: exist = inst.insertProperties; break;
 				case Status.update: exist = inst.updateProperties; break;
 				default: exist = inst.defaultProperties;
@@ -59,6 +60,7 @@ export class FieldFeatureFactory
 		switch(status)
 		{
 			case Status.qbe : fprops = FieldFeatureFactory.clone(inst$.qbeProperties); break;
+			case Status.new : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
 			case Status.insert : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
 			case Status.update : fprops = FieldFeatureFactory.clone(inst$.updateProperties); break;
 			default: fprops = FieldFeatureFactory.clone(inst$.properties);

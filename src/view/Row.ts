@@ -21,6 +21,7 @@ export enum Status
 {
 	na,
 	qbe,
+	new,
 	update,
 	insert,
 }
@@ -114,6 +115,7 @@ export class Row
 
 	public get validated() : boolean
 	{
+		console.log("row["+this.rownum+"] "+Status[this.status])
 		if (this.rownum >= 0) return(this.validated$);
 		else return(this.block.getCurrentRow().validated$);
 	}
@@ -121,7 +123,7 @@ export class Row
 	public invalidate() : void
 	{
 		if (this.rownum >= 0) this.validated$ = false;
-		else this.block.getCurrentRow().validated$ = false;
+		else this.block.getCurrentRow().invalidate();
 	}
 
 	public async validate() : Promise<boolean>
@@ -326,7 +328,7 @@ export class Row
 		return(instances);
 	}
 
-	public getFirstInstance(status?:Status) : FieldInstance
+	public getFirstInstance(status:Status) : FieldInstance
 	{
 		let flds:Field[] = this.getFields();
 
@@ -342,7 +344,7 @@ export class Row
 		return(null);
 	}
 
-	public getFirstEditableInstance(status?:Status) : FieldInstance
+	public getFirstEditableInstance(status:Status) : FieldInstance
 	{
 		let flds:Field[] = this.getFields();
 

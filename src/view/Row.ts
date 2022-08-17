@@ -165,10 +165,8 @@ export class Row
 				if (!fields[i].valid) valid = false;
 		}
 
-		if (valid)
-		{
-			this.validated$ = await this.block.model.validateRecord();
-		}
+		if (!valid) return(false);
+		else this.validated$ = await this.block.model.validateRecord();
 
 		return(this.validated$);
 	}

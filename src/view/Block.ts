@@ -316,9 +316,9 @@ export class Block
 		if (!await this.current.field.validate(this.current))
 			return(false);
 
-			for (let i = 0; i < this.rows; i++)
+		for (let i = 0; i < this.rows; i++)
 		{
-			if (!this.getRow(i).validate())
+			if (!await this.getRow(i).validate())
 				return(false);
 		}
 

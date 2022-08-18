@@ -454,17 +454,6 @@ export class Block
 		return(row-this.row$);
 	}
 
-	public setCurrentStatus(record:Record) : void
-	{
-		let current:Row = this.getRow(-1);
-
-		if (current)
-		{
-			current.status = this.convert(record.status);
-			current.clear(false);
-		}
-	}
-
 	public getCurrentRow() : Row
 	{
 		return(this.rows$.get(this.row));

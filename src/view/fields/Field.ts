@@ -329,13 +329,6 @@ export class Field
 			if (key == null)
 				key = KeyMapping.parseBrowserEvent(brwevent);
 
-			if (this.dirty)
-			{
-				this.value$ = inst.getValue();
-				this.distribute(inst,this.value$,this.dirty);
-				this.block.distribute(this,this.value$,this.dirty);
-			}
-
 			this.block.form.keyhandler(key,inst);
 			return;
 		}
@@ -413,14 +406,15 @@ export class Field
 
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
-		if (this.valid)
+		if (this.valid$)
 			return(true);
 
-		if (!await this.block.validateField(inst,this.value$))
+		if (!await this.block.validateField(inst,inst.getValue()))
 		{
 			inst.focus();
 			inst.valid = false;
 			this.valid = false;
+
 			return(false);
 		}
 		else
@@ -431,5 +425,10 @@ export class Field
 
 			return(true);
 		}
+	}
+
+	public toString() : string
+	{
+		return(this.name+"["+this.row.rownum+"] value: "+this.value$+" dirty: "+this.dirty+" valid: "+this.valid$);
 	}
 }

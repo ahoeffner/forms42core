@@ -142,14 +142,17 @@ export class Record
 
 	public getValue(column:string) : any
 	{
+		if (column == null)
+			return(null);
+
 		column = column.toLowerCase();
-		if (this.source == null) return(null);
 		let idx:number = this.indexOf(column);
 		return(this.values$[idx]);
 	}
 
 	public setValue(column:string,value:any) : void
 	{
+		if (column == null) return;
 		column = column.toLowerCase();
 		let idx:number = this.indexOf(column);
 

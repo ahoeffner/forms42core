@@ -78,7 +78,7 @@ export class FieldInstance implements FieldEventHandler
 			case Status.update 	: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
 			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
 		}
-
+		
 		if (props != null)
 			this.applyProperties(props);
 	}

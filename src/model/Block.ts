@@ -334,7 +334,13 @@ export class Block
 		if (record != null)
 		{
 			this.scroll(scroll,this.view.row);
-			if (!before) await this.view.nextrecord();
+
+			if (!before)
+			{
+				this.move(1);
+				this.view.move(1);
+			}
+
 			this.view.findFirstEditable(record)?.focus();
 		}
 

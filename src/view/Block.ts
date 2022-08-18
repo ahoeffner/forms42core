@@ -454,6 +454,11 @@ export class Block
 		return(row-this.row$);
 	}
 
+	public move(delta:number) : void
+	{
+		this.row$ += delta;
+	}
+
 	public getCurrentRow() : Row
 	{
 		return(this.rows$.get(this.row));

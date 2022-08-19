@@ -373,9 +373,6 @@ export class Form implements EventListenerObject
 		if (!await this.block.onKey(inst,key))
 			return(false);
 
-		if (key == KeyMap.enter)
-			console.log("accept");
-
 		if (KeyMapping.isRowNav(key))
 		{
 			this.block.navigateRow(key,inst);
@@ -386,6 +383,14 @@ export class Form implements EventListenerObject
 		{
 			this.block.navigateBlock(key,inst);
 			return(true);
+		}
+
+		if (key == KeyMap.enter)
+		{
+			if (!await inst.field.validate(inst))
+				return(false);
+
+			return(this.block.validateRow());
 		}
 
 		return(true);

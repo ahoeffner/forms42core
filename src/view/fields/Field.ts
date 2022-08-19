@@ -122,12 +122,6 @@ export class Field
 			if (!valid)	return(false);
 		}
 
-		if (!this.valid$)
-		{
-			this.instances$.forEach((inst) =>
-				{inst.valid = false;})
-		}
-
 		return(this.valid$);
 	}
 
@@ -253,34 +247,12 @@ export class Field
 			if (inst.ignore != "blur")
 				await this.block.form.leave(inst);
 
+			if (!this.valid$)
+				inst.valid = false;
+
 			inst.ignore = null;
 			return;
 		}
-
-		/*
-		if (brwevent.accept)
-		{
-			if (this.dirty)
-			{
-				this.dirty = false;
-				this.value$ = inst.getValue();
-
-				this.distribute(inst,this.value$,this.dirty);
-				this.block.distribute(this,this.value$,this.dirty);
-
-				if (!await this.validate(inst))
-					return;
-			}
-
-			if (!await this.block.validate())
-				return;
-
-			key = KeyMapping.parseBrowserEvent(brwevent);
-			await this.block.onKey(inst,key);
-
-			return;
-		}
-		*/
 
 		if (brwevent.type == "change")
 		{
@@ -325,50 +297,6 @@ export class Field
 			return;
 		}
 
-		/*
-		if (brwevent.type.startsWith("key") && !brwevent.custom)
-		{
-			key = KeyMapping.parseBrowserEvent(brwevent);
-
-			if (brwevent.undo) key = KeyMap.undo;
-			else if (brwevent.copy) key = KeyMap.copy;
-			else if (brwevent.paste) key = KeyMap.paste;
-
-			await this.block.onKey(inst,key);
-			return;
-		}
-
-		if (brwevent.onScrollUp) {brwevent.custom = true; key = KeyMap.nextrecord;}
-		if (brwevent.onScrollDown) {brwevent.custom = true; key = KeyMap.prevrecord;}
-
-		if (brwevent.custom)
-		{
-			if (key == null)
-				key = KeyMapping.parseBrowserEvent(brwevent);
-
-			if (brwevent.onScrollUp || brwevent.onScrollDown)
-				inst = this.block.form.instance;
-
-			if (key != null && inst != null)
-			{
-				if (this.dirty)
-				{
-					this.dirty = false;
-					this.value$ = inst.getValue();
-					this.distribute(inst,this.value$,this.dirty);
-					this.block.distribute(this,this.value$,this.dirty);
-
-					if (!await this.validate(inst))
-						return;
-				}
-
-				await this.block.navigate(key,inst);
-			}
-
-			return;
-		}
-		*/
-
 		if (brwevent.isMouseEvent)
 		{
 			if (brwevent.event.type.includes("click") || brwevent.type == "contextmenu")
@@ -409,6 +337,9 @@ export class Field
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
 		let value:any = inst.getValue();
+
+		if (value != this.value$)
+			this.dirty = true;
 
 		if (!this.dirty)
 			return(true);

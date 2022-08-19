@@ -22,35 +22,40 @@ export class MenuHandler implements EventListenerObject
 	private menucls:string = null;
 	private linkcls:string = null;
 	private target:HTMLElement = null;
-	private options:MenuOptions = null;
+	private options$:MenuOptions = null;
     private open:Set<string> = new Set<string>();
 
 	constructor(menu:Menu, target:HTMLElement, options?:MenuOptions)
 	{
 		this.menu = menu;
 		this.target = target;
-		this.options = options;
-		if (options == null) this.options = {}
+		this.options$ = options;
+		if (options == null) this.options$ = {}
 
-		if (this.options.classes == null) this.options.classes = {};
-		if (this.options.skiproot == null) this.options.skiproot = false;
-		if (this.options.singlepath == null) this.options.singlepath = true;
-		if (this.options.classes.common == null) this.options.classes.common = "";
-		if (this.options.classes.open == null) this.options.classes.open = "menu-open";
-		if (this.options.classes.menuitem == null) this.options.classes.menuitem = "menu-item";
-		if (this.options.classes.linkitem == null) this.options.classes.linkitem = "link-item";
-		if (this.options.classes.container == null) this.options.classes.container = "menu-items";
+		if (this.options$.classes == null) this.options$.classes = {};
+		if (this.options$.skiproot == null) this.options$.skiproot = false;
+		if (this.options$.singlepath == null) this.options$.singlepath = true;
+		if (this.options$.classes.common == null) this.options$.classes.common = "";
+		if (this.options$.classes.open == null) this.options$.classes.open = "menu-open";
+		if (this.options$.classes.menuitem == null) this.options$.classes.menuitem = "menu-item";
+		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
+		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
 
-		this.levcls = (this.options.classes.common + " " + this.options.classes.container).trim();
-		this.menucls = (this.options.classes.common + " " + this.options.classes.menuitem).trim();
-		this.linkcls = (this.options.classes.common + " " + this.options.classes.linkitem).trim();
+		this.levcls = (this.options$.classes.common + " " + this.options$.classes.container).trim();
+		this.menucls = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
+		this.linkcls = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
+	}
+
+	public get options() : MenuOptions
+	{
+		return(this.options$);
 	}
 
 	public show() : void
 	{
 		let start:MenuEntry[] = [this.menu.getRoot()];
 
-		if (this.options.skiproot)
+		if (this.options$.skiproot)
 			start = this.menu.getEntries("/"+start[0].id);
 
 		this.target.innerHTML = this.showEntry(start);
@@ -68,7 +73,7 @@ export class MenuHandler implements EventListenerObject
 	{
 		let open:boolean = this.open.has(path);
 
-		if (this.options.singlepath)
+		if (this.options$.singlepath)
 		{
 			this.open.clear();
 
@@ -132,7 +137,7 @@ export class MenuHandler implements EventListenerObject
 
 			if (this.open.has(npath))
 			{
-				classes += " "+this.options.classes.open;
+				classes += " "+this.options$.classes.open;
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 			}

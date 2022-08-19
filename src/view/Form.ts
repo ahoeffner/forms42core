@@ -23,6 +23,7 @@ import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
+import { Key } from '../model/relations/Key.js';
 
 export class Form implements EventListenerObject
 {
@@ -375,7 +376,19 @@ export class Form implements EventListenerObject
 		if (key == KeyMap.enter)
 			console.log("accept");
 
-		return(this.block.navigate(key,inst));
+		if (KeyMapping.isRowNav(key))
+		{
+			this.block.navigateRow(key,inst);
+			return(true);
+		}
+
+		if (KeyMapping.isBlockNav(key))
+		{
+			this.block.navigateBlock(key,inst);
+			return(true);
+		}
+
+		return(true);
 	}
 
 	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>

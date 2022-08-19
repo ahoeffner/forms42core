@@ -155,6 +155,28 @@ export class KeyMapping
 		});
 	}
 
+	public static isRowNav(key:KeyMap) : boolean
+	{
+		switch(key)
+		{
+			case KeyMap.prevfield : return(true);
+			case KeyMap.nextfield : return(true);
+			default 			  : return(false);
+		}
+	}
+
+	public static isBlockNav(key:KeyMap) : boolean
+	{
+		switch(key)
+		{
+			case KeyMap.pageup 	   : return(true);
+			case KeyMap.pagedown   : return(true);
+			case KeyMap.prevrecord : return(true);
+			case KeyMap.nextrecord : return(true);
+			default 			   : return(false);
+		}
+	}
+
 	public static add(keymap:KeyMap) : void
 	{
 		if (keymap != null && KeyMapping.map.get(keymap.signature) == null)

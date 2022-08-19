@@ -313,16 +313,7 @@ export class Block
 
 	public async validateBlock() : Promise<boolean>
 	{
-		if (!await this.current.field.validate(this.current))
-			return(false);
-
-		for (let i = 0; i < this.rows; i++)
-		{
-			if (!await this.getRow(i).validate())
-				return(false);
-		}
-
-		return(true);
+		return(this.validateRow());
 	}
 
 	public get validated() : boolean
@@ -374,46 +365,45 @@ export class Block
 		return(success);
 	}
 
-	public async prevrecord() : Promise<boolean>
+	public async navigateRow(key:KeyMap, inst:FieldInstance) : Promise<boolean>
 	{
-		return(this.navigate(KeyMap.prevrecord,this.current));
-	}
-
-	public async nextrecord() : Promise<boolean>
-	{
-		return(this.navigate(KeyMap.nextrecord,this.current));
-	}
-
-	public async navigate(key:KeyMap, inst:FieldInstance) : Promise<boolean>
-	{
-		let nav:boolean = false;
 		let next:FieldInstance = inst;
-
-		if (key != KeyMap.nextfield && key != KeyMap.prevfield)
-		{
-			if (!await inst.field.validate(inst))
-			{
-				next.focus();
-				return(false);
-			}
-		}
 
 		switch(key)
 		{
 			case KeyMap.nextfield :
 			{
-				nav = true;
 				next = inst.field.row.nextField(inst);
 				break;
 			}
 
 			case KeyMap.prevfield :
 			{
-				nav = true;
 				next = inst.field.row.prevField(inst);
 				break;
 			}
+		}
 
+		if (next != inst)
+			inst.blur();
+
+		next.focus();
+		return(true);
+	}
+
+	public async navigateBlock(key:KeyMap, inst:FieldInstance) : Promise<boolean>
+	{
+		let nav:boolean = false;
+		let next:FieldInstance = inst;
+
+		if (!await inst.field.validate(inst))
+		{
+			next.focus();
+			return(false);
+		}
+
+		switch(key)
+		{
 			case KeyMap.nextrecord :
 			{
 				nav = true;

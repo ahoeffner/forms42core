@@ -304,7 +304,7 @@ export class Field
 		}
 
 		if (brwevent.onScrollUp) {key = KeyMap.nextrecord; inst = this.block.form.instance;}
-		if (brwevent.onScrollDown) {key = KeyMap.nextrecord; inst = this.block.form.instance;}
+		if (brwevent.onScrollDown) {key = KeyMap.prevrecord; inst = this.block.form.instance;}
 
 		if (brwevent.type.startsWith("key") || key != null)
 		{

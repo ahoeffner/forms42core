@@ -244,14 +244,6 @@ export class Field
 
 		if (brwevent.type == "blur")
 		{
-			if (this.dirty)
-			{
-				let value:string = inst.getIntermediateValue();
-
-				this.distribute(inst,value,this.dirty);
-				this.block.distribute(this,value,this.dirty);
-			}
-
 			if (inst.ignore != "blur")
 				await this.block.form.leave(inst);
 
@@ -286,17 +278,11 @@ export class Field
 
 		if (brwevent.type == "change")
 		{
-			this.dirty = false;
-			let value:any = inst.getValue();
-			if (value == this.value$) return;
-
 			this.row.invalidate();
-			this.value$ = inst.getValue();
+			await this.validate(inst);
 
 			this.distribute(inst,this.value$,this.dirty);
 			this.block.distribute(this,this.value$,this.dirty);
-
-			await this.validate(inst);
 			return;
 		}
 
@@ -392,7 +378,17 @@ export class Field
 	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
 		this.dirty = dirty;
-		if (!dirty) this.value$ = value;
+		this.value$ = value;
+
+		if (dirty)
+		{
+			if (value != null)
+				this.valid$ = false;
+		}
+		else
+		{
+			this.valid$ = true;
+		}
 
 		this.instances$.forEach((fi) =>
 		{
@@ -406,7 +402,9 @@ export class Field
 
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
-		if (this.valid$)
+		let value:any = inst.getValue();
+
+		if (!this.dirty)
 			return(true);
 
 		if (!await this.block.validateField(inst,inst.getValue()))
@@ -422,6 +420,7 @@ export class Field
 			inst.valid = true;
 			this.valid = true;
 			this.dirty = false;
+			this.value$ = value;
 
 			return(true);
 		}

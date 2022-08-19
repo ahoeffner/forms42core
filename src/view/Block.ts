@@ -389,10 +389,13 @@ export class Block
 		let nav:boolean = false;
 		let next:FieldInstance = inst;
 
-		if (!await inst.field.validate(inst))
+		if (key != KeyMap.nextfield && key != KeyMap.prevfield)
 		{
-			next.focus();
-			return(false);
+			if (!await inst.field.validate(inst))
+			{
+				next.focus();
+				return(false);
+			}
 		}
 
 		switch(key)

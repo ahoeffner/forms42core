@@ -78,7 +78,10 @@ export class FieldInstance implements FieldEventHandler
 			case Status.update 	: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
 			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
 		}
-		
+
+		if (props != null)
+			console.log("resetProperties "+this+" "+Status[this.field.row.status]+" "+props)
+
 		if (props != null)
 			this.applyProperties(props);
 	}
@@ -96,6 +99,7 @@ export class FieldInstance implements FieldEventHandler
 		if (status != this.field.row.status)
 			return;
 
+		console.log("setDefaultProperties "+this+" "+Status[status])
 		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
 		if (clazz == this.clazz) this.updateField(props);
@@ -106,6 +110,7 @@ export class FieldInstance implements FieldEventHandler
 	{
 		this.properties$ = props;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
+		console.log("applyProperties "+this)
 
 		if (clazz == this.clazz) this.updateField(props);
 		else					 this.changeFieldType(clazz,props);

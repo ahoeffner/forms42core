@@ -275,9 +275,10 @@ export class Block
 		return(success);
 	}
 
-	public move(delta:number) : void
+	public move(delta:number) : number
 	{
 		this.record$ = this.record + delta;
+		return(this.record$);
 	}
 
 	public get record() : number
@@ -341,6 +342,8 @@ export class Block
 				this.view.move(1);
 			}
 
+			this.view.openrow();
+			this.view.refresh(this.view.row,record);
 			this.view.findFirstEditable(record)?.focus();
 		}
 

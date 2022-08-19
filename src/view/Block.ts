@@ -454,9 +454,10 @@ export class Block
 		return(row-this.row$);
 	}
 
-	public move(delta:number) : void
+	public move(delta:number) : number
 	{
 		this.row$ += delta;
+		return(this.row$);
 	}
 
 	public getCurrentRow() : Row
@@ -556,10 +557,16 @@ export class Block
 	public refresh(rownum:number, record:Record) : void
 	{
 		this.display(rownum,record);
-		if (rownum == this.row) this.displaycurrent();
+
+		if (rownum == this.row)
+		{
+			this.displaycurrent();
+			this.model.queryDetails();
+			this.setIndicators(null,this.row);
+		}
 	}
 
-	private openrow()
+	public openrow()
 	{
 		let row:Row = this.getRow(this.row);
 		let current:Row = this.rows$.get(-1);

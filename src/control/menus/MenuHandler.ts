@@ -21,7 +21,6 @@ export class MenuHandler implements EventListenerObject
 	private levcls:string = null;
 	private menucls:string = null;
 	private linkcls:string = null;
-	private caretdown: string = null;
 	private target:HTMLElement = null;
 	private options:MenuOptions = null;
     private open:Set<string> = new Set<string>();
@@ -41,12 +40,10 @@ export class MenuHandler implements EventListenerObject
 		if (this.options.classes.menuitem == null) this.options.classes.menuitem = "menu-item";
 		if (this.options.classes.linkitem == null) this.options.classes.linkitem = "link-item";
 		if (this.options.classes.container == null) this.options.classes.container = "menu-items";
-		if (this.options.classes.caretdown == null) this.options.classes.caretdown = "caret-down";
 
 		this.levcls = (this.options.classes.common + " " + this.options.classes.container).trim();
 		this.menucls = (this.options.classes.common + " " + this.options.classes.menuitem).trim();
 		this.linkcls = (this.options.classes.common + " " + this.options.classes.linkitem).trim();
-		this.caretdown = (this.options.classes.common + " " + this.options.classes.caretdown).trim();
 	}
 
 	public show() : void
@@ -124,23 +121,23 @@ export class MenuHandler implements EventListenerObject
 
 			let cmd:string = "";
 			let classes:string = this.menucls;
+
 			if (entries[i].command)
 			{
 				classes = this.linkcls;
 				cmd = "command='"+entries[i].command+"'";
-				}
+			}
+
 			let npath:string = path+entries[i].id;
+
 			if (this.open.has(npath))
 			{
 				classes += " "+this.options.classes.open;
-				if(this.caretdown) classes += " " + this.caretdown;
-				
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 				page = this.showEntry(this.menu.getEntries(npath),npath,page);
 			}
 			else
 			{
-				
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
 			}
 

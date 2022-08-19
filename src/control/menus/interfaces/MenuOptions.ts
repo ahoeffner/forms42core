@@ -23,6 +23,5 @@ export interface MenuOptions
 		menuitem?:string;
 		linkitem?:string;
 		container?:string;
-		caretdown?:string;
 	}
 }

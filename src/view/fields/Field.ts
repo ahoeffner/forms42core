@@ -122,6 +122,12 @@ export class Field
 			if (!valid)	return(false);
 		}
 
+		if (!this.valid$)
+		{
+			this.instances$.forEach((inst) =>
+				{inst.valid = false;})
+		}
+
 		return(this.valid$);
 	}
 

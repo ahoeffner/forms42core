@@ -299,12 +299,8 @@ export class Field
 
 		if (brwevent.isMouseEvent)
 		{
-			if (brwevent.event.type.includes("click") || brwevent.type == "contextmenu")
-			{
-				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-				await this.block.onMouse(inst,mevent);
-			}
-
+			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
+			await this.block.onMouse(inst,mevent);
 			return;
 		}
 	}

@@ -18,12 +18,10 @@ import { Properties } from './Properties.js';
 import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ModelForm } from '../model/Form.js';
-import { BrowserEvent } from '../view/BrowserEvent.js';
 import { EventType } from '../control/events/EventType.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
 export interface Component
 {
@@ -214,51 +212,4 @@ export class FormsModule implements EventListenerObject
 
 		return(instance);
     }
-
-	private event:BrowserEvent = new BrowserEvent();
-	public async handleEvent(event:any) : Promise<void>
-	{
-        let bubble:boolean = false;
-		this.event.setEvent(event);
-
-		if (this.event.type == "wait")
-			await this.event.wait();
-
-		if (this.event.waiting)
-			return;
-
-		if (this.event.accept || this.event.cancel)
-			bubble = true;
-
-		if (this.event.bubbleMouseEvent)
-			bubble = true;
-
-		if (this.event.onScrollUp)
-			bubble = true;
-
-        if (this.event.onScrollDown)
-			bubble = true;
-
-        if (this.event.onCtrlKeyDown)
-			bubble = true;
-
-        if (this.event.onFuncKey)
-			bubble = true;
-
-		this.event.preventDefault();
-
-		if (bubble)
-		{
-			if (this.event.type.startsWith("key"))
-			{
-				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
-				await this.keyhandler(key);
-			}
-			else
-			{
-				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
-				await this.mousehandler(mevent);
-			}
-		}
-	}
 }

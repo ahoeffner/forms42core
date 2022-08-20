@@ -124,7 +124,6 @@ export class FormEvents
 	{
 		let id:object = new Object();
 		let listeners:EventListener[] = [];
-		console.log("form: "+form+" clazz: "+clazz)
 
 		if (filter == null)
 		{

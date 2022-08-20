@@ -472,12 +472,12 @@ export class Form implements EventListenerObject
 		{
 			if (this.event.type.startsWith("key"))
 			{
-				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
+				let key:KeyMap = KeyMapping.parseBrowserEvent(this.event);
 				await this.keyhandler(key);
 			}
 			else
 			{
-				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
+				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(this.event);
 				await this.mousehandler(mevent);
 			}
 		}

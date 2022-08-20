@@ -22,6 +22,7 @@ import { EventType } from '../control/events/EventType.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
 export interface Component
 {
@@ -87,7 +88,7 @@ class State
         new Map<string,Class<any>>();
 }
 
-export class FormsModule implements EventListenerObject
+export class FormsModule
 {
     private static instance:FormsModule;
 
@@ -102,6 +103,7 @@ export class FormsModule implements EventListenerObject
     {
 		dates.validate();
 		KeyMapping.init();
+		ApplicationHandler.init();
         FormsModule.instance = this;
     }
 

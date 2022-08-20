@@ -16,7 +16,17 @@ import { BrowserEvent } from '../../view/BrowserEvent.js';
 
 export class ApplicationHandler implements EventListenerObject
 {
+	public static instance:ApplicationHandler;
 
+	public static init() : void
+	{
+		ApplicationHandler.instance = new ApplicationHandler();
+	}
+
+	private constructor()
+	{
+		this.addEvents();
+	}
 
 	private event:BrowserEvent = new BrowserEvent();
 	public async handleEvent(event:any) : Promise<void>
@@ -52,6 +62,7 @@ export class ApplicationHandler implements EventListenerObject
 
 		if (bubble)
 		{
+			/*
 			if (this.event.type.startsWith("key"))
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
@@ -62,6 +73,18 @@ export class ApplicationHandler implements EventListenerObject
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
 				await this.mousehandler(mevent);
 			}
+			*/
 		}
 	}
+
+    private addEvents() : void
+    {
+        document.addEventListener("keyup",this);
+        document.addEventListener("keydown",this);
+        document.addEventListener("keypress",this);
+
+        document.addEventListener("click",this);
+        document.addEventListener("dblclick",this);
+        document.addEventListener("contextmenu",this);
+    }
 }

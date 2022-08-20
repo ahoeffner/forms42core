@@ -15,6 +15,7 @@ import { Record } from '../model/Record.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
+import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -23,7 +24,6 @@ import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
-import { Key } from '../model/relations/Key.js';
 
 export class Form implements EventListenerObject
 {
@@ -370,30 +370,57 @@ export class Form implements EventListenerObject
 
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
 	{
-		if (!await this.block.onKey(inst,key))
+		let success:boolean = false;
+		let blk:ModelBlock = inst?.field.block.model;
+		let form:ModelForm = ModelForm.getForm(this.parent);
+
+		if (!form.checkEventTransaction(EventType.Key,blk))
 			return(false);
 
-		if (KeyMapping.isRowNav(key))
+		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
+
+		if (!await FormEvents.raise(frmevent))
+			return(false);
+
+		if (inst != null)
 		{
-			this.block.navigateRow(key,inst);
+			if (KeyMapping.isRowNav(key))
+			{
+				success = await this.block.navigateRow(key,inst);
+				return(success);
+			}
+
+			if (KeyMapping.isBlockNav(key))
+			{
+				success = await this.block.navigateBlock(key,inst);
+				return(success);
+			}
+
+			if (key == KeyMap.enter)
+			{
+				if (!await inst.field.validate(inst))
+					return(false);
+
+				success = await this.block.validateRow();
+				return(success);
+			}
+
 			return(true);
-		}
-
-		if (KeyMapping.isBlockNav(key))
-		{
-			this.block.navigateBlock(key,inst);
-			return(true);
-		}
-
-		if (key == KeyMap.enter)
-		{
-			if (!await inst.field.validate(inst))
-				return(false);
-
-			return(this.block.validateRow());
 		}
 
 		return(true);
+	}
+
+	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
+	{
+		let blk:ModelBlock = inst?.field.block.model;
+		let form:ModelForm = ModelForm.getForm(this.parent);
+
+		if (!form.checkEventTransaction(EventType.Mouse,blk))
+			return(false);
+
+		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
+		return(FormEvents.raise(frmevent));
 	}
 
 	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>
@@ -446,18 +473,12 @@ export class Form implements EventListenerObject
 			if (this.event.type.startsWith("key"))
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
-				let keyevent:FormEvent = FormEvent.KeyEvent(this.parent,null,key);
-
-				if (await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.Key,null))
-					await FormEvents.raise(keyevent);
+				await this.keyhandler(key);
 			}
 			else
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
-				let mouseevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent);
-
-				if (ModelForm.getForm(this.parent).wait4EventTransaction(EventType.Mouse,null))
-					await FormEvents.raise(mouseevent);
+				await this.mousehandler(mevent);
 			}
 		}
 	}

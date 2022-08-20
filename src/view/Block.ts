@@ -344,17 +344,6 @@ export class Block
 			this.fieldnames$.push(inst.name);
 	}
 
-	public async onKey(inst:FieldInstance, key:KeyMap) : Promise<boolean>
-	{
-		if (key == null) return(true);
-		return(this.fireKeyEvent(inst,key));
-	}
-
-	public async onMouse(inst:FieldInstance, mevent:MouseMap) : Promise<boolean>
-	{
-		return(this.fireMouseEvent(inst,mevent));
-	}
-
 	public async onTyping(inst:FieldInstance) : Promise<boolean>
 	{
 		this.curinst$ = inst;
@@ -867,18 +856,6 @@ export class Block
 	public linkModel() : void
 	{
 		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);
-	}
-
-	private async fireKeyEvent(inst:FieldInstance, key:KeyMap) : Promise<boolean>
-	{
-		let frmevent:FormEvent = FormEvent.KeyEvent(this.form.parent,inst,key);
-		return(FormEvents.raise(frmevent));
-	}
-
-	private async fireMouseEvent(inst:FieldInstance, mevent:MouseMap) : Promise<boolean>
-	{
-		let frmevent:FormEvent = FormEvent.MouseEvent(this.form.parent,mevent,inst);
-		return(FormEvents.raise(frmevent));
 	}
 
 	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>

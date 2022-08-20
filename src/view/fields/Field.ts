@@ -300,7 +300,7 @@ export class Field
 		if (brwevent.isMouseEvent)
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-			await this.block.onMouse(inst,mevent);
+			await this.block.form.mousehandler(mevent,inst);
 			return;
 		}
 	}

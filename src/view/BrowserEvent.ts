@@ -73,7 +73,13 @@ export class BrowserEvent
     {
         this.event$ = event;
 		this.type$ = event.type;
-		event.stopPropagation();
+		let bubble:boolean = false;
+
+		if (this.type == "mouseout") bubble = true;
+		if (this.type == "mouseover") bubble = true;
+
+		if (!bubble)
+			event.stopPropagation();
 
         if (!this.isKeyEvent) this.reset();
         else                  this.KeyEvent();

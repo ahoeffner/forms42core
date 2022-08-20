@@ -10,6 +10,8 @@
  * accompanied this code).
  */
 
+import { KeyMap, KeyMapping } from './KeyMap.js';
+import { FormEvent, FormEvents } from './FormEvents.js';
 import { MouseMap, MouseMapParser } from './MouseMap.js';
 import { BrowserEvent } from '../../view/BrowserEvent.js';
 
@@ -62,18 +64,18 @@ export class ApplicationHandler implements EventListenerObject
 
 		if (bubble)
 		{
-			/*
 			if (this.event.type.startsWith("key"))
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(event);
-				await this.keyhandler(key);
+				let frmevent:FormEvent = FormEvent.KeyEvent(null,null,key);
+				await FormEvents.raise(frmevent)
 			}
 			else
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(event);
-				await this.mousehandler(mevent);
+				let frmevent:FormEvent = FormEvent.MouseEvent(null,mevent);
+				FormEvents.raise(frmevent);
 			}
-			*/
 		}
 	}
 

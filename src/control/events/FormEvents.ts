@@ -124,6 +124,7 @@ export class FormEvents
 	{
 		let id:object = new Object();
 		let listeners:EventListener[] = [];
+		console.log("form: "+form+" clazz: "+clazz)
 
 		if (filter == null)
 		{
@@ -424,7 +425,7 @@ export class FormEvents
 		if (lsnr.form != null && lsnr.form != event.form)
 			return(false);
 
-		Logger.log(Type.eventlisteners," match: "+EventType[event.type]+" "+lsnr.form.constructor.name+" event: "+event.form.constructor.name);
+		Logger.log(Type.eventlisteners," match: "+EventType[event.type]+" "+lsnr.clazz.constructor.name);
 
 		if (lsnr.filter != null)
 		{

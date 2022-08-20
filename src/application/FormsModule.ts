@@ -19,6 +19,8 @@ import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { EventType } from '../control/events/EventType.js';
+import { TriggerFunction } from '../public/TriggerFunction.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -214,4 +216,9 @@ export class FormsModule
 
 		return(instance);
     }
+
+	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
+	{
+		FormEvents.addListener(null,this,method,filter);
+	}
 }

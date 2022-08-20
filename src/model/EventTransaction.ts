@@ -16,9 +16,6 @@ import { EventType } from "../control/events/EventType.js";
 
 export class EventTransaction
 {
-	private NAP:number = 10;
-	private TIMEOUT:number = 3000;
-
 	private transactions:Map<string,Transaction> =
 		new Map<string,Transaction>();
 
@@ -58,24 +55,9 @@ export class EventTransaction
 
 	public async getTrxSlot(block:Block) : Promise<boolean>
 	{
-		let start:number = new Date().getTime();
 		let trx:Transaction = this.transactions.get(block?.name);
-
-		while(trx != null)
-		{
-			await this.sleep(this.NAP);
-			let now:number = new Date().getTime();
-			if (now - start > this.TIMEOUT) break;
-			trx = this.transactions.get(block?.name);
-		}
-
 		return(trx == null);
 	}
-
-	private sleep(ms:number) : Promise<void>
-    {
-        return(new Promise(resolve => setTimeout(resolve,ms)));
-    }
 }
 
 class Transaction

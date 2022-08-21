@@ -3,6 +3,9 @@ export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
+export { Alert } from './src/application/Alert.js';
+export { Logger } from './src/application/Logger.js';
+
 export { Filter } from './src/model/interfaces/Filter.js';
 export { Contains } from './src/model/filters/Contains.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
@@ -19,7 +22,6 @@ export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
 
 export { Class } from './src/types/Class.js';
 export { Column } from './src/application/Column.js';
-export { Logger } from './src/application/Logger.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';
 export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';

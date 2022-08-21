@@ -115,6 +115,9 @@ export class MemoryTable implements DataSource
 			if (this.records$[this.pos$].status == RecordStatus.Deleted)
 				continue;
 
+			if (this.records$[this.pos$].status == RecordStatus.Inserted)
+				this.records$[this.pos$].status = RecordStatus.Query;
+
 			if (this.filters.length == 0)
 				return([this.records$[this.pos$++]]);
 

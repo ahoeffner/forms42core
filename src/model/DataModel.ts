@@ -287,7 +287,7 @@ export class DataSourceWrapper
 			possible = this.cache$.length - record - 1;
 			if (possible > records) possible = records;
 
-			while(possible <= records)
+			while(possible < records)
 			{
 				if (await this.fetch() == null)
 					break;
@@ -300,7 +300,7 @@ export class DataSourceWrapper
 		return(possible);
 	}
 
-	public async copy(all?:boolean, header?:boolean) : Promise<string[][]>
+	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
 		let table:string[][] = [];
 
@@ -323,9 +323,12 @@ export class DataSourceWrapper
 
 		this.cache$.forEach((record) =>
 		{
-			let data:string[] = [];
-			head.forEach((col) => {data.push(record.getValue(col))})
-			table.push(data);
+			if (record.prepared)
+			{
+				let data:string[] = [];
+				head.forEach((col) => {data.push(record.getValue(col))})
+				table.push(data);
+			}
 		})
 
 		return(table);

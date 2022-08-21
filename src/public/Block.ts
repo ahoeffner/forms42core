@@ -48,6 +48,27 @@ export class Block
 		return(this.name$);
 	}
 
+	public async copyData(header?:boolean, all?:boolean) : Promise<string[][]>
+	{
+		return(ModelBlock.getBlock(this).copy(all,header));
+	}
+
+	public async saveToClipBoard(header?:boolean, all?:boolean) : Promise<void>
+	{
+		let str:string = "";
+		let data:string[][] = await this.copyData(header,all);
+
+		data.forEach((rec) =>
+		{
+			let row:string = "";
+			rec.forEach((col) => {row += ", "+col})
+			str += row.substring(2)+"\n";
+		})
+
+		str = str.substring(0,str.length-1);
+		navigator.clipboard.writeText(str);
+	}
+
 	public set datasource(source:DataSource)
 	{
 		ModelBlock.getBlock(this).datasource = source;

@@ -103,7 +103,12 @@ export class Block
 		this.ctrlblk$ = flag;
 	}
 
-	public checkEventTransaction(event:EventType, ) : boolean
+	public hasEventTransaction() : boolean
+	{
+		return(this.form.hasEventTransaction(this));
+	}
+
+	public checkEventTransaction(event:EventType) : boolean
 	{
 		return(this.form.checkEventTransaction(event,this));
 	}
@@ -443,7 +448,7 @@ export class Block
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
-	public async copy(all?:boolean, header?:boolean) : Promise<string[][]>
+	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
 		return(this.wrapper?.copy(all,header));
 	}

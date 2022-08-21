@@ -331,15 +331,7 @@ export class Block
 			scroll = 1;
 
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
-
-		console.log("copy")
-
-		let data:string[][] = await this.wrapper.copy(true,false);
-
-		data.forEach((row) =>
-		{
-			console.log(row[0]+" "+row[1])
-		})
+		await this.dump();
 
 		if (record != null)
 		{
@@ -357,6 +349,16 @@ export class Block
 		}
 
 		return(record != null);
+	}
+
+	public async dump()
+	{
+		let data:string[][] = await this.wrapper.copy(false,true);
+
+		data.forEach((rec) =>
+		{
+			console.log(rec[1]+" "+rec[2]+" "+rec[4]);
+		})
 	}
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>

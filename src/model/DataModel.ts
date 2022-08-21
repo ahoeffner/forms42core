@@ -309,7 +309,8 @@ export class DataSourceWrapper
 		if (header && this.cache$.length > 0)
 		{
 			let head:string[] = [];
-			this.cache$[0].values.forEach((col) => head.push(col.name))
+			this.cache$[0].columns.forEach((col) => head.push(col));
+			table.push(head);
 		}
 
 		this.cache$.forEach((record,index) =>

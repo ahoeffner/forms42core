@@ -303,7 +303,8 @@ export class DataSourceWrapper
 	public async copy(all?:boolean, header?:boolean) : Promise<string[][]>
 	{
 		let table:string[][] = [];
-		if (all) while(this.fetch() != null);
+
+		if (all) while(await this.fetch() != null);
 
 		if (header && this.cache$.length > 0)
 		{

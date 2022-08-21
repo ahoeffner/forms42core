@@ -34,8 +34,9 @@ export class Alert
 	public static async warning(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
-			type = Type.PopAndLog;
+			type = Type.Popup;
 
+		console.log("warning "+Type[type])
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);
@@ -47,7 +48,7 @@ export class Alert
 	public static async message(msg:string, title:string, type?:Type)
 	{
 		if (type == null)
-			type = Type.PopAndLog;
+			type = Type.Popup;
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);

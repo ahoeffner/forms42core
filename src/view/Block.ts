@@ -438,7 +438,7 @@ export class Block
 
 	public move(delta:number) : number
 	{
-		this.row$ += delta;
+		this.row$ = this.row + delta;
 		return(this.row$);
 	}
 

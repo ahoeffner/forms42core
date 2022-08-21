@@ -332,6 +332,15 @@ export class Block
 
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
 
+		console.log("copy")
+
+		let data:string[][] = await this.wrapper.copy(true,false);
+
+		data.forEach((row) =>
+		{
+			console.log(row[0]+" "+row[1])
+		})
+
 		if (record != null)
 		{
 			this.scroll(scroll,this.view.row);

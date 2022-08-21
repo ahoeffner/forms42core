@@ -299,10 +299,6 @@ export class Block
 		if (success)
 			this.model$.setValue(inst.name,value);
 
-		if (success)
-			this.model.dump();
-
-
 		return(success);
 	}
 

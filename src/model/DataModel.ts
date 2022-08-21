@@ -306,21 +306,25 @@ export class DataSourceWrapper
 
 		if (all) while(await this.fetch() != null);
 
-		if (header && this.cache$.length > 0)
+		let head:string[] = [];
+
+		if (this.source != null)
 		{
-			let head:string[] = [];
-			this.cache$[0].columns.forEach((col) => head.push(col));
-			table.push(head);
+			head = this.source.columns;
+		}
+		else
+		{
+			if (this.cache$.length > 0)
+				this.cache$[0].columns.forEach((col) => head.push(col));
 		}
 
-		this.cache$.forEach((record,index) =>
+		if (header)
+			table.push(head);
+
+		this.cache$.forEach((record) =>
 		{
 			let data:string[] = [];
-
-			data.push(index+"");
-			record.values.forEach((col)=>
-			{data.push(col.value+"");})
-
+			head.forEach((col) => {data.push(record.getValue(col))})
 			table.push(data);
 		})
 

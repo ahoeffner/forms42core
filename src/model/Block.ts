@@ -351,16 +351,6 @@ export class Block
 		return(record != null);
 	}
 
-	public async dump()
-	{
-		let data:string[][] = await this.wrapper.copy(false,true);
-
-		data.forEach((rec) =>
-		{
-			console.log(rec[1]+" "+rec[2]+" "+rec[4]);
-		})
-	}
-
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		if (!this.view.validated)

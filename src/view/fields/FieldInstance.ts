@@ -44,12 +44,6 @@ export class FieldInstance implements FieldEventHandler
 		this.properties$ = FieldFeatureFactory.consume(tag);
 		this.field$ = Field.create(form,this.properties$.block,this.properties$.name,this.properties$.row);
 
-		let query:string = this.properties$.getAttribute("query");
-		let insert:string = this.properties$.getAttribute("insert");
-
-		this.properties$.removeAttribute("query");
-		this.properties$.removeAttribute("insert");
-
 		this.clazz = FieldTypes.get(tag.tagName,this.properties$.getAttribute("type"));
 
 		this.impl = new this.clazz();
@@ -60,6 +54,18 @@ export class FieldInstance implements FieldEventHandler
 		this.defproperties$ = this.properties;
 		this.insproperties$ = this.properties;
 		this.qbeproperties$ = this.properties;
+
+		this.element$ = this.impl.getElement();
+		this.field$.addInstance(this);
+	}
+
+	public finalize() : void
+	{
+		let query:string = this.properties$.getAttribute("query");
+		let insert:string = this.properties$.getAttribute("insert");
+
+		this.properties$.removeAttribute("query");
+		this.properties$.removeAttribute("insert");
 
 		if (insert != null)
 		{
@@ -75,12 +81,6 @@ export class FieldInstance implements FieldEventHandler
 			this.qbeproperties$.setReadOnly(!flag);
 		}
 
-		this.element$ = this.impl.getElement();
-		this.field$.addInstance(this);
-	}
-
-	public finalize() : void
-	{
 		FieldFeatureFactory.apply(this,this.properties$);
 		this.impl.apply(this.properties$,true);
 	}

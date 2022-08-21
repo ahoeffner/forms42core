@@ -331,7 +331,6 @@ export class Block
 			scroll = 1;
 
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
-		await this.dump();
 
 		if (record != null)
 		{
@@ -344,6 +343,7 @@ export class Block
 			}
 
 			this.view.openrow();
+
 			this.view.refresh(this.view.row,record);
 			this.view.findFirstEditable(record)?.focus();
 		}
@@ -438,7 +438,7 @@ export class Block
 
 	public async queryDetails() : Promise<boolean>
 	{
-		console.log("queryDetails");
+		console.log("queryDetails record: "+this.record+" "+this.getRecord().getValue("first_name"));
 		return(true);
 	}
 

@@ -17,7 +17,6 @@ import { KeyMap } from "../control/events/KeyMap.js";
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
-import { MouseMap } from "../control/events/MouseMap.js";
 import { Record, RecordStatus } from "../model/Record.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";

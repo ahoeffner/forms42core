@@ -390,6 +390,22 @@ export class Block
 		return(record != null);
 	}
 
+	public async delete() : Promise<boolean>
+	{
+
+		if (!this.view.validated)
+		{
+			if (!await this.view.validateRow())
+				return(false);
+		}
+
+		if (!this.checkEventTransaction(EventType.PreInsert))
+			return(false);
+
+
+		return(true);
+	}
+
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		if (!this.view.validated)

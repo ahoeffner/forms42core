@@ -37,6 +37,11 @@ export class Form implements CanvasComponent
 		Model.createForm(this,page);
     }
 
+	public get name() : string
+	{
+		return(this.constructor.name.toLowerCase());
+	}
+
 	public focus() : void
 	{
 		View.getForm(this).focus();

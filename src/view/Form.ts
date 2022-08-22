@@ -70,7 +70,12 @@ export class Form implements EventListenerObject
 	{
 		this.parent$ = parent;
 		Form.views.set(parent,this);
-		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.constructor.name);
+		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.name);
+	}
+
+	public get name() : string
+	{
+		return(this.constructor.name.toLowerCase());
 	}
 
 	public get parent() : InterfaceForm
@@ -106,7 +111,7 @@ export class Form implements EventListenerObject
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.constructor.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.name);
 	}
 
 	public getIndicators(block:string) : Indicator[]
@@ -555,7 +560,7 @@ export class Form implements EventListenerObject
 		let params:URLSearchParams = new URLSearchParams(location.search);
 		let path:string = location.protocol + '//' + location.host + location.pathname;
 
-		let map:string = FormsModule.getFormPath(this.parent.constructor.name);
+		let map:string = FormsModule.getFormPath(this.parent.name);
 
 		if (map != null && this.parent.navigable)
 		{

@@ -98,7 +98,7 @@ export class FormEvent implements Interface
 	{
 		let str:string = "";
 
-		str += "form: "+this.form$?.constructor.name;
+		str += "form: "+this.form$?.name;
 		if (this.type != null) str += ", type: " + EventType[this.type];
 
 		if (this.block != null) str += ", block: "+this.block;

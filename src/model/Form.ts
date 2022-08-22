@@ -76,7 +76,12 @@ export class Form
 	{
 		this.page$ = page;
 		this.intfrm = parent;
-		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.constructor.name);
+		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.name);
+	}
+
+	public get name() : string
+	{
+		return(this.constructor.name.toLowerCase());
 	}
 
 	public get block() : Block
@@ -162,7 +167,7 @@ export class Form
 	{
 		this.blocks.set(block.name,block);
 		this.datamodel$.setWrapper(block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.constructor.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.name);
 	}
 
 	public async initControlBlocks()

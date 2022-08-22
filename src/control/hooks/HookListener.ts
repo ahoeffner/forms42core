@@ -77,17 +77,17 @@ export class HookListener
 			this.method = method;
 
 			if (form[this.method] == null)
-				throw "@HookListener: method '"+this.method+"' does not exist on form '"+form.constructor.name+"'";
+				throw "@HookListener: method '"+this.method+"' does not exist on form '"+form.name+"'";
 		}
 		else
 		{
 			this.method = method.name;
 
 			if (form[this.method] == null)
-				throw "@HookListener: method '"+this.method+"' does not exist on form '"+form.constructor.name+"'";
+				throw "@HookListener: method '"+this.method+"' does not exist on form '"+form.name+"'";
 
 			if (form[this.method] != method)
-				throw "@HookListener: method '"+this.method+"' does not match method defined on form '"+form.constructor.name+"'";
+				throw "@HookListener: method '"+this.method+"' does not match method defined on form '"+form.name+"'";
 		}
 
 		Logger.log(Type.formhooks,"formhook : "+this.toString());
@@ -95,7 +95,7 @@ export class HookListener
 
 	public toString() : string
 	{
-		let str:string = this.form.constructor.name + "." + this.method;
+		let str:string = this.form.name + "." + this.method;
 		return(str);
 	}
 }

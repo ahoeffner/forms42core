@@ -177,6 +177,16 @@ export class KeyMapping
 		}
 	}
 
+	public static isFormNav(key:KeyMap) : boolean
+	{
+		switch(key)
+		{
+			case KeyMap.prevblock : return(true);
+			case KeyMap.nextblock : return(true);
+			default 			  : return(false);
+		}
+	}
+
 	public static add(keymap:KeyMap) : void
 	{
 		if (keymap != null && KeyMapping.map.get(keymap.signature) == null)

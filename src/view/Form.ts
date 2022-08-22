@@ -396,6 +396,12 @@ export class Form implements EventListenerObject
 				return(success);
 			}
 
+			if (KeyMapping.isFormNav(key))
+			{
+				success = await this.navigateForm(key,inst);;
+				return(success);
+			}
+
 			if (key == KeyMap.enter)
 			{
 				if (!await inst.field.validate(inst))
@@ -409,6 +415,61 @@ export class Form implements EventListenerObject
 		}
 
 		return(true);
+	}
+
+	public async navigateForm(key:KeyMap, inst:FieldInstance) : Promise<boolean>
+	{
+		let next:Block = null;
+
+		switch(key)
+		{
+			case KeyMap.nextblock :
+			{
+				let blks:Block[] = [...this.blocks.values()];
+
+				let nxt:boolean = false;
+				next = blks[blks.length-1];
+
+				for (let i = 0; i < blks.length; i++)
+				{
+					if (nxt)
+					{
+						next = blks[i];
+						break;
+					}
+
+					if (blks[i] == inst.field.block)
+						nxt = true;
+				}
+
+				break;
+			}
+
+			case KeyMap.prevblock :
+			{
+				let blks:Block[] = [...this.blocks.values()];
+
+				next = blks[0];
+				let nxt:boolean = false;
+
+				for (let i = blks.length-1; i >= 0; i--)
+				{
+					if (nxt)
+					{
+						next = blks[i];
+						break;
+					}
+
+					if (blks[i] == inst.field.block)
+						nxt = true;
+				}
+
+				break;
+			}
+		}
+
+		if (next) next.focus();
+		return(next != null);
 	}
 
 	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>

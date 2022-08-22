@@ -248,7 +248,10 @@ export class Field
 				await this.block.form.leave(inst);
 
 			if (!this.valid$)
-				inst.valid = false;
+			{
+				if (inst.getValue() == this.value$)
+					inst.valid = false;
+			}
 
 			inst.ignore = null;
 			return;

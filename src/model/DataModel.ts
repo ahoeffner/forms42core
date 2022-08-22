@@ -122,6 +122,8 @@ export class DataSourceWrapper
 
 	public async post(record?:Record) : Promise<boolean>
 	{
+		console.log("post "+record.getValue("first_name")+" "+RecordStatus[record.status]);
+		
 		switch(record.status)
 		{
 			case RecordStatus.New :

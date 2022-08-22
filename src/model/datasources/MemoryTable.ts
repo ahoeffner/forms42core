@@ -54,6 +54,12 @@ export class MemoryTable implements DataSource
 
 	public async post() : Promise<boolean>
 	{
+		this.records$.forEach((record) =>
+		{
+			record.prepared = false;
+			record.status = RecordStatus.Query;
+		})
+
 		return(true);
 	}
 
@@ -75,8 +81,15 @@ export class MemoryTable implements DataSource
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		record.status = RecordStatus.Deleted;
-		return(true);
+		let rec:number = this.indexOf(this.records$,record.id);
+
+		if (rec >= 0)
+			this.records$.splice(rec,1);
+
+		for (let i = 0; i < 9; i++)
+			console.log(this.records$[i]?.getValue("first_name"));
+
+		return(rec >= 0);
 	}
 
 	public async fetch() : Promise<Record[]>
@@ -86,12 +99,6 @@ export class MemoryTable implements DataSource
 
 		while(this.pos$ < this.records$.length)
 		{
-			if (this.records$[this.pos$].status == RecordStatus.Deleted)
-				continue;
-
-			if (this.records$[this.pos$].status == RecordStatus.Inserted)
-				this.records$[this.pos$].status = RecordStatus.Query;
-
 			if (this.filters.length == 0)
 				return([this.records$[this.pos$++]]);
 
@@ -114,9 +121,6 @@ export class MemoryTable implements DataSource
 		this.pos$ = 0;
 		this.filters = [];
 
-		this.records$.forEach((record) =>
-			{record.prepared = false})
-
 		if (filters != null)
 		{
 			if (Array.isArray(filters)) this.filters = filters;
@@ -128,7 +132,6 @@ export class MemoryTable implements DataSource
 
 	public closeCursor(): void
 	{
-		null;
 	}
 
 	private indexOf(records:Record[],oid:any) : number
@@ -138,6 +141,7 @@ export class MemoryTable implements DataSource
 			if (records[i].id == oid)
 				return(i);
 		}
+
 		return(-1);
 	}
 }

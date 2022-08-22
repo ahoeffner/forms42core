@@ -191,9 +191,27 @@ export class DataSourceWrapper
 
 		this.cache$.splice(pos,1);
 
-		console.log("1 *******")
-		this.cache$.forEach((rec) => {console.log(rec.getValue("first_name"))})
-		console.log("2 *******")
+		if (this.cache$.length < this.window)
+		{
+			if (this.eof$)
+			{
+				this.winpos$[1]--;
+			}
+			else
+			{
+				let recs:Record[] = await this.source.fetch();
+
+				if (recs != null && recs.length > 0)
+				{
+					if (recs.length < this.source.arrayfecth)
+						this.eof$ = true;
+
+					this.cache$.push(...recs);
+				}
+			}
+		}
+
+		this.cache$.forEach((rec) => {console.log("cache: "+rec.getValue("first_name"))})
 
 		return(await this.block.postDelete());
 	}
@@ -233,8 +251,6 @@ export class DataSourceWrapper
 		}
 		else
 		{
-			console.log("this.winpos$[1]: "+this.winpos$[1]+" this.cache$.length: "+this.cache$.length);
-
 			if (this.winpos$[1] >= this.cache$.length-1)
 			{
 				if (this.eof$) return(null);
@@ -280,7 +296,6 @@ export class DataSourceWrapper
 	public async prefetch(record:number,records:number) : Promise<number>
 	{
 		let possible:number = 0;
-		console.log("prefetch("+record+","+records+")")
 
 		if (records < 0)
 		{

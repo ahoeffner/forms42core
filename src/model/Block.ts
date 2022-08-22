@@ -405,8 +405,6 @@ export class Block
 		if (success)
 		{
 			this.move(-1);
-			this.prefetch(1,this.view.rows);
-			
 			this.scroll(0,this.view.row);
 			this.view.refresh(this.view.row,this.getRecord());
 		}
@@ -472,7 +470,6 @@ export class Block
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			let rec:Record = wrapper.getRecord(pos++);
-			console.log((pos-1)+" "+rec?.getValue("first_name"))
 
 			if (rec == null)
 				break;

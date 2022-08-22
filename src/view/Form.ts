@@ -416,6 +416,20 @@ export class Form implements EventListenerObject
 				return(success);
 			}
 
+			if (key == KeyMap.insert)
+			{
+				console.log("insert")
+				if (inst.field.block.model.insertallowed)
+					inst.field.block.model.insert(false);
+			}
+
+			if (key == KeyMap.insertAbove)
+			{
+				console.log("insert")
+				if (inst.field.block.model.insertallowed)
+					inst.field.block.model.insert(true);
+			}
+
 			return(true);
 		}
 

@@ -37,6 +37,11 @@ export class KeyMap
     public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 
+	public static delete:KeyMap = new KeyMap({key: 'd', ctrl: true});
+	
+	public static insert:KeyMap = new KeyMap({key: 'i', ctrl: true});
+	public static insertAbove:KeyMap = new KeyMap({key: 'I', ctrl: true});
+
 
 	private key$:string;
 	private alt$:boolean;

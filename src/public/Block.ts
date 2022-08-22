@@ -31,10 +31,11 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 
-	public queryable:boolean = true;
-	public insertable:boolean = true;
-	public updateable:boolean = true;
-	public deleteable:boolean = true;
+	public qbeallowed:boolean = true;
+	public queryallowed:boolean = true;
+	public insertallowed:boolean = true;
+	public updateallowed:boolean = true;
+	public deleteallowed:boolean = true;
 
 	constructor(form:Form, name:string)
 	{

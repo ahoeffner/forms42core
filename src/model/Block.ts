@@ -103,6 +103,31 @@ export class Block
 		this.ctrlblk$ = flag;
 	}
 
+	public get qbeallowed() : boolean
+	{
+		return(this.intblk.qbeallowed);
+	}
+
+	public get queryallowed() : boolean
+	{
+		return(this.intblk.queryallowed);
+	}
+
+	public get insertallowed() : boolean
+	{
+		return(this.intblk.insertallowed);
+	}
+
+	public get updateallowed() : boolean
+	{
+		return(this.intblk.updateallowed);
+	}
+
+	public get deleteallowed() : boolean
+	{
+		return(this.intblk.deleteallowed);
+	}
+
 	public hasEventTransaction() : boolean
 	{
 		return(this.form.hasEventTransaction(this));

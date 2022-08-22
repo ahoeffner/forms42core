@@ -189,9 +189,13 @@ export class DataSourceWrapper
 		if (!this.source.delete(record))
 			return(false);
 
-		this.winpos$[1]--;
 		this.cache$.splice(pos,1);
-		this.prefetch(this.winpos$[1],1);
+
+		if (this.winpos$[1] >= this.cache$.length)
+		{
+			this.winpos$[1]--;
+			this.prefetch(this.winpos$[1],1);
+		}
 
 		return(await this.block.postDelete());
 	}

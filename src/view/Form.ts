@@ -420,12 +420,24 @@ export class Form implements EventListenerObject
 			{
 				if (inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(false);
+
+				return(true);
 			}
 
 			if (key == KeyMap.insertAbove)
 			{
 				if (inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(true);
+
+				return(true);
+			}
+
+			if (key == KeyMap.delete)
+			{
+				if (inst.field.block.model.deleteallowed)
+					inst.field.block.model.delete();
+
+				return(true);
 			}
 
 			return(true);

@@ -226,7 +226,7 @@ export class Block
 	public async preInsert(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.setEventTransaction(EventType.PreInsert,record);
+		if (!await this.setEventTransaction(EventType.PreInsert,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreInsert);
 		this.endEventTransaction(EventType.PreInsert,success);
 		return(success);
@@ -235,7 +235,7 @@ export class Block
 	public async postInsert() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.wait4EventTransaction(EventType.PostInsert);
+		if (!await this.wait4EventTransaction(EventType.PostInsert)) return(false);
 		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endEventTransaction(EventType.PostInsert,success);
 		return(success);
@@ -245,7 +245,7 @@ export class Block
 	{
 		if (this.ctrlblk) return(true);
 		let record:Record = this.getRecord();
-		await this.setEventTransaction(EventType.PreUpdate,record);
+		if (!await this.setEventTransaction(EventType.PreUpdate,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreUpdate);
 		this.endEventTransaction(EventType.PreUpdate,success);
 		return(success);
@@ -254,7 +254,7 @@ export class Block
 	public async postUpdate() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.wait4EventTransaction(EventType.PostUpdate);
+		if (!await this.wait4EventTransaction(EventType.PostUpdate)) return(false);
 		let success:boolean = await this.fire(EventType.PostUpdate);
 		return(success);
 	}
@@ -263,7 +263,7 @@ export class Block
 	{
 		if (this.ctrlblk) return(true);
 		let record:Record = this.getRecord();
-		await this.setEventTransaction(EventType.PreDelete,record);
+		if (!await this.setEventTransaction(EventType.PreDelete,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreDelete);
 		this.endEventTransaction(EventType.PreDelete,success);
 		return(success);
@@ -272,7 +272,7 @@ export class Block
 	public async postDelete() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.wait4EventTransaction(EventType.PostDelete);
+		if (!await this.wait4EventTransaction(EventType.PostDelete)) return(false);
 		let success:boolean = await this.fire(EventType.PostDelete);
 		return(success);
 	}
@@ -281,7 +281,7 @@ export class Block
 	{
 		if (this.ctrlblk) return(true);
 		let record:Record = new Record(null);
-		await this.setEventTransaction(EventType.PreQuery,record);
+		if (!await this.setEventTransaction(EventType.PreQuery,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreQuery);
 		this.endEventTransaction(EventType.PreQuery,success);
 		return(success);
@@ -290,7 +290,7 @@ export class Block
 	public async onFetch(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.setEventTransaction(EventType.OnFetch,record);
+		if (!await this.setEventTransaction(EventType.OnFetch,record)) return(false);
 		let success:boolean = await this.fire(EventType.OnFetch);
 		this.endEventTransaction(EventType.OnFetch,success);
 		return(success);
@@ -299,7 +299,7 @@ export class Block
 	public async postQuery() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		await this.wait4EventTransaction(EventType.PostQuery);
+		if (!await this.wait4EventTransaction(EventType.PostQuery)) return(false);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		return(success);
 	}
@@ -307,7 +307,7 @@ export class Block
 	public async validateRecord() : Promise<boolean>
 	{
 		let record:Record = this.getRecord();
-		await this.setEventTransaction(EventType.WhenValidateRecord,record);
+		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
 		if (success) success = await this.wrapper.post(record);
@@ -382,7 +382,6 @@ export class Block
 			}
 
 			this.view.openrow();
-
 			this.view.refresh(this.view.row,record);
 			this.view.findFirstEditable(record)?.focus();
 		}
@@ -392,7 +391,6 @@ export class Block
 
 	public async delete() : Promise<boolean>
 	{
-
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateRow())
@@ -402,6 +400,14 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
+		let success:boolean = await this.wrapper.delete(this.getRecord());
+
+		if (success)
+		{
+			this.move(-1);
+			this.scroll(0,this.view.row);
+			this.view.refresh(this.view.row,this.getRecord());
+		}
 
 		return(true);
 	}

@@ -176,13 +176,19 @@ export class DataSourceWrapper
 
 	public async delete(record:Record) : Promise<boolean>
 	{
+		let pos:number = this.indexOf(record);
+
+		if (pos < 0)
+			return(false);
+
 		if (!await this.block.preDelete())
 			return(false);
 
 		if (!this.source.delete(record))
 			return(false);
 
-		return(!await this.block.postDelete());
+		this.cache$.splice(pos,1);
+		return(await this.block.postDelete());
 	}
 
 	public getRecord(record:number) : Record
@@ -325,7 +331,7 @@ export class DataSourceWrapper
 	private indexOf(record:Record) : number
 	{
 		if (record == null)
-			return(0);
+			return(-1);
 
 		for (let i = 0; i < this.cache$.length; i++)
 		{
@@ -333,6 +339,6 @@ export class DataSourceWrapper
 				return(i);
 		}
 
-		return(0);
+		return(-1);
 	}
 }

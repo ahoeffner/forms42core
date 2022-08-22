@@ -75,12 +75,8 @@ export class MemoryTable implements DataSource
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		let rec:number = this.indexOf(this.records$,record.id);
-
-		if (rec >= 0)
-			this.records$ = this.records$.splice(rec,1);
-
-		return(rec >= 0);
+		record.status = RecordStatus.Deleted;
+		return(true);
 	}
 
 	public async fetch() : Promise<Record[]>

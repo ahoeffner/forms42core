@@ -123,7 +123,7 @@ export class DataSourceWrapper
 	public async post(record?:Record) : Promise<boolean>
 	{
 		console.log("post "+record.getValue("first_name")+" "+RecordStatus[record.status]);
-		
+
 		switch(record.status)
 		{
 			case RecordStatus.New :
@@ -190,6 +190,11 @@ export class DataSourceWrapper
 			return(false);
 
 		this.cache$.splice(pos,1);
+
+		console.log("1 *******")
+		this.cache$.forEach((rec) => {console.log(rec.getValue("first_name"))})
+		console.log("2 *******")
+
 		return(await this.block.postDelete());
 	}
 
@@ -228,6 +233,8 @@ export class DataSourceWrapper
 		}
 		else
 		{
+			console.log("this.winpos$[1]: "+this.winpos$[1]+" this.cache$.length: "+this.cache$.length);
+
 			if (this.winpos$[1] >= this.cache$.length-1)
 			{
 				if (this.eof$) return(null);
@@ -273,6 +280,7 @@ export class DataSourceWrapper
 	public async prefetch(record:number,records:number) : Promise<number>
 	{
 		let possible:number = 0;
+		console.log("prefetch("+record+","+records+")")
 
 		if (records < 0)
 		{

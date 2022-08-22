@@ -156,6 +156,8 @@ export class Form
 			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
+
+		return(true);
 	}
 
 	public endEventTransaction(_event:EventType, block:Block, _success:boolean) : void

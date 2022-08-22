@@ -89,9 +89,6 @@ export class MemoryTable implements DataSource
 			this.records$.splice(rec,1);
 		}
 
-		for (let i = 0; i < 15; i++)
-			console.log("data: "+this.records$[i].getValue("first_name"))
-
 		return(rec >= 0);
 	}
 

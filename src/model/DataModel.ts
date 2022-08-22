@@ -189,29 +189,9 @@ export class DataSourceWrapper
 		if (!this.source.delete(record))
 			return(false);
 
+		this.winpos$[1]--;
 		this.cache$.splice(pos,1);
-
-		if (this.cache$.length < this.window)
-		{
-			if (this.eof$)
-			{
-				this.winpos$[1]--;
-			}
-			else
-			{
-				let recs:Record[] = await this.source.fetch();
-
-				if (recs != null && recs.length > 0)
-				{
-					if (recs.length < this.source.arrayfecth)
-						this.eof$ = true;
-
-					this.cache$.push(...recs);
-				}
-			}
-		}
-
-		this.cache$.forEach((rec) => {console.log("cache: "+rec.getValue("first_name"))})
+		this.prefetch(this.winpos$[1],1);
 
 		return(await this.block.postDelete());
 	}

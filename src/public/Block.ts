@@ -24,11 +24,17 @@ import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
+import { Field } from '../view/fields/Field.js';
 
 export class Block
 {
 	private form$:Form = null;
 	private name$:string = null;
+
+	public queryable:boolean = true;
+	public insertable:boolean = true;
+	public updateable:boolean = true;
+	public deleteable:boolean = true;
 
 	constructor(form:Form, name:string)
 	{
@@ -48,15 +54,46 @@ export class Block
 		return(this.name$);
 	}
 
-	public async copyData(header?:boolean, all?:boolean) : Promise<string[][]>
+	public focus() : void
+	{
+		setTimeout(() =>
+		{
+			ViewBlock.getBlock(this).focus();
+		},0);
+	}
+
+	public goField(field:string, clazz?:string) : void
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+
+		let inst:FieldInstance = null;
+		let ifield:Field = ViewBlock.getBlock(this).getCurrentRow().getField(field);
+
+		if (ifield != null)
+		{
+			let instances:FieldInstance[] = ifield?.getInstancesByClass(clazz);
+			if (instances.length > 0) inst = instances[0];
+		}
+
+		if (inst != null)
+		{
+			setTimeout(() =>
+			{
+				inst.focus();
+			},0);
+		}
+	}
+
+	public async getSourceData(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
 		return(ModelBlock.getBlock(this).copy(all,header));
 	}
 
-	public async saveToClipBoard(header?:boolean, all?:boolean) : Promise<void>
+	public async saveDataToClipBoard(header?:boolean, all?:boolean) : Promise<void>
 	{
 		let str:string = "";
-		let data:string[][] = await this.copyData(header,all);
+		let data:string[][] = await this.getSourceData(header,all);
 
 		data.forEach((rec) =>
 		{

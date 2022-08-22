@@ -175,9 +175,6 @@ export class Form
 
 				block.ctrlblk = true;
 				await block.executeQuery();
-				block.datasource.queryable = false;
-				block.datasource.insertable = false;
-				block.datasource.deleteable = false;
 			}
 		}
 	}

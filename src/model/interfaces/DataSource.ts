@@ -15,14 +15,8 @@ import { Record } from '../Record.js';
 
 export interface DataSource
 {
-	arrayfecth:number;
-
-	queryable:boolean;
-	insertable:boolean;
-	updateable:boolean;
-	deleteable:boolean;
-
 	columns:string[];
+	arrayfecth:number;
 
 	closeCursor() : void;
 	post() : Promise<boolean>;

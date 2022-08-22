@@ -140,9 +140,6 @@ export class DataSourceWrapper
 
 	public async create(current:Record, before?:boolean) : Promise<Record>
 	{
-		if (!this.source.insertable)
-			return(null);
-
 		let pos:number = this.indexOf(current);
 		if (before && pos >= 0) pos--;
 
@@ -157,9 +154,6 @@ export class DataSourceWrapper
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		if (!this.source.insertable)
-			return(false);
-
 		if (!await this.block.preInsert(record))
 			return(false);
 
@@ -171,9 +165,6 @@ export class DataSourceWrapper
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		if (!this.source.updateable)
-			return(false);
-
 		if (!await this.block.preUpdate())
 			return(false);
 
@@ -185,9 +176,6 @@ export class DataSourceWrapper
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		if (!this.source.deleteable)
-			return(false);
-
 		if (!await this.block.preDelete())
 			return(false);
 

@@ -17,19 +17,12 @@ import { DataSource } from "../interfaces/DataSource.js";
 export class MemoryTable implements DataSource
 {
 	private pos$:number = 0;
-	private rows$:number = -1;
 
 	private columns$:string[] = [];
 	private records$:Record[] = [];
 
-	private filters:Filter[] = [];
-
 	public arrayfecth:number = 1;
-	private insertable$:boolean = true;
-
-	public queryable:boolean  = true;
-	public updateable:boolean = true;
-	public deleteable:boolean = true;
+	private filters:Filter[] = [];
 
 	public constructor(columns:string[], records:any[][])
 	{
@@ -52,21 +45,6 @@ export class MemoryTable implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
-	}
-
-	public set maxrows(rows:number)
-	{
-		this.rows$ = rows;
-	}
-
-	public get insertable() : boolean
-	{
-		return(this.insertable$ && (this.rows$ < 0 || this.records$.length < this.rows$));
-	}
-
-	public set insertable(flag:boolean)
-	{
-		this.insertable$ = flag;
 	}
 
 	public async lock(_record:Record) : Promise<boolean>
@@ -136,9 +114,6 @@ export class MemoryTable implements DataSource
 	public async query(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		this.post();
-
-		if (!this.queryable)
-			return(false);
 
 		this.pos$ = 0;
 		this.filters = [];

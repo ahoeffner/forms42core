@@ -180,13 +180,22 @@ export class Record
 
 	private indexOf(column:string) : number
 	{
-		let idx:number = this.source.columns.indexOf(column);
+		let idx:number = 0;
 
-		if (idx < 0 && this.columns$ != null)
+		if (this.source == null)
 		{
 			idx = this.columns$.indexOf(column);
-			if (idx >= 0) idx += this.source.columns.length;
-			else return(-1);
+		}
+		else
+		{
+			idx = this.source.columns.indexOf(column);
+
+			if (idx < 0 && this.columns$ != null)
+			{
+				idx = this.columns$.indexOf(column);
+				if (idx >= 0) idx += this.source.columns.length;
+				else return(-1);
+			}
 		}
 
 		return(idx);

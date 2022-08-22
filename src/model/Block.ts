@@ -200,6 +200,7 @@ export class Block
 
 	public async preInsert(record:Record) : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.setEventTransaction(EventType.PreInsert,record);
 		let success:boolean = await this.fire(EventType.PreInsert);
 		this.endEventTransaction(EventType.PreInsert,success);
@@ -208,6 +209,7 @@ export class Block
 
 	public async postInsert() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.wait4EventTransaction(EventType.PostInsert);
 		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endEventTransaction(EventType.PostInsert,success);
@@ -216,6 +218,7 @@ export class Block
 
 	public async preUpdate() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		let record:Record = this.getRecord();
 		await this.setEventTransaction(EventType.PreUpdate,record);
 		let success:boolean = await this.fire(EventType.PreUpdate);
@@ -225,6 +228,7 @@ export class Block
 
 	public async postUpdate() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.wait4EventTransaction(EventType.PostUpdate);
 		let success:boolean = await this.fire(EventType.PostUpdate);
 		return(success);
@@ -232,6 +236,7 @@ export class Block
 
 	public async preDelete() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		let record:Record = this.getRecord();
 		await this.setEventTransaction(EventType.PreDelete,record);
 		let success:boolean = await this.fire(EventType.PreDelete);
@@ -241,6 +246,7 @@ export class Block
 
 	public async postDelete() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.wait4EventTransaction(EventType.PostDelete);
 		let success:boolean = await this.fire(EventType.PostDelete);
 		return(success);
@@ -248,6 +254,7 @@ export class Block
 
 	public async preQuery() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		let record:Record = new Record(null);
 		await this.setEventTransaction(EventType.PreQuery,record);
 		let success:boolean = await this.fire(EventType.PreQuery);
@@ -257,6 +264,7 @@ export class Block
 
 	public async onFetch(record:Record) : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.setEventTransaction(EventType.OnFetch,record);
 		let success:boolean = await this.fire(EventType.OnFetch);
 		this.endEventTransaction(EventType.OnFetch,success);
@@ -265,6 +273,7 @@ export class Block
 
 	public async postQuery() : Promise<boolean>
 	{
+		if (this.ctrlblk) return(true);
 		await this.wait4EventTransaction(EventType.PostQuery);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		return(success);

@@ -117,6 +117,7 @@ export class Row
 
 	public get validated() : boolean
 	{
+		if (this.block.name == "search") console.log("search status: "+Status[this.status])
 		if (this.status == Status.new) return(false);
 		if (this.rownum >= 0) return(this.validated$);
 		else return(this.block.getCurrentRow().validated$);

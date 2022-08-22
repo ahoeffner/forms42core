@@ -214,6 +214,7 @@ export class FormsModule
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 		await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
 
+		instance.focus();
 		return(instance);
     }
 

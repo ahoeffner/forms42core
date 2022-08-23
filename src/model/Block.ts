@@ -171,6 +171,11 @@ export class Block
 		this.source$ = source;
 	}
 
+	public get filters() : Filter[]
+	{
+		return(this.wrapper.filters);
+	}
+
 	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
 	{
 		let data:any[][] = [];

@@ -55,6 +55,11 @@ export class Block
 		return(this.name$);
 	}
 
+	public get filters() : Filter[]
+	{
+		return(ModelBlock.getBlock(this).filters);
+	}
+
 	public focus() : void
 	{
 		setTimeout(() =>

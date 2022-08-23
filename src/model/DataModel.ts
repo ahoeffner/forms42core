@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Record, RecordStatus } from "./Record.js";
 import { Filter } from "./interfaces/Filter.js";
+import { Record, RecordStatus } from "./Record.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 
@@ -58,16 +58,12 @@ export class DataSourceWrapper
 	private eof$:boolean;
 	private cache$:Record[];
 	private hwm$:number = 0;
+	private filters$:Filter[] = [];
 
 	constructor(public block:ModelBlock)
 	{
 		this.cache$ = [];
 		this.eof$ = false;
-	}
-
-	public get window() : number
-	{
-		return(this.block.view.rows);
 	}
 
 	public get source() : DataSource
@@ -80,11 +76,19 @@ export class DataSourceWrapper
 		return(this.source.columns);
 	}
 
+	public get filters() : Filter[]
+	{
+		return(this.filters$);
+	}
+
 	public clear() : void
 	{
 		this.hwm$ = 0;
 		this.cache$ = [];
+
 		this.source.post();
+
+		this.filters$ = [];
 		this.source.closeCursor();
 	}
 
@@ -206,6 +210,14 @@ export class DataSourceWrapper
 
 	public async query(filters?:Filter|Filter[]) : Promise<boolean>
 	{
+		this.filters$ = [];
+
+		if (filters != null)
+		{
+			if (Array.isArray(filters)) this.filters$ = filters;
+			else						this.filters$ = [filters];
+		}
+
 		let success:boolean = await this.source.query(filters);
 
 		if (success)

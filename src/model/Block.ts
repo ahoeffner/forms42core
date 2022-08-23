@@ -383,16 +383,11 @@ export class Block
 
 	public async delete() : Promise<boolean>
 	{
-		if (!this.view.validated)
-		{
-			if (!await this.view.validateRow())
-				return(false);
-		}
-
-		if (!this.checkEventTransaction(EventType.PreInsert))
+		if (!this.checkEventTransaction(EventType.PreDelete))
 			return(false);
 
 		let success:boolean = await this.wrapper.delete(this.getRecord());
+		console.log("success: "+success)
 
 		if (success)
 		{

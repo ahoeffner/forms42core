@@ -23,6 +23,7 @@ import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { Status } from "../view/Row.js";
 
 
 export class Block
@@ -387,11 +388,11 @@ export class Block
 			return(false);
 
 		let success:boolean = await this.wrapper.delete(this.getRecord());
-		console.log("success: "+success)
 
 		if (success)
 		{
 			this.move(-1);
+			this.view.validated = true;
 			this.scroll(0,this.view.row);
 			this.view.refresh(this.getRecord());
 			this.view.findFirstEditable(this.getRecord())?.focus();

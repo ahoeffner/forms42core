@@ -320,6 +320,11 @@ export class Block
 		return(this.validateRow());
 	}
 
+	public set validated(flag:boolean)
+	{
+		this.getRow(this.row).validated = flag;
+	}
+
 	public get validated() : boolean
 	{
 		return(this.getRow(this.row).validated);

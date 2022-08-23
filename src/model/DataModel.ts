@@ -57,7 +57,7 @@ export class DataSourceWrapper
 {
 	private eof$:boolean;
 	private cache$:Record[];
-	private winpos$:number[] = [0,-1];
+	private hwm$:number = 0;
 
 	constructor(public block:ModelBlock)
 	{
@@ -82,8 +82,9 @@ export class DataSourceWrapper
 
 	public clear() : void
 	{
+		this.hwm$ = 0;
+		this.cache$ = [];
 		this.source.post();
-		this.winpos$ = [0,-1];
 		this.source.closeCursor();
 	}
 
@@ -189,13 +190,8 @@ export class DataSourceWrapper
 		if (!this.source.delete(record))
 			return(false);
 
+		this.hwm$--;
 		this.cache$.splice(pos,1);
-
-		if (this.winpos$[1] >= this.cache$.length)
-		{
-			this.winpos$[1]--;
-			this.prefetch(this.winpos$[1],1);
-		}
 
 		return(await this.block.postDelete());
 	}
@@ -211,70 +207,47 @@ export class DataSourceWrapper
 
 		if (success)
 		{
+			this.hwm$ = 0;
 			this.cache$ = [];
 			this.eof$ = false;
-			this.winpos$ = [0,-1];
 		}
 
 		return(success);
 	}
 
-	public async fetch(previous?:boolean) : Promise<Record>
+	public async fetch() : Promise<Record>
 	{
-		if (previous)
+		if (this.hwm$ >= this.cache$.length-1)
 		{
-			if (this.winpos$[0] < 1)
+			if (this.eof$) return(null);
+			let recs:Record[] = await this.source.fetch();
+
+			if (recs == null || recs.length == 0)
+			{
+				this.eof$ = true;
+				return(null);
+			}
+
+			if (recs.length < this.source.arrayfecth)
+				this.eof$ = true;
+
+			this.cache$.push(...recs);
+		}
+
+		let record:Record = this.cache$[this.hwm$];
+
+		if (!record.prepared)
+		{
+			record.wrapper = this;
+
+			if (!await this.block.onFetch(record))
 				return(null);
 
-			this.winpos$[0]--;
-
-			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
-				this.winpos$[1]--;
-
-			return(this.cache$[this.winpos$[0]]);
+			record.prepared = true;
 		}
-		else
-		{
-			if (this.winpos$[1] >= this.cache$.length-1)
-			{
-				if (this.eof$) return(null);
-				let recs:Record[] = await this.source.fetch();
 
-				if (recs == null || recs.length == 0)
-				{
-					this.eof$ = true;
-					return(null);
-				}
-
-				if (recs.length < this.source.arrayfecth)
-					this.eof$ = true;
-
-				this.cache$.push(...recs);
-			}
-
-			let undo:number[] = this.winpos$;
-
-			this.winpos$[1]++;
-
-			if (this.winpos$[1] - this.winpos$[0] + 1 > this.window)
-				this.winpos$[0]++;
-
-			let record:Record = this.cache$[this.winpos$[1]];
-
-			if (!record.prepared)
-			{
-				record.wrapper = this;
-
-				if (!await this.block.onFetch(record))
-				{
-					this.winpos$ = undo;
-					return(null);
-				}
-				record.prepared = true;
-			}
-
-			return(record);
-		}
+		this.hwm$++;
+		return(record);
 	}
 
 	public async prefetch(record:number,records:number) : Promise<number>
@@ -306,8 +279,7 @@ export class DataSourceWrapper
 	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
 		let table:string[][] = [];
-
-		if (all) while(await this.fetch() != null);
+		while(all && await this.fetch() != null);
 
 		let head:string[] = [];
 

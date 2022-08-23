@@ -355,8 +355,6 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		let scroll:number = 0;
-
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateRow())
@@ -366,11 +364,16 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		if (this.view.row == this.view.rows - 1)
-			scroll = 1;
-
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
+		if (record == null) return(false);
 
+		let scroll:number = !before ? 1 : 0;
+		this.scroll(scroll,this.view.row);
+
+		this.view.openrow();
+		this.view.findFirstEditable(record)?.focus();
+
+		/*
 		if (record != null)
 		{
 			this.scroll(scroll,this.view.row);
@@ -385,6 +388,7 @@ export class Block
 			this.view.refresh(this.view.row,record);
 			this.view.findFirstEditable(record)?.focus();
 		}
+		*/
 
 		return(record != null);
 	}
@@ -470,6 +474,9 @@ export class Block
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			let rec:Record = wrapper.getRecord(pos++);
+
+			if (rec == null)
+				console.log("*** No more ***")
 
 			if (rec == null)
 				break;

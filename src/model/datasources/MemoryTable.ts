@@ -20,6 +20,7 @@ export class MemoryTable implements DataSource
 
 	private columns$:string[] = [];
 	private records$:Record[] = [];
+	private inserted$:Record[] = [];
 
 	public arrayfecth:number = 1;
 	private filters:Filter[] = [];
@@ -70,7 +71,7 @@ export class MemoryTable implements DataSource
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		this.records$.splice(this.pos$,0,record);
+		this.inserted$.push(record);
 		return(true);
 	}
 
@@ -87,6 +88,13 @@ export class MemoryTable implements DataSource
 		{
 			this.pos$--;
 			this.records$.splice(rec,1);
+		}
+		else
+		{
+			rec = this.indexOf(this.inserted$,record.id);
+
+			if (rec >= 0)
+				this.inserted$.splice(rec,1);
 		}
 
 		return(rec >= 0);

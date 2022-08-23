@@ -23,7 +23,6 @@ import { MemoryTable } from "./datasources/MemoryTable.js";
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { Status } from "../view/Row.js";
 
 
 export class Block

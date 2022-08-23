@@ -418,7 +418,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insert)
 			{
-				if (inst.field.block.model.insertallowed)
+				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(false);
 
 				return(true);
@@ -426,7 +426,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insertAbove)
 			{
-				if (inst.field.block.model.insertallowed)
+				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(true);
 
 				return(true);
@@ -434,7 +434,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.delete)
 			{
-				if (inst.field.block.model.deleteallowed)
+				if (!inst.field.block.model.ctrlblk && inst.field.block.model.deleteallowed)
 					inst.field.block.model.delete();
 
 				return(true);

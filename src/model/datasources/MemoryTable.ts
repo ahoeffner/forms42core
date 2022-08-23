@@ -18,9 +18,11 @@ export class MemoryTable implements DataSource
 {
 	private pos$:number = 0;
 
+	private order$:string = null;
 	private columns$:string[] = [];
 	private records$:Record[] = [];
 	private inserted$:Record[] = [];
+	private sorting$:SortOrder[] = [];
 
 	public arrayfecth:number = 1;
 	private filters:Filter[] = [];
@@ -41,6 +43,17 @@ export class MemoryTable implements DataSource
 
 			this.records$.push(new Record(this,data));
 		});
+	}
+
+	public get sorting() : string
+	{
+		return(this.order$);
+	}
+
+	public set sorting(order:string)
+	{
+		this.order$ = order;
+		this.sorting$ = SortOrder.parse(order);
 	}
 
 	public get columns() : string[]
@@ -137,6 +150,29 @@ export class MemoryTable implements DataSource
 			else						this.filters.push(filters);
 		}
 
+		if (this.sorting$.length > 0)
+		{
+			this.records$ = this.records$.sort((r1,r2) =>
+			{
+				for (let i = 0; i < this.sorting$.length; i++)
+				{
+					let column:string = this.sorting$[i].column;
+					let ascending:boolean = this.sorting$[i].ascending;
+
+					let value1:any = r1.getValue(column);
+					let value2:any = r2.getValue(column);
+
+					if (value1 < value2)
+						return(ascending ? -1 : 1)
+
+					if (value1 > value2)
+						return(ascending ? 1 : -1)
+				}
+
+				return(0);
+			})
+		}
+
 		return(true);
 	}
 
@@ -151,7 +187,52 @@ export class MemoryTable implements DataSource
 			if (records[i].id == oid)
 				return(i);
 		}
-
 		return(-1);
+	}
+}
+
+class SortOrder
+{
+	column:string;
+	ascending:boolean = true;
+
+	static parse(order:string) : SortOrder[]
+	{
+		let sorting:SortOrder[] = [];
+
+		if (order != null)
+		{
+			let parts:string[] = order.split(",");
+
+			parts.forEach((column) =>
+			{
+				column = column.trim();
+
+				if (column.length > 0)
+				{
+					let ascending:string = null;
+
+					if (column.includes(' '))
+					{
+						let tokens:string[] = column.split(' ');
+
+						column = tokens[0].trim();
+						ascending = tokens[1].trim();
+					}
+
+					column = column.toLowerCase();
+					ascending = ascending?.toLowerCase();
+
+					let part:SortOrder = new SortOrder();
+
+					part.column = column;
+					if (ascending == "desc") part.ascending = true;
+
+					sorting.push(part);
+				}
+			})
+		}
+
+		return(sorting);
 	}
 }

@@ -15,6 +15,7 @@ import { Record } from '../Record.js';
 
 export interface DataSource
 {
+	sorting:string;
 	columns:string[];
 	arrayfecth:number;
 

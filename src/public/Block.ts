@@ -107,6 +107,11 @@ export class Block
 		navigator.clipboard.writeText(str);
 	}
 
+	public get datasource() : DataSource
+	{
+		return(ModelBlock.getBlock(this).datasource);
+	}
+
 	public set datasource(source:DataSource)
 	{
 		ModelBlock.getBlock(this).datasource = source;

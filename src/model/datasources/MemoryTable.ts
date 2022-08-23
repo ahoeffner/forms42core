@@ -226,7 +226,7 @@ class SortOrder
 					let part:SortOrder = new SortOrder();
 
 					part.column = column;
-					if (ascending == "desc") part.ascending = true;
+					if (ascending == "desc") part.ascending = false;
 
 					sorting.push(part);
 				}

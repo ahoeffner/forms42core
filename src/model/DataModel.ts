@@ -193,6 +193,11 @@ export class DataSourceWrapper
 		this.hwm$--;
 		this.cache$.splice(pos,1);
 
+		if (this.hwm$ <= this.cache$.length)
+			this.prefetch(this.hwm$,1);
+
+		this.cache$.forEach((rec) => {console.log(rec.getValue("first_name"))})
+
 		return(await this.block.postDelete());
 	}
 

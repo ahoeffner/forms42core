@@ -358,6 +358,16 @@ export class Block
 		return(success);
 	}
 
+	public async prevrecord() : Promise<boolean>
+	{
+		return(this.navigateBlock(KeyMap.prevrecord,this.current));
+	}
+
+	public async nextrecord() : Promise<boolean>
+	{
+		return(this.navigateBlock(KeyMap.nextrecord,this.current));
+	}
+
 	public async navigateRow(key:KeyMap, inst:FieldInstance) : Promise<boolean>
 	{
 		let next:FieldInstance = inst;

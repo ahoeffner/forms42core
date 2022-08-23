@@ -16,7 +16,6 @@ import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
-import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -370,12 +369,15 @@ export class Block
 
 		if (record != null)
 		{
+			let success:boolean = true;
 			this.scroll(0,this.view.row);
+
 			if (before)	this.view.refresh(record);
-			else await this.view.navigateBlock(KeyMap.nextrecord,this.view.current);
+			else success = await this.view.nextrecord();
+
+			if (success) this.view.findFirstEditable(record)?.focus();
 		}
 
-		this.view.findFirstEditable(record)?.focus();
 		return(record != null);
 	}
 

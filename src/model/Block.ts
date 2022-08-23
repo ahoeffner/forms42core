@@ -463,9 +463,6 @@ export class Block
 			let rec:Record = wrapper.getRecord(pos++);
 
 			if (rec == null)
-				console.log("*** No more ***")
-
-			if (rec == null)
 				break;
 
 			displayed++;

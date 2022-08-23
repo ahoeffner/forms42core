@@ -94,6 +94,11 @@ export class Block
 		this.curinst$ = inst;
 	}
 
+	public blur() : void
+	{
+		this.current?.blur();
+	}
+
 	public focus() : void
 	{
 		this.current?.focus();
@@ -535,11 +540,12 @@ export class Block
 		}
 	}
 
-	public refresh(rownum:number, record:Record) : void
+	public refresh(record:Record) : void
 	{
-		this.display(rownum,record);
+		let row:Row = this.displayed(record);
+		this.display(row.rownum,record);
 
-		if (rownum == this.row)
+		if (row.rownum == this.row)
 		{
 			this.displaycurrent();
 			this.model.queryDetails();

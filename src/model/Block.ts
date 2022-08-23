@@ -16,6 +16,7 @@ import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
+import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -364,32 +365,17 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
+		if (before == null)	before = false;
 		let record:Record = await this.wrapper.create(this.getRecord(0),before);
-		if (record == null) return(false);
 
-		let scroll:number = !before ? 1 : 0;
-		this.scroll(scroll,this.view.row);
-
-		this.view.openrow();
-		this.view.findFirstEditable(record)?.focus();
-
-		/*
 		if (record != null)
 		{
-			this.scroll(scroll,this.view.row);
-
-			if (!before)
-			{
-				this.move(1);
-				this.view.move(1);
-			}
-
-			this.view.openrow();
-			this.view.refresh(this.view.row,record);
-			this.view.findFirstEditable(record)?.focus();
+			this.scroll(0,this.view.row);
+			if (before)	this.view.refresh(record);
+			else await this.view.navigateBlock(KeyMap.nextrecord,this.view.current);
 		}
-		*/
 
+		this.view.findFirstEditable(record)?.focus();
 		return(record != null);
 	}
 
@@ -410,7 +396,8 @@ export class Block
 		{
 			this.move(-1);
 			this.scroll(0,this.view.row);
-			this.view.refresh(this.view.row,this.getRecord());
+			this.view.refresh(this.getRecord());
+			this.view.findFirstEditable(this.getRecord())?.focus();
 		}
 
 		return(true);

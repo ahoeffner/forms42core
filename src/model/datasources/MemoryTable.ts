@@ -55,6 +55,9 @@ export class MemoryTable implements DataSource
 
 	public async post() : Promise<boolean>
 	{
+		this.records$.push(...this.inserted$);
+		this.inserted$ = [];
+
 		this.records$.forEach((record) =>
 		{
 			record.prepared = false;
@@ -66,7 +69,6 @@ export class MemoryTable implements DataSource
 
 	public async refresh(_record:Record) : Promise<void>
 	{
-		null;
 	}
 
 	public async insert(record:Record) : Promise<boolean>

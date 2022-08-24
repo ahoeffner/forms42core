@@ -32,6 +32,7 @@ export class Row
 	private block$:Block = null;
 	private rownum$:number = null;
 	private validated$:boolean = true;
+	private indicator$:boolean = false;
 	private status$:Status = Status.na;
 	private indicators:Indicator[] = [];
 	private instances:FieldInstance[] = [];
@@ -85,8 +86,13 @@ export class Row
 		this.indicators.push(ind);
 	}
 
-	public avtivateIndicators(flag:boolean) : void
+	public activateIndicators(flag:boolean) : void
 	{
+		if (flag && this.indicator$) return;
+		if (!flag && !this.indicator$) return;
+
+		this.indicator$ = flag;
+
 		this.indicators.forEach((ind) =>
 		{
 			if (flag) ind.element.classList.add(Properties.Classes.RowIndicator);
@@ -322,7 +328,7 @@ export class Row
 
 	public clear() : void
 	{
-		this.avtivateIndicators(false);
+		this.activateIndicators(false);
 		this.getFields().forEach((fld) => {fld.clear()});
 	}
 

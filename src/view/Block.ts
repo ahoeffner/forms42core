@@ -608,8 +608,9 @@ export class Block
 
 	private setIndicators(prev:number, next:number) : void
 	{
-		if (next != null) this.getRow(next).avtivateIndicators(true);
-		if (prev != null) this.getRow(prev).avtivateIndicators(false);
+		if (prev == next) prev = null;
+		if (next != null) this.getRow(next).activateIndicators(true);
+		if (prev != null) this.getRow(prev).activateIndicators(false);
 	}
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>
@@ -655,6 +656,10 @@ export class Block
 			{
 				this.setIndicators(this.row$,next.row);
 				this.row$ = next.row;
+			}
+			else
+			{
+				this.setIndicators(this.row$,next.row);
 			}
 
 			this.displaycurrent();

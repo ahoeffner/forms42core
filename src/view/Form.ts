@@ -389,6 +389,9 @@ export class Form implements EventListenerObject
 
 		if (inst != null)
 		{
+			if (key == KeyMap.enter && inst.field.block.model.querymode)
+				key = KeyMap.executequery;
+
 			if (KeyMapping.isRowNav(key))
 			{
 				success = await this.block.navigateRow(key,inst);
@@ -438,7 +441,7 @@ export class Form implements EventListenerObject
 
 				if (success)
 					inst.field.block.focus();
-					
+
 				return(true);
 			}
 

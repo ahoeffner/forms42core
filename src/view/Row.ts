@@ -322,7 +322,6 @@ export class Row
 
 	public clear() : void
 	{
-		console.log(this.block.name+" "+this.rownum+" clear state: "+Status[this.status])
 		this.avtivateIndicators(false);
 		this.getFields().forEach((fld) => {fld.clear()});
 	}

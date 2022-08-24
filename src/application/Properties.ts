@@ -39,7 +39,9 @@ export interface ClassNames
 
 export class Properties
 {
-    public static BindTag:string = "bind";
+    public static BindAttr:string = "bind";
+    public static RecordModeAttr:string = "mode";
+
     public static RootTag:string = "forms";
     public static IncludeTag:string = "include";
     public static ForeachTag:string = "foreach";
@@ -79,7 +81,7 @@ export class Properties
             new Map<string,Class<Tag>>
             (
                 [
-                    [Properties.BindTag,Field],
+                    [Properties.BindAttr,Field],
                     [Properties.ForeachTag,Foreach]
                 ]
             ));

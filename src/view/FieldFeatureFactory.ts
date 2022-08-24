@@ -102,13 +102,13 @@ export class FieldFeatureFactory
 	public static consume(tag:HTMLElement) : FieldProperties
 	{
 		let props:FieldProperties = new FieldProperties();
-		let skip:string[] = ["id","name",Properties.BindTag,"row","value"];
+		let skip:string[] = ["id","name",Properties.BindAttr,"row","value"];
 
 		props.tag = tag.tagName;
 		props.id = tag.getAttribute("id");
 
-		props.block = tag.getAttribute(Properties.BindTag);
-		if (props.block == null) throw "@FieldInstance: "+Properties.BindTag+" must be specified";
+		props.block = tag.getAttribute(Properties.BindAttr);
+		if (props.block == null) throw "@FieldInstance: "+Properties.BindAttr+" must be specified";
 
 		props.name = tag.getAttribute("name");
 		if (props.name == null)	throw "@FieldInstance: Name must be specified";
@@ -171,7 +171,7 @@ export class FieldFeatureFactory
 		let tag:HTMLElement = inst.element;
 
 		tag.setAttribute("name",props.name);
-		tag.setAttribute(Properties.BindTag,props.block);
+		tag.setAttribute(Properties.BindAttr,props.block);
 
 		if (props.id != null) tag.setAttribute("id",props.id);
 		if (props.row >= 0) tag.setAttribute("row",""+props.row);
@@ -210,6 +210,26 @@ export class FieldFeatureFactory
 			FieldFeatureFactory.setSelectOptions(tag,props);
 			FieldFeatureFactory.setReadOnly(tag,props.readonly)
 			if (props.readonly) tag.setAttribute("readonly","");
+		}
+	}
+
+	public static setMode(inst:FieldInstance, props:FieldProperties) : void
+	{
+		let tag:HTMLElement = inst.element;
+
+		tag.removeAttribute("query");
+		tag.removeAttribute("insert");
+
+		if (inst.field.row.status == Status.qbe)
+		{
+			if (props.enabled && !props.readonly)
+				tag.setAttribute(Properties.RecordModeAttr,"query");
+		}
+
+		if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
+		{
+			if (props.enabled && !props.readonly)
+				tag.setAttribute(Properties.RecordModeAttr,"insert");
 		}
 	}
 

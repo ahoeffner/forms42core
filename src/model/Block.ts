@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record } from "./Record.js";
+import { Record, RecordStatus } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Form as ViewForm } from "../view/Form.js";
@@ -593,8 +593,10 @@ export class Block
 		let table:MemoryTable = new MemoryTable();
 		this.qbewrp$ = new DataSourceWrapper(this);
 
-		this.qbewrp$.source = table
+		this.qbewrp$.source = table;
 		this.qberec$ = this.qbewrp$.create(0);
+
+		this.qberec$.status = RecordStatus.QBE;
 	}
 
 	private setDataWrapper() : void

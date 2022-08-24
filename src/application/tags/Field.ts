@@ -34,7 +34,7 @@ export class Field implements Tag, FormField
 		if (binding == null)
 		{
 			attr = Properties.AttributePrefix+attr;
-			tag.setAttribute(Properties.BindTag,tag.getAttribute(attr));
+			tag.setAttribute(Properties.BindAttr,tag.getAttribute(attr));
 		}
 
 		let type:string = tag.tagName.toLowerCase();
@@ -43,7 +43,7 @@ export class Field implements Tag, FormField
 		if (tag.getAttribute("type")?.toLowerCase() == "row-indicator")
 			return(new Indicator().parse(component,tag,attr));
 
-		if (attr != Properties.BindTag) tag.removeAttribute(attr);
+		if (attr != Properties.BindAttr) tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,tag);
 
         return(field.element);

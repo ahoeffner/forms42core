@@ -100,6 +100,8 @@ export class FieldInstance implements FieldEventHandler
 
 		if (props != null)
 			this.applyProperties(props);
+
+		FieldFeatureFactory.setMode(this,this.properties$);
 	}
 
 	public setDefaultProperties(props:FieldProperties, status:Status) : void

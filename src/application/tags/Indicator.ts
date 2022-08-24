@@ -24,7 +24,7 @@ export class Indicator implements Tag
     {
 		let row:string = tag.getAttribute("row");
 		let binding:string = tag.getAttribute(attr);
-		if (attr != Properties.BindTag) tag.removeAttribute(attr);
+		if (attr != Properties.BindAttr) tag.removeAttribute(attr);
 
 		if (row == null)
 			throw "@Indicator: row attribute missing";

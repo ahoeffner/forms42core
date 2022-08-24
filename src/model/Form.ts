@@ -178,7 +178,6 @@ export class Form
 		{
 			if (block.datasource == null)
 			{
-				console.log("initControlBlock "+block.name)
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;

@@ -335,21 +335,13 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public reset(props:boolean) : void
+	public reset(props:boolean, rewind:boolean) : void
 	{
-		this.row$ = -1;
 		this.current = null;
 		this.displayed$.clear();
+		if (rewind) this.row$ = -1;
 		if (props) this.recprops$.clear();
-	}
-
-	public clear(props:boolean) : void
-	{
-		this.row$ = -1;
-		this.current = null;
-		this.displayed$.clear();
-		if (props) this.recprops$.clear();
-		this.rows$.forEach((row) => {row.clear(true)});
+		this.rows$.forEach((row) => {row.status = Status.na});
 	}
 
 	public addInstance(inst:FieldInstance) : void
@@ -539,7 +531,7 @@ export class Block
 
 		row.status = this.convert(record.status);
 
-		row.clear(false);
+		row.clear();
 		this.applyRecordProperties(record,true);
 
 		record.values.forEach((field) =>
@@ -552,6 +544,7 @@ export class Block
 
 		if (row.status == Status.na)
 		{
+			row.clear();
 			row.setFieldState(FieldState.READONLY);
 			this.getRow(-1)?.setFieldState(FieldState.READONLY);
 		}
@@ -559,7 +552,12 @@ export class Block
 		for (let i = 1; i < this.rows; i++)
 		{
 			row = this.getRow(i);
-			if (row.status == Status.na) row.setFieldState(FieldState.DISABLED);
+
+			if (row.status == Status.na)
+			{
+				row.clear();
+				row.setFieldState(FieldState.DISABLED);
+			}
 		}
 	}
 
@@ -602,7 +600,7 @@ export class Block
 			let record:Record = this.model.getRecord();
 			current.status = this.convert(record.status);
 
-			current.clear(false);
+			current.clear();
 			this.applyRecordProperties(record,false);
 			record.values.forEach((field) => {current.distribute(field.name,field.value,false);});
 		}

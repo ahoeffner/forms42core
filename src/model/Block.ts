@@ -435,8 +435,8 @@ export class Block
 
 		this.wrapper.clear();
 		this.setQBEWrapper();
-		this.view.clear(true);
 
+		this.view.reset(true,true);
 		this.view.display(0,this.qberec$);
 
 		this.view.lockUnused();
@@ -463,7 +463,7 @@ export class Block
 
 		this.setDataWrapper();
 
-		this.view.clear(true);
+		this.view.reset(true,true);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
@@ -496,9 +496,9 @@ export class Block
 		if (this.querymode)
 			return(false);
 
-		this.view.clear(false);
 		let displayed:number = 0;
-		
+		this.view.reset(false,false);
+
 		let wrapper:DataSourceWrapper = this.wrapper;
 		let pos:number = this.record + records - offset;
 

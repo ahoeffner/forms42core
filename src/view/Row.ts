@@ -320,25 +320,10 @@ export class Row
 		return(fields);
 	}
 
-	public reset(state:boolean) : void
+	public clear() : void
 	{
+		console.log(this.block.name+" "+this.rownum+" clear state: "+Status[this.status])
 		this.avtivateIndicators(false);
-		if (state) this.status = Status.na;
-	}
-
-	public clear(state:boolean) : void
-	{
-		if (this.rownum == 3 && this.block.name == "employees")
-		{
-			console.log('-')
-			console.log('-')
-			console.log("state: ["+Status[this.status]+"] "+new Error().stack)
-			console.log('-')
-			console.log('-')
-			console.log('-')
-		}
-		this.avtivateIndicators(false);
-		if (state) this.status = Status.na;
 		this.getFields().forEach((fld) => {fld.clear()});
 	}
 

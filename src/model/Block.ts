@@ -14,12 +14,12 @@ import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
-import { DataSourceWrapper } from "./DataModel.js";
 import { Form as ViewForm } from "../view/Form.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
+import { DataSourceWrapper } from "./DataSourceWrapper.js";
 import { EventType } from "../control/events/EventType.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
@@ -52,12 +52,14 @@ export class Block
 	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
+	private qberec$:Record = null;
 	private view$:ViewBlock = null;
 	private linked$:boolean = false;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
+	private qbewrp$:DataSourceWrapper = null;
 
 	private constructor(form:Form, name:string)
 	{
@@ -96,6 +98,16 @@ export class Block
 	public get ctrlblk() : boolean
 	{
 		return(this.ctrlblk$);
+	}
+
+	public get qberec() : Record
+	{
+		return(this.qberec$);
+	}
+
+	public get querymode() : boolean
+	{
+		return(this.qberec$ != null);
 	}
 
 	public set ctrlblk(flag:boolean)
@@ -201,6 +213,7 @@ export class Block
 
 	private get wrapper() : DataSourceWrapper
 	{
+		if (this.querymode) return(this.qbewrp$);
 		return(this.form.datamodel.getWrapper(this));
 	}
 
@@ -285,8 +298,7 @@ export class Block
 	public async preQuery() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		let record:Record = new Record(null);
-		if (!await this.setEventTransaction(EventType.PreQuery,record)) return(false);
+		if (!await this.setEventTransaction(EventType.PreQuery,this.qberec)) return(false);
 		let success:boolean = await this.fire(EventType.PreQuery);
 		this.endEventTransaction(EventType.PreQuery,success);
 		return(success);
@@ -348,18 +360,23 @@ export class Block
 
 	public locked(record?:Record) : boolean
 	{
+		if (this.querymode) return(true);
 		if (record == null)	record = this.getRecord(0);
 		return(this.wrapper.locked(record));
 	}
 
 	public async lock(record?:Record) : Promise<boolean>
 	{
+		if (this.querymode) return(true);
 		if (record == null)	record = this.getRecord(0);
 		return(this.wrapper.lock(record));
 	}
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
+		if (this.querymode)
+			return(false);
+
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateRow())
@@ -370,7 +387,7 @@ export class Block
 			return(false);
 
 		if (before == null)	before = false;
-		let record:Record = await this.wrapper.create(this.getRecord(0),before);
+		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)
 		{
@@ -388,6 +405,9 @@ export class Block
 
 	public async delete() : Promise<boolean>
 	{
+		if (this.querymode)
+			return(false);
+
 		if (!this.checkEventTransaction(EventType.PreDelete))
 			return(false);
 
@@ -405,6 +425,26 @@ export class Block
 		return(true);
 	}
 
+	public async enterQuery() : Promise<boolean>
+	{
+		if (!this.view.validated)
+		{
+			if (!await this.view.validateBlock())
+				return(false);
+		}
+
+		this.wrapper.clear();
+		this.setQBEWrapper();
+		this.view.clear(true);
+
+		this.view.display(0,this.qberec$);
+
+		this.view.lockUnused();
+		this.view.setCurrentRow(0);
+
+		return(true);
+	}
+
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
 		if (!this.view.validated)
@@ -413,14 +453,20 @@ export class Block
 				return(false);
 		}
 
+		this.setQBEWrapper();
+
 		if (!await this.preQuery())
+		{
+			this.setDataWrapper();
 			return(false);
+		}
+
+		this.setDataWrapper();
 
 		if (!this.view.clear(true)) return(false);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
-		this.view.reset();
 		let record:Record = null;
 
 		if (!await wrapper.query(filters))
@@ -438,7 +484,7 @@ export class Block
 
 			this.record$ = 0;
 			this.view.display(i,record);
-			if (i == 0)	this.view$.setCurrentRow(0)
+			if (i == 0)	this.view$.setCurrentRow(0);
 		}
 
 		this.view.lockUnused();
@@ -447,6 +493,9 @@ export class Block
 
 	public scroll(records:number, offset:number) : boolean
 	{
+		if (this.querymode)
+			return(false);
+
 		if (!this.view.clear(false))
 			return(false);
 
@@ -482,7 +531,11 @@ export class Block
 
 	public async queryDetails() : Promise<boolean>
 	{
+		if (this.querymode)
+			return(true);
+
 		console.log("queryDetails record: "+this.record+" "+this.getRecord().getValue("first_name"));
+
 		return(true);
 	}
 
@@ -494,6 +547,7 @@ export class Block
 	public getRecord(offset?:number) : Record
 	{
 		if (offset == null) offset = 0;
+		if (this.querymode) return(this.qberec$);
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
@@ -530,6 +584,24 @@ export class Block
 			this.intblk = new InterfaceBlock(this.intfrm,this.name);
 			this.linked$ = false;
 		}
+	}
+
+	private setQBEWrapper() : void
+	{
+		if (this.qberec$ != null)
+			return;
+
+		let table:MemoryTable = new MemoryTable();
+		this.qbewrp$ = new DataSourceWrapper(this);
+
+		this.qbewrp$.source = table
+		this.qberec$ = this.qbewrp$.create(0);
+	}
+
+	private setDataWrapper() : void
+	{
+		this.qberec$ = null;
+		this.qbewrp$ = null;
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

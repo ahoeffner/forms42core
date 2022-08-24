@@ -309,8 +309,13 @@ export class Block
 
 	public async validateRow() : Promise<boolean>
 	{
+		if (this.model.querymode) return(true);
+
 		if (!await this.current.field.validate(this.current))
 			return(false);
+
+		if (this.current.field.block.model.ctrlblk)
+			return(true);
 
 		return(this.getRow(this.row).validate());
 	}
@@ -330,16 +335,13 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public reset() : void
-	{
-		this.row$ = -1;
-	}
-
 	public clear(props:boolean) : boolean
 	{
 		if (!this.validated)
 			return(false);
 
+		this.row$ = -1;
+		this.current = null;
 		this.displayed$.clear();
 		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear(true)});
@@ -403,6 +405,9 @@ export class Block
 	{
 		let nav:boolean = false;
 		let next:FieldInstance = inst;
+
+		if (this.model.querymode)
+			return(false);
 
 		if (!await inst.field.validate(inst))
 		{

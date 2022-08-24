@@ -11,8 +11,8 @@
  */
 
 import { Block } from "./Block.js";
-import { DataSourceWrapper } from "./DataModel.js";
 import { DataSource } from "./interfaces/DataSource.js";
+import { DataSourceWrapper } from "./DataSourceWrapper.js";
 
 export enum RecordStatus
 {
@@ -29,7 +29,6 @@ export class Record
 	private id$:any;
 	private keys$:any[] = [];
 	private values$:any[] = [];
-	private columns$:string[] = [];
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
@@ -107,14 +106,6 @@ export class Record
 		this.prepared$ = flag;
 	}
 
-	public get columns() : string[]
-	{
-		let columns:string[] = [];
-		columns.push(...this.source.columns);
-		columns.push(...this.columns$);
-		return(columns);
-	}
-
 	public get values() : {name:string,value:any}[]
 	{
 		let values:{name:string, value:any}[] = [];
@@ -159,60 +150,31 @@ export class Record
 		if (this.status == RecordStatus.Query)
 			this.status = RecordStatus.Updated;
 
-		if (idx < 0)
-		{
-			idx = this.cols;
-			this.push(column);
-		}
-
 		this.values$[idx] = value;
-	}
-
-	private get cols() : number
-	{
-		return(this.source.columns.length+this.columns$.length);
-	}
-
-	private push(column:string) : void
-	{
-		this.columns$.push(column);
 	}
 
 	private indexOf(column:string) : number
 	{
-		let idx:number = 0;
-
-		if (this.source == null)
-		{
-			idx = this.columns$.indexOf(column);
-		}
-		else
-		{
-			idx = this.source.columns.indexOf(column);
-
-			if (idx < 0 && this.columns$ != null)
-			{
-				idx = this.columns$.indexOf(column);
-				if (idx >= 0) idx += this.source.columns.length;
-				else return(-1);
-			}
-		}
-
+		let idx:number = this.source.columns.indexOf(column);
+		if (idx < 0) idx = this.wrapper.indexOf(column);
 		return(idx);
 	}
 
 	private column(pos:number) : string
 	{
 		let len:number = this.source.columns.length;
-		if (pos >= len) return(this.columns$[pos-len]);
-		else    		return(this.source.columns[pos]);
+		if (pos < len) return(this.source.columns[pos]);
+		else    	   return(this.wrapper.columns[pos-len]);
 	}
 
 	public toString() : string
 	{
 		let str:string = "";
 
-		for (let i = 0; i < this.cols; i++)
+		let cols:number = this.source.columns.length +
+						  this.wrapper.columns.length;
+
+		for (let i = 0; i < cols; i++)
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));
 
 		return(str.substring(2));

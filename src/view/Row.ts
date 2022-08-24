@@ -125,7 +125,7 @@ export class Row
 	public set validated(flag:boolean)
 	{
 		this.validated$ = flag;
-		
+
 		if (flag && this.status == Status.new)
 			this.status = Status.na;
 	}
@@ -322,6 +322,15 @@ export class Row
 
 	public clear(state:boolean) : void
 	{
+		if (this.rownum == 3 && this.block.name == "employees")
+		{
+			console.log('-')
+			console.log('-')
+			console.log(new Error().stack)
+			console.log('-')
+			console.log('-')
+			console.log('-')
+		}
 		this.avtivateIndicators(false);
 		if (state) this.status = Status.na;
 		this.getFields().forEach((fld) => {fld.clear()});

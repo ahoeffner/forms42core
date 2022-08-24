@@ -27,7 +27,7 @@ export class MemoryTable implements DataSource
 	public arrayfecth:number = 1;
 	private filters:Filter[] = [];
 
-	public constructor(columns:string[], records:any[][])
+	public constructor(columns?:string[], records?:any[][])
 	{
 		if (columns == null) columns = [];
 		if (records == null) records = [];
@@ -59,6 +59,11 @@ export class MemoryTable implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public set columns(columns:string[])
+	{
+		this.columns = columns;
 	}
 
 	public async lock(_record:Record) : Promise<boolean>

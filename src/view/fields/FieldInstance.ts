@@ -333,7 +333,7 @@ export class FieldInstance implements FieldEventHandler
 			}
 		}
 
-		return(props.enabled);
+		return(props.enabled && !props.hidden);
 	}
 
 	public editable(status?:Status) : boolean
@@ -355,7 +355,7 @@ export class FieldInstance implements FieldEventHandler
 			}
 		}
 
-		return(!props.readonly);
+		return(!props.readonly && !props.hidden);
 	}
 
 	public setFieldState(state:FieldState) : void

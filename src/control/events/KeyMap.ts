@@ -22,6 +22,9 @@ export class KeyMap
 
 	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
 
+	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});
+	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8});
+
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
 
@@ -38,7 +41,7 @@ export class KeyMap
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 
 	public static delete:KeyMap = new KeyMap({key: 'd', ctrl: true});
-	
+
 	public static insert:KeyMap = new KeyMap({key: 'i', ctrl: true});
 	public static insertAbove:KeyMap = new KeyMap({key: 'I', ctrl: true});
 

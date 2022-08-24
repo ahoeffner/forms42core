@@ -416,6 +416,32 @@ export class Form implements EventListenerObject
 				return(success);
 			}
 
+			if (key == KeyMap.enterquery)
+			{
+				let success:boolean = false;
+
+				if (!inst.field.block.model.ctrlblk && inst.field.block.model.qbeallowed)
+					success = await inst.field.block.model.enterQuery();
+
+				if (success)
+					inst.field.block.findFirstEditable(inst.field.block.model.qberec)?.focus();
+
+				return(true);
+			}
+
+			if (key == KeyMap.executequery)
+			{
+				let success:boolean = false;
+
+				if (!inst.field.block.model.ctrlblk && inst.field.block.model.queryallowed)
+					success = await inst.field.block.model.executeQuery();
+
+				if (success)
+					inst.field.block.focus();
+					
+				return(true);
+			}
+
 			if (key == KeyMap.insert)
 			{
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)

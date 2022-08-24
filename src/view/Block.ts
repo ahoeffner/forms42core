@@ -335,18 +335,21 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public clear(props:boolean) : boolean
+	public reset(props:boolean) : void
 	{
-		if (!this.validated)
-			return(false);
+		this.row$ = -1;
+		this.current = null;
+		this.displayed$.clear();
+		if (props) this.recprops$.clear();
+	}
 
+	public clear(props:boolean) : void
+	{
 		this.row$ = -1;
 		this.current = null;
 		this.displayed$.clear();
 		if (props) this.recprops$.clear();
 		this.rows$.forEach((row) => {row.clear(true)});
-
-		return(true);
 	}
 
 	public addInstance(inst:FieldInstance) : void

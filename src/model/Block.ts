@@ -463,7 +463,7 @@ export class Block
 
 		this.setDataWrapper();
 
-		if (!this.view.clear(true)) return(false);
+		this.view.clear(true);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
@@ -496,10 +496,9 @@ export class Block
 		if (this.querymode)
 			return(false);
 
-		if (!this.view.clear(false))
-			return(false);
-
+		this.view.clear(false);
 		let displayed:number = 0;
+		
 		let wrapper:DataSourceWrapper = this.wrapper;
 		let pos:number = this.record + records - offset;
 

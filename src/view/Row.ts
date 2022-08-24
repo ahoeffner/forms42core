@@ -320,13 +320,19 @@ export class Row
 		return(fields);
 	}
 
+	public reset(state:boolean) : void
+	{
+		this.avtivateIndicators(false);
+		if (state) this.status = Status.na;
+	}
+
 	public clear(state:boolean) : void
 	{
 		if (this.rownum == 3 && this.block.name == "employees")
 		{
 			console.log('-')
 			console.log('-')
-			console.log(new Error().stack)
+			console.log("state: ["+Status[this.status]+"] "+new Error().stack)
 			console.log('-')
 			console.log('-')
 			console.log('-')

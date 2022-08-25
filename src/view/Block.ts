@@ -310,6 +310,7 @@ export class Block
 	public async validateRow() : Promise<boolean>
 	{
 		if (this.model.querymode) return(true);
+		if (!this.getCurrentRow().exist) return(true);
 
 		if (!await this.current.field.validate(this.current))
 			return(false);
@@ -491,9 +492,12 @@ export class Block
 			return;
 
 		this.model$.move(rownum-this.row);
-
 		this.setIndicators(this.row$,rownum);
-		this.getRow(this.row).setFieldState(FieldState.READONLY);
+
+		let prev:Row = this.getRow(this.row);
+
+		if (prev.status != Status.na)
+			prev.setFieldState(FieldState.READONLY);
 
 		this.row$ = rownum;
 
@@ -542,11 +546,21 @@ export class Block
 	{
 		let row:Row = this.getRow(0);
 
+		if (this.getCurrentRow().status == Status.na)
+		{
+			let curr:Row = this.getRow(-1);
+
+			if (curr != null)
+			{
+				curr.clear();
+				curr.setFieldState(FieldState.READONLY);
+			}
+		}
+
 		if (row.status == Status.na)
 		{
 			row.clear();
 			row.setFieldState(FieldState.READONLY);
-			this.getRow(-1)?.setFieldState(FieldState.READONLY);
 		}
 
 		for (let i = 1; i < this.rows; i++)
@@ -595,7 +609,7 @@ export class Block
 	{
 		let current:Row = this.rows$.get(-1);
 
-		if (current != null)
+		if (current != null && this.getCurrentRow().exist)
 		{
 			let record:Record = this.model.getRecord();
 			current.status = this.convert(record.status);

@@ -11,10 +11,10 @@
  */
 
 import { Form } from "./Form.js";
-import { Record, RecordStatus } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Form as ViewForm } from "../view/Form.js";
+import { Record, RecordStatus } from "./Record.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -418,6 +418,14 @@ export class Block
 			this.move(-1);
 			this.view.validated = true;
 			this.scroll(0,this.view.row);
+
+			if (!this.view.getCurrentRow().exist)
+			{
+				this.move(1);
+				this.view.prevrecord();
+				return(true);
+			}
+
 			this.view.refresh(this.getRecord());
 			this.view.findFirstEditable(this.getRecord())?.focus();
 		}
@@ -532,8 +540,6 @@ export class Block
 	{
 		if (this.querymode)
 			return(true);
-
-		console.log("queryDetails record: "+this.record+" "+this.getRecord().getValue("first_name"));
 
 		return(true);
 	}

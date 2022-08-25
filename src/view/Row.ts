@@ -50,6 +50,11 @@ export class Row
 		return(this.block$);
 	}
 
+	public get exist() : boolean
+	{
+		return(this.status != Status.na);
+	}
+
 	public get status() : Status
 	{
 		if (this.rownum >= 0) return(this.status$);

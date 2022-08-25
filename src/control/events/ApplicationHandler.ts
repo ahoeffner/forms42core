@@ -30,7 +30,7 @@ export class ApplicationHandler implements EventListenerObject
 		this.addEvents();
 	}
 
-	private event:BrowserEvent = new BrowserEvent();
+	private event:BrowserEvent = BrowserEvent.get();
 	public async handleEvent(event:any) : Promise<void>
 	{
         let bubble:boolean = false;

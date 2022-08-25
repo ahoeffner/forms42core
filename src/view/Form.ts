@@ -555,7 +555,7 @@ export class Form implements EventListenerObject
 		return(ModelForm.getForm(this.parent).setEventTransaction(event,block?.model,record));
 	}
 
-	private event:BrowserEvent = new BrowserEvent();
+	private event:BrowserEvent = BrowserEvent.get();
 	public async handleEvent(event:any) : Promise<void>
 	{
         let bubble:boolean = false;

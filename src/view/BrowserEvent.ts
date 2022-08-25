@@ -69,6 +69,10 @@ export class BrowserEvent
 		return(BrowserEvent.instance);
 	}
 
+	private constructor()
+	{
+	}
+
     public setEvent(event:any) : void
     {
         this.event$ = event;
@@ -86,9 +90,11 @@ export class BrowserEvent
 
         if (this.isMouseEvent) this.mouseEvent();
 
-		// Reset alt,... in case button has been released in another window
-        if (this.type == "blur") {this.alt = false; this.ctrl = false; this.meta = false}
-        if (this.type == "focus") {this.alt = false; this.ctrl = false; this.meta = false}
+		// could have been set outside this window
+		if (event.altKey != null) this.alt = event.altKey;
+		if (event.ctrlKey != null) this.ctrl = event.ctrlKey;
+		if (event.metaKey != null) this.meta = event.metaKey;
+		if (event.shiftKey != null) this.shift = event.shiftKey;
     }
 
     public get event() : any

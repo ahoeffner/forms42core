@@ -109,6 +109,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public clear() : void
 	{
+		this.before = "";
 		this.setElementValue(null);
 	}
 

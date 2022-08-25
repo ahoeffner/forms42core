@@ -175,9 +175,11 @@ export class Block
 	{
 		if (this.source$ != null)
 		{
-			this.view.reset(true,true);
 			this.form$.datamodel.clear(this);
 			this.form$.datamodel.setWrapper(this);
+
+			this.view.reset(true,true);
+			this.view.lockUnused();
 		}
 
 		this.ctrlblk = false;
@@ -375,6 +377,9 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
+		if (before == null)
+			before = false;
+
 		if (this.querymode)
 			return(false);
 
@@ -384,8 +389,12 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		if (before == null)	before = false;
-		if (!this.view.getCurrentRow().exist) before = true;
+		if (!this.view.getCurrentRow().exist)
+		{
+			before = true;
+			this.view.openrow();
+		}
+
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)

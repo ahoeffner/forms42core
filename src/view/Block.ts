@@ -311,6 +311,7 @@ export class Block
 	{
 		if (this.model.querymode) return(true);
 		if (!this.getCurrentRow().exist) return(true);
+		if (this.getCurrentRow().validated) return(true);
 
 		if (!await this.current.field.validate(this.current))
 			return(false);

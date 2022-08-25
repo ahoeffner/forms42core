@@ -175,6 +175,7 @@ export class Block
 	{
 		if (this.source$ != null)
 		{
+			this.view.reset(true,true);
 			this.form$.datamodel.clear(this);
 			this.form$.datamodel.setWrapper(this);
 		}
@@ -377,16 +378,14 @@ export class Block
 		if (this.querymode)
 			return(false);
 
-		if (!this.view.validated)
-		{
-			if (!await this.view.validateRow())
-				return(false);
-		}
+		if (!await this.view.validateRow())
+			return(false);
 
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
 		if (before == null)	before = false;
+		if (!this.view.getCurrentRow().exist) before = true;
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)

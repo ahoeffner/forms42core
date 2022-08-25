@@ -136,9 +136,6 @@ export class Row
 	public set validated(flag:boolean)
 	{
 		this.validated$ = flag;
-
-		if (flag && this.status == Status.new)
-			this.status = Status.na;
 	}
 
 	public invalidate() : void

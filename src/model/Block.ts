@@ -330,7 +330,7 @@ export class Block
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
-		if (success) success = await this.wrapper.post(record);
+		if (success) success = await this.wrapper.push(record);
 		return(success);
 	}
 
@@ -419,12 +419,14 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreDelete))
 			return(false);
 
+		let offset:number = this.view.rows - this.view.row;
 		let success:boolean = await this.wrapper.delete(this.getRecord());
 
 		if (success)
 		{
 			this.move(-1);
-			this.view.validated = true;
+			await this.prefetch(0,offset);
+
 			this.scroll(0,this.view.row);
 
 			if (!this.view.getCurrentRow().exist)

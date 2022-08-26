@@ -142,12 +142,7 @@ export class Row
 	{
 		if (this.rownum >= 0) this.validated$ = false;
 		else this.block.getCurrentRow().validated$ = false;
-	}
-
-	public changestate() : void
-	{
-		if (this.status == Status.new)
-			this.status = Status.insert;
+		if (this.status == Status.new) this.status = Status.insert;
 	}
 
 	public async validate() : Promise<boolean>

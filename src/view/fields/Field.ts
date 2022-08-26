@@ -275,7 +275,6 @@ export class Field
 			inst.valid = true;
 			this.valid = false;
 			this.row.invalidate();
-			this.row.changestate();
 
 			this.distribute(inst,value,this.dirty);
 			this.block.distribute(this,value,this.dirty);

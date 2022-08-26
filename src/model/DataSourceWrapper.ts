@@ -98,10 +98,8 @@ export class DataSourceWrapper
 		return(success);
 	}
 
-	public async post(record?:Record) : Promise<boolean>
+	public async push(record?:Record) : Promise<boolean>
 	{
-		console.log("post "+record.getValue("first_name")+" "+RecordStatus[record.status]);
-
 		switch(record.status)
 		{
 			case RecordStatus.New :
@@ -120,6 +118,8 @@ export class DataSourceWrapper
 
 	public create(pos:number, before?:boolean) : Record
 	{
+		this.hwm$++;
+
 		if (pos > this.cache$.length)
 			pos = this.cache$.length - 1;
 
@@ -171,10 +171,14 @@ export class DataSourceWrapper
 		this.hwm$--;
 		this.cache$.splice(pos,1);
 
-		if (this.hwm$ <= this.cache$.length)
-			this.prefetch(this.hwm$,1);
-
 		return(await this.block.postDelete());
+	}
+
+	public test() : void
+	{
+		console.log("hwm "+this.hwm$)
+		this.cache$.forEach((rec) => {console.log(rec.getValue("first_name"))})
+		console.log("-")
 	}
 
 	public getRecord(record:number) : Record

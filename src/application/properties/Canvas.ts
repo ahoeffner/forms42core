@@ -12,40 +12,40 @@
 
 export class Canvas
 {
-    public html:string =
-    `
+	public html:string =
+	`
 	<div name="canvas">
 		<div name="modal"></div>
 		<div name="content"></div>
 	</div>
-    `
+	`
 
-    public ModalStyle:string =
-    `
+	public ModalStyle:string =
+	`
 		top: 0;
 		left: 0;
 		width: 0;
 		height: 0;
 		position: absolute;
-    `
+	`
 
-    public CanvasStyle:string =
-    `
+	public CanvasStyle:string =
+	`
 		resize: both;
 		overflow: hidden;
 		position: absolute;
 		width: fit-content;
 		height: fit-content;
-    `
+	`
 
-    public ContentStyle:string =
-    `
+	public ContentStyle:string =
+	`
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
 		position: relative;
-    `
+	`
 
 	public ModalClasses:string = "modal";
 	public CanvasClasses:string = "canvas";

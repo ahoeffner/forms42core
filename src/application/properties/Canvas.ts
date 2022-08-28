@@ -32,11 +32,11 @@ export class Canvas
 
     public CanvasStyle:string =
     `
-		resize: both;
-		overflow: hidden;
-		position: absolute;
-		width: fit-content;
-		height: fit-content;
+				resize: both;
+				overflow: hidden;
+				position: absolute;
+				width: fit-content;
+				height: fit-content;
     `
 
     public ContentStyle:string =

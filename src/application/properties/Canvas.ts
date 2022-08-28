@@ -12,7 +12,7 @@
 
 export class Canvas
 {
-    public page:string =
+    public html:string =
     `
     <div name="canvas">
         <div name="modal"></div>
@@ -32,7 +32,7 @@ export class Canvas
 
     public CanvasStyle:string =
     `
-        resize: both;
+		resize: both;
         overflow: hidden;
         position: absolute;
         width: fit-content;

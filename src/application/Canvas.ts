@@ -29,6 +29,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
     private container:HTMLDivElement = null;
     private component:CanvasComponent = null;
 
+
     public get moveable() : boolean
     {
         return(this.moveable$);
@@ -131,7 +132,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.component = component;
         let page = component.getView();
 
-        let layout:string = Properties.CanvasProperties.page;
+        let layout:string = Properties.CanvasProperties.html;
         let template:HTMLTemplateElement = document.createElement("template");
 
         template.innerHTML = layout;
@@ -148,7 +149,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
         this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
 
-        this.container.style.zIndex = (2*this.zindex$)+"";
+		this.container.style.zIndex = (2*this.zindex$)+"";
         this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 
         if (typeof page === 'string')
@@ -161,6 +162,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
         this.container.appendChild(page);
         this.content = this.container.firstChild as HTMLElement;
         this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
+
+		this.content.tabIndex = -1;
+        this.content.addEventListener("focus",() => this.focus());
 
         this.moveable$ = component.moveable;
         this.resizable$ = component.resizable;
@@ -303,7 +307,15 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
     public handleEvent(event:Event) : void
     {
+		console.log("event "+event.type)
         if (event.type == "mouseup") this.dragend();
         if (event.type == "mousemove") this.drag(event);
     }
+
+	private static layers$:number = 0;
+
+	private focus() : void
+	{
+		this.zindex = ++Canvas.layers$;
+	}
 }

@@ -273,7 +273,6 @@ export class Field
 
 			this.dirty = true;
 			inst.valid = true;
-			this.valid = false;
 			this.row.invalidate();
 
 			this.distribute(inst,value,this.dirty);
@@ -310,17 +309,7 @@ export class Field
 	public distribute(inst:FieldInstance, value:any, dirty:boolean) : void
 	{
 		this.dirty = dirty;
-		this.value$ = value;
-
-		if (dirty)
-		{
-			if (value != null)
-				this.valid$ = false;
-		}
-		else
-		{
-			this.valid$ = true;
-		}
+ 		this.value$ = value;
 
 		this.instances$.forEach((fi) =>
 		{

@@ -490,9 +490,6 @@ export class Block
 		if (!await wrapper.query(filters))
 			return(false);
 
-		if (!await this.postQuery())
-			return(false);
-
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			record = await wrapper.fetch();
@@ -506,6 +503,10 @@ export class Block
 		}
 
 		this.view.lockUnused();
+
+		if (!await this.postQuery())
+			return(false);
+
 		return(true);
 	}
 

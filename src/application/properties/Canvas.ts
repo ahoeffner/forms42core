@@ -14,20 +14,19 @@ export class Canvas
 {
     public html:string =
     `
-    <div name="canvas">
-        <div name="modal"></div>
-        <div name="content"></div>
-    </div>
-
+	<div name="canvas">
+		<div name="modal"></div>
+		<div name="content"></div>
+	</div>
     `
 
     public ModalStyle:string =
     `
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-        position: absolute;
+		top: 0;
+		left: 0;
+		width: 0;
+		height: 0;
+		position: absolute;
     `
 
     public CanvasStyle:string =
@@ -41,15 +40,15 @@ export class Canvas
 
     public ContentStyle:string =
     `
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        position: relative;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		position: relative;
     `
 
-    public ModalClasses:string = "modal";
-    public CanvasClasses:string = "canvas";
-    public ContentClasses:string = "canvas-content";
-    public CanvasHandleClass:string = "canvas-handle";
+	public ModalClasses:string = "modal";
+	public CanvasClasses:string = "canvas";
+	public ContentClasses:string = "canvas-content";
+	public CanvasHandleClass:string = "canvas-handle";
 }

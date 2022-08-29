@@ -59,7 +59,7 @@ export class Form implements CanvasComponent
 
 	public getView() : HTMLElement
 	{
-	return(FormBacking.getBacking(this).page);
+		return(FormBacking.getBacking(this).page);
 	}
 
 	public getBlock(block:string) : Block

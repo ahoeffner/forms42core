@@ -42,6 +42,8 @@ export class Form implements EventListenerObject
 	}
 
 	private static curform$:Form = null;
+
+	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
 	private blocks:Map<string,Block> = new Map<string,Block>();
@@ -51,6 +53,7 @@ export class Form implements EventListenerObject
 	{
 		this.parent$ = parent;
 		FormBacking.setViewForm(parent,this);
+		this.modfrm$ = FormBacking.getModelForm(this.parent,true);
 		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.name);
 	}
 
@@ -66,7 +69,7 @@ export class Form implements EventListenerObject
 
 	public modform() : ModelForm
 	{
-		return(FormBacking.getModelForm(this.parent));
+		return(this.modfrm$);
 	}
 
 	public get block() : Block

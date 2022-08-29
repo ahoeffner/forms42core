@@ -31,16 +31,16 @@ export class Form
 	}
 
 	private block$:Block = null;
-	private intfrm:InterfaceForm = null;
+	private parent$:InterfaceForm = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private evttrans$:EventTransaction = new EventTransaction();
 
 	constructor(parent:InterfaceForm)
 	{
-		this.intfrm = parent;
+		this.parent$ = parent;
 		FormBacking.setModelForm(parent,this);
-		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.name);
+		Logger.log(Type.formbinding,"Create modelform: "+this.parent$.name);
 	}
 
 	public get name() : string
@@ -55,7 +55,7 @@ export class Form
 
 	public get parent() : InterfaceForm
 	{
-		return(this.intfrm);
+		return(this.parent$);
 	}
 
 	public getBlock(name:string) : Block
@@ -128,7 +128,7 @@ export class Form
 	{
 		this.datamodel$.setWrapper(block);
 		this.blocks$.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent$.name);
 	}
 
 	public async initControlBlocks()

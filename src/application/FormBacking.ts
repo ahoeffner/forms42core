@@ -17,6 +17,7 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Block } from '../public/Block.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { FormEvents } from '../control/events/FormEvents.js';
 
 export class FormBacking
 {
@@ -51,6 +52,7 @@ export class FormBacking
 	{
 		FormBacking.mforms.delete(form);
 		FormBacking.vforms.delete(form);
+		FormBacking.getBacking(form).removeAllEventListener();
 	}
 
 	public static getViewForm(form:Form, create?:boolean) : ViewForm
@@ -105,4 +107,18 @@ export class FormBacking
 
 
 	public page:HTMLElement = null;
+	public listeners:object[] = [];
+
+	public removeEventListener(handle:object) : void
+	{
+		let pos:number = this.listeners.indexOf(handle);
+		this.listeners.splice(pos,1);
+		FormEvents.removeListener(handle);
+	}
+
+	public removeAllEventListener() : void
+	{
+		this.listeners.forEach((handle) => {FormEvents.removeListener(handle)});
+		this.listeners = [];
+	}
 }

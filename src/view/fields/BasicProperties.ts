@@ -222,7 +222,7 @@ export class BasicProperties
 		{
 			if (this.styles$[i].style == style)
 			{
-				this.styles$ = this.styles$.splice(i,1);
+				this.styles$.splice(i,1);
 				break;
 			}
 		}
@@ -285,7 +285,7 @@ export class BasicProperties
 	{
 		clazz = clazz?.toLowerCase();
 		let idx:number = this.classes$.indexOf(clazz);
-		if (idx >= 0) this.classes$ = this.classes$.splice(idx,1)
+		if (idx >= 0) this.classes$.splice(idx,1)
 		return(this);
 	}
 

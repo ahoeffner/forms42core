@@ -131,8 +131,15 @@ export class Form implements CanvasComponent
 		return(success);
 	}
 
-	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
+	public removeEventListener(handle:object) : void
 	{
-		FormEvents.addListener(this,this,method,filter);
+		FormBacking.getBacking(this).removeEventListener(handle);
+	}
+
+	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
+	{
+		let handle:object = FormEvents.addListener(this,this,method,filter);
+		FormBacking.getBacking(this).listeners.push(handle);
+		return(handle);
 	}
 }

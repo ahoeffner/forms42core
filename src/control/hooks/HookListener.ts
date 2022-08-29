@@ -30,7 +30,7 @@ export class HookListener
 		{
 			if (lsnrs[i].id == id)
 			{
-				lsnrs = lsnrs.splice(i,1);
+				lsnrs.splice(i,1);
 				return(true);
 			}
 		}

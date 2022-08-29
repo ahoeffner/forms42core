@@ -209,7 +209,7 @@ export class Block
 		{
 			if (name == this.keys$[i].name)
 			{
-				this.keys$ = this.keys$.splice(i,1);
+				this.keys$.splice(i,1);
 				return(true);
 			}
 		}

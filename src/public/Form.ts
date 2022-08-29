@@ -35,7 +35,6 @@ export class Form implements CanvasComponent
 
 	constructor(page?:string|HTMLElement)
 	{
-		Model.createForm(this,page);
 		page = Framework.prepare(page);
 		FormBacking.setBacking(this).page = page;
 	}
@@ -47,7 +46,7 @@ export class Form implements CanvasComponent
 
 	public focus() : void
 	{
-		View.getForm(this).focus();
+		FormBacking.getViewForm(this).focus();
 	}
 
 	public get valid() : boolean
@@ -55,7 +54,7 @@ export class Form implements CanvasComponent
 		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)
 			return(false);
 
-		return(View.getForm(this).validated());
+		return(FormBacking.getViewForm(this).validated());
 	}
 
 	public getView() : HTMLElement
@@ -97,8 +96,8 @@ export class Form implements CanvasComponent
 
 		if (this.canvas == null)
 		{
-			View.getForm(this);
-			FormBacking.getModelForm(this);
+			//View.getForm(this);
+			//FormBacking.getModelForm(this);
 		}
 		else
 		{
@@ -108,7 +107,7 @@ export class Form implements CanvasComponent
 				return;
 			}
 
-			View.drop(this);
+			//View.drop(this);
 			Model.drop(this);
 		}
 
@@ -125,11 +124,8 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		let vform:View = View.getForm(this);
-		if (!vform.validated) return(false);
-		let mform:Model = FormBacking.getModelForm(this);
-
-		await mform.wait4EventTransaction(EventType.OnCloseForm,null);
+		if (!FormBacking.getViewForm(this).validated) return(false);
+		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
 
 		if (success)

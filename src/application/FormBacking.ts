@@ -46,9 +46,11 @@ export class FormBacking
 		FormBacking.bdata.delete(form);
 	}
 
-	public static getViewForm(form:Form) : ViewForm
+	public static getViewForm(form:Form, create?:boolean) : ViewForm
 	{
-		return(FormBacking.vforms.get(form));
+		let vfrm:ViewForm = FormBacking.vforms.get(form);
+		if (vfrm == null && create) vfrm = new ViewForm(form);
+		return(vfrm);
 	}
 
 	public static setViewForm(form:Form, view:ViewForm) : void
@@ -56,9 +58,11 @@ export class FormBacking
 		FormBacking.vforms.set(form,view);
 	}
 
-	public static getModelForm(form:Form) : ModelForm
+	public static getModelForm(form:Form, create?:boolean) : ModelForm
 	{
-		return(FormBacking.mforms.get(form));
+		let mfrm:ModelForm = FormBacking.mforms.get(form);
+		if (mfrm == null && create) mfrm = new ModelForm(form);
+		return(mfrm);
 	}
 
 	public static setModelForm(form:Form, model:ModelForm) : void

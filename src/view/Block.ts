@@ -44,15 +44,16 @@ export class Block
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
-		return(Form.getForm(block.form).getBlock(block.name));
+		return(FormBacking.getViewForm(block.form).getBlock(block.name));
 	}
 
 	constructor(form:InterfaceForm,name:string)
 	{
 		this.name$ = name;
 		this.fieldnames$ = [];
-		this.form$ = Form.getForm(form);
-		ModelBlock.create(Form.getForm(form),this);
+		this.form$ = FormBacking.getViewForm(form);
+		console.log("create block "+name)
+		ModelBlock.create(FormBacking.getViewForm(form),this);
 	}
 
 	public get row() : number

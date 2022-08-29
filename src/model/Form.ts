@@ -45,11 +45,6 @@ export class Form
 		{form.blocks$.delete(name)});
 	}
 
-	public static createForm(parent:InterfaceForm, page:string|HTMLElement) : void
-	{
-		let form:Form = new Form(parent,page);
-	}
-
 	public static finalize(parent:InterfaceForm) : void
 	{
 		let form:Form = FormBacking.getModelForm(parent);
@@ -59,14 +54,12 @@ export class Form
 
 	private block$:Block = null;
 	private intfrm:InterfaceForm = null;
-	private page$:string|HTMLElement = null;
 	private datamodel$:DataModel = new DataModel();
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private evttrans$:EventTransaction = new EventTransaction();
 
-	private constructor(parent:InterfaceForm, page:string|HTMLElement)
+	constructor(parent:InterfaceForm)
 	{
-		this.page$ = page;
 		this.intfrm = parent;
 		FormBacking.setModelForm(parent,this);
 		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.name);
@@ -95,11 +88,6 @@ export class Form
 	public get datamodel() : DataModel
 	{
 		return(this.datamodel$);
-	}
-
-	public get page() : string|HTMLElement
-	{
-		return(this.page$);
 	}
 
 	public setDataSource(blk:string,source:DataSource) : void

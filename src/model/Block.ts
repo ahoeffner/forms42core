@@ -31,7 +31,7 @@ export class Block
 	public static create(form:Form|ViewForm, block:InterfaceBlock|ViewBlock) : Block
 	{
 		if (form instanceof ViewForm)
-			form = FormBacking.getModelForm(form.parent);
+			form = FormBacking.getModelForm(form.parent,true);
 
 		let blk:Block = form.getBlock(block.name);
 
@@ -576,7 +576,7 @@ export class Block
 
 	public linkView() : void
 	{
-		this.view$ = ViewForm.getForm(this.form$.parent).getBlock(this.name);
+		this.view$ = FormBacking.getViewForm(this.form$.parent).getBlock(this.name);
 	}
 
 	public unlinkView() : void

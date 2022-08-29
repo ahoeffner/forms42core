@@ -18,6 +18,7 @@ import { BrowserEvent} from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
+import { FormBacking } from "../../application/FormBacking.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
 
@@ -35,8 +36,7 @@ export class Field
 
 	public static create(form:Interface, block:string, field:string, rownum:number) : Field
 	{
-		let frm:Form = Form.getForm(form);
-		if (frm == null) return(null);
+		let frm:Form = FormBacking.getViewForm(form,true);
 
 		let blk:Block = frm.getBlock(block);
 

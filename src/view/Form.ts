@@ -28,33 +28,14 @@ import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
 export class Form implements EventListenerObject
 {
-	private static views:Map<InterfaceForm,Form> =
-		new Map<InterfaceForm,Form>();
-
-	public static drop(parent:InterfaceForm) : void
-	{
-		Form.views.delete(parent);
-		Form.getForm(parent);
-	}
-
 	public static current() : Form
 	{
 		return(Form.curform$);
 	}
 
-	public static getForm(parent:InterfaceForm) : Form
-	{
-		let frm:Form = Form.views.get(parent);
-
-		if (frm == null)
-			frm = new Form(parent);
-
-		return(frm);
-	}
-
 	public static finalize(parent:InterfaceForm) : void
 	{
-		let form:Form = Form.views.get(parent);
+		let form:Form = FormBacking.getViewForm(parent);
 		form.blocks.forEach((blk) => {blk.finalize();});
 		form.addEvents(parent.getView());
 		form.indicators.clear();
@@ -67,10 +48,10 @@ export class Form implements EventListenerObject
 	private blocks:Map<string,Block> = new Map<string,Block>();
 	private indicators:Map<string,Indicator[]> = new Map<string,Indicator[]>();
 
-	private constructor(parent:InterfaceForm)
+	constructor(parent:InterfaceForm)
 	{
 		this.parent$ = parent;
-		Form.views.set(parent,this);
+		FormBacking.setViewForm(parent,this);
 		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.name);
 	}
 

@@ -876,6 +876,8 @@ export class Block
 				});
 			}
 		});
+
+		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);
 	}
 
 	public distribute(field:Field, value:any, dirty:boolean) : void

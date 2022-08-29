@@ -39,7 +39,6 @@ export class Form implements EventListenerObject
 		form.blocks.forEach((blk) => {blk.finalize();});
 		form.addEvents(parent.getView());
 		form.indicators.clear();
-		form.linkModels();
 	}
 
 	private static curform$:Form = null;
@@ -585,11 +584,6 @@ export class Form implements EventListenerObject
 				await this.mousehandler(mevent);
 			}
 		}
-	}
-
-	private linkModels() : void
-	{
-		this.blocks.forEach((blk) => {blk.linkModel();});
 	}
 
 	private setURL() : void

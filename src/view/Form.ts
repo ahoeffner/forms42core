@@ -54,7 +54,7 @@ export class Form implements EventListenerObject
 		this.parent$ = parent;
 		FormBacking.setViewForm(parent,this);
 		this.modfrm$ = FormBacking.getModelForm(this.parent,true);
-		Logger.log(Type.formbinding,"Create viewform: "+this.parent$.name);
+		Logger.log(Type.formbinding,"Create viewform: "+this.parent.name);
 	}
 
 	public get name() : string
@@ -100,7 +100,7 @@ export class Form implements EventListenerObject
 	public addBlock(block:Block) : void
 	{
 		this.blocks.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent$.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent.name);
 	}
 
 	public getIndicators(block:string) : Indicator[]

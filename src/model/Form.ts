@@ -40,7 +40,7 @@ export class Form
 	{
 		this.parent$ = parent;
 		FormBacking.setModelForm(parent,this);
-		Logger.log(Type.formbinding,"Create modelform: "+this.parent$.name);
+		Logger.log(Type.formbinding,"Create modelform: "+this.parent.name);
 	}
 
 	public get name() : string
@@ -128,7 +128,7 @@ export class Form
 	{
 		this.datamodel$.setWrapper(block);
 		this.blocks$.set(block.name,block);
-		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent$.name);
+		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent.name);
 	}
 
 	public async initControlBlocks()

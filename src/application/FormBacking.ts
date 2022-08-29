@@ -34,6 +34,18 @@ export class FormBacking
 		return(FormBacking.bdata.get(form));
 	}
 
+	public static setBacking(form:Form) : FormBacking
+	{
+		let back:FormBacking = new FormBacking();
+		FormBacking.bdata.set(form,back);
+		return(back);
+	}
+
+	public static removeBacking(form:Form) : void
+	{
+		FormBacking.bdata.delete(form);
+	}
+
 	public static getViewForm(form:Form) : ViewForm
 	{
 		return(FormBacking.vforms.get(form));
@@ -75,10 +87,6 @@ export class FormBacking
 	}
 
 
-	public page:string|HTMLElement = null;
+	public page:HTMLElement = null;
 
-	constructor(form:Form)
-	{
-		FormBacking.bdata.set(form,this);
-	}
 }

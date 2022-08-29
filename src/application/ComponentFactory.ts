@@ -1,7 +1,7 @@
 import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
+import { FormBacking } from './FormBacking.js';
 import { HTMLFragment } from './HTMLFragment.js';
-import { Form as ModelForm } from '../model/Form.js';
 import { ComponentFactory as Factory } from './interfaces/ComponentFactory.js';
 
 export class ComponentFactory implements Factory
@@ -11,8 +11,11 @@ export class ComponentFactory implements Factory
 	async createForm(form:Class<Form>) : Promise<Form>
 	{
 		let instance:Form = new form();
-		let page:string|HTMLElement = ModelForm.getForm(instance).page;
-		if (page != null) instance.setView(page);
+		let page:string|HTMLElement = FormBacking.getBacking(instance).page;
+
+		if (page != null)
+			instance.setView(page);
+			
 		return(instance)
 	}
 

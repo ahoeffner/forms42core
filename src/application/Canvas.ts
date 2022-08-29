@@ -18,39 +18,39 @@ import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 export class Canvas implements CanvasDefinition, EventListenerObject
 {
-    private moveable$:boolean;
-    private resizable$:boolean;
-    private parent:HTMLElement;
-    private zindex$:number = 0;
-    private active:Element = null;
-    private content:HTMLElement = null;
-    private modal:HTMLDivElement = null;
-    private canvas:HTMLDivElement = null;
-    private container:HTMLDivElement = null;
-    private component:CanvasComponent = null;
+	private moveable$:boolean;
+	private resizable$:boolean;
+	private parent:HTMLElement;
+	private zindex$:number = 0;
+	private active:Element = null;
+	private content:HTMLElement = null;
+	private modal:HTMLDivElement = null;
+	private canvas:HTMLDivElement = null;
+	private container:HTMLDivElement = null;
+	private component:CanvasComponent = null;
 
 
-    public get moveable() : boolean
-    {
-        return(this.moveable$);
-    }
+	public get moveable() : boolean
+	{
+		return(this.moveable$);
+	}
 
-    public get resizable() : boolean
-    {
-        return(this.resizable$);
-    }
+	public get resizable() : boolean
+	{
+		return(this.resizable$);
+	}
 
-    public set moveable(flag:boolean)
-    {
-        this.moveable$ = flag;
-    }
+	public set moveable(flag:boolean)
+	{
+		this.moveable$ = flag;
+	}
 
-    public set resizable(flag:boolean)
-    {
-        this.resizable$ = flag;
-        if (flag) this.canvas.style.resize = "both";
-        else      this.canvas.style.resize = "none";
-    }
+	public set resizable(flag:boolean)
+	{
+		this.resizable$ = flag;
+		if (flag) this.canvas.style.resize = "both";
+		else      this.canvas.style.resize = "none";
+	}
 
 	public get zindex() : number
 	{
@@ -61,256 +61,256 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	{
 		this.zindex$ = zindex;
 		this.canvas.style.zIndex = (2*this.zindex$)+"";
-        this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
+			this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 	}
 
-    public close() : void
-    {
-        this.canvas.remove();
-    }
+	public close() : void
+	{
+		this.canvas.remove();
+	}
 
-    public remove() : void
-    {
-        if (this.parent != null) return;
-        this.parent = this.canvas.parentElement;
-        this.canvas.remove();
-    }
+	public remove() : void
+	{
+		if (this.parent != null) return;
+		this.parent = this.canvas.parentElement;
+		this.canvas.remove();
+	}
 
-    public restore() : void
-    {
-        if (this.parent == null) return;
-        this.parent.appendChild(this.canvas);
-        this.parent = null;
-    }
+	public restore() : void
+	{
+		if (this.parent == null) return;
+		this.parent.appendChild(this.canvas);
+		this.parent = null;
+	}
 
-    public getElement() : HTMLElement
-    {
-        return(this.canvas);
-    }
+	public getElement() : HTMLElement
+	{
+		return(this.canvas);
+	}
 
-    public getContent() : HTMLElement
-    {
-        return(this.content);
-    }
+	public getContent() : HTMLElement
+	{
+		return(this.content);
+	}
 
-    public getComponent(): CanvasComponent
-    {
-        return(this.component);
-    }
+	public getComponent(): CanvasComponent
+	{
+		return(this.component);
+	}
 
-    public getElementById(id:string) : HTMLElement
-    {
-        return(this.content.querySelector("#"+id));
-    }
+	public getElementById(id:string) : HTMLElement
+	{
+		return(this.content.querySelector("#"+id));
+	}
 
-    public getElementByName(name:string) : HTMLElement[]
-    {
-        let elements:HTMLElement[] = [];
-        let list:NodeListOf<HTMLElement> = this.content.querySelectorAll("[name='"+name+"']");
+	public getElementByName(name:string) : HTMLElement[]
+	{
+		let elements:HTMLElement[] = [];
+		let list:NodeListOf<HTMLElement> = this.content.querySelectorAll("[name='"+name+"']");
 
-        list.forEach((element) => {elements.push(element)});
-        return(elements);
-    }
+		list.forEach((element) => {elements.push(element)});
+		return(elements);
+	}
 
 	public refresh() : void
 	{
 		this.container.innerHTML = "";
-        let page = this.component.getView();
+			let page = this.component.getView();
 
 		if (typeof page === 'string')
-        {
-            let root:HTMLDivElement = document.createElement("div");
+		{
+			let root:HTMLDivElement = document.createElement("div");
 			root.innerHTML = page;
-            page = Framework.trim(root);
-        }
+			page = Framework.prepare(root);
+		}
 
-        this.container.appendChild(page);
+		this.container.appendChild(page);
 	}
 
-    public setComponent(component:CanvasComponent) : void
-    {
-        this.component = component;
-        let page = component.getView();
+	public setComponent(component:CanvasComponent) : void
+	{
+		this.component = component;
+		let page = component.getView();
 
-        let layout:string = Properties.CanvasProperties.html;
-        let template:HTMLTemplateElement = document.createElement("template");
+		let layout:string = Properties.CanvasProperties.html;
+		let template:HTMLTemplateElement = document.createElement("template");
 
-        template.innerHTML = layout;
+		template.innerHTML = layout;
 
-        this.modal = template.content.querySelector("[name=modal]");
-        this.canvas = template.content.querySelector("[name=canvas]");
-        this.container = template.content.querySelector("[name=content]");
+		this.modal = template.content.querySelector("[name=modal]");
+		this.canvas = template.content.querySelector("[name=canvas]");
+		this.container = template.content.querySelector("[name=content]");
 
-        this.modal.classList.value = Properties.CanvasProperties.ModalClasses;
-        this.canvas.classList.value = Properties.CanvasProperties.CanvasClasses;
-        this.container.classList.value = Properties.CanvasProperties.ContentClasses;
+		this.modal.classList.value = Properties.CanvasProperties.ModalClasses;
+		this.canvas.classList.value = Properties.CanvasProperties.CanvasClasses;
+		this.container.classList.value = Properties.CanvasProperties.ContentClasses;
 
-        this.modal.style.cssText = Properties.CanvasProperties.ModalStyle;
-        this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
-        this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
+		this.modal.style.cssText = Properties.CanvasProperties.ModalStyle;
+		this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
+		this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
 
 		this.container.style.zIndex = (2*this.zindex$)+"";
-        this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
+		  this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 
-        if (typeof page === 'string')
-        {
-            let root:HTMLDivElement = document.createElement("div");
+		if (typeof page === 'string')
+		{
+			let root:HTMLDivElement = document.createElement("div");
 			root.innerHTML = page;
-            page = Framework.trim(root);
-        }
+			page = Framework.prepare(root);
+		}
 
-        this.container.appendChild(page);
-        this.content = this.container.firstChild as HTMLElement;
-        this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
+		this.container.appendChild(page);
+		this.content = this.container.firstChild as HTMLElement;
+		this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
 
 		this.content.tabIndex = -1;
-        this.content.addEventListener("focus",() => this.focus());
+		  this.content.addEventListener("focus",() => this.focus());
 
-        this.moveable$ = component.moveable;
-        this.resizable$ = component.resizable;
-        if (!this.resizable) this.canvas.style.resize = "none";
-    }
+		this.moveable$ = component.moveable;
+		this.resizable$ = component.resizable;
+		if (!this.resizable) this.canvas.style.resize = "none";
+	}
 
-    public block() : void
-    {
-        this.canvas.style.resize = "none";
-        this.active = document.activeElement as Element;
-        this.modal.style.width = this.canvas.offsetWidth+"px";
-        this.modal.style.height = this.canvas.offsetHeight+"px";
-        if (this.active instanceof HTMLElement) this.active.blur();
-    }
+	public block() : void
+	{
+		this.canvas.style.resize = "none";
+		this.active = document.activeElement as Element;
+		this.modal.style.width = this.canvas.offsetWidth+"px";
+		this.modal.style.height = this.canvas.offsetHeight+"px";
+		if (this.active instanceof HTMLElement) this.active.blur();
+	}
 
-    public unblock() : void
-    {
-        this.modal.style.width = "0";
-        this.modal.style.height = "0";
-        if (this.resizable) this.canvas.style.resize = "both";
-        if (this.active instanceof HTMLElement) this.active.focus();
-    }
+	public unblock() : void
+	{
+		this.modal.style.width = "0";
+		this.modal.style.height = "0";
+		if (this.resizable) this.canvas.style.resize = "both";
+		if (this.active instanceof HTMLElement) this.active.focus();
+	}
 
-    public getView() : View
-    {
-        return({
-            y: this.canvas.offsetTop,
-            x: this.canvas.offsetLeft,
-            width: this.canvas.offsetWidth,
-            height: this.canvas.offsetHeight
-        });
-    }
+	public getView() : View
+	{
+		return({
+			y: this.canvas.offsetTop,
+			x: this.canvas.offsetLeft,
+			width: this.canvas.offsetWidth,
+			height: this.canvas.offsetHeight
+		});
+	}
 
-    public getParentView() : View
-    {
-        return({
-            y: this.canvas.parentElement.offsetTop,
-            x: this.canvas.parentElement.offsetLeft,
-            width: this.canvas.parentElement.offsetWidth,
-            height: this.canvas.parentElement.offsetHeight
-        });
-    }
+	public getParentView() : View
+	{
+		return({
+			y: this.canvas.parentElement.offsetTop,
+			x: this.canvas.parentElement.offsetLeft,
+			width: this.canvas.parentElement.offsetWidth,
+			height: this.canvas.parentElement.offsetHeight
+		});
+	}
 
-    public setView(frame:View) : void
-    {
-        let x:string|number = frame.x;
-        let y:string|number = frame.y;
-        let width:string|number = frame.width;
-        let height:string|number = frame.height;
+	public setView(frame:View) : void
+	{
+		let x:string|number = frame.x;
+		let y:string|number = frame.y;
+		let width:string|number = frame.width;
+		let height:string|number = frame.height;
 
-        if (typeof x === "number") x = x + "px";
-        if (typeof y === "number") y = y + "px";
-        if (typeof width === "number") width = width + "px";
-        if (typeof height === "number") height = height + "px";
+		if (typeof x === "number") x = x + "px";
+		if (typeof y === "number") y = y + "px";
+		if (typeof width === "number") width = width + "px";
+		if (typeof height === "number") height = height + "px";
 
-        this.canvas.style.top = y;
-        this.canvas.style.left = x;
-        this.canvas.style.width = width;
-        this.canvas.style.height = height;
-    }
-
-
-    /*
-     * Drag code
-     */
-
-    private move = false;
-    private mouse = {x: 0, y: 0};
-    private boundary = {x: 0, y: 0, w: 0, h: 0};
+		this.canvas.style.top = y;
+		this.canvas.style.left = x;
+		this.canvas.style.width = width;
+		this.canvas.style.height = height;
+	}
 
 
-    private dragstart(event:any) : void
-    {
-        if (!this.moveable) return;
+	/*
+	 * Drag code
+	 */
 
-        if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
-            return;
+	private move = false;
+	private mouse = {x: 0, y: 0};
+	private boundary = {x: 0, y: 0, w: 0, h: 0};
 
-        let corner =
-        {
-            x: +this.canvas.offsetLeft + +this.canvas.offsetWidth,
-            y: +this.canvas.offsetTop + +this.canvas.offsetHeight
-        }
 
-        let parent:HTMLElement = this.canvas.parentElement;
-        this.boundary = {x: parent.offsetLeft, y: parent.offsetTop, w: parent.offsetWidth, h: parent.offsetHeight};
+	private dragstart(event:any) : void
+	{
+		if (!this.moveable) return;
 
-        let pos = {x: +event.clientX, y: +event.clientY};
+		if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
+			return;
 
-        if (corner.x - pos.x < 24 && corner.y - pos.y < 24)
-            return;
+		let corner =
+		{
+			x: +this.canvas.offsetLeft + +this.canvas.offsetWidth,
+			y: +this.canvas.offsetTop + +this.canvas.offsetHeight
+		}
 
-        this.move = true;
+		let parent:HTMLElement = this.canvas.parentElement;
+		this.boundary = {x: parent.offsetLeft, y: parent.offsetTop, w: parent.offsetWidth, h: parent.offsetHeight};
 
-        document.addEventListener('mouseup',this);
-        document.addEventListener('mousemove',this);
+		let pos = {x: +event.clientX, y: +event.clientY};
 
-        this.mouse = {x: event.clientX, y: event.clientY};
-    }
+		if (corner.x - pos.x < 24 && corner.y - pos.y < 24)
+			return;
 
-    public drag(event:any) : void
-    {
-        if (this.move)
-        {
-            event.preventDefault();
+		this.move = true;
 
-            let offX:number = event.clientX - this.mouse.x;
-            let offY:number = event.clientY - this.mouse.y;
+		document.addEventListener('mouseup',this);
+		document.addEventListener('mousemove',this);
 
-            let elemY:number = this.canvas.offsetTop;
-            let elemX:number = this.canvas.offsetLeft;
-            let elemW:number = this.canvas.offsetWidth;
-            let elemH:number = this.canvas.offsetHeight;
+		this.mouse = {x: event.clientX, y: event.clientY};
+	}
 
-            let posX:number = elemX + offX;
-            let posY:number = elemY + offY;
+	public drag(event:any) : void
+	{
+		if (this.move)
+		{
+			event.preventDefault();
 
-            let maxX:number = this.boundary.w - elemW;
-            let maxY:number = this.boundary.h - elemH;
+			let offX:number = event.clientX - this.mouse.x;
+			let offY:number = event.clientY - this.mouse.y;
 
-            if (posX < 0) posX = 0;
-            if (posY < 0) posY = 0;
+			let elemY:number = this.canvas.offsetTop;
+			let elemX:number = this.canvas.offsetLeft;
+			let elemW:number = this.canvas.offsetWidth;
+			let elemH:number = this.canvas.offsetHeight;
 
-            if (posX > maxX) posX = maxX;
-            if (posY > maxY) posY = maxY;
+			let posX:number = elemX + offX;
+			let posY:number = elemY + offY;
 
-            this.canvas.style.top = posY + "px";
-            this.canvas.style.left = posX + "px";
+			let maxX:number = this.boundary.w - elemW;
+			let maxY:number = this.boundary.h - elemH;
 
-            this.mouse = {x: event.clientX, y: event.clientY};
-        }
-    }
+			if (posX < 0) posX = 0;
+			if (posY < 0) posY = 0;
 
-    private dragend() : void
-    {
-        this.move = false;
-        document.removeEventListener('mouseup',this);
-        document.removeEventListener('mousemove',this);
-    }
+			if (posX > maxX) posX = maxX;
+			if (posY > maxY) posY = maxY;
 
-    public handleEvent(event:Event) : void
-    {
-		console.log("event "+event.type)
-        if (event.type == "mouseup") this.dragend();
-        if (event.type == "mousemove") this.drag(event);
-    }
+			this.canvas.style.top = posY + "px";
+			this.canvas.style.left = posX + "px";
+
+			this.mouse = {x: event.clientX, y: event.clientY};
+		}
+	}
+
+	private dragend() : void
+	{
+		this.move = false;
+		document.removeEventListener('mouseup',this);
+		document.removeEventListener('mousemove',this);
+	}
+
+	public handleEvent(event:Event) : void
+	{
+	console.log("event "+event.type)
+		if (event.type == "mouseup") this.dragend();
+		if (event.type == "mousemove") this.drag(event);
+	}
 
 	private static layers$:number = 0;
 

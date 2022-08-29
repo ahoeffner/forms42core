@@ -101,26 +101,26 @@ export class FormsModule
 		return(FormsModule.instance);
 	}
 
-	 constructor()
-	 {
+	constructor()
+	{
 		dates.validate();
 		KeyMapping.init();
 		ApplicationHandler.init();
 		FormsModule.instance = this;
-	 }
+	}
 
-	 public getRootElement() : HTMLElement
-	 {
+	public getRootElement() : HTMLElement
+	{
 		return(State.root);
-	 }
+	}
 
-	 public setRootElement(root:HTMLElement) : void
-	 {
+	public setRootElement(root:HTMLElement) : void
+	{
 		State.root = root;
-	 }
+	}
 
-	 public mapComponent(clazz:Class<any>, path?:string) : void
-	 {
+	public mapComponent(clazz:Class<any>, path?:string) : void
+	{
 		if (clazz == null)
 			return;
 
@@ -130,33 +130,33 @@ export class FormsModule
 		path = path.toLowerCase();
 		State.components.set(path,clazz);
 		State.classes.set(clazz.name,path);
-	 }
+	}
 
-	 public static getFormPath(clazz:Class<any>|string) : string
-	 {
+	public static getFormPath(clazz:Class<any>|string) : string
+	{
 		if (clazz == null)
 			return(null);
 
 		if (typeof clazz != "string")
 			clazz = clazz.name;
 
-		  return(State.classes.get(clazz.toLowerCase()));
-	 }
+		return(State.classes.get(clazz.toLowerCase()));
+	}
 
-	 public getComponent(path:string) : Class<any>
-	 {
-		  return(State.components.get(path.toLowerCase()));
-	 }
+	public getComponent(path:string) : Class<any>
+	{
+		return(State.components.get(path.toLowerCase()));
+	}
 
-	 public parse(doc?:Element) : void
-	 {
+	public parse(doc?:Element) : void
+	{
 		if (doc == null) doc = document.body;
 		let frmwrk:Framework = Framework.parse(this,doc);
 
 		let root:HTMLElement = frmwrk.getRoot();
 		if (State.root == null) State.root = root;
 		if (State.root == null) State.root = document.body;
-	 }
+	}
 
 	public updateKeyMap(map:Class<KeyMap>) : void
 	{
@@ -182,8 +182,8 @@ export class FormsModule
 		return(false);
 	}
 
-	 public async showform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
-	 {
+	public async showform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
+	{
 		if (typeof form === "string")
 		{
 			let path:string = form;
@@ -192,21 +192,21 @@ export class FormsModule
 			if (form == null) throw "@Application: No components mapped to path '"+path+"'";
 		}
 
-		  if (container == null)
+		if (container == null)
 			container = this.getRootElement();
 
 		if (!(form.prototype instanceof Form))
-				throw "@Application: Component mapped to '"+form+"' is not a form";
+			throw "@Application: Component mapped to '"+form+"' is not a form";
 
-		  let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
-		  let factory:ComponentFactory = Properties.FactoryImplementationClass;
+		let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
+		let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
-		  let canvas:Canvas = new canvasimpl();
-		  let instance:Form = await factory.createForm(form);
+		let canvas:Canvas = new canvasimpl();
+		let instance:Form = await factory.createForm(form);
 
-		  instance.canvas = canvas;
-		  canvas.setComponent(instance);
-		  container.appendChild(canvas.getElement());
+		instance.canvas = canvas;
+		canvas.setComponent(instance);
+		container.appendChild(canvas.getElement());
 
 		let mform:ModelForm = ModelForm.getForm(instance);
 
@@ -216,7 +216,7 @@ export class FormsModule
 
 		instance.focus();
 		return(instance);
-	 }
+	}
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
 	{

@@ -65,12 +65,22 @@ export class Framework
 
     public static parse(component:any, doc:Element) : Framework
     {
-        return(new Framework(component,doc));
+		return(new Framework(component,doc));
     }
 
-	public static trim(element:HTMLElement) : HTMLElement
+	public static prepare(element:string|HTMLElement) : HTMLElement
 	{
 		let remove:number[] = [];
+
+		if (element == null)
+			return(null);
+
+		if (typeof element === 'string')
+		{
+			let template:HTMLDivElement = document.createElement('div');
+			template.innerHTML = element;
+			element = template;
+		}
 
 		for(let i=0; i < element.childNodes.length; i++)
 		{
@@ -188,7 +198,7 @@ export class Framework
                     {
                         let template:HTMLDivElement = document.createElement('div');
 						template.innerHTML = replace;
-						replace = Framework.trim(template);
+						replace = Framework.prepare(template);
                     }
 
 					if (!Array.isArray(replace))

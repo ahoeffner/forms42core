@@ -17,6 +17,7 @@ import { Form as Model } from '../model/Form.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
+import { FormBacking } from '../application/FormBacking.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
@@ -26,17 +27,18 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form implements CanvasComponent
 {
-    public canvas:Canvas = null;
-    public moveable:boolean = true;
-    public navigable:boolean = true;
-    public resizable:boolean = true;
-    private view$:HTMLElement = null;
-	 public blocks:Map<string,Block> = new Map<string,Block>();
+	public canvas:Canvas = null;
+	public moveable:boolean = true;
+	public navigable:boolean = true;
+	public resizable:boolean = true;
+	public blocks:Map<string,Block> = new Map<string,Block>();
 
-    constructor(page?:string|HTMLElement)
-    {
+	constructor(page?:string|HTMLElement)
+	{
 		Model.createForm(this,page);
-    }
+		page = Framework.prepare(page);
+		FormBacking.setBacking(this).page = page;
+	}
 
 	public get name() : string
 	{
@@ -56,10 +58,10 @@ export class Form implements CanvasComponent
 		return(View.getForm(this).validated());
 	}
 
-    public getView() : HTMLElement
-    {
-        return(this.view$);
-    }
+	public getView() : HTMLElement
+	{
+	return(FormBacking.getBacking(this).page);
+	}
 
 	public getBlock(block:string) : Block
 	{
@@ -81,19 +83,19 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
-    public async setView(page:string|HTMLElement) : Promise<void>
-    {
-		let replace:boolean = false;
+	public async setView(page:string|HTMLElement) : Promise<void>
+	{
+		let back:FormBacking = FormBacking.getBacking(this);
 
 		if (page == null)
 		{
 			page = "";
 
-			if (this.view$ == null)
+			if (back.page == null)
 				return;
 		}
 
-		if (this.view$ == null)
+		if (this.canvas == null)
 		{
 			View.getForm(this);
 			Model.getForm(this);
@@ -106,39 +108,38 @@ export class Form implements CanvasComponent
 				return;
 			}
 
-			replace = true;
 			View.drop(this);
 			Model.drop(this);
 		}
 
-        if (typeof page === 'string')
-        {
-            let template:HTMLDivElement = document.createElement('div');
-            template.innerHTML = page;
-			page = Framework.trim(template);
-		}
+		page = Framework.prepare(page);
+		Framework.parse(this,page);
+		back.page = page;
 
-        Framework.parse(this,page);
-        this.view$ = page;
-
-		if (replace)
+		if (this.canvas != null)
 			this.canvas.refresh();
 
 		View.finalize(this);
 		Model.finalize(this);
-    }
+   }
 
-    public async close() : Promise<boolean>
-    {
+	public async close() : Promise<boolean>
+	{
 		let vform:View = View.getForm(this);
 		if (!vform.validated) return(false);
 		let mform:Model = Model.getForm(this);
 
 		await mform.wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
-        if (success) this.canvas.close();
-        return(success);
-    }
+
+		if (success)
+		{
+			this.canvas.close();
+			FormBacking.removeBacking(this);
+		}
+
+		return(success);
+	}
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
 	{

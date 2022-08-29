@@ -114,7 +114,7 @@ export class Form implements CanvasComponent
 
 		View.finalize(this);
 		Model.finalize(this);
-   }
+	}
 
 	public async close() : Promise<boolean>
 	{

@@ -20,7 +20,6 @@ import { Record, RecordStatus } from "../model/Record.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
-import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "../public/FieldProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { DataType } from "./fields/implementations/DataType.js";
@@ -40,11 +39,6 @@ export class Block
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private displayed$:Map<object,Row> = new Map<object,Row>();
 	private recprops$:RecordProperties = new RecordProperties();
-
-	public static getBlock(block:InterfaceBlock) : Block
-	{
-		return(FormBacking.getViewForm(block.form).getBlock(block.name));
-	}
 
 	constructor(form:Form,name:string)
 	{

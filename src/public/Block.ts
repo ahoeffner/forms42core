@@ -64,7 +64,7 @@ export class Block
 	{
 		setTimeout(() =>
 		{
-			ViewBlock.getBlock(this).focus();
+			FormBacking.getViewBlock(this).focus();
 		},0);
 	}
 
@@ -74,7 +74,7 @@ export class Block
 		clazz = clazz?.toLowerCase();
 
 		let inst:FieldInstance = null;
-		let ifield:Field = ViewBlock.getBlock(this).getCurrentRow().getField(field);
+		let ifield:Field = FormBacking.getViewBlock(this).getCurrentRow().getField(field);
 
 		if (ifield != null)
 		{
@@ -179,7 +179,7 @@ export class Block
 	{
 		id = id?.toLowerCase();
 		field = field?.toLowerCase();
-		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
 		if (inst != null) return(new FieldProperties(inst.qbeProperties));
 		return(null);
 	}
@@ -188,7 +188,7 @@ export class Block
 	{
 		id = id?.toLowerCase();
 		field = field?.toLowerCase();
-		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
 		if (inst != null) return(new FieldProperties(inst.insertProperties));
 		return(null);
 	}
@@ -197,7 +197,7 @@ export class Block
 	{
 		id = id?.toLowerCase();
 		field = field?.toLowerCase();
-		let inst:FieldInstance = ViewBlock.getBlock(this).getFieldById(field,id);
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
 		if (inst != null) return(new FieldProperties(inst.updateProperties));
 		return(null);
 	}
@@ -207,7 +207,7 @@ export class Block
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();
 		let props:FieldProperties[] = [];
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {props.push(new FieldProperties(inst.qbeProperties))})
 		return(props);
 	}
@@ -217,7 +217,7 @@ export class Block
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();
 		let props:FieldProperties[] = [];
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {props.push(new FieldProperties(inst.insertProperties))})
 		return(props);
 	}
@@ -227,7 +227,7 @@ export class Block
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();
 		let props:FieldProperties[] = [];
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {props.push(new FieldProperties(inst.updateProperties))})
 		return(props);
 	}
@@ -236,7 +236,7 @@ export class Block
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.qbe);})
 	}
 
@@ -244,7 +244,7 @@ export class Block
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.insert);})
 	}
 
@@ -252,7 +252,7 @@ export class Block
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
-		ViewBlock.getBlock(this).getFieldsByClass(field,clazz).
+		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.update);})
 	}
 

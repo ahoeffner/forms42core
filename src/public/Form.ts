@@ -31,6 +31,7 @@ export class Form implements CanvasComponent
     public navigable:boolean = true;
     public resizable:boolean = true;
     private view$:HTMLElement = null;
+	 public blocks:Map<string,Block> = new Map<string,Block>();
 
     constructor(page?:string|HTMLElement)
     {
@@ -62,7 +63,7 @@ export class Form implements CanvasComponent
 
 	public getBlock(block:string) : Block
 	{
-		return(Model.getForm(this).getBlock(block?.toLowerCase())?.getBlock());
+		return(this.blocks.get(block?.toLowerCase()));
 	}
 
 	public setDataSource(block:string,source:DataSource) : void

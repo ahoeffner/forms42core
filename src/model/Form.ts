@@ -34,7 +34,7 @@ export class Form
 		form.unlinkViews();
 		form.clearEventTransactions();
 
-		form.blocks.forEach((blk) =>
+		form.blocks$.forEach((blk) =>
 		{
 			if (!blk.isLinked())
 			{
@@ -44,7 +44,7 @@ export class Form
 		});
 
 		remove.forEach((name) =>
-		{form.blocks.delete(name)});
+		{form.blocks$.delete(name)});
 	}
 
 	public static createForm(parent:InterfaceForm, page:string|HTMLElement) : void
@@ -61,7 +61,7 @@ export class Form
 	public static finalize(parent:InterfaceForm) : void
 	{
 		let form:Form = Form.models.get(parent);
-		form.blocks.forEach((block) => {block.finalize()})
+		form.blocks$.forEach((block) => {block.finalize()})
 		form.linkViews();
 	}
 
@@ -69,7 +69,7 @@ export class Form
 	private intfrm:InterfaceForm = null;
 	private page$:string|HTMLElement = null;
 	private datamodel$:DataModel = new DataModel();
-	private blocks:Map<string,Block> = new Map<string,Block>();
+	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private evttrans$:EventTransaction = new EventTransaction();
 
 	private constructor(parent:InterfaceForm, page:string|HTMLElement)
@@ -96,7 +96,7 @@ export class Form
 
 	public getBlock(name:string) : Block
 	{
-		return(this.blocks.get(name));
+		return(this.blocks$.get(name));
 	}
 
 	public get datamodel() : DataModel
@@ -167,14 +167,14 @@ export class Form
 
 	public addBlock(block:Block) : void
 	{
-		this.blocks.set(block.name,block);
 		this.datamodel$.setWrapper(block);
+		this.blocks$.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.intfrm.name);
 	}
 
 	public async initControlBlocks()
 	{
-		for(let block of this.blocks.values())
+		for(let block of this.blocks$.values())
 		{
 			if (block.datasource == null)
 			{
@@ -193,11 +193,11 @@ export class Form
 
 	private linkViews() : void
 	{
-		this.blocks.forEach((blk) => {blk.linkView()})
+		this.blocks$.forEach((blk) => {blk.linkView()})
 	}
 
 	private unlinkViews() : void
 	{
-		this.blocks.forEach((blk) => {blk.unlinkView()})
+		this.blocks$.forEach((blk) => {blk.unlinkView()})
 	}
 }

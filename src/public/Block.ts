@@ -13,6 +13,7 @@
 import { Form } from './Form.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
+import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
@@ -24,7 +25,6 @@ import { EventType } from '../control/events/EventType.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
-import { Field } from '../view/fields/Field.js';
 
 export class Block
 {
@@ -40,8 +40,8 @@ export class Block
 	constructor(form:Form, name:string)
 	{
 		this.form$ = form;
-		if (name == null) name = "";
-		this.name$ = name.toLowerCase();
+		this.name$ = name?.toLowerCase();
+		form.blocks.set(this.name$,this);
 		ModelBlock.create(ModelForm.getForm(form),this);
 	}
 

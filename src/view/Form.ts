@@ -19,6 +19,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
+import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
@@ -81,6 +82,11 @@ export class Form implements EventListenerObject
 	public get parent() : InterfaceForm
 	{
 		return(this.parent$);
+	}
+
+	public modform() : ModelForm
+	{
+		return(FormBacking.getModelForm(this.parent));
 	}
 
 	public get block() : Block
@@ -294,7 +300,7 @@ export class Form implements EventListenerObject
 		if (preform)
 		{
 			// Successfully navigated from preform to this form
-			if (!await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
+			if (!this.modform().wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
 			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
 			return(success);
 		}
@@ -316,7 +322,7 @@ export class Form implements EventListenerObject
 	{
 		if (!await this.setEventTransaction(EventType.PreForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		ModelForm.getForm(this.parent).endEventTransaction(EventType.PreForm,null,success);
+		this.modform().endEventTransaction(EventType.PreForm,null,success);
 		if (success && form.parent.navigable) this.setURL();
 		return(success);
 	}
@@ -347,7 +353,7 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!await ModelForm.getForm(this.parent).wait4EventTransaction(EventType.PostForm,null)) return(false);
+		if (!await this.modform().wait4EventTransaction(EventType.PostForm,null)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		return(success);
 	}
@@ -377,9 +383,8 @@ export class Form implements EventListenerObject
 	{
 		let success:boolean = false;
 		let blk:ModelBlock = inst?.field.block.model;
-		let form:ModelForm = ModelForm.getForm(this.parent);
 
-		if (!form.checkEventTransaction(EventType.Key,blk))
+		if (!this.modform().checkEventTransaction(EventType.Key,blk))
 			return(false);
 
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
@@ -533,9 +538,8 @@ export class Form implements EventListenerObject
 	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
 	{
 		let blk:ModelBlock = inst?.field.block.model;
-		let form:ModelForm = ModelForm.getForm(this.parent);
 
-		if (!form.checkEventTransaction(EventType.Mouse,blk))
+		if (!this.modform().checkEventTransaction(EventType.Mouse,blk))
 			return(false);
 
 		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
@@ -552,7 +556,7 @@ export class Form implements EventListenerObject
 			record = block.model.getRecord(offset);
 		}
 
-		return(ModelForm.getForm(this.parent).setEventTransaction(event,block?.model,record));
+		return(this.modform().setEventTransaction(event,block?.model,record));
 	}
 
 	private event:BrowserEvent = BrowserEvent.get();

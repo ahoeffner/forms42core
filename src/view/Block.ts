@@ -14,13 +14,13 @@ import { Form } from "./Form.js";
 import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
 import { KeyMap } from "../control/events/KeyMap.js";
-import { Form as ModelForm } from '../model/Form.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
 import { Record, RecordStatus } from "../model/Record.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
+import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FieldProperties } from "../public/FieldProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
@@ -901,7 +901,7 @@ export class Block
 
 	public linkModel() : void
 	{
-		this.model$ = ModelForm.getForm(this.form.parent).getBlock(this.name);
+		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);
 	}
 
 	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>

@@ -19,17 +19,15 @@ import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
+import { FormBacking } from '../application/FormBacking.js';
 
 
 export class Form
 {
-	private static models:Map<InterfaceForm,Form> =
-		new Map<InterfaceForm,Form>();
-
 	public static drop(parent:InterfaceForm) : void
 	{
 		let remove:string[] = [];
-		let form:Form = Form.models.get(parent);
+		let form:Form = FormBacking.getModelForm(parent);
 
 		form.unlinkViews();
 		form.clearEventTransactions();
@@ -50,17 +48,11 @@ export class Form
 	public static createForm(parent:InterfaceForm, page:string|HTMLElement) : void
 	{
 		let form:Form = new Form(parent,page);
-		Form.models.set(parent,form);
-	}
-
-	public static getForm(parent:InterfaceForm) : Form
-	{
-		return(Form.models.get(parent));
 	}
 
 	public static finalize(parent:InterfaceForm) : void
 	{
-		let form:Form = Form.models.get(parent);
+		let form:Form = FormBacking.getModelForm(parent);
 		form.blocks$.forEach((block) => {block.finalize()})
 		form.linkViews();
 	}
@@ -76,6 +68,7 @@ export class Form
 	{
 		this.page$ = page;
 		this.intfrm = parent;
+		FormBacking.setModelForm(parent,this);
 		Logger.log(Type.formbinding,"Create modelform: "+this.intfrm.name);
 	}
 

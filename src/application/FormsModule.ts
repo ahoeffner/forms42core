@@ -15,6 +15,7 @@ import { Class } from '../types/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Properties } from './Properties.js';
+import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ModelForm } from '../model/Form.js';
@@ -208,7 +209,7 @@ export class FormsModule
 		canvas.setComponent(instance);
 		container.appendChild(canvas.getElement());
 
-		let mform:ModelForm = ModelForm.getForm(instance);
+		let mform:ModelForm = FormBacking.getModelForm(instance);
 
 		await mform.initControlBlocks();
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);

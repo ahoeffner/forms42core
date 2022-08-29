@@ -21,6 +21,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
 import { EventType } from "../control/events/EventType.js";
+import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
@@ -30,7 +31,7 @@ export class Block
 	public static create(form:Form|ViewForm, block:InterfaceBlock|ViewBlock) : Block
 	{
 		if (form instanceof ViewForm)
-			form = Form.getForm(form.parent);
+			form = FormBacking.getModelForm(form.parent);
 
 		let blk:Block = form.getBlock(block.name);
 
@@ -45,7 +46,7 @@ export class Block
 
 	public static getBlock(block:InterfaceBlock) : Block
 	{
-		return(Form.getForm(block.form).getBlock(block.name));
+		return(FormBacking.getModelForm(block.form).getBlock(block.name));
 	}
 
 	private form$:Form = null;

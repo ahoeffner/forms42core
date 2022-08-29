@@ -52,7 +52,7 @@ export class Form implements CanvasComponent
 
 	public get valid() : boolean
 	{
-		if (Model.getForm(this).eventTransaction.running() > 0)
+		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)
 			return(false);
 
 		return(View.getForm(this).validated());
@@ -70,7 +70,7 @@ export class Form implements CanvasComponent
 
 	public setDataSource(block:string,source:DataSource) : void
 	{
-		Model.getForm(this).setDataSource(block?.toLowerCase(),source);
+		FormBacking.getModelForm(this).setDataSource(block?.toLowerCase(),source);
 	}
 
 	public getValue(block:string, field:string) : any
@@ -98,7 +98,7 @@ export class Form implements CanvasComponent
 		if (this.canvas == null)
 		{
 			View.getForm(this);
-			Model.getForm(this);
+			FormBacking.getModelForm(this);
 		}
 		else
 		{
@@ -127,7 +127,7 @@ export class Form implements CanvasComponent
 	{
 		let vform:View = View.getForm(this);
 		if (!vform.validated) return(false);
-		let mform:Model = Model.getForm(this);
+		let mform:Model = FormBacking.getModelForm(this);
 
 		await mform.wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));

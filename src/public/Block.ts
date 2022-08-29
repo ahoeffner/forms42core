@@ -22,6 +22,7 @@ import { Filter } from '../model/interfaces/Filter.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
+import { FormBacking } from '../application/FormBacking.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
@@ -42,7 +43,7 @@ export class Block
 		this.form$ = form;
 		this.name$ = name?.toLowerCase();
 		form.blocks.set(this.name$,this);
-		ModelBlock.create(ModelForm.getForm(form),this);
+		ModelBlock.create(FormBacking.getModelForm(form),this);
 	}
 
 	public get form() : Form
@@ -143,7 +144,7 @@ export class Block
 		if (offset == null) offset = 0;
 		let block:ModelBlock = ModelBlock.getBlock(this);
 
-		if (!ModelForm.getForm(this.form).hasEventTransaction(block))
+		if (!FormBacking.getModelForm(this.form).hasEventTransaction(block))
 		{
 			intrec = block.getRecord(offset);
 		}
@@ -151,12 +152,12 @@ export class Block
 		{
 			if (offset != 0)
 			{
-				let running:EventType = ModelForm.getForm(this.form).eventTransaction.getEvent(block);
+				let running:EventType = FormBacking.getModelForm(this.form).eventTransaction.getEvent(block);
 				Alert.fatal("During transaction "+EventType[running]+" only current record can be accessed","Transaction Violation");
 				return(null);
 			}
 
-			intrec = ModelForm.getForm(this.form).eventTransaction.getRecord(block);
+			intrec = FormBacking.getModelForm(this.form).eventTransaction.getRecord(block);
 		}
 
 		return(intrec == null ? null : new Record(intrec));

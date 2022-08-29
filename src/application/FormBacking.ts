@@ -70,24 +70,42 @@ export class FormBacking
 		FormBacking.mforms.set(form,model);
 	}
 
-	public static getViewBlock(block:Block|ModelBlock) : ViewBlock
+	public static getViewBlock(block:Block|ModelBlock, create?:boolean) : ViewBlock
 	{
 		let form:ViewForm = null;
 
 		if (block instanceof Block) form = FormBacking.vforms.get(block.form);
 		else 								 form = FormBacking.vforms.get(block.form.parent);
 
-		return(form.getBlock(block.name));
+		if (form == null && create)
+		{
+			let mblk:ModelBlock = block as ModelBlock;
+			FormBacking.getViewForm(mblk.form.parent,create);
+		}
+
+		let blk:ViewBlock = form.getBlock(block.name);
+		if (blk == null && create) blk = new ViewBlock(form,block.name);
+
+		return(blk);
 	}
 
-	public static getModelBlock(block:Block|ViewBlock) : ModelBlock
+	public static getModelBlock(block:Block|ViewBlock, create?:boolean) : ModelBlock
 	{
 		let form:ModelForm = null;
 
 		if (block instanceof Block) form = FormBacking.mforms.get(block.form);
 		else 								 form = FormBacking.mforms.get(block.form.parent);
 
-		return(form.getBlock(block.name));
+		if (form == null && create)
+		{
+			let vblk:ViewBlock = block as ViewBlock;
+			form = FormBacking.getModelForm(vblk.form.parent,create);
+		}
+
+		let blk:ModelBlock = form.getBlock(block.name);
+		if (blk == null && create) blk = new ModelBlock(form,block.name);
+
+		return(blk);
 	}
 
 

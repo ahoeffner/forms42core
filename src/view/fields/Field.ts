@@ -41,10 +41,7 @@ export class Field
 		let blk:Block = frm.getBlock(block);
 
 		if (blk == null)
-		{
-			blk = new Block(form,block);
-			frm.addBlock(blk);
-		}
+			blk = new Block(frm,block);
 
 		if (rownum < 0) rownum = -1;
 		let row:Row = blk.getRow(rownum);

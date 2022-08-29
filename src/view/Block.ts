@@ -17,7 +17,6 @@ import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
 import { Record, RecordStatus } from "../model/Record.js";
-import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -47,13 +46,13 @@ export class Block
 		return(FormBacking.getViewForm(block.form).getBlock(block.name));
 	}
 
-	constructor(form:InterfaceForm,name:string)
+	constructor(form:Form,name:string)
 	{
 		this.name$ = name;
+		this.form$ = form;
 		this.fieldnames$ = [];
-		this.form$ = FormBacking.getViewForm(form);
-		console.log("create block "+name)
-		ModelBlock.create(FormBacking.getViewForm(form),this);
+		this.form.addBlock(this);
+		FormBacking.getModelBlock(this,true);
 	}
 
 	public get row() : number

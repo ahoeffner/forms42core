@@ -13,7 +13,6 @@
 import { Form } from "./Form.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
-import { Form as ViewForm } from "../view/Form.js";
 import { Record, RecordStatus } from "./Record.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
@@ -28,27 +27,6 @@ import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
 export class Block
 {
-	public static create(form:Form|ViewForm, block:InterfaceBlock|ViewBlock) : Block
-	{
-		if (form instanceof ViewForm)
-			form = FormBacking.getModelForm(form.parent,true);
-
-		let blk:Block = form.getBlock(block.name);
-
-		if (blk == null)
-			blk = new Block(form,block.name);
-
-		if (block instanceof InterfaceBlock)
-			blk.link(block);
-
-		return(blk);
-	}
-
-	public static getBlock(block:InterfaceBlock) : Block
-	{
-		return(FormBacking.getModelForm(block.form).getBlock(block.name));
-	}
-
 	private form$:Form = null;
 	private keys$:Key[] = [];
 	private name$:string = null;
@@ -62,11 +40,11 @@ export class Block
 	private intblk:InterfaceBlock = null;
 	private qbewrp$:DataSourceWrapper = null;
 
-	private constructor(form:Form, name:string)
+	constructor(form:Form, name:string)
 	{
-		this.form$ = form;
 		this.name$ = name;
-		this.form$.addBlock(this);
+		this.form$ = form;
+		this.form.addBlock(this);
 		this.intfrm = form.parent;
 		this.datasource = form.datamodel.getDataSource(this.name);
 	}

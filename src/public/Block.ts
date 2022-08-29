@@ -15,7 +15,6 @@ import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
-import { Form as ModelForm } from '../model/Form.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Filter } from '../model/interfaces/Filter.js';
@@ -43,7 +42,7 @@ export class Block
 		this.form$ = form;
 		this.name$ = name?.toLowerCase();
 		form.blocks.set(this.name$,this);
-		ModelBlock.create(FormBacking.getModelForm(form),this);
+		FormBacking.getModelBlock(this,true);
 	}
 
 	public get form() : Form
@@ -58,7 +57,7 @@ export class Block
 
 	public get filters() : Filter[]
 	{
-		return(ModelBlock.getBlock(this).filters);
+		return(FormBacking.getModelBlock(this).filters);
 	}
 
 	public focus() : void
@@ -94,7 +93,7 @@ export class Block
 
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
-		return(ModelBlock.getBlock(this).copy(all,header));
+		return(FormBacking.getModelBlock(this).copy(all,header));
 	}
 
 	public async saveDataToClipBoard(header?:boolean, all?:boolean) : Promise<void>
@@ -115,17 +114,17 @@ export class Block
 
 	public get datasource() : DataSource
 	{
-		return(ModelBlock.getBlock(this).datasource);
+		return(FormBacking.getModelBlock(this).datasource);
 	}
 
 	public set datasource(source:DataSource)
 	{
-		ModelBlock.getBlock(this).datasource = source;
+		FormBacking.getModelBlock(this).datasource = source;
 	}
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		return(ModelBlock.getBlock(this).insert(before));
+		return(FormBacking.getModelBlock(this).insert(before));
 	}
 
 	public getValue(field:string) : any
@@ -142,7 +141,8 @@ export class Block
 	{
 		let intrec:ModelRecord = null;
 		if (offset == null) offset = 0;
-		let block:ModelBlock = ModelBlock.getBlock(this);
+
+		let block:ModelBlock = FormBacking.getModelBlock(this);
 
 		if (!FormBacking.getModelForm(this.form).hasEventTransaction(block))
 		{
@@ -167,12 +167,12 @@ export class Block
 	{
 		if (name == null) throw "@Block: Key name is madatory";
 		if (fields == null) throw "@Block: Key fields is madatory";
-		ModelBlock.getBlock(this).addKey(name,fields);
+		FormBacking.getModelBlock(this).addKey(name,fields);
 	}
 
 	public removeKey(name:string) : boolean
 	{
-		return(ModelBlock.getBlock(this).removeKey(name));
+		return(FormBacking.getModelBlock(this).removeKey(name));
 	}
 
 	public getQBEPropertiesById(field:string, id:string) : FieldProperties
@@ -258,6 +258,6 @@ export class Block
 
 	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
 	{
-		return(ModelBlock.getBlock(this).executeQuery(filters));
+		return(FormBacking.getModelBlock(this).executeQuery(filters));
 	}
 }

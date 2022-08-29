@@ -33,7 +33,6 @@ export class Block
 	private record$:number = -1;
 	private qberec$:Record = null;
 	private view$:ViewBlock = null;
-	private linked$:boolean = false;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
@@ -546,34 +545,11 @@ export class Block
 		return(this.wrapper?.copy(all,header));
 	}
 
-	public link(block:InterfaceBlock) : void
-	{
-		this.intblk = block;
-		this.linked$ = true;
-	}
-
-	public linkView() : void
-	{
-		this.view$ = FormBacking.getViewForm(this.form$.parent).getBlock(this.name);
-	}
-
-	public unlinkView() : void
-	{
-		this.view$ = null;
-	}
-
-	public isLinked() : boolean
-	{
-		return(this.linked$);
-	}
-
 	public finalize() : void
 	{
-		if (this.intblk == null)
-		{
-			this.intblk = new InterfaceBlock(this.intfrm,this.name);
-			this.linked$ = false;
-		}
+		this.intblk = this.form.parent.getBlock(this.name);
+		this.view$ = FormBacking.getViewForm(this.form$.parent).getBlock(this.name);
+		if (this.intblk == null) this.intblk = new InterfaceBlock(this.intfrm,this.name);
 	}
 
 	private setQBEWrapper() : void

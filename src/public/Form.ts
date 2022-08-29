@@ -94,12 +94,7 @@ export class Form implements CanvasComponent
 				return;
 		}
 
-		if (this.canvas == null)
-		{
-			//View.getForm(this);
-			//FormBacking.getModelForm(this);
-		}
-		else
+		if (this.canvas != null)
 		{
 			if (!this.valid)
 			{
@@ -107,8 +102,7 @@ export class Form implements CanvasComponent
 				return;
 			}
 
-			//View.drop(this);
-			Model.drop(this);
+			FormBacking.cleanup(this);
 		}
 
 		page = Framework.prepare(page);

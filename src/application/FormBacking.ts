@@ -43,7 +43,14 @@ export class FormBacking
 
 	public static removeBacking(form:Form) : void
 	{
+		FormBacking.cleanup(form);
 		FormBacking.bdata.delete(form);
+	}
+
+	public static cleanup(form:Form) : void
+	{
+		FormBacking.mforms.delete(form);
+		FormBacking.vforms.delete(form);
 	}
 
 	public static getViewForm(form:Form, create?:boolean) : ViewForm
@@ -74,14 +81,8 @@ export class FormBacking
 	{
 		let form:ViewForm = null;
 
-		if (block instanceof Block) form = FormBacking.vforms.get(block.form);
-		else 								 form = FormBacking.vforms.get(block.form.parent);
-
-		if (form == null && create)
-		{
-			let mblk:ModelBlock = block as ModelBlock;
-			FormBacking.getViewForm(mblk.form.parent,create);
-		}
+		if (block instanceof Block) form = FormBacking.getViewForm(block.form,create);
+		else 								 form = FormBacking.getViewForm(block.form.parent,create);
 
 		let blk:ViewBlock = form.getBlock(block.name);
 		if (blk == null && create) blk = new ViewBlock(form,block.name);
@@ -93,14 +94,8 @@ export class FormBacking
 	{
 		let form:ModelForm = null;
 
-		if (block instanceof Block) form = FormBacking.mforms.get(block.form);
-		else 								 form = FormBacking.mforms.get(block.form.parent);
-
-		if (form == null && create)
-		{
-			let vblk:ViewBlock = block as ViewBlock;
-			form = FormBacking.getModelForm(vblk.form.parent,create);
-		}
+		if (block instanceof Block) form = FormBacking.getModelForm(block.form,create);
+		else 								 form = FormBacking.getModelForm(block.form.parent,create);
 
 		let blk:ModelBlock = form.getBlock(block.name);
 		if (blk == null && create) blk = new ModelBlock(form,block.name);
@@ -110,5 +105,4 @@ export class FormBacking
 
 
 	public page:HTMLElement = null;
-
 }

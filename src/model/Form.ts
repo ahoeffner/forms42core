@@ -24,32 +24,10 @@ import { FormBacking } from '../application/FormBacking.js';
 
 export class Form
 {
-	public static drop(parent:InterfaceForm) : void
-	{
-		let remove:string[] = [];
-		let form:Form = FormBacking.getModelForm(parent);
-
-		form.unlinkViews();
-		form.clearEventTransactions();
-
-		form.blocks$.forEach((blk) =>
-		{
-			if (!blk.isLinked())
-			{
-				remove.push(blk.name);
-				form.datamodel.clear(blk);
-			}
-		});
-
-		remove.forEach((name) =>
-		{form.blocks$.delete(name)});
-	}
-
 	public static finalize(parent:InterfaceForm) : void
 	{
 		let form:Form = FormBacking.getModelForm(parent);
 		form.blocks$.forEach((block) => {block.finalize()})
-		form.linkViews();
 	}
 
 	private block$:Block = null;
@@ -167,18 +145,8 @@ export class Form
 		}
 	}
 
-	private clearEventTransactions() : void
+	public clearEventTransactions() : void
 	{
 		this.eventTransaction.clear();
-	}
-
-	private linkViews() : void
-	{
-		this.blocks$.forEach((blk) => {blk.linkView()})
-	}
-
-	private unlinkViews() : void
-	{
-		this.blocks$.forEach((blk) => {blk.unlinkView()})
 	}
 }

@@ -54,7 +54,7 @@ export class Record
 		if (row != null) row.getField(field)?.setValue(value);
 	}
 
-	public getProperties(field:string, clazz?:string) : FieldProperties
+	public getProperties(field?:string, clazz?:string) : FieldProperties
 	{
 		let blk:ModelBlock = this.rec$.block;
 		return(blk.view.getRecordProperties(this.rec$,field,clazz));

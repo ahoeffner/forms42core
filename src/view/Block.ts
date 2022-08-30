@@ -225,7 +225,20 @@ export class Block
 
 	public getRecordProperties(record:Record, field:string, clazz:string) : FieldProperties
 	{
-		return(this.recprops$.get(record,field,clazz));
+		let curr:boolean = false;
+
+		if (field == null)
+		{
+			curr = true;
+			field = this.current.name;
+		}
+
+		let props:FieldProperties = this.recprops$.get(record,field,clazz);
+
+		if (props == null && curr)
+			props = this.current.properties;
+
+		return(props);
 	}
 
 	public setRecordProperties(record:Record, field:string, clazz:string, props:FieldProperties) : void

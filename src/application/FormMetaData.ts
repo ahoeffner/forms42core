@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { Form } from "../public/Form";
-import { isClass } from "../types/Class";
-import { BlockSource } from "./annotations/datasource";
+import { Form } from "../public/Form.js";
+import { isClass } from "../types/Class.js";
+import { BlockSource } from "./annotations/datasource.js";
 
 export class FormMetaData
 {
@@ -21,7 +21,7 @@ export class FormMetaData
 
 	public static get(form:Form, create?:boolean) : FormMetaData
 	{
-		let meta:FormMetaData = FormMetaData.metadata.get(form);
+		let meta:FormMetaData = FormMetaData.metadata.get(form,true);
 
 		if (meta == null && create)
 		{

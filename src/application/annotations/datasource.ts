@@ -10,14 +10,29 @@
  * accompanied this code).
  */
 
+import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
+import { Class } from '../../types/Class.js';
+import { FormMetaData } from '../FormMetaData.js';
 import { DataSource } from '../../model/interfaces/DataSource.js';
 
-export const datasource = (source:DataSource) =>
+export class BlockSource
 {
-	function define(component:Form, attr:string)
+	constructor
+	(
+		public attr:string,
+		public source:Class<DataSource>|DataSource
+	)
+	{};
+}
+
+export const datasource = (source:Class<DataSource>|DataSource) =>
+{
+	function define(form:Form, attr:string)
 	{
-		console.log("attr: "+attr+" component: "+component.constructor.name)
+		let blksrc:BlockSource = new BlockSource(attr,source);
+		FormMetaData.get(form).addDataSourceAttribute(form,blksrc);
+		Logger.log(Type.metadata,"Setting datasource for "+form.name+"."+attr);
 	}
 
 	return(define);

@@ -12,9 +12,9 @@
 
 import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
-import { Logger, Type } from './Logger.js';
 import { Framework } from './Framework.js';
 import { Properties } from './Properties.js';
+import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
@@ -27,72 +27,9 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
-export interface Component
-{
-	path:string;
-	class:Class<any>;
-}
-
-function isComponent(object: any) : object is Component
-{
-	return('path' in object && 'class' in object);
-}
-
-export const BaseURL = (url:string) =>
-{
-	function define(_comp_:Class<FormsModule>)
-	{
-		State.baseurl = url;
-	}
-
-	return(define);
-}
-
-export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
-{
-	function define(_comp_:Class<FormsModule>)
-	{
-		components.forEach(element =>
-		{
-			let path:string = null;
-			let clazz:Class<any> = null;
-
-			if (isComponent(element))
-			{
-				clazz = (element as Component).class;
-				path = (element as Component).path.toLowerCase();
-			}
-			else
-			{
-				clazz = element as Class<any>;
-				path = (element as Class<any>).name.toLowerCase();
-			}
-
-			State.components.set(path,clazz);
-			State.classes.set(clazz.name,path);
-
-			Logger.log(Type.classloader,"Loading class: "+clazz.name+" into position: "+path);
-		});
-	 }
-
-	 return(define);
-}
-
-
-class State
-{
-	static baseurl:string;
-	static root:HTMLElement;
-
-	static classes:Map<string,string> =
-		new Map<string,string>();
-
-	static components:Map<string,Class<any>> =
-		new Map<string,Class<any>>();
-}
-
 export class FormsModule
 {
+	private root$:HTMLElement;
 	private static instance:FormsModule;
 
 	public static get() : FormsModule
@@ -112,12 +49,12 @@ export class FormsModule
 
 	public getRootElement() : HTMLElement
 	{
-		return(State.root);
+		return(this.root$);
 	}
 
 	public setRootElement(root:HTMLElement) : void
 	{
-		State.root = root;
+		this.root$ = root;
 	}
 
 	public mapComponent(clazz:Class<any>, path?:string) : void
@@ -129,8 +66,8 @@ export class FormsModule
 			path = clazz.name;
 
 		path = path.toLowerCase();
-		State.components.set(path,clazz);
-		State.classes.set(clazz.name,path);
+		Components.classmap.set(path,clazz);
+		Components.classurl.set(clazz.name,path);
 	}
 
 	public static getFormPath(clazz:Class<any>|string) : string
@@ -141,12 +78,12 @@ export class FormsModule
 		if (typeof clazz != "string")
 			clazz = clazz.name;
 
-		return(State.classes.get(clazz.toLowerCase()));
+		return(Components.classurl.get(clazz.toLowerCase()));
 	}
 
 	public getComponent(path:string) : Class<any>
 	{
-		return(State.components.get(path.toLowerCase()));
+		return(Components.classmap.get(path.toLowerCase()));
 	}
 
 	public parse(doc?:Element) : void
@@ -155,8 +92,8 @@ export class FormsModule
 		let frmwrk:Framework = Framework.parse(this,doc);
 
 		let root:HTMLElement = frmwrk.getRoot();
-		if (State.root == null) State.root = root;
-		if (State.root == null) State.root = document.body;
+		if (this.root$ == null) this.root$ = root;
+		if (this.root$ == null) this.root$ = document.body;
 	}
 
 	public updateKeyMap(map:Class<KeyMap>) : void

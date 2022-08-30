@@ -174,13 +174,6 @@ export class DataSourceWrapper
 		return(await this.block.postDelete());
 	}
 
-	public test() : void
-	{
-		console.log("hwm "+this.hwm$)
-		this.cache$.forEach((rec) => {console.log(rec.getValue("first_name"))})
-		console.log("-")
-	}
-
 	public getRecord(record:number) : Record
 	{
 		return(this.cache$[record]);

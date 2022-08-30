@@ -24,11 +24,12 @@ export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
 
 export { Class } from './src/types/Class.js';
 export { Column } from './src/application/Column.js';
+export {  FormsModule } from './src/application/FormsModule.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';
 export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';
 export { Properties as Config, ScrollDirection } from './src/application/Properties.js';
-export { Component, BaseURL, FormsPathMapping, FormsModule } from './src/application/FormsModule.js';
+export { Component, FormsPathMapping } from './src/application/annotations/FormsPathMapping.js';
 
 export { Menu } from './src/control/menus/interfaces/Menu.js';
 export { StaticMenu } from './src/control/menus/StaticMenu.js';

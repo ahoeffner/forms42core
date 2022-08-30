@@ -39,53 +39,55 @@ export interface ClassNames
 
 export class Properties
 {
-    public static BindAttr:string = "bind";
-    public static RecordModeAttr:string = "mode";
+	public static baseurl:string = "/";
 
-    public static RootTag:string = "forms";
-    public static IncludeTag:string = "include";
-    public static ForeachTag:string = "foreach";
+	public static BindAttr:string = "bind";
+	public static RecordModeAttr:string = "mode";
+
+	public static RootTag:string = "forms";
+	public static IncludeTag:string = "include";
+	public static ForeachTag:string = "foreach";
 
 	public static AttributePrefix:string = "$";
-    public static RequireAttributePrefix:boolean = false;
+	public static RequireAttributePrefix:boolean = false;
 
 	public static DateDelimitors:string = "./-: ";
 	public static TimeFormat:string = "HH:mm:ss";
 	public static DateFormat:string = "DD-MM-YYYY";
 
-    public static ParseTags:boolean = true;
-    public static ParseEvents:boolean = true;
+	public static ParseTags:boolean = true;
+	public static ParseEvents:boolean = true;
 
 	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator"};
 
-    public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
-    public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
+	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
+	public static FactoryImplementationClass:ComponentFactory = new FactoryImpl();
 
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
 
-    public static getTagLibrary() : Map<string,Class<Tag>>
-    {
-        return(
-            new Map<string,Class<Tag>>
-            (
-                [
-                    [Properties.RootTag,Root],
-                    [Properties.IncludeTag,Include]
-                ]
-            ));
-    }
+	public static getTagLibrary() : Map<string,Class<Tag>>
+	{
+		return(
+			new Map<string,Class<Tag>>
+			(
+					[
+						[Properties.RootTag,Root],
+						[Properties.IncludeTag,Include]
+					]
+			));
+	}
 
-    public static getAttributeLibrary() : Map<string,Class<Tag>>
-    {
-        return(
-            new Map<string,Class<Tag>>
-            (
-                [
-                    [Properties.BindAttr,Field],
-                    [Properties.ForeachTag,Foreach]
-                ]
-            ));
-    }
+	public static getAttributeLibrary() : Map<string,Class<Tag>>
+	{
+		return(
+			new Map<string,Class<Tag>>
+			(
+					[
+						[Properties.BindAttr,Field],
+						[Properties.ForeachTag,Foreach]
+					]
+			));
+	}
 
-    public static CanvasProperties:CanvasProperties = new CanvasProperties();
+	public static CanvasProperties:CanvasProperties = new CanvasProperties();
 }

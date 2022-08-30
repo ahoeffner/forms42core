@@ -307,7 +307,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	public handleEvent(event:Event) : void
 	{
-	console.log("event "+event.type)
 		if (event.type == "mouseup") this.dragend();
 		if (event.type == "mousemove") this.drag(event);
 	}

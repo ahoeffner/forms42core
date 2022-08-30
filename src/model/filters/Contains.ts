@@ -37,7 +37,6 @@ export class Contains implements Filter
 
 	public set constraint(values:string|string[])
 	{
-		console.log("constraint set, values: "+values)
 		if (!Array.isArray(values)) values = [values];
 
 		for (let i = 0; i < values.length; i++)
@@ -48,13 +47,11 @@ export class Contains implements Filter
 
 	public async matches(record:Record) : Promise<boolean>
 	{
-		console.log("columns: "+this.columns$+" constraints: "+this.constraint$)
 		for (let c = 0; c < this.columns$.length; c++)
 		{
 			for (let v = 0; v < this.constraint$.length; v++)
 			{
 				let val:any = record.getValue(this.columns$[c]);
-				console.log("match '"+val.toLowerCase()+"' with "+this.constraint$[v])
 				if (val != null && (val+"").toLowerCase().includes(this.constraint$[v]))
 					return(true);
 			}

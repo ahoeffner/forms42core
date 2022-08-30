@@ -61,7 +61,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	{
 		this.zindex$ = zindex;
 		this.canvas.style.zIndex = (2*this.zindex$)+"";
-			this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
+		this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 	}
 
 	public close() : void
@@ -150,7 +150,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
 
 		this.container.style.zIndex = (2*this.zindex$)+"";
-		  this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
+		this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
 
 		if (typeof page === 'string')
 		{
@@ -164,7 +164,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
 
 		this.content.tabIndex = -1;
-		  this.content.addEventListener("focus",() => this.focus());
+		this.content.addEventListener("focus",() => this.focus());
 
 		this.moveable$ = component.moveable;
 		this.resizable$ = component.resizable;
@@ -225,7 +225,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas.style.width = width;
 		this.canvas.style.height = height;
 	}
-
 
 	/*
 	 * Drag code

@@ -8,8 +8,8 @@ export { FieldProperties } from './src/public/FieldProperties.js';
 export { Alert } from './src/application/Alert.js';
 export { Logger } from './src/application/Logger.js';
 
+export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';
-export { Contains } from './src/model/filters/Contains.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
 export { dates } from './src/model/dates/dates.js';
@@ -24,7 +24,7 @@ export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
 
 export { Class } from './src/types/Class.js';
 export { Column } from './src/application/Column.js';
-export {  FormsModule } from './src/application/FormsModule.js';
+export { FormsModule } from './src/application/FormsModule.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';
 export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';

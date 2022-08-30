@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Record } from "../Record.js";
+import { Contains } from "./Contains.js";
+import { Filter } from "../interfaces/Filter.js";
 
-export interface Filter
+export class Filters
 {
-	contraint?:any|any[];
-	matches(record:Record) : Promise<boolean>;
+	public static Contains(spec:string) : Filter {return(new Contains(spec))};
 }

@@ -16,37 +16,46 @@ import { Filter } from "../interfaces/Filter.js";
 
 export class Contains implements Filter
 {
-	public contraint:string = null;
-
-	private values$:string[] = [];
 	private columns$:string[] = [];
+	private constraint$:string[] = [];
 
-	public constructor(columns:string|string[])
+	public constructor(columns:string)
 	{
-		if (Array.isArray(columns)) this.columns$ = columns;
-		else						this.columns$.push(columns);
+		columns.split(",").forEach((column) =>
+		{
+			column = column.trim();
+
+			if (column.length > 0)
+				this.columns$.push(column);
+		})
 	}
 
-	public set value(value:string)
+	public get constraint() : string|string[]
 	{
-		if (value != null)
-			this.values$ = [value.toLowerCase()];
+		return(this.constraint$);
 	}
 
-	public set values(values:string[])
+	public set constraint(values:string|string[])
 	{
-		this.values$ = [];
-		values.forEach((value) => {this.values$.push(value?.toLowerCase())})
+		console.log("constraint set, values: "+values)
+		if (!Array.isArray(values)) values = [values];
+
+		for (let i = 0; i < values.length; i++)
+			values[i] = values[i]?.toLocaleLowerCase();
+
+		this.constraint$ = values;
 	}
 
 	public async matches(record:Record) : Promise<boolean>
 	{
+		console.log("columns: "+this.columns$+" constraints: "+this.constraint$)
 		for (let c = 0; c < this.columns$.length; c++)
 		{
-			for (let v = 0; v < this.values$.length; v++)
+			for (let v = 0; v < this.constraint$.length; v++)
 			{
 				let val:any = record.getValue(this.columns$[c]);
-				if (val != null && (val+"").toLowerCase().includes(this.values$[v]))
+				console.log("match '"+val.toLowerCase()+"' with "+this.constraint$[v])
+				if (val != null && (val+"").toLowerCase().includes(this.constraint$[v]))
 					return(true);
 			}
 		}

@@ -3,6 +3,8 @@ export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
+export { datasource } from './src/application/annotations/datasource.js';
+
 export { Alert } from './src/application/Alert.js';
 export { Logger } from './src/application/Logger.js';
 

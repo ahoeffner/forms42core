@@ -21,7 +21,7 @@ export class FormMetaData
 
 	public static get(form:Form, create?:boolean) : FormMetaData
 	{
-		let meta:FormMetaData = FormMetaData.metadata.get(form,true);
+		let meta:FormMetaData = FormMetaData.metadata.get(form);
 
 		if (meta == null && create)
 		{

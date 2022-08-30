@@ -31,7 +31,7 @@ export const datasource = (source:Class<DataSource>|DataSource) =>
 	function define(form:Form, attr:string)
 	{
 		let blksrc:BlockSource = new BlockSource(attr,source);
-		FormMetaData.get(form).addDataSourceAttribute(form,blksrc);
+		FormMetaData.get(form,true).addDataSourceAttribute(form,blksrc);
 		Logger.log(Type.metadata,"Setting datasource for "+form.name+"."+attr);
 	}
 

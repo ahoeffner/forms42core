@@ -11,9 +11,7 @@
  */
 
 import { Block } from './Block.js';
-import { Form as View } from '../view/Form.js';
 import { Alert } from '../application/Alert.js';
-import { Form as Model } from '../model/Form.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
@@ -112,8 +110,8 @@ export class Form implements CanvasComponent
 		if (this.canvas != null)
 			this.canvas.refresh();
 
-		View.finalize(this);
-		Model.finalize(this);
+		await FormBacking.getViewForm(this).finalize();
+		await FormBacking.getModelForm(this).finalize();
 	}
 
 	public async close() : Promise<boolean>

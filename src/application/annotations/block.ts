@@ -12,18 +12,14 @@
 
 import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
-import { Class } from '../../types/Class.js';
-import { Block } from '../../public/Block.js';
 import { FormMetaData } from '../FormMetaData.js';
-import { DataSource } from '../../model/interfaces/DataSource.js';
 
-export const datasource = (block:Block|string, source:Class<DataSource>|DataSource) =>
+export const block = (block:string) =>
 {
-	function define(form:Class<Form>)
+	function define(form:Form, attr:string)
 	{
-		if (!(typeof block === "string")) block = block.name;
-		FormMetaData.get(form,true).addDataSource(block,source);
-		Logger.log(Type.metadata,"Setting datasource on form: "+form.name+" block: "+block);
+		FormMetaData.get(form,true).blockattrs.set(attr,block);
+		Logger.log(Type.metadata,"Setting variable "+attr+" on form: "+form.name+" to block: "+block);
 	}
 
 	return(define);

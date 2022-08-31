@@ -28,20 +28,8 @@ import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
 export class Form implements EventListenerObject
 {
-	public static current() : Form
-	{
-		return(Form.curform$);
-	}
-
-	public static finalize(parent:InterfaceForm) : void
-	{
-		let form:Form = FormBacking.getViewForm(parent);
-		form.blocks.forEach((blk) => {blk.finalize();});
-		form.addEvents(parent.getView());
-		form.indicators.clear();
-	}
-
 	private static curform$:Form = null;
+	public static current() : Form {return(Form.curform$);}
 
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
@@ -602,6 +590,13 @@ export class Form implements EventListenerObject
 			params.set("form",map)
 			window.history.replaceState('', '',path+"?"+params);
 		}
+	}
+
+	public async finalize() : Promise<void>
+	{
+		this.blocks.forEach((blk) => {blk.finalize();});
+		this.addEvents(this.parent.getView());
+		this.indicators.clear();
 	}
 
 	private async fireFormEvent(type:EventType, form:InterfaceForm) : Promise<boolean>

@@ -20,16 +20,11 @@ import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
+import { FormMetaData } from '../application/FormMetaData.js';
 
 
 export class Form
 {
-	public static finalize(parent:InterfaceForm) : void
-	{
-		let form:Form = FormBacking.getModelForm(parent);
-		form.blocks$.forEach((block) => {block.finalize()})
-	}
-
 	private block$:Block = null;
 	private parent$:InterfaceForm = null;
 	private datamodel$:DataModel = new DataModel();
@@ -133,10 +128,22 @@ export class Form
 
 	public async finalize() : Promise<void>
 	{
-		this.blocks$.forEach((block) =>
+		let meta:FormMetaData = FormMetaData.get(this.parent);
+
+		meta.blockattrs.forEach((block,attr) =>
 		{
-			block.finalize();
-		});
+			let blk:Block = this.getBlock(block.toLowerCase());
+			if (blk != null) this.parent[attr] = blk;
+		})
+
+		meta.getDataSources().forEach((source,block) =>
+		{
+			let blk:Block = this.getBlock(block.toLowerCase());
+			if (blk != null) blk.datasource = source;
+		})
+
+		this.blocks$.forEach((block) =>
+			{block.finalize()});
 
 		await this.initControlBlocks();
 	}

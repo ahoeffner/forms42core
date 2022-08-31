@@ -148,7 +148,6 @@ export class FormsModule
 
 		let mform:ModelForm = FormBacking.getModelForm(instance);
 
-		await mform.initControlBlocks();
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 		await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
 

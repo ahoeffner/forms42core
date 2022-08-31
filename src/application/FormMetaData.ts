@@ -15,69 +15,51 @@ import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 
 
-export class BlockSource
-{
-	constructor
-	(
-		public block:string,
-		public source:Class<DataSource>|DataSource
-	)
-	{};
-}
-
-
 export class FormMetaData
 {
 	private static metadata:Map<string,FormMetaData> =
 		new Map<string,FormMetaData>();
 
-	public static get(form:Class<Form>|string, create?:boolean) : FormMetaData
+	public static get(form:Class<Form>|Form, create?:boolean) : FormMetaData
 	{
-		if (!(typeof form === "string")) form = form.name;
-		let meta:FormMetaData = FormMetaData.metadata.get(form);
+		let name:string = null;
+
+		if (isClass(form)) name = form.name;
+		else					 name = form.constructor.name;
+
+		let meta:FormMetaData = FormMetaData.metadata.get(name);
 
 		if (meta == null && create)
 		{
 			meta = new FormMetaData();
-			FormMetaData.metadata.set(form,meta);
+			FormMetaData.metadata.set(name,meta);
 		}
 
 		return(meta)
 	}
 
-	private blocksources$:Map<string,BlockSource[]> =
-		new Map<string,BlockSource[]>();
+	public blockattrs:Map<string,string> =
+		new Map<string,string>();
 
-	public getDataSourceAttributes(form:Form) : BlockSource[]
+	private blocksources$:Map<string,Class<DataSource>|DataSource> =
+		new Map<string,Class<DataSource>|DataSource>();
+
+	public getDataSources() : Map<string,DataSource>
 	{
-		let prepared:BlockSource[] = [];
-		let name:string = form.constructor.name;
-		let sources:BlockSource[] = this.blocksources$.get(name);
+		let sources:Map<string,DataSource> =
+			new Map<string,DataSource>();
 
-		if (sources != null)
+		this.blocksources$.forEach((source,block) =>
 		{
-			for (let i = 0; i < sources.length; i++)
-			{
-				let source:any = sources[i].source;
-				if (!isClass(source)) prepared.push(source);
-				else						 prepared.push(new source())
-			}
-		}
+			if (!isClass(source)) sources.set(block,source);
+			else						 sources.set(block, new source());
+		})
 
-		return(prepared);
+		return(sources);
 	}
 
-	public addDataSourceAttribute(form:Class<Form>|string, source:BlockSource) : void
+	public addDataSource(block:string, source:Class<DataSource>|DataSource) : void
 	{
-		if (!(typeof form === "string")) form = form.name;
-		let sources:BlockSource[] = this.blocksources$.get(form);
-
-		if (sources == null)
-		{
-			sources = [];
-			this.blocksources$.set(form,sources);
-		}
-
-		sources.push(source);
+		this.blocksources$.set(block,source);
 	}
 }

@@ -11,16 +11,29 @@
  */
 
 import { Form } from "../public/Form.js";
-import { isClass } from "../types/Class.js";
-import { BlockSource } from "./annotations/datasource.js";
+import { Class, isClass } from '../types/Class.js';
+import { DataSource } from '../model/interfaces/DataSource.js';
+
+
+export class BlockSource
+{
+	constructor
+	(
+		public block:string,
+		public source:Class<DataSource>|DataSource
+	)
+	{};
+}
+
 
 export class FormMetaData
 {
-	private static metadata:Map<Form,FormMetaData> =
-		new Map<Form,FormMetaData>();
+	private static metadata:Map<string,FormMetaData> =
+		new Map<string,FormMetaData>();
 
-	public static get(form:Form, create?:boolean) : FormMetaData
+	public static get(form:Class<Form>|string, create?:boolean) : FormMetaData
 	{
+		if (!(typeof form === "string")) form = form.name;
 		let meta:FormMetaData = FormMetaData.metadata.get(form);
 
 		if (meta == null && create)
@@ -32,13 +45,14 @@ export class FormMetaData
 		return(meta)
 	}
 
-	private blocksources$:Map<Form,BlockSource[]> =
-		new Map<Form,BlockSource[]>();
+	private blocksources$:Map<string,BlockSource[]> =
+		new Map<string,BlockSource[]>();
 
 	public getDataSourceAttributes(form:Form) : BlockSource[]
 	{
 		let prepared:BlockSource[] = [];
-		let sources:BlockSource[] = this.blocksources$.get(form);
+		let name:string = form.constructor.name;
+		let sources:BlockSource[] = this.blocksources$.get(name);
 
 		if (sources != null)
 		{
@@ -53,8 +67,9 @@ export class FormMetaData
 		return(prepared);
 	}
 
-	public addDataSourceAttribute(form:Form, source:BlockSource) : void
+	public addDataSourceAttribute(form:Class<Form>|string, source:BlockSource) : void
 	{
+		if (!(typeof form === "string")) form = form.name;
 		let sources:BlockSource[] = this.blocksources$.get(form);
 
 		if (sources == null)

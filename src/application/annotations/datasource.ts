@@ -13,26 +13,16 @@
 import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
 import { Class } from '../../types/Class.js';
-import { FormMetaData } from '../FormMetaData.js';
+import { BlockSource, FormMetaData } from '../FormMetaData.js';
 import { DataSource } from '../../model/interfaces/DataSource.js';
 
-export class BlockSource
+export const datasource = (block:string, source:Class<DataSource>|DataSource) =>
 {
-	constructor
-	(
-		public attr:string,
-		public source:Class<DataSource>|DataSource
-	)
-	{};
-}
-
-export const datasource = (source:Class<DataSource>|DataSource) =>
-{
-	function define(form:Form, attr:string)
+	function define(form:Class<Form>)
 	{
-		let blksrc:BlockSource = new BlockSource(attr,source);
+		let blksrc:BlockSource = new BlockSource(block,source);
 		FormMetaData.get(form,true).addDataSourceAttribute(form,blksrc);
-		Logger.log(Type.metadata,"Setting datasource for "+form.name+"."+attr);
+		Logger.log(Type.metadata,"Setting datasource on form: "+form.name+" block: "+block);
 	}
 
 	return(define);

@@ -131,6 +131,16 @@ export class Form
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to modelform: "+this.parent.name);
 	}
 
+	public async finalize() : Promise<void>
+	{
+		this.blocks$.forEach((block) =>
+		{
+			block.finalize();
+		});
+
+		await this.initControlBlocks();
+	}
+
 	public async initControlBlocks()
 	{
 		for(let block of this.blocks$.values())

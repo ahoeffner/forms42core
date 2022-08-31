@@ -4,6 +4,7 @@ export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
 export { block } from './src/application/annotations/block.js';
+export { formevent } from './src/application/annotations/formevent.js';
 export { datasource } from './src/application/annotations/datasource.js';
 
 export { Alert } from './src/application/Alert.js';

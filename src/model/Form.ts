@@ -20,6 +20,7 @@ import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
+import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
 
 
@@ -134,6 +135,12 @@ export class Form
 		{
 			let blk:Block = this.getBlock(block.toLowerCase());
 			if (blk != null) this.parent[attr] = blk;
+		})
+
+		meta.eventhandlers.forEach((filter,method) =>
+		{
+			let handle:object = FormEvents.addListener(this.parent,this.parent,method,filter);
+			FormBacking.getBacking(this.parent).listeners.push(handle);
 		})
 
 		meta.getDataSources().forEach((source,block) =>

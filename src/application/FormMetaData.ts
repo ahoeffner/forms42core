@@ -13,6 +13,7 @@
 import { Form } from "../public/Form.js";
 import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 
 
 export class FormMetaData
@@ -40,6 +41,9 @@ export class FormMetaData
 
 	public blockattrs:Map<string,string> =
 		new Map<string,string>();
+
+	public eventhandlers:Map<string,EventFilter|EventFilter[]> =
+		new Map<string,EventFilter|EventFilter[]>();
 
 	private blocksources$:Map<string,Class<DataSource>|DataSource> =
 		new Map<string,Class<DataSource>|DataSource>();

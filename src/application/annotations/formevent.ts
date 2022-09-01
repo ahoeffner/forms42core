@@ -13,23 +13,15 @@
 import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
 import { FormMetaData } from '../FormMetaData.js';
-import { TriggerFunction } from '../../public/TriggerFunction.js';
 import { EventFilter } from '../../control/events/EventFilter.js';
 
-function test(func:TriggerFunction)
-{
-
-}
 
 export const formevent = (filter:EventFilter|EventFilter[]) =>
 {
 	function define(form:Form, method:string)
 	{
-		let func:Function = form[method];
-
-		//FormMetaData.get(form,true).blockattrs.set(attr,block);
-		Logger.log(Type.metadata,"Register formevent "+method+" on form: "+form.name+", filter: "+filter);
-		//Logger.log(Type.metadata,"Register formevent "+attr+" on form: "+form.name+" to block: "+block);
+		FormMetaData.get(form,true).eventhandlers.set(method,filter);
+		Logger.log(Type.metadata,"Register eventhandler "+method+" on form: "+form.name+", filter: "+filter);
 	}
 
 	return(define);

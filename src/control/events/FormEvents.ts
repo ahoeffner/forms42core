@@ -404,7 +404,7 @@ export class FormEvents
 		}
 		else
 		{
-			if (response != null && typeof response !== "boolean")
+			if (response == null || typeof response !== "boolean")
 			{
 				Alert.fatal("@FormEvents: EventListner '"+lsnr+"' did not return boolean, but '"+response+"'","EventListener");
 				cont = true;

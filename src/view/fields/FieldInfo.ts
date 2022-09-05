@@ -10,10 +10,16 @@
  * accompanied this code).
  */
 
-import { HTMLType } from "../HTMLType.js";
+import { DataType } from "./DataType.js";
 
 export class FieldInfo
 {
+	type:DataType = null;
 	derived:boolean = false;
-	type:HTMLType = HTMLType.na;
+
+	constructor(type:DataType, derived:boolean)
+	{
+		this.type = type;
+		this.derived = derived;
+	}
 }

@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType.js";
 import { DataMapper } from "./DataMapper.js";
 import { Alert } from "../../application/Alert.js";
 import { Class, isClass } from "../../types/Class.js";
-import { DataType } from "./implementations/DataType.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
 import { ComponentFactory } from "../../application/ComponentFactory.js";

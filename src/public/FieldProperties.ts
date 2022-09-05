@@ -11,10 +11,11 @@
  */
 
 import { Class } from '../types/Class.js';
+import { Alert } from '../application/Alert.js';
+import { DataType } from '../view/fields/DataType.js';
 import { DataMapper } from '../view/fields/DataMapper.js';
 import { BasicProperties } from '../view/fields/BasicProperties.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
-import { DataType } from '../view/fields/implementations/DataType.js';
 
 export class FieldProperties extends BasicProperties
 {
@@ -32,9 +33,9 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setType(type:DataType) : FieldProperties
+	public setType(_type:DataType) : FieldProperties
 	{
-		super.setType(type);
+		Alert.fatal("Data type cannot be changed","Properties");
 		return(this);
 	}
 
@@ -50,9 +51,9 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setDerived(flag:boolean) : FieldProperties
+	public setDerived(_flag:boolean) : FieldProperties
 	{
-		this.derived = flag;
+		Alert.fatal("Derived cannot be changed","Properties");
 		return(this);
 	}
 

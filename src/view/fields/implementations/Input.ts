@@ -11,7 +11,7 @@
  */
 
 import { Pattern } from "../Pattern.js";
-import { DataType } from "./DataType.js";
+import { DataType } from "../DataType.js";
 import { Section } from "../interfaces/Pattern.js";
 import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";

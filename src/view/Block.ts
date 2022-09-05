@@ -13,6 +13,8 @@
 import { Form } from "./Form.js";
 import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
+import { DataType } from "./fields/DataType.js";
+import { FieldInfo } from "./fields/FieldInfo.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
@@ -22,7 +24,6 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { FieldProperties } from "../public/FieldProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
-import { DataType } from "./fields/implementations/DataType.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
@@ -39,6 +40,7 @@ export class Block
 	private rows$:Map<number,Row> = new Map<number,Row>();
 	private displayed$:Map<object,Row> = new Map<object,Row>();
 	private recprops$:RecordProperties = new RecordProperties();
+	private fieldinfo$:Map<string,FieldInfo> = new Map<string,FieldInfo>();
 
 	constructor(form:Form,name:string)
 	{
@@ -901,6 +903,8 @@ export class Block
 					});
 				});
 			}
+
+			this.fieldinfo$.set(name,new FieldInfo(type,derived))
 		});
 
 		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);

@@ -10,11 +10,11 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType.js";
 import { Class } from "../../types/Class.js";
 import { DataMapper } from "./DataMapper.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
-import { DataType } from "./implementations/DataType.js";
 
 
 export class FieldProperties extends BasicProperties

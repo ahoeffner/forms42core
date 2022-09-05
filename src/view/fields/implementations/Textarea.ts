@@ -10,13 +10,13 @@
  * accompanied this code).
  */
 
+import { DataType } from "../DataType.js";
 import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { DataType } from "./DataType.js";
 
 export class Textarea implements FieldImplementation, EventListenerObject
 {

@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { DataType } from "./DataType.js";
+import { DataType } from "../DataType.js";
 import { DataMapper, Tier } from "../DataMapper.js";
 import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";

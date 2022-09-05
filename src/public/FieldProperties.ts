@@ -50,6 +50,12 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
+	public setDerived(flag:boolean) : FieldProperties
+	{
+		this.derived = flag;
+		return(this);
+	}
+
 	public setRequired(flag:boolean) : FieldProperties
 	{
 		this.required = flag;

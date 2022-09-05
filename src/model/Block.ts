@@ -446,8 +446,8 @@ export class Block
 		if (!await this.preQuery())
 			return(false);
 
-			this.view.reset(true,true);
-			this.qbe.querymode = false;
+		this.view.reset(true,true);
+		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;

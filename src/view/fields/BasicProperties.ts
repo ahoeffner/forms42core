@@ -35,14 +35,15 @@ export class BasicProperties
 
 	protected hidden$:boolean = false;
 	protected enabled$:boolean = false;
+	protected derived$:boolean = false;
 	protected readonly$:boolean = false;
 	protected required$:boolean = false;
 
 	protected value$:string = null;
-    protected values$:Map<string,string> = new Map<string,string>();
+	protected values$:Map<string,string> = new Map<string,string>();
 
 	protected handled$:string[] = ["id","name",Properties.BindAttr,"row","invalid"];
-	protected structured$:string[] = ["hidden","enabled","readonly","required","value","class","style","mapper"];
+	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","value","class","style","mapper"];
 
 	public get tag() : string
 	{
@@ -102,9 +103,25 @@ export class BasicProperties
 		this.required$ = flag;
 	}
 
+	public get derived() : boolean
+	{
+		return(this.derived$);
+	}
+
+	public set derived(flag:boolean)
+	{
+		this.derived$ = flag;
+	}
+
 	public setRequired(flag:boolean) : BasicProperties
 	{
 		this.required = flag;
+		return(this);
+	}
+
+	public setDerived(flag:boolean) : BasicProperties
+	{
+		this.derived = flag;
 		return(this);
 	}
 
@@ -317,6 +334,7 @@ export class BasicProperties
 			{
 				case "hidden": this.hidden = flag; break;
 				case "enabled": this.enabled = flag; break;
+				case "derived": this.derived = flag; break;
 				case "readonly": this.readonly = flag; break;
 				case "required": this.required = flag; break;
 
@@ -370,31 +388,31 @@ export class BasicProperties
 	}
 
 
-    public get validValues() : Map<string,string>
+	 public get validValues() : Map<string,string>
 	{
 		return(this.values$);
-    }
+	 }
 
-    public set validValues(values: Set<string> | Map<string,string>)
+	 public set validValues(values: Set<string> | Map<string,string>)
 	{
 		if (values instanceof Set)
 		{
 			this.values$ = new Map<string,string>();
 			values.forEach((value) => {this.values$.set(value,value)});
 		}
-        else this.values$ = values;
-    }
+		  else this.values$ = values;
+	 }
 
-    public setValidValues(values: Set<string> | Map<string,string>) : BasicProperties
+	 public setValidValues(values: Set<string> | Map<string,string>) : BasicProperties
 	{
 		this.validValues = values;
 		return(this);
 	}
 
-    public getValidValues() : Map<string,string>
+	 public getValidValues() : Map<string,string>
 	{
 		return(this.values$);
-    }
+	 }
 
 	public get mapper() : DataMapper
 	{

@@ -158,6 +158,13 @@ export class Record
 		this.values$[idx] = value;
 	}
 
+	public get columns() : string[]
+	{
+		let columns:string[] = this.source.columns;
+		columns.push(...this.wrapper.columns);
+		return(columns);
+	}
+
 	private indexOf(column:string) : number
 	{
 		let idx:number = this.source.columns.indexOf(column);
@@ -169,7 +176,7 @@ export class Record
 	{
 		let len:number = this.source.columns.length;
 		if (pos < len) return(this.source.columns[pos]);
-		else    	   return(this.wrapper.columns[pos-len]);
+		else    	      return(this.wrapper.columns[pos-len]);
 	}
 
 	public toString() : string
@@ -177,7 +184,7 @@ export class Record
 		let str:string = "";
 
 		let cols:number = this.source.columns.length +
-						  this.wrapper.columns.length;
+						  		this.wrapper.columns.length;
 
 		for (let i = 0; i < cols; i++)
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));

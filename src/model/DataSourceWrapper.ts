@@ -45,7 +45,12 @@ export class DataSourceWrapper
 
 	public get columns() : string[]
 	{
-		return(this.source.columns);
+		return(this.columns$);
+	}
+
+	public set columns(columns:string[])
+	{
+		this.columns$ = columns;
 	}
 
 	public get filters() : Filter[]
@@ -278,11 +283,8 @@ export class DataSourceWrapper
 	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
 	{
 		let table:string[][] = [];
+		let head:string[] = this.columns;
 		while(all && await this.fetch() != null);
-
-		let head:string[];
-		head = this.source.columns;
-		head.push(...this.columns$);
 
 		if (header)
 			table.push(head);

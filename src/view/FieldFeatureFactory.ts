@@ -83,6 +83,7 @@ export class FieldFeatureFactory
 		props.mapper = exist.mapper;
 		props.hidden = exist.hidden;
 		props.enabled = exist.enabled;
+		props.derived = exist.derived;
 		props.readonly = exist.readonly;
 		props.required = exist.required;
 

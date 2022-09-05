@@ -11,6 +11,7 @@
  */
 
 import { Record } from "./Record.js";
+import { Filter } from "./interfaces/Filter.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
 
@@ -57,5 +58,16 @@ export class QueryByExample
 			this.wrapper$.source = this.table$;
 			this.record$ = this.wrapper$.create(0);
 		}
+
+		this.wrapper.columns = [];
 	}
+}
+
+class QueryFilter
+{
+	private values$:any[] = [];
+	private column$:string = null;
+	private filter$:Filter = null;
+
+
 }

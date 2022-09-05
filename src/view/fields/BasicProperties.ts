@@ -110,7 +110,6 @@ export class BasicProperties
 
 	public set derived(flag:boolean)
 	{
-		console.log("derived "+flag)
 		this.derived$ = flag;
 	}
 

@@ -812,18 +812,25 @@ export class Block
 		// set most restrictive datatype and derived
 		this.getFieldNames().forEach((name) =>
 		{
-			let diff:boolean = false;
 			let type:DataType = null;
-			let derived:boolean = false;
+			let tdiff:boolean = false;
+			let ddiff:boolean = false;
+			let derived:boolean = null;
 
 			this.getAllFields(name).forEach((fld) =>
 			{
-				if (type == null)
-					type = fld.getInstance(0).datatype;
-
 				fld.getInstances().forEach((inst) =>
 				{
-					if (inst.defaultProperties.derived)
+					if (type == null)
+						type = inst.datatype;
+
+					if (derived == null)
+						derived = inst.properties.derived;
+
+					if (inst.properties.derived != derived)
+						ddiff = true;
+
+					if (inst.properties.derived)
 						derived = true;
 
 					if (inst.datatype != type)
@@ -834,7 +841,7 @@ export class Block
 							{
 								if (inst.datatype != DataType.string)
 								{
-									diff = true;
+									tdiff = true;
 									type = inst.datatype;
 								}
 							}
@@ -843,7 +850,7 @@ export class Block
 							case DataType.integer :
 							{
 								if (inst.datatype != DataType.integer)
-									diff = true;
+									tdiff = true;
 							}
 							break;
 
@@ -853,7 +860,7 @@ export class Block
 									type = DataType.integer;
 
 								if (inst.datatype != DataType.decimal)
-									diff = true;
+									tdiff = true;
 							}
 							break;
 
@@ -861,38 +868,37 @@ export class Block
 							case DataType.datetime :
 							{
 								if (inst.datatype == DataType.string)
-									diff = true;
+									tdiff = true;
 
 								if (inst.datatype == DataType.integer)
-									diff = true;
+									tdiff = true;
 
 								if (inst.datatype == DataType.decimal)
-									diff = true;
+									tdiff = true;
 							} break;
 						}
 					}
 				})
 			});
 
-			if (diff)
+			if (tdiff || ddiff)
 			{
 				this.getAllFields(name).forEach((fld) =>
 				{
 					fld.getInstances().forEach((inst) =>
 					{
-						inst.datatype = type;
-						inst.defaultProperties.setType(type);
-						FieldFeatureFactory.applyType(inst);
-						inst.defaultProperties.derived = derived;
+						if (tdiff)
+						{
+							inst.datatype = type;
+							inst.defaultProperties.setType(type);
+							FieldFeatureFactory.applyType(inst);
+						}
+
+						if (ddiff)
+						{
+							inst.defaultProperties.derived = derived;
+						}
 					});
-				});
-			}
-			else if (derived)
-			{
-				this.getAllFields(name).forEach((fld) =>
-				{
-					fld.getInstances().forEach((inst) =>
-					{inst.defaultProperties.derived = derived;});
 				});
 			}
 		});

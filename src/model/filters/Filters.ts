@@ -12,6 +12,7 @@
 
 import { Like } from "./Like.js";
 import { ILike } from "./ILike.js";
+import { Equals } from "./Equals.js";
 import { Contains } from "./Contains.js";
 import { Filter } from "../interfaces/Filter.js";
 
@@ -19,5 +20,6 @@ export class Filters
 {
 	public static Like(spec:string) : Filter {return(new Like(spec))};
 	public static ILike(spec:string) : Filter {return(new ILike(spec))};
+	public static Equals(spec:string) : Filter {return(new Equals(spec))};
 	public static Contains(spec:string) : Filter {return(new Contains(spec))};
 }

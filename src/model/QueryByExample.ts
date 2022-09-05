@@ -72,13 +72,17 @@ export class QueryByExample
 			{
 				switch(this.block$.view.fieldinfo.get(column).type)
 				{
-					case DataType.string : filter = Filters.Like(column); break;
+					case DataType.date 		: filter = Filters.Like(column); break;
+					case DataType.datetime 	: filter = Filters.Like(column); break;
+					case DataType.string 	: filter = Filters.Like(column); break;
+					case DataType.integer 	: filter = Filters.Equals(column); break;
+					case DataType.decimal 	: filter = Filters.Equals(column); break;
 				}
 
 				group.and(filter);
 			}
 
-			console.log(column+" -> "+this.record.getValue(column))
+			console.log(column+" -> "+this.record.getValue(column)+" filter: "+filter)
 		})
 
 		return(group);

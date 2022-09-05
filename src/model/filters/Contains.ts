@@ -52,7 +52,7 @@ export class Contains implements Filter
 			for (let v = 0; v < this.constraint$.length; v++)
 			{
 				let val:any = record.getValue(this.columns$[c]);
-				if (val != null && (val+"").toLowerCase().includes(this.constraint$[v]))
+				if (val != null && (val+"").toLocaleLowerCase().includes(this.constraint$[v]))
 					return(true);
 			}
 		}

@@ -37,7 +37,7 @@ export class Block
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
-	private qbe:QueryByExample = new QueryByExample();
+	private qbe:QueryByExample = new QueryByExample(this);
 
 	constructor(form:Form, name:string)
 	{
@@ -445,6 +445,11 @@ export class Block
 
 		if (!await this.preQuery())
 			return(false);
+
+		if (this.qbe.querymode)
+		{
+			this.qbe.finalize();
+		}
 
 		this.view.reset(true,true);
 		this.qbe.querymode = false;

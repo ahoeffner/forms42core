@@ -100,6 +100,11 @@ export class Block
 		this.current?.focus();
 	}
 
+	public get fieldinfo() : Map<string,FieldInfo>
+	{
+		return(this.fieldinfo$);
+	}
+
 	public getAllFields(field?:string) : Field[]
 	{
 		let fields:Field[] = [];

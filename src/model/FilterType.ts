@@ -10,14 +10,10 @@
  * accompanied this code).
  */
 
-import { Like } from "./Like.js";
-import { ILike } from "./ILike.js";
-import { Contains } from "./Contains.js";
-import { Filter } from "../interfaces/Filter.js";
-
-export class Filters
+export enum FilterType
 {
-	public static Like(spec:string) : Filter {return(new Like(spec))};
-	public static ILike(spec:string) : Filter {return(new ILike(spec))};
-	public static Contains(spec:string) : Filter {return(new Contains(spec))};
+	or,
+	and,
+	where,
+	detect
 }

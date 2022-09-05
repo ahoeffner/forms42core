@@ -10,17 +10,28 @@
  * accompanied this code).
  */
 
+import { Block } from "./Block.js";
 import { Record } from "./Record.js";
 import { Filter } from "./interfaces/Filter.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
+import { DataType } from "../view/fields/DataType.js";
+import { Filters } from "./filters/Filters.js";
+import { FilterGroup } from "./FilterGroup.js";
 
 export class QueryByExample
 {
+	private block$:Block = null;
 	private record$:Record = null;
 	private qmode$:boolean = false;
 	private table$:MemoryTable = null;
 	private wrapper$:DataSourceWrapper = null;
+	private filters$:Map<string,QueryFilter> = new Map<string,QueryFilter>();
+
+	constructor(block:Block)
+	{
+		this.block$ = block;
+	}
 
 	public get querymode() : boolean
 	{
@@ -48,6 +59,31 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
+	public finalize() : FilterGroup
+	{
+		let group:FilterGroup = new FilterGroup();
+
+		this.record.columns.forEach((column) =>
+		{
+			let filter:Filter = null;
+			let qf:QueryFilter = this.filters$.get(column);
+
+			if (qf == null)
+			{
+				switch(this.block$.view.fieldinfo.get(column).type)
+				{
+					case DataType.string : filter = Filters.Like(column); break;
+				}
+
+				group.and(filter);
+			}
+
+			console.log(column+" -> "+this.record.getValue(column))
+		})
+
+		return(group);
+	}
+
 	private initialize() : void
 	{
 		if (this.wrapper$ == null)
@@ -65,9 +101,6 @@ export class QueryByExample
 
 class QueryFilter
 {
-	private values$:any[] = [];
 	private column$:string = null;
 	private filter$:Filter = null;
-
-
 }

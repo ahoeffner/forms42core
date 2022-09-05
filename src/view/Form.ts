@@ -399,6 +399,9 @@ export class Form implements EventListenerObject
 			{
 				let success:boolean = false;
 
+				if (!await inst.field.validate(inst))
+					return(false);
+
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.qbeallowed)
 					success = await inst.field.block.model.enterQuery();
 
@@ -412,6 +415,9 @@ export class Form implements EventListenerObject
 			{
 				let success:boolean = false;
 
+				if (!await inst.field.validate(inst))
+					return(false);
+
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.queryallowed)
 					success = await inst.field.block.model.executeQuery();
 
@@ -423,6 +429,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insert)
 			{
+				if (!await inst.field.validate(inst))
+					return(false);
+
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(false);
 
@@ -431,6 +440,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insertAbove)
 			{
+				if (!await inst.field.validate(inst))
+					return(false);
+
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
 					inst.field.block.model.insert(true);
 

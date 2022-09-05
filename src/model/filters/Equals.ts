@@ -10,14 +10,33 @@
  * accompanied this code).
  */
 
-import { Like } from "./Like.js";
-import { ILike } from "./ILike.js";
-import { Contains } from "./Contains.js";
+import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 
-export class Filters
+
+export class Equals implements Filter
 {
-	public static Like(spec:string) : Filter {return(new Like(spec))};
-	public static ILike(spec:string) : Filter {return(new ILike(spec))};
-	public static Contains(spec:string) : Filter {return(new Contains(spec))};
+	private column$:string = null;
+	private constraint$:any = null;
+
+	public constructor(column:string)
+	{
+		this.column$ = column;
+	}
+
+	public get constraint() : string
+	{
+		return(this.constraint$);
+	}
+
+	public set constraint(value:any)
+	{
+		this.constraint$ = value;
+	}
+
+	public async matches(record:Record) : Promise<boolean>
+	{
+		let val:any = record.getValue(this.column$);
+		return(val == this.constraint$);
+	}
 }

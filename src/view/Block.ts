@@ -363,9 +363,9 @@ export class Block
 	{
 		this.curinst$ = inst;
 		if (!this.lock(inst)) return(false);
-		await this.setEventTransaction(EventType.OnTyping);
-		let success:boolean = await	this.fireFieldEvent(EventType.OnTyping,inst);
-		this.endEventTransaction(EventType.OnTyping,success);
+		await this.setEventTransaction(EventType.OnEdit);
+		let success:boolean = await	this.fireFieldEvent(EventType.OnEdit,inst);
+		this.endEventTransaction(EventType.OnEdit,success);
 		return(success);
 	}
 

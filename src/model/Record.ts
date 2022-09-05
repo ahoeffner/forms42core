@@ -71,6 +71,11 @@ export class Record
 		return(this.wrapper$?.block);
 	}
 
+	public clear() : void
+	{
+		this.values$ = [];
+	}
+
 	public get source() : DataSource
 	{
 		return(this.source$);

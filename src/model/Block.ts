@@ -11,9 +11,10 @@
  */
 
 import { Form } from "./Form.js";
+import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
-import { Record, RecordStatus } from "./Record.js";
+import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
@@ -31,13 +32,12 @@ export class Block
 	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
-	private qberec$:Record = null;
 	private view$:ViewBlock = null;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
-	private qbewrp$:DataSourceWrapper = null;
+	private qbe:QueryByExample = new QueryByExample();
 
 	constructor(form:Form, name:string)
 	{
@@ -75,12 +75,12 @@ export class Block
 
 	public get qberec() : Record
 	{
-		return(this.qberec$);
+		return(this.qbe.record);
 	}
 
 	public get querymode() : boolean
 	{
-		return(this.qberec$ != null);
+		return(this.qbe.querymode);
 	}
 
 	public set ctrlblk(flag:boolean)
@@ -189,7 +189,7 @@ export class Block
 
 	private get wrapper() : DataSourceWrapper
 	{
-		if (this.querymode) return(this.qbewrp$);
+		if (this.querymode) return(this.qbe.wrapper);
 		return(this.form.datamodel.getWrapper(this));
 	}
 
@@ -425,10 +425,9 @@ export class Block
 		}
 
 		this.wrapper.clear();
-		this.setQBEWrapper();
-
+		this.qbe.querymode = true;
 		this.view.reset(true,true);
-		this.view.display(0,this.qberec$);
+		this.view.display(0,this.qberec);
 
 		this.view.lockUnused();
 		this.view.setCurrentRow(0);
@@ -444,17 +443,11 @@ export class Block
 				return(false);
 		}
 
-		this.setQBEWrapper();
-
 		if (!await this.preQuery())
-		{
-			this.setDataWrapper();
 			return(false);
-		}
 
-		this.setDataWrapper();
-
-		this.view.reset(true,true);
+			this.view.reset(true,true);
+			this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		this.record$ = -1;
@@ -536,7 +529,7 @@ export class Block
 	public getRecord(offset?:number) : Record
 	{
 		if (offset == null) offset = 0;
-		if (this.querymode) return(this.qberec$);
+		if (this.querymode) return(this.qberec);
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
@@ -550,26 +543,6 @@ export class Block
 		this.intblk = this.form.parent.getBlock(this.name);
 		this.view$ = FormBacking.getViewForm(this.form$.parent).getBlock(this.name);
 		if (this.intblk == null) this.intblk = new InterfaceBlock(this.intfrm,this.name);
-	}
-
-	private setQBEWrapper() : void
-	{
-		if (this.qberec$ != null)
-			return;
-
-		let table:MemoryTable = new MemoryTable();
-		this.qbewrp$ = new DataSourceWrapper(this);
-
-		this.qbewrp$.source = table;
-		this.qberec$ = this.qbewrp$.create(0);
-
-		this.qberec$.status = RecordStatus.QBE;
-	}
-
-	private setDataWrapper() : void
-	{
-		this.qberec$ = null;
-		this.qbewrp$ = null;
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

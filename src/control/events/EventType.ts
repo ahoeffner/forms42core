@@ -33,28 +33,28 @@ export enum EventType
 	PreBlock,
 	PostBlock,
 
-    PreRecord,
-    PostRecord,
+	PreRecord,
+	PostRecord,
 
-    PreField,
-    PostField,
+	PreField,
+	PostField,
 
-	OnTyping,
+	OnEdit,
 	WhenValidateField,
 
-    OnFetch,
+	OnFetch,
 	PreQuery,
 	PostQuery,
 
-    PreInsert,
-    PostInsert,
+	PreInsert,
+	PostInsert,
 
-    PreUpdate,
-    PostUpdate,
+	PreUpdate,
+	PostUpdate,
 
-    PreDelete,
-    PostDelete,
+	PreDelete,
+	PostDelete,
 
-    OnLockRecord,
+	OnLockRecord,
 	WhenValidateRecord
 }

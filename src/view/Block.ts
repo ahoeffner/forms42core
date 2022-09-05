@@ -809,11 +809,12 @@ export class Block
 		this.getRow(0)?.setFieldState(FieldState.READONLY);
 		this.getRow(-1)?.setFieldState(FieldState.READONLY);
 
-		// set most restrictive datatype
+		// set most restrictive datatype and derived
 		this.getFieldNames().forEach((name) =>
 		{
 			let diff:boolean = false;
 			let type:DataType = null;
+			let derived:boolean = false;
 
 			this.getAllFields(name).forEach((fld) =>
 			{
@@ -822,6 +823,9 @@ export class Block
 
 				fld.getInstances().forEach((inst) =>
 				{
+					if (inst.defaultProperties.derived)
+						derived = true;
+
 					if (inst.datatype != type)
 					{
 						switch(type)
@@ -879,7 +883,16 @@ export class Block
 						inst.datatype = type;
 						inst.defaultProperties.setType(type);
 						FieldFeatureFactory.applyType(inst);
+						inst.defaultProperties.derived = derived;
 					});
+				});
+			}
+			else if (derived)
+			{
+				this.getAllFields(name).forEach((fld) =>
+				{
+					fld.getInstances().forEach((inst) =>
+					{inst.defaultProperties.derived = derived;});
 				});
 			}
 		});

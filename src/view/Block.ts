@@ -352,6 +352,7 @@ export class Block
 	{
 		this.rows$.forEach((row) =>
 		{
+			row.status = Status.na;
 			row.clear();
 			row.setFieldState(FieldState.OPEN);
 		});

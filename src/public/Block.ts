@@ -15,7 +15,6 @@ import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
-import { Block as ViewBlock } from '../view/Block.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Filter } from '../model/interfaces/Filter.js';
 import { Block as ModelBlock } from '../model/Block.js';

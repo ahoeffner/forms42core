@@ -15,6 +15,7 @@ import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
 
 import { Block } from '../public/Block.js';
+import { FormMetaData } from './FormMetaData.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { FormEvents } from '../control/events/FormEvents.js';
@@ -50,6 +51,7 @@ export class FormBacking
 
 	public static cleanup(form:Form) : void
 	{
+		FormMetaData.cleanup(form);
 		FormBacking.mforms.delete(form);
 		FormBacking.vforms.delete(form);
 		FormBacking.getBacking(form).removeAllEventListener();

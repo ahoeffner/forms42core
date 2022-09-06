@@ -16,6 +16,7 @@ import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
+import { FilterStructure } from "./FilterStructure.js";
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
@@ -435,7 +436,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
+	public async executeQuery(filters?:Filter|Filter[]|FilterStructure) : Promise<boolean>
 	{
 		if (!this.view.validated)
 		{
@@ -446,9 +447,18 @@ export class Block
 		if (!await this.preQuery())
 			return(false);
 
-		if (this.qbe.querymode)
+		let structure:FilterStructure = new FilterStructure();
+		if (this.qbe.querymode) structure = this.qbe.finalize();
+
+		if (filters != null)
 		{
-			this.qbe.finalize();
+			if (!Array.isArray(filters))
+				filters = [filters];
+
+			filters.forEach((filter) =>
+			{
+				structure.and(filter);
+			})
 		}
 
 		this.view.reset(true,true);
@@ -458,7 +468,7 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
-		if (!await wrapper.query(filters))
+		if (!await wrapper.query(structure))
 			return(false);
 
 		for (let i = 0; i < this.view.rows; i++)

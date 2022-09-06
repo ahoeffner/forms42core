@@ -12,6 +12,7 @@
 
 import { Filter } from "./interfaces/Filter.js";
 import { Record, RecordStatus } from "./Record.js";
+import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 
@@ -184,17 +185,9 @@ export class DataSourceWrapper
 		return(this.cache$[record]);
 	}
 
-	public async query(filters?:Filter|Filter[]) : Promise<boolean>
+	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
-		this.filters$ = [];
-
-		if (filters != null)
-		{
-			if (Array.isArray(filters)) this.filters$ = filters;
-			else						this.filters$ = [filters];
-		}
-
-		let success:boolean = await this.source.query(filters);
+		let success:boolean = await this.source.query(filter);
 
 		if (success)
 		{

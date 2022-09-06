@@ -12,12 +12,13 @@
 
 import { Block } from "./Block.js";
 import { Record } from "./Record.js";
+import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
+import { DataType } from "../view/fields/DataType.js";
+import { FilterStructure } from "./FilterStructure.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
-import { DataType } from "../view/fields/DataType.js";
-import { Filters } from "./filters/Filters.js";
-import { FilterGroup } from "./FilterGroup.js";
+
 
 export class QueryByExample
 {
@@ -59,9 +60,9 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
-	public finalize() : FilterGroup
+	public finalize() : FilterStructure
 	{
-		let group:FilterGroup = new FilterGroup();
+		let structure:FilterStructure = new FilterStructure();
 
 		this.record.columns.forEach((column) =>
 		{
@@ -79,13 +80,14 @@ export class QueryByExample
 					case DataType.decimal 	: filter = Filters.Equals(column); break;
 				}
 
-				group.and(filter);
+				structure.and(filter);
 			}
 
-			console.log(column+" -> "+this.record.getValue(column)+" filter: "+filter)
+			console.log(column+" -> "+this.record$.getValue(column))
+			filter.constraint = this.record$.getValue(column);
 		})
 
-		return(group);
+		return(structure);
 	}
 
 	private initialize() : void
@@ -98,13 +100,11 @@ export class QueryByExample
 			this.wrapper$.source = this.table$;
 			this.record$ = this.wrapper$.create(0);
 		}
-
-		this.wrapper.columns = [];
 	}
 }
 
 class QueryFilter
 {
 	private column$:string = null;
-	private filter$:Filter = null;
+	private filter$:Filter|FilterStructure = null;
 }

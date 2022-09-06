@@ -17,6 +17,8 @@ import { Filter } from "../interfaces/Filter.js";
 export class ILike implements Filter
 {
 	private column$:string = null;
+	private ltrunc:boolean = false;
+	private rtrunc:boolean = false;
 	private constraint$:string = null;
 
 	public constructor(column:string)
@@ -31,39 +33,43 @@ export class ILike implements Filter
 
 	public set constraint(value:string)
 	{
-		this.constraint$ = value;
+		if (value == null) return;
 		value = value.replace("*","%");
+
+		if (value.endsWith("%")) this.rtrunc = true;
+		if (value.startsWith("%")) this.ltrunc = true;
+
+		if (this.ltrunc) value = value.substring(1);
+		if (this.rtrunc) value = value.substring(0,value.length-1);
+
+		this.constraint$ = value.toLocaleLowerCase();
 	}
 
 	public async matches(record:Record) : Promise<boolean>
 	{
-		let ltrunc:boolean = false;
-		let rtrunc:boolean = false;
+		let val:string = record.getValue(this.column$)+"";
+		if (val == null || this.constraint$ == null) return(false);
 
-		let val:any = record.getValue(this.column$);
-		if (val == null) return(false);
+		val = val.toLocaleLowerCase();
 
-		if (this.constraint$.endsWith("%")) rtrunc = true;
-		if (this.constraint$.startsWith("%")) ltrunc = true;
-
-		if (rtrunc && ltrunc)
+		if (this.rtrunc && this.ltrunc)
 		{
-			if ((val+"").toLocaleLowerCase().includes(this.constraint$)) return(true);
+			if (val.includes(this.constraint$)) return(true);
 			return(false);
 		}
 
-		if (rtrunc)
+		if (this.rtrunc)
 		{
-			if ((val+"").toLocaleLowerCase().startsWith(this.constraint$)) return(true);
+			if (val.startsWith(this.constraint$)) return(true);
 			return(false);
 		}
 
-		if (ltrunc)
+		if (this.ltrunc)
 		{
-			if ((val+"").toLocaleLowerCase().endsWith(this.constraint$)) return(true);
+			if (val.endsWith(this.constraint$)) return(true);
 			return(false);
 		}
 
-		return((val+"") == this.constraint$);
+		return(val == this.constraint$);
 	}
 }

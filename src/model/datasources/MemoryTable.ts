@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Filter } from "../interfaces/Filter.js";
 import { Record, RecordStatus } from "../Record.js";
+import { FilterStructure } from "../FilterStructure.js";
 import { DataSource } from "../interfaces/DataSource.js";
 
 export class MemoryTable implements DataSource
@@ -25,7 +25,7 @@ export class MemoryTable implements DataSource
 	private sorting$:SortOrder[] = [];
 
 	public arrayfecth:number = 1;
-	private filters:Filter[] = [];
+	private filter:FilterStructure;
 
 	public constructor(columns?:string[], records?:any[][])
 	{
@@ -127,14 +127,11 @@ export class MemoryTable implements DataSource
 
 		while(this.pos$ < this.records$.length)
 		{
-			if (this.filters.length == 0)
+			if (this.filter.empty)
 				return([this.records$[this.pos$++]]);
 
-			for (let f = 0; f < this.filters.length; f++)
-			{
-				if (await this.filters[f].matches(this.records$[this.pos$]))
-					return([this.records$[this.pos$++]]);
-			}
+			if (await this.filter.matches(this.records$[this.pos$]))
+				return([this.records$[this.pos$++]]);
 
 			this.pos$++;
 		}
@@ -142,18 +139,12 @@ export class MemoryTable implements DataSource
 		return([]);
 	}
 
-	public async query(filters?:Filter|Filter[]) : Promise<boolean>
+	public async query(filter:FilterStructure) : Promise<boolean>
 	{
 		this.post();
 
 		this.pos$ = 0;
-		this.filters = [];
-
-		if (filters != null)
-		{
-			if (Array.isArray(filters)) this.filters = filters;
-			else						this.filters.push(filters);
-		}
+		this.filter = filter;
 
 		if (this.sorting$.length > 0)
 		{

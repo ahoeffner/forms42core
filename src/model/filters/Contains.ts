@@ -37,26 +37,37 @@ export class Contains implements Filter
 
 	public set constraint(values:string|string[])
 	{
-		if (!Array.isArray(values)) values = [values];
+		this.constraint$ = [];
+		if (values == null) return;
+
+		if (!Array.isArray(values))
+			values = values.split(" ")
 
 		for (let i = 0; i < values.length; i++)
-			values[i] = values[i]?.toLocaleLowerCase();
-
-		this.constraint$ = values;
+		{
+			if (values[i].length > 0)
+				this.constraint$.push(values[i].trim().toLocaleLowerCase());
+		}
 	}
 
 	public async matches(record:Record) : Promise<boolean>
 	{
-		for (let c = 0; c < this.columns$.length; c++)
-		{
-			for (let v = 0; v < this.constraint$.length; v++)
-			{
-				let val:any = record.getValue(this.columns$[c]);
-				if (val != null && (val+"").toLocaleLowerCase().includes(this.constraint$[v]))
-					return(true);
-			}
-		}
+		let val:string = "";
 
-		return(false);
+		if (this.constraint$.length == 0)
+			return(true);
+
+		for (let c = 0; c < this.columns$.length; c++)
+			val += " " +  record.getValue(this.columns$[c]);
+
+		val = val.toLocaleLowerCase();
+
+		if (this.constraint$.length > 1)
+			console.log("match "+this.constraint$+" to "+val)
+
+		for (let c = 0; c < this.constraint$.length; c++)
+			if (!val.includes(this.constraint$[c])) return(false);
+
+		return(true);
 	}
 }

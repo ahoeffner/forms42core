@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Filter } from './Filter.js';
 import { Record } from '../Record.js';
+import { FilterStructure } from '../FilterStructure.js';
 
 export interface DataSource
 {
@@ -27,5 +27,5 @@ export interface DataSource
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
-	query(filters?:Filter|Filter[]) : Promise<boolean>;
+	query(filters?:FilterStructure) : Promise<boolean>;
 }

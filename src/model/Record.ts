@@ -160,7 +160,8 @@ export class Record
 
 	public get columns() : string[]
 	{
-		let columns:string[] = this.source.columns;
+		let columns:string[] = [];
+		columns.push(...this.source.columns);
 		columns.push(...this.wrapper.columns);
 		return(columns);
 	}

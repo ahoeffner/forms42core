@@ -152,7 +152,7 @@ export class Block
 			this.form$.datamodel.clear(this);
 			this.form$.datamodel.setWrapper(this);
 
-			this.view.reset(true,true);
+			this.view.clear(true,true);
 			this.view.lockUnused();
 		}
 
@@ -160,10 +160,15 @@ export class Block
 		this.ctrlblk = (source == null);
 	}
 
-	public clearDataSource() : void
+	public reset(source:boolean) : void
 	{
-		this.source$ = null;
-		this.ctrlblk = true;
+		if (source)
+		{
+			this.source$ = null;
+			this.ctrlblk = true;
+		}
+
+		this.view.reset();
 	}
 
 	public get filters() : Filter[]
@@ -433,7 +438,7 @@ export class Block
 
 		this.wrapper.clear();
 		this.qbe.querymode = true;
-		this.view.reset(true,true);
+		this.view.clear(true,true);
 		this.view.display(0,this.qberec);
 
 		this.view.lockUnused();
@@ -467,7 +472,7 @@ export class Block
 			})
 		}
 
-		this.view.reset(true,true);
+		this.view.clear(true,true);
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
@@ -503,7 +508,7 @@ export class Block
 			return(false);
 
 		let displayed:number = 0;
-		this.view.reset(false,false);
+		this.view.clear(false,false);
 
 		let wrapper:DataSourceWrapper = this.wrapper;
 		let pos:number = this.record + records - offset;

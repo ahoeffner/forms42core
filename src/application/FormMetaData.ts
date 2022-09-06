@@ -11,7 +11,6 @@
  */
 
 import { Form } from "../public/Form.js";
-import { Block } from "../public/Block.js";
 import { FormBacking } from "./FormBacking.js";
 import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
@@ -25,18 +24,14 @@ export class FormMetaData
 
 	public static cleanup(form:Form) : void
 	{
-		let meta:FormMetaData = FormMetaData.metadata.get(form.constructor.name);
+		let meta:FormMetaData =
+			FormMetaData.metadata.get(form.constructor.name);
 
 		meta.blockattrs.forEach((_block,attr) =>
-		{
-			form[attr] = null;
-		});
+			{form[attr] = null;});
 
-		meta.getDataSources().forEach((_source,block) =>
-		{
-			let blk:Block = form.getBlock(block.toLowerCase());
-			if (blk != null) FormBacking.getModelBlock(blk).clearDataSource();
-		})
+		FormBacking.getModelForm(form).getBlocks().forEach((blk) =>
+			{blk.reset(meta.blocksources$.get(blk.name) != null);})
 	}
 
 	public static get(form:Class<Form>|Form, create?:boolean) : FormMetaData
@@ -82,6 +77,6 @@ export class FormMetaData
 
 	public addDataSource(block:string, source:Class<DataSource>|DataSource) : void
 	{
-		this.blocksources$.set(block,source);
+		this.blocksources$.set(block.toLowerCase(),source);
 	}
 }

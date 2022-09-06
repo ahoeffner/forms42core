@@ -54,6 +54,16 @@ export class Form
 		return(this.parent$);
 	}
 
+	public getBlocks() : Block[]
+	{
+		let blocks:Block[] = [];
+
+		this.blocks$.forEach((block) =>
+			{blocks.push(block)})
+
+		return(blocks);
+	}
+
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks$.get(name));
@@ -145,7 +155,7 @@ export class Form
 
 		meta.getDataSources().forEach((source,block) =>
 		{
-			let blk:Block = this.getBlock(block.toLowerCase());
+			let blk:Block = this.getBlock(block);
 			if (blk != null) blk.datasource = source;
 		})
 

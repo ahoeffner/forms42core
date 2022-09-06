@@ -34,7 +34,7 @@ export class Form implements EventListenerObject
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
-	private blocks:Map<string,Block> = new Map<string,Block>();
+	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private indicators:Map<string,Indicator[]> = new Map<string,Indicator[]>();
 
 	constructor(parent:InterfaceForm)
@@ -72,14 +72,14 @@ export class Form implements EventListenerObject
 
 	public getBlock(name:string) : Block
 	{
-		return(this.blocks.get(name));
+		return(this.blocks$.get(name));
 	}
 
 	public getBlocks() : Block[]
 	{
 		let blocks:Block[] = [];
 
-		this.blocks.forEach((block) =>
+		this.blocks$.forEach((block) =>
 			{blocks.push(block)})
 
 		return(blocks);
@@ -87,7 +87,7 @@ export class Form implements EventListenerObject
 
 	public addBlock(block:Block) : void
 	{
-		this.blocks.set(block.name,block);
+		this.blocks$.set(block.name,block);
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent.name);
 	}
 
@@ -119,18 +119,23 @@ export class Form implements EventListenerObject
 			this.curinst$?.focus();
 			return;
 		}
-		else if (this.blocks.size > 0)
+		else if (this.blocks$.size > 0)
 		{
-			this.blocks.values().next().value.focus();
+			this.blocks$.values().next().value.focus();
 			return;
 		}
+	}
+
+	public async validate() : Promise<boolean>
+	{
+		return(this.curinst$.field.block.validateBlock());
 	}
 
 	public validated() : boolean
 	{
 		let valid:boolean = true;
 
-		this.blocks.forEach((blk) =>
+		this.blocks$.forEach((blk) =>
 		{
 			if (!blk.validated)
 				valid = false;
@@ -471,7 +476,7 @@ export class Form implements EventListenerObject
 		{
 			case KeyMap.nextblock :
 			{
-				let blks:Block[] = [...this.blocks.values()];
+				let blks:Block[] = [...this.blocks$.values()];
 
 				let nxt:boolean = false;
 				next = blks[blks.length-1];
@@ -493,7 +498,7 @@ export class Form implements EventListenerObject
 
 			case KeyMap.prevblock :
 			{
-				let blks:Block[] = [...this.blocks.values()];
+				let blks:Block[] = [...this.blocks$.values()];
 
 				next = blks[0];
 				let nxt:boolean = false;
@@ -606,7 +611,7 @@ export class Form implements EventListenerObject
 
 	public async finalize() : Promise<void>
 	{
-		this.blocks.forEach((blk) => {blk.finalize();});
+		this.blocks$.forEach((blk) => {blk.finalize();});
 		this.addEvents(this.parent.getView());
 		this.indicators.clear();
 	}

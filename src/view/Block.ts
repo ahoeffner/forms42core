@@ -348,7 +348,16 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public reset(props:boolean, rewind:boolean) : void
+	public reset() : void
+	{
+		this.rows$.forEach((row) =>
+		{
+			row.clear();
+			row.setFieldState(FieldState.OPEN);
+		});
+	}
+
+	public clear(props:boolean, rewind:boolean) : void
 	{
 		this.current = null;
 		this.displayed$.clear();

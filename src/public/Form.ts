@@ -55,6 +55,11 @@ export class Form implements CanvasComponent
 		return(FormBacking.getViewForm(this).validated());
 	}
 
+	public async validate() : Promise<boolean>
+	{
+		return(FormBacking.getViewForm(this).validate());
+	}
+
 	public getView() : HTMLElement
 	{
 		return(FormBacking.getBacking(this).page);

@@ -79,6 +79,9 @@ export class Row
 
 		this.rownum$ = rownum;
 
+		this.indicators.forEach((ind) =>
+		{ind.element.setAttribute("row",rownum+"")})
+
 		this.getFields().forEach((fld) =>
 		{
 			fld.getInstances().forEach((inst) =>

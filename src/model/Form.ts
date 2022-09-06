@@ -141,12 +141,6 @@ export class Form
 	{
 		let meta:FormMetaData = FormMetaData.get(this.parent);
 
-		meta.blockattrs.forEach((block,attr) =>
-		{
-			let blk:Block = this.getBlock(block.toLowerCase());
-			if (blk != null) this.parent[attr] = blk;
-		})
-
 		meta.eventhandlers.forEach((filter,method) =>
 		{
 			let handle:object = FormEvents.addListener(this.parent,this.parent,method,filter);
@@ -161,6 +155,9 @@ export class Form
 
 		this.blocks$.forEach((block) =>
 			{block.finalize()});
+
+		meta.blockattrs.forEach((block,attr) =>
+		{this.parent[attr] = this.parent.getBlock(block)})
 
 		await this.initControlBlocks();
 	}

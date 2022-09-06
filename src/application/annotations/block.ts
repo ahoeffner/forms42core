@@ -18,6 +18,7 @@ export const block = (block:string) =>
 {
 	function define(form:Form, attr:string)
 	{
+		block = block?.toLowerCase();
 		FormMetaData.get(form,true).blockattrs.set(attr,block);
 		Logger.log(Type.metadata,"Setting variable "+attr+" on form: "+form.name+" to block: "+block);
 	}

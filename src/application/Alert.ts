@@ -36,8 +36,6 @@ export class Alert
 		if (type == null)
 			type = Type.Popup;
 
-		console.log("warning "+Type[type])
-
 		if (type == Type.Popup || type == Type.PopAndLog)
 			window.alert(msg);
 

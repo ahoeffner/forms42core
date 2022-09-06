@@ -38,7 +38,7 @@ export class FormBacking
 
 	public static setBacking(form:Form) : FormBacking
 	{
-		let back:FormBacking = new FormBacking();
+		let back:FormBacking = new FormBacking(form);
 		FormBacking.bdata.set(form,back);
 		return(back);
 	}
@@ -108,8 +108,30 @@ export class FormBacking
 	}
 
 
-	public page:HTMLElement = null;
-	public listeners:object[] = [];
+	private listeners$:object[] = [];
+	private page$:HTMLElement = null;
+
+	constructor(public form:Form) {}
+
+	public get page() : HTMLElement
+	{
+		return(this.page$);
+	}
+
+	public set page(page:HTMLElement)
+	{
+		this.page$ = page;
+	}
+
+	public get listeners() : object[]
+	{
+		return(this.listeners$);
+	}
+
+	public set listeners(listeners:object[])
+	{
+		this.listeners$ = listeners;
+	}
 
 	public removeEventListener(handle:object) : void
 	{

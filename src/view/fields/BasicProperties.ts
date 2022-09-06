@@ -276,7 +276,7 @@ export class BasicProperties
 			return(this);
 
 		if (!Array.isArray(classes))
-			classes = classes.split(" ,");
+			classes = classes.split(' ');
 
 		for (let i = 0; i < classes.length; i++)
 		{

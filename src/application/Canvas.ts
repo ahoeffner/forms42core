@@ -125,6 +125,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		}
 
 		this.container.appendChild(page);
+		
+		this.moveable = this.component.moveable;
+		this.resizable = this.component.resizable;
 	}
 
 	public setComponent(component:CanvasComponent) : void

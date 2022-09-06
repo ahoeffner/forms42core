@@ -330,9 +330,6 @@ export class Block
 		if (!await this.current.field.validate(this.current))
 			return(false);
 
-		if (this.current.field.block.model.ctrlblk)
-			return(true);
-
 		return(this.getRow(this.row).validate());
 	}
 

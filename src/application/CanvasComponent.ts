@@ -20,6 +20,6 @@ export interface CanvasComponent
     navigable:boolean;
     resizable:boolean;
 
+    getView() : HTMLElement;
     close() : Promise<boolean>;
-    getView() : string|HTMLElement;
 }

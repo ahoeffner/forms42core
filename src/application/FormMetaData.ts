@@ -12,6 +12,7 @@
 
 import { Form } from "../public/Form.js";
 import { Block } from "../public/Block.js";
+import { FormBacking } from "./FormBacking.js";
 import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
@@ -34,7 +35,7 @@ export class FormMetaData
 		meta.getDataSources().forEach((_source,block) =>
 		{
 			let blk:Block = form.getBlock(block.toLowerCase());
-			if (blk != null) blk.datasource = null;
+			if (blk != null) FormBacking.getModelBlock(blk).clearDataSource();
 		})
 	}
 

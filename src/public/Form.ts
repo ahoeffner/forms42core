@@ -103,6 +103,7 @@ export class Form implements CanvasComponent
 			FormBacking.cleanup(this);
 		}
 
+
 		page = Framework.prepare(page);
 		Framework.parse(this,page);
 		back.page = page;

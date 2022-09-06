@@ -54,7 +54,7 @@ export class FormBacking
 		FormMetaData.cleanup(form);
 		FormBacking.mforms.delete(form);
 		FormBacking.vforms.delete(form);
-		FormBacking.getBacking(form).removeAllEventListener();
+		FormBacking.getBacking(form).removeAllEventListeners();
 	}
 
 	public static getViewForm(form:Form, create?:boolean) : ViewForm
@@ -140,7 +140,7 @@ export class FormBacking
 		FormEvents.removeListener(handle);
 	}
 
-	public removeAllEventListener() : void
+	public removeAllEventListeners() : void
 	{
 		this.listeners.forEach((handle) => {FormEvents.removeListener(handle)});
 		this.listeners = [];

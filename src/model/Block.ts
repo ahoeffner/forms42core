@@ -156,8 +156,14 @@ export class Block
 			this.view.lockUnused();
 		}
 
-		this.ctrlblk = false;
 		this.source$ = source;
+		this.ctrlblk = (source == null);
+	}
+
+	public clearDataSource() : void
+	{
+		this.source$ = null;
+		this.ctrlblk = true;
 	}
 
 	public get filters() : Filter[]

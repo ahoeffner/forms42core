@@ -115,7 +115,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	public refresh() : void
 	{
 		this.container.innerHTML = "";
-			let page = this.component.getView();
+		let page:HTMLElement = this.component.getView();
 
 		if (typeof page === 'string')
 		{
@@ -125,7 +125,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		}
 
 		this.container.appendChild(page);
-		
+
 		this.moveable = this.component.moveable;
 		this.resizable = this.component.resizable;
 	}

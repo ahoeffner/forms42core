@@ -169,7 +169,7 @@ export class KeyMapping
 		{
 			case KeyMap.prevfield : return(true);
 			case KeyMap.nextfield : return(true);
-			default 			  : return(false);
+			default 			  		 : return(false);
 		}
 	}
 
@@ -177,11 +177,11 @@ export class KeyMapping
 	{
 		switch(key)
 		{
-			case KeyMap.pageup 	   : return(true);
+			case KeyMap.pageup 	  : return(true);
 			case KeyMap.pagedown   : return(true);
 			case KeyMap.prevrecord : return(true);
 			case KeyMap.nextrecord : return(true);
-			default 			   : return(false);
+			default 			   	  : return(false);
 		}
 	}
 
@@ -191,7 +191,7 @@ export class KeyMapping
 		{
 			case KeyMap.prevblock : return(true);
 			case KeyMap.nextblock : return(true);
-			default 			  : return(false);
+			default 			  		 : return(false);
 		}
 	}
 

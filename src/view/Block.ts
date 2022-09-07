@@ -427,6 +427,9 @@ export class Block
 		if (this.model.querymode)
 			return(false);
 
+		if (this.getCurrentRow().status == Status.na)
+			return(false);
+
 		if (!await inst.field.validate(inst))
 		{
 			next.focus();
@@ -662,7 +665,7 @@ export class Block
 
 			// fetch up from first, down from last
 			if (scroll < 0) available = await this.model.prefetch(scroll,-this.row);
-			else			available = await this.model.prefetch(scroll,this.rows-this.row-1);
+			else				 available = await this.model.prefetch(scroll,this.rows-this.row-1);
 
 			if (available <= 0) return(next);
 			let move:boolean = (scroll > 1 && available <= this.row);
@@ -709,6 +712,7 @@ export class Block
 
 		if (inst.row < 0)
 		{
+			console.log("scroll 4")
 			if (this.getRow(this.row+scroll).status == Status.na)
 				return(inst);
 

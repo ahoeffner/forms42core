@@ -451,7 +451,10 @@ export class Block
 	public async executeQuery() : Promise<boolean>
 	{
 		if (!this.qbe.querymode)
+		{
 			this.qbe.clear();
+			this.wrapper.clear();
+		}
 
 		if (!this.view.validated)
 		{

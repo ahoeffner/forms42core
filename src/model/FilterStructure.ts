@@ -18,6 +18,9 @@ export class FilterStructure
 {
 	private entries$:Constraint[] = [];
 
+	private index$:Map<Filter|FilterStructure,Constraint> =
+		new Map<Filter|FilterStructure,Constraint>();
+
 	public get empty() : boolean
 	{
 		return(this.entries$.length == 0);
@@ -31,16 +34,33 @@ export class FilterStructure
 	public clear() : void
 	{
 		this.entries$ = [];
+		this.index$.clear();
 	}
 
 	public or(filter:Filter|FilterStructure) : void
 	{
-		this.entries$.push(new Constraint(false,filter));
+		if (filter == this)
+			return;
+
+		if (!this.index$.has(filter))
+		{
+			let cstr:Constraint = new Constraint(false,filter);
+			this.index$.set(filter,cstr);
+			this.entries$.push(cstr);
+		}
 	}
 
 	public and(filter:Filter|FilterStructure) : void
 	{
-		this.entries$.push(new Constraint(true,filter));
+		if (filter == this)
+			return;
+
+		if (!this.index$.has(filter))
+		{
+			let cstr:Constraint = new Constraint(true,filter);
+			this.index$.set(filter,cstr);
+			this.entries$.push(cstr);
+		}
 	}
 
 	public async matches(record:Record) : Promise<boolean>

@@ -256,8 +256,8 @@ export class Block
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.update);})
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async executeQuery(requery?:boolean) : Promise<boolean>
 	{
-		return(FormBacking.getModelBlock(this).executeQuery());
+		return(FormBacking.getModelBlock(this).executeQuery(requery));
 	}
 }

@@ -448,19 +448,19 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async executeQuery(requery?:boolean) : Promise<boolean>
 	{
 		if (!this.qbe.querymode)
 		{
-			this.qbe.clear();
 			this.wrapper.clear();
+			if (!requery) this.qbe.clear();
 		}
 
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateBlock())
 			{
-				this.qbe.clear();
+				if (!requery) this.qbe.clear();
 				return(false);
 			}
 		}

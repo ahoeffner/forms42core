@@ -98,7 +98,6 @@ export class QueryByExample
 				}
 
 				filter.constraint = value;
-				console.log("finalize "+filter.constructor.name+" -> "+value)
 			}
 		})
 	}

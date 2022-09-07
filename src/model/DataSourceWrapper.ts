@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Filter } from "./interfaces/Filter.js";
 import { Record, RecordStatus } from "./Record.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
@@ -21,9 +20,9 @@ export class DataSourceWrapper
 	private eof$:boolean;
 	private cache$:Record[];
 	private hwm$:number = 0;
-	private filters$:Filter[] = [];
 	private columns$:string[] = [];
 	private source$:DataSource = null;
+	private filter$:FilterStructure = new FilterStructure();
 
 	constructor(public block?:ModelBlock)
 	{
@@ -54,9 +53,9 @@ export class DataSourceWrapper
 		this.columns$ = columns;
 	}
 
-	public get filters() : Filter[]
+	public get filter() : FilterStructure
 	{
-		return(this.filters$);
+		return(this.filter$);
 	}
 
 	public clear() : void
@@ -67,7 +66,7 @@ export class DataSourceWrapper
 
 		this.source.post();
 
-		this.filters$ = [];
+		this.filter$.clear();
 		this.source.closeCursor();
 	}
 
@@ -187,7 +186,8 @@ export class DataSourceWrapper
 
 	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
-		let success:boolean = await this.source.query(filter);
+		this.filter$.add(filter);
+		let success:boolean = await this.source.query(this.filter);
 
 		if (success)
 		{

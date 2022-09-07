@@ -37,6 +37,13 @@ export class Equals implements Filter
 	public async matches(record:Record) : Promise<boolean>
 	{
 		let val:any = record.getValue(this.column$);
+
+		if (this.constraint$ == null)
+			return(true);
+
+		if (val == null)
+			return(false);
+
 		return(val == this.constraint$);
 	}
 }

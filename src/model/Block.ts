@@ -171,9 +171,9 @@ export class Block
 		this.view.reset();
 	}
 
-	public get filters() : Filter[]
+	public get filter() : FilterStructure
 	{
-		return(this.wrapper.filters);
+		return(this.wrapper.filter);
 	}
 
 	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
@@ -436,6 +436,7 @@ export class Block
 				return(false);
 		}
 
+		this.qbe.clear();
 		this.wrapper.clear();
 		this.qbe.querymode = true;
 		this.view.clear(true,true);
@@ -447,7 +448,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(filters?:Filter|Filter[]|FilterStructure) : Promise<boolean>
+	public async executeQuery() : Promise<boolean>
 	{
 		if (!this.view.validated)
 		{
@@ -458,28 +459,22 @@ export class Block
 		if (!await this.preQuery())
 			return(false);
 
-		let structure:FilterStructure = new FilterStructure();
-		if (this.qbe.querymode) structure = this.qbe.finalize();
+		if (this.qbe.querymode)
+			this.qbe.finalize(this.filter);
 
-		if (filters != null)
-		{
-			if (!Array.isArray(filters))
-				filters = [filters];
-
-			filters.forEach((filter) =>
-			{
-				structure.and(filter);
-			})
-		}
-
+		console.log("1 filter for "+this.name+": "+this.filter.size())
 		this.view.clear(true,true);
+		console.log("2 filter for "+this.name+": "+this.filter.size())
 		this.qbe.querymode = false;
+		console.log("3 filter for "+this.name+": "+this.filter.size())
 		let wrapper:DataSourceWrapper = this.wrapper;
+		console.log("4 filter for "+this.name+": "+this.filter.size())
 
 		this.record$ = -1;
 		let record:Record = null;
 
-		if (!await wrapper.query(structure))
+		console.log("5 filter for "+this.name+": "+this.filter.size())
+		if (!await wrapper.query(this.filter))
 			return(false);
 
 		for (let i = 0; i < this.view.rows; i++)

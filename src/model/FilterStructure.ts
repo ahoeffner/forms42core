@@ -23,6 +23,22 @@ export class FilterStructure
 		return(this.entries$.length == 0);
 	}
 
+	public size() : number
+	{
+		return(this.entries$.length);
+	}
+
+	public clear() : void
+	{
+		this.entries$ = [];
+	}
+
+	public add(structure:FilterStructure) : void
+	{
+		if (structure != null)
+			this.entries$.push(...structure.entries$);
+	}
+
 	public or(filter:Filter|FilterStructure) : void
 	{
 		this.entries$.push(new Constraint(false,filter));
@@ -30,6 +46,7 @@ export class FilterStructure
 
 	public and(filter:Filter|FilterStructure) : void
 	{
+		console.log("push "+this.entries$.length)
 		this.entries$.push(new Constraint(true,filter));
 	}
 
@@ -49,6 +66,21 @@ export class FilterStructure
 		}
 
 		return(match);
+	}
+
+	public toString() : string
+	{
+		let str:string = "";
+
+		this.entries$.forEach((cons) =>
+		{
+			if (str.length > 0) str += " ";
+			str += cons.filter.constructor.name;
+			if (cons.filter["constraint"]) str += cons.filter["constraint"];
+			else 									 str += cons.filter.toString();
+		})
+
+		return(str);
 	}
 }
 

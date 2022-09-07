@@ -48,7 +48,12 @@ export class Like implements Filter
 	public async matches(record:Record) : Promise<boolean>
 	{
 		let val:string = record.getValue(this.column$)+"";
-		if (val == null || this.constraint$ == null) return(false);
+
+		if (this.constraint$ == null)
+			return(true);
+
+		if (val == null)
+			return(false);
 
 		if (this.rtrunc && this.ltrunc)
 		{

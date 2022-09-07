@@ -32,6 +32,7 @@ export class QueryByExample
 	constructor(block:Block)
 	{
 		this.block$ = block;
+		this.initialize();
 	}
 
 	public get querymode() : boolean
@@ -42,7 +43,6 @@ export class QueryByExample
 	public set querymode(flag:boolean)
 	{
 		this.qmode$ = flag;
-		if (flag) this.initialize();
 	}
 
 	public clear() : void
@@ -60,37 +60,44 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
-	public finalize() : FilterStructure
+	public finalize(structure:FilterStructure) : void
 	{
-		let structure:FilterStructure = new FilterStructure();
-
 		this.record.columns.forEach((column) =>
 		{
 			let filter:Filter = null;
+			let value = this.record$.getValue(column);
 			let qf:QueryFilter = this.filters$.get(column);
 
-			if (qf == null)
+			if (value == null)
 			{
-				switch(this.block$.view.fieldinfo.get(column).type)
+				if (qf != null)
+					this.filters$.delete(column);
+			}
+			else
+			{
+				if (qf == null)
 				{
-					case DataType.date 		: filter = Filters.Like(column); break;
-					case DataType.datetime 	: filter = Filters.Like(column); break;
-					case DataType.string 	: filter = Filters.Like(column); break;
-					case DataType.integer 	: filter = Filters.Equals(column); break;
-					case DataType.decimal 	: filter = Filters.Equals(column); break;
+					switch(this.block$.view.fieldinfo.get(column).type)
+					{
+						case DataType.date 		: filter = Filters.Like(column); break;
+						case DataType.datetime 	: filter = Filters.Like(column); break;
+						case DataType.string 	: filter = Filters.Like(column); break;
+						case DataType.integer 	: filter = Filters.Equals(column); break;
+						case DataType.decimal 	: filter = Filters.Equals(column); break;
+					}
+
+					structure.and(filter);
 				}
 
-				structure.and(filter);
+				filter.constraint = value;
+				console.log("finalize "+filter.constructor.name+" -> "+value)
 			}
-
-			filter.constraint = this.record$.getValue(column);
 		})
-
-		return(structure);
 	}
 
 	private initialize() : void
 	{
+		console.log("initialize "+this.wrapper$)
 		if (this.wrapper$ == null)
 		{
 			this.table$ = new MemoryTable();

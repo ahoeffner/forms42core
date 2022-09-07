@@ -21,6 +21,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
+import { FilterStructure } from '../model/FilterStructure.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
@@ -54,9 +55,9 @@ export class Block
 		return(this.name$);
 	}
 
-	public get filters() : Filter[]
+	public get filter() : FilterStructure
 	{
-		return(FormBacking.getModelBlock(this).filters);
+		return(FormBacking.getModelBlock(this).filter);
 	}
 
 	public focus() : void
@@ -255,8 +256,8 @@ export class Block
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.update);})
 	}
 
-	public async executeQuery(filters?:Filter|Filter[]) : Promise<boolean>
+	public async executeQuery() : Promise<boolean>
 	{
-		return(FormBacking.getModelBlock(this).executeQuery(filters));
+		return(FormBacking.getModelBlock(this).executeQuery());
 	}
 }

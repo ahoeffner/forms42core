@@ -173,7 +173,7 @@ export class Block
 
 	public get filter() : FilterStructure
 	{
-		return(this.wrapper.filter);
+		return(this.qbe.filter);
 	}
 
 	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
@@ -450,32 +450,39 @@ export class Block
 
 	public async executeQuery() : Promise<boolean>
 	{
+		if (!this.qbe.querymode)
+			this.qbe.clear();
+
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateBlock())
+			{
+				this.qbe.clear();
 				return(false);
+			}
 		}
 
 		if (!await this.preQuery())
+		{
+			this.qbe.clear();
 			return(false);
+		}
 
 		if (this.qbe.querymode)
-			this.qbe.finalize(this.filter);
+			this.qbe.finalize();
 
-		console.log("1 filter for "+this.name+": "+this.filter.size())
 		this.view.clear(true,true);
-		console.log("2 filter for "+this.name+": "+this.filter.size())
 		this.qbe.querymode = false;
-		console.log("3 filter for "+this.name+": "+this.filter.size())
 		let wrapper:DataSourceWrapper = this.wrapper;
-		console.log("4 filter for "+this.name+": "+this.filter.size())
 
 		this.record$ = -1;
 		let record:Record = null;
 
-		console.log("5 filter for "+this.name+": "+this.filter.size())
 		if (!await wrapper.query(this.filter))
+		{
+			this.qbe.clear();
 			return(false);
+		}
 
 		for (let i = 0; i < this.view.rows; i++)
 		{
@@ -490,11 +497,7 @@ export class Block
 		}
 
 		this.view.lockUnused();
-
-		if (!await this.postQuery())
-			return(false);
-
-		return(true);
+		return(await this.postQuery());
 	}
 
 	public scroll(records:number, offset:number) : boolean

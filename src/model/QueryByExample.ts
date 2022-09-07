@@ -27,6 +27,7 @@ export class QueryByExample
 	private qmode$:boolean = false;
 	private table$:MemoryTable = null;
 	private wrapper$:DataSourceWrapper = null;
+	private filter$:FilterStructure = new FilterStructure();
 	private filters$:Map<string,QueryFilter> = new Map<string,QueryFilter>();
 
 	constructor(block:Block)
@@ -47,6 +48,8 @@ export class QueryByExample
 
 	public clear() : void
 	{
+		this.qmode$ = false;
+		this.filter$.clear();
 		this.record$?.clear();
 	}
 
@@ -60,7 +63,12 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
-	public finalize(structure:FilterStructure) : void
+	public get filter() : FilterStructure
+	{
+		return(this.filter$);
+	}
+
+	public finalize() : void
 	{
 		this.record.columns.forEach((column) =>
 		{
@@ -86,7 +94,7 @@ export class QueryByExample
 						case DataType.decimal 	: filter = Filters.Equals(column); break;
 					}
 
-					structure.and(filter);
+					this.filter.and(filter);
 				}
 
 				filter.constraint = value;
@@ -97,7 +105,6 @@ export class QueryByExample
 
 	private initialize() : void
 	{
-		console.log("initialize "+this.wrapper$)
 		if (this.wrapper$ == null)
 		{
 			this.table$ = new MemoryTable();

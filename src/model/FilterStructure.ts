@@ -33,12 +33,6 @@ export class FilterStructure
 		this.entries$ = [];
 	}
 
-	public add(structure:FilterStructure) : void
-	{
-		if (structure != null)
-			this.entries$.push(...structure.entries$);
-	}
-
 	public or(filter:Filter|FilterStructure) : void
 	{
 		this.entries$.push(new Constraint(false,filter));
@@ -46,7 +40,6 @@ export class FilterStructure
 
 	public and(filter:Filter|FilterStructure) : void
 	{
-		console.log("push "+this.entries$.length)
 		this.entries$.push(new Constraint(true,filter));
 	}
 

@@ -62,9 +62,6 @@ export class Contains implements Filter
 
 		val = val.toLocaleLowerCase();
 
-		if (this.constraint$.length > 1)
-			console.log("match "+this.constraint$+" to "+val)
-
 		for (let c = 0; c < this.constraint$.length; c++)
 			if (!val.includes(this.constraint$[c])) return(false);
 

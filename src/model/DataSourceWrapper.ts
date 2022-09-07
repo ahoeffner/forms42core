@@ -22,7 +22,6 @@ export class DataSourceWrapper
 	private hwm$:number = 0;
 	private columns$:string[] = [];
 	private source$:DataSource = null;
-	private filter$:FilterStructure = new FilterStructure();
 
 	constructor(public block?:ModelBlock)
 	{
@@ -53,11 +52,6 @@ export class DataSourceWrapper
 		this.columns$ = columns;
 	}
 
-	public get filter() : FilterStructure
-	{
-		return(this.filter$);
-	}
-
 	public clear() : void
 	{
 		this.hwm$ = 0;
@@ -65,8 +59,6 @@ export class DataSourceWrapper
 		this.columns$ = [];
 
 		this.source.post();
-
-		this.filter$.clear();
 		this.source.closeCursor();
 	}
 
@@ -186,8 +178,7 @@ export class DataSourceWrapper
 
 	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
-		this.filter$.add(filter);
-		let success:boolean = await this.source.query(this.filter);
+		let success:boolean = await this.source.query(filter);
 
 		if (success)
 		{

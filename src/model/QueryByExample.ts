@@ -11,9 +11,9 @@
  */
 
 import { Block } from "./Block.js";
-import { Record } from "./Record.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
+import { Record, RecordStatus } from "./Record.js";
 import { DataType } from "../view/fields/DataType.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
@@ -83,7 +83,6 @@ export class QueryByExample
 				structure.and(filter);
 			}
 
-			console.log(column+" -> "+this.record$.getValue(column))
 			filter.constraint = this.record$.getValue(column);
 		})
 
@@ -99,6 +98,7 @@ export class QueryByExample
 
 			this.wrapper$.source = this.table$;
 			this.record$ = this.wrapper$.create(0);
+			this.record$.status = RecordStatus.QBE;
 		}
 	}
 }

@@ -74,12 +74,12 @@ export class FieldInstance implements FieldEventHandler
 			this.insproperties$.setReadOnly(!flag);
 		}
 
-		if (query != null)
-		{
-			let flag:boolean = query.toLowerCase() == "true";
-			this.qbeproperties$ = FieldFeatureFactory.clone(this.properties$);
-			this.qbeproperties$.setReadOnly(!flag);
-		}
+		if (query == null) query = "true";
+		let flag:boolean = query.toLowerCase() == "true";
+		this.qbeproperties$ = FieldFeatureFactory.clone(this.properties$);
+
+		this.qbeproperties$.required = false;
+		this.qbeproperties$.readonly = !flag;
 
 		FieldFeatureFactory.apply(this,this.properties$);
 		this.impl.apply(this.properties$,true);

@@ -323,7 +323,6 @@ export class Block
 
 	public async validateRow() : Promise<boolean>
 	{
-		if (this.model.querymode) return(true);
 		if (!this.getCurrentRow().exist) return(true);
 		if (this.getCurrentRow().validated) return(true);
 
@@ -353,7 +352,7 @@ export class Block
 		this.rows$.forEach((row) =>
 		{
 			row.status = Status.na;
-			
+
 			row.clear();
 			row.setFieldState(FieldState.OPEN);
 		});

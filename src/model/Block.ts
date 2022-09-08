@@ -441,6 +441,8 @@ export class Block
 				return(false);
 		}
 
+		this.record$ = 0;
+
 		this.qbe.clear();
 		this.wrapper.clear();
 		this.qbe.querymode = true;

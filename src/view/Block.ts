@@ -715,7 +715,6 @@ export class Block
 
 		if (inst.row < 0)
 		{
-			console.log("scroll 4")
 			if (this.getRow(this.row+scroll).status == Status.na)
 				return(inst);
 

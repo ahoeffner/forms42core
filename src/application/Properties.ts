@@ -41,7 +41,7 @@ export class Properties
 {
 	public static baseurl:string = "/";
 
-	public static BindAttr:string = "bind";
+	public static BindAttr:string = "from";
 	public static RecordModeAttr:string = "mode";
 
 	public static RootTag:string = "forms";

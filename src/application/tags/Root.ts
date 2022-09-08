@@ -19,9 +19,6 @@ export class Root implements Tag
     {
 		let root:HTMLElement = document.createElement("div");
 		Framework.copyAttributes(tag,root);
-
-		root.style.position = "sticky";
-
 		return(root);
     }
 }

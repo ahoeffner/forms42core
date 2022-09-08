@@ -81,6 +81,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		if (this.parent == null) return;
 		this.parent.appendChild(this.canvas);
 		this.parent = null;
+		this.focus();
 	}
 
 	public getElement() : HTMLElement

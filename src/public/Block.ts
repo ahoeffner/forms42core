@@ -62,10 +62,7 @@ export class Block
 
 	public focus() : void
 	{
-		setTimeout(() =>
-		{
-			FormBacking.getViewBlock(this).focus();
-		},0);
+		FormBacking.getViewBlock(this).focus();
 	}
 
 	public goField(field:string, clazz?:string) : void
@@ -83,12 +80,7 @@ export class Block
 		}
 
 		if (inst != null)
-		{
-			setTimeout(() =>
-			{
-				inst.focus();
-			},0);
-		}
+			inst.focus();
 	}
 
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<string[][]>

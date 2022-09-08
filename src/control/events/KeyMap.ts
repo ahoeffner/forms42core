@@ -24,6 +24,7 @@ export class KeyMap
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8});
+	public static queryeditor:KeyMap = new KeyMap({key: KeyCodes.f7, ctrl: true});
 
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});

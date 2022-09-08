@@ -28,7 +28,8 @@ export class QueryByExample
 	private table$:MemoryTable = null;
 	private wrapper$:DataSourceWrapper = null;
 	private filter$:FilterStructure = new FilterStructure();
-	private filters$:Map<string,QueryFilter> = new Map<string,QueryFilter>();
+	private lastqry$:Map<string,QueryFilter> = new Map<string,QueryFilter>();
+	private filters$:Map<string,Filter|FilterStructure> = new Map<string,Filter|FilterStructure>();
 
 	constructor(block:Block)
 	{
@@ -49,9 +50,26 @@ export class QueryByExample
 	public clear() : void
 	{
 		this.qmode$ = false;
+		this.lastqry$.clear();
+
+		this.record$.values.forEach((column) =>
+		{
+			let qf:QueryFilter = new QueryFilter(column.value,this.filters$.get(column.name));
+			this.lastqry$.set(column.name,qf);
+		})
+
 		this.filter$.clear();
 		this.filters$.clear();
 		this.record$?.clear();
+	}
+
+	public showLastQuery() : void
+	{
+		this.lastqry$.forEach((qf,column) =>
+		{
+			this.record$.setValue(column,qf.value);
+			this.setFilter(column,qf.filter);
+		})
 	}
 
 	public get record() : Record
@@ -71,7 +89,7 @@ export class QueryByExample
 
 	public getFilter(column:string) : Filter|FilterStructure
 	{
-		return(this.filters$.get(column)?.filter);
+		return(this.filters$.get(column));
 	}
 
 	public setFilter(column:string, filter?:Filter|FilterStructure) : void
@@ -79,8 +97,14 @@ export class QueryByExample
 		if (filter == null)
 			filter = this.getDefaultFilter(column);
 
-		if (filter == null) this.filters$.delete(column);
-		else this.filters$.set(column, new QueryFilter(column,filter));
+		if (filter == null)
+		{
+			this.filters$.delete(column);
+		}
+		else
+		{
+			this.filters$.set(column,filter);
+		}
 	}
 
 	public getDefaultFilter(column:string) : Filter
@@ -104,11 +128,10 @@ export class QueryByExample
 		return(filter);
 	}
 
-	public finalize(clear:boolean) : void
+	public finalize() : void
 	{
-		if (clear) this.filter$.clear();
-		this.filters$.forEach((qflt) =>
-		{this.filter$.and(qflt.filter)})
+		this.filter$.clear();
+		this.filters$.forEach((qflt) => {this.filter$.and(qflt)});
 	}
 
 	private initialize() : void
@@ -127,5 +150,5 @@ export class QueryByExample
 
 class QueryFilter
 {
-	constructor(public field:string, public filter:Filter|FilterStructure) {}
+	constructor(public value:any, public filter:Filter|FilterStructure) {}
 }

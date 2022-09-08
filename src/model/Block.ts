@@ -470,15 +470,13 @@ export class Block
 			}
 		}
 
-		this.qbe.finalize(true);
+		this.qbe.finalize();
 
 		if (!await this.preQuery())
 		{
 			this.qbe.clear();
 			return(false);
 		}
-
-		this.qbe.finalize(false);
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
@@ -507,6 +505,14 @@ export class Block
 
 		this.view.lockUnused();
 		return(await this.postQuery());
+	}
+
+	public showLastQuery() : void
+	{
+		this.qbe.showLastQuery();
+		this.view.clear(true,true);
+		this.view.display(0,this.qberec);
+		this.view$.setCurrentRow(0);
 	}
 
 	public scroll(records:number, offset:number) : boolean

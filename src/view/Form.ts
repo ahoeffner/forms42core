@@ -402,6 +402,12 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.enterquery)
 			{
+				if (inst.field.block.model.querymode)
+				{
+					inst.field.block.model.showLastQuery();
+					return(true);
+				}
+
 				let success:boolean = false;
 
 				if (!await inst.field.validate(inst))
@@ -414,6 +420,14 @@ export class Form implements EventListenerObject
 					inst.field.block.findFirstEditable(inst.field.block.model.qberec)?.focus();
 
 				return(true);
+			}
+
+			if (key == KeyMap.queryeditor)
+			{
+				if (!inst.field.block.model.querymode)
+					return(false);
+
+				console.log("QueryEditor");
 			}
 
 			if (key == KeyMap.executequery)

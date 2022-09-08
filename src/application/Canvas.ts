@@ -256,6 +256,36 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 		let pos = {x: +event.clientX, y: +event.clientY};
 
+		let type:string = this.canvas.parentElement?.style.position;
+
+		if (type == "static") type = "";
+		if (type == "fixed")	type = "absolute";
+		if (type == "sticky") type = "relative";
+
+		if (type == "")
+		{
+			corner.y -= this.canvas.offsetTop;
+			corner.x -= this.canvas.offsetLeft;
+
+			this.boundary.w += this.boundary.x;
+			this.boundary.h += this.boundary.y;
+		}
+
+		if (type == "relative")
+		{
+			this.boundary.x = 0;
+			this.boundary.y = 0;
+		}
+
+		if (type == "absolute")
+		{
+			this.boundary.x = 0;
+			this.boundary.y = 0;
+
+			this.boundary.w = parent.parentElement.clientWidth;
+			this.boundary.h = parent.parentElement.clientHeight;
+		}
+
 		if (corner.x - pos.x < 24 && corner.y - pos.y < 24)
 			return;
 
@@ -284,11 +314,14 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 			let posX:number = elemX + offX;
 			let posY:number = elemY + offY;
 
+			let minX:number = this.boundary.x;
+			let minY:number = this.boundary.y;
+
 			let maxX:number = this.boundary.w - elemW;
 			let maxY:number = this.boundary.h - elemH;
 
-			if (posX < 0) posX = 0;
-			if (posY < 0) posY = 0;
+			if (posX < minX) posX = minX;
+			if (posY < minY) posY = minY;
 
 			if (posX > maxX) posX = maxX;
 			if (posY > maxY) posY = maxY;

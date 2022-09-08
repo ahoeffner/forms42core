@@ -141,13 +141,13 @@ export class Form
 	{
 		let meta:FormMetaData = FormMetaData.get(this.parent);
 
-		meta.eventhandlers.forEach((filter,method) =>
+		meta?.eventhandlers.forEach((filter,method) =>
 		{
 			let handle:object = FormEvents.addListener(this.parent,this.parent,method,filter);
 			FormBacking.getBacking(this.parent).listeners.push(handle);
 		})
 
-		meta.getDataSources().forEach((source,block) =>
+		meta?.getDataSources().forEach((source,block) =>
 		{
 			let blk:Block = this.getBlock(block);
 			if (blk != null) blk.datasource = source;
@@ -156,7 +156,7 @@ export class Form
 		this.blocks$.forEach((block) =>
 			{block.finalize()});
 
-		meta.blockattrs.forEach((block,attr) =>
+		meta?.blockattrs.forEach((block,attr) =>
 		{this.parent[attr] = this.parent.getBlock(block)})
 
 		await this.initControlBlocks();

@@ -27,11 +27,14 @@ export class FormMetaData
 		let meta:FormMetaData =
 			FormMetaData.metadata.get(form.constructor.name);
 
-		meta.blockattrs.forEach((_block,attr) =>
-			{form[attr] = null;});
+		if (meta != null)
+		{
+			meta.blockattrs.forEach((_block,attr) =>
+				{form[attr] = null;});
 
-		FormBacking.getModelForm(form).getBlocks().forEach((blk) =>
-			{blk.reset(meta.blocksources$.get(blk.name) != null);})
+			FormBacking.getModelForm(form).getBlocks().forEach((blk) =>
+				{blk.reset(meta.blocksources$.get(blk.name) != null);})
+		}
 	}
 
 	public static get(form:Class<Form>|Form, create?:boolean) : FormMetaData

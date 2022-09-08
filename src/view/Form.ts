@@ -428,6 +428,9 @@ export class Form implements EventListenerObject
 					return(false);
 
 				console.log("QueryEditor");
+				await this.parent.callform("fields");
+
+				return(true);
 			}
 
 			if (key == KeyMap.executequery)

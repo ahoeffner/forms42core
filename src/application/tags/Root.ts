@@ -17,9 +17,11 @@ export class Root implements Tag
 {
     public parse(_component:any, tag:HTMLElement, _attr:string) : HTMLElement
     {
-        let root:HTMLElement = document.createElement("div");
-        Framework.copyAttributes(tag,root);
-		root.style.position = "relative";
-        return(root);
+		let root:HTMLElement = document.createElement("div");
+		Framework.copyAttributes(tag,root);
+
+		root.style.position = "sticky";
+
+		return(root);
     }
 }

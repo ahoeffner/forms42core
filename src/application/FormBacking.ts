@@ -109,6 +109,7 @@ export class FormBacking
 	}
 
 
+	private parent$:Form = null;
 	private page$:HTMLElement = null;
 	private listeners$:object[] = [];
 	private autoblocks$:Block[] = [];
@@ -123,6 +124,16 @@ export class FormBacking
 	public set page(page:HTMLElement)
 	{
 		this.page$ = page;
+	}
+
+	public get parent() : Form
+	{
+		return(this.parent$);
+	}
+
+	public set parent(form:Form)
+	{
+		this.parent$ = form;
 	}
 
 	public get listeners() : object[]

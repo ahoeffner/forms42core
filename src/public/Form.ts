@@ -11,10 +11,12 @@
  */
 
 import { Block } from './Block.js';
+import { Class } from '../types/Class.js';
 import { Alert } from '../application/Alert.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
+import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { Canvas } from '../application/interfaces/Canvas.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
@@ -85,6 +87,14 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
+	public async callform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
+	{
+		this.canvas.block();
+		let cform:Form = await FormsModule.get().showform(form,container);
+		FormBacking.getBacking(cform).parent = this;
+		return(cform);
+	}
+
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
 		let back:FormBacking = FormBacking.getBacking(this);
@@ -129,6 +139,7 @@ export class Form implements CanvasComponent
 		if (success)
 		{
 			this.canvas.close();
+			FormBacking.getBacking(this).parent?.focus();
 			FormBacking.removeBacking(this);
 		}
 

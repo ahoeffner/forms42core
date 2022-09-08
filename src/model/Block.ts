@@ -171,9 +171,9 @@ export class Block
 		this.view.reset();
 	}
 
-	public get filter() : FilterStructure
+	public get QBEFilter() : FilterStructure
 	{
-		return(this.qbe.filter);
+		return(this.qbe.QBEFilter);
 	}
 
 	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
@@ -428,6 +428,11 @@ export class Block
 		return(true);
 	}
 
+	public setFilter(field:string, filter?:Filter|FilterStructure) : void
+	{
+		this.qbe.setFilter(field,filter);
+	}
+
 	public async enterQuery() : Promise<boolean>
 	{
 		if (!this.view.validated)
@@ -448,22 +453,25 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(requery?:boolean) : Promise<boolean>
+	public async executeQuery(keep?:boolean) : Promise<boolean>
 	{
 		if (!this.qbe.querymode)
 		{
 			this.wrapper.clear();
-			if (!requery) this.qbe.clear();
+			if (!keep) this.qbe.clear();
 		}
 
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateBlock())
 			{
-				if (!requery) this.qbe.clear();
+				if (!keep) this.qbe.clear();
 				return(false);
 			}
 		}
+
+		if (this.qbe.querymode)
+			this.qbe.finalize();
 
 		if (!await this.preQuery())
 		{
@@ -481,7 +489,7 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
-		if (!await wrapper.query(this.filter))
+		if (!await wrapper.query(this.QBEFilter))
 		{
 			this.qbe.clear();
 			return(false);

@@ -50,6 +50,7 @@ export class QueryByExample
 	{
 		this.qmode$ = false;
 		this.filter$.clear();
+		this.filters$.clear();
 		this.record$?.clear();
 	}
 
@@ -63,43 +64,51 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
-	public get filter() : FilterStructure
+	public get QBEFilter() : FilterStructure
 	{
 		return(this.filter$);
 	}
 
+	public getFilter(column:string) : Filter|FilterStructure
+	{
+		return(this.filters$.get(column)?.filter);
+	}
+
+	public setFilter(column:string, filter?:Filter|FilterStructure) : void
+	{
+		if (filter == null)
+			filter = this.getDefaultFilter(column);
+
+		if (filter == null) this.filters$.delete(column);
+		else this.filters$.set(column, new QueryFilter(column,filter));
+	}
+
+	public getDefaultFilter(column:string) : Filter
+	{
+		let filter:Filter = null;
+		let value = this.record$.getValue(column);
+
+		if (value == null)
+			return(null);
+
+		switch(this.block$.view.fieldinfo.get(column).type)
+		{
+			case DataType.date 		: filter = Filters.Like(column); break;
+			case DataType.datetime 	: filter = Filters.Like(column); break;
+			case DataType.string 	: filter = Filters.Like(column); break;
+			case DataType.integer 	: filter = Filters.Equals(column); break;
+			case DataType.decimal 	: filter = Filters.Equals(column); break;
+		}
+
+		filter.constraint = value;
+		return(filter);
+	}
+
 	public finalize() : void
 	{
-		this.record.columns.forEach((column) =>
-		{
-			let filter:Filter = null;
-			let value = this.record$.getValue(column);
-			let qf:QueryFilter = this.filters$.get(column);
-
-			if (value == null)
-			{
-				if (qf != null)
-					this.filters$.delete(column);
-			}
-			else
-			{
-				if (qf == null)
-				{
-					switch(this.block$.view.fieldinfo.get(column).type)
-					{
-						case DataType.date 		: filter = Filters.Like(column); break;
-						case DataType.datetime 	: filter = Filters.Like(column); break;
-						case DataType.string 	: filter = Filters.Like(column); break;
-						case DataType.integer 	: filter = Filters.Equals(column); break;
-						case DataType.decimal 	: filter = Filters.Equals(column); break;
-					}
-
-					this.filter.and(filter);
-				}
-
-				filter.constraint = value;
-			}
-		})
+		this.filter$.clear();
+		this.filters$.forEach((qflt) =>
+		{this.filter$.and(qflt.filter)})
 	}
 
 	private initialize() : void
@@ -118,6 +127,5 @@ export class QueryByExample
 
 class QueryFilter
 {
-	private column$:string = null;
-	private filter$:Filter|FilterStructure = null;
+	constructor(public field:string, public filter:Filter|FilterStructure) {}
 }

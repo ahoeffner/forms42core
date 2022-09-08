@@ -57,7 +57,7 @@ export class Block
 
 	public get filter() : FilterStructure
 	{
-		return(FormBacking.getModelBlock(this).filter);
+		return(FormBacking.getModelBlock(this).QBEFilter);
 	}
 
 	public focus() : void

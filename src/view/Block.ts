@@ -309,14 +309,17 @@ export class Block
 		return(this.model.lock());
 	}
 
-	public async validateField(inst?:FieldInstance, value?:any) : Promise<boolean>
+	public async validateField(inst:FieldInstance, value?:any) : Promise<boolean>
 	{
 		await this.setEventTransaction(EventType.WhenValidateField);
 		let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 		this.endEventTransaction(EventType.WhenValidateField,success);
 
 		if (success)
+		{
 			this.model$.setValue(inst.name,value);
+			if (this.model.querymode) this.model.setFilter(inst.name);
+		}
 
 		return(success);
 	}

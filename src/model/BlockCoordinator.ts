@@ -10,12 +10,12 @@
  * accompanied this code).
  */
 
-import { Block } from "./Block.js";
+import { Form } from "./Form.js";
 
 
 export class BlockCoordinator
 {
-	constructor(private block:Block)
+	constructor(private form:Form)
 	{
 
 	}

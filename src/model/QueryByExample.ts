@@ -104,9 +104,9 @@ export class QueryByExample
 		return(filter);
 	}
 
-	public finalize() : void
+	public finalize(clear:boolean) : void
 	{
-		this.filter$.clear();
+		if (clear) this.filter$.clear();
 		this.filters$.forEach((qflt) =>
 		{this.filter$.and(qflt.filter)})
 	}

@@ -470,8 +470,7 @@ export class Block
 			}
 		}
 
-		if (this.qbe.querymode)
-			this.qbe.finalize();
+		this.qbe.finalize(true);
 
 		if (!await this.preQuery())
 		{
@@ -479,8 +478,7 @@ export class Block
 			return(false);
 		}
 
-		if (this.qbe.querymode)
-			this.qbe.finalize();
+		this.qbe.finalize(false);
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;

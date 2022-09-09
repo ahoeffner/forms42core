@@ -10,13 +10,13 @@
  * accompanied this code).
  */
 
-import { Properties } from "../Properties.js";
+import { Popup } from "./Popup.js";
 
 export class FilterEditor
 {
 	public page:string =
 
-	Properties.popups.header +
+	Popup.header +
 	`
 	<div name="filter-editor">
 		<div name="filter-editor-form">
@@ -25,5 +25,5 @@ export class FilterEditor
 
 	</div>
 	`
-	+ Properties.popups.footer;
+	+ Popup.footer;
 }

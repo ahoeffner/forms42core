@@ -12,12 +12,12 @@
 
 export class Popup
 {
-	public header:string =
+	public static header:string =
 	`
 		<div class="window-header canvas-handle"></div>
 	`;
 
-	public footer:string =
+	public static footer:string =
 	`
 		<div class="window-footer"></div>
 	`;

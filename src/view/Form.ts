@@ -428,7 +428,7 @@ export class Form implements EventListenerObject
 				if (!inst.field.block.model.querymode)
 					return(false);
 
-				await this.parent.callform(FilterEditor);
+				//await this.parent.callform(FilterEditor);
 				return(true);
 			}
 

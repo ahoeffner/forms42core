@@ -12,7 +12,9 @@
 
 import { Class } from '../types/Class.js';
 
+import { Popup } from './properties/Popup.js';
 import { Canvas as CanvasImpl } from './Canvas.js';
+import { FilterEditor } from './properties/FilterEditor.js';
 import { Canvas as CanvasType } from './interfaces/Canvas.js';
 import { Canvas as CanvasProperties } from './properties/Canvas.js'
 
@@ -89,5 +91,7 @@ export class Properties
 			));
 	}
 
-	public static CanvasProperties:CanvasProperties = new CanvasProperties();
+	public static popups:Popup = new Popup();
+	public static filtereditor:FilterEditor = new FilterEditor();
+	public static canvas:CanvasProperties = new CanvasProperties();
 }

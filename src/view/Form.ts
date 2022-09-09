@@ -25,6 +25,7 @@ import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
+import { FilterEditor } from '../forms/FilterEditor.js';
 
 export class Form implements EventListenerObject
 {
@@ -427,9 +428,7 @@ export class Form implements EventListenerObject
 				if (!inst.field.block.model.querymode)
 					return(false);
 
-				console.log("QueryEditor");
-				await this.parent.callform("fields");
-
+				await this.parent.callform(FilterEditor);
 				return(true);
 			}
 

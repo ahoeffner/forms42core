@@ -10,13 +10,15 @@
  * accompanied this code).
  */
 
-import { Form } from "../public/Form.js";
-import { Properties } from "../application/Properties.js";
-
-export class FilterEditor extends Form
+export class Popup
 {
-	constructor()
-	{
-		super(Properties.filtereditor.page);
-	}
+	public header:string =
+	`
+		<div class="window-header canvas-handle"></div>
+	`;
+
+	public footer:string =
+	`
+		<div class="window-footer"></div>
+	`;
 }

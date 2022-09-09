@@ -136,7 +136,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.component = component;
 		let page = component.getView();
 
-		let layout:string = Properties.CanvasProperties.page;
+		let layout:string = Properties.canvas.page;
 		let template:HTMLTemplateElement = document.createElement("template");
 
 		template.innerHTML = layout;
@@ -145,13 +145,13 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas = template.content.querySelector("[name=canvas]");
 		this.container = template.content.querySelector("[name=content]");
 
-		this.modal.classList.value = Properties.CanvasProperties.ModalClasses;
-		this.canvas.classList.value = Properties.CanvasProperties.CanvasClasses;
-		this.container.classList.value = Properties.CanvasProperties.ContentClasses;
+		this.modal.classList.value = Properties.canvas.ModalClasses;
+		this.canvas.classList.value = Properties.canvas.CanvasClasses;
+		this.container.classList.value = Properties.canvas.ContentClasses;
 
-		this.modal.style.cssText = Properties.CanvasProperties.ModalStyle;
-		this.canvas.style.cssText = Properties.CanvasProperties.CanvasStyle;
-		this.container.style.cssText = Properties.CanvasProperties.ContentStyle;
+		this.modal.style.cssText = Properties.canvas.ModalStyle;
+		this.canvas.style.cssText = Properties.canvas.CanvasStyle;
+		this.container.style.cssText = Properties.canvas.ContentStyle;
 
 		this.container.style.zIndex = (2*this.zindex$)+"";
 		this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
@@ -243,7 +243,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	{
 		if (!this.moveable) return;
 
-		if (!event.target.classList.contains(Properties.CanvasProperties.CanvasHandleClass))
+		if (!event.target.classList.contains(Properties.canvas.CanvasHandleClass))
 			return;
 
 		let corner =

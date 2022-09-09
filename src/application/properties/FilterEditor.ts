@@ -10,25 +10,20 @@
  * accompanied this code).
  */
 
+import { Properties } from "../Properties";
+
 export class FilterEditor
 {
 	public page:string =
+
+	Properties.popups.header +
 	`
 	<div name="filter-editor">
-		<div name="filter-editor-header" class="canvas-handle">
-			<div name="title"></div>
-			<div name="close-window"></div>
-		</div>
-
 		<div name="filter-editor-form">
 			filter-editor-form
 		</div>
 
-		<div name="filter-editor-footer"></div>
 	</div>
-	`;
-
-	public headerstyle:string =
 	`
-	`;
+	+ Properties.popups.footer;
 }

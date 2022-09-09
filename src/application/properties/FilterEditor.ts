@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Properties } from "../Properties";
+import { Properties } from "../Properties.js";
 
 export class FilterEditor
 {

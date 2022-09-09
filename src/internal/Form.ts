@@ -26,8 +26,9 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 
 /*
- * This is a copy of the public form. This is a necessary hack to avoid
- * "ReferenceError: Cannot access 'Form' before initialization"
+ * This is an exact copy of the public form. Its sole purpose is to circumvent:
+ * ReferenceError: Cannot access 'Form' before initialization
+ * when calling internal forms from public forms
  */
 
 export class Form implements CanvasComponent

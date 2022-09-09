@@ -121,7 +121,7 @@ export class FormsModule
 		return(false);
 	}
 
-	public async showform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
+	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		if (typeof form === "string")
 		{
@@ -141,7 +141,7 @@ export class FormsModule
 		let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
 		let canvas:Canvas = new canvasimpl();
-		let instance:Form = await factory.createForm(form);
+		let instance:Form = await factory.createForm(form,parameters);
 
 		instance.canvas = canvas;
 		canvas.setComponent(instance);

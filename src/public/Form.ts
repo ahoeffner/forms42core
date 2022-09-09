@@ -31,6 +31,7 @@ export class Form implements CanvasComponent
 	public moveable:boolean = true;
 	public navigable:boolean = true;
 	public resizable:boolean = true;
+	public parameters:Map<any,any> = new Map<any,any>();
 	public blocks:Map<string,Block> = new Map<string,Block>();
 
 	constructor(page?:string|HTMLElement)
@@ -87,10 +88,10 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
-	public async callform(form:Class<Form>|string, container?:HTMLElement) : Promise<Form>
+	public async callform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		this.canvas.block();
-		let cform:Form = await FormsModule.get().showform(form,container);
+		let cform:Form = await FormsModule.get().showform(form,parameters,container);
 		FormBacking.getBacking(cform).parent = this;
 		return(cform);
 	}

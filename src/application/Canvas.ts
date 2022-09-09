@@ -287,9 +287,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 			this.boundary.h = parent.parentElement.clientHeight;
 		}
 
-		if (corner.x - pos.x < 24 && corner.y - pos.y < 24)
-			return;
-
 		this.move = true;
 
 		document.addEventListener('mouseup',this);

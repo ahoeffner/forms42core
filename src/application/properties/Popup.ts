@@ -21,4 +21,16 @@ export class Popup
 	`
 		<div class="window-footer"></div>
 	`;
+
+	public static WindowHeaderStyle =
+	`
+		width: 100%;
+		height: 20px;
+		border: 1px solid black;
+	`;
+
+
+	public static WindowFooterStyle =
+	`
+	`;
 }

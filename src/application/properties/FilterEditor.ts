@@ -20,7 +20,7 @@ export class FilterEditor
 	`
 	<div name="filter-editor">
 		<div name="filter-editor-form">
-			filter-editor-form
+			filter-editor-form <input>
 		</div>
 
 	</div>

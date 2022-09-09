@@ -16,7 +16,6 @@ import { Status } from '../view/Row.js';
 import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
 import { FieldProperties } from './FieldProperties.js';
-import { Filter } from '../model/interfaces/Filter.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';

@@ -12,13 +12,13 @@
 
 export class Canvas
 {
-	public html:string =
+	public page:string =
 	`
 	<div name="canvas">
 		<div name="modal"></div>
 		<div name="content"></div>
 	</div>
-	`
+	`;
 
 	public ModalStyle:string =
 	`

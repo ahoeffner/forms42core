@@ -480,6 +480,8 @@ export class Block
 			return(false);
 		}
 
+		this.qbe.finalize();
+
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;

@@ -275,7 +275,7 @@ export class Field
 			this.distribute(inst,value,this.dirty);
 			this.block.distribute(this,value,this.dirty);
 
-			await this.block.onTyping(inst);
+			await this.block.onEdit(inst);
 			return;
 		}
 

@@ -130,8 +130,9 @@ export class QueryByExample
 
 	public finalize() : void
 	{
-		this.filter$.clear();
-		this.filters$.forEach((qflt) => {this.filter$.and(qflt)});
+		this.filters$.forEach((qflt) =>
+		{this.filter$.and(qflt)});
+		this.filters$.clear();
 	}
 
 	private initialize() : void

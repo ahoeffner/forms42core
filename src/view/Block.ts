@@ -376,7 +376,7 @@ export class Block
 			this.fieldnames$.push(inst.name);
 	}
 
-	public async onTyping(inst:FieldInstance) : Promise<boolean>
+	public async onEdit(inst:FieldInstance) : Promise<boolean>
 	{
 		this.curinst$ = inst;
 		if (!this.lock(inst)) return(false);

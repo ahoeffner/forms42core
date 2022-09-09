@@ -16,7 +16,6 @@ import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
-import { FilterEditor } from '../forms/FilterEditor.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -24,6 +23,7 @@ import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
+import { FilterEditor } from '../internal/forms/FilterEditor.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
@@ -428,7 +428,7 @@ export class Form implements EventListenerObject
 				if (!inst.field.block.model.querymode)
 					return(false);
 
-				//await this.parent.callform(FilterEditor);
+				await this.parent.callform(FilterEditor);
 				return(true);
 			}
 

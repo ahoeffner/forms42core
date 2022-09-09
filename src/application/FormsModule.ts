@@ -19,6 +19,7 @@ import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ModelForm } from '../model/Form.js';
+import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
 import { EventFilter } from '../control/events/EventFilter.js';
@@ -133,7 +134,7 @@ export class FormsModule
 		if (container == null)
 			container = this.getRootElement();
 
-		if (!(form.prototype instanceof Form))
+		if (!(form.prototype instanceof Form) && !(form.prototype instanceof InternalForm))
 			throw "@Application: Component mapped to '"+form+"' is not a form";
 
 		let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;

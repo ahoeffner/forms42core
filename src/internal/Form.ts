@@ -25,6 +25,11 @@ import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 
+/*
+ * This is a copy of the public form. This is a necessary hack to avoid
+ * "ReferenceError: Cannot access 'Form' before initialization"
+ */
+
 export class Form implements CanvasComponent
 {
 	public canvas:Canvas = null;

@@ -10,18 +10,13 @@
  * accompanied this code).
  */
 
-//import { Form } from "./Form.js";
-//import { Properties } from "../application/Properties.js";
+import { Form } from "../Form.js";
+import { Properties } from "../../application/Properties.js";
 
-export class FilterEditor //extends Form
+export class FilterEditor extends Form
 {
-	public static create() : void
-	{
-	}
-/*
 	constructor()
 	{
 		super(Properties.filtereditor.page);
 	}
-*/
 }

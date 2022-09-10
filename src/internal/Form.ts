@@ -134,8 +134,10 @@ export class Form implements CanvasComponent
 		if (this.canvas != null)
 			this.canvas.refresh();
 
+		console.log("finalize")
 		await FormBacking.getViewForm(this,true).finalize();
 		await FormBacking.getModelForm(this,true).finalize();
+		console.log("finalize done")
 	}
 
 	public async close() : Promise<boolean>

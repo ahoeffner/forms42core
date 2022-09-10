@@ -60,6 +60,9 @@ export class RecordProperties
 
 	public reset(row:Row, field?:string, clazz?:string) : void
 	{
+		if (row == null)
+			return;
+			
 		if (field != null)
 		{
 			let fld:Field = row.getField(field);

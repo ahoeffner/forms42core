@@ -142,6 +142,7 @@ export class FormsModule
 
 		let canvas:Canvas = new canvasimpl();
 		let instance:Form = await factory.createForm(form,parameters);
+		console.log("form created")
 
 		instance.canvas = canvas;
 		canvas.setComponent(instance);

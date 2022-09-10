@@ -260,9 +260,7 @@ export class Block
 			if (this.row == row.rownum)
 			{
 				row = this.getRow(-1);
-
-				if (row != null)
-					this.recprops$.reset(row,field,clazz);
+				this.recprops$.reset(row,field,clazz);
 			}
 		}
 		else
@@ -280,8 +278,9 @@ export class Block
 	public applyRecordProperties(record:Record, baserec:boolean, field?:string) : void
 	{
 		let row:Row = this.displayed(record);
+
 		if (!baserec) row = this.getRow(-1);
-		this.recprops$.apply(row,record,field);
+		if (row != null) this.recprops$.apply(row,record,field);
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>

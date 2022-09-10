@@ -162,7 +162,7 @@ export class Form
 		await this.initControlBlocks();
 	}
 
-	public async initControlBlocks()
+	public async initControlBlocks() : Promise<void>
 	{
 		for(let block of this.blocks$.values())
 		{

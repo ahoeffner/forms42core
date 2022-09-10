@@ -11,27 +11,42 @@
  */
 
 import { Form } from "../Form.js";
-import { Properties } from "../../application/Properties.js";
+import { Block } from "../../public/Block.js";
+import { Record } from "../../public/Record.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Popup } from "../../application/properties/Popup.js";
+import { FieldProperties } from "../../public/FieldProperties.js";
 
 export class FilterEditor extends Form
 {
+	private options:Block = null;
+
 	constructor()
 	{
-		super(Properties.filtereditor.page);
+		super(FilterEditor.page);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit})
 	}
 
-	public async initialize() : Promise<boolean>
+	private setOptions() : void
 	{
+		let rec:Record = this.options.getRecord();
+		let opts:FieldProperties = rec.getProperties();
+
+		opts.setValidValues(["like","equals"]);
+		rec.setProperties(opts,"options");
+	}
+
+	private async initialize() : Promise<boolean>
+	{
+		console.log("editor")
 		let view:HTMLElement = this.getView();
+		this.options = this.getBlock("options");
 
 		let header:HTMLElement = view.querySelector(".window-header");
 		let footer:HTMLElement = view.querySelector(".window-footer");
 
-		if (header) header.style.cssText = Popup.WindowHeaderStyle;
-		if (footer) footer.style.cssText = Popup.WindowFooterStyle;
+		if (header && Popup.WindowHeaderStyle) header.style.cssText = Popup.WindowHeaderStyle;
+		if (footer && Popup.WindowFooterStyle) footer.style.cssText = Popup.WindowFooterStyle;
 
 
 		this.canvas.getElement().style.top = "400px";
@@ -39,7 +54,22 @@ export class FilterEditor extends Form
 		this.canvas.getElement().style.width = "200px";
 		this.canvas.getElement().style.height = "200px";
 
+		//this.setOptions();
+
 		return(true);
 	}
 
+
+	private static page:string =
+		Popup.header +
+		`
+			<div name="filter-editor">
+
+			<div>
+				<select name="options" from="options"></select>
+			</div>
+
+		</div>
+		`
+		+ Popup.footer;
 }

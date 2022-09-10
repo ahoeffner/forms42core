@@ -15,6 +15,7 @@ import { Indicator } from "./Indicator.js";
 import { FormField } from "./FormField.js";
 import { Form } from "../../public/Form.js";
 import { Properties } from "../Properties.js";
+import { Form as InternalForm } from "../../internal/Form.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
 export class Field implements Tag, FormField
@@ -26,7 +27,7 @@ export class Field implements Tag, FormField
 		if (component == null)
 			throw "@Field: component is null";
 
-		if (!(component instanceof Form))
+		if (!(component instanceof Form) && !(component instanceof InternalForm))
 			throw "@Field: Fields cannot be placed on non-forms "+component.constructor.name;
 
 		let binding:string = tag.getAttribute(attr);

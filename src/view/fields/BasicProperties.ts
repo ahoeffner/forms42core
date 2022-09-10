@@ -393,17 +393,17 @@ export class BasicProperties
 		return(this.values$);
 	 }
 
-	 public set validValues(values: Set<string> | Map<string,string>)
+	 public set validValues(values: string[] | Set<string> | Map<string,string>)
 	{
-		if (values instanceof Set)
+		if (Array.isArray(values) || values instanceof Set)
 		{
 			this.values$ = new Map<string,string>();
-			values.forEach((value) => {this.values$.set(value,value)});
+			values.forEach((value:string) => {this.values$.set(value,value)});
 		}
-		  else this.values$ = values;
+		else this.values$ = values;
 	 }
 
-	 public setValidValues(values: Set<string> | Map<string,string>) : BasicProperties
+	 public setValidValues(values: string[] | Set<string> | Map<string,string>) : BasicProperties
 	{
 		this.validValues = values;
 		return(this);

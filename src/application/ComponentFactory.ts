@@ -17,7 +17,7 @@ export class ComponentFactory implements Factory
 		let page:string|HTMLElement = FormBacking.getBacking(instance).page;
 
 		if (page != null)
-			instance.setView(page);
+			await instance.setView(page);
 
 		return(instance)
 	}

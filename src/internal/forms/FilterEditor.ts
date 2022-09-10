@@ -25,6 +25,7 @@ export class FilterEditor extends Form
 	{
 		super(FilterEditor.page);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit})
+		this.addEventListener(this.setType,{type: EventType.WhenValidateField, block: "options"})
 	}
 
 	private setOptions() : void
@@ -36,9 +37,14 @@ export class FilterEditor extends Form
 		rec.setProperties(opts,"options");
 	}
 
+	private async setType() : Promise<boolean>
+	{
+		console.log("setType "+this.options.getValue("options"))
+		return(true);
+	}
+
 	private async initialize() : Promise<boolean>
 	{
-		console.log("editor")
 		let view:HTMLElement = this.getView();
 		this.options = this.getBlock("options");
 
@@ -54,7 +60,7 @@ export class FilterEditor extends Form
 		this.canvas.getElement().style.width = "200px";
 		this.canvas.getElement().style.height = "200px";
 
-		//this.setOptions();
+		this.setOptions();
 
 		return(true);
 	}

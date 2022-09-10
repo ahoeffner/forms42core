@@ -140,7 +140,14 @@ export class Form implements CanvasComponent
 		if (success)
 		{
 			this.canvas.close();
-			FormBacking.getBacking(this).parent?.focus();
+			let parent:Form = FormBacking.getBacking(this).parent;
+
+			if (parent != null)
+			{
+				parent.focus();
+				parent.canvas.unblock();
+			}
+
 			FormBacking.removeBacking(this);
 		}
 

@@ -72,7 +72,15 @@ export class FilterEditor extends Form
 			<div name="filter-editor">
 
 			<div>
-				<select name="options" from="options"></select>
+				<label for="options">Filter</label>
+				<select id="options" name="options" from="options"></select>
+
+				<label for="include">Including</label>
+				<input type="radio" id="include" name="include" from="options" value="true">
+			</div>
+
+			<div>
+				<input name="filter" from="values">
 			</div>
 
 		</div>

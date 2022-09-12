@@ -84,10 +84,7 @@ export class FilterEditor extends Form
 
 			<div>
 				<label for="options">Filter</label>
-				<!--
 				<select id="options" name="options" from="options"></select>
-				-->
-				<input id="options" name="options" from="options">
 
 				<label for="include">Include</label>
 				<input type="checkbox" id="include" name="include" from="options" boolean value="true">

@@ -210,11 +210,8 @@ export class Field
 
 	public getValue() : any
 	{
-		if (!this.dirty) return(this.value$);
-
 		let inst:FieldInstance = this.instance$;
 		if (inst == null) inst = this.instances$[0];
-
 		return(inst.getValue());
 	}
 

@@ -127,6 +127,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (value.trim().length == 0)
 			return(null);
 
+		if (this.datatype$ == DataType.boolean)
+			return(value.toLowerCase() == "true");
+
 		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let date:Date = dates.parse(value);
@@ -189,7 +192,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			else  value = this.pattern.getValue();
 		}
 
-		  if (value == null)
+		if (value == null)
 			value = "";
 
 		value += "";
@@ -241,8 +244,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(this.element);
 	}
 
-	 public setAttributes(attributes:Map<string,any>) : void
-	 {
+	public setAttributes(attributes:Map<string,any>) : void
+	{
 		this.int = false;
 		this.dec = false;
 		this.pattern = null;
@@ -276,6 +279,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (attr == "initcap")
 				this.cse = Case.initcap;
+
+			if (attr == "boolean")
+				this.datatype$ = DataType.boolean;
 
 			if (attr == "integer")
 			{
@@ -458,13 +464,13 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.int)
 		{
 			if (!this.xint())
-					return;
+				return;
 		}
 
 		if (this.dec)
 		{
 			if (!this.xdec())
-					return;
+				return;
 		}
 
 		if (this.cse != Case.mixed)
@@ -541,7 +547,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
-	 }
+	}
 
 	private xcase() : boolean
 	{
@@ -594,7 +600,6 @@ export class Input implements FieldImplementation, EventListenerObject
 				value = initcap;
 			}
 
-
 			this.setElementValue(value);
 			this.setPosition(pos+1);
 		}
@@ -602,133 +607,133 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(true);
 	}
 
-	 private xint() : boolean
-	 {
+	private xint() : boolean
+	{
 		if (this.type == "range")
 			return(true);
 
 		if (this.element.readOnly)
 			return(true);
 
-		  let pos:number = this.getPosition();
+		let pos:number = this.getPosition();
 
-		  if (this.event.type == "keydown")
-		  {
-				if (this.event.isPrintableKey)
-				{
-					 let pass:boolean = false;
+		if (this.event.type == "keydown")
+		{
+			if (this.event.isPrintableKey)
+			{
+				let pass:boolean = false;
 
-					 if (this.event.key >= '0' && this.event.key <= '9')
-						  pass = true;
-
-					 if (this.event.key == "-" && !this.getElementValue().includes("-"))
-						  pass = true;
-
-				if (this.maxlen != null && this.getElementValue().length >= this.maxlen)
-					pass = false;
-
-					 if (!pass)
-					 {
-						  this.event.preventDefault(true);
-					 }
-					 else if (this.event.repeat && this.event.key != ".")
-					 {
-						  let value:string = this.getElementValue();
-
-						  let a:string = value.substring(pos);
-						  let b:string = value.substring(0,pos);
-
-						  this.setElementValue(b + this.event.key + a);
-						  this.setPosition(++pos);
-					 }
-				}
-		  }
-
-		  return(true);
-	 }
-
-	 private xdec() : boolean
-	 {
-		if (this.type == "range")
-			return(true);
-
-		if (this.element.readOnly)
-			return(true);
-
-		  let pos:number = this.getPosition();
-
-		  if (this.event.type == "keydown")
-		  {
-				if (this.event.isPrintableKey)
-				{
-					 let pass:boolean = false;
-
-					 if (this.event.key >= '0' && this.event.key <= '9')
-						  pass = true;
-
-					 if (this.event.key == "." && !this.getElementValue().includes("."))
-						  pass = true;
+				if (this.event.key >= '0' && this.event.key <= '9')
+					pass = true;
 
 				if (this.event.key == "-" && !this.getElementValue().includes("-"))
-						  pass = true;
+					pass = true;
 
 				if (this.maxlen != null && this.getElementValue().length >= this.maxlen)
 					pass = false;
 
-					 if (!pass)
-					 {
-						  this.event.preventDefault(true);
-					 }
-					 else if (this.event.repeat && this.event.key != ".")
-					 {
-						  let value:string = this.getElementValue();
-
-						  let a:string = value.substring(pos);
-						  let b:string = value.substring(0,pos);
-
-						  this.setElementValue(b + this.event.key + a);
-						  this.setPosition(++pos);
-					 }
+				if (!pass)
+				{
+					this.event.preventDefault(true);
 				}
-		  }
+				else if (this.event.repeat && this.event.key != ".")
+				{
+					let value:string = this.getElementValue();
 
-		  return(true);
-	 }
+					let a:string = value.substring(pos);
+					let b:string = value.substring(0,pos);
 
-	 private xfixed() : boolean
-	 {
+					this.setElementValue(b + this.event.key + a);
+					this.setPosition(++pos);
+				}
+			}
+		}
+
+		return(true);
+	}
+
+	private xdec() : boolean
+	{
 		if (this.type == "range")
 			return(true);
 
 		if (this.element.readOnly)
 			return(true);
 
-		  let prevent:boolean = this.event.prevent;
+		let pos:number = this.getPosition();
 
-		  if (this.event.prevent)
-				prevent = true;
+		if (this.event.type == "keydown")
+		{
+			if (this.event.isPrintableKey)
+			{
+				let pass:boolean = false;
 
-		  if (this.event.type == "drop")
-				prevent = true;
+				if (this.event.key >= '0' && this.event.key <= '9')
+					pass = true;
 
-		  if (this.event.type == "keypress")
-				prevent = true;
+				if (this.event.key == "." && !this.getElementValue().includes("."))
+					pass = true;
 
-		  if (this.event.key == "ArrowLeft" && this.event.shift)
-				prevent = true;
+				if (this.event.key == "-" && !this.getElementValue().includes("-"))
+						pass = true;
 
-		  if (!this.event.modifier)
-		  {
-				switch(this.event.key)
+				if (this.maxlen != null && this.getElementValue().length >= this.maxlen)
+					pass = false;
+
+				if (!pass)
 				{
-					 case "Backspace":
-					 case "ArrowLeft":
-					 case "ArrowRight": prevent = true;
+					this.event.preventDefault(true);
 				}
-		  }
+				else if (this.event.repeat && this.event.key != ".")
+				{
+					let value:string = this.getElementValue();
 
-		  this.event.preventDefault(prevent);
-		  let pos:number = this.getPosition();
+					let a:string = value.substring(pos);
+					let b:string = value.substring(0,pos);
+
+					this.setElementValue(b + this.event.key + a);
+					this.setPosition(++pos);
+				}
+			}
+		}
+
+		return(true);
+	}
+
+	private xfixed() : boolean
+	{
+		if (this.type == "range")
+			return(true);
+
+		if (this.element.readOnly)
+			return(true);
+
+		let prevent:boolean = this.event.prevent;
+
+		if (this.event.prevent)
+			prevent = true;
+
+		if (this.event.type == "drop")
+			prevent = true;
+
+		if (this.event.type == "keypress")
+			prevent = true;
+
+		if (this.event.key == "ArrowLeft" && this.event.shift)
+			prevent = true;
+
+		if (!this.event.modifier)
+		{
+			switch(this.event.key)
+			{
+					case "Backspace":
+					case "ArrowLeft":
+					case "ArrowRight": prevent = true;
+			}
+		}
+
+		this.event.preventDefault(prevent);
+		let pos:number = this.getPosition();
 
 		// Get ready to markup
 		if (this.event.mousedown && this.event.mouseinit)
@@ -737,7 +742,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		// Mark current pos for replace
 		if (this.event.type == "click" && !this.event.mousemark)
 		{
-				let npos:number = this.pattern.findPosition(pos);
+			let npos:number = this.pattern.findPosition(pos);
 			this.setSelection([npos,npos]);
 
 			setTimeout(() =>
@@ -750,97 +755,97 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(true);
 		}
 
-		  if (this.event.type == "focus")
-		  {
-				pos = this.pattern.findPosition(0);
+		if (this.event.type == "focus")
+		{
+			pos = this.pattern.findPosition(0);
 
 			this.pattern.setValue(this.getIntermediateValue());
 			this.setIntermediateValue(this.pattern.getValue());
 
-				this.setPosition(pos);
-				this.pattern.setPosition(pos);
+			this.setPosition(pos);
+			this.pattern.setPosition(pos);
 
-				return(true);
-		  }
+			return(true);
+		}
 
-		  if (this.event.type == "blur")
-		  {
+		if (this.event.type == "blur")
+		{
 			this.pattern.setValue(this.getIntermediateValue());
 			if (this.pattern.isNull()) this.clear();
 				return(true);
-		  }
+		}
 
-		  if (this.event.type == "change")
-				return(true);
+		if (this.event.type == "change")
+			return(true);
 
 		if (this.event.type.startsWith("mouse") || this.event.type == "wheel")
 			return(true);
 
-		  let ignore:boolean = this.event.ignore;
-		  if (this.event.printable) ignore = false;
+		let ignore:boolean = this.event.ignore;
+		if (this.event.printable) ignore = false;
 
-		  if (this.event.repeat)
-		  {
-				switch(this.event.key)
+		if (this.event.repeat)
+		{
+			switch(this.event.key)
+			{
+					case "Backspace":
+					case "ArrowLeft":
+					case "ArrowRight": ignore = false;
+			}
+		}
+
+		if (ignore) return(true);
+
+		if (this.event.key == "Backspace" && !this.event.modifier)
+		{
+			let sel:number[] = this.getSelection();
+
+			if (sel[0] == sel[1] && !this.pattern.input(sel[0]))
+			{
+					pos = this.pattern.prev(true);
+					this.setSelection([pos,pos]);
+			}
+			else
+			{
+				pos = sel[0];
+
+				if (sel[0] > 0 && sel[0] == sel[1])
 				{
-					 case "Backspace":
-					 case "ArrowLeft":
-					 case "ArrowRight": ignore = false;
-				}
-		  }
+					pos--;
 
-		  if (ignore) return(true);
+					// Move past fixed pattern before deleting
+					if (!this.pattern.setPosition(pos) && sel[0] > 0)
+					{
+						let pre:number = pos;
 
-		  if (this.event.key == "Backspace" && !this.event.modifier)
-		  {
-				let sel:number[] = this.getSelection();
+						pos = this.pattern.prev(true);
+						let off:number = pre - pos;
 
-				if (sel[0] == sel[1] && !this.pattern.input(sel[0]))
-				{
-					 pos = this.pattern.prev(true);
-					 this.setSelection([pos,pos]);
-				}
-				else
-				{
-					 pos = sel[0];
-
-					 if (sel[0] > 0 && sel[0] == sel[1])
-					 {
-						  pos--;
-
-						  // Move past fixed pattern before deleting
-						  if (!this.pattern.setPosition(pos) && sel[0] > 0)
-						  {
-								let pre:number = pos;
-
-								pos = this.pattern.prev(true);
-								let off:number = pre - pos;
-
-								if (off > 0)
-								{
-									 sel[0] = sel[0] - off;
-									 sel[1] = sel[1] - off;
-								}
-						  }
-					 }
-
-					 pos = sel[0];
-					 this.setElementValue(this.pattern.delete(sel[0],sel[1]));
-
-					 if (sel[1] == sel[0] + 1)
-						  pos = this.pattern.prev(true);
-
-					 if (!this.pattern.setPosition(pos))
-						  pos = this.pattern.prev(true,pos);
-
-					 if (!this.pattern.setPosition(pos))
-						  pos = this.pattern.next(true,pos);
-
-					 this.setSelection([pos,pos]);
+						if (off > 0)
+						{
+								sel[0] = sel[0] - off;
+								sel[1] = sel[1] - off;
+						}
+					}
 				}
 
-				return(true);
-		  }
+				pos = sel[0];
+				this.setElementValue(this.pattern.delete(sel[0],sel[1]));
+
+				if (sel[1] == sel[0] + 1)
+					pos = this.pattern.prev(true);
+
+				if (!this.pattern.setPosition(pos))
+					pos = this.pattern.prev(true,pos);
+
+				if (!this.pattern.setPosition(pos))
+					pos = this.pattern.next(true,pos);
+
+				this.setSelection([pos,pos]);
+			}
+
+			return(true);
+		}
 
 		if (this.event.undo || this.event.paste)
 		{
@@ -848,7 +853,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			{
 				this.pattern.setValue(this.getIntermediateValue());
 				this.setValue(this.pattern.getValue());
-					 this.setPosition(this.pattern.next(true,pos));
+				this.setPosition(this.pattern.next(true,pos));
 			},0);
 			return(true);
 		}
@@ -867,77 +872,79 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 		}
 
-		  if (this.event.printable)
-		  {
-				let sel:number[] = this.getSelection();
+		if (this.event.printable)
+		{
+			let sel:number[] = this.getSelection();
 
-				if (sel[0] != sel[1])
-				{
-					 pos = sel[0];
+			if (sel[0] != sel[1])
+			{
+				pos = sel[0];
 
 				if (!this.pattern.isValid(pos,this.event.key))
 					return(true);
 
-					 this.pattern.delete(sel[0],sel[1]);
-					 this.setElementValue(this.pattern.getValue());
-					 pos = this.pattern.findPosition(sel[0]);
-					 this.setSelection([pos,pos]);
-				}
+				this.pattern.delete(sel[0],sel[1]);
+				this.setElementValue(this.pattern.getValue());
+				pos = this.pattern.findPosition(sel[0]);
+				this.setSelection([pos,pos]);
+			}
 
-				if (this.pattern.setCharacter(pos,this.event.key))
-				{
+			if (this.pattern.setCharacter(pos,this.event.key))
+			{
 				if (this.datetokens != null)
 					this.validateDateField(pos);
 
 				pos = this.pattern.next(true,pos);
-					 this.setElementValue(this.pattern.getValue());
-					 this.setSelection([pos,pos]);
-				}
+						this.setElementValue(this.pattern.getValue());
+						this.setSelection([pos,pos]);
+			}
 
-				return(true);
-		  }
+			return(true);
+		}
 
-		  if (this.event.key == "ArrowLeft")
-		  {
-				let sel:number[] = this.getSelection();
+		if (this.event.key == "ArrowLeft")
+		{
+			let sel:number[] = this.getSelection();
 
-				if (!this.event.modifier)
+			if (!this.event.modifier)
+			{
+				pos = this.pattern.prev(true);
+				this.setSelection([pos,pos]);
+			}
+			else if (this.event.shift)
+			{
+				if (pos > 0)
 				{
-					 pos = this.pattern.prev(true);
-					 this.setSelection([pos,pos]);
+					pos--;
+					this.setSelection([pos,sel[1]-1]);
 				}
-				else if (this.event.shift)
-				{
-					 if (pos > 0)
-					 {
-						  pos--;
-						  this.setSelection([pos,sel[1]-1]);
-					 }
-				}
-				return(false);
-		  }
+			}
 
-		  if (this.event.key == "ArrowRight")
-		  {
-				let sel:number[] = this.getSelection();
+			return(false);
+		}
 
-				if (!this.event.modifier)
-				{
-					 pos = this.pattern.next(true);
-					 this.setSelection([pos,pos]);
-				}
-				else if (this.event.shift)
-				{
+		if (this.event.key == "ArrowRight")
+		{
+			let sel:number[] = this.getSelection();
+
+			if (!this.event.modifier)
+			{
+				pos = this.pattern.next(true);
+				this.setSelection([pos,pos]);
+			}
+			else if (this.event.shift)
+			{
 				pos = sel[1];
 
 				if (pos < this.pattern.size())
-						  this.setSelection([sel[0],pos]);
-				}
-				return(false);
-		  }
+					this.setSelection([sel[0],pos]);
+			}
 
-		  return(true);
-	 }
+			return(false);
+		}
+
+		return(true);
+	}
 
 	private finishDate() : string
 	{
@@ -1040,49 +1047,49 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(dates.format(new Date()));
 	}
 
-	 private getPosition() : number
-	 {
-		  let pos:number = this.element.selectionStart;
+	private getPosition() : number
+	{
+		let pos:number = this.element.selectionStart;
 
-		  if (pos < 0)
-		  {
-				pos = 0;
-				this.setSelection([pos,pos]);
-		  }
+		if (pos < 0)
+		{
+			pos = 0;
+			this.setSelection([pos,pos]);
+		}
 
-		  return(pos);
-	 }
+		return(pos);
+	}
 
-	 private setPosition(pos:number) : void
-	 {
-		  if (pos < 0) pos = 0;
+	private setPosition(pos:number) : void
+	{
+		if (pos < 0) pos = 0;
 		let sel:number[] = [pos,pos];
 
 		if (pos == 0) sel[1] = 1;
-		  this.element.setSelectionRange(sel[0],sel[1]);
-	 }
+			this.element.setSelectionRange(sel[0],sel[1]);
+	}
 
-	 private setSelection(sel:number[]) : void
-	 {
-		  if (sel[0] < 0) sel[0] = 0;
-		  if (sel[1] < sel[0]) sel[1] = sel[0];
+	private setSelection(sel:number[]) : void
+	{
+		if (sel[0] < 0) sel[0] = 0;
+		if (sel[1] < sel[0]) sel[1] = sel[0];
 
 		this.element.selectionStart = sel[0];
 		this.element.selectionEnd = sel[1]+1;
-	 }
+	}
 
-	 private clearSelection() : void
-	 {
+	private clearSelection() : void
+	{
 		this.element.setSelectionRange(0,0);
-	 }
+	}
 
-	 private getSelection() : number[]
-	 {
-		  let pos:number[] = [];
-		  pos[1] = this.element.selectionEnd;
-		  pos[0] = this.element.selectionStart;
-		  return(pos);
-	 }
+	private getSelection() : number[]
+	{
+		let pos:number[] = [];
+		pos[1] = this.element.selectionEnd;
+		pos[0] = this.element.selectionStart;
+		return(pos);
+	}
 
 	private getElementValue() : string
 	{
@@ -1100,28 +1107,28 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(this.element.disabled);
 	}
 
-	 private addEvents(element:HTMLElement) : void
-	 {
-		  element.addEventListener("blur",this);
-		  element.addEventListener("focus",this);
-		  element.addEventListener("change",this);
+	private addEvents(element:HTMLElement) : void
+	{
+		element.addEventListener("blur",this);
+		element.addEventListener("focus",this);
+		element.addEventListener("change",this);
 
-		  element.addEventListener("keyup",this);
-		  element.addEventListener("keydown",this);
-		  element.addEventListener("keypress",this);
+		element.addEventListener("keyup",this);
+		element.addEventListener("keydown",this);
+		element.addEventListener("keypress",this);
 
-		  element.addEventListener("wheel",this);
-		  element.addEventListener("mouseup",this);
-		  element.addEventListener("mouseout",this);
-		  element.addEventListener("mousedown",this);
-		  element.addEventListener("mouseover",this);
-		  element.addEventListener("mousemove",this);
+		element.addEventListener("wheel",this);
+		element.addEventListener("mouseup",this);
+		element.addEventListener("mouseout",this);
+		element.addEventListener("mousedown",this);
+		element.addEventListener("mouseover",this);
+		element.addEventListener("mousemove",this);
 
-		  element.addEventListener("drop",this);
-		  element.addEventListener("dragover",this);
+		element.addEventListener("drop",this);
+		element.addEventListener("dragover",this);
 
-		  element.addEventListener("click",this);
-		  element.addEventListener("dblclick",this);
-		  element.addEventListener("contextmenu",this);
-	 }
+		element.addEventListener("click",this);
+		element.addEventListener("dblclick",this);
+		element.addEventListener("contextmenu",this);
+	}
 }

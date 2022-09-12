@@ -72,6 +72,9 @@ export class Select implements FieldImplementation, EventListenerObject
 			return(this.value$);
 		}
 
+		if (this.datatype$ == DataType.boolean)
+			return(this.value$?.toLowerCase() == "true");
+
 		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let value:Date = dates.parse(this.value$);
@@ -206,6 +209,9 @@ export class Select implements FieldImplementation, EventListenerObject
 
 			if (attr == "datetime")
 				this.datatype$ = DataType.datetime;
+
+			if (attr == "boolean")
+				this.datatype$ = DataType.boolean;
 
 			if (attr == "integer")
 				this.datatype$ = DataType.integer;

@@ -14,6 +14,7 @@ export enum DataType
 {
 	date,
 	string,
+	boolean,
 	integer,
 	decimal,
 	datetime

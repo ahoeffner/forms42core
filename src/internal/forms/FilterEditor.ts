@@ -39,7 +39,11 @@ export class FilterEditor extends Form
 
 	private async setType() : Promise<boolean>
 	{
-		console.log("setType "+this.options.getValue("options"))
+		let type:string = this.options.getValue("options");
+		let incl:string = this.options.getValue("include");
+
+		console.log("type: "+type+" incl: "+incl)
+
 		return(true);
 	}
 

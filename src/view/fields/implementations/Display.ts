@@ -74,6 +74,9 @@ export class Display implements FieldImplementation, EventListenerObject
 			return(this.value$);
 		}
 
+		if (this.datatype$ == DataType.boolean)
+			return(this.value$?.toLowerCase() == "true");
+
 		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let value:Date = dates.parse(this.value$);
@@ -210,6 +213,9 @@ export class Display implements FieldImplementation, EventListenerObject
 			if (attr == "datetime")
 				this.datatype$ = DataType.datetime;
 
+			if (attr == "boolean")
+				this.datatype$ = DataType.boolean;
+
 			if (attr == "integer")
 				this.datatype$ = DataType.integer;
 
@@ -259,28 +265,28 @@ export class Display implements FieldImplementation, EventListenerObject
 			await this.eventhandler.handleEvent(this.event);
 	}
 
-    private addEvents(element:HTMLElement) : void
-    {
-        element.addEventListener("blur",this);
-        element.addEventListener("focus",this);
-        element.addEventListener("change",this);
+	private addEvents(element:HTMLElement) : void
+	{
+		element.addEventListener("blur",this);
+		element.addEventListener("focus",this);
+		element.addEventListener("change",this);
 
-        element.addEventListener("keyup",this);
-        element.addEventListener("keydown",this);
-        element.addEventListener("keypress",this);
+		element.addEventListener("keyup",this);
+		element.addEventListener("keydown",this);
+		element.addEventListener("keypress",this);
 
-        element.addEventListener("wheel",this);
-        element.addEventListener("mouseup",this);
-        element.addEventListener("mouseout",this);
-        element.addEventListener("mousedown",this);
-        element.addEventListener("mouseover",this);
-        element.addEventListener("mousemove",this);
+		element.addEventListener("wheel",this);
+		element.addEventListener("mouseup",this);
+		element.addEventListener("mouseout",this);
+		element.addEventListener("mousedown",this);
+		element.addEventListener("mouseover",this);
+		element.addEventListener("mousemove",this);
 
-        element.addEventListener("drop",this);
-        element.addEventListener("dragover",this);
+		element.addEventListener("drop",this);
+		element.addEventListener("dragover",this);
 
-        element.addEventListener("click",this);
-        element.addEventListener("dblclick",this);
-        element.addEventListener("contextmenu",this);
-    }
+		element.addEventListener("click",this);
+		element.addEventListener("dblclick",this);
+		element.addEventListener("contextmenu",this);
+	}
 }

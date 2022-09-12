@@ -60,6 +60,8 @@ export class Popup
 		view.style.top = "400px";
 		view.style.left = "400px";
 
+		console.log(view.innerHTML)
+
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');

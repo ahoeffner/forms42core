@@ -14,23 +14,59 @@ export class Popup
 {
 	public static header:string =
 	`
-		<div class="window-header canvas-handle"></div>
+		<div name="popup">
+			<div name="popup-header" class="canvas-handle">
+				<div name="close-button" onclick="this.close()">x</div>
+			</div>
+		</div>
 	`;
 
 	public static footer:string =
 	`
-		<div class="window-footer"></div>
+		<div name="popup-footer" ></div>
 	`;
 
-	public static WindowHeaderStyle =
+	public static PopupStyle =
+	`
+		display: grid;
+		position: relative;
+		width: fit-content;
+		height: fit-content;
+	`;
+
+
+	public static PopupHeaderStyle =
 	`
 		width: 100%;
 		height: 20px;
+		position: relative;
 		border: 1px solid black;
 	`;
 
+	public static PopupFooterStyle = null;
 
-	public static WindowFooterStyle =
+	public static PopupCloseButton =
 	`
+		left: 10px;
+		width: 10px;
+		height: 20px;
+		display: grid;
+		position: relative;
+		border: 1px solid black;
 	`;
+
+	public static stylePopupWindow(view:HTMLElement) : void
+	{
+		view.style.top = "400px";
+		view.style.left = "400px";
+
+		let close:HTMLElement = view.querySelector('div[name="close-button"]');
+		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
+		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
+
+		if (Popup.PopupStyle) view.style.cssText = Popup.PopupStyle;
+		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
+		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
+		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
+	}
 }

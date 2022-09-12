@@ -11,6 +11,7 @@
  */
 
 import { Form } from "../Form.js";
+import { KeyMap } from "../../../index.js";
 import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { EventType } from "../../control/events/EventType.js";
@@ -24,8 +25,17 @@ export class FilterEditor extends Form
 	constructor()
 	{
 		super(FilterEditor.page);
-		this.addEventListener(this.initialize,{type: EventType.PostViewInit})
-		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"})
+		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
+		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+
+		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
+		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
+	}
+
+	private async done() : Promise<boolean>
+	{
+		console.log("create filter")
+		return(this.close());
 	}
 
 	private setOptions() : void
@@ -72,22 +82,11 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		this.options = this.getBlock("options");
 
-		let header:HTMLElement = view.querySelector(".window-header");
-		let footer:HTMLElement = view.querySelector(".window-footer");
-
-		if (header && Popup.WindowHeaderStyle) header.style.cssText = Popup.WindowHeaderStyle;
-		if (footer && Popup.WindowFooterStyle) footer.style.cssText = Popup.WindowFooterStyle;
-
-
-		this.canvas.getElement().style.top = "400px";
-		this.canvas.getElement().style.left = "400px";
-		this.canvas.getElement().style.width = "200px";
-		this.canvas.getElement().style.height = "200px";
-
 		this.setOptions();
+		Popup.stylePopupWindow(view);
+
 		return(true);
 	}
-
 
 	private static page:string =
 		Popup.header +
@@ -116,11 +115,11 @@ export class FilterEditor extends Form
 		</div>
 
 		<div>
-			<label for="include">Incl</label>
-			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
-
 			<label for="filter">Value</label>
 			<input id="filter" name="filter" from="values">
+
+			<label for="include">Incl</label>
+			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 		</div>
 
 	</div>

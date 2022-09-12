@@ -124,7 +124,7 @@ export class Block
 		return(this.form.checkEventTransaction(event,this));
 	}
 
-	public async wait4EventTransaction(event:EventType, ) : Promise<boolean>
+	public async wait4EventTransaction(event:EventType) : Promise<boolean>
 	{
 		return(this.form.wait4EventTransaction(event,this));
 	}

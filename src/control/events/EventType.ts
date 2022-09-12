@@ -41,6 +41,7 @@ export enum EventType
 
 	OnEdit,
 	WhenValidateField,
+	PostValidateField,
 
 	OnFetch,
 	PreQuery,

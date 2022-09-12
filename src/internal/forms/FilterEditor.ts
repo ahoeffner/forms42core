@@ -25,7 +25,7 @@ export class FilterEditor extends Form
 	{
 		super(FilterEditor.page);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit})
-		this.addEventListener(this.setType,{type: EventType.WhenValidateField, block: "options"})
+		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"})
 	}
 
 	private setOptions() : void
@@ -35,6 +35,7 @@ export class FilterEditor extends Form
 
 		let types:Map<string,string> = new Map<string,string>();
 
+		types.set("x","Is null");
 		types.set("..","Any off");
 		types.set(":","Between");
 		types.set("<","Less than");
@@ -46,10 +47,22 @@ export class FilterEditor extends Form
 
 	private async setType() : Promise<boolean>
 	{
+		let incl:boolean = true;
 		let type:string = this.options.getValue("options");
-		let incl:boolean = this.options.getValue("include");
 
-		console.log("type: "+type+" incl: "+incl)
+		if ([":","<",">"].includes(type))
+			incl = this.options.getValue("include");
+
+		if (type == "<" || type == ">")
+		{
+			await this.validate();
+			await this.setView(FilterEditor.ltgt);
+
+			await this.initialize();
+
+			this.options.setValue("options",type);
+			this.options.setValue("include",incl);
+		}
 
 		return(true);
 	}
@@ -72,7 +85,6 @@ export class FilterEditor extends Form
 		this.canvas.getElement().style.height = "200px";
 
 		this.setOptions();
-
 		return(true);
 	}
 
@@ -85,16 +97,34 @@ export class FilterEditor extends Form
 			<div>
 				<label for="options">Filter</label>
 				<select id="options" name="options" from="options"></select>
-
-				<label for="include">Include</label>
-				<input type="checkbox" id="include" name="include" from="options" boolean value="true">
-			</div>
-
-			<div>
-				<input name="filter" from="values">
 			</div>
 
 		</div>
 		`
 		+ Popup.footer;
+
+
+
+	private static ltgt:string =
+	Popup.header +
+	`
+		<div name="filter-editor">
+
+		<div>
+			<label for="options">Type</label>
+			<select id="options" name="options" from="options"></select>
+		</div>
+
+		<div>
+			<label for="include">Incl</label>
+			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
+
+			<label for="filter">Value</label>
+			<input id="filter" name="filter" from="values">
+		</div>
+
+	</div>
+	`
+	+ Popup.footer;
+
 }

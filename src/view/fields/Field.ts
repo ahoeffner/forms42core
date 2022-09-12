@@ -340,6 +340,7 @@ export class Field
 			this.dirty = false;
 			this.value$ = value;
 
+			this.block.postValidateField(inst);
 			return(true);
 		}
 	}

@@ -289,6 +289,11 @@ export class Block
 		await this.model.setEventTransaction(event,record);
 	}
 
+	public async wait4EventTransaction(event:EventType) : Promise<boolean>
+	{
+		return(this.model.wait4EventTransaction(event));
+	}
+
 	public endEventTransaction(event:EventType, apply:boolean) : void
 	{
 		this.model.endEventTransaction(event,apply);
@@ -321,6 +326,12 @@ export class Block
 		}
 
 		return(success);
+	}
+
+	public async postValidateField(inst:FieldInstance) : Promise<boolean>
+	{
+		if (!await this.wait4EventTransaction(EventType.PostValidateField)) return(false);
+		return(await this.fireFieldEvent(EventType.PostValidateField,inst));
 	}
 
 	public async validateRow() : Promise<boolean>

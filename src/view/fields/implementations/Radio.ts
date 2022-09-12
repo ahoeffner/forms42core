@@ -30,7 +30,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private checked:string = null;
 	private element:HTMLInputElement = null;
 	private datatype$:DataType = DataType.string;
-    private event:BrowserEvent = BrowserEvent.get();
+   private event:BrowserEvent = BrowserEvent.get();
 
 	public get datatype() : DataType
 	{
@@ -95,6 +95,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 			this.datamapper.setValue(Tier.Backend,value);
 			value = this.datamapper.getValue(Tier.Frontend);
 		}
+
+		if (this.datatype$ == DataType.boolean)
+			value = value?.toLowerCase() == "true";
 
 		if (DataType[this.datatype$].startsWith("date"))
 		{

@@ -360,6 +360,12 @@ export class Block
 		});
 	}
 
+	public cancel() : void
+	{
+		this.model.cancel();
+		this.clear(true,true);
+	}
+
 	public clear(props:boolean, rewind:boolean) : void
 	{
 		this.current = null;

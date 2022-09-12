@@ -26,6 +26,7 @@ import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FilterEditor } from '../internal/forms/FilterEditor.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
+import { Status } from './Row.js';
 
 export class Form implements EventListenerObject
 {
@@ -390,6 +391,18 @@ export class Form implements EventListenerObject
 			{
 				success = await this.navigateForm(key,inst);;
 				return(success);
+			}
+
+			if (key == KeyMap.escape)
+			{
+				if (inst.field.row.status == Status.qbe)
+				{
+					inst.field.block.cancel();
+					return(success);
+				}
+
+				if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
+					key = KeyMap.delete;
 			}
 
 			if (key == KeyMap.enter)

@@ -433,6 +433,11 @@ export class Block
 		this.qbe.setFilter(field,filter);
 	}
 
+	public cancel() : void
+	{
+		this.qbe.querymode = false;
+	}
+
 	public async enterQuery() : Promise<boolean>
 	{
 		if (!this.view.validated)

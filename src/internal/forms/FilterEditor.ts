@@ -80,7 +80,6 @@ export class FilterEditor extends Form
 	private static page:string =
 		Popup.header +
 		`
-			changed
 			<div name="filter-editor">
 
 			<div>

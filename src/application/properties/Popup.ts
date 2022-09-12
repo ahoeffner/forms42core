@@ -15,7 +15,7 @@ export class Popup
 	public static header:string =
 	`
 		<div name="popup" class="canvas-handle">
-			<div name="popup-header">
+			<div name="popup-header" class="canvas-handle">
 				<div name="close-button" onclick="this.close()">x</div>
 			</div>
 		</div>

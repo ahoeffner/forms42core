@@ -14,8 +14,8 @@ export class Popup
 {
 	public static header:string =
 	`
-		<div name="popup">
-			<div name="popup-header" class="canvas-handle">
+		<div name="popup" class="canvas-handle">
+			<div name="popup-header">
 				<div name="close-button" onclick="this.close()">x</div>
 			</div>
 		</div>
@@ -57,11 +57,6 @@ export class Popup
 
 	public static stylePopupWindow(view:HTMLElement) : void
 	{
-		view.style.top = "400px";
-		view.style.left = "400px";
-
-		console.log(view.innerHTML)
-
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');

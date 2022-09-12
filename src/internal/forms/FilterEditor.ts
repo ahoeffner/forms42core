@@ -82,6 +82,9 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		this.options = this.getBlock("options");
 
+		this.canvas.getElement().style.top = "200px";
+		this.canvas.getElement().style.left = "200px";
+
 		this.setOptions();
 		Popup.stylePopupWindow(view);
 

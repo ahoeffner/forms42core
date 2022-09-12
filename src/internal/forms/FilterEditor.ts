@@ -33,14 +33,21 @@ export class FilterEditor extends Form
 		let rec:Record = this.options.getRecord();
 		let opts:FieldProperties = rec.getProperties();
 
-		opts.setValidValues(["like","equals"]);
+		let types:Map<string,string> = new Map<string,string>();
+
+		types.set("..","Any off");
+		types.set(":","Between");
+		types.set("<","Less than");
+		types.set(">","Greater than");
+
+		opts.setValidValues(types);
 		rec.setProperties(opts,"options");
 	}
 
 	private async setType() : Promise<boolean>
 	{
 		let type:string = this.options.getValue("options");
-		let incl:string = this.options.getValue("include");
+		let incl:boolean = this.options.getValue("include");
 
 		console.log("type: "+type+" incl: "+incl)
 
@@ -77,10 +84,13 @@ export class FilterEditor extends Form
 
 			<div>
 				<label for="options">Filter</label>
+				<!--
 				<select id="options" name="options" from="options"></select>
+				-->
+				<input id="options" name="options" from="options">
 
-				<label for="include">Including</label>
-				<input type="radio" id="include" name="include" from="options" value="true">
+				<label for="include">Include</label>
+				<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 			</div>
 
 			<div>

@@ -193,9 +193,6 @@ export class Radio implements FieldImplementation, EventListenerObject
 		if (this.event.waiting)
 			return;
 
-		if (this.event.type == "click")
-			console.log("click "+this.getIntermediateValue())
-
 		if (this.event.type == "focus")
 			bubble = true;
 
@@ -204,7 +201,6 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "change")
 		{
-			console.log("change")
 			bubble = true;
 			this.value$ = this.getElementValue();
 

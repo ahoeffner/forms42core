@@ -157,7 +157,23 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(+value);
 
 		if (this.pattern != null)
-			return(this.pattern.getValue().trim())
+			return(this.pattern.getValue().trim());
+
+		if (this.properties.validValues.size > 0)
+		{
+			let keyval:any = null;
+
+			this.properties.validValues.forEach((val,key) =>
+			{
+				if (value == val)
+					keyval = key;
+			});
+
+			if (keyval != null)
+				value = keyval;
+
+			return(value);
+		}
 
 		return(value);
 	}

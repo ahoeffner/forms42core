@@ -215,7 +215,7 @@ export class Field
 		let inst:FieldInstance = this.instance$;
 		if (inst == null) inst = this.instances$[0];
 
-		return(inst.getIntermediateValue());
+		return(inst.getValue());
 	}
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>

@@ -365,7 +365,7 @@ export class FieldFeatureFactory
 		tag.options.add(new Option())
 		let options:HTMLOptionElement[] = [];
 
-		props.getValidValues().forEach((value:string,label:string) =>
+		props.getValidValues().forEach((label:string,value:string) =>
 		{
 			if (label.length > 0 || value.length > 0)
 			{

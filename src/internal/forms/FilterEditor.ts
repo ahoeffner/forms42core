@@ -102,6 +102,33 @@ export class FilterEditor extends Form
 				<span style="display: block; width: 1em"></span>
 			</div>
 
+			<div name="single-value" style="display: none;">
+				<label for="filter">Value :</label>
+				<input id="filter" name="filter" from="options" hidden>
+
+				<span style="display: block; width: 1em"></span>
+
+				<label for="include">Incl :</label>
+				<input type="checkbox" id="include" name="include" from="options" boolean value="true" hidden>
+			</div>
+
+			<div name="double-value" style="display: none;">
+				<label for="filter">Values :</label>
+				<input id="filter" name="range1" from="options" hidden>
+				<input id="filter" name="range1" from="options" hidden>
+
+				<span style="display: block; width: 1em"></span>
+
+				<label for="include">Incl :</label>
+				<input type="checkbox" id="include" name="include" from="options" boolean value="true" hidden>
+			</div>
+
+			<div name="multi-value" style="display: none;">
+				<input name="value" from="values" row="0" hiddenx>
+				<input name="value" from="values" row="1" hiddenx>
+				<input name="value" from="values" row="2" hiddenx>
+			</div>
+
 		</div>
 		`
 		+ Popup.footer;

@@ -97,7 +97,7 @@ export class FilterEditor extends Form
 			<div name="popup-body">
 
 			<div>
-				<label for="options">Filter</label>
+				<label for="options">Type :</label>
 				<select id="options" name="options" from="options"></select>
 			</div>
 
@@ -113,17 +113,17 @@ export class FilterEditor extends Form
 		<div name="popup-body">
 
 		<div>
-			<label for="options">Type</label>
+			<label for="options">Type :</label>
 			<select id="options" name="options" from="options"></select>
 		</div>
 
 		<div>
-			<label for="filter">Value</label>
+			<label for="filter">Value :</label>
 			<input id="filter" name="filter" from="values">
 
-			<span style="display: block; width: 3em"></span>
+			<span style="display: block; width: 1em"></span>
 
-			<label for="include">Incl</label>
+			<label for="include">Incl :</label>
 			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 		</div>
 

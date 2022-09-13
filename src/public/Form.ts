@@ -88,6 +88,12 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
+	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
+	{
+		let cform:Form = await FormsModule.get().showform(form,parameters,container);
+		return(cform);
+	}
+
 	public async callform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		this.canvas.block();

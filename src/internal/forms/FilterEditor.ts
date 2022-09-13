@@ -25,11 +25,7 @@ export class FilterEditor extends Form
 	constructor()
 	{
 		super(FilterEditor.page);
-		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
-
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
 	}
 
 	private async done() : Promise<boolean>
@@ -82,11 +78,15 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		this.options = this.getBlock("options");
 
-		this.canvas.getElement().style.top = "400px";
-		this.canvas.getElement().style.left = "400px";
+		this.canvas.getView().style.top = "400px";
+		this.canvas.getView().style.left = "400px";
 
 		this.setOptions();
 		Popup.stylePopupWindow(view);
+
+		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
+		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
 
 		return(true);
 	}
@@ -94,7 +94,7 @@ export class FilterEditor extends Form
 	private static page:string =
 		Popup.header +
 		`
-			<div name="filter-editor">
+			<div name="popup-body">
 
 			<div>
 				<label for="options">Filter</label>
@@ -110,7 +110,7 @@ export class FilterEditor extends Form
 	private static ltgt:string =
 	Popup.header +
 	`
-		<div name="filter-editor">
+		<div name="popup-body">
 
 		<div>
 			<label for="options">Type</label>

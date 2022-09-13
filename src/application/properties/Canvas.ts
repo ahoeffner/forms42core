@@ -31,7 +31,6 @@ export class Canvas
 
 	public CanvasStyle:string =
 	`
-		resize: both;
 		overflow: hidden;
 		position: absolute;
 		width: fit-content;

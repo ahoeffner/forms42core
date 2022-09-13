@@ -23,12 +23,12 @@ export interface Canvas
 	restore() : void;
 	refresh() : void;
 
-	getElement() : HTMLElement;
+	getView() : HTMLElement;
 	getContent() : HTMLElement;
 
-	getView() : View;
-	getParentView() : View;
-	setView(view:View) : void;
+	getViewPort() : View;
+	getParentViewPort() : View;
+	setViewPort(view:View) : void;
 
 	getComponent() : CanvasComponent;
 	setComponent(component:CanvasComponent) : void;

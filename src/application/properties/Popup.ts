@@ -72,18 +72,20 @@ export class Popup
 
 	public static stylePopupWindow(view:HTMLElement) : void
 	{
+		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
-		let style:HTMLElement = view.querySelector('div[name="filter-editor"]');
-		let divstyle:HTMLElement = view.querySelector('div[name="filter-editor"] div');
-		let labelstyle:HTMLElement = view.querySelector('div[name="filter-editor"] label');
+		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
+		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
-		if (style && Popup.PopupStyle) style.style.cssText = Popup.PopupStyle;
-		if (divstyle && Popup.PopupStyleDiv) divstyle.style.cssText = Popup.PopupStyleDiv;
+		if (body && Popup.PopupStyle) body.style.cssText = Popup.PopupStyle;
 		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
 		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
 		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
-		if (labelstyle && Popup.PopupStyleLabel) labelstyle.style.cssText = Popup.PopupStyleLabel;
+
+		if (Popup.PopupStyleDiv) divs.forEach((div) => console.log("div "+div.innerHTML));
+		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
+		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
 	}
 }

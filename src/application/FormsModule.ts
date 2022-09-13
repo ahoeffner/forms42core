@@ -145,7 +145,7 @@ export class FormsModule
 
 		instance.canvas = canvas;
 		canvas.setComponent(instance);
-		container.appendChild(canvas.getElement());
+		container.appendChild(canvas.getView());
 
 		let mform:ModelForm = FormBacking.getModelForm(instance);
 

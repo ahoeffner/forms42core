@@ -84,7 +84,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.focus();
 	}
 
-	public getElement() : HTMLElement
+	public getView() : HTMLElement
 	{
 		return(this.canvas);
 	}
@@ -115,7 +115,8 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	public refresh() : void
 	{
-		this.container.innerHTML = "";
+		this.container.firstChild.remove();
+		
 		let page:HTMLElement = this.component.getView();
 
 		if (typeof page === 'string')
@@ -170,9 +171,8 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.content.tabIndex = -1;
 		this.content.addEventListener("focus",() => this.focus());
 
-		this.moveable$ = component.moveable;
-		this.resizable$ = component.resizable;
-		if (!this.resizable) this.canvas.style.resize = "none";
+		this.moveable = component.moveable;
+		this.resizable = component.resizable;
 	}
 
 	public block() : void
@@ -192,7 +192,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		if (this.active instanceof HTMLElement) this.active.focus();
 	}
 
-	public getView() : View
+	public getViewPort() : View
 	{
 		return({
 			y: this.canvas.offsetTop,
@@ -202,7 +202,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		});
 	}
 
-	public getParentView() : View
+	public getParentViewPort() : View
 	{
 		return({
 			y: this.canvas.parentElement.offsetTop,
@@ -212,7 +212,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		});
 	}
 
-	public setView(frame:View) : void
+	public setViewPort(frame:View) : void
 	{
 		let x:string|number = frame.x;
 		let y:string|number = frame.y;

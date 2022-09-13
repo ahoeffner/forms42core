@@ -84,7 +84,6 @@ export class Popup
 		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
 		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
 
-		if (Popup.PopupStyleDiv) divs.forEach((div) => console.log("div "+div.innerHTML));
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
 	}

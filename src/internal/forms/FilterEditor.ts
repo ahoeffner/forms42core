@@ -121,6 +121,8 @@ export class FilterEditor extends Form
 			<label for="filter">Value</label>
 			<input id="filter" name="filter" from="values">
 
+			<span style="display: block; width: 3em"></span>
+
 			<label for="include">Incl</label>
 			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 		</div>

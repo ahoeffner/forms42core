@@ -116,7 +116,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	public refresh() : void
 	{
 		this.container.firstChild.remove();
-		
+
 		let page:HTMLElement = this.component.getView();
 
 		if (typeof page === 'string')
@@ -127,9 +127,10 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		}
 
 		this.container.appendChild(page);
+		this.content = this.container.firstChild as HTMLElement;
 
-		this.moveable = this.component.moveable;
-		this.resizable = this.component.resizable;
+		this.content.tabIndex = -1;
+		this.content.addEventListener("focus",() => this.focus());
 	}
 
 	public setComponent(component:CanvasComponent) : void

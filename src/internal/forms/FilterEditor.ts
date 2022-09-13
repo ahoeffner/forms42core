@@ -99,6 +99,7 @@ export class FilterEditor extends Form
 			<div>
 				<label for="options">Type :</label>
 				<select id="options" name="options" from="options"></select>
+				<span style="display: block; width: 1em"></span>
 			</div>
 
 		</div>

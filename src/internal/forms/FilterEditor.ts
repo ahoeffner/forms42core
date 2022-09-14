@@ -79,8 +79,8 @@ export class FilterEditor extends Form
 		this.setOptions();
 		Popup.stylePopupWindow(view);
 
-		this.fltprops = this.options.getDefaultPropertiesByClass("filter");
-		this.inclprops = this.options.getDefaultPropertiesByClass("include");
+		this.fltprops = this.options.getDefaultPropertiesByClass("filter").setHidden(true);
+		this.inclprops = this.options.getDefaultPropertiesByClass("include").setHidden(true);
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
@@ -95,13 +95,15 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		this.fltprops.hidden = false;
-		this.inclprops.hidden = false;
+		let fltprops:FieldProperties = this.fltprops.clone().setHidden(false);
+		let inclprops:FieldProperties = this.inclprops.clone().setHidden(false);
+
+		console.log(this.fltprops.hidden+" "+fltprops.hidden)
 
 		single.style.display = "inline-flex";
 
-		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
-		this.options.setDefaultProperties(this.inclprops,"include","single-value");
+		this.options.setDefaultProperties(fltprops,"filter","single-value");
+		this.options.setDefaultProperties(inclprops,"include","single-value");
 	}
 
 	private hideAll() : void
@@ -115,9 +117,6 @@ export class FilterEditor extends Form
 		multi.style.display = "none";
 		single.style.display = "none";
 		double.style.display = "none";
-
-		this.fltprops.hidden = true;
-		this.inclprops.hidden = true;
 
 		this.options.setDefaultProperties(this.fltprops,"filter");
 		this.options.setDefaultProperties(this.inclprops,"include");

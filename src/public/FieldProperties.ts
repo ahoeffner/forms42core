@@ -27,6 +27,11 @@ export class FieldProperties extends BasicProperties
 			FieldFeatureFactory.copyBasic(properties,this);
 	}
 
+	public clone() : FieldProperties
+	{
+		return(new FieldProperties(this));
+	}
+
 	public setTag(tag:string) : FieldProperties
 	{
 		this.tag = tag;

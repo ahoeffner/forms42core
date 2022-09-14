@@ -17,6 +17,7 @@ import { Class, isClass } from "../../types/Class.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
 import { ComponentFactory } from "../../application/ComponentFactory.js";
+import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 
 
 export interface Style
@@ -69,6 +70,11 @@ export class BasicProperties
 	public set enabled(flag:boolean)
 	{
 		this.enabled$ = flag;
+	}
+
+	public clone() : BasicProperties
+	{
+		return(null);
 	}
 
 	public setEnabled(flag:boolean) : BasicProperties

@@ -17,7 +17,6 @@ import { Class, isClass } from "../../types/Class.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
 import { ComponentFactory } from "../../application/ComponentFactory.js";
-import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 
 
 export interface Style

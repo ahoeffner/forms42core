@@ -17,10 +17,10 @@ import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';
-import { Canvas } from '../application/interfaces/Canvas.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
+import { Canvas, View } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
@@ -56,6 +56,17 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this).focus();
 	}
 
+	public hide() : void
+	{
+		this.canvas.remove();
+	}
+
+	public show() : void
+	{
+		this.canvas.restore();
+		this.focus();
+	}
+
 	public get valid() : boolean
 	{
 		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)
@@ -71,7 +82,24 @@ export class Form implements CanvasComponent
 
 	public getView() : HTMLElement
 	{
-		return(FormBacking.getBacking(this).page);
+		let view:HTMLElement = this.canvas?.getView();
+		if (view != null) return(this.canvas.getView());
+		else return(FormBacking.getBacking(this).page);
+	}
+
+	public getViewPort() : View
+	{
+		return(this.canvas.getViewPort());
+	}
+
+	public setViewPort(view:View) : void
+	{
+		this.canvas.setViewPort(view);
+	}
+
+	public getParentViewPort() : View
+	{
+		return(this.canvas.getParentViewPort());
 	}
 
 	public getBlock(block:string) : Block

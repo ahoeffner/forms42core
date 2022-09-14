@@ -86,5 +86,9 @@ export class Popup
 
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
+
+		console.log("size: "+view.offsetWidth+" "+view.offsetHeight);
+		console.log("parent pos: "+view.parentElement.offsetTop+" "+view.parentElement.offsetLeft);
+		console.log("parent size: "+view.parentElement.offsetWidth+" "+view.parentElement.offsetHeight);
 	}
 }

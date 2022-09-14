@@ -63,7 +63,7 @@ export class FilterEditor extends Form
 		if (type == "<" || type == ">")
 		{
 			this.hideAll();
-			//this.showSingle();
+			this.showSingle();
 		}
 
 		return(true);
@@ -102,28 +102,26 @@ export class FilterEditor extends Form
 	private hideAll() : void
 	{
 		let view:HTMLElement = this.getView();
+		let options:Block = this.getBlock("options");
 
 		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 		let double:HTMLElement = view.querySelector('div[name="double-value"]');
 
-		console.log(multi);
-		console.log(single);
-		console.log(double);
-
 		multi.style.display = "none";
 		single.style.display = "none";
 		double.style.display = "none";
 
-		let rec:Record = this.getBlock("options").getRecord();
-		let fltprops:FieldProperties = rec.getProperties("filter").setAttribute("hidden");
-		let inclprops:FieldProperties = rec.getProperties("include").setAttribute("hidden");
-		let rangeprops:FieldProperties = rec.getProperties("range1").setAttribute("hidden");
+		let rec:Record = options.getRecord();
+
+		let fltprops:FieldProperties = options.getDefaultPropertiesByClass("filter")[0].setAttribute("hidden");
+		let inclprops:FieldProperties = options.getDefaultPropertiesByClass("include")[0].setAttribute("hidden");
 
 		rec.setProperties(fltprops,"filter");
 		rec.setProperties(inclprops,"include");
-		rec.setProperties(rangeprops,"range1");
-		rec.setProperties(rangeprops,"range2");
+
+		rec.setProperties(fltprops,"range1");
+		rec.setProperties(fltprops,"range2");
 	}
 
 	private static page:string =
@@ -155,7 +153,7 @@ export class FilterEditor extends Form
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true" hidden>
+					<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 				</div>
 
 				<div name="multi-value">

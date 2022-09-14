@@ -73,7 +73,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 		}
 
 		if (this.datatype$ == DataType.boolean)
-			return(this.value$?.toLowerCase() == "true");
+			return((""+this.value$).toLowerCase() == "true");
 
 		if (DataType[this.datatype$].startsWith("date"))
 		{
@@ -97,7 +97,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 		}
 
 		if (this.datatype$ == DataType.boolean)
-			value = ""+(value?.toLowerCase() == "true");
+		{
+				value = ((""+value).toLowerCase() == "true");
+		}
 
 		if (DataType[this.datatype$].startsWith("date"))
 		{

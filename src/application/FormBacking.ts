@@ -110,10 +110,10 @@ export class FormBacking
 
 
 	private parent$:Form = null;
-	private blocked$:boolean = false;
 	private page$:HTMLElement = null;
 	private listeners$:object[] = [];
 	private autoblocks$:Block[] = [];
+	private callform$:boolean = false;
 
 	constructor(public form:Form) {}
 
@@ -137,14 +137,14 @@ export class FormBacking
 		this.parent$ = form;
 	}
 
-	public get blocked() : boolean
+	public get callform() : boolean
 	{
-		return(this.blocked$);
+		return(this.callform$);
 	}
 
-	public set blocked(flag:boolean)
+	public set callform(flag:boolean)
 	{
-		this.blocked$ = flag;
+		this.callform$ = flag;
 	}
 
 	public get listeners() : object[]

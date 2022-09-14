@@ -166,23 +166,26 @@ export class Form implements EventListenerObject
 
 		if (this != Form.curform$)
 		{
-			preform = this;
-
-			if (Form.curform$ != null)
+			// When callform, allow leaving in any state
+			if (!FormBacking.getBacking(this.parent).callform)
 			{
-				preform = Form.curform$;
-				console.log(preform.parent.name+" call form valid: "+preform.validated()+" blocked: "+FormBacking.getBacking(preform.parent).blocked)
+				preform = this;
 
-				if (!preform.validated())
+				if (Form.curform$ != null)
 				{
-					preform.focus();
-					return(false);
-				}
+					preform = Form.curform$;
 
-				if (!await this.leaveForm(preform))
-				{
-					preform.focus();
-					return(false);
+					if (!preform.validated())
+					{
+						preform.focus();
+						return(false);
+					}
+
+					if (!await this.leaveForm(preform))
+					{
+						preform.focus();
+						return(false);
+					}
 				}
 			}
 

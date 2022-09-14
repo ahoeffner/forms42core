@@ -96,6 +96,7 @@ export class Form implements CanvasComponent
 
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
+		if (!await this.validate()) return(null);
 		let cform:Form = await FormsModule.get().showform(form,parameters,container);
 		return(cform);
 	}
@@ -104,11 +105,11 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.block();
 
-		FormBacking.getBacking(this).blocked = true;
+		FormBacking.getBacking(this).callform = true;
 		let cform:Form = await FormsModule.get().showform(form,parameters,container);
 
 		if (cform) FormBacking.getBacking(cform).parent = this;
-		else       FormBacking.getBacking(this).blocked = false;
+		else       FormBacking.getBacking(this).callform = false;
 
 		return(cform);
 	}

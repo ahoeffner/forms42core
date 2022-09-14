@@ -93,22 +93,20 @@ export class FilterEditor extends Form
 	private showSingle() : void
 	{
 		let view:HTMLElement = this.getView();
-		let rec:Record = this.getBlock("options").getRecord();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
-
 
 		this.fltprops.hidden = false;
 		this.inclprops.hidden = false;
 
 		single.style.display = "inline-flex";
-		rec.setProperties(this.fltprops,"filter");
-		rec.setProperties(this.inclprops,"include");
+
+		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 	}
 
 	private hideAll() : void
 	{
 		let view:HTMLElement = this.getView();
-		let options:Block = this.getBlock("options");
 
 		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
@@ -121,11 +119,11 @@ export class FilterEditor extends Form
 		this.fltprops.hidden = true;
 		this.inclprops.hidden = true;
 
-		options.setDefaultProperties(this.fltprops,"filter");
-		options.setDefaultProperties(this.inclprops,"include");
+		this.options.setDefaultProperties(this.fltprops,"filter");
+		this.options.setDefaultProperties(this.inclprops,"include");
 
-		options.setDefaultProperties(this.fltprops,"range1");
-		options.setDefaultProperties(this.fltprops,"range2");
+		this.options.setDefaultProperties(this.fltprops,"range1");
+		this.options.setDefaultProperties(this.fltprops,"range2");
 
 	}
 
@@ -142,12 +140,12 @@ export class FilterEditor extends Form
 
 				<div name="single-value">
 					<label for="filter">Value :</label>
-					<input id="filter" name="filter" from="options">
+					<input id="filter" name="filter" from="options" class="single-value">
 
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true">
+					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="single-value">
 				</div>
 
 				<div name="double-value">

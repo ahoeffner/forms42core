@@ -59,15 +59,10 @@ export class FilterEditor extends Form
 		if ([":","<",">"].includes(type))
 			incl = this.options.getValue("include");
 
+		//let single:HTMLElement =
+
 		if (type == "<" || type == ">")
 		{
-			await this.validate();
-			await this.setView(FilterEditor.ltgt);
-
-			await this.initialize();
-
-			this.options.setValue("options",type);
-			this.options.setValue("include",incl);
 		}
 
 		return(true);
@@ -78,8 +73,11 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		this.options = this.getBlock("options");
 
-		this.canvas.getView().style.top = "400px";
-		this.canvas.getView().style.left = "400px";
+		console.log("view "+view.innerHTML);
+		console.log("canvas "+this.canvas.getView().innerHTML);
+
+		view.style.top = "400px";
+		view.style.left = "400px";
 
 		this.setOptions();
 		Popup.stylePopupWindow(view);
@@ -133,30 +131,4 @@ export class FilterEditor extends Form
 		</div>
 		`
 		+ Popup.footer;
-
-
-
-	private static ltgt:string =
-	Popup.header +
-	`
-		<div name="popup-body">
-
-		<div>
-			<label for="options">Type :</label>
-			<select id="options" name="options" from="options"></select>
-		</div>
-
-		<div>
-			<label for="filter">Value :</label>
-			<input id="filter" name="filter" from="values">
-
-			<span style="display: block; width: 1em"></span>
-
-			<label for="include">Incl :</label>
-			<input type="checkbox" id="include" name="include" from="options" boolean value="true">
-		</div>
-
-	</div>
-	`
-	+ Popup.footer;
 }

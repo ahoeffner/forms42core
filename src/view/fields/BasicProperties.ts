@@ -193,6 +193,12 @@ export class BasicProperties
 
 	public set styles(styles:string)
 	{
+		if (styles == null)
+		{
+			this.styles$ = [];
+			return;
+		}
+
 		let elements:string[] = styles.split(";")
 
 		for (let i = 0; i < elements.length; i++)
@@ -361,6 +367,21 @@ export class BasicProperties
 	{
 		attr = attr?.toLowerCase();
 		this.attribs$.delete(attr);
+
+		switch(attr)
+		{
+			case "hidden": this.hidden = false; break;
+			case "enabled": this.enabled = false; break;
+			case "derived": this.derived = false; break;
+			case "readonly": this.readonly = false; break;
+			case "required": this.required = false; break;
+
+			case "style": this.setStyles(null); break;
+			case "class": this.setClasses(null); break;
+
+			case "mapper": this.setMapper(null); break;
+		}
+
 		return(this);
 	}
 

@@ -114,6 +114,7 @@ export class FilterEditor extends Form
 
 		let rec:Record = options.getRecord();
 
+		// SHOULD BE OK TO GET RECORDPROPERTIES
 		let fltprops:FieldProperties = options.getDefaultPropertiesByClass("filter")[0].setAttribute("hidden");
 		let inclprops:FieldProperties = options.getDefaultPropertiesByClass("include")[0].setAttribute("hidden");
 
@@ -148,7 +149,7 @@ export class FilterEditor extends Form
 				<div name="double-value">
 					<label for="filter">Values :</label>
 					<input id="filter" name="range1" from="options" hidden>
-					<input id="filter" name="range1" from="options" hidden>
+					<input id="filter" name="range2" from="options" hidden>
 
 					<span style="display: block; width: 1em"></span>
 

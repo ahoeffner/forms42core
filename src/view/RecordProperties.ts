@@ -62,7 +62,7 @@ export class RecordProperties
 	{
 		if (row == null)
 			return;
-			
+
 		if (field != null)
 		{
 			let fld:Field = row.getField(field);
@@ -102,7 +102,7 @@ export class RecordProperties
 				let fld:Field = row.getField(field);
 				let classes:string[] = [...fmap.keys()];
 
-				fld.getInstances().forEach((inst) =>
+				fld?.getInstances().forEach((inst) =>
 				{
 					for (let i = 0; i < classes.length; i++)
 					{
@@ -122,7 +122,7 @@ export class RecordProperties
 				{
 					let classes:string[] = [...fmap.keys()];
 
-					fld.getInstances().forEach((inst) =>
+					fld?.getInstances().forEach((inst) =>
 					{
 						for (let i = 0; i < classes.length; i++)
 						{

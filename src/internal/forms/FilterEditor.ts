@@ -21,6 +21,8 @@ import { FieldProperties } from "../../public/FieldProperties.js";
 export class FilterEditor extends Form
 {
 	private options:Block = null;
+	private fltprops:FieldProperties = null;
+	private inclprops:FieldProperties = null;
 
 	constructor()
 	{
@@ -77,6 +79,9 @@ export class FilterEditor extends Form
 		this.setOptions();
 		Popup.stylePopupWindow(view);
 
+		this.fltprops = this.options.getDefaultPropertiesByClass("filter");
+		this.inclprops = this.options.getDefaultPropertiesByClass("include");
+
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
@@ -91,12 +96,13 @@ export class FilterEditor extends Form
 		let rec:Record = this.getBlock("options").getRecord();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		let fltprops:FieldProperties = rec.getProperties("filter").removeAttribute("hidden");
-		let inclprops:FieldProperties = rec.getProperties("include").removeAttribute("hidden");
+
+		this.fltprops.hidden = false;
+		this.inclprops.hidden = false;
 
 		single.style.display = "inline-flex";
-		rec.setProperties(fltprops,"filter");
-		rec.setProperties(inclprops,"include");
+		rec.setProperties(this.fltprops,"filter");
+		rec.setProperties(this.inclprops,"include");
 	}
 
 	private hideAll() : void
@@ -112,17 +118,15 @@ export class FilterEditor extends Form
 		single.style.display = "none";
 		double.style.display = "none";
 
-		let rec:Record = options.getRecord();
+		this.fltprops.hidden = true;
+		this.inclprops.hidden = true;
 
-		// SHOULD BE OK TO GET RECORDPROPERTIES
-		let fltprops:FieldProperties = options.getDefaultPropertiesByClass("filter")[0].setAttribute("hidden");
-		let inclprops:FieldProperties = options.getDefaultPropertiesByClass("include")[0].setAttribute("hidden");
+		options.setDefaultProperties(this.fltprops,"filter");
+		options.setDefaultProperties(this.inclprops,"include");
 
-		rec.setProperties(fltprops,"filter");
-		rec.setProperties(inclprops,"include");
+		options.setDefaultProperties(this.fltprops,"range1");
+		options.setDefaultProperties(this.fltprops,"range2");
 
-		rec.setProperties(fltprops,"range1");
-		rec.setProperties(fltprops,"range2");
 	}
 
 	private static page:string =

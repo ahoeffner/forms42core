@@ -193,7 +193,25 @@ export class Block
 		return(null);
 	}
 
-	public getQBEPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	public getQBEPropertiesByClass(field:string, clazz?:string) : FieldProperties
+	{
+		let props:FieldProperties[] = this.getAllQBEPropertiesByClass(field,clazz);
+		return(props.length == 0 ? null : props[0])
+	}
+
+	public getInsertPropertiesByClass(field:string, clazz?:string) : FieldProperties
+	{
+		let props:FieldProperties[] = this.getAllInsertPropertiesByClass(field,clazz);
+		return(props.length == 0 ? null : props[0])
+	}
+
+	public getDefaultPropertiesByClass(field:string, clazz?:string) : FieldProperties
+	{
+		let props:FieldProperties[] = this.getAllDefaultPropertiesByClass(field,clazz);
+		return(props.length == 0 ? null : props[0])
+	}
+
+	public getAllQBEPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
 	{
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();
@@ -203,7 +221,7 @@ export class Block
 		return(props);
 	}
 
-	public getInsertPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	public getAllInsertPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
 	{
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();
@@ -213,7 +231,7 @@ export class Block
 		return(props);
 	}
 
-	public getDefaultPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
+	public getAllDefaultPropertiesByClass(field:string, clazz?:string) : FieldProperties[]
 	{
 		clazz = clazz?.toLowerCase();
 		field = field?.toLowerCase();

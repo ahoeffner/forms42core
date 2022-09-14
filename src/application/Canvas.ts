@@ -155,9 +155,6 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas.style.cssText = Properties.canvas.CanvasStyle;
 		this.container.style.cssText = Properties.canvas.ContentStyle;
 
-		this.container.style.zIndex = (2*this.zindex$)+"";
-		this.modal.style.zIndex = (2*this.zindex$ + 1)+"";
-
 		if (typeof page === 'string')
 		{
 			let root:HTMLDivElement = document.createElement("div");
@@ -170,6 +167,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});
 
 		this.content.tabIndex = -1;
+		this.zindex = Canvas.newLayer;
 		this.content.addEventListener("focus",() => this.focus());
 
 		this.moveable = component.moveable;
@@ -347,6 +345,11 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	private focus() : void
 	{
-		this.zindex = ++Canvas.layers$;
+		this.zindex = Canvas.newLayer;
+	}
+
+	private static get newLayer() : number
+	{
+		return(++Canvas.layers$);
 	}
 }

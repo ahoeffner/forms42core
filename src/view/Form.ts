@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { Record } from '../model/Record.js';
 import { BrowserEvent } from './BrowserEvent.js';
@@ -22,11 +23,11 @@ import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
+import { DatePicker } from '../internal/forms/DatePicker.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FilterEditor } from '../internal/forms/FilterEditor.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
-import { Status } from './Row.js';
 
 export class Form implements EventListenerObject
 {
@@ -170,6 +171,7 @@ export class Form implements EventListenerObject
 			if (Form.curform$ != null)
 			{
 				preform = Form.curform$;
+				console.log("call form")
 
 				if (!preform.validated)
 				{
@@ -488,6 +490,12 @@ export class Form implements EventListenerObject
 				if (!inst.field.block.model.ctrlblk && inst.field.block.model.deleteallowed)
 					inst.field.block.model.delete();
 
+				return(true);
+			}
+
+			if (key == KeyMap.dates)
+			{
+				this.parent.callform(DatePicker);
 				return(true);
 			}
 

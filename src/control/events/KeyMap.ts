@@ -46,6 +46,8 @@ export class KeyMap
 	public static insert:KeyMap = new KeyMap({key: 'i', ctrl: true});
 	public static insertAbove:KeyMap = new KeyMap({key: 'I', ctrl: true});
 
+	public static dates:KeyMap = new KeyMap({key: 'D', ctrl: true});
+
 
 	private key$:string;
 	private alt$:boolean;

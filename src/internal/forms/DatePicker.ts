@@ -33,13 +33,13 @@ export class DatePicker extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-		console.log(view.innerHTML)
+		Popup.stylePopupWindow(view);
 
 		//build datepicker
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
-		this.addEventListener(this.done,{type: EventType.Mouse, mouse: MouseMap.click});
+		//this.addEventListener(this.done,{type: EventType.Mouse, mouse: MouseMap.click});
 
 		return(true);
 	}

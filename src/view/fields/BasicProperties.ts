@@ -316,7 +316,7 @@ export class BasicProperties
 		return(this.attribs$.get(attr?.toLowerCase()));
 	}
 
-	public setAttribute(attr:string, value:any) : BasicProperties
+	public setAttribute(attr:string, value?:any) : BasicProperties
 	{
 		attr = attr?.toLowerCase();
 

@@ -59,10 +59,11 @@ export class FilterEditor extends Form
 		if ([":","<",">"].includes(type))
 			incl = this.options.getValue("include");
 
-		//let single:HTMLElement =
 
 		if (type == "<" || type == ">")
 		{
+			this.hideAll();
+			//this.showSingle();
 		}
 
 		return(true);
@@ -80,7 +81,49 @@ export class FilterEditor extends Form
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
 
+		this.hideAll();
 		return(true);
+	}
+
+	private showSingle() : void
+	{
+		let view:HTMLElement = this.getView();
+		let rec:Record = this.getBlock("options").getRecord();
+		let single:HTMLElement = view.querySelector('div[name="single-value"]');
+
+		let fltprops:FieldProperties = rec.getProperties("filter").removeAttribute("hidden");
+		let inclprops:FieldProperties = rec.getProperties("include").removeAttribute("hidden");
+
+		single.style.display = "inline-flex";
+		rec.setProperties(fltprops,"filter");
+		rec.setProperties(inclprops,"include");
+	}
+
+	private hideAll() : void
+	{
+		let view:HTMLElement = this.getView();
+
+		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
+		let single:HTMLElement = view.querySelector('div[name="single-value"]');
+		let double:HTMLElement = view.querySelector('div[name="double-value"]');
+
+		console.log(multi);
+		console.log(single);
+		console.log(double);
+
+		multi.style.display = "none";
+		single.style.display = "none";
+		double.style.display = "none";
+
+		let rec:Record = this.getBlock("options").getRecord();
+		let fltprops:FieldProperties = rec.getProperties("filter").setAttribute("hidden");
+		let inclprops:FieldProperties = rec.getProperties("include").setAttribute("hidden");
+		let rangeprops:FieldProperties = rec.getProperties("range1").setAttribute("hidden");
+
+		rec.setProperties(fltprops,"filter");
+		rec.setProperties(inclprops,"include");
+		rec.setProperties(rangeprops,"range1");
+		rec.setProperties(rangeprops,"range2");
 	}
 
 	private static page:string =
@@ -96,13 +139,12 @@ export class FilterEditor extends Form
 
 				<div name="single-value">
 					<label for="filter">Value :</label>
-					<input id="filter" name="filter" from="options" hidden>
-					Jonas
+					<input id="filter" name="filter" from="options">
 
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true" hidden>
+					<input type="checkbox" id="include" name="include" from="options" boolean value="true">
 				</div>
 
 				<div name="double-value">
@@ -117,9 +159,9 @@ export class FilterEditor extends Form
 				</div>
 
 				<div name="multi-value">
-					<input name="value" from="values" row="0" hiddenx>
-					<input name="value" from="values" row="1" hiddenx>
-					<input name="value" from="values" row="2" hiddenx>
+					<input name="value" from="values" row="0">
+					<input name="value" from="values" row="1">
+					<input name="value" from="values" row="2">
 				</div>
 
 		</div>

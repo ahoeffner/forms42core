@@ -165,7 +165,7 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-	public setAttribute(attr:string, value:any) : FieldProperties
+	public setAttribute(attr:string, value?:any) : FieldProperties
 	{
 		super.setAttribute(attr,value);
 		return(this);

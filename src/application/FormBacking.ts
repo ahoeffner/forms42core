@@ -110,6 +110,7 @@ export class FormBacking
 
 
 	private parent$:Form = null;
+	private blocked$:boolean = false;
 	private page$:HTMLElement = null;
 	private listeners$:object[] = [];
 	private autoblocks$:Block[] = [];
@@ -134,6 +135,16 @@ export class FormBacking
 	public set parent(form:Form)
 	{
 		this.parent$ = form;
+	}
+
+	public get blocked() : boolean
+	{
+		return(this.blocked$);
+	}
+
+	public set blocked(flag:boolean)
+	{
+		this.blocked$ = flag;
 	}
 
 	public get listeners() : object[]

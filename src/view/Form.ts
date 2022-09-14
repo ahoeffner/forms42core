@@ -171,9 +171,9 @@ export class Form implements EventListenerObject
 			if (Form.curform$ != null)
 			{
 				preform = Form.curform$;
-				console.log("call form")
+				console.log(preform.parent.name+" call form valid: "+preform.validated()+" blocked: "+FormBacking.getBacking(preform.parent).blocked)
 
-				if (!preform.validated)
+				if (!preform.validated())
 				{
 					preform.focus();
 					return(false);

@@ -302,6 +302,10 @@ export class FilterEditor extends Form
 					<input name="value" from="values" row="2" class="multi-value">
 				</div>
 
+				<div name="buttons">
+					<button onClick="this.done()">Ok</button>
+					<button onClick="this.close()">Close</button>
+				</div>
 		</div>
 		`
 		+ Popup.footer;

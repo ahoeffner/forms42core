@@ -87,15 +87,11 @@ export class Popup
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
 
-		console.log("size: "+view.offsetWidth+" "+view.offsetHeight);
-		console.log("parent pos: "+view.parentElement.offsetTop+" "+view.parentElement.offsetLeft);
-		console.log("parent size: "+view.parentElement.offsetWidth+" "+view.parentElement.offsetHeight);
-
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;
 
-		left += (view.parentElement.offsetWidth - view.offsetWidth)/2;
-		top += (view.parentElement.offsetHeight - view.offsetHeight)/2;
+		left += (view.parentElement.offsetWidth - view.offsetWidth)/1.75;
+		top += (view.parentElement.offsetHeight - view.offsetHeight)/3.00;
 
 		view.style.top = top+"px";
 		view.style.left = left+"px";

@@ -175,6 +175,14 @@ export class FilterEditor extends Form
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
 
+		let value:any = this.parameters.get("value");
+		
+		if (value != null)
+		{
+			this.values.setValue("value",value);
+			this.options.setValue("filter",value);
+		}
+
 		this.hideAll();
 		return(true);
 	}

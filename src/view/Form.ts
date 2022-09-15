@@ -451,6 +451,7 @@ export class Form implements EventListenerObject
 				let params:Map<string,any> = new Map<string,any>();
 
 				params.set("name",inst.name);
+				params.set("value",inst.getValue());
 				params.set("properties",new FieldProperties(inst.defaultProperties));
 				params.set("type",DataType[inst.field.block.fieldinfo.get(inst.name).type]);
 

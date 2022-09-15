@@ -16,6 +16,7 @@ import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Popup } from "../../application/properties/Popup.js";
+import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 
 export class FilterEditor extends Form
@@ -33,6 +34,14 @@ export class FilterEditor extends Form
 	{
 		super(FilterEditor.page);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
+
+		this.addEventListener(this.navigate,
+		[
+			{type: EventType.Key, key: KeyMap.nextfield},
+			{type: EventType.Key, key: KeyMap.prevfield},
+			{type: EventType.Key, key: KeyMap.nextblock},
+			{type: EventType.Key, key: KeyMap.prevblock}
+		]);
 	}
 
 	private async done() : Promise<boolean>
@@ -92,6 +101,23 @@ export class FilterEditor extends Form
 		return(true);
 	}
 
+	private async navigate(event:FormEvent) : Promise<boolean>
+	{
+		if (this.type == "..")
+		{
+			if (event.block == "options")	this.values.goField("value");
+			if (event.block == "values") this.options.goField("options");
+			return(false);
+		}
+		else
+		{
+			if (event.key == KeyMap.nextblock || event.key == KeyMap.prevblock)
+				return(false);
+		}
+
+		return(true);
+	}
+
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
@@ -121,7 +147,7 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		single.hidden = false;
+		single.style.display = "block";
 
 		this.fltprops.setHidden(false);
 		this.inclprops.setHidden(false);
@@ -144,7 +170,7 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		let range:HTMLElement = view.querySelector('div[name="range-values"]');
 
-		range.hidden = false;
+		range.style.display = "block";
 
 		this.fltprops.setHidden(false);
 		this.inclprops.setHidden(false);
@@ -166,8 +192,8 @@ export class FilterEditor extends Form
 	private showMulti() : void
 	{
 		let view:HTMLElement = this.getView();
-		let multi:HTMLElement = view.querySelector('div[name="range-values"]');
-		multi.hidden = false;
+		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
+		multi.style.display = "block";
 	}
 
 	private hideAll() : void
@@ -178,9 +204,9 @@ export class FilterEditor extends Form
 		let range:HTMLElement = view.querySelector('div[name="range-values"]');
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		multi.hidden = true;
-		range.hidden = true;
-		single.hidden = true;
+		multi.style.display = "none";
+		range.style.display = "none";
+		single.style.display = "none";
 
 		this.fltprops.setClass("single-value");
 		this.inclprops.setClass("single-value");
@@ -205,7 +231,7 @@ export class FilterEditor extends Form
 		this.inclprops.setClasses("multi-value");
 	}
 
-	private static page:string =
+	public static page:string =
 		Popup.header +
 		`
 			<div name="popup-body">

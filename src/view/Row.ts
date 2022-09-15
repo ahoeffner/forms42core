@@ -89,6 +89,20 @@ export class Row
 		});
 	}
 
+	public setSingleRow() : void
+	{
+		this.rownum$ = 0;
+
+		this.indicators.forEach((ind) =>
+		{ind.element.setAttribute("row","0")})
+
+		this.getFields().forEach((fld) =>
+		{
+			fld.getInstances().forEach((inst) =>
+			{inst.properties.row = -1;})
+		});
+	}
+
 	public setIndicator(ind:Indicator) : void
 	{
 		this.indicators.push(ind);

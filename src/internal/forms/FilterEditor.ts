@@ -159,11 +159,16 @@ export class FilterEditor extends Form
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		this.values.executeQuery();
 
-		this.fltprops = this.parameters.get("properties");
-		//this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
+		let fprops:FieldProperties = this.parameters.get("properties");
+
+		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")
 
-		this.fltprops.setHidden(true).removeClass("single-value");
+		this.fltprops
+			.setClasses(fprops.getClasses())
+			.setAttributes(fprops.getAttributes())
+			.setHidden(true);
+
 		this.inclprops.setHidden(true).removeClass("single-value");
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
@@ -244,7 +249,6 @@ export class FilterEditor extends Form
 		this.inclprops.setClass("single-value");
 
 		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
-		/*
 		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 
 		this.fltprops.removeClass("single-value");
@@ -262,7 +266,6 @@ export class FilterEditor extends Form
 
 		this.fltprops.setClasses("multi-value");
 		this.inclprops.setClasses("multi-value");
-		*/
 	}
 
 	public static page:string =

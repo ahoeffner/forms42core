@@ -171,6 +171,12 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
+	public setAttributes(attrs:Map<string,string>) : FieldProperties
+	{
+		super.setAttributes(attrs);
+		return(this);
+	}
+
 	public removeAttribute(attr:string) : FieldProperties
 	{
 		super.removeAttribute(attr);

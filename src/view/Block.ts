@@ -809,7 +809,7 @@ export class Block
 		*/
 
 		if (rows.length == 1)
-			rows[0].rownum = 0;
+			rows[0].setSingleRow();
 
 		if (rows.length > 1)
 		{

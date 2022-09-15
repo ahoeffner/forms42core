@@ -323,9 +323,10 @@ export class BasicProperties
 		return(this.attribs$);
 	}
 
-	public setAttributes(attrs:Map<string,string>) : void
+	public setAttributes(attrs:Map<string,string>) : BasicProperties
 	{
 		this.attribs$ = attrs;
+		return(this);
 	}
 
 	public getAttribute(attr:string) : string
@@ -349,6 +350,7 @@ export class BasicProperties
 
 			switch(attr)
 			{
+				case "value": this.value$ = value; break;
 				case "hidden": this.hidden = flag; break;
 				case "enabled": this.enabled = flag; break;
 				case "derived": this.derived = flag; break;
@@ -381,6 +383,7 @@ export class BasicProperties
 
 		switch(attr)
 		{
+			case "value": this.value$ = null; break;
 			case "hidden": this.hidden = false; break;
 			case "enabled": this.enabled = false; break;
 			case "derived": this.derived = false; break;

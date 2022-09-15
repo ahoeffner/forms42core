@@ -196,11 +196,17 @@ export class BasicProperties
 		return(style)
 	}
 
-	public set styles(styles:string)
+	public set styles(styles:string|Style[])
 	{
 		if (styles == null)
 		{
 			this.styles$ = [];
+			return;
+		}
+
+		if (!(typeof styles === "string"))
+		{
+			this.styles$ = styles;
 			return;
 		}
 
@@ -225,7 +231,7 @@ export class BasicProperties
 		}
 	}
 
-	public setStyles(styles:string) : BasicProperties
+	public setStyles(styles:string|Style[]) : BasicProperties
 	{
 		this.styles = styles;
 		return(this);
@@ -273,7 +279,7 @@ export class BasicProperties
 
 		clazz = clazz?.toLowerCase();
 
-		if (this.classes$[clazz] == null)
+		if (!this.classes$.includes(clazz))
 			this.classes$.push(clazz);
 
 		return(this);
@@ -320,6 +326,11 @@ export class BasicProperties
 	public getAttributes() : Map<string,string>
 	{
 		return(this.attribs$);
+	}
+
+	public setAttributes(attrs:Map<string,string>) : void
+	{
+		this.attribs$ = attrs;
 	}
 
 	public getAttribute(attr:string) : string

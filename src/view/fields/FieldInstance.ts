@@ -117,6 +117,7 @@ export class FieldInstance implements FieldEventHandler
 		if (status != this.field.row.status)
 			return;
 
+		this.properties$ = props;
 		let clazz:Class<FieldImplementation> = FieldTypes.get(props.tag,props.type);
 
 		if (clazz == this.clazz) this.updateField(props);

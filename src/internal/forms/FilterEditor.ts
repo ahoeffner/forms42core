@@ -20,7 +20,12 @@ import { FieldProperties } from "../../public/FieldProperties.js";
 
 export class FilterEditor extends Form
 {
+	private type:string = null;
+	private incl:boolean = false;
+
+	private values:Block = null;
 	private options:Block = null;
+
 	private fltprops:FieldProperties = null;
 	private inclprops:FieldProperties = null;
 
@@ -55,14 +60,12 @@ export class FilterEditor extends Form
 
 	private async setType() : Promise<boolean>
 	{
-		let incl:boolean = true;
-		let type:string = this.options.getValue("options");
+		this.type = this.options.getValue("options");
 
-		if ([":","<",">"].includes(type))
-			incl = this.options.getValue("include");
+		if ([":","<",">"].includes(this.type))
+			this.incl = this.options.getValue("include");
 
-
-		if (type == "<" || type == ">")
+		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
 			this.showSingle();
@@ -74,13 +77,18 @@ export class FilterEditor extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
+
+		this.values = this.getBlock("values");
 		this.options = this.getBlock("options");
 
 		this.setOptions();
 		Popup.stylePopupWindow(view);
 
-		this.fltprops = this.options.getDefaultPropertiesByClass("filter").setHidden(true);
-		this.inclprops = this.options.getDefaultPropertiesByClass("include").setHidden(true);
+		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
+		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")
+
+		this.fltprops.setHidden(true).removeClass("single-value");
+		this.inclprops.setHidden(true).removeClass("single-value");
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
@@ -95,15 +103,22 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		let fltprops:FieldProperties = this.fltprops.clone().setHidden(false);
-		let inclprops:FieldProperties = this.inclprops.clone().setHidden(false);
-
-		console.log(this.fltprops.hidden+" "+fltprops.hidden)
-
 		single.style.display = "inline-flex";
 
-		this.options.setDefaultProperties(fltprops,"filter","single-value");
-		this.options.setDefaultProperties(inclprops,"include","single-value");
+		this.fltprops.setHidden(false);
+		this.inclprops.setHidden(false);
+
+		this.fltprops.setClass("single-value");
+		this.inclprops.setClass("single-value");
+
+		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		this.options.setDefaultProperties(this.inclprops,"include","single-value");
+
+		this.fltprops.setHidden(true);
+		this.inclprops.setHidden(true);
+
+		this.fltprops.removeClass("single-value");
+		this.inclprops.removeClass("single-value");
 	}
 
 	private hideAll() : void
@@ -118,12 +133,27 @@ export class FilterEditor extends Form
 		single.style.display = "none";
 		double.style.display = "none";
 
-		this.options.setDefaultProperties(this.fltprops,"filter");
-		this.options.setDefaultProperties(this.inclprops,"include");
+		this.fltprops.setClass("single-value");
+		this.inclprops.setClass("single-value");
 
-		this.options.setDefaultProperties(this.fltprops,"range1");
-		this.options.setDefaultProperties(this.fltprops,"range2");
+		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 
+		this.fltprops.removeClass("single-value");
+		this.inclprops.removeClass("single-value");
+
+		this.fltprops.setClass("double-value");
+		this.inclprops.setClass("double-value");
+
+		this.options.setDefaultProperties(this.fltprops,"range1","double-value");
+		this.options.setDefaultProperties(this.fltprops,"range2","double-value");
+		this.options.setDefaultProperties(this.inclprops,"include","double-value");
+
+		this.fltprops.removeClass("double-value");
+		this.inclprops.removeClass("double-value");
+
+		this.fltprops.setClasses("multi-value");
+		this.inclprops.setClasses("multi-value");
 	}
 
 	private static page:string =
@@ -144,18 +174,18 @@ export class FilterEditor extends Form
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="single-value">
+					<input type="checkbox" id="include1" name="include" from="options" boolean value="true" class="single-value">
 				</div>
 
 				<div name="double-value">
 					<label for="filter">Values :</label>
-					<input id="filter" name="range1" from="options" hidden>
-					<input id="filter" name="range2" from="options" hidden>
+					<input id="filter" name="range1" from="options" class="double-value">
+					<input id="filter" name="range2" from="options" class="double-value">
 
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true">
+					<input type="checkbox" id="include2" name="include" from="options" boolean value="true" class="double-value">
 				</div>
 
 				<div name="multi-value">

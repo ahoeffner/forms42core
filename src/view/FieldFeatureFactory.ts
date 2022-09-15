@@ -87,9 +87,9 @@ export class FieldFeatureFactory
 		props.readonly = exist.readonly;
 		props.required = exist.required;
 
-		exist.getClasses().forEach((clazz) => {props.setClass(clazz)});
-		exist.getAttributes().forEach((value,name) => {props.setAttribute(name,value)});
-		exist.getStyles().forEach((element) => {props.setStyle(element.style,element.value)});
+		props.setStyles(props.getStyles());
+		props.setClasses(exist.getClasses());
+		props.setAttributes(exist.getAttributes());
 	}
 
 	public static reset(tag:HTMLElement) : void

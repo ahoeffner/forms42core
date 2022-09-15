@@ -25,6 +25,7 @@ import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { DatePicker } from '../internal/forms/DatePicker.js';
+import { FieldProperties } from '../public/FieldProperties.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FilterEditor } from '../internal/forms/FilterEditor.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -450,7 +451,7 @@ export class Form implements EventListenerObject
 				let params:Map<string,any> = new Map<string,any>();
 
 				params.set("name",inst.name);
-				params.set("props",inst.defaultProperties);
+				params.set("properties",new FieldProperties(inst.defaultProperties));
 				params.set("type",DataType[inst.field.block.fieldinfo.get(inst.name).type]);
 
 				await this.parent.callform(FilterEditor,params);

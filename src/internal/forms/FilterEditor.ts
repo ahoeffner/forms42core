@@ -19,7 +19,6 @@ import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { MemoryTable } from "../../model/datasources/MemoryTable.js";
-import { BasicProperties } from "../../view/fields/BasicProperties.js";
 
 export class FilterEditor extends Form
 {
@@ -150,7 +149,6 @@ export class FilterEditor extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-		console.log("params: "+this.parameters.size)
 
 		this.values = this.getBlock("values");
 		this.options = this.getBlock("options");
@@ -161,7 +159,8 @@ export class FilterEditor extends Form
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		this.values.executeQuery();
 
-		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
+		this.fltprops = this.parameters.get("properties");
+		//this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")
 
 		this.fltprops.setHidden(true).removeClass("single-value");
@@ -245,6 +244,7 @@ export class FilterEditor extends Form
 		this.inclprops.setClass("single-value");
 
 		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		/*
 		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 
 		this.fltprops.removeClass("single-value");
@@ -262,6 +262,7 @@ export class FilterEditor extends Form
 
 		this.fltprops.setClasses("multi-value");
 		this.inclprops.setClasses("multi-value");
+		*/
 	}
 
 	public static page:string =

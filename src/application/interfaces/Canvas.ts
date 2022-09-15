@@ -22,6 +22,7 @@ export interface Canvas
 	remove() : void;
 	restore() : void;
 	refresh() : void;
+	attach(parent:HTMLElement) : void;
 
 	getView() : HTMLElement;
 	getContent() : HTMLElement;

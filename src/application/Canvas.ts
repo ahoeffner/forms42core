@@ -84,6 +84,12 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.focus();
 	}
 
+	public attach(parent:HTMLElement) : void
+	{
+		this.canvas.remove();
+		parent.appendChild(this.canvas);
+	}
+
 	public getView() : HTMLElement
 	{
 		return(this.canvas);
@@ -233,7 +239,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	 * Drag code
 	 */
 
-	private move = false;
+	private moving = false;
 	private mouse = {x: 0, y: 0};
 	private boundary = {x: 0, y: 0, w: 0, h: 0};
 
@@ -284,7 +290,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 			this.boundary.h = parent.parentElement.clientHeight;
 		}
 
-		this.move = true;
+		this.moving = true;
 
 		document.addEventListener('mouseup',this);
 		document.addEventListener('mousemove',this);
@@ -294,7 +300,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	public drag(event:any) : void
 	{
-		if (this.move)
+		if (this.moving)
 		{
 			event.preventDefault();
 
@@ -330,7 +336,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	private dragend() : void
 	{
-		this.move = false;
+		this.moving = false;
 		document.removeEventListener('mouseup',this);
 		document.removeEventListener('mousemove',this);
 	}

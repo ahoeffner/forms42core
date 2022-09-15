@@ -67,6 +67,11 @@ export class Form implements CanvasComponent
 		this.focus();
 	}
 
+	public goField(block:string, field:string, clazz?:string) : void
+	{
+		this.getBlock(block)?.goField(field,clazz);
+	}
+
 	public get valid() : boolean
 	{
 		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)

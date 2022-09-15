@@ -18,6 +18,7 @@ import { EventType } from "../../control/events/EventType.js";
 import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
+import { MemoryTable } from "../../model/datasources/MemoryTable.js";
 
 export class FilterEditor extends Form
 {
@@ -33,6 +34,7 @@ export class FilterEditor extends Form
 	constructor()
 	{
 		super(FilterEditor.page);
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
 		this.addEventListener(this.navigate,
@@ -105,9 +107,36 @@ export class FilterEditor extends Form
 	{
 		if (this.type == "..")
 		{
-			if (event.block == "options")	this.values.goField("value");
-			if (event.block == "values") this.options.goField("options");
-			return(false);
+			if (event.block == "options")
+			{
+				this.values.goField("value");
+				return(false);
+			}
+			else
+			{
+				let goopt:boolean = false;
+
+				if (event.key == KeyMap.prevfield && this.values.row == 0) goopt = true;
+				if (event.key == KeyMap.nextblock || event.key == KeyMap.prevblock) goopt = true;
+
+				if (goopt)
+				{
+					this.options.goField("options");
+					return(false);
+				}
+
+				if (event.key == KeyMap.prevfield && this.values.row > 0)
+				{
+					this.values.prevrecord();
+					return(false);
+				}
+
+				if (event.key == KeyMap.nextfield && this.values.row < this.values.rows - 1 && this.values.getValue("value") != null)
+				{
+					this.values.nextrecord();
+					return(false);
+				}
+			}
 		}
 		else
 		{
@@ -127,6 +156,8 @@ export class FilterEditor extends Form
 
 		this.setOptions();
 		Popup.stylePopupWindow(view);
+
+		this.values.datasource = new MemoryTable("value",this.values.rows);
 
 		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")

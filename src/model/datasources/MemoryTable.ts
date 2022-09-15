@@ -27,8 +27,31 @@ export class MemoryTable implements DataSource
 	public arrayfecth:number = 1;
 	private filter:FilterStructure;
 
-	public constructor(columns?:string[], records?:any[][])
+	public constructor(columns?:string|string[], records?:number|any[][])
 	{
+		if (columns != null && !Array.isArray(columns))
+			columns = [columns];
+
+		if (typeof records === "number")
+		{
+			let rows:number = records;
+
+			if (columns != null && columns.length > 0)
+			{
+				records = [];
+
+				for (let r = 0; r < rows; r++)
+				{
+					let row:any[] = [];
+
+					for (let c = 0; c < columns.length; c++)
+						row.push(null);
+
+						records.push(row);
+				}
+			}
+		}
+
 		if (columns == null) columns = [];
 		if (records == null) records = [];
 

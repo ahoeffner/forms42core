@@ -59,6 +59,26 @@ export class Block
 		return(FormBacking.getModelBlock(this).QBEFilter);
 	}
 
+	public get row() : number
+	{
+		return(FormBacking.getViewBlock(this).row);
+	}
+
+	public get rows() : number
+	{
+		return(FormBacking.getViewBlock(this).rows);
+	}
+
+	public async prevrecord() : Promise<boolean>
+	{
+		return(FormBacking.getViewBlock(this).prevrecord());
+	}
+
+	public async nextrecord() : Promise<boolean>
+	{
+		return(FormBacking.getViewBlock(this).nextrecord());
+	}
+
 	public focus() : void
 	{
 		FormBacking.getViewBlock(this).focus();

@@ -65,6 +65,24 @@ export class FilterEditor extends Form
 		if ([":","<",">"].includes(this.type))
 			this.incl = this.options.getValue("include");
 
+		if (this.type == "x")
+		{
+			this.hideAll();
+		}
+
+		if (this.type == ":")
+		{
+			this.hideAll();
+			this.showRange();
+		}
+
+		if (this.type == "..")
+		{
+			this.hideAll();
+			this.showMulti();
+		}
+
+
 		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
@@ -103,7 +121,7 @@ export class FilterEditor extends Form
 		let view:HTMLElement = this.getView();
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
 
-		single.style.display = "inline-flex";
+		single.hidden = false;
 
 		this.fltprops.setHidden(false);
 		this.inclprops.setHidden(false);
@@ -121,17 +139,48 @@ export class FilterEditor extends Form
 		this.inclprops.removeClass("single-value");
 	}
 
+	private showRange() : void
+	{
+		let view:HTMLElement = this.getView();
+		let range:HTMLElement = view.querySelector('div[name="range-values"]');
+
+		range.hidden = false;
+
+		this.fltprops.setHidden(false);
+		this.inclprops.setHidden(false);
+
+		this.fltprops.setClass("range-values");
+		this.inclprops.setClass("range-values");
+
+		this.options.setDefaultProperties(this.fltprops,"range1","range-values");
+		this.options.setDefaultProperties(this.fltprops,"range2","range-values");
+		this.options.setDefaultProperties(this.inclprops,"include","range-values");
+
+		this.fltprops.setHidden(true);
+		this.inclprops.setHidden(true);
+
+		this.fltprops.removeClass("range-values");
+		this.inclprops.removeClass("range-values");
+	}
+
+	private showMulti() : void
+	{
+		let view:HTMLElement = this.getView();
+		let multi:HTMLElement = view.querySelector('div[name="range-values"]');
+		multi.hidden = false;
+	}
+
 	private hideAll() : void
 	{
 		let view:HTMLElement = this.getView();
 
 		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
+		let range:HTMLElement = view.querySelector('div[name="range-values"]');
 		let single:HTMLElement = view.querySelector('div[name="single-value"]');
-		let double:HTMLElement = view.querySelector('div[name="double-value"]');
 
-		multi.style.display = "none";
-		single.style.display = "none";
-		double.style.display = "none";
+		multi.hidden = true;
+		range.hidden = true;
+		single.hidden = true;
 
 		this.fltprops.setClass("single-value");
 		this.inclprops.setClass("single-value");
@@ -142,15 +191,15 @@ export class FilterEditor extends Form
 		this.fltprops.removeClass("single-value");
 		this.inclprops.removeClass("single-value");
 
-		this.fltprops.setClass("double-value");
-		this.inclprops.setClass("double-value");
+		this.fltprops.setClass("range-values");
+		this.inclprops.setClass("range-values");
 
-		this.options.setDefaultProperties(this.fltprops,"range1","double-value");
-		this.options.setDefaultProperties(this.fltprops,"range2","double-value");
-		this.options.setDefaultProperties(this.inclprops,"include","double-value");
+		this.options.setDefaultProperties(this.fltprops,"range1","range-values");
+		this.options.setDefaultProperties(this.fltprops,"range2","range-values");
+		this.options.setDefaultProperties(this.inclprops,"include","range-values");
 
-		this.fltprops.removeClass("double-value");
-		this.inclprops.removeClass("double-value");
+		this.fltprops.removeClass("range-values");
+		this.inclprops.removeClass("range-values");
 
 		this.fltprops.setClasses("multi-value");
 		this.inclprops.setClasses("multi-value");
@@ -174,24 +223,24 @@ export class FilterEditor extends Form
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include1" name="include" from="options" boolean value="true" class="single-value">
+					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="single-value">
 				</div>
 
-				<div name="double-value">
+				<div name="range-values">
 					<label for="filter">Values :</label>
-					<input id="filter" name="range1" from="options" class="double-value">
-					<input id="filter" name="range2" from="options" class="double-value">
+					<input id="filter" name="range1" from="options" class="range-values">
+					<input id="filter" name="range2" from="options" class="range-values">
 
 					<span style="display: block; width: 1em"></span>
 
 					<label for="include">Incl :</label>
-					<input type="checkbox" id="include2" name="include" from="options" boolean value="true" class="double-value">
+					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="range-values">
 				</div>
 
 				<div name="multi-value">
-					<input name="value" from="values" row="0">
-					<input name="value" from="values" row="1">
-					<input name="value" from="values" row="2">
+					<input name="value" from="values" row="0" class="multi-value">
+					<input name="value" from="values" row="1" class="multi-value">
+					<input name="value" from="values" row="2" class="multi-value">
 				</div>
 
 		</div>

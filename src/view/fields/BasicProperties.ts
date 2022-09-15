@@ -71,11 +71,6 @@ export class BasicProperties
 		this.enabled$ = flag;
 	}
 
-	public clone() : BasicProperties
-	{
-		return(null);
-	}
-
 	public setEnabled(flag:boolean) : BasicProperties
 	{
 		this.enabled = flag;

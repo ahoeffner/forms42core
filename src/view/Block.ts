@@ -22,7 +22,7 @@ import { Record, RecordStatus } from "../model/Record.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
-import { FieldProperties } from "../public/FieldProperties.js";
+import { BasicProperties } from "./fields/BasicProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
@@ -230,12 +230,12 @@ export class Block
 		return(this.fieldnames$);
 	}
 
-	public getRecordProperties(record:Record, field:string, clazz:string) : FieldProperties
+	public getRecordProperties(record:Record, field:string, clazz:string) : BasicProperties
 	{
 		if (field == null)
 			field = this.current.name;
 
-		let props:FieldProperties = this.recprops$.get(record,field,clazz);
+		let props:BasicProperties = this.recprops$.get(record,field,clazz);
 
 		if (props == null)
 		{
@@ -246,7 +246,7 @@ export class Block
 		return(props);
 	}
 
-	public setRecordProperties(record:Record, field:string, clazz:string, props:FieldProperties) : void
+	public setRecordProperties(record:Record, field:string, clazz:string, props:BasicProperties) : void
 	{
 		if (props == null)
 		{

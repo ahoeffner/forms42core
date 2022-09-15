@@ -13,40 +13,40 @@
 import { Row } from "./Row.js";
 import { Field } from "./fields/Field.js";
 import { Record } from "../model/Record.js";
-import { FieldProperties } from "../public/FieldProperties.js";
+import { BasicProperties } from "./fields/BasicProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 export class RecordProperties
 {
 	// record -> field -> clazz -> props
-	propmap$:Map<object,Map<string,Map<string,FieldProperties>>> =
-		new Map<object,Map<string,Map<string,FieldProperties>>>();
+	propmap$:Map<object,Map<string,Map<string,BasicProperties>>> =
+		new Map<object,Map<string,Map<string,BasicProperties>>>();
 
 	public clear() : void
 	{
 		this.propmap$.clear();
 	}
 
-	public get(record:Record, field:string, clazz:string) : FieldProperties
+	public get(record:Record, field:string, clazz:string) : BasicProperties
 	{
 		return(this.propmap$.get(record.id)?.get(field)?.get(clazz));
 	}
 
-	public set(record:Record, field:string, clazz:string, props:FieldProperties) : void
+	public set(record:Record, field:string, clazz:string, props:BasicProperties) : void
 	{
-		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
+		let rmap:Map<string,Map<string,BasicProperties>> = this.propmap$.get(record.id);
 
 		if (rmap == null)
 		{
-			rmap = new Map<string,Map<string,FieldProperties>>();
+			rmap = new Map<string,Map<string,BasicProperties>>();
 			this.propmap$.set(record.id,rmap);
 		}
 
-		let fmap:Map<string,FieldProperties> = rmap.get(field);
+		let fmap:Map<string,BasicProperties> = rmap.get(field);
 
 		if (fmap == null)
 		{
-			fmap = new Map<string,FieldProperties>();
+			fmap = new Map<string,BasicProperties>();
 			rmap.set(field,fmap);
 		}
 
@@ -88,14 +88,14 @@ export class RecordProperties
 
 	public apply(row:Row, record:Record, field?:string) : void
 	{
-		let rmap:Map<string,Map<string,FieldProperties>> = this.propmap$.get(record.id);
+		let rmap:Map<string,Map<string,BasicProperties>> = this.propmap$.get(record.id);
 
 		if (rmap == null)
 			return;
 
 		if (field != null)
 		{
-			let fmap:Map<string,FieldProperties> = rmap.get(field);
+			let fmap:Map<string,BasicProperties> = rmap.get(field);
 
 			if (fmap != null)
 			{
@@ -116,7 +116,7 @@ export class RecordProperties
 		{
 			row.getFields().forEach((fld) =>
 			{
-				let fmap:Map<string,FieldProperties> = rmap.get(fld.name);
+				let fmap:Map<string,BasicProperties> = rmap.get(fld.name);
 
 				if (fmap != null)
 				{

@@ -57,7 +57,7 @@ export class Record
 	public getProperties(field?:string, clazz?:string) : FieldProperties
 	{
 		let blk:ModelBlock = this.rec$.block;
-		return(blk.view.getRecordProperties(this.rec$,field,clazz));
+		return(new FieldProperties(blk.view.getRecordProperties(this.rec$,field,clazz)));
 	}
 
 	public setProperties(props:FieldProperties, field:string, clazz?:string) : void

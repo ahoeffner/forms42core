@@ -116,7 +116,7 @@ export class FilterEditor extends Form
 			{
 				let goopt:boolean = false;
 
-				if (event.key == KeyMap.prevfield && this.values.row == 0) goopt = true;
+				if (event.key == KeyMap.prevfield && this.values.record == 0) goopt = true;
 				if (event.key == KeyMap.nextblock || event.key == KeyMap.prevblock) goopt = true;
 
 				if (goopt)
@@ -125,13 +125,13 @@ export class FilterEditor extends Form
 					return(false);
 				}
 
-				if (event.key == KeyMap.prevfield && this.values.row > 0)
+				if (event.key == KeyMap.prevfield)
 				{
 					this.values.prevrecord();
 					return(false);
 				}
 
-				if (event.key == KeyMap.nextfield && this.values.row < this.values.rows - 1 && this.values.getValue("value") != null)
+				if (event.key == KeyMap.nextfield && this.values.getValue("value") != null)
 				{
 					this.values.nextrecord();
 					return(false);
@@ -158,6 +158,7 @@ export class FilterEditor extends Form
 		Popup.stylePopupWindow(view);
 
 		this.values.datasource = new MemoryTable("value",this.values.rows);
+		this.values.executeQuery();
 
 		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")

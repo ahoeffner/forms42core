@@ -29,17 +29,16 @@ export class MemoryTable implements DataSource
 
 	public constructor(columns?:string|string[], records?:number|any[][])
 	{
-		if (columns != null && !Array.isArray(columns))
+		if (!Array.isArray(columns))
 			columns = [columns];
 
 		if (typeof records === "number")
 		{
 			let rows:number = records;
 
+			records = [];
 			if (columns != null && columns.length > 0)
 			{
-				records = [];
-
 				for (let r = 0; r < rows; r++)
 				{
 					let row:any[] = [];

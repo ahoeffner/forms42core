@@ -69,6 +69,11 @@ export class Block
 		return(FormBacking.getViewBlock(this).rows);
 	}
 
+	public get record() : number
+	{
+		return(FormBacking.getModelBlock(this).record);
+	}
+
 	public async prevrecord() : Promise<boolean>
 	{
 		return(FormBacking.getViewBlock(this).prevrecord());

@@ -19,6 +19,7 @@ import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { MemoryTable } from "../../model/datasources/MemoryTable.js";
+import { BasicProperties } from "../../view/fields/BasicProperties.js";
 
 export class FilterEditor extends Form
 {
@@ -93,7 +94,6 @@ export class FilterEditor extends Form
 			this.showMulti();
 		}
 
-
 		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
@@ -150,6 +150,7 @@ export class FilterEditor extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
+		console.log("params: "+this.parameters.size)
 
 		this.values = this.getBlock("values");
 		this.options = this.getBlock("options");

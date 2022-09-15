@@ -15,6 +15,7 @@ import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
+import { DataType } from '../view/fields/DataType.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { Record as ModelRecord } from '../model/Record.js';
@@ -72,6 +73,12 @@ export class Block
 	public get record() : number
 	{
 		return(FormBacking.getModelBlock(this).record);
+	}
+
+	public datatype(field:string) : string
+	{
+		field = field?.toLowerCase();
+		return(DataType[FormBacking.getViewBlock(this).fieldinfo.get(field).type]);
 	}
 
 	public async prevrecord() : Promise<boolean>

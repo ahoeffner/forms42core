@@ -13,6 +13,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { Record } from '../model/Record.js';
+import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
@@ -446,7 +447,13 @@ export class Form implements EventListenerObject
 				if (!inst.field.block.model.querymode)
 					return(false);
 
-				await this.parent.callform(FilterEditor);
+				let params:Map<string,any> = new Map<string,any>();
+
+				params.set("name",inst.name);
+				params.set("props",inst.defaultProperties);
+				params.set("type",DataType[inst.field.block.fieldinfo.get(inst.name).type]);
+
+				await this.parent.callform(FilterEditor,params);
 				return(true);
 			}
 

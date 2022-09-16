@@ -138,11 +138,11 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.block();
 
-		FormBacking.getBacking(this).callform = true;
+		FormBacking.getBacking(this).hasModalChild = true;
 		let cform:Form = await FormsModule.get().showform(form,parameters,container);
 
 		if (cform) FormBacking.getBacking(cform).parent = this;
-		else       FormBacking.getBacking(this).callform = false;
+		else       FormBacking.getBacking(this).hasModalChild = false;
 
 		return(cform);
 	}

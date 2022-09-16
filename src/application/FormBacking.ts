@@ -113,7 +113,7 @@ export class FormBacking
 	private page$:HTMLElement = null;
 	private listeners$:object[] = [];
 	private autoblocks$:Block[] = [];
-	private callform$:boolean = false;
+	private haschild$:boolean = false;
 
 	constructor(public form:Form) {}
 
@@ -137,14 +137,19 @@ export class FormBacking
 		this.parent$ = form;
 	}
 
-	public get callform() : boolean
+	public get wasCalled() : boolean
 	{
-		return(this.callform$);
+		return(this.parent$ != null);
 	}
 
-	public set callform(flag:boolean)
+	public get hasModalChild() : boolean
 	{
-		this.callform$ = flag;
+		return(this.haschild$);
+	}
+
+	public set hasModalChild(flag:boolean)
+	{
+		this.haschild$ = flag;
 	}
 
 	public get listeners() : object[]

@@ -60,7 +60,7 @@ export class Form implements EventListenerObject
 		return(this.parent$);
 	}
 
-	public modform() : ModelForm
+	public get model() : ModelForm
 	{
 		return(this.modfrm$);
 	}
@@ -168,8 +168,9 @@ export class Form implements EventListenerObject
 
 		if (this != Form.curform$)
 		{
-			// When callform, allow leaving in any state
-			if (!FormBacking.getBacking(this.parent).callform)
+			// When modal call, allow leaving former form in any state
+
+			if (!FormBacking.getBacking(this.parent).wasCalled)
 			{
 				preform = this;
 
@@ -285,7 +286,7 @@ export class Form implements EventListenerObject
 		if (preform)
 		{
 			// Successfully navigated from preform to this form
-			if (!this.modform().wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
+			if (!this.model.wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
 			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
 			return(success);
 		}
@@ -307,7 +308,7 @@ export class Form implements EventListenerObject
 	{
 		if (!await this.setEventTransaction(EventType.PreForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
-		this.modform().endEventTransaction(EventType.PreForm,null,success);
+		this.model.endEventTransaction(EventType.PreForm,null,success);
 		if (success && form.parent.navigable) this.setURL();
 		return(success);
 	}
@@ -338,7 +339,7 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!await this.modform().wait4EventTransaction(EventType.PostForm,null)) return(false);
+		if (!await this.model.wait4EventTransaction(EventType.PostForm,null)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		return(success);
 	}
@@ -367,9 +368,11 @@ export class Form implements EventListenerObject
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
 	{
 		let success:boolean = false;
-		let blk:ModelBlock = inst?.field.block.model;
 
-		if (!this.modform().checkEventTransaction(EventType.Key,blk))
+		let block:Block = inst?.field.block;
+		let mblock:ModelBlock = inst?.field.block.model;
+
+		if (!this.model.checkEventTransaction(EventType.Key,mblock))
 			return(false);
 
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
@@ -379,18 +382,18 @@ export class Form implements EventListenerObject
 
 		if (inst != null)
 		{
-			if (key == KeyMap.enter && inst.field.block.model.querymode)
+			if (key == KeyMap.enter && mblock.querymode)
 				key = KeyMap.executequery;
 
 			if (KeyMapping.isRowNav(key))
 			{
-				success = await this.block.navigateRow(key,inst);
+				success = await block.navigateRow(key,inst);
 				return(success);
 			}
 
 			if (KeyMapping.isBlockNav(key))
 			{
-				success = await this.block.navigateBlock(key,inst);
+				success = await block.navigateBlock(key,inst);
 				return(success);
 			}
 
@@ -417,15 +420,15 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				success = await this.block.validateRow();
+				success = await block.validateRow();
 				return(success);
 			}
 
 			if (key == KeyMap.enterquery)
 			{
-				if (inst.field.block.model.querymode)
+				if (mblock.querymode)
 				{
-					inst.field.block.model.showLastQuery();
+					mblock.showLastQuery();
 					return(true);
 				}
 
@@ -434,26 +437,26 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!inst.field.block.model.ctrlblk && inst.field.block.model.qbeallowed)
-					success = await inst.field.block.model.enterQuery();
+				if (!mblock.ctrlblk && inst.field.block.model.qbeallowed)
+					success = await mblock.enterQuery();
 
 				if (success)
-					inst.field.block.findFirstEditable(inst.field.block.model.qberec)?.focus();
+					block.findFirstEditable(mblock.qberec)?.focus();
 
 				return(true);
 			}
 
 			if (key == KeyMap.queryeditor)
 			{
-				if (!inst.field.block.model.querymode)
+				if (!mblock.querymode)
 					return(false);
 
 				let params:Map<string,any> = new Map<string,any>();
 
 				params.set("name",inst.name);
 				params.set("value",inst.getValue());
+				params.set("type",DataType[block.fieldinfo.get(inst.name).type]);
 				params.set("properties",new FieldProperties(inst.defaultProperties));
-				params.set("type",DataType[inst.field.block.fieldinfo.get(inst.name).type]);
 
 				await this.parent.callform(FilterEditor,params);
 				return(true);
@@ -466,11 +469,11 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!inst.field.block.model.ctrlblk && inst.field.block.model.queryallowed)
-					success = await inst.field.block.model.executeQuery();
+				if (!mblock.ctrlblk && mblock.queryallowed)
+					success = await mblock.executeQuery();
 
 				if (success)
-					inst.field.block.focus();
+					block.focus();
 
 				return(true);
 			}
@@ -480,8 +483,8 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
-					inst.field.block.model.insert(false);
+				if (!mblock.ctrlblk && mblock.insertallowed)
+					mblock.insert(false);
 
 				return(true);
 			}
@@ -491,16 +494,16 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!inst.field.block.model.ctrlblk && inst.field.block.model.insertallowed)
-					inst.field.block.model.insert(true);
+				if (!mblock.ctrlblk && mblock.insertallowed)
+					mblock.insert(true);
 
 				return(true);
 			}
 
 			if (key == KeyMap.delete)
 			{
-				if (!inst.field.block.model.ctrlblk && inst.field.block.model.deleteallowed)
-					inst.field.block.model.delete();
+				if (!mblock.ctrlblk && mblock.deleteallowed)
+					mblock.delete();
 
 				return(true);
 			}
@@ -576,7 +579,7 @@ export class Form implements EventListenerObject
 	{
 		let blk:ModelBlock = inst?.field.block.model;
 
-		if (!this.modform().checkEventTransaction(EventType.Mouse,blk))
+		if (!this.model.checkEventTransaction(EventType.Mouse,blk))
 			return(false);
 
 		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
@@ -593,7 +596,7 @@ export class Form implements EventListenerObject
 			record = block.model.getRecord(offset);
 		}
 
-		return(this.modform().setEventTransaction(event,block?.model,record));
+		return(this.model.setEventTransaction(event,block?.model,record));
 	}
 
 	private event:BrowserEvent = BrowserEvent.get();

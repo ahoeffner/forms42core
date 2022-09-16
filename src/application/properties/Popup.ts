@@ -90,12 +90,8 @@ export class Popup
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;
 
-		console.log("left: "+left+" "+view.parentElement.offsetWidth+" "+view.offsetWidth+" "+((view.parentElement.offsetWidth - view.offsetWidth)))
-
 		left += (view.parentElement.offsetWidth - view.offsetWidth)/1.50;
 		top += (view.parentElement.offsetHeight - view.offsetHeight)/4.00;
-
-		console.log("left: "+left+" top: "+top)
 
 		view.style.top = top+"px";
 		view.style.left = left+"px";

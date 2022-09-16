@@ -157,11 +157,11 @@ export class FilterEditor extends Form
 		Popup.stylePopupWindow(view);
 
 		this.values.datasource = new MemoryTable("value",this.values.rows);
-		this.values.executeQuery();
+		await this.values.executeQuery();
 
 		let fprops:FieldProperties = this.parameters.get("properties");
 
-		this.fltprops = this.options.getDefaultPropertiesByClass("filter","single-value")
+		this.fltprops = this.options.getDefaultPropertiesByClass("value","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")
 
 		this.fltprops
@@ -176,11 +176,12 @@ export class FilterEditor extends Form
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
 
 		let value:any = this.parameters.get("value");
-		
+
 		if (value != null)
 		{
 			this.values.setValue("value",value);
-			this.options.setValue("filter",value);
+			this.options.setValue("value",value);
+			this.options.setValue("value1",value);
 		}
 
 		this.hideAll();
@@ -200,7 +201,7 @@ export class FilterEditor extends Form
 		this.fltprops.setClass("single-value");
 		this.inclprops.setClass("single-value");
 
-		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		this.options.setDefaultProperties(this.fltprops,"value","single-value");
 		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 
 		this.fltprops.setHidden(true);
@@ -223,8 +224,8 @@ export class FilterEditor extends Form
 		this.fltprops.setClass("range-values");
 		this.inclprops.setClass("range-values");
 
-		this.options.setDefaultProperties(this.fltprops,"range1","range-values");
-		this.options.setDefaultProperties(this.fltprops,"range2","range-values");
+		this.options.setDefaultProperties(this.fltprops,"value1","range-values");
+		this.options.setDefaultProperties(this.fltprops,"value2","range-values");
 		this.options.setDefaultProperties(this.inclprops,"include","range-values");
 
 		this.fltprops.setHidden(true);
@@ -256,7 +257,7 @@ export class FilterEditor extends Form
 		this.fltprops.setClass("single-value");
 		this.inclprops.setClass("single-value");
 
-		this.options.setDefaultProperties(this.fltprops,"filter","single-value");
+		this.options.setDefaultProperties(this.fltprops,"value","single-value");
 		this.options.setDefaultProperties(this.inclprops,"include","single-value");
 
 		this.fltprops.removeClass("single-value");
@@ -265,8 +266,8 @@ export class FilterEditor extends Form
 		this.fltprops.setClass("range-values");
 		this.inclprops.setClass("range-values");
 
-		this.options.setDefaultProperties(this.fltprops,"range1","range-values");
-		this.options.setDefaultProperties(this.fltprops,"range2","range-values");
+		this.options.setDefaultProperties(this.fltprops,"value1","range-values");
+		this.options.setDefaultProperties(this.fltprops,"value2","range-values");
 		this.options.setDefaultProperties(this.inclprops,"include","range-values");
 
 		this.fltprops.removeClass("range-values");
@@ -288,30 +289,52 @@ export class FilterEditor extends Form
 				</div>
 
 				<div name="single-value">
-					<label for="filter">Value :</label>
-					<input id="filter" name="filter" from="options" class="single-value">
-
-					<span style="display: block; width: 1em"></span>
-
-					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="single-value">
+					<tabel>
+						<tr>
+							<td>
+								<input name="value" from="options" class="single-value">
+							</td>
+							<td>
+								Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="single-value">
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<div name="range-values">
-					<label for="filter">Values :</label>
-					<input id="filter" name="range1" from="options" class="range-values">
-					<input id="filter" name="range2" from="options" class="range-values">
-
-					<span style="display: block; width: 1em"></span>
-
-					<label for="include">Incl :</label>
-					<input type="checkbox" id="include" name="include" from="options" boolean value="true" class="range-values">
+					<tabel>
+						<tr>
+							<td>
+								<input name="value1" from="options" class="range-values">
+							</td>
+							<td>
+								<input name="value2" from="options" class="range-values">
+							</td>
+							<td>
+								Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="range-values">
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<div name="multi-value">
-					<input name="value" from="values" row="0" class="multi-value">
-					<input name="value" from="values" row="1" class="multi-value">
-					<input name="value" from="values" row="2" class="multi-value">
+					<table>
+						<tr>
+							<td>
+								<input name="value" from="values" row="0" class="multi-value">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input name="value" from="values" row="1" class="multi-value">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input name="value" from="values" row="2" class="multi-value">
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<div name="buttons">

@@ -15,7 +15,6 @@ import { KeyMap } from "../../control/events/KeyMap.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Popup } from "../../application/properties/Popup.js";
-import { Console } from "console";
 import { FormEvent } from "../../../index.js";
 
 export class DatePicker extends Form
@@ -59,7 +58,7 @@ export class DatePicker extends Form
 	{
 		let view:HTMLElement = this.getView();
 		Popup.stylePopupWindow(view);
-		
+
 		this.days_element = view.querySelector('.days');
 		this.mth_element = view.querySelector('.mth')
 		this.pre_mth_element = view.querySelector('.prev-mth');
@@ -68,7 +67,7 @@ export class DatePicker extends Form
 		//build datepicker
 		this.populateDates()
 		this.selected_date_element.value = this.formatDate(this.day,Number(this.month + 1),this.year);
-		
+
 		this.pre_mth_element.addEventListener('click', this.goToPrevMonth);
 		this.next_mth_element.addEventListener('click', this.goToNextMonth);
 
@@ -78,7 +77,7 @@ export class DatePicker extends Form
 		return(true);
 	}
 
-	
+
 	private async dateInputFile(e : FormEvent) : Promise<boolean>
 	{
 		console.log(this.getValue("fields", "date"))
@@ -87,7 +86,7 @@ export class DatePicker extends Form
 		// this.month--;
 		// this.selectedDay = this.day;
 		// this.selectedMonth = this.month;
-		// this.selectedYear = this.year;	
+		// this.selectedYear = this.year;
 
 		// this.populateDates();
 		return(true)
@@ -114,12 +113,12 @@ export class DatePicker extends Form
 		}
 		this.populateDates()
 	}
-	
+
 
 	private populateDates()
 	{
 		this.days_element.textContent = '';
-		
+
 		let daysInCurrentMonth = this.getDaysInMonth(this.year, this.month);
 
 		//Found local from browser
@@ -152,7 +151,7 @@ export class DatePicker extends Form
 	private formatDate(node1:number,node2:number,node3:number){
 		return node1 + '-' + node2 + '-' + node3
 	}
-	
+
 	private  getDaysInMonth(year, month): number {
 		return new Date(year, month,0).getDate();
 	}

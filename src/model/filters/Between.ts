@@ -14,36 +14,51 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 
 
-export class Equals implements Filter
+export class Between implements Filter
 {
-	private column$:string = null;
-	private constraint$:any = null;
+	private fr:any = null;
+	private to:any = null;
+	private incl:boolean = false;
 
-	public constructor(column:string)
+	private column$:string = null;
+	private constraint$:any[] = [];
+
+	public constructor(column:string, incl?:boolean)
 	{
+		this.incl = incl;
 		this.column$ = column;
 	}
 
-	public get constraint() : any
+	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(value:any)
+	public set constraint(values:any|any[])
 	{
-		this.constraint$ = value;
+		this.constraint$ = [];
+		if (values == null) return;
+
+		if (typeof values === "string")
+		{
+			values = values.split(",")
+
+			for (let i = 0; i < values.length; i++)
+			{
+				if (values[i].length > 0)
+					this.constraint$.push(values[i].trim());
+			}
+		}
+
+
+		if (this.constraint$.length > 0) this.fr = this.constraint$[0];
+		if (this.constraint$.length > 1) this.to = this.constraint$[1];
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let val:any = record.getValue(this.column$);
-
-		if (this.constraint$ == null)
-			return(true);
-
-		if (val == null)
-			return(false);
-
-		return(val == this.constraint$);
+		if (this.incl) return(val >= this.fr && val <= this.to);
+		return(val > this.fr && val < this.to);
 	}
 }

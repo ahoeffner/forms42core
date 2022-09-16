@@ -345,6 +345,7 @@ export class Block
 
 	public async validateBlock() : Promise<boolean>
 	{
+		if (!await this.wait4EventTransaction(EventType.WhenValidateRecord)) return(false);
 		return(this.validateRow());
 	}
 

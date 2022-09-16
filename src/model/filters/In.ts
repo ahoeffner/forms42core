@@ -14,36 +14,46 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 
 
-export class Equals implements Filter
+export class In implements Filter
 {
-	private column$:string = null;
-	private constraint$:any = null;
+	private columns$:string = null;
+	private constraint$:any[] = [];
 
 	public constructor(column:string)
 	{
-		this.column$ = column;
+		this.columns$ = column;
 	}
 
-	public get constraint() : any
+	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(value:any)
+	public set constraint(values:any|any[])
 	{
-		this.constraint$ = value;
+		this.constraint$ = [];
+		if (values == null) return;
+
+		if (typeof values === "string")
+		{
+			values = values.split(",")
+
+			for (let i = 0; i < values.length; i++)
+			{
+				if (values[i].length > 0)
+					this.constraint$.push(values[i].trim());
+			}
+		}
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:any = record.getValue(this.column$);
+		let val:any = record.getValue(this.columns$);
+		if (this.constraint$.length == 0) return(false);
 
-		if (this.constraint$ == null)
-			return(true);
+		for (let c = 0; c < this.constraint$.length; c++)
+			if (val == this.constraint$[c]) return(true);
 
-		if (val == null)
-			return(false);
-
-		return(val == this.constraint$);
+		return(false);
 	}
 }

@@ -14,6 +14,8 @@ import { Form } from "../Form.js";
 import { KeyMap } from "../../../index.js";
 import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
+import { Filters } from "../../model/filters/Filters.js";
+import { Filter } from "../../model/interfaces/Filter.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
@@ -48,7 +50,60 @@ export class FilterEditor extends Form
 
 	private async done() : Promise<boolean>
 	{
-		console.log("create filter")
+		let value:any;
+		let incl:boolean;
+
+		let filter:Filter = null;
+
+		let form:Form = this.parameters.get("form");
+		let block:string = this.parameters.get("block");
+		let field:string = this.parameters.get("field");
+
+		switch(this.type)
+		{
+			case "x" :
+				filter = Filters.Null(field);
+				break;
+
+			case "<" :
+				value = this.options.getValue("value");
+				incl = this.options.getValue("include");
+
+				filter = Filters.LT(field,incl);
+				filter.constraint = value;
+				break;
+
+			case ">" :
+				value = this.options.getValue("value");
+				incl = this.options.getValue("include");
+
+				filter = Filters.GT(field,incl);
+				filter.constraint = value;
+				break;
+
+			case ".." :
+				let values:any[] = [];
+				await this.validate();
+
+				let data:any[][] = await this.values.getSourceData(false,true);
+				data.forEach((row) => {if (row[0] != null) values.push(row[0])});
+
+				filter = Filters.In(field);
+				filter.constraint = values;
+				console.log("values: "+values)
+				break;
+
+			case ":" :
+				incl = this.options.getValue("include");
+				let fr:any = this.options.getValue("value1");
+				let to:any = this.options.getValue("value2");
+
+				filter = Filters.Between(field,incl);
+				filter.constraint = [fr,to];
+				break;
+		}
+
+		form.getBlock(block).filter.and(filter,field);
 		return(this.close());
 	}
 
@@ -159,6 +214,7 @@ export class FilterEditor extends Form
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		await this.values.executeQuery();
 
+		let value:any = this.parameters.get("value");
 		let fprops:FieldProperties = this.parameters.get("properties");
 
 		this.fltprops = this.options.getDefaultPropertiesByClass("value","single-value")
@@ -174,8 +230,6 @@ export class FilterEditor extends Form
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
-
-		let value:any = this.parameters.get("value");
 
 		if (value != null)
 		{
@@ -239,7 +293,16 @@ export class FilterEditor extends Form
 	{
 		let view:HTMLElement = this.getView();
 		let multi:HTMLElement = view.querySelector('div[name="multi-value"]');
+
 		multi.style.display = "block";
+
+		this.fltprops.setHidden(false);
+		this.fltprops.setClass("multi-value");
+
+		this.values.setDefaultProperties(this.fltprops,"value","multi-value");
+
+		this.fltprops.setHidden(true);
+		this.fltprops.removeClass("multi-value");
 	}
 
 	private hideAll() : void
@@ -274,7 +337,8 @@ export class FilterEditor extends Form
 		this.inclprops.removeClass("range-values");
 
 		this.fltprops.setClasses("multi-value");
-		this.inclprops.setClasses("multi-value");
+		this.values.setDefaultProperties(this.fltprops,"value","multi-value");
+		this.fltprops.removeClass("multi-value");
 	}
 
 	public static page:string =

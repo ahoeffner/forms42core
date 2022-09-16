@@ -577,7 +577,7 @@ export class Block
 		return(this.wrapper.getRecord(this.record+offset));
 	}
 
-	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
+	public async copy(header?:boolean, all?:boolean) : Promise<any[][]>
 	{
 		return(this.wrapper?.copy(all,header));
 	}

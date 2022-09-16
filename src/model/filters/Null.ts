@@ -14,36 +14,28 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 
 
-export class Equals implements Filter
+export class Null implements Filter
 {
 	private column$:string = null;
-	private constraint$:any = null;
+	private constraint$:string = null;
 
 	public constructor(column:string)
 	{
 		this.column$ = column;
 	}
 
-	public get constraint() : any
+	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(value:any)
+	public set constraint(value:any|any[])
 	{
 		this.constraint$ = value;
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:any = record.getValue(this.column$);
-
-		if (this.constraint$ == null)
-			return(true);
-
-		if (val == null)
-			return(false);
-
-		return(val == this.constraint$);
+		return(record.getValue(this.column$) == null);
 	}
 }

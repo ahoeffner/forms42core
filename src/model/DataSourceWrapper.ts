@@ -264,11 +264,14 @@ export class DataSourceWrapper
 		return(idx);
 	}
 
-	public async copy(header?:boolean, all?:boolean) : Promise<string[][]>
+	public async copy(header?:boolean, all?:boolean) : Promise<any[][]>
 	{
-		let table:string[][] = [];
-		let head:string[] = this.columns;
+		let table:any[][] = [];
 		while(all && await this.fetch() != null);
+
+		let head:string[] = [];
+		head.push(...this.columns);
+		head.push(...this.source.columns);
 
 		if (header)
 			table.push(head);
@@ -277,7 +280,7 @@ export class DataSourceWrapper
 		{
 			if (record.prepared)
 			{
-				let data:string[] = [];
+				let data:any[] = [];
 				head.forEach((col) => {data.push(record.getValue(col))})
 				table.push(data);
 			}

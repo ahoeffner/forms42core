@@ -114,7 +114,7 @@ export class Block
 			inst.focus();
 	}
 
-	public async getSourceData(header?:boolean, all?:boolean) : Promise<string[][]>
+	public async getSourceData(header?:boolean, all?:boolean) : Promise<any[][]>
 	{
 		return(FormBacking.getModelBlock(this).copy(all,header));
 	}

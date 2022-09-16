@@ -14,13 +14,15 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 
 
-export class Equals implements Filter
+export class GT implements Filter
 {
+	private constraint$:any;
+	private incl:boolean = false;
 	private column$:string = null;
-	private constraint$:any = null;
 
-	public constructor(column:string)
+	public constructor(column:string, incl?:boolean)
 	{
+		this.incl = incl;
 		this.column$ = column;
 	}
 
@@ -36,14 +38,10 @@ export class Equals implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:any = record.getValue(this.column$);
+		if (this.column$ == null) return(false);
+		let val:any = record.getValue(this.column$.toLowerCase());
 
-		if (this.constraint$ == null)
-			return(true);
-
-		if (val == null)
-			return(false);
-
-		return(val == this.constraint$);
+		if (this.incl) return(val >= this.constraint$);
+		return(val > this.constraint$);
 	}
 }

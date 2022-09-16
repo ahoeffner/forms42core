@@ -221,6 +221,12 @@ export class FieldFeatureFactory
 		tag.removeAttribute("query");
 		tag.removeAttribute("insert");
 
+		if (inst.field.row.status == Status.update)
+		{
+			if (props.enabled && !props.readonly)
+				tag.setAttribute(Properties.RecordModeAttr,"update");
+		}
+
 		if (inst.field.row.status == Status.qbe)
 		{
 			if (props.enabled && !props.readonly)

@@ -72,6 +72,16 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.goField(field,clazz);
 	}
 
+	public alert(msg:string, title?:string) : void
+	{
+		Alert.message(msg,title);
+	}
+
+	public warning(msg:string, title?:string) : void
+	{
+		Alert.warning(msg,title);
+	}
+
 	public get valid() : boolean
 	{
 		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)
@@ -147,6 +157,10 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
+	public callback(_form:Form) : void
+	{
+	}
+
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
 		let back:FormBacking = FormBacking.getBacking(this);
@@ -206,11 +220,6 @@ export class Form implements CanvasComponent
 		}
 
 		return(success);
-	}
-
-	public callback(_form:Form) : void
-	{
-
 	}
 
 	public removeEventListener(handle:object) : void

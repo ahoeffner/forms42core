@@ -48,7 +48,7 @@ export class FilterStructure
 		if (!this.filteridx$.has(filter))
 		{
 			let cstr:Constraint = new Constraint(false,filter,field);
-			if (field) this.fieldidx$.set(field,cstr);
+			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
@@ -62,10 +62,35 @@ export class FilterStructure
 		if (!this.filteridx$.has(filter))
 		{
 			let cstr:Constraint = new Constraint(true,filter,field);
-			if (field) this.fieldidx$.set(field,cstr);
+			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
+	}
+
+	public get(field:string) : Filter
+	{
+		return(this.fieldidx$.get(field?.toLowerCase())?.filter);
+	}
+
+	public remove(filter:Filter|FilterStructure) : boolean
+	{
+		let cstr:Constraint = this.filteridx$.get(filter);
+
+		if (cstr != null)
+		{
+			let pos:number = this.entries$.indexOf(cstr);
+
+			if (pos >= 0)
+			{
+				this.entries$.splice(pos,1);
+				this.filteridx$.delete(filter);
+				this.fieldidx$.delete(cstr.field);
+				return(true);
+			}
+		}
+
+		return(false);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

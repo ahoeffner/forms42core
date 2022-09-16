@@ -87,11 +87,6 @@ export class QueryByExample
 		return(this.filter$);
 	}
 
-	public getFilter(column:string) : Filter|FilterStructure
-	{
-		return(this.filters$.get(column));
-	}
-
 	public setFilter(column:string, filter?:Filter|FilterStructure) : void
 	{
 		if (filter == null)

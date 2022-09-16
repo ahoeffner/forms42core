@@ -41,7 +41,6 @@ export class Popup
 	public static PopupStyleDiv =
 	`
 		margin: 10px 5px;
-		display: inline-flex;
 	`;
 
 	public static PopupStyleLabel =

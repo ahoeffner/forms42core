@@ -16,12 +16,12 @@ import { Filter } from "../interfaces/Filter.js";
 
 export class In implements Filter
 {
-	private columns$:string = null;
+	private column$:string = null;
 	private constraint$:any[] = [];
 
 	public constructor(column:string)
 	{
-		this.columns$ = column;
+		this.column$ = column;
 	}
 
 	public get constraint() : any|any[]
@@ -48,8 +48,10 @@ export class In implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:any = record.getValue(this.columns$);
+		console.log(this.column$+" In "+this.constraint$)
+		if (this.column$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
+		let val:any = record.getValue(this.column$?.toLowerCase());
 
 		for (let c = 0; c < this.constraint$.length; c++)
 			if (val == this.constraint$[c]) return(true);

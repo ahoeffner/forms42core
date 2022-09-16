@@ -57,7 +57,8 @@ export class Between implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:any = record.getValue(this.column$);
+		if (this.column$ == null) return(false);
+		let val:any = record.getValue(this.column$.toLowerCase());
 		if (this.incl) return(val >= this.fr && val <= this.to);
 		return(val > this.fr && val < this.to);
 	}

@@ -58,7 +58,7 @@ export class Contains implements Filter
 			return(true);
 
 		for (let c = 0; c < this.columns$.length; c++)
-			val += " " +  record.getValue(this.columns$[c]);
+			val += " " +  record.getValue(this.columns$[c]?.toLowerCase());
 
 		val = val.toLocaleLowerCase();
 

@@ -36,6 +36,7 @@ export class Null implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		return(record.getValue(this.column$) == null);
+		if (this.column$ == null) return(false);
+		return(record.getValue(this.column$.toLowerCase()) == null);
 	}
 }

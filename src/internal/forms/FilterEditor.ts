@@ -90,7 +90,6 @@ export class FilterEditor extends Form
 
 				filter = Filters.In(field);
 				filter.constraint = values;
-				console.log("values: "+values)
 				break;
 
 			case ":" :

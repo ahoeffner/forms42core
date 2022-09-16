@@ -42,7 +42,7 @@ export class DatePicker extends Form
 		super(DatePicker.page);
 		this.goToNextMonth = this.goToNextMonth.bind(this);
 		this.goToPrevMonth = this.goToPrevMonth.bind(this);
-		this.dateInputFile = this.dateInputFile.bind(this);
+		//this.dateInputFile = this.dateInputFile.bind(this);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 		this.addEventListener(this.dateInputFile,{type: EventType.OnEdit, field: "date"});
 	}

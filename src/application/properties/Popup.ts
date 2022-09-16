@@ -51,10 +51,11 @@ export class Popup
 	public static PopupStyleButtonBar =
 	`
 		gap:3px;
-		display:grid;
+		float:right;
+		display:flex;
+		margin:10px 5px 10px auto;
 		margin-left:auto;
-		margin-right: 0px;
-		grid-auto-flow: column;
+		margin-right: 5px;
 	`;
 
 	public static PopupHeaderStyle =

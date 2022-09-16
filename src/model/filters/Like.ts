@@ -45,7 +45,7 @@ export class Like implements Filter
 		this.constraint$ = value;
 	}
 
-	public async matches(record:Record) : Promise<boolean>
+	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let val:string = record.getValue(this.column$)+"";
 

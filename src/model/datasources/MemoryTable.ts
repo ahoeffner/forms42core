@@ -152,7 +152,7 @@ export class MemoryTable implements DataSource
 			if (this.filter.empty)
 				return([this.records$[this.pos$++]]);
 
-			if (await this.filter.matches(this.records$[this.pos$]))
+			if (await this.filter.evaluate(this.records$[this.pos$]))
 				return([this.records$[this.pos$++]]);
 
 			this.pos$++;

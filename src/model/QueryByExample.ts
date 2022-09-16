@@ -29,12 +29,16 @@ export class QueryByExample
 	private wrapper$:DataSourceWrapper = null;
 	private filter$:FilterStructure = new FilterStructure();
 	private lastqry$:Map<string,QueryFilter> = new Map<string,QueryFilter>();
-	private filters$:Map<string,Filter|FilterStructure> = new Map<string,Filter|FilterStructure>();
 
 	constructor(block:Block)
 	{
 		this.block$ = block;
-		this.initialize();
+		this.table$ = new MemoryTable();
+		this.wrapper$ = new DataSourceWrapper();
+
+		this.wrapper$.source = this.table$;
+		this.record$ = this.wrapper$.create(0);
+		this.record$.status = RecordStatus.QBE;
 	}
 
 	public get querymode() : boolean
@@ -54,12 +58,11 @@ export class QueryByExample
 
 		this.record$.values.forEach((column) =>
 		{
-			let qf:QueryFilter = new QueryFilter(column.value,this.filters$.get(column.name));
+			let qf:QueryFilter = new QueryFilter(column.value,this.filter$.get(column.name));
 			this.lastqry$.set(column.name,qf);
 		})
 
 		this.filter$.clear();
-		this.filters$.clear();
 		this.record$?.clear();
 	}
 
@@ -92,14 +95,8 @@ export class QueryByExample
 		if (filter == null)
 			filter = this.getDefaultFilter(column);
 
-		if (filter == null)
-		{
-			this.filters$.delete(column);
-		}
-		else
-		{
-			this.filters$.set(column,filter);
-		}
+		if (filter == null) 	this.filter$.delete(filter);
+		else						this.filter$.and(filter,column);
 	}
 
 	public getDefaultFilter(column:string) : Filter
@@ -121,26 +118,6 @@ export class QueryByExample
 
 		filter.constraint = value;
 		return(filter);
-	}
-
-	public finalize() : void
-	{
-		this.filters$.forEach((qflt) =>
-		{this.filter$.and(qflt)});
-		this.filters$.clear();
-	}
-
-	private initialize() : void
-	{
-		if (this.wrapper$ == null)
-		{
-			this.table$ = new MemoryTable();
-			this.wrapper$ = new DataSourceWrapper();
-
-			this.wrapper$.source = this.table$;
-			this.record$ = this.wrapper$.create(0);
-			this.record$.status = RecordStatus.QBE;
-		}
 	}
 }
 

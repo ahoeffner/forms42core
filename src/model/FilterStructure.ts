@@ -73,7 +73,7 @@ export class FilterStructure
 		return(this.fieldidx$.get(field?.toLowerCase())?.filter);
 	}
 
-	public remove(filter:Filter|FilterStructure) : boolean
+	public delete(filter:Filter|FilterStructure) : boolean
 	{
 		let cstr:Constraint = this.filteridx$.get(filter);
 

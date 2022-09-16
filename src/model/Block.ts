@@ -477,15 +477,11 @@ export class Block
 			}
 		}
 
-		this.qbe.finalize();
-
 		if (!await this.preQuery())
 		{
 			this.qbe.clear();
 			return(false);
 		}
-
-		this.qbe.finalize();
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;

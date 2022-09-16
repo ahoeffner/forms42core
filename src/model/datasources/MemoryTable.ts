@@ -29,8 +29,13 @@ export class MemoryTable implements DataSource
 
 	public constructor(columns?:string|string[], records?:number|any[][])
 	{
+		if (columns == null) columns = [];
+		if (records == null) records = [];
+
 		if (!Array.isArray(columns))
 			columns = [columns];
+
+		this.columns$ = columns;
 
 		if (typeof records === "number")
 		{
@@ -50,11 +55,6 @@ export class MemoryTable implements DataSource
 				}
 			}
 		}
-
-		if (columns == null) columns = [];
-		if (records == null) records = [];
-
-		this.columns$ = columns;
 
 		records.forEach((rec) =>
 		{

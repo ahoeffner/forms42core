@@ -48,6 +48,11 @@ export class Popup
 		margin-right: 8px;
 	`;
 
+	public static PopupStyleButtonBar =
+	`
+		margin-right: 8px;
+	`;
+
 	public static PopupHeaderStyle =
 	`
 		width: 100%;

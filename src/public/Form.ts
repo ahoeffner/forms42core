@@ -191,12 +191,20 @@ export class Form implements CanvasComponent
 			{
 				parent.focus();
 				parent.canvas.unblock();
+
+				parent.callback(this);
+				FormBacking.getBacking(parent).hasModalChild = false;
 			}
 
 			FormBacking.removeBacking(this);
 		}
 
 		return(success);
+	}
+
+	public callback(_form:Form) : void
+	{
+
 	}
 
 	public removeEventListener(handle:object) : void

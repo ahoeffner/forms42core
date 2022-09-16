@@ -336,11 +336,11 @@ export class FilterEditor extends Form
 						</tr>
 					</table>
 				</div>
+		</div>
 
-				<div name="buttonbar">
-					<button onClick="this.done()">Ok</button>
-					<button onClick="this.close()">Close</button>
-				</div>
+		<div name="buttonbar">
+			<button onClick="this.done()">Ok</button>
+			<button onClick="this.close()">Close</button>
 		</div>
 		`
 		+ Popup.footer;

@@ -92,11 +92,11 @@ export class Popup
 		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
 		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
 		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
-		if (buttons && Popup.PopupStyleButtonBar) buttons.style.cssText = Popup.PopupStyleButtonBar;
-		console.log(buttons.style.cssText)
 
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
+
+		if (buttons && Popup.PopupStyleButtonBar) buttons.style.cssText = Popup.PopupStyleButtonBar;
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

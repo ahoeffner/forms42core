@@ -136,6 +136,8 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.content = this.container.firstChild as HTMLElement;
 
 		this.content.tabIndex = -1;
+		this.content.style.width = "100%";
+		this.content.style.height = "100%";
 		this.content.addEventListener("focus",() => this.focus());
 	}
 
@@ -174,6 +176,8 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 		this.content.tabIndex = -1;
 		this.zindex = Canvas.newLayer;
+		this.content.style.width = "100%";
+		this.content.style.height = "100%";
 		this.content.addEventListener("focus",() => this.focus());
 
 		this.moveable = component.moveable;

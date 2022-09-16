@@ -34,8 +34,11 @@ export class In implements Filter
 		this.constraint$ = [];
 		if (values == null) return;
 
+		this.constraint$ = values;
+
 		if (typeof values === "string")
 		{
+			this.constraint$ = [];
 			values = values.split(",")
 
 			for (let i = 0; i < values.length; i++)
@@ -48,7 +51,6 @@ export class In implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		console.log(this.column$+" In "+this.constraint$)
 		if (this.column$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 		let val:any = record.getValue(this.column$?.toLowerCase());

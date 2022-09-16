@@ -69,6 +69,7 @@ export class FilterEditor extends Form
 				value = this.options.getValue("value");
 				incl = this.options.getValue("include");
 
+				form.setValue(block,field,value);
 				filter = Filters.LT(field,incl);
 				filter.constraint = value;
 				break;
@@ -77,6 +78,7 @@ export class FilterEditor extends Form
 				value = this.options.getValue("value");
 				incl = this.options.getValue("include");
 
+				form.setValue(block,field,value);
 				filter = Filters.GT(field,incl);
 				filter.constraint = value;
 				break;
@@ -88,6 +90,7 @@ export class FilterEditor extends Form
 				let data:any[][] = await this.values.getSourceData(false,true);
 				data.forEach((row) => {if (row[0] != null) values.push(row[0])});
 
+				form.setValue(block,field,values[0]);
 				filter = Filters.In(field);
 				filter.constraint = values;
 				break;
@@ -97,6 +100,7 @@ export class FilterEditor extends Form
 				let fr:any = this.options.getValue("value1");
 				let to:any = this.options.getValue("value2");
 
+				form.setValue(block,field,fr);
 				filter = Filters.Between(field,incl);
 				filter.constraint = [fr,to];
 				break;

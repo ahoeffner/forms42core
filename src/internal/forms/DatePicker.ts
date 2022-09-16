@@ -60,7 +60,7 @@ export class DatePicker extends Form
 		Popup.stylePopupWindow(view);
 
 		this.days_element = view.querySelector('.days');
-		this.mth_element = view.querySelector('.mth')
+		this.mth_element = view.querySelector('.mth');
 		this.pre_mth_element = view.querySelector('.prev-mth');
 		this.next_mth_element = view.querySelector('.next-mth');
 		this.selected_date_element = view.querySelector('input[name="date"]');
@@ -80,8 +80,8 @@ export class DatePicker extends Form
 
 	private async dateInputFile(e : FormEvent) : Promise<boolean>
 	{
-		console.log(this.getValue("fields", "date"))
-
+		let days = this.getValue("fields", "date")
+		console.log(days)
 		// [this.day,this.month,this.year] = e.target["value"].split("-");
 		// this.month--;
 		// this.selectedDay = this.day;

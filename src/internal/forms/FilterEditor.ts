@@ -337,7 +337,7 @@ export class FilterEditor extends Form
 					</table>
 				</div>
 
-				<div name="buttons">
+				<div name="buttonbar">
 					<button onClick="this.done()">Ok</button>
 					<button onClick="this.close()">Close</button>
 				</div>

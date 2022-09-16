@@ -29,7 +29,7 @@ export class Popup
 	public static PopupStyle =
 	`
 		gap:2px;
-		margin:20px;
+		margin:10px;
 		display:grid;
 		overflow: hidden;
 		padding:10px 20px;
@@ -40,7 +40,7 @@ export class Popup
 
 	public static PopupStyleDiv =
 	`
-		margin: 10px 5px;
+		margin-top:10px;
 	`;
 
 	public static PopupStyleLabel =
@@ -50,7 +50,11 @@ export class Popup
 
 	public static PopupStyleButtonBar =
 	`
-		margin-right: 8px;
+		gap:3px;
+		display:grid;
+		margin-left:auto;
+		margin-right: 0px;
+		grid-auto-flow: column;
 	`;
 
 	public static PopupHeaderStyle =
@@ -77,6 +81,7 @@ export class Popup
 	public static stylePopupWindow(view:HTMLElement) : void
 	{
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
+		let buttons:HTMLElement = view.querySelector('div[name="buttonbar"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
@@ -87,6 +92,8 @@ export class Popup
 		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
 		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
 		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
+		if (buttons && Popup.PopupStyleButtonBar) buttons.style.cssText = Popup.PopupStyleButtonBar;
+		console.log(buttons.style.cssText)
 
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);

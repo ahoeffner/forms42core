@@ -50,7 +50,7 @@ export class Contains implements Filter
 		}
 	}
 
-	public async matches(record:Record) : Promise<boolean>
+	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let val:string = "";
 

@@ -15,5 +15,5 @@ import { Record } from "../Record.js";
 export interface Filter
 {
 	constraint?:any|any[];
-	matches(record:Record) : Promise<boolean>;
+	evaluate(record:Record) : Promise<boolean>;
 }

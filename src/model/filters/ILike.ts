@@ -45,7 +45,7 @@ export class ILike implements Filter
 		this.constraint$ = value.toLocaleLowerCase();
 	}
 
-	public async matches(record:Record) : Promise<boolean>
+	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let val:string = record.getValue(this.column$)+"";
 

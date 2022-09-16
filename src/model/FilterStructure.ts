@@ -18,7 +18,10 @@ export class FilterStructure
 {
 	private entries$:Constraint[] = [];
 
-	private index$:Map<Filter|FilterStructure,Constraint> =
+	private fieldidx$:Map<string,Constraint> =
+		new Map<string,Constraint>();
+
+	private filteridx$:Map<Filter|FilterStructure,Constraint> =
 		new Map<Filter|FilterStructure,Constraint>();
 
 	public get empty() : boolean
@@ -34,36 +37,63 @@ export class FilterStructure
 	public clear() : void
 	{
 		this.entries$ = [];
-		this.index$.clear();
+		this.filteridx$.clear();
 	}
 
-	public or(filter:Filter|FilterStructure) : void
+	public or(filter:Filter|FilterStructure, field?:string) : void
 	{
 		if (filter == this)
 			return;
 
-		if (!this.index$.has(filter))
+		if (!this.filteridx$.has(filter))
 		{
-			let cstr:Constraint = new Constraint(false,filter);
-			this.index$.set(filter,cstr);
+			let cstr:Constraint = new Constraint(false,filter,field);
+			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
+			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
 	}
 
-	public and(filter:Filter|FilterStructure) : void
+	public and(filter:Filter|FilterStructure, field?:string) : void
 	{
 		if (filter == this)
 			return;
 
-		if (!this.index$.has(filter))
+		if (!this.filteridx$.has(filter))
 		{
-			let cstr:Constraint = new Constraint(true,filter);
-			this.index$.set(filter,cstr);
+			let cstr:Constraint = new Constraint(true,filter,field);
+			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
+			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
 	}
 
-	public async matches(record:Record) : Promise<boolean>
+	public get(field:string) : Filter
+	{
+		return(this.fieldidx$.get(field?.toLowerCase())?.filter);
+	}
+
+	public remove(filter:Filter|FilterStructure) : boolean
+	{
+		let cstr:Constraint = this.filteridx$.get(filter);
+
+		if (cstr != null)
+		{
+			let pos:number = this.entries$.indexOf(cstr);
+
+			if (pos >= 0)
+			{
+				this.entries$.splice(pos,1);
+				this.filteridx$.delete(filter);
+				this.fieldidx$.delete(cstr.field);
+				return(true);
+			}
+		}
+
+		return(false);
+	}
+
+	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let match:boolean = true;
 
@@ -99,7 +129,7 @@ export class FilterStructure
 
 class Constraint
 {
-	constructor(public and$:boolean, public filter:Filter|FilterStructure) {}
+	constructor(public and$:boolean, public filter:Filter|FilterStructure, public field:string) {}
 
 	get or() : boolean
 	{
@@ -113,6 +143,6 @@ class Constraint
 
 	async matches(record:Record) : Promise<boolean>
 	{
-		return(this.filter.matches(record));
+		return(this.filter.evaluate(record));
 	}
 }

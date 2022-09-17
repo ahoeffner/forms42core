@@ -40,7 +40,7 @@ export class Indicator implements Tag
 		this.element = tag;
 		this.binding = binding;
 
-		FormBacking.getViewForm(component)?.addIndicator(this);
+		FormBacking.getViewForm(component,true)?.addIndicator(this);
 		return(tag);
     }
 }

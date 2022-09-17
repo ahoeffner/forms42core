@@ -72,7 +72,7 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.goField(field,clazz);
 	}
 
-	public alert(msg:string, title?:string) : void
+	public message(msg:string, title?:string) : void
 	{
 		Alert.message(msg,title);
 	}

@@ -56,7 +56,7 @@ export class Internals
 		margin-right: 8px;
 	`;
 
-	public static PopupStyleButton =
+	public static PopupStyleButtonArea =
 	`
 		gap:3px;
 		right:0;
@@ -65,7 +65,7 @@ export class Internals
 		position: absolute;
 	`;
 
-	public static PopupStyleButtonBar =
+	public static PopupStyleLowerRight =
 	`
 		height:30px;
 		padding-top:10px;
@@ -91,9 +91,9 @@ export class Internals
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
-		let buttonbar:HTMLElement = view.querySelector('div[name="buttonbar"]');
+		let lowerright:HTMLElement = view.querySelector('div[name="lowerright"]');
 
-		let buttons:HTMLElement = buttonbar?.querySelector('div[name="buttonbar-buttons"]');
+		let buttonarea:HTMLElement = lowerright?.querySelector('div[name="buttonarea"]');
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
@@ -105,8 +105,8 @@ export class Internals
 		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
 		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
-		if (buttons && Internals.PopupStyleButton) buttons.style.cssText = Internals.PopupStyleButton;
-		if (buttonbar && Internals.PopupStyleButtonBar) buttonbar.style.cssText = Internals.PopupStyleButtonBar;
+		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
+		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

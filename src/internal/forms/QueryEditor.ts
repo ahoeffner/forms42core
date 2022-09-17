@@ -418,8 +418,8 @@ export class QueryEditor extends Form
 				</div>
 		</div>
 
-		<div name="buttonbar">
-			<div name="buttonbar-buttons">
+		<div name="lowerright">
+			<div name="buttonarea">
 				<button onClick="this.done()">Ok</button>
 				<button onClick="this.close()">Close</button>
 			</div>

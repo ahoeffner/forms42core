@@ -12,7 +12,7 @@
 
 export class Canvas
 {
-	public page:string =
+	public static page:string =
 	`
 	<div name="canvas">
 		<div name="modal"></div>
@@ -20,7 +20,7 @@ export class Canvas
 	</div>
 	`;
 
-	public ModalStyle:string =
+	public static ModalStyle:string =
 	`
 		top: 0;
 		left: 0;
@@ -29,7 +29,7 @@ export class Canvas
 		position: absolute;
 	`
 
-	public CanvasStyle:string =
+	public static CanvasStyle:string =
 	`
 		overflow: hidden;
 		position: absolute;
@@ -37,7 +37,7 @@ export class Canvas
 		height: fit-content;
 	`
 
-	public ContentStyle:string =
+	public static ContentStyle:string =
 	`
 		top: 0;
 		left: 0;
@@ -46,8 +46,8 @@ export class Canvas
 		position: relative;
 	`
 
-	public ModalClasses:string = "modal";
-	public CanvasClasses:string = "canvas";
-	public ContentClasses:string = "canvas-content";
-	public CanvasHandleClass:string = "canvas-handle";
+	public static ModalClasses:string = "modal";
+	public static CanvasClasses:string = "canvas";
+	public static ContentClasses:string = "canvas-content";
+	public static CanvasHandleClass:string = "canvas-handle";
 }

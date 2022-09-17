@@ -13,6 +13,7 @@
 import { Framework } from './Framework.js';
 import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
+import { Canvas as CanvasProperties } from './properties/Canvas.js';
 import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
 
 
@@ -146,7 +147,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.component = component;
 		let page = component.getView();
 
-		let layout:string = Properties.canvas.page;
+		let layout:string = CanvasProperties.page;
 		let template:HTMLTemplateElement = document.createElement("template");
 
 		template.innerHTML = layout;
@@ -155,13 +156,13 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas = template.content.querySelector("[name=canvas]");
 		this.container = template.content.querySelector("[name=content]");
 
-		this.modal.classList.value = Properties.canvas.ModalClasses;
-		this.canvas.classList.value = Properties.canvas.CanvasClasses;
-		this.container.classList.value = Properties.canvas.ContentClasses;
+		this.modal.classList.value = CanvasProperties.ModalClasses;
+		this.canvas.classList.value = CanvasProperties.CanvasClasses;
+		this.container.classList.value = CanvasProperties.ContentClasses;
 
-		this.modal.style.cssText = Properties.canvas.ModalStyle;
-		this.canvas.style.cssText = Properties.canvas.CanvasStyle;
-		this.container.style.cssText = Properties.canvas.ContentStyle;
+		this.modal.style.cssText = CanvasProperties.ModalStyle;
+		this.canvas.style.cssText = CanvasProperties.CanvasStyle;
+		this.container.style.cssText = CanvasProperties.ContentStyle;
 
 		if (typeof page === 'string')
 		{
@@ -252,7 +253,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	{
 		if (!this.moveable) return;
 
-		if (!event.target.classList.contains(Properties.canvas.CanvasHandleClass))
+		if (!event.target.classList.contains(CanvasProperties.CanvasHandleClass))
 			return;
 
 		let corner =

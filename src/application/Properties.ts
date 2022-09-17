@@ -90,6 +90,5 @@ export class Properties
 			));
 	}
 
-	public static popups:Popup = new Popup();
 	public static canvas:CanvasProperties = new CanvasProperties();
 }

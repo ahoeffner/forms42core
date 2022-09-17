@@ -43,6 +43,15 @@ export class Alert extends Form
 
 		Internals.stylePopupWindow(view,title);
 
+		// Block everything else
+		let block:HTMLElement = view.querySelector('div[id="block"]');
+
+		block.style.top = "0";
+		block.style.left = "0";
+		block.style.position = "fixed";
+		block.style.width = document.body.offsetWidth+"px";
+		block.style.height = document.body.offsetHeight+"px";
+
 		this.setValue("alert","msg",msg);
 		close.focus();
 
@@ -50,17 +59,19 @@ export class Alert extends Form
 	}
 
 	public static page:string =
+		`<div id="block"></div>` +
+
 		Internals.header +
 		`
-			<div name="popup-body">
-				<div name="msg" from="alert"></div>
-			</div>
+		<div name="popup-body">
+			<div name="msg" from="alert"></div>
+		</div>
 
-			<div name="lowerright">
-				<div name="buttonarea">
-					<button name="close" onClick="this.close()">Ok</button>
-				</div>
+		<div name="lowerright">
+			<div name="buttonarea">
+				<button name="close" onClick="this.close()">Ok</button>
 			</div>
+		</div>
 		`
-	+ Internals.footer;
+	+ 	Internals.footer;
 }

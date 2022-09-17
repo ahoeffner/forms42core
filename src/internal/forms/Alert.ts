@@ -10,7 +10,57 @@
  * accompanied this code).
  */
 
-export class Alert
+import { Form } from "../Form.js";
+import { KeyMap } from "../../control/events/KeyMap.js";
+import { EventType } from "../../control/events/EventType.js";
+import { Internals } from "../../application/properties/Internals.js";
+
+export class Alert extends Form
 {
-	
+	constructor()
+	{
+		super(Alert.page);
+
+		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
+
+		this.addEventListener(this.close,
+		[
+			{type: EventType.Key, key: KeyMap.enter},
+			{type: EventType.Key, key: KeyMap.escape}
+		]);
+	}
+
+	private async initialize() : Promise<boolean>
+	{
+		let view:HTMLElement = this.getView();
+		let close:HTMLElement = view.querySelector('button[name="close"]');
+
+		let msg:string = this.parameters.get("message");
+		let title:string = this.parameters.get("title");
+
+		let fatal:boolean = this.parameters.get("fatal");
+		let warning:boolean = this.parameters.get("warning");
+
+		Internals.stylePopupWindow(view,title);
+
+		this.setValue("alert","msg",msg);
+		close.focus();
+
+		return(true);
+	}
+
+	public static page:string =
+		Internals.header +
+		`
+			<div name="popup-body">
+				<div name="msg" from="alert"></div>
+			</div>
+
+			<div name="lowerright">
+				<div name="buttonarea">
+					<button name="close" onClick="this.close()">Ok</button>
+				</div>
+			</div>
+		`
+	+ Internals.footer;
 }

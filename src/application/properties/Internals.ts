@@ -16,7 +16,7 @@ export class Internals
 	`
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
-				<div name="title"></div>
+				<span name="title"></span>
 				<div name="close-button" onclick="this.close()">x</div>
 			</div>
 		</div>

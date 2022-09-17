@@ -12,16 +12,20 @@
 
 import { Form } from './Form.js';
 import { Class } from '../types/Class.js';
+
+import { Alert } from './forms/Alert.js';
 import { DatePicker } from './forms/DatePicker.js';
 import { QueryEditor } from './forms/QueryEditor.js';
 
 export class Classes
 {
+	public static AlertClass:Class<Form> = Alert;
 	public static DatePickerClass:Class<Form> = DatePicker;
 	public static QueryEditorClass:Class<Form> = QueryEditor;
 
 	public static isInternal(clazz:Class<Form>) : boolean
 	{
+		if (clazz == Alert) return(true);
 		if (clazz == DatePicker) return(true);
 		if (clazz == QueryEditor) return(true);
 		return(false);

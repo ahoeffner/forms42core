@@ -31,6 +31,11 @@ export class FormBacking
 	private static bdata:Map<Form,FormBacking> =
 		new Map<Form,FormBacking>();
 
+	public static getCurrentForm() : Form
+	{
+		return(ViewForm.current().parent);
+	}
+
 	public static getBacking(form:Form) : FormBacking
 	{
 		return(FormBacking.bdata.get(form));

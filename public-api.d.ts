@@ -6,6 +6,7 @@ export { FieldProperties } from './src/public/FieldProperties.js';
 export { Alert } from './src/internal/forms/Alert.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
+export { Classes as InternalClasses } from './src/internal/Classes.js';
 
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { Properties as Config, ScrollDirection } from './src/application/Properties.js';

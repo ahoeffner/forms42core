@@ -11,9 +11,9 @@
  */
 
 import { Form } from "../Form.js";
-import { KeyMap } from "../../../index.js";
 import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
+import { KeyMap } from "../../control/events/KeyMap.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { EventType } from "../../control/events/EventType.js";
@@ -416,14 +416,14 @@ export class QueryEditor extends Form
 						</tr>
 					</table>
 				</div>
-		</div>
-
-		<div name="lowerright">
-			<div name="buttonarea">
-				<button onClick="this.done()">Ok</button>
-				<button onClick="this.close()">Close</button>
 			</div>
-		</div>
+
+			<div name="lowerright">
+				<div name="buttonarea">
+					<button onClick="this.done()">Ok</button>
+					<button onClick="this.close()">Close</button>
+				</div>
+			</div>
 		`
 	+ Internals.footer;
 }

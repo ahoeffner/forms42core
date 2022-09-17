@@ -10,6 +10,9 @@
  * accompanied this code).
  */
 
+import { FormsModule } from './FormsModule.js';
+import { Classes } from '../internal/Classes.js';
+
 export enum Type
 {
 	Log,
@@ -25,7 +28,7 @@ export class Alert
 			type = Type.PopAndLog;
 
 		if (type == Type.Popup || type == Type.PopAndLog)
-			window.alert(msg);
+			Alert.callform(msg,title,false,true);
 
 		if (type == Type.PopAndLog)
 			console.log(title+": "+msg+" "+(new Error()).stack);
@@ -37,7 +40,7 @@ export class Alert
 			type = Type.Popup;
 
 		if (type == Type.Popup || type == Type.PopAndLog)
-			window.alert(msg);
+			Alert.callform(msg,title,true,false);
 
 		if (type == Type.PopAndLog)
 			console.log(title+": "+msg+" "+(new Error()).stack);
@@ -49,9 +52,22 @@ export class Alert
 			type = Type.Popup;
 
 		if (type == Type.Popup || type == Type.PopAndLog)
-			window.alert(msg);
+			Alert.callform(msg,title,false,false);
 
 		if (type == Type.PopAndLog)
 			console.log(title+": "+msg+" "+(new Error()).stack);
+	}
+
+	public static async callform(msg:string, title:string, warning:boolean, fatal:boolean) : Promise<void>
+	{
+		let params:Map<string,any> = new Map<string,any>();
+
+		params.set("title",title);
+		params.set("message",msg);
+
+		params.set("fatal",fatal);
+		params.set("warning",warning);
+
+		FormsModule.get().showform(Classes.AlertClass,params);
 	}
 }

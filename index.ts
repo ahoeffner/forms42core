@@ -5,11 +5,19 @@ export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
+export { Alert } from './src/internal/forms/Alert.js';
+export { DatePicker } from './src/internal/forms/DatePicker.js';
+export { QueryEditor } from './src/internal/forms/QueryEditor.js';
+
+export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
+export { Properties as Config, ScrollDirection } from './src/application/Properties.js';
+export { Internals as InternalFormsConfig } from './src/application/properties/Internals.js';
+
+
 export { block } from './src/application/annotations/block.js';
 export { formevent } from './src/application/annotations/formevent.js';
 export { datasource } from './src/application/annotations/datasource.js';
 
-export { Alert } from './src/application/Alert.js';
 export { Logger } from './src/application/Logger.js';
 
 export { Filters } from './src/model/filters/Filters.js';
@@ -32,7 +40,6 @@ export { FormsModule } from './src/application/FormsModule.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';
 export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';
-export { Properties as Config, ScrollDirection } from './src/application/Properties.js';
 export { Component, FormsPathMapping } from './src/application/annotations/FormsPathMapping.js';
 
 export { Menu } from './src/control/menus/interfaces/Menu.js';

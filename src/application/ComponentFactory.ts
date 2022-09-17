@@ -14,7 +14,7 @@ import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
 import { FormBacking } from './FormBacking.js';
 import { HTMLFragment } from './HTMLFragment.js';
-import { Classes } from './properties/Classes.js';
+import { Classes } from '../internal/Classes.js';
 import { ComponentFactory as Factory } from './interfaces/ComponentFactory.js';
 
 export class ComponentFactory implements Factory

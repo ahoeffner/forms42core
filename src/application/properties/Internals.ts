@@ -16,6 +16,7 @@ export class Internals
 	`
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
+				<div name="title"></div>
 				<div name="close-button" onclick="this.close()">x</div>
 			</div>
 		</div>
@@ -84,9 +85,8 @@ export class Internals
 		position: absolute;
 	`;
 
-	public static stylePopupWindow(view:HTMLElement) : void
+	public static stylePopupWindow(view:HTMLElement, title?:string) : void
 	{
-
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
@@ -107,6 +107,12 @@ export class Internals
 
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
 		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;
+
+		if (title)
+		{
+			let titlearea:HTMLElement = header.querySelector('span[name="title"]');
+			if (titlearea) titlearea.textContent = title;
+		}
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

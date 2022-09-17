@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Class } from '../../types/Class.js';
-import { Form } from '../../internal/Form.js';
-import { DatePicker } from '../../internal/forms/DatePicker.js';
-import { QueryEditor } from '../../internal/forms/QueryEditor.js';
+import { Form } from './Form.js';
+import { Class } from '../types/Class.js';
+import { DatePicker } from './forms/DatePicker.js';
+import { QueryEditor } from './forms/QueryEditor.js';
 
 export class Classes
 {

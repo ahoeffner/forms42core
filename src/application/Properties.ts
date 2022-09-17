@@ -66,8 +66,8 @@ export class Properties
 
 	public static DatePickerClass:Class<Form> = DatePicker;
 	public static FilterEditorClass:Class<Form> = FilterEditor;
-
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
+	
 	public static FactoryImplementation:ComponentFactory = new FactoryImpl();
 
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;

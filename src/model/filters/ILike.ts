@@ -48,34 +48,34 @@ export class ILike implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
-		let val:string = record.getValue(this.column$.toLowerCase())+"";
+		let value:string = record.getValue(this.column$.toLowerCase())+"";
 
 		if (this.constraint$ == null)
 			return(true);
 
-		if (val == null)
+		if (value == null)
 			return(false);
 
-		val = val.toLocaleLowerCase();
+		value = value.toLocaleLowerCase();
 
 		if (this.rtrunc && this.ltrunc)
 		{
-			if (val.includes(this.constraint$)) return(true);
+			if (value.includes(this.constraint$)) return(true);
 			return(false);
 		}
 
 		if (this.rtrunc)
 		{
-			if (val.startsWith(this.constraint$)) return(true);
+			if (value.startsWith(this.constraint$)) return(true);
 			return(false);
 		}
 
 		if (this.ltrunc)
 		{
-			if (val.endsWith(this.constraint$)) return(true);
+			if (value.endsWith(this.constraint$)) return(true);
 			return(false);
 		}
 
-		return(val == this.constraint$);
+		return(value == this.constraint$);
 	}
 }

@@ -52,18 +52,18 @@ export class Contains implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let val:string = "";
+		let value:string = "";
 
 		if (this.constraint$.length == 0)
 			return(true);
 
 		for (let c = 0; c < this.columns$.length; c++)
-			val += " " +  record.getValue(this.columns$[c]?.toLowerCase());
+			value += " " +  record.getValue(this.columns$[c]?.toLowerCase());
 
-		val = val.toLocaleLowerCase();
+		value = value.toLocaleLowerCase();
 
 		for (let c = 0; c < this.constraint$.length; c++)
-			if (!val.includes(this.constraint$[c])) return(false);
+			if (!value.includes(this.constraint$[c])) return(false);
 
 		return(true);
 	}

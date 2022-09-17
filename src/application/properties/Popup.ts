@@ -12,7 +12,7 @@
 
 export class Popup
 {
-	public static header:string =
+	public header:string =
 	`
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
@@ -21,12 +21,12 @@ export class Popup
 		</div>
 	`;
 
-	public static footer:string =
+	public footer:string =
 	`
 		<div name="popup-footer"></div>
 	`;
 
-	public static PopupStyle =
+	public PopupStyle =
 	`
 		gap:2px;
 		margin:10px;
@@ -38,22 +38,22 @@ export class Popup
 		justify-content: center;
 	`;
 
-	public static PopupStyleDiv =
+	public PopupStyleDiv =
 	`
 		margin-top:10px;
 	`;
 
-	public static PopupStyleLabel =
+	public PopupStyleLabel =
 	`
 		margin-right: 8px;
 	`;
 
-	public static PopupStyleButtonBar =
+	public PopupStyleButtonBar =
 	`
 		height:30px;
 	`;
 
-	public static PopupStyleButton =
+	public PopupStyleButton =
 	`
 		gap:3px;
 		right:0;
@@ -62,7 +62,7 @@ export class Popup
 		position: absolute;
 	`;
 
-	public static PopupHeaderStyle =
+	public PopupHeaderStyle =
 	`
 		width: 100%;
 		height: 20px;
@@ -70,9 +70,9 @@ export class Popup
 		border-bottom: 1px solid black;
 	`;
 
-	public static PopupFooterStyle = null;
+	public PopupFooterStyle = null;
 
-	public static PopupCloseButton =
+	public PopupCloseButton =
 	`
 		right: 1px;
 		width: 10px;
@@ -83,7 +83,7 @@ export class Popup
 		position: absolute;
 	`;
 
-	public static stylePopupWindow(view:HTMLElement) : void
+	public stylePopupWindow(view:HTMLElement) : void
 	{
 
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
@@ -95,16 +95,16 @@ export class Popup
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
-		if (body && Popup.PopupStyle) body.style.cssText = Popup.PopupStyle;
-		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
-		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
-		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
+		if (body && this.PopupStyle) body.style.cssText = this.PopupStyle;
+		if (close && this.PopupCloseButton) close.style.cssText = this.PopupCloseButton;
+		if (header && this.PopupHeaderStyle) header.style.cssText = this.PopupHeaderStyle;
+		if (footer && this.PopupFooterStyle) footer.style.cssText = this.PopupFooterStyle;
 
-		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
-		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
+		if (this.PopupStyleDiv) divs.forEach((div) => div.style.cssText = this.PopupStyleDiv);
+		if (this.PopupStyleLabel) labels.forEach((label) => label.style.cssText = this.PopupStyleLabel);
 
-		if (buttonsbar && Popup.PopupStyleButtonBar) buttonsbar.style.cssText = Popup.PopupStyleButtonBar;
-		if (button && Popup.PopupStyleButton) button.style.cssText = Popup.PopupStyleButton;
+		if (buttonsbar && this.PopupStyleButtonBar) buttonsbar.style.cssText = this.PopupStyleButtonBar;
+		if (button && this.PopupStyleButton) button.style.cssText = this.PopupStyleButton;
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

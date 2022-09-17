@@ -37,14 +37,14 @@ export class Equals implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
-		let val:any = record.getValue(this.column$.toLowerCase());
+		let value:any = record.getValue(this.column$.toLowerCase());
 
 		if (this.constraint$ == null)
 			return(true);
 
-		if (val == null)
+		if (value == null)
 			return(false);
 
-		return(val == this.constraint$);
+		return(value == this.constraint$);
 	}
 }

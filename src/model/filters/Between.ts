@@ -39,8 +39,11 @@ export class Between implements Filter
 		this.constraint$ = [];
 		if (values == null) return;
 
+		this.constraint$ = values;
+
 		if (typeof values === "string")
 		{
+			this.constraint$ = [];
 			values = values.split(",")
 
 			for (let i = 0; i < values.length; i++)
@@ -50,7 +53,6 @@ export class Between implements Filter
 			}
 		}
 
-
 		if (this.constraint$.length > 0) this.fr = this.constraint$[0];
 		if (this.constraint$.length > 1) this.to = this.constraint$[1];
 	}
@@ -58,8 +60,9 @@ export class Between implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
-		let val:any = record.getValue(this.column$.toLowerCase());
-		if (this.incl) return(val >= this.fr && val <= this.to);
-		return(val > this.fr && val < this.to);
+		let value:any = record.getValue(this.column$.toLowerCase());
+
+		if (this.incl) return(value >= this.fr && value <= this.to);
+		return(value > this.fr && value < this.to);
 	}
 }

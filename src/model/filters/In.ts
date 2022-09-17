@@ -53,10 +53,10 @@ export class In implements Filter
 	{
 		if (this.column$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
-		let val:any = record.getValue(this.column$?.toLowerCase());
+		let value:any = record.getValue(this.column$?.toLowerCase());
 
 		for (let c = 0; c < this.constraint$.length; c++)
-			if (val == this.constraint$[c]) return(true);
+			if (value == this.constraint$[c]) return(true);
 
 		return(false);
 	}

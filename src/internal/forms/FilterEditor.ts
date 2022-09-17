@@ -16,8 +16,8 @@ import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
+import { Properties } from "../../application/Properties.js";
 import { EventType } from "../../control/events/EventType.js";
-import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { MemoryTable } from "../../model/datasources/MemoryTable.js";
@@ -25,7 +25,6 @@ import { MemoryTable } from "../../model/datasources/MemoryTable.js";
 export class FilterEditor extends Form
 {
 	private type:string = null;
-	private incl:boolean = false;
 
 	private values:Block = null;
 	private options:Block = null;
@@ -53,6 +52,7 @@ export class FilterEditor extends Form
 		let value:any;
 		let incl:boolean;
 
+		await this.validate();
 		let filter:Filter = null;
 
 		let form:Form = this.parameters.get("form");
@@ -85,7 +85,6 @@ export class FilterEditor extends Form
 
 			case ".." :
 				let values:any[] = [];
-				await this.validate();
 
 				let data:any[][] = await this.values.getSourceData(false,true);
 				data.forEach((row) => {if (row[0] != null) values.push(row[0])});
@@ -130,9 +129,6 @@ export class FilterEditor extends Form
 	private async setType() : Promise<boolean>
 	{
 		this.type = this.options.getValue("options");
-
-		if ([":","<",">"].includes(this.type))
-			this.incl = this.options.getValue("include");
 
 		if (this.type == "x")
 		{
@@ -212,7 +208,7 @@ export class FilterEditor extends Form
 		this.options = this.getBlock("options");
 
 		this.setOptions();
-		Popup.stylePopupWindow(view);
+		Properties.Popup.stylePopupWindow(view);
 
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		await this.values.executeQuery();
@@ -345,7 +341,7 @@ export class FilterEditor extends Form
 	}
 
 	public static page:string =
-		Popup.header +
+		Properties.Popup.header +
 		`
 			<div name="popup-body">
 
@@ -385,7 +381,7 @@ export class FilterEditor extends Form
 				</div>
 
 				<div name="multi-value">
-					<table>
+					<table style="margin-left: auto; margin-right: auto;">
 						<tr>
 							<td>
 								<input name="value" from="values" row="0" class="multi-value">
@@ -412,5 +408,5 @@ export class FilterEditor extends Form
 			</div>
 		</div>
 		`
-		+ Popup.footer;
+	+ Properties.Popup.footer;
 }

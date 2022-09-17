@@ -39,9 +39,9 @@ export class LT implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
-		let val:any = record.getValue(this.column$.toLowerCase());
+		let value:any = record.getValue(this.column$.toLowerCase());
 
-		if (this.incl) return(val <= this.constraint$);
-		return(val < this.constraint$);
+		if (this.incl) return(value <= this.constraint$);
+		return(value < this.constraint$);
 	}
 }

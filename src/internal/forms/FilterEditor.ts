@@ -69,18 +69,24 @@ export class FilterEditor extends Form
 				value = this.options.getValue("value");
 				incl = this.options.getValue("include");
 
-				form.setValue(block,field,value);
-				filter = Filters.LT(field,incl);
-				filter.constraint = value;
+				if (value != null)
+				{
+					form.setValue(block,field,value);
+					filter = Filters.LT(field,incl);
+					filter.constraint = value;
+				}
 				break;
 
 			case ">" :
 				value = this.options.getValue("value");
 				incl = this.options.getValue("include");
 
-				form.setValue(block,field,value);
-				filter = Filters.GT(field,incl);
-				filter.constraint = value;
+				if (value != null)
+				{
+					form.setValue(block,field,value);
+					filter = Filters.GT(field,incl);
+					filter.constraint = value;
+				}
 				break;
 
 			case ".." :
@@ -89,9 +95,12 @@ export class FilterEditor extends Form
 				let data:any[][] = await this.values.getSourceData(false,true);
 				data.forEach((row) => {if (row[0] != null) values.push(row[0])});
 
-				form.setValue(block,field,values[0]);
-				filter = Filters.In(field);
-				filter.constraint = values;
+				if (values.length > 0)
+				{
+					form.setValue(block,field,values[0]);
+					filter = Filters.In(field);
+					filter.constraint = values;
+				}
 				break;
 
 			case ":" :
@@ -99,13 +108,18 @@ export class FilterEditor extends Form
 				let fr:any = this.options.getValue("value1");
 				let to:any = this.options.getValue("value2");
 
-				form.setValue(block,field,fr);
-				filter = Filters.Between(field,incl);
-				filter.constraint = [fr,to];
+				if (fr != null && to != null)
+				{
+					form.setValue(block,field,fr);
+					filter = Filters.Between(field,incl);
+					filter.constraint = [fr,to];
+				}
 				break;
 		}
 
-		form.getBlock(block).filter.and(filter,field);
+		if (filter != null)
+			form.getBlock(block).filter.and(filter,field);
+			
 		return(this.close());
 	}
 
@@ -139,18 +153,21 @@ export class FilterEditor extends Form
 		{
 			this.hideAll();
 			this.showRange();
+			this.options.goField("value1");
 		}
 
 		if (this.type == "..")
 		{
 			this.hideAll();
 			this.showMulti();
+			this.values.goField("value");
 		}
 
 		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
 			this.showSingle();
+			this.options.goField("value");
 		}
 
 		return(true);

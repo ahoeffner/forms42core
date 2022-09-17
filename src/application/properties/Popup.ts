@@ -26,6 +26,14 @@ export class Popup
 		<div name="popup-footer"></div>
 	`;
 
+	public static PopupHeaderStyle =
+	`
+		width: 100%;
+		height: 20px;
+		position: relative;
+		border-bottom: 1px solid black;
+	`;
+
 	public static PopupStyle =
 	`
 		gap:2px;
@@ -48,11 +56,6 @@ export class Popup
 		margin-right: 8px;
 	`;
 
-	public static PopupStyleButtonBar =
-	`
-		height:30px;
-	`;
-
 	public static PopupStyleButton =
 	`
 		gap:3px;
@@ -62,12 +65,10 @@ export class Popup
 		position: absolute;
 	`;
 
-	public static PopupHeaderStyle =
+	public static PopupStyleButtonBar =
 	`
-		width: 100%;
-		height: 20px;
-		position: relative;
-		border-bottom: 1px solid black;
+		height:30px;
+		padding-top:10px;
 	`;
 
 	public static PopupFooterStyle = null;

@@ -53,7 +53,7 @@ export class Popup
 		height:30px;
 	`;
 
-	public static PopupStyleButton = 
+	public static PopupStyleButton =
 	`
 		gap:3px;
 		right:0;
@@ -105,9 +105,7 @@ export class Popup
 
 		if (buttonsbar && Popup.PopupStyleButtonBar) buttonsbar.style.cssText = Popup.PopupStyleButtonBar;
 		if (button && Popup.PopupStyleButton) button.style.cssText = Popup.PopupStyleButton;
-		console.log("Buttonbar", buttonsbar.style.cssText)
-		console.log("button", button.style.cssText)
-		
+
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;
 

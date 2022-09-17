@@ -13,8 +13,8 @@
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { EventType } from "../../control/events/EventType.js";
-import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
+import { Internals } from "../../application/properties/Internals.js";
 
 export class DatePicker extends Form
 {
@@ -56,7 +56,7 @@ export class DatePicker extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-		Popup.stylePopupWindow(view);
+		Internals.stylePopupWindow(view);
 
 		this.days_element = view.querySelector('.days');
 		this.mth_element = view.querySelector('.mth');
@@ -157,7 +157,7 @@ export class DatePicker extends Form
 
 
 	public static page:string =
-	Popup.header +
+	Internals.header +
 	`
 	<div name="popup-body">
 		<div class="date-picker">
@@ -173,6 +173,6 @@ export class DatePicker extends Form
 		</div>
 	</div>
 	`
-	+ Popup.footer;
+	+ Internals.footer;
 
 }

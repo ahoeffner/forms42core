@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-export class Popup
+export class Internals
 {
 	public static header:string =
 	`
@@ -97,16 +97,16 @@ export class Popup
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
-		if (body && Popup.PopupStyle) body.style.cssText = Popup.PopupStyle;
-		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
-		if (header && Popup.PopupHeaderStyle) header.style.cssText = Popup.PopupHeaderStyle;
-		if (footer && Popup.PopupFooterStyle) footer.style.cssText = Popup.PopupFooterStyle;
+		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
+		if (close && Internals.PopupCloseButton) close.style.cssText = Internals.PopupCloseButton;
+		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
+		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;
 
-		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
-		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
+		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
+		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
-		if (buttons && Popup.PopupStyleButton) buttons.style.cssText = Popup.PopupStyleButton;
-		if (buttonbar && Popup.PopupStyleButtonBar) buttonbar.style.cssText = Popup.PopupStyleButtonBar;
+		if (buttons && Internals.PopupStyleButton) buttons.style.cssText = Internals.PopupStyleButton;
+		if (buttonbar && Internals.PopupStyleButtonBar) buttonbar.style.cssText = Internals.PopupStyleButtonBar;
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

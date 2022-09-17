@@ -16,13 +16,13 @@ import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
-import { Popup } from "../../application/properties/Popup.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { MemoryTable } from "../../model/datasources/MemoryTable.js";
+import { Internals } from "../../application/properties/Internals.js";
 
-export class FilterEditor extends Form
+export class QueryEditor extends Form
 {
 	private type:string = null;
 
@@ -34,7 +34,7 @@ export class FilterEditor extends Form
 
 	constructor()
 	{
-		super(FilterEditor.page);
+		super(QueryEditor.page);
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
@@ -119,7 +119,7 @@ export class FilterEditor extends Form
 
 		if (filter != null)
 			form.getBlock(block).filter.and(filter,field);
-			
+
 		return(this.close());
 	}
 
@@ -225,7 +225,7 @@ export class FilterEditor extends Form
 		this.options = this.getBlock("options");
 
 		this.setOptions();
-		Popup.stylePopupWindow(view);
+		Internals.stylePopupWindow(view);
 
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		await this.values.executeQuery();
@@ -245,7 +245,7 @@ export class FilterEditor extends Form
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
-		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options"});
+		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options", field: "options"});
 
 		if (value != null)
 		{
@@ -358,13 +358,13 @@ export class FilterEditor extends Form
 	}
 
 	public static page:string =
-		Popup.header +
+		Internals.header +
 		`
 			<div name="popup-body">
 
 				<div>
 					<label for="options">Type :</label>
-					<select id="options" name="options" from="options"></select>
+					<select name="options" from="options"></select>
 					<span style="display: block; width: 1em"></span>
 				</div>
 
@@ -425,5 +425,5 @@ export class FilterEditor extends Form
 			</div>
 		</div>
 		`
-	+ Popup.footer;
+	+ Internals.footer;
 }

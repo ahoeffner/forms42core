@@ -11,14 +11,9 @@
  */
 
 import { Class } from '../types/Class.js';
-import { Form } from '../internal/Form.js';
 
 import { Canvas as CanvasImpl } from './Canvas.js';
 import { Canvas as CanvasType } from './interfaces/Canvas.js';
-import { Canvas as CanvasProperties } from './properties/Canvas.js'
-
-import { DatePicker } from '../internal/forms/DatePicker.js';
-import { FilterEditor } from '../internal/forms/FilterEditor.js';
 
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
@@ -64,10 +59,7 @@ export class Properties
 
 	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator"};
 
-	public static DatePickerClass:Class<Form> = DatePicker;
-	public static FilterEditorClass:Class<Form> = FilterEditor;
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
-	
 	public static FactoryImplementation:ComponentFactory = new FactoryImpl();
 
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
@@ -95,6 +87,4 @@ export class Properties
 					]
 			));
 	}
-
-	public static canvas:CanvasProperties = new CanvasProperties();
 }

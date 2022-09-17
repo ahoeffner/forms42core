@@ -12,8 +12,8 @@
 
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
-import { Properties } from "../../application/Properties.js";
 import { EventType } from "../../control/events/EventType.js";
+import { Popup } from "../../application/properties/Popup.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 
 export class DatePicker extends Form
@@ -56,7 +56,7 @@ export class DatePicker extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-		Properties.Popup.stylePopupWindow(view);
+		Popup.stylePopupWindow(view);
 
 		this.days_element = view.querySelector('.days');
 		this.mth_element = view.querySelector('.mth');
@@ -147,32 +147,32 @@ export class DatePicker extends Form
 		this.populateDates();
 	}
 
-	private formatDate(node1:number,node2:number,node3:number)
-	{
+	private formatDate(node1:number,node2:number,node3:number){
 		return node1 + '-' + node2 + '-' + node3
 	}
 
-	private getDaysInMonth(year, month): number {
+	private  getDaysInMonth(year, month): number {
 		return new Date(year, month,0).getDate();
 	}
 
 
 	public static page:string =
-		Properties.Popup.header +
-		`
-		<div name="popup-body">
-			<div class="date-picker">
-				<div class="selected-date"><span>Date</span>:<input name="date" from="fields" date></div>
-				<div class="dates">
-					<div class="month">
-						<div class="arrows prev-mth">&lt;</div>
-						<div class="mth"></div>
-						<div class="arrows next-mth">&gt;</div>
-					</div>
-					<div class="days"></div>
+	Popup.header +
+	`
+	<div name="popup-body">
+		<div class="date-picker">
+			<div class="selected-date"><span>Date</span>:<input name="date" from="fields" date></div>
+			<div class="dates">
+				<div class="month">
+					<div class="arrows prev-mth">&lt;</div>
+					<div class="mth"></div>
+					<div class="arrows next-mth">&gt;</div>
 				</div>
+				<div class="days"></div>
 			</div>
 		</div>
-		`
-		+ Properties.Popup.footer;
+	</div>
+	`
+	+ Popup.footer;
+
 }

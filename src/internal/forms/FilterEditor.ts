@@ -16,7 +16,7 @@ import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
-import { Properties } from "../../application/Properties.js";
+import { Popup } from "../../application/properties/Popup.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
@@ -208,7 +208,7 @@ export class FilterEditor extends Form
 		this.options = this.getBlock("options");
 
 		this.setOptions();
-		Properties.Popup.stylePopupWindow(view);
+		Popup.stylePopupWindow(view);
 
 		this.values.datasource = new MemoryTable("value",this.values.rows);
 		await this.values.executeQuery();
@@ -341,7 +341,7 @@ export class FilterEditor extends Form
 	}
 
 	public static page:string =
-		Properties.Popup.header +
+		Popup.header +
 		`
 			<div name="popup-body">
 
@@ -408,5 +408,5 @@ export class FilterEditor extends Form
 			</div>
 		</div>
 		`
-	+ Properties.Popup.footer;
+	+ Popup.footer;
 }

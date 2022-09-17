@@ -137,10 +137,9 @@ export class FormsModule
 		if (!(form.prototype instanceof Form) && !(form.prototype instanceof InternalForm))
 			throw "@Application: Component mapped to '"+form+"' is not a form";
 
-		let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
+		let canvas:Canvas = Properties.CanvasImplementationClass;
 		let factory:ComponentFactory = Properties.FactoryImplementationClass;
 
-		let canvas:Canvas = new canvasimpl();
 		let instance:Form = await factory.createForm(form,parameters);
 
 		instance.canvas = canvas;

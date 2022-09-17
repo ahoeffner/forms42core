@@ -93,9 +93,9 @@ export class Popup
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
 		let buttonbar:HTMLElement = view.querySelector('div[name="buttonbar"]');
 
+		let buttons:HTMLElement = buttonbar?.querySelector('div[name="buttonbar-buttons"]');
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
-		let buttons:NodeListOf<HTMLElement> = buttonbar.querySelectorAll('div[name="buttonbar-buttons"]');
 
 		if (body && Popup.PopupStyle) body.style.cssText = Popup.PopupStyle;
 		if (close && Popup.PopupCloseButton) close.style.cssText = Popup.PopupCloseButton;
@@ -105,8 +105,8 @@ export class Popup
 		if (Popup.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Popup.PopupStyleDiv);
 		if (Popup.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Popup.PopupStyleLabel);
 
+		if (buttons && Popup.PopupStyleButton) buttons.style.cssText = Popup.PopupStyleButton;
 		if (buttonbar && Popup.PopupStyleButtonBar) buttonbar.style.cssText = Popup.PopupStyleButtonBar;
-		if (buttons && Popup.PopupStyleButton) buttons.forEach((button) => button.style.cssText = Popup.PopupStyleButton);
 
 		let top:number = view.parentElement.offsetTop;
 		let left:number = view.parentElement.offsetLeft;

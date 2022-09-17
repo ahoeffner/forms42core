@@ -26,7 +26,7 @@ export class Include implements Tag
 
         let src:string = tag.getAttribute("src");
         let impl:Class<any> = module.getComponent(src);
-        let factory:ComponentFactory = Properties.FactoryImplementationClass;
+        let factory:ComponentFactory = Properties.FactoryImplementation;
 
         if (impl == null)
             throw "@Include: No class mapped tp "+src;

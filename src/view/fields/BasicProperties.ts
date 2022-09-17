@@ -462,7 +462,7 @@ export class BasicProperties
 	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : BasicProperties
 	{
 		let factory:ComponentFactory =
-			Properties.FactoryImplementationClass;
+			Properties.FactoryImplementation;
 
 		if (typeof mapper === "string")
 			mapper = FormsModule.get().getComponent(mapper);

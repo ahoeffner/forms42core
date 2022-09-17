@@ -47,7 +47,7 @@ export class Framework
     {
         tag = tag.toLowerCase();
 
-        let factory:ComponentFactory = Properties.FactoryImplementationClass;
+        let factory:ComponentFactory = Properties.FactoryImplementation;
         let impl:Tag = factory.createBean(clazz);
 
         Framework.taglib.set(tag,impl);
@@ -57,7 +57,7 @@ export class Framework
     {
         tag = tag.toLowerCase();
 
-        let factory:ComponentFactory = Properties.FactoryImplementationClass;
+        let factory:ComponentFactory = Properties.FactoryImplementation;
         let impl:Tag = factory.createBean(clazz);
 
         Framework.attrlib.set(tag,impl);

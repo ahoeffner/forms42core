@@ -185,9 +185,9 @@ export class MemoryTable implements DataSource
 
 					if (value1 > value2)
 						return(ascending ? 1 : -1)
-				}
 
-				return(0);
+					return(0);
+				}
 			})
 		}
 

@@ -169,7 +169,7 @@ export class Record
 	private indexOf(column:string) : number
 	{
 		let idx:number = this.source.columns.indexOf(column);
-		if (idx < 0) idx = this.wrapper.indexOf(column);
+		if (idx < 0 && this.wrapper) idx = this.wrapper.indexOf(column);
 		return(idx);
 	}
 

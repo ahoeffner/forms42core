@@ -17,11 +17,11 @@ import { DataSourceWrapper } from "./DataSourceWrapper.js";
 export enum RecordStatus
 {
 	New,
-	QBE,
 	Query,
 	Deleted,
 	Updated,
-	Inserted
+	Inserted,
+	QueryFilter
 }
 
 export class Record
@@ -132,12 +132,12 @@ export class Record
 		return(values);
 	}
 
-	public get status() : RecordStatus
+	public get state() : RecordStatus
 	{
 		return(this.status$);
 	}
 
-	public set status(status:RecordStatus)
+	public set state(status:RecordStatus)
 	{
 		this.status$ = status;
 	}

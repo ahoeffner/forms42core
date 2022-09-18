@@ -576,7 +576,7 @@ export class Block
 		if (row.getFieldState() == FieldState.DISABLED)
 			row.setFieldState(FieldState.READONLY);
 
-		row.status = this.convert(record.status);
+		row.status = this.convert(record.state);
 
 		row.clear();
 		this.applyRecordProperties(record,true);
@@ -655,7 +655,7 @@ export class Block
 		if (current != null && this.getCurrentRow().exist)
 		{
 			let record:Record = this.model.getRecord();
-			current.status = this.convert(record.status);
+			current.status = this.convert(record.state);
 
 			current.clear();
 			this.applyRecordProperties(record,false);
@@ -673,6 +673,9 @@ export class Block
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>
 	{
 		let next:FieldInstance = inst;
+
+		if (!await this.validateRow())
+			return(next);
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
@@ -699,9 +702,6 @@ export class Block
 				return(next);
 
 			if (!await this.form.leaveRecord(this))
-				return(next);
-
-			if (!await this.validateRow())
 				return(next);
 
 			this.model.scroll(scroll,this.row);
@@ -760,7 +760,7 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
-		let status:Status = this.convert(record.status);
+		let status:Status = this.convert(record.state);
 
 		if (curr)
 		{
@@ -781,7 +781,7 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
-		let status:Status = this.convert(record.status);
+		let status:Status = this.convert(record.state);
 
 		if (curr)
 		{
@@ -955,11 +955,11 @@ export class Block
 	{
 		switch(status)
 		{
-			case RecordStatus.New 		: return(Status.new);
-			case RecordStatus.QBE 		: return(Status.qbe);
-			case RecordStatus.Query 	: return(Status.update);
-			case RecordStatus.Updated 	: return(Status.update);
+			case RecordStatus.New 			: return(Status.new);
+			case RecordStatus.Query 		: return(Status.update);
+			case RecordStatus.Updated 		: return(Status.update);
 			case RecordStatus.Inserted 	: return(Status.insert);
+			case RecordStatus.QueryFilter : return(Status.qbe);
 		}
 	}
 

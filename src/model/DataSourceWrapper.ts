@@ -74,22 +74,22 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
-				if (records[i].status == RecordStatus.Inserted)
+				if (records[i].state == RecordStatus.Inserted)
 				{
 					succces = await this.block.postInsert(records[i]);
-					if (succces) records[i].status = RecordStatus.Query;
+					if (succces) records[i].state = RecordStatus.Query;
 				}
 
-				if (records[i].status == RecordStatus.Updated)
+				if (records[i].state == RecordStatus.Updated)
 				{
 					succces = await this.block.postUpdate(records[i]);
-					if (succces) records[i].status = RecordStatus.Query;
+					if (succces) records[i].state = RecordStatus.Query;
 				}
 
-				if (records[i].status == RecordStatus.Deleted)
+				if (records[i].state == RecordStatus.Deleted)
 				{
 					succces = await this.block.postDelete(records[i]);
-					if (succces) records[i].status = RecordStatus.Query;
+					if (succces) records[i].state = RecordStatus.Query;
 				}
 			}
 
@@ -118,7 +118,7 @@ export class DataSourceWrapper
 
 	public locked(record:Record) : boolean
 	{
-		if (record.status == RecordStatus.New || record.status == RecordStatus.Inserted)
+		if (record.state == RecordStatus.New || record.state == RecordStatus.Inserted)
 			return(true);
 
 		return(record.locked);
@@ -126,7 +126,7 @@ export class DataSourceWrapper
 
 	public async lock(record:Record) : Promise<boolean>
 	{
-		if (record.status == RecordStatus.New || record.status == RecordStatus.Inserted)
+		if (record.state == RecordStatus.New || record.state == RecordStatus.Inserted)
 			return(true);
 
 		let success:boolean = await this.source.lock(record);
@@ -138,33 +138,32 @@ export class DataSourceWrapper
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
 		let succces:boolean = true;
-		console.log("mod "+record.getValue("first_name")," "+RecordStatus[record.status])
 
 		if (deleted)
 		{
 			succces = await this.delete(record);
-			if (succces) record.status = RecordStatus.Deleted;
+			if (succces) record.state = RecordStatus.Deleted;
 		}
 		else
 		{
-			if (record.status == RecordStatus.New)
+			if (record.state == RecordStatus.New)
 			{
 				succces = await this.insert(record);
-				if (succces) record.status = RecordStatus.Inserted;
+				if (succces) record.state = RecordStatus.Inserted;
 			}
 
-			if (record.status == RecordStatus.Query)
+			if (record.state == RecordStatus.Query)
 			{
 				succces = await this.update(record);
-				if (succces) record.status = RecordStatus.Updated;
+				if (succces) record.state = RecordStatus.Updated;
 			}
 
-			if (record.status == RecordStatus.Inserted)
+			if (record.state == RecordStatus.Inserted)
 			{
 				succces = await this.update(record);
 			}
 
-			if (record.status == RecordStatus.Updated)
+			if (record.state == RecordStatus.Updated)
 			{
 				succces = await this.update(record);
 			}
@@ -228,7 +227,7 @@ export class DataSourceWrapper
 		this.hwm$--;
 		this.cache$.splice(pos,1);
 
-		record.status = RecordStatus.Deleted;
+		record.state = RecordStatus.Deleted;
 		return(true);
 	}
 

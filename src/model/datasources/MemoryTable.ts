@@ -99,22 +99,22 @@ export class MemoryTable implements DataSource
 
 		this.dirty$.forEach((rec) =>
 		{
-			console.log(rec.getValue("first_name")+" "+RecordStatus[rec.status])
-			
-			if (rec.status == RecordStatus.Inserted)
+			console.log(rec.getValue("first_name")+" "+RecordStatus[rec.state])
+
+			if (rec.state == RecordStatus.Inserted)
 			{
 				processed.push(rec);
 				this.records$.push(rec);
 				rec.response = "inserted";
 			}
 
-			if (rec.status == RecordStatus.Updated)
+			if (rec.state == RecordStatus.Updated)
 			{
 				processed.push(rec);
 				rec.response = "updated";
 			}
 
-			if (rec.status == RecordStatus.Deleted)
+			if (rec.state == RecordStatus.Deleted)
 			{
 				processed.push(rec);
 				rec.response = "deleted";

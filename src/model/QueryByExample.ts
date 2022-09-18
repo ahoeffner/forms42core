@@ -39,7 +39,7 @@ export class QueryByExample
 		this.wrapper$.block = block;
 		this.wrapper$.source = this.table$;
 		this.record$ = this.wrapper$.create(0);
-		this.record$.status = RecordStatus.QBE;
+		this.record$.state = RecordStatus.QueryFilter;
 	}
 
 	public get querymode() : boolean

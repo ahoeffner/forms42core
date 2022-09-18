@@ -13,7 +13,7 @@
 import { Row } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
 import { FieldProperties } from "./FieldProperties.js";
-import { Record as Internal } from "../model/Record.js";
+import { Record as Internal, RecordStatus } from "../model/Record.js";
 import { Block as ModelBlock } from "../model/Block.js";
 
 export class Record
@@ -23,6 +23,11 @@ export class Record
 	constructor(rec:Internal)
 	{
 		this.rec$ = rec;
+	}
+
+	public get state() : RecordStatus
+	{
+		return(this.rec$.state);
 	}
 
 	public getValue(field:string) : any

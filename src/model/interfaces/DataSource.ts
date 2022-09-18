@@ -19,9 +19,9 @@ export interface DataSource
 	columns:string[];
 	arrayfecth:number;
 
-	closeCursor() : void;
-	post() : Promise<boolean>;
 	fetch() : Promise<Record[]>;
+	flush() : Promise<Record[]>;
+	closeCursor() : Promise<boolean>;
 	lock(record:Record) : Promise<boolean>;
 	refresh(record:Record) : Promise<void>;
 	insert(record:Record) : Promise<boolean>;

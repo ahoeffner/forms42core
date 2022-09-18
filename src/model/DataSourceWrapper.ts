@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from "../application/Alert.js";
 import { Record, RecordStatus } from "./Record.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
@@ -52,14 +53,33 @@ export class DataSourceWrapper
 		this.columns$ = columns;
 	}
 
-	public clear() : void
+	public async clear() : Promise<boolean>
 	{
 		this.hwm$ = 0;
 		this.cache$ = [];
 		this.columns$ = [];
 
-		this.source.post();
-		this.source.closeCursor();
+		if (!await this.source.closeCursor())
+			return(false);
+
+		return(this.flush());
+	}
+
+	public async flush() : Promise<boolean>
+	{
+		try
+		{
+			let records:Record[] = await this.source.flush();
+
+			records.forEach((rec) => console.log(rec+" processed"))
+
+			return(true);
+		}
+		catch (error)
+		{
+			Alert.fatal(error+"","Backend failure")
+			return(false);
+		}
 	}
 
 	public getValue(record:number, field:string) : any
@@ -95,22 +115,44 @@ export class DataSourceWrapper
 		return(success);
 	}
 
-	public async push(record?:Record) : Promise<boolean>
+	public async modified(record:Record, state:RecordStatus) : Promise<boolean>
 	{
-		switch(record.status)
+		console.log("push "+record.getValue("first_name")+" "+RecordStatus[record.status])
+
+		let succces:boolean = true;
+
+		if (state == RecordStatus.Updated)
 		{
-			case RecordStatus.New :
+			if (record.status == RecordStatus.New)
+			{
+				succces = await this.insert(record);
+				if (succces) record.status = RecordStatus.Inserted;
+			}
 
-				if (await this.source.insert(record))
-					record.status = RecordStatus.Inserted;
-				break;
+			if (record.status == RecordStatus.Query)
+			{
+				succces = await this.update(record);
+				if (succces) record.status = RecordStatus.Updated;
+			}
 
-			case RecordStatus.Deleted : return(await this.source.delete(record));
-			case RecordStatus.Updated : return(await this.source.update(record));
-			case RecordStatus.Inserted : return(await this.source.update(record));
+			if (record.status == RecordStatus.Inserted)
+			{
+				succces = await this.update(record);
+				if (succces) record.status = RecordStatus.Updated;
+			}
+
+			if (record.status == RecordStatus.Updated)
+			{
+				succces = await this.update(record);
+			}
+		}
+		else if (state == RecordStatus.Deleted)
+		{
+			succces = await this.delete(record);
+			if (succces) record.status = RecordStatus.Deleted;
 		}
 
-		return(true);
+		return(succces);
 	}
 
 	public create(pos:number, before?:boolean) : Record
@@ -168,6 +210,7 @@ export class DataSourceWrapper
 		this.hwm$--;
 		this.cache$.splice(pos,1);
 
+		record.status = RecordStatus.Deleted;
 		return(await this.block.postDelete());
 	}
 

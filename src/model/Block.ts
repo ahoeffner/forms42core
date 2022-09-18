@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record } from "./Record.js";
+import { Record, RecordStatus } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { QueryByExample } from "./QueryByExample.js";
@@ -315,7 +315,10 @@ export class Block
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
-		if (success) success = await this.wrapper.push(record);
+
+		if (success) success =
+			await this.wrapper.modified(record, RecordStatus.Updated);
+
 		return(success);
 	}
 
@@ -405,7 +408,7 @@ export class Block
 			return(false);
 
 		let offset:number = this.view.rows - this.view.row;
-		let success:boolean = await this.wrapper.delete(this.getRecord());
+		let success:boolean = await this.wrapper.modified(this.getRecord(),RecordStatus.Deleted);
 
 		if (success)
 		{
@@ -446,10 +449,12 @@ export class Block
 				return(false);
 		}
 
+		if (!await this.wrapper.clear())
+			return(false);
+
 		this.record$ = 0;
 
 		this.qbe.clear();
-		this.wrapper.clear();
 		this.qbe.querymode = true;
 		this.view.clear(true,true);
 		this.view.display(0,this.qberec);

@@ -29,6 +29,7 @@ export class Record
 	private id$:any;
 	private keys$:any[] = [];
 	private values$:any[] = [];
+	private response$:any = null;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
@@ -79,6 +80,16 @@ export class Record
 	public get source() : DataSource
 	{
 		return(this.source$);
+	}
+
+	public get response() : any
+	{
+		return(this.response$);
+	}
+
+	public set response(response:any)
+	{
+		this.response$ = response;
 	}
 
 	public get wrapper() : DataSourceWrapper
@@ -151,10 +162,6 @@ export class Record
 		if (column == null) return;
 		column = column.toLowerCase();
 		let idx:number = this.indexOf(column);
-
-		if (this.status == RecordStatus.Query)
-			this.status = RecordStatus.Updated;
-
 		this.values$[idx] = value;
 	}
 

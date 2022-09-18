@@ -19,9 +19,9 @@ export class MemoryTable implements DataSource
 	private pos$:number = 0;
 
 	private order$:string = null;
+	private dirty$:Record[] = [];
 	private columns$:string[] = [];
 	private records$:Record[] = [];
-	private inserted$:Record[] = [];
 	private sorting$:SortOrder[] = [];
 
 	public arrayfecth:number = 1;
@@ -93,18 +93,43 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public async post() : Promise<boolean>
+	public async flush() : Promise<Record[]>
 	{
-		this.records$.push(...this.inserted$);
-		this.inserted$ = [];
+		let processed:Record[] = [];
 
-		this.records$.forEach((record) =>
+		this.dirty$.forEach((rec) =>
 		{
-			record.prepared = false;
-			record.status = RecordStatus.Query;
-		})
+			console.log(rec.getValue("first_name")+" "+RecordStatus[rec.status])
+			if (rec.status == RecordStatus.Inserted)
+			{
+				processed.push(rec);
+				this.records$.push(rec);
+				rec.response = "inserted";
+			}
 
-		return(true);
+			if (rec.status == RecordStatus.Updated)
+			{
+				processed.push(rec);
+				rec.response = "updated";
+			}
+
+			if (rec.status == RecordStatus.Deleted)
+			{
+				processed.push(rec);
+				rec.response = "deleted";
+
+				let recno:number = this.indexOf(this.records$,rec.id);
+
+				if (recno >= 0)
+				{
+					this.pos$--;
+					this.records$.splice(recno,1);
+				}
+			}
+		});
+
+		this.dirty$ = [];
+		return(processed);
 	}
 
 	public async refresh(_record:Record) : Promise<void>
@@ -113,33 +138,20 @@ export class MemoryTable implements DataSource
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		this.inserted$.push(record);
+		this.dirty$.push(record);
 		return(true);
 	}
 
-	public async update(_record:Record) : Promise<boolean>
+	public async update(record:Record) : Promise<boolean>
 	{
+		this.dirty$.push(record);
 		return(true);
 	}
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		let rec:number = this.indexOf(this.records$,record.id);
-
-		if (rec >= 0)
-		{
-			this.pos$--;
-			this.records$.splice(rec,1);
-		}
-		else
-		{
-			rec = this.indexOf(this.inserted$,record.id);
-
-			if (rec >= 0)
-				this.inserted$.splice(rec,1);
-		}
-
-		return(rec >= 0);
+		this.dirty$.push(record);
+		return(true);
 	}
 
 	public async fetch() : Promise<Record[]>
@@ -163,8 +175,6 @@ export class MemoryTable implements DataSource
 
 	public async query(filter:FilterStructure) : Promise<boolean>
 	{
-		this.post();
-
 		this.pos$ = 0;
 		this.filter = filter;
 
@@ -194,8 +204,9 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public closeCursor(): void
+	public async closeCursor() : Promise<boolean>
 	{
+		return(true);
 	}
 
 	private indexOf(records:Record[],oid:any) : number

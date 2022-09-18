@@ -319,7 +319,6 @@ export class FieldInstance implements FieldEventHandler
 
 	public focusable(status?:Status) : boolean
 	{
-		console.log("focusable")
 		let props:FieldProperties = this.properties$;
 
 		if (status != null)
@@ -334,11 +333,8 @@ export class FieldInstance implements FieldEventHandler
 			}
 		}
 
-		if (this.impl instanceof Display)
-		{
-			console.log(props.getAttribute("tabindex"))
-			return(props.getAttribute("tabindex") != null);
-		}
+		if (this.impl instanceof Display && props.getAttribute("tabindex") == null)
+			return(false);
 
 		return(props.enabled && !props.hidden);
 	}

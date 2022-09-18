@@ -102,22 +102,41 @@ export class QueryByExample
 
 	public getDefaultFilter(column:string) : Filter
 	{
+		let fr:Date = null;
+		let to:Date = null;
+
 		let filter:Filter = null;
-		let value = this.record$.getValue(column);
+		let value:any = this.record$.getValue(column);
 
 		if (value == null)
 			return(null);
 
-		switch(this.block$.view.fieldinfo.get(column).type)
+		let type:DataType = this.block$.view.fieldinfo.get(column).type;
+
+		if (type == DataType.date || type == DataType.datetime)
 		{
-			case DataType.date 		: filter = Filters.Like(column); break;
-			case DataType.datetime 	: filter = Filters.Like(column); break;
+			fr = value;
+			to = new Date(fr.getTime());
+
+			fr.setHours(0,0,0,0);
+			to.setHours(23,59,59,999);
+		}
+
+		switch(type)
+		{
 			case DataType.string 	: filter = Filters.Like(column); break;
 			case DataType.integer 	: filter = Filters.Equals(column); break;
 			case DataType.decimal 	: filter = Filters.Equals(column); break;
+			case DataType.date 		: filter = Filters.Between(column,true); break;
+			case DataType.datetime 	: filter = Filters.Between(column,true); break;
 		}
 
-		filter.constraint = value;
+		if (type != DataType.date && type != DataType.datetime)
+			filter.constraint = value;
+
+		if (type == DataType.date || type == DataType.datetime)
+			filter.constraint = [fr,to];
+
 		return(filter);
 	}
 }

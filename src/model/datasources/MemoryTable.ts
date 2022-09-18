@@ -99,8 +99,6 @@ export class MemoryTable implements DataSource
 
 		this.dirty$.forEach((rec) =>
 		{
-			console.log(rec.getValue("first_name")+" "+RecordState[rec.state])
-
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);

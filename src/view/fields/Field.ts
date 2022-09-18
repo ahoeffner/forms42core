@@ -31,6 +31,7 @@ export class Field
 	private block$:Block = null;
 	private valid$:boolean = true;
 	private dirty$:boolean = false;
+	private validated$:boolean = true;
 	private instance$:FieldInstance = null;
 	private instances$:FieldInstance[] = [];
 
@@ -93,6 +94,16 @@ export class Field
 	public set dirty(flag:boolean)
 	{
 		this.dirty$ = flag;
+	}
+
+	public get validated() : boolean
+	{
+		return(this.validated$);
+	}
+
+	public set validated(flag:boolean)
+	{
+		this.validated$ = flag;
 	}
 
 	public get mdlblock() : ModelBlock
@@ -269,6 +280,7 @@ export class Field
 			inst.valid = true;
 			this.row.invalidate();
 
+			this.validated = false;
 			this.distribute(inst,value,this.dirty);
 			this.block.distribute(this,value,this.dirty);
 
@@ -339,8 +351,9 @@ export class Field
 			this.valid = true;
 			this.dirty = false;
 			this.value$ = value;
+			this.validated = true;
 
-			this.block.postValidateField(inst);
+			await this.block.postValidateField(inst);
 			return(true);
 		}
 	}

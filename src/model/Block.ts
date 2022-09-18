@@ -467,26 +467,24 @@ export class Block
 
 	public async executeQuery(keep?:boolean) : Promise<boolean>
 	{
-		if (!this.qbe.querymode)
-		{
-			this.wrapper.clear();
-			if (!keep) this.qbe.clear();
-		}
 
 		if (!this.view.validated)
 		{
 			if (!await this.view.validateBlock())
-			{
-				if (!keep) this.qbe.clear();
 				return(false);
-			}
+		}
+
+		if (!keep)
+			this.qbe.clear();
+
+		if (!this.qbe.querymode)
+		{
+			if (!await this.wrapper.clear())
+				return(false);
 		}
 
 		if (!await this.preQuery())
-		{
-			this.qbe.clear();
 			return(false);
-		}
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;

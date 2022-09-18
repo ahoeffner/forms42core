@@ -138,7 +138,6 @@ export class DataSourceWrapper
 			if (record.status == RecordStatus.Inserted)
 			{
 				succces = await this.update(record);
-				if (succces) record.status = RecordStatus.Updated;
 			}
 
 			if (record.status == RecordStatus.Updated)
@@ -180,7 +179,7 @@ export class DataSourceWrapper
 		if (!this.source.insert(record))
 			return(false);
 
-		return(!await this.block.postInsert());
+		return(await this.block.postInsert());
 	}
 
 	public async update(record:Record) : Promise<boolean>
@@ -191,7 +190,7 @@ export class DataSourceWrapper
 		if (!this.source.update(record))
 			return(false);
 
-		return(!await this.block.postUpdate());
+		return(await this.block.postUpdate());
 	}
 
 	public async delete(record:Record) : Promise<boolean>

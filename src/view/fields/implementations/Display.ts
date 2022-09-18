@@ -226,7 +226,7 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public async handleEvent(event:Event) : Promise<void>
 	{
-        let bubble:boolean = false;
+		let bubble:boolean = false;
 		this.event.setEvent(event);
 
 		if (this.event.type == "wait")
@@ -250,16 +250,19 @@ export class Display implements FieldImplementation, EventListenerObject
 		if (this.event.onScrollUp)
 			bubble = true;
 
-        if (this.event.onScrollDown)
+		if (this.event.onScrollDown)
 			bubble = true;
 
-        if (this.event.onCtrlKeyDown)
+		if (this.event.onCtrlKeyDown)
 			bubble = true;
 
-        if (this.event.onFuncKey)
+		if (this.event.onFuncKey)
 			bubble = true;
 
 		this.event.preventDefault();
+
+		if (this.event.ignore) return;
+		if (this.event.custom) bubble = true;
 
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);

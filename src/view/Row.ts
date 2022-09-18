@@ -157,8 +157,8 @@ export class Row
 
 	public invalidate() : void
 	{
-		if (this.rownum >= 0) this.validated$ = false;
-		else this.block.getCurrentRow().validated$ = false;
+		if (this.rownum >= 0) this.validated = false;
+		else this.block.getCurrentRow().validated = false;
 		if (this.status == Status.new) this.status = Status.insert;
 	}
 
@@ -194,9 +194,9 @@ export class Row
 		}
 
 		if (!valid) return(false);
-		else this.validated$ = await this.block.model.validateRecord();
+		else this.validated = await this.block.model.validateRecord();
 
-		return(this.validated$);
+		return(this.validated);
 	}
 
 	public addField(field:Field) : void

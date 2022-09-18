@@ -69,9 +69,29 @@ export class DataSourceWrapper
 	{
 		try
 		{
+			let succces:boolean = true;
 			let records:Record[] = await this.source.flush();
 
-			records.forEach((rec) => console.log(rec+" processed"))
+			for (let i = 0; i < records.length; i++)
+			{
+				if (records[i].status == RecordStatus.Inserted)
+				{
+					succces = await this.block.postInsert(records[i]);
+					if (succces) records[i].status = RecordStatus.Query;
+				}
+
+				if (records[i].status == RecordStatus.Updated)
+				{
+					succces = await this.block.postUpdate(records[i]);
+					if (succces) records[i].status = RecordStatus.Query;
+				}
+
+				if (records[i].status == RecordStatus.Deleted)
+				{
+					succces = await this.block.postDelete(records[i]);
+					if (succces) records[i].status = RecordStatus.Query;
+				}
+			}
 
 			return(true);
 		}
@@ -115,13 +135,17 @@ export class DataSourceWrapper
 		return(success);
 	}
 
-	public async modified(record:Record, state:RecordStatus) : Promise<boolean>
+	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
-		console.log("push "+record.getValue("first_name")+" "+RecordStatus[record.status])
-
 		let succces:boolean = true;
+		console.log("mod "+record.getValue("first_name")," "+RecordStatus[record.status])
 
-		if (state == RecordStatus.Updated)
+		if (deleted)
+		{
+			succces = await this.delete(record);
+			if (succces) record.status = RecordStatus.Deleted;
+		}
+		else
 		{
 			if (record.status == RecordStatus.New)
 			{
@@ -144,11 +168,6 @@ export class DataSourceWrapper
 			{
 				succces = await this.update(record);
 			}
-		}
-		else if (state == RecordStatus.Deleted)
-		{
-			succces = await this.delete(record);
-			if (succces) record.status = RecordStatus.Deleted;
 		}
 
 		return(succces);
@@ -179,18 +198,18 @@ export class DataSourceWrapper
 		if (!this.source.insert(record))
 			return(false);
 
-		return(await this.block.postInsert());
+		return(true);
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		if (!await this.block.preUpdate())
+		if (!await this.block.preUpdate(record))
 			return(false);
 
 		if (!this.source.update(record))
 			return(false);
 
-		return(await this.block.postUpdate());
+		return(true);
 	}
 
 	public async delete(record:Record) : Promise<boolean>
@@ -200,7 +219,7 @@ export class DataSourceWrapper
 		if (pos < 0)
 			return(false);
 
-		if (!await this.block.preDelete())
+		if (!await this.block.preDelete(record))
 			return(false);
 
 		if (!this.source.delete(record))
@@ -210,7 +229,7 @@ export class DataSourceWrapper
 		this.cache$.splice(pos,1);
 
 		record.status = RecordStatus.Deleted;
-		return(await this.block.postDelete());
+		return(true);
 	}
 
 	public getRecord(record:number) : Record

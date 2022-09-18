@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record, RecordStatus } from "./Record.js";
+import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filter } from "./interfaces/Filter.js";
 import { QueryByExample } from "./QueryByExample.js";
@@ -238,48 +238,48 @@ export class Block
 		return(success);
 	}
 
-	public async postInsert() : Promise<boolean>
+	public async postInsert(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		if (!await this.wait4EventTransaction(EventType.PostInsert)) return(false);
+		if (!await this.setEventTransaction(EventType.PostInsert,record)) return(false);
 		let success:boolean = await this.fire(EventType.PostInsert);
 		this.endEventTransaction(EventType.PostInsert,success);
 		return(success);
 	}
 
-	public async preUpdate() : Promise<boolean>
+	public async preUpdate(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		let record:Record = this.getRecord();
 		if (!await this.setEventTransaction(EventType.PreUpdate,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreUpdate);
 		this.endEventTransaction(EventType.PreUpdate,success);
 		return(success);
 	}
 
-	public async postUpdate() : Promise<boolean>
+	public async postUpdate(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		if (!await this.wait4EventTransaction(EventType.PostUpdate)) return(false);
+		if (!await this.setEventTransaction(EventType.PostUpdate,record)) return(false);
 		let success:boolean = await this.fire(EventType.PostUpdate);
+		this.endEventTransaction(EventType.PostUpdate,success);
 		return(success);
 	}
 
-	public async preDelete() : Promise<boolean>
+	public async preDelete(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		let record:Record = this.getRecord();
 		if (!await this.setEventTransaction(EventType.PreDelete,record)) return(false);
 		let success:boolean = await this.fire(EventType.PreDelete);
 		this.endEventTransaction(EventType.PreDelete,success);
 		return(success);
 	}
 
-	public async postDelete() : Promise<boolean>
+	public async postDelete(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		if (!await this.wait4EventTransaction(EventType.PostDelete)) return(false);
+		if (!await this.setEventTransaction(EventType.PostDelete,record)) return(false);
 		let success:boolean = await this.fire(EventType.PostDelete);
+		this.endEventTransaction(EventType.PostDelete,success);
 		return(success);
 	}
 
@@ -317,7 +317,7 @@ export class Block
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
 
 		if (success) success =
-			await this.wrapper.modified(record, RecordStatus.Updated);
+			await this.wrapper.modified(record,false);
 
 		return(success);
 	}
@@ -408,7 +408,7 @@ export class Block
 			return(false);
 
 		let offset:number = this.view.rows - this.view.row;
-		let success:boolean = await this.wrapper.modified(this.getRecord(),RecordStatus.Deleted);
+		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{

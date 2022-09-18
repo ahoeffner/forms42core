@@ -674,9 +674,6 @@ export class Block
 	{
 		let next:FieldInstance = inst;
 
-		if (!await this.validateRow())
-			return(next);
-
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
 			let available:number = 0;
@@ -704,6 +701,9 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
+			if (!await this.validateRow())
+				return(next);
+
 			this.model.scroll(scroll,this.row);
 
 			await this.form.enterRecord(this,0);
@@ -725,7 +725,6 @@ export class Block
 			return(next);
 		}
 
-		this.getCurrentRow().validate();
 		let idx:number = inst.field.row.getFieldIndex(inst);
 
 		if (inst.row < 0)

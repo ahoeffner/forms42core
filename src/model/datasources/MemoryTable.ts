@@ -100,6 +100,7 @@ export class MemoryTable implements DataSource
 		this.dirty$.forEach((rec) =>
 		{
 			console.log(rec.getValue("first_name")+" "+RecordStatus[rec.status])
+			
 			if (rec.status == RecordStatus.Inserted)
 			{
 				processed.push(rec);
@@ -138,19 +139,22 @@ export class MemoryTable implements DataSource
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		this.dirty$.push(record);
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
 		return(true);
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		this.dirty$.push(record);
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
 		return(true);
 	}
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		this.dirty$.push(record);
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
 		return(true);
 	}
 

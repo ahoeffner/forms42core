@@ -458,6 +458,9 @@ export class Input implements FieldImplementation, EventListenerObject
 					else					   this.setElementValue(this.pattern.getValue());
 				}
 
+				this.initial = this.getIntermediateValue();
+				if (this.pattern != null) this.initial = this.pattern.getValue();
+
 				this.eventhandler.handleEvent(this.event);
 				this.event.type = "blur";
 			}
@@ -558,15 +561,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 		}
 
-		if (this.event.cancel)
+		if (this.event.accept || this.event.cancel)
 			bubble = true;
-
-		if (this.event.accept)
-		{
-			bubble = true;
-			this.initial = this.getIntermediateValue();
-			if (this.pattern != null) this.initial = this.pattern.getValue();
-		}
 
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);

@@ -152,6 +152,8 @@ export class Row
 
 	public set validated(flag:boolean)
 	{
+		console.log("validated "+flag)
+		//if (!flag) console.log(new Error().stack)
 		this.validated$ = flag;
 	}
 

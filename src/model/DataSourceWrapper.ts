@@ -138,6 +138,7 @@ export class DataSourceWrapper
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
 		let succces:boolean = true;
+		console.log("mod "+record.getValue("first_name")+" "+RecordState[record.state])
 
 		if (deleted)
 		{

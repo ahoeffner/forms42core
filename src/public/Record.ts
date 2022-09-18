@@ -13,8 +13,8 @@
 import { Row } from "../view/Row.js";
 import { Field } from "../view/fields/Field.js";
 import { FieldProperties } from "./FieldProperties.js";
-import { Record as Internal, RecordStatus } from "../model/Record.js";
 import { Block as ModelBlock } from "../model/Block.js";
+import { Record as Internal, RecordState } from "../model/Record.js";
 
 export class Record
 {
@@ -25,7 +25,7 @@ export class Record
 		this.rec$ = rec;
 	}
 
-	public get state() : RecordStatus
+	public get state() : RecordState
 	{
 		return(this.rec$.state);
 	}

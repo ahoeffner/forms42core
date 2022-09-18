@@ -18,7 +18,7 @@ import { FieldInfo } from "./fields/FieldInfo.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
-import { Record, RecordStatus } from "../model/Record.js";
+import { Record, RecordState } from "../model/Record.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -951,15 +951,15 @@ export class Block
 		else		 this.getRow(cr)?.distribute(field.name,value,dirty);
 	}
 
-	public convert(status:RecordStatus) : Status
+	public convert(status:RecordState) : Status
 	{
 		switch(status)
 		{
-			case RecordStatus.New 			: return(Status.new);
-			case RecordStatus.Query 		: return(Status.update);
-			case RecordStatus.Updated 		: return(Status.update);
-			case RecordStatus.Inserted 	: return(Status.insert);
-			case RecordStatus.QueryFilter : return(Status.qbe);
+			case RecordState.New 			: return(Status.new);
+			case RecordState.Query 		: return(Status.update);
+			case RecordState.Updated 		: return(Status.update);
+			case RecordState.Inserted 	: return(Status.insert);
+			case RecordState.QueryFilter : return(Status.qbe);
 		}
 	}
 

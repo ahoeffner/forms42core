@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Record, RecordStatus } from "../Record.js";
+import { Record, RecordState } from "../Record.js";
 import { FilterStructure } from "../FilterStructure.js";
 import { DataSource } from "../interfaces/DataSource.js";
 
@@ -99,22 +99,22 @@ export class MemoryTable implements DataSource
 
 		this.dirty$.forEach((rec) =>
 		{
-			console.log(rec.getValue("first_name")+" "+RecordStatus[rec.state])
+			console.log(rec.getValue("first_name")+" "+RecordState[rec.state])
 
-			if (rec.state == RecordStatus.Inserted)
+			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
 				this.records$.push(rec);
 				rec.response = "inserted";
 			}
 
-			if (rec.state == RecordStatus.Updated)
+			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
 				rec.response = "updated";
 			}
 
-			if (rec.state == RecordStatus.Deleted)
+			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
 				rec.response = "deleted";

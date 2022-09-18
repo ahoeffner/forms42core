@@ -14,7 +14,7 @@ import { Block } from "./Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
 
-export enum RecordStatus
+export enum RecordState
 {
 	New,
 	Query,
@@ -34,7 +34,7 @@ export class Record
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
-	private status$:RecordStatus = RecordStatus.Query;
+	private status$:RecordState = RecordState.Query;
 
 	constructor(source:DataSource, columns?:{[name:string]: any})
 	{
@@ -43,7 +43,7 @@ export class Record
 
 		if (columns == null)
 		{
-			this.status$ = RecordStatus.New;
+			this.status$ = RecordState.New;
 		}
 		else
 		{
@@ -132,12 +132,12 @@ export class Record
 		return(values);
 	}
 
-	public get state() : RecordStatus
+	public get state() : RecordState
 	{
 		return(this.status$);
 	}
 
-	public set state(status:RecordStatus)
+	public set state(status:RecordState)
 	{
 		this.status$ = status;
 	}

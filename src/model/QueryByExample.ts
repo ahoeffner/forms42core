@@ -13,7 +13,7 @@
 import { Block } from "./Block.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
-import { Record, RecordStatus } from "./Record.js";
+import { Record, RecordState } from "./Record.js";
 import { DataType } from "../view/fields/DataType.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
@@ -39,7 +39,7 @@ export class QueryByExample
 		this.wrapper$.block = block;
 		this.wrapper$.source = this.table$;
 		this.record$ = this.wrapper$.create(0);
-		this.record$.state = RecordStatus.QueryFilter;
+		this.record$.state = RecordState.QueryFilter;
 	}
 
 	public get querymode() : boolean

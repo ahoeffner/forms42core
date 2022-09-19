@@ -13,6 +13,7 @@ export { Classes as InternalClasses } from './src/internal/Classes.js';
 
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { Properties as Config, ScrollDirection } from './src/application/Properties.js';
+export { DatePicker as DatePickerConfig } from './src/application/properties/DatePicker.js';
 export { Internals as InternalFormsConfig } from './src/application/properties/Internals.js';
 
 

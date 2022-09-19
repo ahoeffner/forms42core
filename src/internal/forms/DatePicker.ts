@@ -15,6 +15,8 @@ import { KeyMap } from "../../control/events/KeyMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { Internals } from "../../application/properties/Internals.js";
+import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
+import { MouseMap } from "../../../index.js";
 
 export class DatePicker extends Form
 {
@@ -39,11 +41,20 @@ export class DatePicker extends Form
 	constructor()
 	{
 		super(DatePicker.page);
-		this.goToNextMonth = this.goToNextMonth.bind(this);
-		this.goToPrevMonth = this.goToPrevMonth.bind(this);
+		//this.goToNextMonth = this.goToNextMonth.bind(this);
+		//this.goToPrevMonth = this.goToPrevMonth.bind(this);
 		//this.dateInputFile = this.dateInputFile.bind(this);
+
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 		this.addEventListener(this.dateInputFile,{type: EventType.OnEdit, field: "date"});
+
+		this.addEventListener(this.goToPrevMonth,
+		[
+			{type: EventType.Key, field: "prev", key: KeyMap.enter},
+			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
+		]);
+
 	}
 
 	private async done() : Promise<boolean>
@@ -58,6 +69,13 @@ export class DatePicker extends Form
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view);
 
+		let value:Date = this.parameters.get("value");
+		if (value == null) value = new Date();
+
+		this.setValue("calendar","prev","<");
+		this.setValue("calendar","next",">");
+		this.setValue("calendar","date",value);
+
 		this.days_element = view.querySelector('.days');
 		this.mth_element = view.querySelector('.mth');
 		this.pre_mth_element = view.querySelector('.prev-mth');
@@ -65,10 +83,10 @@ export class DatePicker extends Form
 		this.selected_date_element = view.querySelector('input[name="date"]');
 		//build datepicker
 		this.populateDates()
-		this.selected_date_element.value = this.formatDate(this.day,Number(this.month + 1),this.year);
+		//this.selected_date_element.value = this.formatDate(this.day,Number(this.month + 1),this.year);
 
-		this.pre_mth_element.addEventListener('click', this.goToPrevMonth);
-		this.next_mth_element.addEventListener('click', this.goToNextMonth);
+		//this.pre_mth_element.addEventListener('click', this.goToPrevMonth);
+		//this.next_mth_element.addEventListener('click', this.goToNextMonth);
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
@@ -77,10 +95,11 @@ export class DatePicker extends Form
 	}
 
 
-	private async dateInputFile(e : FormEvent) : Promise<boolean>
+	private async dateInputFile(event:FormEvent) : Promise<boolean>
 	{
-		let days = this.getValue("fields", "date")
-		console.log(days)
+		let date:Date = this.getValue("calendar","date");
+		console.log(date.getMonth())
+
 		// [this.day,this.month,this.year] = e.target["value"].split("-");
 		// this.month--;
 		// this.selectedDay = this.day;
@@ -102,8 +121,9 @@ export class DatePicker extends Form
 		this.populateDates()
 	}
 
-	private goToPrevMonth()
+	private async goToPrevMonth(event:FormEvent) : Promise<boolean>
 	{
+		console.log("previois")
 		this.month--;
 		if(this.month < 0)
 		{
@@ -111,6 +131,7 @@ export class DatePicker extends Form
 			this.year--;
 		}
 		this.populateDates()
+		return(true);
 	}
 
 
@@ -143,7 +164,7 @@ export class DatePicker extends Form
 		this.selectedDay = day;
 		this.selectedMonth = this.month;
 		this.selectedYear = this.year;
-		this.selected_date_element.value = this.formatDate(day,Number(this.month + 1),this.year);
+		//this.selected_date_element.value = this.formatDate(day,Number(this.month + 1),this.year);
 		this.populateDates();
 	}
 
@@ -157,16 +178,16 @@ export class DatePicker extends Form
 
 
 	public static page:string =
-	Internals.header +
+	Internals.header + Properties.Day +
 	`
 	<div name="popup-body">
 		<div class="date-picker">
-			<div class="selected-date"><span>Date</span>:<input name="date" from="fields" date></div>
+			<div class="selected-date"><span>Date</span>:<input name="date" from="calendar" date></div>
 			<div class="dates">
 				<div class="month">
-					<div class="arrows prev-mth">&lt;</div>
+					<div class="arrows prev-mth" tabindex="0" name="prev" from="calendar"></div>
 					<div class="mth"></div>
-					<div class="arrows next-mth">&gt;</div>
+					<div class="arrows next-mth" tabindex="0" name="next" from="calendar"></div>
 				</div>
 				<div class="days"></div>
 			</div>

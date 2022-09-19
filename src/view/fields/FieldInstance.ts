@@ -223,6 +223,11 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.datatype = type;
 	}
 
+	public get implementation() : FieldImplementation
+	{
+		return(this.impl);
+	}
+
 	public get ignore() : string
 	{
 		return(this.ignore$);

@@ -434,10 +434,10 @@ export class Block
 	public async flush() : Promise<boolean>
 	{
 		if (this.ctrlblk)
-			return(false);
+			return(true);
 
 		if (this.qbe.querymode)
-			return(false);
+			return(true);
 
 		return(this.wrapper?.flush());
 	}

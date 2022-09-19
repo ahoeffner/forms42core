@@ -12,50 +12,35 @@
 
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
+import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
-import { MouseMap } from "../../../index.js";
-import { Field } from "../../view/fields/Field.js";
 
 export class DatePicker extends Form
 {
-	days_element:HTMLElement= null;
-	mth_element: HTMLElement = null;
-	pre_mth_element: HTMLElement = null;
-	next_mth_element: HTMLElement = null;
-	selected_date_element: HTMLInputElement = null;
-
 	date:Date = new Date();
 	day:number = this.date.getDate();
 	month:number = this.date.getMonth();
 	year:number = this.date.getFullYear();
 
-	selectedDate = this.date;
-	selectedDay = this.day;
-	selectedMonth = this.month;
-	selectedYear = this.year;
-	input:string = "";
-
-	options:object = { month: 'long'};
 	constructor()
 	{
 		super(DatePicker.page);
-		//this.goToNextMonth = this.goToNextMonth.bind(this);
-		//this.goToPrevMonth = this.goToPrevMonth.bind(this);
-		//this.dateInputFile = this.dateInputFile.bind(this);
-
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-		this.addEventListener(this.dateInputFile,{type: EventType.OnEdit, field: "date"});
+		this.addEventListener(this.setDate,{type: EventType.OnEdit, field: "date"});
+
+		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
+		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.goToPrevMonth,
 		[
 				{type: EventType.Key, field: "prev", key: KeyMap.enter},
 				{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
 		]);
-	
+
 		this.addEventListener(this.goToNextMonth,
 		[
 					{type: EventType.Key, field: "next", key: KeyMap.enter},
@@ -65,8 +50,7 @@ export class DatePicker extends Form
 
 	private async done() : Promise<boolean>
 	{
-		this.selected_date_element.value = this.formatDate(this.day,Number(this.month + 1),this.year);
-		console.log(this.selected_date_element.value)
+		console.log(this.getValue("calendar","date"))
 		return (this.close());
 	}
 
@@ -77,85 +61,63 @@ export class DatePicker extends Form
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
+		console.log("value : "+value);
 
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
-		// this.setValue("calender","mth", this.mth_element)
-		this.mth_element = view.querySelector('.mth');
-		this.days_element = view.querySelector('.days');
-		this.selected_date_element = view.querySelector('input[name="date"]');
-		//build datepicker
-		this.populateDates()
-		this.selected_date_element.value = this.formatDate(this.day,Number(this.month + 1),this.year);
 
-		// this.pre_mth_element.addEventListener('click', this.goToPrevMonth);
-		// this.next_mth_element.addEventListener('click', this.goToNextMonth);
-
-		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
-
-		
-
+		this.populateDates();
 		return(true);
 	}
 
 
-	private async dateInputFile(event:FormEvent) : Promise<boolean>
+	private async setDate() : Promise<boolean>
 	{
-		
-		let date:Date = this.getValue("calendar","date");
-
-		if(date !== null)
-		{
-		 this.selectedDay = this.date.getDay();
-		 this.selectedMonth = this.date.getMonth();
-		 this.selectedYear =this.date.getFullYear();
-		 console.log(this.selectedDate,this.selectedMonth, this.selectedYear)
-		}
-		// 
-		// this.populateDates();
+		this.date = this.getValue("calendar","date");
+		console.log(this.date)
 		return(true)
 	}
 
 	private async goToNextMonth () : Promise<boolean>
 	{
-		console.log("gonext")
-		this.month++;
-		if(this.month > 11)
-		{
-			this.month = 0;
-			this.year++;
-		}
-		this.populateDates()
-
+		this.date.setMonth(this.date.getMonth()+1);
+		console.log("next "+this.date);
+		//this.populateDates()
 		return(true)
 	}
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
-		console.log("previois")
-		this.month--;
-		if(this.month < 0)
-		{
-			this.month = 11;
-			this.year--;
-		}
-		this.populateDates()
+		this.date.setMonth(this.date.getMonth()-1);
+		console.log("previous "+this.date);
+		//this.populateDates()
 		return(true);
 	}
 
 
 	private populateDates() : void
 	{
-		this.days_element.textContent = '';
+		let dayno:number = 0;
+		let days:number = this.getDaysInMonth(this.year,this.month);
 
-		let daysInCurrentMonth = this.getDaysInMonth(this.year, this.month);
+		for (let week = 0; week < 5; week++)
+		{
+			for (let day = 0; day < 7; day++)
+			{
+				if (++dayno < days)
+					this.setValue("calendar","day-"+week+""+day,dayno);
+			}
+		}
+
+		/*
+		//this.days_element.textContent = '';
+
 
 		//Found local from browser
 		let month_output = new Date(this.year,this.month) .toLocaleDateString('en-us', this.options) + ' ' + this.year
 		// this.setValue("calander","mth", month_output)
-		this.mth_element.textContent = month_output;
+		//this.mth_element.textContent = month_output;
 
 		for(let day = 1; day < daysInCurrentMonth + 1; day++)
 		{
@@ -169,26 +131,18 @@ export class DatePicker extends Form
 			}
 			// this.addEventListener(day_element,{block:"calender", field:"days"})
 			day_element.addEventListener('click',() => this.choiceDay(day))
-			this.days_element.appendChild(day_element)
+			//this.days_element.appendChild(day_element)
 		}
-
+		*/
 	}
 
 	private choiceDay(day:number)
 	{
-		this.selectedDay = day;
-		this.selectedMonth = this.month;
-		this.selectedYear = this.year;
-
-		this.setValue("calendar", "date", this.formatDate(day,Number(this.month + 1),this.year))
 		this.populateDates();
 	}
 
-	private formatDate(node1:number,node2:number,node3:number){
-		return node1 + '-' + node2 + '-' + node3
-	}
-
-	private  getDaysInMonth(year, month): number {
+	private  getDaysInMonth(year, month): number
+	{
 		return new Date(year, month,0).getDate();
 	}
 
@@ -198,14 +152,18 @@ export class DatePicker extends Form
 	`
 	<div name="popup-body">
 		<div class="date-picker">
-			<div class="selected-date"><span>Date</span>:<input name="date" from="calendar" date></div>
+			<div><span>Date</span>:<input name="date" from="calendar" date></div>
 			<div class="dates">
 				<div class="month">
-					<div class="arrows prev-mth" tabindex="0" name="prev" from="calendar"></div>
+					<div class="arrows" tabindex="0" name="prev" from="calendar"></div>
 					<div class="mth" name="mth" from="calendar"></div>
-					<div class="arrows next-mth" tabindex="0" name="next" from="calendar"></div>
+					<div class="arrows" tabindex="0" name="next" from="calendar"></div>
 				</div>
-				<div class="days" name="days" tabindex="0" from="calendar"></div>
+				<div class="week" foreach="week in 1..5">
+					<div class="day" foreach="day in 1..7">
+						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

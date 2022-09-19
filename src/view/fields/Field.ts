@@ -21,6 +21,7 @@ import { Block as ModelBlock } from "../../model/Block.js";
 import { FormBacking } from "../../application/FormBacking.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
+import { Input } from "./implementations/Input.js";
 
 
 export class Field
@@ -330,6 +331,9 @@ export class Field
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
 		let value:any = inst.getValue();
+
+		if (inst.implementation instanceof Input)
+			value = inst.implementation.validate(value);
 
 		if (value != this.value$)
 			this.dirty = true;

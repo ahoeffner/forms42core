@@ -113,6 +113,36 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.setElementValue(null);
 	}
 
+	public validate(value:any) : any
+	{
+		if (DataType[this.datatype$].startsWith("date") && this.pattern && value == null)
+		{
+			let date:Date = dates.parse(this.getElementValue());
+
+			if (date == null && !this.pattern.isNull())
+			{
+				let fine:string = this.finishDate();
+
+				date = dates.parse(fine);
+
+				if (date != null)
+				{
+					this.pattern.setValue(fine);
+					this.setElementValue(this.pattern.getValue());
+				}
+				else
+				{
+					if (dates.parse(this.getElementValue()) == null)
+						this.setElementValue(null);
+				}
+			}
+
+			return(date);
+		}
+
+		return(value);
+	}
+
 	public getValue() : any
 	{
 		let value:string = this.getElementValue();
@@ -133,23 +163,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (DataType[this.datatype$].startsWith("date"))
 		{
 			let date:Date = dates.parse(value);
-
-			if (date == null && !this.pattern.isNull())
-			{
-				let fine:string = this.finishDate();
-				date = dates.parse(fine);
-
-				if (date != null)
-				{
-					this.pattern.setValue(fine);
-					this.setElementValue(this.pattern.getValue());
-				}
-				else
-				{
-					this.setElementValue(null);
-				}
-			}
-
 			return(date);
 		}
 
@@ -977,6 +990,15 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			for (let i = part.pos; i < part.pos + part.length; i++)
 				if (input.charAt(i) != ' ') empty = false;
+
+			if (!empty)
+			{
+				let fld:string = input.substring(part.pos,part.pos+part.length);
+
+				fld = fld.trim();
+				while(fld.length < part.length) fld = "0"+fld;
+				input = input.substring(0,part.pos) + fld + input.substring(part.pos+part.length);
+			}
 
 			if (empty)
 			{

@@ -30,7 +30,12 @@ export class DatePicker extends Form
 		super(DatePicker.page);
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-		this.addEventListener(this.setDate,{type: EventType.OnEdit, field: "date"});
+
+		this.addEventListener(this.setDate,
+		[
+			{type: EventType.OnEdit, field: "date"},
+			{type: EventType.WhenValidateField, field: "date"}
+		]);
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});

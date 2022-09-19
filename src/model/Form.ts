@@ -17,6 +17,7 @@ import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
+import { BlockCoordinator } from './BlockCoordinator.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
@@ -31,6 +32,7 @@ export class Form
 	private datamodel$:DataModel = new DataModel();
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private evttrans$:EventTransaction = new EventTransaction();
+	private blkcord$:BlockCoordinator = new BlockCoordinator(this);
 
 	constructor(parent:InterfaceForm)
 	{
@@ -52,6 +54,11 @@ export class Form
 	public get parent() : InterfaceForm
 	{
 		return(this.parent$);
+	}
+
+	public get blockcoordinator() : BlockCoordinator
+	{
+		return(this.blkcord$);
 	}
 
 	public getBlocks() : Block[]

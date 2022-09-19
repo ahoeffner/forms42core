@@ -380,6 +380,24 @@ export class Form implements EventListenerObject
 		if (!await FormEvents.raise(frmevent))
 			return(false);
 
+		if (inst == null)
+		{
+			if (key == KeyMap.delete)
+				inst = this.curinst$;
+
+			if (key == KeyMap.enterquery)
+				inst = this.curinst$;
+
+			if (key == KeyMap.executequery)
+				inst = this.curinst$;
+
+			if (key == KeyMap.enter && mblock.querymode)
+				inst = this.curinst$;
+
+			if (key == KeyMap.insert || KeyMap.insertAbove)
+				inst = this.curinst$;
+		}
+
 		if (inst != null)
 		{
 			if (key == KeyMap.enter && mblock.querymode)
@@ -443,6 +461,7 @@ export class Form implements EventListenerObject
 				if (success)
 					block.findFirstEditable(mblock.qberec)?.focus();
 
+				this.model.blockcoordinator.setQueryMaster(inst.block);
 				return(true);
 			}
 
@@ -470,6 +489,8 @@ export class Form implements EventListenerObject
 
 				if (!await inst.field.validate(inst))
 					return(false);
+
+				this.model.blockcoordinator.setQueryMaster(inst.block);
 
 				if (!mblock.ctrlblk && mblock.queryallowed)
 					success = await mblock.executeQuery();

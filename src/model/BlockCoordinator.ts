@@ -15,8 +15,17 @@ import { Form } from "./Form.js";
 
 export class BlockCoordinator
 {
-	constructor(private form:Form)
-	{
+	constructor(private form:Form) {}
+	private query$:QueryCoordinator = new QueryCoordinator(this);
 
+	public setQueryMaster(block:string) : void
+	{
+		this.query$.qmaster$ = block;
 	}
+}
+
+class QueryCoordinator
+{
+	qmaster$:string = null;
+	constructor(private blkcord$:BlockCoordinator) {}
 }

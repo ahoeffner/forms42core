@@ -431,6 +431,17 @@ export class Block
 		return(true);
 	}
 
+	public async flush() : Promise<boolean>
+	{
+		if (this.ctrlblk)
+			return(false);
+
+		if (this.qbe.querymode)
+			return(false);
+
+		return(this.wrapper?.flush());
+	}
+
 	public setFilter(field:string, filter?:Filter|FilterStructure) : void
 	{
 		this.qbe.setFilter(field,filter);
@@ -476,7 +487,7 @@ export class Block
 		if (!this.qbe.querymode)
 		{
 			if (!keep) this.qbe.clear();
-			
+
 			if (!await this.wrapper.clear())
 				return(false);
 		}

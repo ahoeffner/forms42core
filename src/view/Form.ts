@@ -347,6 +347,7 @@ export class Form implements EventListenerObject
 	{
 		if (!await block.model.wait4EventTransaction(EventType.PostBlock)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
+		if (success) success = await block.model.flush();
 		return(success);
 	}
 

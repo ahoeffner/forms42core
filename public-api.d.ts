@@ -1,6 +1,7 @@
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
+export { Key } from './src/model/relations/Key.js';
 export { RecordState } from './src/model/Record.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 

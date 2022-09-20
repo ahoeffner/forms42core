@@ -25,6 +25,7 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { block } from "../../index.js";
 
 
 export class Block
@@ -569,10 +570,18 @@ export class Block
 		return(true);
 	}
 
+	public getDetailBlocks() : Block[]
+	{
+		return(this.form.blockcoordinator.getDetailBlocks(this));
+	}
+
 	public async queryDetails() : Promise<boolean>
 	{
 		if (this.querymode)
 			return(true);
+
+		this.getDetailBlocks().forEach((detail) =>
+			{detail.executeQuery()})
 
 		return(true);
 	}

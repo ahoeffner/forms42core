@@ -10,9 +10,10 @@
  * accompanied this code).
  */
 
-import { Block } from '../public/Block.js';
 import { Class } from '../types/Class.js';
+import { Block } from '../public/Block.js';
 import { Alert } from '../application/Alert.js';
+import { Key } from '../model/relations/Key.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
@@ -65,6 +66,11 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.restore();
 		this.focus();
+	}
+
+	public link(master:Key, detail:Key) : void
+	{
+		FormBacking.getBacking(this).link(master,detail);
 	}
 
 	public goField(block:string, field:string, clazz?:string) : void

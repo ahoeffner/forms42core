@@ -495,7 +495,7 @@ export class Block
 
 		this.getMasterLinks().forEach((link) =>
 		{
-			console.log("Link to "+link.master.name+" "+link.master.fields)
+			console.log("Link to "+link.master.block+" "+link.master.fields)
 		})
 
 		if (!await this.preQuery())

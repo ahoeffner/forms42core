@@ -45,14 +45,14 @@ export class DatePicker extends Form
 
 		this.addEventListener(this.goToPrevMonth,
 		[
-				{type: EventType.Key, field: "prev", key: KeyMap.enter},
-				{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
+			{type: EventType.Key, field: "prev", key: KeyMap.enter},
+			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
 		]);
 
 		this.addEventListener(this.goToNextMonth,
 		[
-					{type: EventType.Key, field: "next", key: KeyMap.enter},
-					{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
+			{type: EventType.Key, field: "next", key: KeyMap.enter},
+			{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
 		]);
 	}
 
@@ -65,10 +65,13 @@ export class DatePicker extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
+
 		Internals.stylePopupWindow(view);
-		Properties.styleDatePicker(view)
+		Properties.styleDatePicker(view);
+
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
+
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
@@ -79,11 +82,12 @@ export class DatePicker extends Form
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
-		this.day = this.getValue(event.block,event.field)
+		this.day = this.getValue(event.block,event.field);
 		if(typeof this.day == "number")
 		{
 			this.date.setDate(this.day);
 			this.setValue("calendar","date",this.date);
+
 			this.populateDates();
 			return(true)
 		}
@@ -93,6 +97,7 @@ export class DatePicker extends Form
 	private async setDate() : Promise<boolean>
 	{
 		this.date = this.getValue("calendar","date");
+
 		this.populateDates();
 		return(true)
 	}
@@ -100,6 +105,7 @@ export class DatePicker extends Form
 	private async goToNextMonth () : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()+1);
+
 		this.populateDates();
 		return(true)
 	}
@@ -107,6 +113,7 @@ export class DatePicker extends Form
 	private async goToPrevMonth() : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()-1);
+
 		this.populateDates();
 		return(true);
 	}

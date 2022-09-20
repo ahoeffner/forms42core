@@ -69,7 +69,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view)
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-
+		console.log(value)
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
@@ -80,12 +80,15 @@ export class DatePicker extends Form
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
-		console.log(event.field)
 		this.day = this.getValue(event.block,event.field)
-		this.date.setDate(this.day);
-		this.setValue("calendar","date",this.date);
-		this.populateDates();
-		return(true)
+		if(typeof this.day == "number")
+		{
+			this.date.setDate(this.day);
+			this.setValue("calendar","date",this.date);
+			this.populateDates();
+			return(true)
+		}
+		return(false)
 	}
 
 	private async setDate() : Promise<boolean>
@@ -99,7 +102,6 @@ export class DatePicker extends Form
 	private async goToNextMonth () : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()+1);
-		console.log("next "+this.date);
 		this.populateDates();
 		return(true)
 	}
@@ -107,7 +109,6 @@ export class DatePicker extends Form
 	private async goToPrevMonth() : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()-1);
-		console.log("previous "+this.date);
 		this.populateDates();
 		return(true);
 	}
@@ -115,22 +116,25 @@ export class DatePicker extends Form
 	private populateDates() : void
 	{
 		let dayno:number = 0;
+		console.log(dayno)
 		if(this.date == null) this.date = new Date();	
-		let Lday:string = dates.format(this.date,"MMM-YYYY");
-		let days:number = this.getDaysInMonth(this.year,this.month);
-	
+		let Lday:string = dates.format(this.date,"MMM YYYY");
+		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
+		console.log(days)
 		this.setValue("calendar","mth",Lday);
 		for (let week = 1; week <= 5; week++)
 		{
 			for (let day = 1; day <= 7; day++)
 			{
-				if (++dayno < days)
+				if (++dayno <= days)
 					this.setValue("calendar","day-"+week+""+day,dayno);
+				else
+					this.setValue("calendar","day-"+week+""+day,null);
 			}
 		}
 	}
 
-	private  getDaysInMonth(year, month): number
+	private  getDaysInMonth(year:number, month:number): number
 	{
 		return new Date(year, month,0).getDate();
 	}

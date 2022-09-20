@@ -13,6 +13,7 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
+import { Link } from "./relations/Link.js";
 import { Filter } from "./interfaces/Filter.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -25,7 +26,6 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { block } from "../../index.js";
 
 
 export class Block
@@ -493,9 +493,9 @@ export class Block
 				return(false);
 		}
 
-		this.getMasterBlocks().forEach((master) =>
+		this.getMasterLinks().forEach((link) =>
 		{
-			console.log("Link to "+master.name)
+			console.log("Link to "+link.master.name+" "+link.master.fields)
 		})
 
 		if (!await this.preQuery())
@@ -578,6 +578,11 @@ export class Block
 	public getMasterBlocks() : Block[]
 	{
 		return(this.form.blockcoordinator.getMasterBlocks(this));
+	}
+
+	public getMasterLinks() : Link[]
+	{
+		return(this.form.blockcoordinator.getMasterLinks(this));
 	}
 
 	public getDetailBlocks() : Block[]

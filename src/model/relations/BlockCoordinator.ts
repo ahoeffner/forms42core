@@ -63,6 +63,26 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
+	public getMasterLinks(block:Block) : Link[]
+	{
+		let blocks:Link[] = [];
+
+		this.blocks$.get(block.name)?.masters.forEach((link) =>
+		{
+			let block:Block = this.form.getBlock(link.master.block);
+
+			if (block == null)
+			{
+				Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
+				return([]);
+			}
+
+			blocks.push(link);
+		})
+
+		return(blocks);
+	}
+
 	public link(link:Link) : void
 	{
 		let dependency:Dependency = null;

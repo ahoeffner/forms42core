@@ -69,7 +69,6 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view)
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-		console.log(value)
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
@@ -94,7 +93,6 @@ export class DatePicker extends Form
 	private async setDate() : Promise<boolean>
 	{
 		this.date = this.getValue("calendar","date");
-		
 		this.populateDates();
 		return(true)
 	}
@@ -116,11 +114,10 @@ export class DatePicker extends Form
 	private populateDates() : void
 	{
 		let dayno:number = 0;
-		console.log(dayno)
 		if(this.date == null) this.date = new Date();	
 		let Lday:string = dates.format(this.date,"MMM YYYY");
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
-		console.log(days)
+
 		this.setValue("calendar","mth",Lday);
 		for (let week = 1; week <= 5; week++)
 		{

@@ -14,6 +14,7 @@ import { Key } from "./Key.js";
 import { Link } from "./Link.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
+import { Alert } from "../../application/Alert.js";
 
 
 export class BlockCoordinator
@@ -26,10 +27,37 @@ export class BlockCoordinator
 	{
 		let blocks:Block[] = [];
 
-		this.blocks$.get(block.name).details?.forEach((link) =>
+		this.blocks$.get(block.name)?.details.forEach((link) =>
 		{
 			let block:Block = this.form.getBlock(link.detail.block);
-			if (block != null) blocks.push(block);
+
+			if (block == null)
+			{
+				Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
+				return([]);
+			}
+
+			blocks.push(block);
+		})
+
+		return(blocks);
+	}
+
+	public getMasterBlocks(block:Block) : Block[]
+	{
+		let blocks:Block[] = [];
+
+		this.blocks$.get(block.name)?.masters.forEach((link) =>
+		{
+			let block:Block = this.form.getBlock(link.master.block);
+
+			if (block == null)
+			{
+				Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
+				return([]);
+			}
+
+			blocks.push(block);
 		})
 
 		return(blocks);

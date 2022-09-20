@@ -493,6 +493,11 @@ export class Block
 				return(false);
 		}
 
+		this.getMasterBlocks().forEach((master) =>
+		{
+			console.log("Link to "+master.name)
+		})
+
 		if (!await this.preQuery())
 			return(false);
 
@@ -568,6 +573,11 @@ export class Block
 
 		this.view.lockUnused();
 		return(true);
+	}
+
+	public getMasterBlocks() : Block[]
+	{
+		return(this.form.blockcoordinator.getMasterBlocks(this));
 	}
 
 	public getDetailBlocks() : Block[]

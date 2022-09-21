@@ -219,7 +219,9 @@ export class Form
 		this.blockcoordinator.setQueryMaster(block.name);
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
+		// If master record state == NA skip
 		// Go to master block and query
+		// Check Alert setValue before style
 
 		if (!block.querymode && !keep)
 			block.clearQueryFilters();

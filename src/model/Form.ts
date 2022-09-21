@@ -172,6 +172,28 @@ export class Form
 		await this.initControlBlocks();
 	}
 
+	public async enterQuery(block:Block) : Promise<boolean>
+	{
+		if (!block.view.validated)
+		{
+			if (!await block.view.validateBlock())
+				return(false);
+		}
+
+		return(true);
+	}
+
+	public async executeQuery(block:Block, keep?:boolean) : Promise<boolean>
+	{
+		if (!block.view.validated)
+		{
+			if (!await block.view.validateBlock())
+				return(false);
+		}
+
+		return(true);
+	}
+
 	public async initControlBlocks() : Promise<void>
 	{
 		for(let block of this.blocks$.values())

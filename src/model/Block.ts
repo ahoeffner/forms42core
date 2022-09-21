@@ -24,6 +24,7 @@ import { Form as InterfaceForm } from '../public/Form.js';
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
 import { EventType } from "../control/events/EventType.js";
+import { QueryManager } from "./relations/QueryManager.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
@@ -484,7 +485,6 @@ export class Block
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
 		console.log(this.name+" "+qryid)
-
 		if (!this.setMasterDependencies())
 			return(false);
 
@@ -495,8 +495,13 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
+		await QueryManager.sleep(100);
+
 		if (!await wrapper.query(this.filter))
 			return(false);
+
+		if (qryid != this.form.QueryManager.getQueryID())
+			console.log("behind")
 
 		for (let i = 0; i < this.view.rows; i++)
 		{

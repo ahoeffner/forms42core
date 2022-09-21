@@ -286,7 +286,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executeQuery(this.qrymgr$.startNewChain());
+				await block.executeQuery();
 			}
 		}
 	}

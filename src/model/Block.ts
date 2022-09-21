@@ -488,6 +488,9 @@ export class Block
 		let newid:object = null;
 		let runid:object = null;
 
+		if (qryid == null)
+			qryid = this.form.QueryManager.startNewChain();
+
 		if (!this.setMasterDependencies())
 			return(false);
 
@@ -645,7 +648,10 @@ export class Block
 			let master:Block = this.getMasterBlock(link);
 
 			if (master.empty)
+			{
+				console.log("cannot perform query as master block '"+master.name+"' is empty");
 				return(false);
+			}
 
 			for (let i = 0; i < link.master.fields.length; i++)
 			{

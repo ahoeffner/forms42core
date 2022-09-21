@@ -172,9 +172,9 @@ export class Form
 		await this.initControlBlocks();
 	}
 
-	public getQueryMaster(block:Block) : Block
+	public getQueryMaster() : Block
 	{
-		return(this.blkcord$.getQueryMaster(block));
+		return(this.blkcord$.getQueryMaster());
 	}
 
 	public async enterQuery(block:Block|string) : Promise<boolean>

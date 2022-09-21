@@ -22,8 +22,11 @@ export class BlockCoordinator
 	private query$:QueryCoordinator = new QueryCoordinator(this);
 	private blocks$:Map<string,Dependency> = new Map<string,Dependency>();
 
-	public getQueryMaster(block:Block) : Block
+	public getQueryMaster(block?:Block) : Block
 	{
+		if (block == null)
+			return(this.getBlock(this.query$.qmaster$));
+
 		let master:Block = block;
 		let masters:Block[] = this.getMasterBlocks(block);
 

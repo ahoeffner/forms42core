@@ -23,6 +23,32 @@ export class BlockCoordinator
 	private query$:QueryCoordinator = new QueryCoordinator(this);
 	private blocks$:Map<string,Dependency> = new Map<string,Dependency>();
 
+	public getMasterBlock(link:Link) : Block
+	{
+		let block:Block = this.form.getBlock(link.master.block);
+
+		if (block == null)
+		{
+			Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
+			return(null);
+		}
+
+		return(block);
+	}
+
+	public getDetailBlock(link:Link) : Block
+	{
+		let block:Block = this.form.getBlock(link.detail.block);
+
+		if (block == null)
+		{
+			Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
+			return(null);
+		}
+
+		return(block);
+	}
+
 	public getDetailBlocks(block:Block) : Block[]
 	{
 		let blocks:Block[] = [];
@@ -74,6 +100,26 @@ export class BlockCoordinator
 			if (block == null)
 			{
 				Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
+				return([]);
+			}
+
+			blocks.push(link);
+		})
+
+		return(blocks);
+	}
+
+	public getDetailLinks(block:Block) : Link[]
+	{
+		let blocks:Link[] = [];
+
+		this.blocks$.get(block.name)?.details.forEach((link) =>
+		{
+			let block:Block = this.form.getBlock(link.master.block);
+
+			if (block == null)
+			{
+				Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
 				return([]);
 			}
 

@@ -26,6 +26,7 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { Filters } from "./filters/Filters.js";
 
 
 export class Block
@@ -40,6 +41,7 @@ export class Block
 	private intfrm:InterfaceForm = null;
 	private intblk:InterfaceBlock = null;
 	private qbe:QueryByExample = new QueryByExample(this);
+	private filter:FilterStructure = new FilterStructure();
 
 	constructor(form:Form, name:string)
 	{
@@ -47,6 +49,9 @@ export class Block
 		this.form$ = form;
 		this.form.addBlock(this);
 		this.intfrm = form.parent;
+		this.filter.and(this.qbe.QBEFilter,"qbe");
+		this.filter.and(new FilterStructure(),"masters");
+		this.filter.and(new FilterStructure(),"details");
 		this.datasource = form.datamodel.getDataSource(this.name);
 	}
 
@@ -493,9 +498,28 @@ export class Block
 				return(false);
 		}
 
+		let mstflts:FilterStructure = this.filter.get("masters") as FilterStructure;
+
+		mstflts.clear();
 		this.getMasterLinks().forEach((link) =>
 		{
-			console.log("Link to "+link.master.block+" "+link.master.fields)
+			let master:Block = this.getDetailBlock(link);
+
+			for (let i = 0; i < link.master.fields.length; i++)
+			{
+				let mfld:string = link.master.fields[i];
+				let dfld:string = link.detail.fields[i];
+
+				let value:any = master.getValue(mfld);
+				console.log("mblk: "+master.name+" mfld: "+mfld+" val: "+value)
+
+				if (value != null)
+				{
+					let flt:Filter = Filters.Equals(dfld);
+					flt.constraint = master.getValue(mfld);
+					mstflts.and(flt,dfld);
+				}
+			}
 		})
 
 		if (!await this.preQuery())
@@ -508,7 +532,7 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
-		if (!await wrapper.query(this.QBEFilter))
+		if (!await wrapper.query(this.filter))
 		{
 			this.qbe.clear();
 			return(false);
@@ -575,6 +599,11 @@ export class Block
 		return(true);
 	}
 
+	public getMasterBlock(link:Link) : Block
+	{
+		return(this.form.blockcoordinator.getMasterBlock(link));
+	}
+
 	public getMasterBlocks() : Block[]
 	{
 		return(this.form.blockcoordinator.getMasterBlocks(this));
@@ -585,9 +614,19 @@ export class Block
 		return(this.form.blockcoordinator.getMasterLinks(this));
 	}
 
+	public getDetailBlock(link:Link) : Block
+	{
+		return(this.form.blockcoordinator.getDetailBlock(link));
+	}
+
 	public getDetailBlocks() : Block[]
 	{
 		return(this.form.blockcoordinator.getDetailBlocks(this));
+	}
+
+	public getDetailLinks() : Link[]
+	{
+		return(this.form.blockcoordinator.getDetailLinks(this));
 	}
 
 	public async queryDetails() : Promise<boolean>

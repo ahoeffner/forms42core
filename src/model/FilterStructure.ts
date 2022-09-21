@@ -40,35 +40,35 @@ export class FilterStructure
 		this.filteridx$.clear();
 	}
 
-	public or(filter:Filter|FilterStructure, field?:string) : void
+	public or(filter:Filter|FilterStructure, name?:string) : void
 	{
 		if (filter == this)
 			return;
 
 		if (!this.filteridx$.has(filter))
 		{
-			let cstr:Constraint = new Constraint(false,filter,field);
-			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
+			let cstr:Constraint = new Constraint(false,filter,name);
+			if (name) this.fieldidx$.set(name.toLowerCase(),cstr);
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
 	}
 
-	public and(filter:Filter|FilterStructure, field?:string) : void
+	public and(filter:Filter|FilterStructure, name?:string) : void
 	{
 		if (filter == this)
 			return;
 
 		if (!this.filteridx$.has(filter))
 		{
-			let cstr:Constraint = new Constraint(true,filter,field);
-			if (field) this.fieldidx$.set(field.toLowerCase(),cstr);
+			let cstr:Constraint = new Constraint(true,filter,name);
+			if (name) this.fieldidx$.set(name.toLowerCase(),cstr);
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
 	}
 
-	public get(field:string) : Filter
+	public get(field:string) : Filter|FilterStructure
 	{
 		return(this.fieldidx$.get(field?.toLowerCase())?.filter);
 	}

@@ -26,6 +26,11 @@ export class LT implements Filter
 		this.column$ = column;
 	}
 
+	public clear() : void
+	{
+		this.constraint$ = null;
+	}
+
 	public get constraint() : any
 	{
 		return(this.constraint$);
@@ -39,6 +44,8 @@ export class LT implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
+		if (this.constraint$ == null) return(false);
+
 		let value:any = record.getValue(this.column$.toLowerCase());
 
 		if (this.incl) return(value <= this.constraint$);

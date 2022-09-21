@@ -24,6 +24,11 @@ export class Null implements Filter
 		this.column$ = column;
 	}
 
+	public clear() : void
+	{
+		this.constraint$ = null;
+	}
+
 	public get constraint() : any|any[]
 	{
 		return(this.constraint$);

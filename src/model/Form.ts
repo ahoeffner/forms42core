@@ -195,6 +195,14 @@ export class Form
 		if (!block.queryallowed)
 			return(false);
 
+		this.QueryManager.stopAllQueries();
+
+		while(this.QueryManager.hasRunning())
+		{
+			await QueryManager.sleep(10);
+			// Wait for stale query to finish displaying rows
+		}
+
 		if (!block.view.validated)
 		{
 			if (!await block.view.validateBlock())
@@ -278,7 +286,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executeQuery();
+				await block.executeQuery(this.qrymgr$.startNewChain());
 			}
 		}
 	}

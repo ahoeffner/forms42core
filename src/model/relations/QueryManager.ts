@@ -17,6 +17,7 @@ export class QueryManager
 {
 	qid$:number = 0;
 	qmaster$:Block = null;
+	running$:Map<Block,object> = new Map<Block,object>();
 
 	public getQueryID() : object
 	{
@@ -27,6 +28,31 @@ export class QueryManager
 	{
 		this.qid$ = this.qid$ + 1;
 		return(this.qid$ as Number);
+	}
+
+	public stopAllQueries() : void
+	{
+		this.startNewChain();
+	}
+
+	public setRunning(block:Block, qid:object) : void
+	{
+		this.running$.set(block,qid);
+	}
+
+	public getRunning(block:Block) : object
+	{
+		return(this.running$.get(block));
+	}
+
+	public hasRunning() : boolean
+	{
+		let active:boolean = false;
+
+		this.running$.forEach((qid) =>
+		 {if (qid) active = true});
+
+		return(active);
 	}
 
 	public get QueryMaster() : Block

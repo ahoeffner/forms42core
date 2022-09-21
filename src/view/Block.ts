@@ -666,8 +666,8 @@ export class Block
 	private setIndicators(prev:number, next:number) : void
 	{
 		if (prev == next) prev = null;
-		if (next != null) this.getRow(next).activateIndicators(true);
-		if (prev != null) this.getRow(prev).activateIndicators(false);
+		if (next != null) this.getRow(next)?.activateIndicators(true);
+		if (prev != null) this.getRow(prev)?.activateIndicators(false);
 	}
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>

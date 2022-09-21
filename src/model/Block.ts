@@ -484,9 +484,26 @@ export class Block
 
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
-		console.log(this.name+" "+qryid)
+		let newid:object = null;
+		let runid:object = null;
+
 		if (!this.setMasterDependencies())
 			return(false);
+
+		// Abort query if already obsolete
+		newid = this.form.QueryManager.getQueryID();
+
+		if (qryid != newid)
+			return(true);
+
+		runid = this.form.QueryManager.getRunning(this);
+
+		while(runid)
+		{
+			await QueryManager.sleep(10);
+			runid = this.form.QueryManager.getRunning(this);
+			// Wait for stale query to finish displaying rows
+		}
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
@@ -495,13 +512,10 @@ export class Block
 		this.record$ = -1;
 		let record:Record = null;
 
-		await QueryManager.sleep(100);
-
 		if (!await wrapper.query(this.filter))
 			return(false);
 
-		if (qryid != this.form.QueryManager.getQueryID())
-			console.log("behind")
+		this.form.QueryManager.setRunning(this,qryid);
 
 		for (let i = 0; i < this.view.rows; i++)
 		{
@@ -514,6 +528,8 @@ export class Block
 			this.view.display(i,record);
 			if (i == 0)	this.view$.setCurrentRow(0,false);
 		}
+
+		this.form.QueryManager.setRunning(this,null);
 
 		this.view.lockUnused();
 		return(await this.postQuery());

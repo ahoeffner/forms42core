@@ -15,6 +15,7 @@ import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
+import { Alert } from "../application/Alert.js";
 import { Relation } from "./relations/Relation.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -496,13 +497,21 @@ export class Block
 		if (qryid != newid)
 			return(true);
 
+		let waits:number = 0;
 		runid = this.form.QueryManager.getRunning(this);
 
 		while(runid)
 		{
+			waits++;
 			await QueryManager.sleep(10);
 			runid = this.form.QueryManager.getRunning(this);
 			// Wait for stale query to finish displaying rows
+
+			if (runid && waits > 1000)
+			{
+				waits = 0;
+				Alert.warning("Waiting for former query to finish","Execute Query");
+			}
 		}
 
 		this.view.clear(true,true);

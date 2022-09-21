@@ -17,12 +17,12 @@ import { Alert } from '../application/Alert.js';
 import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
-import { BlockCoordinator } from './BlockCoordinator.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
+import { BlockCoordinator } from './relations/BlockCoordinator.js';
 
 
 export class Form
@@ -166,7 +166,32 @@ export class Form
 		meta?.blockattrs.forEach((block,attr) =>
 		{this.parent[attr] = this.parent.getBlock(block)})
 
+		FormBacking.getBacking(this.parent).links.
+		forEach((link) => this.blockcoordinator.link(link))
+
 		await this.initControlBlocks();
+	}
+
+	public async enterQuery(block:Block) : Promise<boolean>
+	{
+		if (!block.view.validated)
+		{
+			if (!await block.view.validateBlock())
+				return(false);
+		}
+
+		return(true);
+	}
+
+	public async executeQuery(block:Block, keep?:boolean) : Promise<boolean>
+	{
+		if (!block.view.validated)
+		{
+			if (!await block.view.validateBlock())
+				return(false);
+		}
+
+		return(true);
 	}
 
 	public async initControlBlocks() : Promise<void>

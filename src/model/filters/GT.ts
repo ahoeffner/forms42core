@@ -16,14 +16,19 @@ import { Filter } from "../interfaces/Filter.js";
 
 export class GT implements Filter
 {
-	private constraint$:any;
 	private incl:boolean = false;
 	private column$:string = null;
+	private constraint$:any = null;
 
 	public constructor(column:string, incl?:boolean)
 	{
 		this.incl = incl;
 		this.column$ = column;
+	}
+
+	public clear() : void
+	{
+		this.constraint$ = null;
 	}
 
 	public get constraint() : any
@@ -39,6 +44,8 @@ export class GT implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
+		if (this.constraint$ == null) return(false);
+
 		let value:any = record.getValue(this.column$.toLowerCase());
 
 		if (this.incl) return(value >= this.constraint$);

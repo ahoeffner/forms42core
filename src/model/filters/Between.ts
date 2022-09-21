@@ -21,12 +21,17 @@ export class Between implements Filter
 	private incl:boolean = false;
 
 	private column$:string = null;
-	private constraint$:any[] = [];
+	private constraint$:any[] = null;
 
 	public constructor(column:string, incl?:boolean)
 	{
 		this.incl = incl;
 		this.column$ = column;
+	}
+
+	public clear() : void
+	{
+		this.constraint$ = null;
 	}
 
 	public get constraint() : any|any[]
@@ -60,6 +65,7 @@ export class Between implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
+		if (this.constraint$ == null) return(false);
 		let value:any = record.getValue(this.column$.toLowerCase());
 
 		if (this.incl) return(value >= this.fr && value <= this.to);

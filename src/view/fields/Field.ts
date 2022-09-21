@@ -333,7 +333,7 @@ export class Field
 		let value:any = inst.getValue();
 
 		if (inst.implementation instanceof Input)
-			value = inst.implementation.validate(value);
+			value = inst.implementation.bonusstuff(value);
 
 		if (value != this.value$)
 			this.dirty = true;

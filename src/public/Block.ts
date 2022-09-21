@@ -70,6 +70,11 @@ export class Block
 		return(FormBacking.getViewBlock(this).rows);
 	}
 
+	public focus() : void
+	{
+		FormBacking.getViewBlock(this).focus();
+	}
+
 	public get record() : number
 	{
 		return(FormBacking.getModelBlock(this).record);
@@ -89,11 +94,6 @@ export class Block
 	public async nextrecord() : Promise<boolean>
 	{
 		return(FormBacking.getViewBlock(this).nextrecord());
-	}
-
-	public focus() : void
-	{
-		FormBacking.getViewBlock(this).focus();
 	}
 
 	public goField(field:string, clazz?:string) : void

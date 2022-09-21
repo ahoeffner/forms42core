@@ -113,8 +113,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.setElementValue(null);
 	}
 
-	public validate(value:any) : any
+	public bonusstuff(value:any) : any
 	{
+		// finish date with defaults from today
 		if (DataType[this.datatype$].startsWith("date") && this.pattern && value == null)
 		{
 			let date:Date = dates.parse(this.getElementValue());

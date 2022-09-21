@@ -41,10 +41,10 @@ export class KeyMap
     public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 
-	public static delete:KeyMap = new KeyMap({key: 'd', ctrl: true});
+	public static delete:KeyMap = new KeyMap({key: KeyCodes.f6});
 
-	public static insert:KeyMap = new KeyMap({key: 'i', ctrl: true});
-	public static insertAbove:KeyMap = new KeyMap({key: 'I', ctrl: true});
+	public static insert:KeyMap = new KeyMap({key: KeyCodes.f5});
+	public static insertAbove:KeyMap = new KeyMap({key: KeyCodes.f5, shift: true});
 
 	public static dates:KeyMap = new KeyMap({key: 'D', ctrl: true});
 

@@ -26,6 +26,11 @@ export class Like implements Filter
 		this.column$ = column;
 	}
 
+	public clear() : void
+	{
+		this.constraint$ = null;
+	}
+
 	public get constraint() : string
 	{
 		return(this.constraint$);
@@ -48,10 +53,9 @@ export class Like implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
-		let value:string = record.getValue(this.column$.toLowerCase())+"";
+		if (this.constraint$ == null) return(false);
 
-		if (this.constraint$ == null)
-			return(true);
+		let value:string = record.getValue(this.column$.toLowerCase())+"";
 
 		if (value == null)
 			return(false);

@@ -17,7 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class Contains implements Filter
 {
 	private columns$:string[] = [];
-	private constraint$:string[] = [];
+	private constraint$:string[] = null;
 
 	public constructor(columns:string)
 	{
@@ -28,6 +28,11 @@ export class Contains implements Filter
 			if (column.length > 0)
 				this.columns$.push(column);
 		})
+	}
+
+	public clear() : void
+	{
+		this.constraint$ = null;
 	}
 
 	public get constraint() : string|string[]
@@ -54,8 +59,8 @@ export class Contains implements Filter
 	{
 		let value:string = "";
 
-		if (this.constraint$.length == 0)
-			return(true);
+		if (this.constraint$ == null) return(false);
+		if (this.constraint$.length == 0) return(false);
 
 		for (let c = 0; c < this.columns$.length; c++)
 			value += " " +  record.getValue(this.columns$[c]?.toLowerCase());

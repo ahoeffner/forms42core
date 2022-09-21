@@ -13,6 +13,7 @@
 import { Block } from './Block.js';
 import { Class } from '../types/Class.js';
 import { Alert } from '../application/Alert.js';
+import { Key } from '../model/relations/Key.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { EventType } from '../control/events/EventType.js';
@@ -59,6 +60,12 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.restore();
 		this.focus();
+	}
+
+	public link(master:Key, detail:Key, allowMasterless?:boolean) : void
+	{
+		if (allowMasterless == null) allowMasterless = true;
+		FormBacking.getBacking(this).setLink(master,detail, allowMasterless);
 	}
 
 	public goField(block:string, field:string, clazz?:string) : void

@@ -17,11 +17,16 @@ import { Filter } from "../interfaces/Filter.js";
 export class In implements Filter
 {
 	private column$:string = null;
-	private constraint$:any[] = [];
+	private constraint$:any[] = null;
 
 	public constructor(column:string)
 	{
 		this.column$ = column;
+	}
+
+	public clear() : void
+	{
+		this.constraint$ = null;
 	}
 
 	public get constraint() : any|any[]
@@ -52,7 +57,9 @@ export class In implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
+		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
+
 		let value:any = record.getValue(this.column$?.toLowerCase());
 
 		for (let c = 0; c < this.constraint$.length; c++)

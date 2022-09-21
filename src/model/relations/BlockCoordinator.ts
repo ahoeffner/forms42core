@@ -48,7 +48,7 @@ export class BlockCoordinator
 		return(block);
 	}
 
-	public getDetailBlocks(block:Block) : Block[]
+	public getDetailBlocks(block:Block,masterless?:boolean) : Block[]
 	{
 		let blocks:Block[] = [];
 
@@ -62,7 +62,8 @@ export class BlockCoordinator
 				return([]);
 			}
 
-			blocks.push(block);
+			if (masterless || link.allowMasterless)
+				blocks.push(block);
 		})
 
 		return(blocks);

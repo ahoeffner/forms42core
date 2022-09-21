@@ -172,11 +172,24 @@ export class Form
 		await this.initControlBlocks();
 	}
 
-	public async enterQuery(block:Block) : Promise<boolean>
+	public async enterQuery(block:Block|string) : Promise<boolean>
 	{
+		if (typeof block === "string")
+			block = this.getBlock(block);
+
 		if (!block.view.validated)
 		{
 			if (!await block.view.validateBlock())
+				return(false);
+		}
+
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
+
+		blocks.unshift(block);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!await blocks[i].enterQuery())
 				return(false);
 		}
 
@@ -204,6 +217,21 @@ export class Form
 		}
 
 		this.blockcoordinator.setQueryMaster(block.name);
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
+
+		// Go to master block and query
+
+		if (!block.querymode && !keep)
+			block.clearQueryFilters();
+
+		blocks.unshift(block);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!await blocks[i].preQuery())
+				return(false);
+		}
+
 		return(block.executeQuery());
 	}
 

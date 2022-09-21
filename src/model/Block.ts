@@ -120,6 +120,11 @@ export class Block
 		return(this.intblk.deleteallowed);
 	}
 
+	public clearQueryFilters() : void
+	{
+		this.qbe.clear();
+	}
+
 	public hasEventTransaction() : boolean
 	{
 		return(this.form.hasEventTransaction(this));
@@ -460,12 +465,6 @@ export class Block
 
 	public async enterQuery() : Promise<boolean>
 	{
-		if (!this.view.validated)
-		{
-			if (!await this.view.validateBlock())
-				return(false);
-		}
-
 		if (!await this.wrapper.clear())
 			return(false);
 
@@ -482,26 +481,9 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(keep?:boolean) : Promise<boolean>
+	public async executeQuery() : Promise<boolean>
 	{
-		if (!this.view.validated)
-		{
-			if (!await this.view.validateBlock())
-				return(false);
-		}
-
-		if (!this.qbe.querymode)
-		{
-			if (!keep) this.qbe.clear();
-
-			if (!await this.wrapper.clear())
-				return(false);
-		}
-
 		this.setMasterDependencies();
-
-		if (!await this.preQuery())
-			return(false);
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
@@ -511,10 +493,7 @@ export class Block
 		let record:Record = null;
 
 		if (!await wrapper.query(this.filter))
-		{
-			this.qbe.clear();
 			return(false);
-		}
 
 		for (let i = 0; i < this.view.rows; i++)
 		{

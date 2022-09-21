@@ -13,8 +13,9 @@
 
 import { Key } from "./Key";
 
-export interface Link
+export interface Relation
 {
 	master:Key;
 	detail:Key;
+	allowMasterless:boolean;
 }

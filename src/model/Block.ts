@@ -13,8 +13,9 @@
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
-import { Link } from "./relations/Link.js";
+import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
+import { Relation } from "./relations/Relation.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { FilterStructure } from "./FilterStructure.js";
@@ -26,7 +27,6 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { Filters } from "./filters/Filters.js";
 
 
 export class Block
@@ -498,29 +498,7 @@ export class Block
 				return(false);
 		}
 
-		let mstflts:FilterStructure = this.filter.get("masters") as FilterStructure;
-
-		mstflts.clear();
-		this.getMasterLinks().forEach((link) =>
-		{
-			let master:Block = this.getDetailBlock(link);
-
-			for (let i = 0; i < link.master.fields.length; i++)
-			{
-				let mfld:string = link.master.fields[i];
-				let dfld:string = link.detail.fields[i];
-
-				let value:any = master.getValue(mfld);
-				console.log("mblk: "+master.name+" mfld: "+mfld+" val: "+value)
-
-				if (value != null)
-				{
-					let flt:Filter = Filters.Equals(dfld);
-					flt.constraint = master.getValue(mfld);
-					mstflts.and(flt,dfld);
-				}
-			}
-		})
+		this.setMasterDependencies();
 
 		if (!await this.preQuery())
 			return(false);
@@ -599,7 +577,17 @@ export class Block
 		return(true);
 	}
 
-	public getMasterBlock(link:Link) : Block
+	public get masterfilters() : FilterStructure
+	{
+		return(this.filter.get("masters") as FilterStructure);
+	}
+
+	public get detailfilters() : FilterStructure
+	{
+		return(this.filter.get("details") as FilterStructure);
+	}
+
+	public getMasterBlock(link:Relation) : Block
 	{
 		return(this.form.blockcoordinator.getMasterBlock(link));
 	}
@@ -609,12 +597,12 @@ export class Block
 		return(this.form.blockcoordinator.getMasterBlocks(this));
 	}
 
-	public getMasterLinks() : Link[]
+	public getMasterLinks() : Relation[]
 	{
 		return(this.form.blockcoordinator.getMasterLinks(this));
 	}
 
-	public getDetailBlock(link:Link) : Block
+	public getDetailBlock(link:Relation) : Block
 	{
 		return(this.form.blockcoordinator.getDetailBlock(link));
 	}
@@ -624,9 +612,36 @@ export class Block
 		return(this.form.blockcoordinator.getDetailBlocks(this));
 	}
 
-	public getDetailLinks() : Link[]
+	public getDetailLinks() : Relation[]
 	{
 		return(this.form.blockcoordinator.getDetailLinks(this));
+	}
+
+	public setMasterDependencies() : void
+	{
+		let filters:FilterStructure = this.masterfilters;
+
+		filters.clear();
+
+		this.getMasterLinks().forEach((link) =>
+		{
+			let master:Block = this.getMasterBlock(link);
+
+			for (let i = 0; i < link.master.fields.length; i++)
+			{
+				let mfld:string = link.master.fields[i];
+				let dfld:string = link.detail.fields[i];
+
+				let value:any = master.getValue(mfld);
+
+				if (value != null)
+				{
+					let flt:Filter = Filters.Equals(dfld);
+					flt.constraint = master.getValue(mfld);
+					filters.and(flt,dfld);
+				}
+			}
+		})
 	}
 
 	public async queryDetails() : Promise<boolean>

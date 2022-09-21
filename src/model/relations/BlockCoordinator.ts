@@ -10,10 +10,9 @@
  * accompanied this code).
  */
 
-import { Key } from "./Key.js";
-import { Link } from "./Link.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
+import { Relation } from "./Relation.js";
 import { Alert } from "../../application/Alert.js";
 
 
@@ -23,7 +22,7 @@ export class BlockCoordinator
 	private query$:QueryCoordinator = new QueryCoordinator(this);
 	private blocks$:Map<string,Dependency> = new Map<string,Dependency>();
 
-	public getMasterBlock(link:Link) : Block
+	public getMasterBlock(link:Relation) : Block
 	{
 		let block:Block = this.form.getBlock(link.master.block);
 
@@ -36,7 +35,7 @@ export class BlockCoordinator
 		return(block);
 	}
 
-	public getDetailBlock(link:Link) : Block
+	public getDetailBlock(link:Relation) : Block
 	{
 		let block:Block = this.form.getBlock(link.detail.block);
 
@@ -89,9 +88,9 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
-	public getMasterLinks(block:Block) : Link[]
+	public getMasterLinks(block:Block) : Relation[]
 	{
-		let blocks:Link[] = [];
+		let blocks:Relation[] = [];
 
 		this.blocks$.get(block.name)?.masters.forEach((link) =>
 		{
@@ -109,9 +108,9 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
-	public getDetailLinks(block:Block) : Link[]
+	public getDetailLinks(block:Block) : Relation[]
 	{
-		let blocks:Link[] = [];
+		let blocks:Relation[] = [];
 
 		this.blocks$.get(block.name)?.details.forEach((link) =>
 		{
@@ -129,7 +128,7 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
-	public link(link:Link) : void
+	public link(link:Relation) : void
 	{
 		let dependency:Dependency = null;
 		dependency = this.blocks$.get(link.master.block);
@@ -162,23 +161,23 @@ export class BlockCoordinator
 class Dependency
 {
 	constructor(public block:string) {}
-	private masters$:Map<string,Link> = new Map<string,Link>();
-	private details$:Map<string,Link> = new Map<string,Link>();
-	private fldmap$:Map<string,Link[]> = new Map<string,Link[]>();
+	private masters$:Map<string,Relation> = new Map<string,Relation>();
+	private details$:Map<string,Relation> = new Map<string,Relation>();
+	private fldmap$:Map<string,Relation[]> = new Map<string,Relation[]>();
 
-	public get details() : Link[]
+	public get details() : Relation[]
 	{
-		let links:Link[] = Array.from(this.details$.values());
+		let links:Relation[] = Array.from(this.details$.values());
 		return(links != null ? links : []);
 	}
 
-	public get masters() : Link[]
+	public get masters() : Relation[]
 	{
-		let links:Link[] = Array.from(this.masters$.values());
+		let links:Relation[] = Array.from(this.masters$.values());
 		return(links != null ? links : []);
 	}
 
-	public link(link:Link) : void
+	public link(link:Relation) : void
 	{
 		if (link.detail.block == this.block)
 		{
@@ -186,7 +185,7 @@ class Dependency
 		}
 		else
 		{
-			let links:Link[] = null;
+			let links:Relation[] = null;
 			this.details$.set(link.detail.block,link);
 
 			link.master.fields.forEach((fld) =>

@@ -494,6 +494,9 @@ export class Block
 		if (!this.setMasterDependencies())
 			return(false);
 
+		if (!this.setDetailDependencies())
+			return(false);
+
 		// Abort query if already obsolete
 		newid = this.form.QueryManager.getQueryID();
 
@@ -669,6 +672,12 @@ export class Block
 			}
 		})
 
+		return(true);
+	}
+
+
+	public setDetailDependencies() : boolean
+	{
 		return(true);
 	}
 

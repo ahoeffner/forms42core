@@ -490,15 +490,10 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				this.model.blockcoordinator.setQueryMaster(inst.block);
+				success = await this.model.executeQuery(inst.field.block.model);
+				if (success) block.focus();
 
-				if (!mblock.ctrlblk && mblock.queryallowed)
-					success = await mblock.executeQuery();
-
-				if (success)
-					block.focus();
-
-				return(true);
+				return(success);
 			}
 
 			if (key == KeyMap.insert)

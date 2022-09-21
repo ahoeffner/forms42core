@@ -185,13 +185,20 @@ export class Form
 
 	public async executeQuery(block:Block, keep?:boolean) : Promise<boolean>
 	{
+		if (block.ctrlblk)
+			return(false);
+
+		if (!block.queryallowed)
+			return(false);
+
 		if (!block.view.validated)
 		{
 			if (!await block.view.validateBlock())
 				return(false);
 		}
 
-		return(true);
+		this.blockcoordinator.setQueryMaster(block.name);
+		return(block.executeQuery());
 	}
 
 	public async initControlBlocks() : Promise<void>

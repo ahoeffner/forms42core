@@ -87,7 +87,7 @@ export class Internals
 		position: absolute;
 	`;
 
-	public static stylePopupWindow(view:HTMLElement, title?:string) : void
+	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
@@ -114,6 +114,16 @@ export class Internals
 		{
 			let titlearea:HTMLElement = header.querySelector('span[name="title"]');
 			if (titlearea) titlearea.textContent = title;
+		}
+
+		if (width)
+		{
+			view.style.width = width + "px";
+		}
+
+		if (height)
+		{
+			view.style.width = height + "px";
 		}
 
 		let top:number = view.parentElement.offsetTop;

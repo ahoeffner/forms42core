@@ -17,6 +17,13 @@ import { Internals } from "../../application/properties/Internals.js";
 
 export class Alert extends Form
 {
+	public static WIDTH:number = 300;
+	public static HEIGHT:number = null;
+	public static BlurStyle:string = 
+	`
+	
+	`;
+
 	constructor()
 	{
 		super(Alert.page);
@@ -40,18 +47,16 @@ export class Alert extends Form
 
 		let fatal:boolean = this.parameters.get("fatal");
 		let warning:boolean = this.parameters.get("warning");
-
-		Internals.stylePopupWindow(view,title);
+		
+		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
 		// Block everything else
 		let block:HTMLElement = view.querySelector('div[id="block"]');
-		// let msgElement: HTMLElement = view.querySelector('div[name="msg"]');
-		// console.log(msgElement)
+		
 		block.style.top = "0";
 		block.style.left = "0";
 		block.style.position = "fixed";
 		block.style.width = document.body.offsetWidth+"px";
-		view.style.width = "" + msg.length * 3 + "px";
 		block.style.height = document.body.offsetHeight+"px";
 		
 		this.setValue("alert","msg",msg);

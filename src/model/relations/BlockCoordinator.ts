@@ -19,14 +19,10 @@ import { Alert } from "../../application/Alert.js";
 export class BlockCoordinator
 {
 	constructor(private form:Form) {}
-	private query$:QueryCoordinator = new QueryCoordinator(this);
 	private blocks$:Map<string,Dependency> = new Map<string,Dependency>();
 
 	public getQueryMaster(block?:Block) : Block
 	{
-		if (block == null)
-			return(this.getBlock(this.query$.qmaster$));
-
 		let master:Block = block;
 		let masters:Block[] = this.getMasterBlocks(block);
 
@@ -194,11 +190,6 @@ export class BlockCoordinator
 
 		return(block);
 	}
-
-	public setQueryMaster(block:string) : void
-	{
-		this.query$.qmaster$ = block;
-	}
 }
 
 class Dependency
@@ -245,10 +236,4 @@ class Dependency
 			})
 		}
 	}
-}
-
-class QueryCoordinator
-{
-	qmaster$:string = null;
-	constructor(private blkcord$:BlockCoordinator) {}
 }

@@ -510,7 +510,7 @@ export class Block
 		return(this.rows$.get(this.row));
 	}
 
-	public setCurrentRow(rownum:number) : void
+	public setCurrentRow(rownum:number, newqry:boolean) : void
 	{
 		if (this.row$ < 0)
 		{
@@ -523,7 +523,7 @@ export class Block
 			{
 				this.openrow();
 				this.displaycurrent();
-				this.model.queryDetails();
+				this.model.queryDetails(newqry);
 			}
 
 			this.setIndicators(null,rownum);
@@ -547,7 +547,7 @@ export class Block
 		if (this.getRow(this.row).status != Status.na)
 		{
 			this.openrow();
-			this.model.queryDetails();
+			this.model.queryDetails(newqry);
 		}
 
 		this.displaycurrent();
@@ -626,7 +626,7 @@ export class Block
 		if (row.rownum == this.row)
 		{
 			this.displaycurrent();
-			this.model.queryDetails();
+			this.model.queryDetails(true);
 			this.setIndicators(null,this.row);
 		}
 	}
@@ -720,7 +720,7 @@ export class Block
 			}
 
 			this.displaycurrent();
-			this.model.queryDetails();
+			this.model.queryDetails(true);
 
 			return(next);
 		}
@@ -744,7 +744,7 @@ export class Block
 			if (!await this.form.enterField(inst,scroll))
 				return(next);
 
-			this.setCurrentRow(this.row+scroll);
+			this.setCurrentRow(this.row+scroll,true);
 		}
 		else
 		{

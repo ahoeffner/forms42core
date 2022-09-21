@@ -476,13 +476,15 @@ export class Block
 		this.view.display(0,this.qberec);
 
 		this.view.lockUnused();
-		this.view.setCurrentRow(0);
+		this.view.setCurrentRow(0,true);
 
 		return(true);
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
+		console.log(this.name+" "+qryid)
+
 		if (!this.setMasterDependencies())
 			return(false);
 
@@ -505,7 +507,7 @@ export class Block
 
 			this.record$ = 0;
 			this.view.display(i,record);
-			if (i == 0)	this.view$.setCurrentRow(0);
+			if (i == 0)	this.view$.setCurrentRow(0,false);
 		}
 
 		this.view.lockUnused();
@@ -517,7 +519,7 @@ export class Block
 		this.qbe.showLastQuery();
 		this.view.clear(true,true);
 		this.view.display(0,this.qberec);
-		this.view$.setCurrentRow(0);
+		this.view$.setCurrentRow(0,false);
 	}
 
 	public scroll(records:number, offset:number) : boolean
@@ -557,6 +559,11 @@ export class Block
 		return(true);
 	}
 
+	public getQueryMaster() : Block
+	{
+		return(this.form.QueryManager.qmaster$);
+	}
+
 	public get masterfilters() : FilterStructure
 	{
 		return(this.filter.get("masters") as FilterStructure);
@@ -569,32 +576,32 @@ export class Block
 
 	public getMasterBlock(link:Relation) : Block
 	{
-		return(this.form.blockcoordinator.getMasterBlock(link));
+		return(this.form.BlockCoordinator.getMasterBlock(link));
 	}
 
 	public getMasterBlocks() : Block[]
 	{
-		return(this.form.blockcoordinator.getMasterBlocks(this));
+		return(this.form.BlockCoordinator.getMasterBlocks(this));
 	}
 
 	public getMasterLinks() : Relation[]
 	{
-		return(this.form.blockcoordinator.getMasterLinks(this));
+		return(this.form.BlockCoordinator.getMasterLinks(this));
 	}
 
 	public getDetailBlock(link:Relation) : Block
 	{
-		return(this.form.blockcoordinator.getDetailBlock(link));
+		return(this.form.BlockCoordinator.getDetailBlock(link));
 	}
 
 	public getDetailBlocks() : Block[]
 	{
-		return(this.form.blockcoordinator.getDetailBlocks(this));
+		return(this.form.BlockCoordinator.getDetailBlocks(this));
 	}
 
 	public getDetailLinks() : Relation[]
 	{
-		return(this.form.blockcoordinator.getDetailLinks(this));
+		return(this.form.BlockCoordinator.getDetailLinks(this));
 	}
 
 	public setMasterDependencies() : boolean
@@ -629,13 +636,26 @@ export class Block
 		return(true);
 	}
 
-	public async queryDetails() : Promise<boolean>
+	public getQueryID() : object
+	{
+		return(this.form.QueryManager.getQueryID());
+	}
+
+	public startNewQueryChain() : object
+	{
+		return(this.form.QueryManager.startNewChain());
+	}
+
+	public async queryDetails(newqry:boolean) : Promise<boolean>
 	{
 		if (this.querymode)
 			return(true);
 
+		let qryid:object = this.getQueryID();
+		if (newqry) qryid = this.startNewQueryChain();
+
 		this.getDetailBlocks().forEach((detail) =>
-			{detail.executeQuery()})
+			{detail.executeQuery(qryid)})
 
 		return(true);
 	}

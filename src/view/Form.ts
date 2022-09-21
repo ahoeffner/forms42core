@@ -280,7 +280,7 @@ export class Form implements EventListenerObject
 		Form.curform$ = this;
 		this.curinst$ = inst;
 		inst.field.block.current = inst;
-		nxtblock.setCurrentRow(inst.row);
+		nxtblock.setCurrentRow(inst.row,true);
 
 		if (preform)
 		{

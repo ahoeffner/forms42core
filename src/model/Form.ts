@@ -18,6 +18,7 @@ import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
 import { Form as InterfaceForm } from '../public/Form.js';
+import { QueryManager } from './relations/QueryManager.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormEvents } from '../control/events/FormEvents.js';
@@ -30,6 +31,7 @@ export class Form
 	private block$:Block = null;
 	private parent$:InterfaceForm = null;
 	private datamodel$:DataModel = new DataModel();
+	private qrymgr$:QueryManager = new QueryManager();
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private evttrans$:EventTransaction = new EventTransaction();
 	private blkcord$:BlockCoordinator = new BlockCoordinator(this);
@@ -56,7 +58,12 @@ export class Form
 		return(this.parent$);
 	}
 
-	public get blockcoordinator() : BlockCoordinator
+	public get QueryManager() : QueryManager
+	{
+		return(this.qrymgr$);
+	}
+
+	public get BlockCoordinator() : BlockCoordinator
 	{
 		return(this.blkcord$);
 	}
@@ -167,14 +174,14 @@ export class Form
 		{this.parent[attr] = this.parent.getBlock(block)})
 
 		FormBacking.getBacking(this.parent).links.
-		forEach((link) => this.blockcoordinator.link(link))
+		forEach((link) => this.BlockCoordinator.link(link))
 
 		await this.initControlBlocks();
 	}
 
 	public getQueryMaster() : Block
 	{
-		return(this.blkcord$.getQueryMaster());
+		return(this.qrymgr$.QueryMaster);
 	}
 
 	public async enterQuery(block:Block|string) : Promise<boolean>
@@ -245,7 +252,7 @@ export class Form
 		if (block.querymode)
 			block = this.blkcord$.getQueryMaster(block);
 
-		this.blkcord$.setQueryMaster(block.name);
+		this.qrymgr$.QueryMaster = block;
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
 		if (!block.querymode && !keep)
@@ -259,7 +266,7 @@ export class Form
 				return(false);
 		}
 
-		return(block.executeQuery());
+		return(block.executeQuery(this.qrymgr$.startNewChain()));
 	}
 
 	public async initControlBlocks() : Promise<void>

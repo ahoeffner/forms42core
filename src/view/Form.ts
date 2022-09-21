@@ -444,25 +444,16 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.enterquery)
 			{
-				if (mblock.querymode)
-				{
-					mblock.showLastQuery();
-					return(true);
-				}
+				success = await this.model.enterQuery(inst.field.block.model);
+				if (success) block.findFirstEditable(block.model.qberec).focus();
+				return(success);
+			}
 
-				let success:boolean = false;
-
-				if (!await inst.field.validate(inst))
-					return(false);
-
-				if (!mblock.ctrlblk && inst.field.block.model.qbeallowed)
-					success = await mblock.enterQuery();
-
-				if (success)
-					block.findFirstEditable(mblock.qberec)?.focus();
-
-				this.model.blockcoordinator.setQueryMaster(inst.block);
-				return(true);
+			if (key == KeyMap.executequery)
+			{
+				success = await this.model.executeQuery(inst.field.block.model);
+				if (success) this.model.getQueryMaster(mblock)?.view.focus();
+				return(success);
 			}
 
 			if (key == KeyMap.queryeditor)
@@ -481,19 +472,6 @@ export class Form implements EventListenerObject
 
 				await this.parent.callform(Classes.QueryEditorClass,params);
 				return(true);
-			}
-
-			if (key == KeyMap.executequery)
-			{
-				let success:boolean = false;
-
-				if (!await inst.field.validate(inst))
-					return(false);
-
-				success = await this.model.executeQuery(inst.field.block.model);
-				if (success) block.focus();
-
-				return(success);
 			}
 
 			if (key == KeyMap.insert)

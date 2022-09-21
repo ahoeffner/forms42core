@@ -764,16 +764,29 @@ export class Block
 
 		if (curr)
 		{
-			inst = this.getRow(-1).getFirstInstance(status);
-			if (inst == null) inst = row.getFirstInstance(status);
+			inst = this.getRow(-1)?.getFirstInstance(status);
+			if (inst == null) inst = row?.getFirstInstance(status);
 		}
 		else
 		{
-			inst = row.getFirstInstance(status);
-			if (inst == null) inst = this.getRow(-1).getFirstInstance(status);
+			inst = row?.getFirstInstance(status);
+			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(status);
 		}
 
 		return(inst);
+	}
+
+	public hasQueryableFields() : boolean
+	{
+		let row:Row = this.getRow(0);
+		let curr:Row = this.getRow(-1);
+
+		let inst:FieldInstance = null;
+
+		inst = row?.getFirstEditableInstance(Status.qbe);
+		if (!inst) inst = curr?.getFirstEditableInstance(Status.qbe);
+
+		return(inst != null);
 	}
 
 	public findFirstEditable(record:Record) : FieldInstance
@@ -785,13 +798,13 @@ export class Block
 
 		if (curr)
 		{
-			inst = this.getRow(-1).getFirstEditableInstance(status);
-			if (inst == null) inst = row.getFirstEditableInstance(status);
+			inst = this.getRow(-1)?.getFirstEditableInstance(status);
+			if (inst == null) inst = row?.getFirstEditableInstance(status);
 		}
 		else
 		{
-			inst = row.getFirstEditableInstance(status);
-			if (inst == null) inst = this.getRow(-1).getFirstEditableInstance(status);
+			inst = row?.getFirstEditableInstance(status);
+			if (inst == null) inst = this.getRow(-1)?.getFirstEditableInstance(status);
 		}
 
 		return(inst);

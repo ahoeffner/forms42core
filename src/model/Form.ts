@@ -172,10 +172,21 @@ export class Form
 		await this.initControlBlocks();
 	}
 
+	public getQueryMaster(block:Block) : Block
+	{
+		return(this.blkcord$.getQueryMaster(block));
+	}
+
 	public async enterQuery(block:Block|string) : Promise<boolean>
 	{
 		if (typeof block === "string")
 			block = this.getBlock(block);
+
+		if (block.ctrlblk)
+			return(false);
+
+		if (!block.queryallowed)
+			return(false);
 
 		if (!block.view.validated)
 		{
@@ -183,17 +194,32 @@ export class Form
 				return(false);
 		}
 
-		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
+		if (block.querymode)
+		{
+			block.showLastQuery();
+			return(true);
+		}
 
-		blocks.unshift(block);
+		if (!this.blkcord$.allowQueryMode(block))
+			return(false);
+
+		if (!block.view.hasQueryableFields())
+			return(false);
+
+		await this.enterQueryMode(block);
+		return(true);
+	}
+
+	private async enterQueryMode(block:Block) : Promise<void>
+	{
+		if (!await block.enterQuery()) return;
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!await blocks[i].enterQuery())
-				return(false);
+			this.blkcord$.allowMasterLess(block,blocks[i])
+				await this.enterQueryMode(blocks[i]);
 		}
-
-		return(true);
 	}
 
 	public async executeQuery(block:Block|string, keep?:boolean) : Promise<boolean>
@@ -216,12 +242,11 @@ export class Form
 				return(false);
 		}
 
-		this.blockcoordinator.setQueryMaster(block.name);
-		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
+		if (block.querymode)
+			block = this.blkcord$.getQueryMaster(block);
 
-		// If master record state == NA skip
-		// Go to master block and query
-		// Check Alert setValue before style
+		this.blkcord$.setQueryMaster(block.name);
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
 		if (!block.querymode && !keep)
 			block.clearQueryFilters();

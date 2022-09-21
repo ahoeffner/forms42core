@@ -22,30 +22,49 @@ export class BlockCoordinator
 	private query$:QueryCoordinator = new QueryCoordinator(this);
 	private blocks$:Map<string,Dependency> = new Map<string,Dependency>();
 
-	public getMasterBlock(link:Relation) : Block
+	public getQueryMaster(block:Block) : Block
 	{
-		let block:Block = this.form.getBlock(link.master.block);
+		let master:Block = block;
+		let masters:Block[] = this.getMasterBlocks(block);
 
-		if (block == null)
+		for (let i = 0; i < masters.length; i++)
 		{
-			Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
-			return(null);
+			if (masters[i].querymode)
+				master = this.getQueryMaster(masters[i]);
 		}
 
-		return(block);
+		return(master);
+	}
+
+	public allowQueryMode(block:Block) : boolean
+	{
+		let masters:Block[] = this.getMasterBlocks(block);
+
+		for (let i = 0; i < masters.length; i++)
+		{
+			if (masters[i].querymode)
+			{
+				console.log("check "+masters[i].name);
+				let rel:Relation = this.findRelation(masters[i].name,block.name);
+
+				let master:Block = this.getBlock(rel.master.block);
+
+				if (master?.querymode && !rel.allowMasterless)
+					return(false);
+			}
+		}
+
+		return(true);
+	}
+
+	public getMasterBlock(link:Relation) : Block
+	{
+		return(this.getBlock(link.master.block));
 	}
 
 	public getDetailBlock(link:Relation) : Block
 	{
-		let block:Block = this.form.getBlock(link.detail.block);
-
-		if (block == null)
-		{
-			Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
-			return(null);
-		}
-
-		return(block);
+		return(this.getBlock(link.detail.block));
 	}
 
 	public getDetailBlocks(block:Block,masterless?:boolean) : Block[]
@@ -54,13 +73,10 @@ export class BlockCoordinator
 
 		this.blocks$.get(block.name)?.details.forEach((link) =>
 		{
-			let block:Block = this.form.getBlock(link.detail.block);
+			let block:Block = this.getBlock(link.detail.block);
 
 			if (block == null)
-			{
-				Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
 				return([]);
-			}
 
 			if (masterless || link.allowMasterless)
 				blocks.push(block);
@@ -75,13 +91,10 @@ export class BlockCoordinator
 
 		this.blocks$.get(block.name)?.masters.forEach((link) =>
 		{
-			let block:Block = this.form.getBlock(link.master.block);
+			let block:Block = this.getBlock(link.master.block);
 
 			if (block == null)
-			{
-				Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
 				return([]);
-			}
 
 			blocks.push(block);
 		})
@@ -95,13 +108,10 @@ export class BlockCoordinator
 
 		this.blocks$.get(block.name)?.masters.forEach((link) =>
 		{
-			let block:Block = this.form.getBlock(link.master.block);
+			let block:Block = this.getBlock(link.master.block);
 
 			if (block == null)
-			{
-				Alert.fatal("Block '"+link.master.block+"', does not exist","Linked Blocks");
 				return([]);
-			}
 
 			blocks.push(link);
 		})
@@ -115,18 +125,34 @@ export class BlockCoordinator
 
 		this.blocks$.get(block.name)?.details.forEach((link) =>
 		{
-			let block:Block = this.form.getBlock(link.master.block);
+			let block:Block = this.getBlock(link.master.block);
 
 			if (block == null)
-			{
-				Alert.fatal("Block '"+link.detail.block+"', does not exist","Linked Blocks");
 				return([]);
-			}
 
 			blocks.push(link);
 		})
 
 		return(blocks);
+	}
+
+	public allowMasterLess(master:Block, detail:Block) : boolean
+	{
+		if (master == detail) return(true);
+		return(this.findRelation(master.name, detail.name)?.allowMasterless);
+	}
+
+	public findRelation(master:string, detail:string) : Relation
+	{
+		let details:Relation[] = this.blocks$.get(master).details;
+
+		for (let i = 0; i < details.length; i++)
+		{
+			if (details[i].detail.block == detail)
+				return(details[i]);
+		}
+
+		return(null);
 	}
 
 	public link(link:Relation) : void
@@ -151,6 +177,19 @@ export class BlockCoordinator
 		}
 
 		dependency.link(link);
+	}
+
+	public getBlock(name:string) : Block
+	{
+		let block:Block = this.form.getBlock(name);
+
+		if (block == null)
+		{
+			Alert.fatal("Block '"+name+"', does not exist","Linked Blocks");
+			return(null);
+		}
+
+		return(block);
 	}
 
 	public setQueryMaster(block:string) : void
@@ -210,107 +249,3 @@ class QueryCoordinator
 	qmaster$:string = null;
 	constructor(private blkcord$:BlockCoordinator) {}
 }
-
-/*
-	add(master:Key, detail:Key) : void
-	{
-		if (link == null) return;
-
-		if (link.master == null || link.master.block == null || link.master.fields == null)
-		{
-			Alert.fatal("Invalid master block definition: "+JSON.stringify(link.master),"Master Detail");
-			return;
-		}
-
-		if (link.detail == null || link.detail.block == null || link.detail.fields == null)
-		{
-			Alert.fatal("Invalid detail block definition: "+JSON.stringify(link.detail),"Master Detail");
-			return;
-		}
-
-		link.master.block = link.master.block.toLowerCase();
-		link.detail.block = link.detail.block.toLowerCase();
-
-		let child:Child = this.roots$.find(link.master.block);
-		console.log("add to "+child);
-		if (child == null) child = this.roots$;
-		child.add(link);
-	}
-}
-
-class Child
-{
-	constructor(public link?:Link) {}
-	private children$:Map<string,Child> = new Map<string,Child>();
-	private fldmap$:Map<string,Child[]> = new Map<string,Child[]>();
-
-	add(link:Link) : void
-	{
-		let key:string = "";
-
-		if (!Array.isArray(link.master.fields))
-			link.master.fields = [link.master.fields];
-
-		if (!Array.isArray(link.detail.fields))
-			link.detail.fields = [link.detail.fields];
-
-		if (link.master.fields.length != link.detail.fields.length)
-		{
-			Alert.fatal("Master fields and Detail fields does not match : "+link.master.fields+" "+link.detail.fields,"Master Detail");
-			return;
-		}
-
-		link.master.block = link.master.block.toLowerCase();
-		link.detail.block = link.detail.block.toLowerCase();
-
-		for (let i = 0; i < link.master.fields.length; i++)
-			link.master.fields[i] = link.master.fields[i].toLowerCase();
-
-		for (let i = 0; i < link.detail.fields.length; i++)
-			link.detail.fields[i] = link.detail.fields[i].toLowerCase();
-
-		link.master.fields.forEach((field) => key += ","+field);
-
-		let child:Child = new Child(link);
-		this.children$.set(key.substring(1),child);
-
-		link.master.fields.forEach((fld) =>
-		{
-			let children:Child[] = this.fldmap$.get(fld);
-
-			if (children == null)
-			{
-				children = [];
-				this.fldmap$.set(fld,children)
-			}
-
-			children.push(child);
-		});
-	}
-
-	find(block:string) : Child
-	{
-		let children:Child[] = this.children();
-
-		for (let i = 0; i < children.length; i++)
-		{
-			if (children[i].link.master.block == block)
-				return(children[i]);
-		}
-
-		for (let i = 0; i < children.length; i++)
-		{
-			let child:Child = children[i].find(block);
-			if (child != null) return(child);
-		}
-
-		return(null);
-	}
-
-	children(fld?:string) : Child[]
-	{
-		if (fld) return(this.fldmap$.get(fld));
-		else return(Array.from(this.children$.values()));
-	}
-}
-*/

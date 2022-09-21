@@ -483,7 +483,8 @@ export class Block
 
 	public async executeQuery() : Promise<boolean>
 	{
-		this.setMasterDependencies();
+		if (!this.setMasterDependencies())
+			return(false);
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
@@ -596,7 +597,7 @@ export class Block
 		return(this.form.blockcoordinator.getDetailLinks(this));
 	}
 
-	public setMasterDependencies() : void
+	public setMasterDependencies() : boolean
 	{
 		let filters:FilterStructure = this.masterfilters;
 
@@ -605,6 +606,9 @@ export class Block
 		this.getMasterLinks().forEach((link) =>
 		{
 			let master:Block = this.getMasterBlock(link);
+
+			if (master.empty)
+				return(false);
 
 			for (let i = 0; i < link.master.fields.length; i++)
 			{
@@ -621,6 +625,8 @@ export class Block
 				}
 			}
 		})
+
+		return(true);
 	}
 
 	public async queryDetails() : Promise<boolean>

@@ -14,7 +14,7 @@ export class DatePicker
 {
 	public static datePickerStyle:string =
 	`
-		width: 210px;
+		width: 160px;
 	`;
 	public static datePickerMonthStyle:string = 
 	`
@@ -45,6 +45,7 @@ export class DatePicker
 
 	public static datePickerDayStyle:string = 
 	`
+		height:15px;
 		display:flex;
 		font-size: 12px;
 		cursor: default;

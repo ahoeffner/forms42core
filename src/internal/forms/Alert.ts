@@ -45,13 +45,15 @@ export class Alert extends Form
 
 		// Block everything else
 		let block:HTMLElement = view.querySelector('div[id="block"]');
-
+		// let msgElement: HTMLElement = view.querySelector('div[name="msg"]');
+		// console.log(msgElement)
 		block.style.top = "0";
 		block.style.left = "0";
 		block.style.position = "fixed";
 		block.style.width = document.body.offsetWidth+"px";
+		view.style.width = "" + msg.length * 3 + "px";
 		block.style.height = document.body.offsetHeight+"px";
-
+		
 		this.setValue("alert","msg",msg);
 		close.focus();
 

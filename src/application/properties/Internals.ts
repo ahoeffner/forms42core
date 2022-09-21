@@ -31,6 +31,7 @@ export class Internals
 	`
 		width: 100%;
 		height: 20px;
+		text-align: center;
 		position: relative;
 		border-bottom: 1px solid black;
 	`;
@@ -76,6 +77,7 @@ export class Internals
 
 	public static PopupCloseButton =
 	`
+		top: 0px;
 		right: 1px;
 		width: 10px;
 		height: 20px;

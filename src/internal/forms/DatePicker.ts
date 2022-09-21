@@ -75,6 +75,7 @@ export class DatePicker extends Form
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
+		
 		this.setDate();
 		this.populateDates();
 		return(true);
@@ -133,7 +134,7 @@ export class DatePicker extends Form
 				if (++dayno <= days)
 					this.setValue("calendar","day-"+week+""+day,dayno);
 				else
-					this.setValue("calendar","day-"+week+""+day,null);
+					this.setValue("calendar","day-"+week+""+day, " ");
 			}
 		}
 	}

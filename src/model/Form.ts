@@ -183,8 +183,14 @@ export class Form
 		return(true);
 	}
 
-	public async executeQuery(block:Block, keep?:boolean) : Promise<boolean>
+	public async executeQuery(block:Block|string, keep?:boolean) : Promise<boolean>
 	{
+		if (typeof block === "string")
+			block = this.getBlock(block);
+
+		if (block == null)
+			return(false);
+
 		if (block.ctrlblk)
 			return(false);
 

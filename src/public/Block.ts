@@ -299,6 +299,6 @@ export class Block
 
 	public async executeQuery(requery?:boolean) : Promise<boolean>
 	{
-		return(FormBacking.getModelBlock(this).executeQuery(requery));
+		return(FormBacking.getModelForm(this.form).executeQuery(this.name,requery));
 	}
 }

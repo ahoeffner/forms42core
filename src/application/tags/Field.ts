@@ -12,18 +12,15 @@
 
 import { Tag } from "./Tag.js";
 import { Indicator } from "./Indicator.js";
-import { FormField } from "./FormField.js";
 import { Form } from "../../public/Form.js";
 import { Properties } from "../Properties.js";
 import { Form as InternalForm } from "../../internal/Form.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
-export class Field implements Tag, FormField
+export class Field implements Tag
 {
-	private editable$:boolean = false;
-
-    public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
-    {
+	public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
+	{
 		if (component == null)
 			throw "@Field: component is null";
 
@@ -38,20 +35,12 @@ export class Field implements Tag, FormField
 			tag.setAttribute(Properties.BindAttr,tag.getAttribute(attr));
 		}
 
-		let type:string = tag.tagName.toLowerCase();
-		if (type == "input" || type == "select") this.editable$ = true;
-
 		if (tag.getAttribute("type")?.toLowerCase() == "row-indicator")
 			return(new Indicator().parse(component,tag,attr));
 
 		if (attr != Properties.BindAttr) tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,tag);
 
-        return(field.element);
-    }
-
-	public get editable() : boolean
-	{
-		return(this.editable$);
+		return(field.element);
 	}
 }

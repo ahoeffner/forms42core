@@ -21,6 +21,7 @@ export { formevent } from './src/application/annotations/formevent.js';
 export { datasource } from './src/application/annotations/datasource.js';
 
 export { Logger } from './src/application/Logger.js';
+export { Tag as CustomTag } from './src/application/tags/Tag.js';
 
 export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';

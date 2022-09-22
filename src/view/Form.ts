@@ -27,6 +27,7 @@ import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
 import { FieldProperties } from '../public/FieldProperties.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
+import { FlightRecorder } from '../application/FlightRecorder.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
@@ -376,6 +377,12 @@ export class Form implements EventListenerObject
 			return(false);
 
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
+
+		if (key == KeyMap.dump)
+		{
+			FlightRecorder.dump();
+			return(true);
+		}
 
 		if (!await FormEvents.raise(frmevent))
 			return(false);

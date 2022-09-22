@@ -20,6 +20,7 @@ import { EventListener } from "./EventListener.js";
 import { FormEvent as Interface } from "./FormEvent.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
+import { FlightRecorder } from "../../application/FlightRecorder.js";
 
 export class KeyEventSource
 {
@@ -415,6 +416,8 @@ export class FormEvents
 		}
 
 		if (swap) event["key$"] = ekey;
+		if (!cont) FlightRecorder.add(lsnr.clazz+" "+lsnr.method+" "+event+" returned false");
+
 		return(cont);
 	}
 

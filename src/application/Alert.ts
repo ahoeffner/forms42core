@@ -12,6 +12,7 @@
 
 import { FormsModule } from './FormsModule.js';
 import { Classes } from '../internal/Classes.js';
+import { FlightRecorder } from './FlightRecorder.js';
 
 export enum Type
 {
@@ -26,6 +27,8 @@ export class Alert
 	{
 		if (type == null)
 			type = Type.PopAndLog;
+
+		FlightRecorder.add(title+" - "+msg);
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			Alert.callform(msg,title,false,true);

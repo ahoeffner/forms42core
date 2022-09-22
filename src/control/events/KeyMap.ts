@@ -20,12 +20,14 @@ export class KeyMap
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
 
+	public static dump:KeyMap = new KeyMap({key: 'X', ctrl: true});
 	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8});
 	public static queryeditor:KeyMap = new KeyMap({key: KeyCodes.f7, ctrl: true});
 
+	public static space:KeyMap = new KeyMap({key: ' '});
 	public static enter:KeyMap = new KeyMap({key: KeyCodes.Enter});
 	public static escape:KeyMap = new KeyMap({key: KeyCodes.Escape});
 
@@ -38,7 +40,7 @@ export class KeyMap
 	public static prevrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowUp});
 	public static nextrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowDown});
 
-    public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
+   public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 
 	public static delete:KeyMap = new KeyMap({key: KeyCodes.f6});

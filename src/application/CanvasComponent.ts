@@ -14,12 +14,12 @@ import { Canvas } from './interfaces/Canvas.js';
 
 export interface CanvasComponent
 {
-    canvas:Canvas;
+	canvas:Canvas;
 
-    moveable:boolean;
-    navigable:boolean;
-    resizable:boolean;
+	moveable:boolean;
+	navigable:boolean;
+	resizable:boolean;
 
-    getView() : HTMLElement;
-    close() : Promise<boolean>;
+	getView() : HTMLElement;
+	close() : Promise<boolean>;
 }

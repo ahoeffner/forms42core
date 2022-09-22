@@ -10,13 +10,22 @@
  * accompanied this code).
  */
 
-export function isFormField(object:any) : object is FormField
-{
-    return('editable' in object);
-}
 
-
-export interface FormField
+export class FlightRecorder
 {
-	editable:boolean;
+	public static MESSAGES:number = 25;
+	private static messages$:any[] = [];
+
+	public static add(message:any) : void
+	{
+		this.messages$.push(message);
+		if (this.messages$.length > this.MESSAGES) this.messages$.shift();
+	}
+
+	public static dump() : void
+	{
+		console.log("**** dump ****");
+		this.messages$.forEach((msg) =>
+			{console.log(msg);})
+	}
 }

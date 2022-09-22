@@ -21,8 +21,8 @@ export class Indicator implements Tag
 	public binding:string = null;
 	public element:HTMLElement = null;
 
-    public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
-    {
+	public parse(component:any, tag:HTMLElement, attr:string) : HTMLElement
+	{
 		let row:string = tag.getAttribute("row");
 		let binding:string = tag.getAttribute(attr);
 		if (attr != Properties.BindAttr) tag.removeAttribute(attr);
@@ -42,5 +42,5 @@ export class Indicator implements Tag
 
 		FormBacking.getViewForm(component,true)?.addIndicator(this);
 		return(tag);
-    }
+	}
 }

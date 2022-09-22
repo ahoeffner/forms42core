@@ -221,8 +221,21 @@ export class Form
 		if (!block.view.hasQueryableFields())
 			return(false);
 
+		this.clearMasterSubquery(block);
+
 		await this.enterQueryMode(block);
 		return(true);
+	}
+
+	private clearMasterSubquery(block:Block) : void
+	{
+		let blocks:Block[] = this.blkcord$.getMasterBlocks(block);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			blocks[i].clearDetailDependencies();
+			this.clearMasterSubquery(blocks[i]);
+		}
 	}
 
 	private async enterQueryMode(block:Block) : Promise<void>
@@ -265,6 +278,9 @@ export class Form
 
 		if (!block.querymode && !keep)
 			block.clearQueryFilters();
+
+		if (!block.querymode)
+			this.clearMasterSubquery(block);
 
 		blocks.unshift(block);
 

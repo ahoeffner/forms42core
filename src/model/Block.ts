@@ -675,10 +675,15 @@ export class Block
 		return(true);
 	}
 
-
 	public setDetailDependencies() : boolean
 	{
+		console.log("setDetailDependencies "+this.name);
 		return(true);
+	}
+
+	public clearDetailDependencies() : void
+	{
+		console.log("clearDetailDependencies "+this.name);
 	}
 
 	public getQueryID() : object

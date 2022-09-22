@@ -67,6 +67,32 @@ export class MemoryTable implements DataSource
 		});
 	}
 
+	public clone(columns?:string|string[]) : MemoryTable
+	{
+		let table:any[][] = [];
+
+		if (columns == null)
+		{
+			columns = [];
+			columns.push(...this.columns$);
+		}
+
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		for (let r = 0; r < this.records$.length; r++)
+		{
+			let row:any[] = [];
+
+			for (let c = 0; c < columns.length; c++)
+				row[c] = this.records$[r].getValue(columns[c]);
+
+			table.push(row);
+		}
+
+		return(new MemoryTable(columns,table));
+	}
+
 	public get sorting() : string
 	{
 		return(this.order$);
@@ -83,9 +109,18 @@ export class MemoryTable implements DataSource
 		return(this.columns$);
 	}
 
-	public set columns(columns:string[])
+	public addColumns(columns:string|string[]) : void
 	{
-		this.columns = columns;
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		columns.forEach((column) =>
+		{
+			column = column?.toLowerCase();
+
+			if (column && !this.columns$.includes(column))
+				this.columns$.push(column);
+		})
 	}
 
 	public async lock(_record:Record) : Promise<boolean>

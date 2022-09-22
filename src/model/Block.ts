@@ -494,7 +494,7 @@ export class Block
 		if (!this.setMasterDependencies())
 			return(false);
 
-		if (!this.setDetailDependencies())
+		if (!await this.setDetailDependencies())
 			return(false);
 
 		// Abort query if already obsolete
@@ -675,15 +675,51 @@ export class Block
 		return(true);
 	}
 
-	public setDetailDependencies() : boolean
+	public async setDetailDependencies() : Promise<boolean>
 	{
-		console.log("setDetailDependencies "+this.name);
+		let rel:Relation = null;
+		let blocks:Block[] = this.getDetailBlocks();
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			// if already there, then reuse
+			if (!blocks[i].QBEFilter.empty)
+			{
+				rel = this.form.BlockCoordinator.findRelation(this,blocks[i]);
+				let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
+
+				if (!await src.query(blocks[i].QBEFilter))
+					return(false);
+
+				while(true)
+				{
+					let recs:Record[] = await src.fetch();
+
+					if (recs == null || recs.length == 0)
+						break;
+
+					let values:any[][] = [];
+
+					recs.forEach((rec) =>
+					{
+						let row:any[] = [];
+						rel.detail.fields.forEach((col) => row.push(rec.getValue(col)));
+						values.push(row);
+
+						console.log(row);
+					});
+				}
+			}
+		}
+
 		return(true);
 	}
 
 	public clearDetailDependencies() : void
 	{
-		console.log("clearDetailDependencies "+this.name);
+		//if (!(this.filter.get("details") as FilterStructure).empty)
+			console.log("clearDetailDependencies "+this.name)
+		this.filter.get("details").clear();
 	}
 
 	public getQueryID() : object

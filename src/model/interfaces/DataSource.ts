@@ -27,5 +27,7 @@ export interface DataSource
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
+	addColumns(columns:string|string[]) : void;
+	clone(columns?:string|string[]) : DataSource;
 	query(filters?:FilterStructure) : Promise<boolean>;
 }

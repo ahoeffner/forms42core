@@ -141,8 +141,11 @@ export class BlockCoordinator
 		return(this.findRelation(master.name, detail.name)?.allowMasterless);
 	}
 
-	public findRelation(master:string, detail:string) : Relation
+	public findRelation(master:Block|string, detail:Block|string) : Relation
 	{
+		if (master instanceof Block) master = master.name;
+		if (detail instanceof Block) detail = detail.name;
+
 		let details:Relation[] = this.blocks$.get(master).details;
 
 		for (let i = 0; i < details.length; i++)

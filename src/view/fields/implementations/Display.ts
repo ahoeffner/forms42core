@@ -241,6 +241,9 @@ export class Display implements FieldImplementation, EventListenerObject
 		if (this.event.type == "blur")
 			bubble = true;
 
+		if (this.event.type == "keyup")
+			bubble = true;
+
 		if (this.event.accept || this.event.cancel)
 			bubble = true;
 

@@ -48,7 +48,7 @@ export class BlockCoordinator
 
 				let master:Block = this.getBlock(rel.master.block);
 
-				if (master?.querymode && !rel.allowMasterless)
+				if (master?.querymode && !rel.orphanQueries)
 					return(false);
 			}
 		}
@@ -77,7 +77,7 @@ export class BlockCoordinator
 			if (block == null)
 				return([]);
 
-			if (masterless || link.allowMasterless)
+			if (masterless || link.orphanQueries)
 				blocks.push(block);
 		})
 
@@ -138,7 +138,7 @@ export class BlockCoordinator
 	public allowMasterLess(master:Block, detail:Block) : boolean
 	{
 		if (master == detail) return(true);
-		return(this.findRelation(master.name, detail.name)?.allowMasterless);
+		return(this.findRelation(master.name, detail.name)?.orphanQueries);
 	}
 
 	public findRelation(master:Block|string, detail:Block|string) : Relation

@@ -17,5 +17,5 @@ export interface Relation
 {
 	master:Key;
 	detail:Key;
-	allowMasterless:boolean;
+	orphanQueries:boolean;
 }

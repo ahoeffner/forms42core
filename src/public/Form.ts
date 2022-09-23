@@ -62,10 +62,10 @@ export class Form implements CanvasComponent
 		this.focus();
 	}
 
-	public link(master:Key, detail:Key, allowMasterless?:boolean) : void
+	public link(master:Key, detail:Key, orphanQueries?:boolean) : void
 	{
-		if (allowMasterless == null) allowMasterless = true;
-		FormBacking.getBacking(this).setLink(master,detail, allowMasterless);
+		if (orphanQueries == null) orphanQueries = true;
+		FormBacking.getBacking(this).setLink(master,detail, orphanQueries);
 	}
 
 	public goField(block:string, field:string, clazz?:string) : void

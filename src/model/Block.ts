@@ -721,7 +721,10 @@ export class Block
 					values.push(row);
 				});
 
-				blkflt.and(Filters.In(rel.master.fields));
+				let filter:Filter = Filters.In(rel.master.fields);
+				filter.constraint = values;
+
+				blkflt.and(filter,blocks[i].name+".subquery()");
 			}
 		}
 

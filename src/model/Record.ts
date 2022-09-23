@@ -190,9 +190,10 @@ export class Record
 	public toString() : string
 	{
 		let str:string = "";
-
-		let cols:number = this.source.columns.length +
-						  		this.wrapper.columns.length;
+		let cols:number = 0;
+		
+		if (this.source) cols += this.source.columns.length;
+		if (this.wrapper) cols += this.wrapper.columns.length;
 
 		for (let i = 0; i < cols; i++)
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));

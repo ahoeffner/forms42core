@@ -21,6 +21,17 @@ export class In implements Filter
 
 	public constructor(columns:string|string[])
 	{
+		if (typeof columns === "string")
+		{
+			columns.split(",").forEach((column) =>
+			{
+				column = column.trim();
+
+				if (column.length > 0)
+					this.columns$.push(column);
+			})
+		}
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 

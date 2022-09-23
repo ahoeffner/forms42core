@@ -233,7 +233,7 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			blocks[i].clearDetailDependencies();
+			blocks[i].clearDetailDependencies(block);
 			this.clearMasterSubquery(blocks[i]);
 		}
 	}

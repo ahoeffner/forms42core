@@ -643,6 +643,7 @@ export class Block
 	public setMasterDependencies() : boolean
 	{
 		let filters:FilterStructure = this.masterfilters;
+		console.log("only remove masterfilters for given block")
 
 		filters.clear();
 
@@ -682,44 +683,55 @@ export class Block
 
 		for (let i = 0; i < blocks.length; i++)
 		{
+			let detflt:FilterStructure = this.filter.get("details") as FilterStructure;
+			let blkflt:FilterStructure = detflt.get(blocks[i].name) as FilterStructure;
+
 			// if already there, then reuse
-			if (!blocks[i].QBEFilter.empty)
+			console.log("details already set "+blkflt);
+
+			// if no filters skip
+			if (blocks[i].QBEFilter.empty)
+				return(true);
+
+			if (blkflt == null)
 			{
-				rel = this.form.BlockCoordinator.findRelation(this,blocks[i]);
-				let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
+				blkflt = new FilterStructure();
+				detflt.and(blkflt,blocks[i].name);
+			}
 
-				if (!await src.query(blocks[i].QBEFilter))
-					return(false);
+			rel = this.form.BlockCoordinator.findRelation(this,blocks[i]);
+			let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
 
-				while(true)
+			if (!await src.query(blocks[i].QBEFilter))
+				return(false);
+
+			while(true)
+			{
+				let recs:Record[] = await src.fetch();
+
+				if (recs == null || recs.length == 0)
+					break;
+
+				let values:any[][] = [];
+
+				recs.forEach((rec) =>
 				{
-					let recs:Record[] = await src.fetch();
+					let row:any[] = [];
+					rel.detail.fields.forEach((col) => row.push(rec.getValue(col)));
+					values.push(row);
+				});
 
-					if (recs == null || recs.length == 0)
-						break;
-
-					let values:any[][] = [];
-
-					recs.forEach((rec) =>
-					{
-						let row:any[] = [];
-						rel.detail.fields.forEach((col) => row.push(rec.getValue(col)));
-						values.push(row);
-
-						console.log(row);
-					});
-				}
+				blkflt.and(Filters.In(rel.master.fields));
 			}
 		}
 
 		return(true);
 	}
 
-	public clearDetailDependencies() : void
+	public clearDetailDependencies(detail:Block) : void
 	{
-		//if (!(this.filter.get("details") as FilterStructure).empty)
-			console.log("clearDetailDependencies "+this.name)
-		this.filter.get("details").clear();
+		console.log("clear details for "+this.name+" detail block "+detail.name);
+		(this.filter.get("details") as FilterStructure).delete(detail.name);
 	}
 
 	public getQueryID() : object

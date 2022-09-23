@@ -23,13 +23,13 @@ import { Filter } from "../interfaces/Filter.js";
 
 export class Filters
 {
-	public static In(column:string) : Filter {return(new In(column))};
 	public static Null(column:string) : Filter {return(new Null(column))};
 	public static Like(column:string) : Filter {return(new Like(column))};
 	public static ILike(column:string) : Filter {return(new ILike(column))};
 	public static Equals(column:string) : Filter {return(new Equals(column))};
-	public static Contains(columns:string) : Filter {return(new Contains(columns))};
+	public static In(columns:string|string[]) : Filter {return(new In(columns))};
 	public static LT(column:string, incl?:boolean) : Filter {return(new LT(column,incl))};
 	public static GT(column:string, incl?:boolean) : Filter {return(new GT(column,incl))};
+	public static Contains(columns:string|string[]) : Filter {return(new Contains(columns))};
 	public static Between(column:string, incl?:boolean) : Filter {return(new Between(column,incl))};
 }

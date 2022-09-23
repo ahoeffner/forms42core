@@ -19,15 +19,23 @@ export class Contains implements Filter
 	private columns$:string[] = [];
 	private constraint$:string[] = null;
 
-	public constructor(columns:string)
+	public constructor(columns:string|string[])
 	{
-		columns.split(",").forEach((column) =>
+		if (typeof columns === "string")
 		{
-			column = column.trim();
+			columns.split(",").forEach((column) =>
+			{
+				column = column.trim();
 
-			if (column.length > 0)
-				this.columns$.push(column);
-		})
+				if (column.length > 0)
+					this.columns$.push(column);
+			})
+		}
+
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.columns$ = columns;
 	}
 
 	public clear() : void

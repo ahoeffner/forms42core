@@ -41,6 +41,9 @@ export class BlockCoordinator
 
 		for (let i = 0; i < masters.length; i++)
 		{
+			if (masters[i].empty)
+				return(false);
+				
 			if (masters[i].querymode)
 			{
 				console.log("check "+masters[i].name);

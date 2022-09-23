@@ -497,6 +497,8 @@ export class Block
 		if (!await this.setDetailDependencies())
 			return(false);
 
+		console.log("details for "+this.name+" completed")
+
 		// Abort query if already obsolete
 		newid = this.form.QueryManager.getQueryID();
 
@@ -705,6 +707,10 @@ export class Block
 			if (!await src.query(blocks[i].QBEFilter))
 				return(false);
 
+
+			let values:any[][] = [];
+			let filter:Filter = Filters.In(rel.master.fields);
+
 			while(true)
 			{
 				let recs:Record[] = await src.fetch();
@@ -712,21 +718,17 @@ export class Block
 				if (recs == null || recs.length == 0)
 					break;
 
-				let values:any[][] = [];
-
 				recs.forEach((rec) =>
 				{
 					let row:any[] = [];
 					rel.detail.fields.forEach((col) => row.push(rec.getValue(col)));
 					values.push(row);
 				});
-
-				let filter:Filter = Filters.In(rel.master.fields);
-				filter.constraint = values;
-
-				blkflt.and(filter,blocks[i].name+".subquery()");
 			}
-		}
+
+			filter.constraint = values;
+			blkflt.and(filter,blocks[i].name+".subquery()");
+	}
 
 		return(true);
 	}

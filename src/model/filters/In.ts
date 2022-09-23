@@ -25,13 +25,17 @@ export class In implements Filter
 
 		if (typeof columns === "string")
 		{
+			let list:string[] = [];
+
 			columns.split(",").forEach((column) =>
 			{
 				column = column.trim();
 
 				if (column.length > 0)
-					this.columns$.push(column);
+					list.push(column);
 			})
+
+			columns = list;
 		}
 
 		if (!Array.isArray(columns))

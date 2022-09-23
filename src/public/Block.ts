@@ -57,7 +57,7 @@ export class Block
 
 	public get filter() : FilterStructure
 	{
-		return(FormBacking.getModelBlock(this).QBEFilter);
+		return(FormBacking.getModelBlock(this).QueryFilter);
 	}
 
 	public get row() : number

@@ -86,7 +86,7 @@ export class QueryByExample
 		return(this.wrapper$);
 	}
 
-	public get QBEFilter() : FilterStructure
+	public get filters() : FilterStructure
 	{
 		return(this.filter$);
 	}

@@ -51,7 +51,7 @@ export class Block
 		this.form$ = form;
 		this.form.addBlock(this);
 		this.intfrm = form.parent;
-		this.filter.and(this.qbe.QBEFilter,"qbe");
+		this.filter.and(this.qbe.filters,"qbe");
 		this.filter.and(new FilterStructure(),"masters");
 		this.filter.and(new FilterStructure(),"details");
 		this.datasource = form.datamodel.getDataSource(this.name);
@@ -182,11 +182,6 @@ export class Block
 		}
 
 		this.view.reset();
-	}
-
-	public get QBEFilter() : FilterStructure
-	{
-		return(this.qbe.QBEFilter);
 	}
 
 	public createMemorySource(recs?:number, columns?:string[]) : MemoryTable
@@ -497,8 +492,6 @@ export class Block
 		if (!await this.setDetailDependencies())
 			return(false);
 
-		console.log("details for "+this.name+" completed")
-
 		// Abort query if already obsolete
 		newid = this.form.QueryManager.getQueryID();
 
@@ -602,14 +595,29 @@ export class Block
 		return(this.form.QueryManager.qmaster$);
 	}
 
-	public get masterfilters() : FilterStructure
+	public get QueryFilter() : FilterStructure
+	{
+		return(this.qbe.filters);
+	}
+
+	public get MasterFilter() : FilterStructure
 	{
 		return(this.filter.get("masters") as FilterStructure);
 	}
 
-	public get detailfilters() : FilterStructure
+	public get DetailFilter() : FilterStructure
 	{
 		return(this.filter.get("details") as FilterStructure);
+	}
+
+	public getDetailBlockFilter(block:Block)
+	{
+		this.DetailFilter.get(block.name);
+	}
+
+	public getMasterBlockFilter(block:Block)
+	{
+		this.MasterFilter.get(block.name);
 	}
 
 	public getMasterBlock(link:Relation) : Block
@@ -644,11 +652,9 @@ export class Block
 
 	public setMasterDependencies() : boolean
 	{
-		let filters:FilterStructure = this.masterfilters;
-		console.log("only remove masterfilters for given block")
+		let filters:FilterStructure = this.MasterFilter;
 
 		filters.clear();
-
 		this.getMasterLinks().forEach((link) =>
 		{
 			let master:Block = this.getMasterBlock(link);
@@ -685,14 +691,14 @@ export class Block
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			let detflt:FilterStructure = this.filter.get("details") as FilterStructure;
+			let detflt:FilterStructure = this.DetailFilter;
 			let blkflt:FilterStructure = detflt.get(blocks[i].name) as FilterStructure;
 
 			// if already there, then reuse
 			console.log("details already set "+blkflt);
 
 			// if no filters skip
-			if (blocks[i].QBEFilter.empty)
+			if (blocks[i].QueryFilter.empty)
 				return(true);
 
 			if (blkflt == null)
@@ -704,7 +710,7 @@ export class Block
 			rel = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 			let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
 
-			if (!await src.query(blocks[i].QBEFilter))
+			if (!await src.query(blocks[i].QueryFilter))
 				return(false);
 
 

@@ -16,12 +16,15 @@ import { Filter } from "../interfaces/Filter.js";
 
 export class In implements Filter
 {
-	private column$:string = null;
-	private constraint$:any[] = null;
+	private columns$:string[] = null;
+	private constraint$:any[][] = null;
 
-	public constructor(column:string)
+	public constructor(columns:string|string[])
 	{
-		this.column$ = column;
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.columns$ = columns;
 	}
 
 	public clear() : void
@@ -34,37 +37,76 @@ export class In implements Filter
 		return(this.constraint$);
 	}
 
-	public set constraint(values:any|any[])
+	public set constraint(table:any|any[]|any[][])
 	{
-		this.constraint$ = [];
-		if (values == null) return;
+		this.constraint$ = null;
+		if (table == null) return;
 
-		this.constraint$ = values;
-
-		if (typeof values === "string")
+		if (typeof table === "string")
 		{
-			this.constraint$ = [];
-			values = values.split(",")
+			let list:string[] = [];
+			table = table.split(",")
 
-			for (let i = 0; i < values.length; i++)
+			for (let i = 0; i < table.length; i++)
 			{
-				if (values[i].length > 0)
-					this.constraint$.push(values[i].trim());
+				if (table[i].length > 0)
+					list.push(table[i].trim());
 			}
+
+			table = list;
 		}
+
+		// Single value
+		if (!Array.isArray(table))
+			table = [table];
+
+		if (table.length == 0)
+			return;
+
+		// List
+		if (!Array.isArray(table[0]))
+		{
+			let list:any[] = table;	table = [];
+			list.forEach((elem) => table.push([elem]));
+		}
+
+		this.constraint$ = table;
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		if (this.column$ == null) return(false);
+		let values:any[] = [];
+		if (this.columns$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 
-		let value:any = record.getValue(this.column$?.toLowerCase());
+		let table:any[][] = this.constraint$;
 
-		for (let c = 0; c < this.constraint$.length; c++)
-			if (value == this.constraint$[c]) return(true);
+		this.columns$.forEach((column) =>
+		{
+			column = column?.toLowerCase();
+			values.push(record.getValue(column));
+		})
 
-		return(false);
+		let match:boolean = false;
+		for (let r = 0; r < table.length; r++)
+		{
+			match = true;
+			let row:any[] = table[r];
+
+			for (let c = 0; c < row.length; c++)
+			{
+				if (values[c] != row[c])
+				{
+					match = false;
+					break;
+				}
+			}
+
+			if (match)
+				break;
+		}
+
+		return(match);
 	}
 }

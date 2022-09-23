@@ -221,26 +221,29 @@ export class Form
 		if (!block.view.hasQueryableFields())
 			return(false);
 
-		this.clearMasterSubquery(block);
+		this.clearDetailDepencies(block);
 
 		await this.enterQueryMode(block);
 		return(true);
 	}
 
-	private clearMasterSubquery(block:Block) : void
+	private clearDetailDepencies(block:Block) : void
 	{
-		let blocks:Block[] = this.blkcord$.getMasterBlocks(block);
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			blocks[i].clearDetailDependencies(block);
-			this.clearMasterSubquery(blocks[i]);
+			blocks[i].clearDetailDepencies(block);
+			this.clearDetailDepencies(blocks[i]);
 		}
 	}
 
 	private async enterQueryMode(block:Block) : Promise<void>
 	{
-		if (!await block.enterQuery()) return;
+		if (!await block.enterQuery())
+			return;
+
+		block.QueryFilter.clear();
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
 
 		for (let i = 0; i < blocks.length; i++)
@@ -280,7 +283,7 @@ export class Form
 			block.clearQueryFilters();
 
 		if (!block.querymode)
-			this.clearMasterSubquery(block);
+			this.clearDetailDepencies(block);
 
 		blocks.unshift(block);
 

@@ -51,9 +51,11 @@ export class Block
 		this.form$ = form;
 		this.form.addBlock(this);
 		this.intfrm = form.parent;
+
 		this.filter.and(this.qbe.filters,"qbe");
 		this.filter.and(new FilterStructure(),"masters");
 		this.filter.and(new FilterStructure(),"details");
+
 		this.datasource = form.datamodel.getDataSource(this.name);
 	}
 
@@ -519,6 +521,8 @@ export class Block
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
+		console.log(this.name+" "+this.filter)
+
 		this.record$ = -1;
 		let record:Record = null;
 
@@ -610,14 +614,30 @@ export class Block
 		return(this.filter.get("details") as FilterStructure);
 	}
 
-	public getDetailBlockFilter(block:Block)
+	public getDetailBlockFilter(block:Block, create?:boolean) : FilterStructure
 	{
-		this.DetailFilter.get(block.name);
+		let flt:FilterStructure = this.DetailFilter.get(block.name) as FilterStructure;
+
+		if (flt == null && create)
+		{
+			flt = new FilterStructure();
+			this.DetailFilter.and(flt,block.name);
+		}
+
+		return(flt);
 	}
 
-	public getMasterBlockFilter(block:Block)
+	public getMasterBlockFilter(block:Block, create?:boolean) : FilterStructure
 	{
-		this.MasterFilter.get(block.name);
+		let flt:FilterStructure = this.MasterFilter.get(block.name) as FilterStructure;
+
+		if (flt == null && create)
+		{
+			flt = new FilterStructure();
+			this.MasterFilter.and(flt,block.name);
+		}
+
+		return(flt);
 	}
 
 	public getMasterBlock(link:Relation) : Block
@@ -652,16 +672,14 @@ export class Block
 
 	public setMasterDependencies() : boolean
 	{
-		let filters:FilterStructure = this.MasterFilter;
-
-		filters.clear();
+		this.MasterFilter.clear();
 		this.getMasterLinks().forEach((link) =>
 		{
 			let master:Block = this.getMasterBlock(link);
 
 			if (master.empty)
 			{
-				console.log("cannot perform query as master block '"+master.name+"' is empty");
+				Alert.fatal("cannot perform query as master block '"+master.name+"' is empty","Master Detail Query");
 				return(false);
 			}
 
@@ -676,7 +694,7 @@ export class Block
 				{
 					let flt:Filter = Filters.Equals(dfld);
 					flt.constraint = master.getValue(mfld);
-					filters.and(flt,dfld);
+					this.getMasterBlockFilter(master,true).and(flt,dfld);
 				}
 			}
 		})
@@ -686,33 +704,20 @@ export class Block
 
 	public async setDetailDependencies() : Promise<boolean>
 	{
-		let rel:Relation = null;
 		let blocks:Block[] = this.getDetailBlocks();
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			let detflt:FilterStructure = this.DetailFilter;
-			let blkflt:FilterStructure = detflt.get(blocks[i].name) as FilterStructure;
-
-			// if already there, then reuse
-			console.log("details already set "+blkflt);
-
-			// if no filters skip
 			if (blocks[i].QueryFilter.empty)
 				return(true);
 
-			if (blkflt == null)
-			{
-				blkflt = new FilterStructure();
-				detflt.and(blkflt,blocks[i].name);
-			}
+			let blkflt:FilterStructure = this.getDetailBlockFilter(blocks[i],true);
+			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 
-			rel = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 			let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
 
 			if (!await src.query(blocks[i].QueryFilter))
 				return(false);
-
 
 			let values:any[][] = [];
 			let filter:Filter = Filters.In(rel.master.fields);
@@ -733,16 +738,15 @@ export class Block
 			}
 
 			filter.constraint = values;
-			blkflt.and(filter,blocks[i].name+".subquery()");
-	}
+			blkflt.and(filter,blocks[i].name);
+		}
 
 		return(true);
 	}
 
-	public clearDetailDependencies(detail:Block) : void
+	public clearDetailDepencies(block:Block) : void
 	{
-		console.log("clear details for "+this.name+" detail block "+detail.name);
-		(this.filter.get("details") as FilterStructure).delete(detail.name);
+		block.DetailFilter.clear(this.name);
 	}
 
 	public getQueryID() : object

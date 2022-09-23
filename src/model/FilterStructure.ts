@@ -34,10 +34,18 @@ export class FilterStructure
 		return(this.entries$.length);
 	}
 
-	public clear() : void
+	public clear(name?:string) : void
 	{
-		this.entries$ = [];
-		this.filteridx$.clear();
+		if (name == null)
+		{
+			this.entries$ = [];
+			this.fieldidx$.clear();
+			this.filteridx$.clear();
+		}
+		else
+		{
+			this.delete(name);
+		}
 	}
 
 	public or(filter:Filter|FilterStructure, name?:string) : void
@@ -94,7 +102,7 @@ export class FilterStructure
 			{
 				this.entries$.splice(pos,1);
 				this.filteridx$.delete(filter);
-				this.fieldidx$.delete(cstr.field);
+				this.fieldidx$.delete(cstr.name);
 				return(true);
 			}
 		}
@@ -127,9 +135,17 @@ export class FilterStructure
 		this.entries$.forEach((cons) =>
 		{
 			if (str.length > 0) str += " ";
-			str += cons.filter.constructor.name;
-			if (cons.filter["constraint"]) str += cons.filter["constraint"];
-			else 									 str += cons.filter.toString();
+
+			if (cons.filter instanceof FilterStructure)
+			{
+				str += cons.name+" ";
+				str += cons.filter.toString();
+			}
+			else
+			{
+				str += cons.filter.constructor.name+" ";
+				str += (""+cons.filter.constraint).substring(0,10);
+			}
 		})
 
 		return(str);
@@ -138,7 +154,7 @@ export class FilterStructure
 
 class Constraint
 {
-	constructor(public and$:boolean, public filter:Filter|FilterStructure, public field:string) {}
+	constructor(public and$:boolean, public filter:Filter|FilterStructure, public name:string) {}
 
 	get or() : boolean
 	{

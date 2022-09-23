@@ -191,25 +191,6 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public async fetch() : Promise<Record[]>
-	{
-		if (this.pos$ >= this.records$.length)
-			return([]);
-
-		while(this.pos$ < this.records$.length)
-		{
-			if (this.filter.empty)
-				return([this.records$[this.pos$++]]);
-
-			if (await this.filter.evaluate(this.records$[this.pos$]))
-				return([this.records$[this.pos$++]]);
-
-			this.pos$++;
-		}
-
-		return([]);
-	}
-
 	public async query(filter:FilterStructure) : Promise<boolean>
 	{
 		this.pos$ = 0;
@@ -239,6 +220,25 @@ export class MemoryTable implements DataSource
 		}
 
 		return(true);
+	}
+
+	public async fetch() : Promise<Record[]>
+	{
+		if (this.pos$ >= this.records$.length)
+			return([]);
+
+		while(this.pos$ < this.records$.length)
+		{
+			if (this.filter.empty)
+				return([this.records$[this.pos$++]]);
+
+			if (await this.filter.evaluate(this.records$[this.pos$]))
+				return([this.records$[this.pos$++]]);
+
+			this.pos$++;
+		}
+
+		return([]);
 	}
 
 	public async closeCursor() : Promise<boolean>

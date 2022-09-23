@@ -45,6 +45,9 @@ export class FilterStructure
 		if (filter == this)
 			return;
 
+		if (name != null)
+			this.delete(name);
+
 		if (!this.filteridx$.has(filter))
 		{
 			let cstr:Constraint = new Constraint(false,filter,name);
@@ -58,6 +61,9 @@ export class FilterStructure
 	{
 		if (filter == this)
 			return;
+
+		if (name != null)
+			this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{
@@ -77,7 +83,7 @@ export class FilterStructure
 	{
 		if (typeof filter === "string")
 			filter = this.get(filter);
-			
+
 		let cstr:Constraint = this.filteridx$.get(filter);
 
 		if (cstr != null)

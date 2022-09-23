@@ -82,7 +82,7 @@ export class EventStack
 			return;
 		}
 
-		FlightRecorder.debug("event: "+cmd.field.name+"["+cmd.field.row+"] "+cmd.brwevent.type);
+		FlightRecorder.debug("event: "+cmd.field.name+"["+cmd.field.row.rownum+"] "+cmd.brwevent.type);
 
 		try
 		{

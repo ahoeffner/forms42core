@@ -521,8 +521,6 @@ export class Block
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
-		console.log(this.name+" "+this.filter)
-
 		this.record$ = -1;
 		let record:Record = null;
 

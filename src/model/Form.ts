@@ -229,6 +229,7 @@ export class Form
 
 	private clearDetailDepencies(block:Block) : void
 	{
+		block.QueryFilter.clear();
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
 		for (let i = 0; i < blocks.length; i++)
@@ -243,7 +244,6 @@ export class Form
 		if (!await block.enterQuery())
 			return;
 
-		block.QueryFilter.clear();
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
 
 		for (let i = 0; i < blocks.length; i++)

@@ -74,14 +74,15 @@ export class EventStack
 
 		EventStack.running = true;
 		let cmd:event = EventStack.stack$.pop();
-		
-		FlightRecorder.debug("event: "+cmd.field+" "+cmd.brwevent.toString);
 
 		if (cmd == undefined)
 		{
 			EventStack.running = false;
+			FlightRecorder.debug("stop EventStack");
 			return;
 		}
+
+		FlightRecorder.debug("event: "+cmd.field.name+"["+cmd.field.row+"] "+cmd.brwevent.type);
 
 		try
 		{

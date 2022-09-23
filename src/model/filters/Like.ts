@@ -19,6 +19,7 @@ export class Like implements Filter
 	private column$:string = null;
 	private ltrunc:boolean = false;
 	private rtrunc:boolean = false;
+	private parsed:boolean = false;
 	private constraint$:string = null;
 
 	public constructor(column:string)
@@ -38,22 +39,25 @@ export class Like implements Filter
 
 	public set constraint(value:string)
 	{
-		if (value == null) return;
-		value = value.replace("*","%");
-
-		if (value.endsWith("%")) this.rtrunc = true;
-		if (value.startsWith("%")) this.ltrunc = true;
-
-		if (this.ltrunc) value = value.substring(1);
-		if (this.rtrunc) value = value.substring(0,value.length-1);
-
 		this.constraint$ = value;
+		this.constraint$ = this.constraint$.replace("*","%");
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
+
+		if (!this.parsed)
+		{
+			this.parsed = true;
+			
+			if (this.constraint$.endsWith("%")) this.rtrunc = true;
+			if (this.constraint$.startsWith("%")) this.ltrunc = true;
+
+			if (this.ltrunc) this.constraint$ = this.constraint$.substring(1);
+			if (this.rtrunc) this.constraint$ = this.constraint$.substring(0,this.constraint$.length-1);
+		}
 
 		let value:string = record.getValue(this.column$.toLowerCase())+"";
 

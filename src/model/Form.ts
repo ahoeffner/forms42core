@@ -274,16 +274,20 @@ export class Form
 		}
 
 		if (block.querymode)
+		{
 			block = this.blkcord$.getQueryMaster(block);
+		}
+		else
+		{
+			if (!this.blkcord$.allowQueryMode(block))
+				return(false);
+
+			this.clearDetailDepencies(block);
+			if (!keep) block.clearQueryFilters();
+		}
 
 		this.qrymgr$.QueryMaster = block;
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
-
-		if (!block.querymode && !keep)
-			block.clearQueryFilters();
-
-		if (!block.querymode)
-			this.clearDetailDepencies(block);
 
 		blocks.unshift(block);
 

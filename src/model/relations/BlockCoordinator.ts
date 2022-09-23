@@ -43,10 +43,9 @@ export class BlockCoordinator
 		{
 			if (masters[i].empty)
 				return(false);
-				
+
 			if (masters[i].querymode)
 			{
-				console.log("check "+masters[i].name);
 				let rel:Relation = this.findRelation(masters[i].name,block.name);
 
 				let master:Block = this.getBlock(rel.master.block);

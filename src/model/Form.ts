@@ -282,8 +282,11 @@ export class Form
 			if (!this.blkcord$.allowQueryMode(block))
 				return(false);
 
-			this.clearDetailDepencies(block);
-			if (!keep) block.clearQueryFilters();
+			if (!keep)
+			{
+				block.clearQueryFilters();
+				this.clearDetailDepencies(block);
+			}
 		}
 
 		this.qrymgr$.QueryMaster = block;

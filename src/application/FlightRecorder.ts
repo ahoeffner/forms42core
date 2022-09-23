@@ -13,8 +13,10 @@
 
 export class FlightRecorder
 {
-	public static MESSAGES:number = 25;
+	public static MESSAGES:number = 50;
+
 	private static messages$:any[] = [];
+	private static debug$:boolean = false;
 
 	public static add(message:any) : void
 	{
@@ -22,8 +24,18 @@ export class FlightRecorder
 		if (this.messages$.length > this.MESSAGES) this.messages$.shift();
 	}
 
+	public static debug(message:any) : void
+	{
+		if (this.debug$)
+		{
+			this.messages$.push(message);
+			if (this.messages$.length > this.MESSAGES) this.messages$.shift();
+		}
+	}
+
 	public static dump() : void
 	{
+		this.debug$ = !this.debug$;
 		console.log("**** dump ****");
 		this.messages$.forEach((msg) =>
 			{console.log(msg);})

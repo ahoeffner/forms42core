@@ -320,8 +320,9 @@ export class Block
 
 		if (success)
 		{
-			this.model$.setValue(inst.name,value);
+			this.model.setValue(inst.name,value);
 			if (this.model.querymode) this.model.setFilter(inst.name);
+			else success = await this.model.queryFieldDetails(inst.name);
 		}
 
 		return(success);

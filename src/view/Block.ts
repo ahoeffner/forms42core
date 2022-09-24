@@ -24,6 +24,7 @@ import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
+import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
@@ -442,6 +443,8 @@ export class Block
 		let nav:boolean = false;
 		let next:FieldInstance = inst;
 
+		FlightRecorder.debug("navigateBlock 1: "+inst);
+
 		if (this.model.querymode)
 			return(false);
 
@@ -453,6 +456,8 @@ export class Block
 			next.focus();
 			return(false);
 		}
+
+		FlightRecorder.debug("navigateBlock 2: "+inst);
 
 		switch(key)
 		{

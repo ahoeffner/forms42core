@@ -87,6 +87,7 @@ export class EventStack
 		try
 		{
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
+			FlightRecorder.debug("event comleted");
 
 			EventStack.running = false;
 			setTimeout(() => {EventStack.handle();},0);

@@ -15,13 +15,14 @@ import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { EventStack } from "./EventStack.js";
 import { BrowserEvent} from "../BrowserEvent.js";
+import { Input } from "./implementations/Input.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
 import { FormBacking } from "../../application/FormBacking.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
-import { Input } from "./implementations/Input.js";
+import { FlightRecorder } from "../../application/FlightRecorder.js";
 
 
 export class Field
@@ -235,6 +236,7 @@ export class Field
 	public async performEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		let key:KeyMap = null;
+		let success:boolean = null;
 
 		if (brwevent.type == "focus")
 		{
@@ -242,7 +244,9 @@ export class Field
 			this.value$ = inst.getValue();
 
 			if (inst.ignore != "focus")
-				await this.block.form.enter(inst);
+				success = await this.block.form.enter(inst);
+
+			FlightRecorder.debug("focus: "+inst+" ignore: "+inst.ignore+" success: "+success);
 
 			inst.ignore = null;
 			return;
@@ -251,7 +255,9 @@ export class Field
 		if (brwevent.type == "blur")
 		{
 			if (inst.ignore != "blur")
-				await this.block.form.leave(inst);
+				success = await this.block.form.leave(inst);
+
+			FlightRecorder.debug("blur: "+inst+" completed, success: "+success);
 
 			if (!this.valid$)
 			{
@@ -266,10 +272,12 @@ export class Field
 		if (brwevent.type == "change")
 		{
 			this.row.invalidate();
-			await this.validate(inst);
+			success = await this.validate(inst);
 
 			this.distribute(inst,this.value$,this.dirty);
 			this.block.distribute(this,this.value$,this.dirty);
+
+			FlightRecorder.debug("change: "+inst+" completed, success: "+success);
 			return;
 		}
 
@@ -285,7 +293,8 @@ export class Field
 			this.distribute(inst,value,this.dirty);
 			this.block.distribute(this,value,this.dirty);
 
-			await this.block.onEdit(inst);
+			success = await this.block.onEdit(inst);
+			FlightRecorder.debug("onEdit: "+inst+" completed, success: "+success);
 			return;
 		}
 
@@ -301,14 +310,16 @@ export class Field
 			if (key == null)
 				key = KeyMapping.parseBrowserEvent(brwevent);
 
-			this.block.form.keyhandler(key,inst);
+			success = await this.block.form.keyhandler(key,inst);
+			FlightRecorder.debug("keyhandler: "+inst+" completed, success: "+success);
 			return;
 		}
 
 		if (brwevent.isMouseEvent)
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-			await this.block.form.mousehandler(mevent,inst);
+			success = await this.block.form.mousehandler(mevent,inst);
+			FlightRecorder.debug("mouse: "+inst+" completed, success: "+success);
 			return;
 		}
 	}
@@ -347,6 +358,7 @@ export class Field
 			inst.valid = false;
 			this.valid = false;
 
+			FlightRecorder.debug("validateField: "+inst+" completed, success: false");
 			return(false);
 		}
 		else
@@ -358,6 +370,7 @@ export class Field
 			this.validated = true;
 
 			await this.block.postValidateField(inst);
+			FlightRecorder.debug("validateField: "+inst+" completed, success: true");
 			return(true);
 		}
 	}

@@ -36,12 +36,6 @@ export class FormBacking
 	private static bdata:Map<Form,FormBacking> =
 		new Map<Form,FormBacking>();
 
-	public static removeForm(form:Form) : void
-	{
-		if (form == FormBacking.form)
-			FormBacking.form = null;
-	}
-
 	public static getCurrentForm() : Form
 	{
 		return(ViewForm.current().parent);
@@ -90,6 +84,7 @@ export class FormBacking
 	{
 		FormBacking.cleanup(form);
 		FormBacking.bdata.delete(form);
+		if (form == FormBacking.form) FormBacking.form = null;
 	}
 
 	public static cleanup(form:Form) : void

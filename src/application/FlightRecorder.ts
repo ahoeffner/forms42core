@@ -28,14 +28,17 @@ export class FlightRecorder
 	public static debug(message:any) : void
 	{
 		if (this.debug$)
+		{
 			console.log(message);
+			this.messages$.push(message);
+			if (this.messages$.length > this.MESSAGES) this.messages$.shift();
+		}
 	}
 
 	public static dump() : void
 	{
-		this.debug$ = !this.debug$;
+		this.debug$ = true;
 		console.log("**** dump ****");
-		console.log("debug: "+this.debug$);
 		this.messages$.forEach((msg) =>
 			{console.log(msg);})
 	}

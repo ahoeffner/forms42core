@@ -21,8 +21,8 @@ import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
 import { FormBacking } from "../../application/FormBacking.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
-import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
+import { MouseMap, MouseMapParser} from "../../control/events/MouseMap.js";
 
 
 export class Field

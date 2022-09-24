@@ -15,16 +15,15 @@ import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
-import { DataType } from '../view/fields/DataType.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
-import { Record as ModelRecord } from '../model/Record.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FilterStructure } from '../model/FilterStructure.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
+import { Record as ModelRecord, RecordState } from '../model/Record.js';
 
 export class Block
 {
@@ -80,10 +79,17 @@ export class Block
 		return(FormBacking.getModelBlock(this).record);
 	}
 
-	public datatype(field:string) : string
+	public get state() : RecordState
 	{
-		field = field?.toLowerCase();
-		return(DataType[FormBacking.getViewBlock(this).fieldinfo.get(field).type]);
+		return(this.getRecord()?.state);
+	}
+
+	public refresh(requery:boolean) : void
+	{
+	}
+
+	public querydetails(field?:string) : void
+	{
 	}
 
 	public async prevrecord() : Promise<boolean>

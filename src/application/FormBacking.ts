@@ -25,6 +25,8 @@ import { FormEvents } from '../control/events/FormEvents.js';
 
 export class FormBacking
 {
+	private static form:Form = null;
+
 	private static vforms:Map<Form,ViewForm> =
 		new Map<Form,ViewForm>();
 
@@ -34,9 +36,42 @@ export class FormBacking
 	private static bdata:Map<Form,FormBacking> =
 		new Map<Form,FormBacking>();
 
+	public static removeForm(form:Form) : void
+	{
+		if (form == FormBacking.form)
+			FormBacking.form = null;
+	}
+
 	public static getCurrentForm() : Form
 	{
 		return(ViewForm.current().parent);
+	}
+
+	public static getCurrentViewForm() : ViewForm
+	{
+		return(FormBacking.vforms.get(this.form));
+	}
+
+	public static getCurrentModelForm() : ModelForm
+	{
+		return(FormBacking.mforms.get(this.form));
+	}
+
+	public static setCurrentForm(form:Form|ViewForm|ModelForm) : void
+	{
+		if (form instanceof ViewForm)
+		{
+			FormBacking.form = form.parent;
+			return;
+		}
+
+		if (form instanceof ModelForm)
+		{
+			FormBacking.form = form.parent;
+			return;
+		}
+
+		FormBacking.form = form;
 	}
 
 	public static getBacking(form:Form) : FormBacking

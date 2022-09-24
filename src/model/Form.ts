@@ -45,7 +45,7 @@ export class Form
 
 	public get name() : string
 	{
-		return(this.constructor.name.toLowerCase());
+		return(this.parent.name);
 	}
 
 	public get block() : Block

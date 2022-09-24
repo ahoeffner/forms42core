@@ -33,8 +33,10 @@ import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 
 export class Form implements EventListenerObject
 {
-	private static curform$:Form = null;
-	public static current() : Form {return(Form.curform$);}
+	public static current() : Form
+	{
+		return(FormBacking.getCurrentViewForm());
+	}
 
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
@@ -52,7 +54,7 @@ export class Form implements EventListenerObject
 
 	public get name() : string
 	{
-		return(this.constructor.name.toLowerCase());
+		return(this.parent.name);
 	}
 
 	public get parent() : InterfaceForm
@@ -166,7 +168,7 @@ export class Form implements EventListenerObject
 			Go to form
 		 **********************************************************************/
 
-		if (this != Form.curform$)
+		if (this != Form.current())
 		{
 			// When modal call, allow leaving former form in any state
 
@@ -174,9 +176,9 @@ export class Form implements EventListenerObject
 			{
 				preform = this;
 
-				if (Form.curform$ != null)
+				if (Form.current() != null)
 				{
-					preform = Form.curform$;
+					preform = Form.current();
 
 					if (!preform.validated())
 					{
@@ -278,10 +280,11 @@ export class Form implements EventListenerObject
 			return(false);
 		}
 
-		Form.curform$ = this;
 		this.curinst$ = inst;
 		inst.field.block.current = inst;
+		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
+		console.log("set current form : "+this.name)
 
 		if (preform)
 		{
@@ -298,7 +301,7 @@ export class Form implements EventListenerObject
 	{
 		if (!await this.LeaveField(inst))
 		{
-			Form.curform$.focus();
+			Form.current().focus();
 			return(false);
 		}
 		return(true);

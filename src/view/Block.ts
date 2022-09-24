@@ -677,10 +677,14 @@ export class Block
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>
 	{
+		let success:boolean = null;
 		let next:FieldInstance = inst;
+		FlightRecorder.debug("scroll 1: "+inst);
 
 		if (!await this.validateRow())
 			return(next);
+
+		FlightRecorder.debug("scroll 2: "+inst);
 
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
@@ -693,6 +697,8 @@ export class Block
 			if (available <= 0) return(next);
 			let move:boolean = (scroll > 1 && available <= this.row);
 
+			FlightRecorder.debug("scroll 3: "+inst);
+
 			if (move)
 			{
 				inst.ignore = "blur";
@@ -700,19 +706,27 @@ export class Block
 				let idx:number = this.getCurrentRow().getFieldIndex(inst);
 				next = this.getRow(available-1).getFieldByIndex(idx);
 
+				FlightRecorder.debug("scroll 4: "+inst+" next: "+next);
 				next.ignore = "focus";
 			}
+
+			FlightRecorder.debug("scroll 5: "+inst+" next: "+next);
 
 			if (!await this.form.LeaveField(inst))
 				return(next);
 
+			FlightRecorder.debug("scroll 6: "+inst+" next: "+next);
+
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
+			FlightRecorder.debug("scroll 7: "+inst+" next: "+next);
 			this.model.scroll(scroll,this.row);
 
-			await this.form.enterRecord(this,0);
-			await this.form.enterField(inst,0);
+			success = await this.form.enterRecord(this,0);
+			success = await this.form.enterField(inst,0);
+
+			FlightRecorder.debug("scroll 8: "+inst+" success: "+success);
 
 			if (move)
 			{
@@ -757,6 +771,7 @@ export class Block
 			if (row.status != Status.na) next = row.getFieldByIndex(idx);
 		}
 
+		FlightRecorder.debug("scroll 9: "+inst+" done");
 		return(next);
 	}
 

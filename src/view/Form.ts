@@ -284,7 +284,6 @@ export class Form implements EventListenerObject
 		inst.field.block.current = inst;
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
-		console.log("set current form : "+this.name)
 
 		if (preform)
 		{

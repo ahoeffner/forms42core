@@ -42,7 +42,7 @@ class WatchDog
 	{
 		if (!EventStack.running && EventStack.stack$.length > 0)
 		{
-			FlightRecorder.add("restart EventStackHandler");
+			FlightRecorder.add("@eventstack: restart EventStackHandler");
 			EventStack.handle();
 		}
 
@@ -67,7 +67,7 @@ export class EventStack
 
 	public static async handle() : Promise<void>
 	{
-		FlightRecorder.debug("run events");
+		FlightRecorder.debug("@eventstack: run events");
 
 		if (EventStack.running)
 			return;
@@ -78,16 +78,16 @@ export class EventStack
 		if (cmd == undefined)
 		{
 			EventStack.running = false;
-			FlightRecorder.debug("stop EventStack");
+			FlightRecorder.debug("@eventstack: stop EventStack");
 			return;
 		}
 
-		FlightRecorder.debug("event: "+cmd.field.name+"["+cmd.field.row.rownum+"] "+cmd.brwevent.type);
+		FlightRecorder.debug("@eventstack: "+cmd.field.name+"["+cmd.field.row.rownum+"] "+cmd.brwevent.type);
 
 		try
 		{
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
-			FlightRecorder.debug("event comleted");
+			FlightRecorder.debug("@eventstack:  comleted");
 
 			EventStack.running = false;
 			setTimeout(() => {EventStack.handle();},0);

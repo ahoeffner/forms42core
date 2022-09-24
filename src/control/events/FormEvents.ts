@@ -416,7 +416,7 @@ export class FormEvents
 		}
 
 		if (swap) event["key$"] = ekey;
-		if (!cont) FlightRecorder.add(lsnr.clazz+" "+lsnr.method+" "+event+" returned false");
+		if (!cont) FlightRecorder.add("@formevent: "+lsnr.clazz+" "+lsnr.method+" "+event+" returned false");
 
 		return(cont);
 	}

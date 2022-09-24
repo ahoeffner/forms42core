@@ -246,7 +246,8 @@ export class Field
 			if (inst.ignore != "focus")
 				success = await this.block.form.enter(inst);
 
-			FlightRecorder.debug("focus: "+inst+" ignore: "+inst.ignore+" success: "+success);
+			if (!success)
+				FlightRecorder.add("@field: focus "+inst+" ignore: "+inst.ignore+" failed");
 
 			inst.ignore = null;
 			return;
@@ -257,7 +258,8 @@ export class Field
 			if (inst.ignore != "blur")
 				success = await this.block.form.leave(inst);
 
-			FlightRecorder.debug("blur: "+inst+" completed, success: "+success);
+			if (!success)
+				FlightRecorder.add("@field: blur "+inst+" failed");
 
 			if (!this.valid$)
 			{
@@ -277,7 +279,9 @@ export class Field
 			this.distribute(inst,this.value$,this.dirty);
 			this.block.distribute(this,this.value$,this.dirty);
 
-			FlightRecorder.debug("change: "+inst+" completed, success: "+success);
+			if (!success)
+				FlightRecorder.add("@field: change "+inst+" failed");
+
 			return;
 		}
 
@@ -294,7 +298,10 @@ export class Field
 			this.block.distribute(this,value,this.dirty);
 
 			success = await this.block.onEdit(inst);
-			FlightRecorder.debug("onEdit: "+inst+" completed, success: "+success);
+
+			if (!success)
+				FlightRecorder.add("@field: onEdit "+inst+" failed");
+
 			return;
 		}
 
@@ -311,7 +318,10 @@ export class Field
 				key = KeyMapping.parseBrowserEvent(brwevent);
 
 			success = await this.block.form.keyhandler(key,inst);
-			FlightRecorder.debug("keyhandler: "+inst+" completed, success: "+success);
+
+			if (!success)
+				FlightRecorder.add("@field: keyhandler "+inst+" failed");
+
 			return;
 		}
 
@@ -319,7 +329,10 @@ export class Field
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
 			success = await this.block.form.mousehandler(mevent,inst);
-			FlightRecorder.debug("mouse: "+inst+" completed, success: "+success);
+
+			if (!success)
+				FlightRecorder.add("@field: mouseevent "+inst+" failed");
+
 			return;
 		}
 	}
@@ -358,7 +371,7 @@ export class Field
 			inst.valid = false;
 			this.valid = false;
 
-			FlightRecorder.debug("validateField: "+inst+" completed, success: false");
+			FlightRecorder.debug("@field: validateField: "+inst+" failed");
 			return(false);
 		}
 		else
@@ -370,7 +383,6 @@ export class Field
 			this.validated = true;
 
 			await this.block.postValidateField(inst);
-			FlightRecorder.debug("validateField: "+inst+" completed, success: true");
 			return(true);
 		}
 	}

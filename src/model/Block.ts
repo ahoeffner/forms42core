@@ -486,8 +486,6 @@ export class Block
 		let newid:object = null;
 		let runid:object = null;
 
-		FlightRecorder.debug("query phase 1 "+this.name);
-
 		if (qryid == null)
 			qryid = this.form.QueryManager.startNewChain();
 
@@ -523,7 +521,8 @@ export class Block
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
-		FlightRecorder.debug("query phase 2 "+this.name+" "+this.filter);
+
+		FlightRecorder.debug("@model.block: execute query "+this.name+" filter: "+this.filter);
 
 		this.record$ = -1;
 		let record:Record = null;
@@ -546,7 +545,6 @@ export class Block
 		}
 
 		this.form.QueryManager.setRunning(this,null);
-		FlightRecorder.debug("query phase 3 "+this.name);
 
 		this.view.lockUnused();
 		return(await this.postQuery());

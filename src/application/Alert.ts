@@ -28,7 +28,7 @@ export class Alert
 		if (type == null)
 			type = Type.PopAndLog;
 
-		FlightRecorder.add(title+" - "+msg);
+		FlightRecorder.add("alert.fatal: "+title+" - "+msg);
 
 		if (type == Type.Popup || type == Type.PopAndLog)
 			Alert.callform(msg,title,false,true);

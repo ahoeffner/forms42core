@@ -21,22 +21,21 @@ export class FlightRecorder
 	public static add(message:any) : void
 	{
 		this.messages$.push(message);
+		if (this.debug) console.log(message);
 		if (this.messages$.length > this.MESSAGES) this.messages$.shift();
 	}
 
 	public static debug(message:any) : void
 	{
 		if (this.debug$)
-		{
-			this.messages$.push(message);
-			if (this.messages$.length > this.MESSAGES) this.messages$.shift();
-		}
+			console.log(message);
 	}
 
 	public static dump() : void
 	{
 		this.debug$ = !this.debug$;
 		console.log("**** dump ****");
+		console.log("debug: "+this.debug$);
 		this.messages$.forEach((msg) =>
 			{console.log(msg);})
 	}

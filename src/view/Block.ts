@@ -322,7 +322,7 @@ export class Block
 		{
 			this.model.setValue(inst.name,value);
 			if (this.model.querymode) this.model.setFilter(inst.name);
-			else success = await this.model.queryFieldDetails(inst.name);
+			else success = await this.model.form.queryFieldDetails(this.name,inst.name);
 		}
 
 		return(success);

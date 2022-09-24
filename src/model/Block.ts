@@ -463,11 +463,6 @@ export class Block
 		this.qbe.querymode = false;
 	}
 
-	public async queryFieldDetails(field:string) : Promise<boolean>
-	{
-		return(true)
-	}
-
 	public async enterQuery() : Promise<boolean>
 	{
 		if (!await this.wrapper.clear())

@@ -103,6 +103,16 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
+	public getDetailBlocksForField(block:Block,field:string) : Block[]
+	{
+		let blocks:Block[] = [];
+
+		this.blocks$.get(block.name)?.getFieldRelations(field).
+		forEach((rel) => blocks.push(this.getBlock(rel.detail.block)))
+
+		return(blocks);
+	}
+
 	public getMasterLinks(block:Block) : Relation[]
 	{
 		let blocks:Relation[] = [];
@@ -214,6 +224,11 @@ class Dependency
 	{
 		let links:Relation[] = Array.from(this.masters$.values());
 		return(links != null ? links : []);
+	}
+
+	public getFieldRelations(field:string) : Relation[]
+	{
+		return(this.fldmap$.get(field));
 	}
 
 	public link(link:Relation) : void

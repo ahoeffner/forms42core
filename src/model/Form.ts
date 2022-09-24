@@ -253,6 +253,17 @@ export class Form
 		}
 	}
 
+	public async queryFieldDetails(block:string,field:string) : Promise<boolean>
+	{
+		let blk:Block = this.getBlock(block);
+		let newid:object = this.QueryManager.startNewChain();
+
+		this.blkcord$.getDetailBlocksForField(blk,field).
+		forEach((detail) => {detail.executeQuery(newid)})
+		
+		return(true)
+	}
+
 	public async executeQuery(block:Block|string, keep?:boolean) : Promise<boolean>
 	{
 		if (typeof block === "string")

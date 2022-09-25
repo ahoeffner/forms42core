@@ -21,7 +21,7 @@ export class FlightRecorder
 	public static add(message:any) : void
 	{
 		this.messages$.push(message);
-		if (this.debug) console.log(message);
+		if (this.debug$) console.log(message);
 		if (this.messages$.length > this.MESSAGES) this.messages$.shift();
 	}
 

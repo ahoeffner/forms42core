@@ -74,7 +74,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		let props:FieldProperties = this.getBlock("calendar").
-			getDefaultProperties("day");
+			getDefaultProperties("day-11");
 
 		this.enabled = props;
 		this.disabled = props.clone().setEnabled(false);

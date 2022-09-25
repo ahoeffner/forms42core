@@ -348,7 +348,7 @@ export class FieldInstance implements FieldEventHandler
 				return;
 			}
 
-			this.focus(++attempts);
+			this.focus(++attempts,hits,sleep);
 		},
 			sleep
 		);

@@ -42,6 +42,12 @@ export class DatePicker extends Form
 			{type: EventType.WhenValidateField, field: "date"}
 		]);
 
+		this.addEventListener(this.navigate,
+		[
+			{type: EventType.Key, key: KeyMap.prevrecord},
+			{type: EventType.Key, key: KeyMap.nextrecord}
+		]);
+
 		this.addEventListener(this.setDay,{type: EventType.Mouse, mouse:MouseMap.click});
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
@@ -62,14 +68,13 @@ export class DatePicker extends Form
 
 	private async done() : Promise<boolean>
 	{
-		let date = this.getValue("calendar","date");
-
 		let form:Form = this.parameters.get("form");
 		let block:string = this.parameters.get("block");
 		let field:string = this.parameters.get("field");
 
-		console.log("form: "+form.name+" block: "+block+" field: "+field+" value: "+date)
-		form.setValue(block,field,date);
+		form.setValue(block,field,this.date);
+		this.setValue("calendar","date",this.date);
+
 		return (this.close());
 	}
 
@@ -94,7 +99,16 @@ export class DatePicker extends Form
 		this.setValue("calendar","date",value);
 
 		this.setDate();
-		this.populateDates();
+		return(true);
+	}
+
+	private async navigate(event:FormEvent) : Promise<boolean>
+	{
+		let prev:boolean = event.key == KeyMap.prevrecord;
+		let next:boolean = event.key == KeyMap.nextrecord;
+
+		console.log(event.field+" prev: "+prev+" next: "+next);
+
 		return(true);
 	}
 
@@ -125,7 +139,7 @@ export class DatePicker extends Form
 	private async goToNextMonth () : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()+1);
-
+		this.setValue("calendar","date",this.date);
 		this.populateDates();
 		return(true)
 	}
@@ -133,7 +147,7 @@ export class DatePicker extends Form
 	private async goToPrevMonth() : Promise<boolean>
 	{
 		this.date.setMonth(this.date.getMonth()-1);
-
+		this.setValue("calendar","date",this.date);
 		this.populateDates();
 		return(true);
 	}
@@ -164,10 +178,12 @@ export class DatePicker extends Form
 					{
 						++dayno
 						this.setValue("calendar","day-"+week+""+day, dayno);
+						block.setDefaultProperties(this.enabled,"day-"+week+""+day);
 					}
 					else
 					{
 						this.setValue("calendar","day-"+week+""+day, null);
+						block.setDefaultProperties(this.disabled,"day-"+week+""+day);
 					}
 				}
 				else if(++dayno <= days)

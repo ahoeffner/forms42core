@@ -170,6 +170,17 @@ export class Block
 		return(fields);
 	}
 
+	public getFields(field:string) : FieldInstance[]
+	{
+		let matched:FieldInstance[] = [];
+		let fields:Field[] = this.getAllFields(field);
+
+		for (let f = 0; f < fields.length; f++)
+			matched.push(...fields[f].getInstances());
+
+		return(matched);
+	}
+
 	public getFieldById(field:string, id:string) : FieldInstance
 	{
 		let fields:Field[] = this.getAllFields(field);

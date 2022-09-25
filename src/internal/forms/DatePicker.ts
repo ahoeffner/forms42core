@@ -18,13 +18,15 @@ import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
+import { FieldProperties } from "../../public/FieldProperties.js";
+import { Block } from "../../public/Block.js";
 
 export class DatePicker extends Form
 {
-	date:Date = new Date();
-	day:number = this.date.getDate();
-	month:number = this.date.getMonth();
-	year:number = this.date.getFullYear();
+	private date:Date = new Date();
+	private enabled:FieldProperties;
+	private disabled:FieldProperties;
+	private day:number = this.date.getDate();
 
 	space:KeyMap = new KeyMap({key:' '});
 
@@ -70,6 +72,12 @@ export class DatePicker extends Form
 
 		Internals.stylePopupWindow(view);
 		Properties.styleDatePicker(view);
+
+		let props:FieldProperties = this.getBlock("calendar").
+			getDefaultProperties("day");
+
+		this.enabled = props;
+		this.disabled = props.clone().setEnabled(false);
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
@@ -126,17 +134,17 @@ export class DatePicker extends Form
 	private populateDates() : void
 	{
 		let dayno:number = 0;
+		let block:Block = this.getBlock("calendar");
 		if(this.date == null) this.date = new Date();
-		let Lday:string = dates.format(this.date,"MMM YYYY");
+		let month:string = dates.format(this.date,"MMM YYYY");
 		let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
-		for (let day = 0; day <= 6; day++) {
+		for (let day = 0; day <= 6; day++)
 			this.setValue("calendar","weekday-"+ day, weekdays[day])
-		}
 
-		this.setValue("calendar","mth",Lday);
+		this.setValue("calendar","mth",month);
 		for (let week = 1; week <= 6; week++)
 		{
 			for (let day = 1; day <= 7; day++)
@@ -151,18 +159,21 @@ export class DatePicker extends Form
 						this.setValue("calendar","day-"+week+""+day, dayno);
 					}
 					else
+					{
 						this.setValue("calendar","day-"+week+""+day, null);
-
+					}
 				}
 				else if(++dayno <= days)
 				{
 					// Enable
 					this.setValue("calendar","day-"+week+""+day, dayno);
+					block.setDefaultProperties(this.enabled,"day-"+week+""+day);
 				}
 				else
 				{
 					// Disable
 					this.setValue("calendar","day-"+week+""+day, null);
+					block.setDefaultProperties(this.disabled,"day-"+week+""+day);
 				}
 			}
 		}
@@ -197,7 +208,7 @@ export class DatePicker extends Form
 				</div>
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
-						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
+						<span tabindex="-1" name="$day-$week$day" from="calendar"></span>
 					</div>
 				</div>
 			</div>

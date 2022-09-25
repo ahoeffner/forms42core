@@ -209,6 +209,30 @@ export class Block
 		return(FormBacking.getModelBlock(this).removeKey(name));
 	}
 
+	public getQBEProperties(field:string) : FieldProperties
+	{
+		field = field?.toLowerCase();
+		let inst:FieldInstance[] = FormBacking.getViewBlock(this).getFields(field);
+		if (inst.length > 0) return(new FieldProperties(inst[0].qbeProperties));
+		return(null);
+	}
+
+	public getInsertProperties(field:string) : FieldProperties
+	{
+		field = field?.toLowerCase();
+		let inst:FieldInstance[] = FormBacking.getViewBlock(this).getFields(field);
+		if (inst.length > 0) return(new FieldProperties(inst[0].insertProperties));
+		return(null);
+	}
+
+	public getDefaultProperties(field:string) : FieldProperties
+	{
+		field = field?.toLowerCase();
+		let inst:FieldInstance[] = FormBacking.getViewBlock(this).getFields(field);
+		if (inst.length > 0) return(new FieldProperties(inst[0].updateProperties));
+		return(null);
+	}
+
 	public getQBEPropertiesById(field:string, id:string) : FieldProperties
 	{
 		id = id?.toLowerCase();
@@ -306,6 +330,30 @@ export class Block
 		clazz = clazz?.toLowerCase();
 		FormBacking.getViewBlock(this).getFieldsByClass(field,clazz).
 		forEach((inst) => {FieldFeatureFactory.replace(props,inst,Status.update);})
+	}
+
+	public setQBEPropertiesById(props:FieldProperties, field:string, id:string) : void
+	{
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
+		FieldFeatureFactory.replace(props,inst,Status.qbe);
+	}
+
+	public setInsertPropertiesById(props:FieldProperties, field:string, id:string) : void
+	{
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
+		FieldFeatureFactory.replace(props,inst,Status.insert);
+	}
+
+	public setDefaultPropertiesById(props:FieldProperties, field:string, id:string) : void
+	{
+		id = id?.toLowerCase();
+		field = field?.toLowerCase();
+		let inst:FieldInstance = FormBacking.getViewBlock(this).getFieldById(field,id);
+		FieldFeatureFactory.replace(props,inst,Status.update);
 	}
 
 	public async executeQuery(requery?:boolean) : Promise<boolean>

@@ -17,7 +17,7 @@ import { Properties } from "../Properties.js";
 import { Form as InternalForm } from "../../internal/Form.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
 
-export class FromTag implements Tag
+export class FromAttribute implements Tag
 {
 	public parse(component:any, tag:HTMLElement, attr:string) : string|HTMLElement|HTMLElement[]
 	{

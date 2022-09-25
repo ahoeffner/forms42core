@@ -22,8 +22,8 @@ import { Tag } from './tags/Tag.js';
 import { Root } from './tags/Root.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
-import { FromTag } from './tags/FromTag.js';
 import { Indicator } from './tags/Indicator.js';
+import { FromAttribute } from './tags/FromAttribute.js';
 import { FilterIndicator } from './tags/FilterIndicator.js';
 
 export enum ScrollDirection
@@ -99,8 +99,8 @@ export class Properties
 	new Map<string,Class<Tag>>
 	(
 			[
-				[Properties.BindAttr,FromTag],
-				[Properties.ForeachTag,Foreach]
+				[Properties.ForeachTag,Foreach],
+				[Properties.BindAttr,FromAttribute]
 			]
 	);
 }

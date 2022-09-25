@@ -13,9 +13,19 @@
 export class Connection
 {
 	private base$:URL = null;
+	private name$:string = null;
+	private success$:boolean = true;
 
-	public constructor(url?:string|URL)
+	private headers$:any =
 	{
+		"Accept" : "application/json",
+		"Content-Type": "application/json"
+	};
+
+	public constructor(name:string, url?:string|URL)
+	{
+		this.name$ = name;
+
 		let host:string = window.location.host;
 		let prot:string = window.location.protocol;
 
@@ -28,9 +38,29 @@ export class Connection
 		this.base$ = url;
 	}
 
+	public get name() : string
+	{
+		return(this.name$);
+	}
+
+	public get success() : boolean
+	{
+		return(this.success$);
+	}
+
 	public get baseURL() : URL
 	{
 		return(this.base$);
+	}
+
+	public get headers() : any
+	{
+		return(this.headers$);
+	}
+
+	public set headers(headers:any)
+	{
+		this.headers$ = headers;
 	}
 
 	public set baseURL(url:string|URL)
@@ -41,18 +71,29 @@ export class Connection
 		this.base$ = url;
 	}
 
-	public async invoke(url?:string|URL,payload?:any) : Promise<any>
+	public async invoke(url?:string|URL, payload?:any) : Promise<any>
 	{
+		let body:any = null;
+		this.success$ = true;
+
 		let endpoint:URL = new URL(this.base$);
 		if (url) endpoint = new URL(url,endpoint);
 
-		await fetch(endpoint,
+		let http:any = await fetch(endpoint,
 		{
-			mode: 'cors',
-			method: 'POST'
-		})
-		.then(function(response) {console.log(response)});
+			method : 'POST',
+			headers : this.headers$,
+			body : JSON.stringify(payload)
+		}).
+		catch((err) =>
+		{
+			body = err;
+			this.success$ = false;
+		});
 
-		return(null);
+		if (this.success$)
+			body = await http.json();
+
+		return(body);
 	}
 }

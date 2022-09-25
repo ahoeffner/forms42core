@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { Connection } from "./Connection";
+import { Connection } from "./Connection.js";
 
 export class Connections
 {

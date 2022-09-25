@@ -13,14 +13,9 @@
 export class Connection
 {
 	private base$:URL = null;
+	private headers$:any = {};
 	private name$:string = null;
-	private success$:boolean = true;
-
-	private headers$:any =
-	{
-		"Accept" : "application/json",
-		"Content-Type": "application/json"
-	};
+	private method$:string = null;
 
 	public constructor(name:string, url?:string|URL)
 	{
@@ -41,11 +36,6 @@ export class Connection
 	public get name() : string
 	{
 		return(this.name$);
-	}
-
-	public get success() : boolean
-	{
-		return(this.success$);
 	}
 
 	public get baseURL() : URL
@@ -71,28 +61,60 @@ export class Connection
 		this.base$ = url;
 	}
 
-	public async invoke(url?:string|URL, payload?:any) : Promise<any>
+	public async get(url?:string|URL, raw?:boolean) : Promise<any>
+	{
+		this.method$ = "GET";
+		return(this.invoke(url,null,raw));
+	}
+
+	public async post(url?:string|URL, payload?:string|any, raw?:boolean) : Promise<any>
+	{
+		this.method$ = "POST";
+		return(this.invoke(url,payload,raw));
+	}
+
+	public async patch(url?:string|URL, payload?:string|any, raw?:boolean) : Promise<any>
+	{
+		this.method$ = "PATCH";
+		return(this.invoke(url,payload,raw));
+	}
+
+	private async invoke(url:string|URL, payload:string|any, raw:boolean) : Promise<any>
 	{
 		let body:any = null;
-		this.success$ = true;
+		let success:boolean = true;
 
 		let endpoint:URL = new URL(this.base$);
 		if (url) endpoint = new URL(url,endpoint);
 
+		if (payload)
+		{
+			if (typeof payload != "string")
+				payload = JSON.stringify(payload);
+		}
+
 		let http:any = await fetch(endpoint,
 		{
-			method : 'POST',
-			headers : this.headers$,
-			body : JSON.stringify(payload)
+			method 	: this.method$,
+			headers 	: this.headers$,
+			body 		: payload
 		}).
-		catch((err) =>
+		catch((errmsg) =>
 		{
-			body = err;
-			this.success$ = false;
+			body =
+			{
+				success: false,
+				message: errmsg
+			};
+
+			success = false;
 		});
 
-		if (this.success$)
-			body = await http.json();
+		if (success)
+		{
+			if (raw) body = await http.text();
+			else		body = await http.json();
+		}
 
 		return(body);
 	}

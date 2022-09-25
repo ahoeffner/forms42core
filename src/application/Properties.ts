@@ -20,9 +20,9 @@ import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
 import { Tag } from './tags/Tag.js';
 import { Root } from './tags/Root.js';
-import { Field } from './tags/Field.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
+import { FromTag } from './tags/FromTag.js';
 import { Indicator } from './tags/Indicator.js';
 import { FilterIndicator } from './tags/FilterIndicator.js';
 
@@ -43,6 +43,9 @@ export class Properties
 {
 	public static baseurl:string = "/";
 
+	public static ParseTags:boolean = true;
+	public static ParseEvents:boolean = true;
+
 	public static BindAttr:string = "from";
 	public static RecordModeAttr:string = "mode";
 
@@ -50,59 +53,54 @@ export class Properties
 	public static IncludeTag:string = "include";
 	public static ForeachTag:string = "foreach";
 
-	public static IndicatorType:string = "row-indicator";
-	public static FilterIndicatorType:string = "filter-indicator";
-
-	public static AttributePrefix:string = "$";
-	public static RequireAttributePrefix:boolean = false;
-
 	public static DateDelimitors:string = "./-: ";
 	public static TimeFormat:string = "HH:mm:ss";
 	public static DateFormat:string = "DD-MM-YYYY";
 
-	public static ParseTags:boolean = true;
-	public static ParseEvents:boolean = true;
+	public static AttributePrefix:string = "$";
+	public static RequireAttributePrefix:boolean = false;
 
-	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator", FilterIndicator:"filter-indicator"};
+	public static IndicatorType:string = "row-indicator";
+	public static FilterIndicatorType:string = "filter-indicator";
+
+	public static Classes:ClassNames =
+	{
+		Invalid: "invalid",
+		RowIndicator:"row-indicator",
+		FilterIndicator:"filter-indicator"
+	};
 
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
 	public static FactoryImplementation:ComponentFactory = new FactoryImpl();
 
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
 
-	public static getTagLibrary() : Map<string,Class<Tag>>
-	{
-		return(
-			new Map<string,Class<Tag>>
-			(
-					[
-						[Properties.RootTag,Root],
-						[Properties.IncludeTag,Include]
-					]
-			));
-	}
+	public static TagLibrary : Map<string,Class<Tag>> =
+	new Map<string,Class<Tag>>
+	(
+			[
+				[Properties.RootTag,Root],
+				[Properties.IncludeTag,Include]
+			]
+	);
 
-	public static getTypeLibrary() : Map<string,Class<Tag>>
-	{
-		return(
-			new Map<string,Class<Tag>>
-			(
-					[
-						[Properties.IndicatorType,Indicator],
-						[Properties.FilterIndicatorType,FilterIndicator]
-					]
-			));
-	}
 
-	public static getAttributeLibrary() : Map<string,Class<Tag>>
-	{
-		return(
-			new Map<string,Class<Tag>>
-			(
-					[
-						[Properties.BindAttr,Field],
-						[Properties.ForeachTag,Foreach]
-					]
-			));
-	}
+	public static BlockTypeLibrary : Map<string,Class<Tag>> =
+	new Map<string,Class<Tag>>
+	(
+			[
+				[Properties.IndicatorType,Indicator],
+				[Properties.FilterIndicatorType,FilterIndicator]
+			]
+	);
+
+
+	public static AttributeLibrary : Map<string,Class<Tag>> =
+	new Map<string,Class<Tag>>
+	(
+			[
+				[Properties.BindAttr,FromTag],
+				[Properties.ForeachTag,Foreach]
+			]
+	);
 }

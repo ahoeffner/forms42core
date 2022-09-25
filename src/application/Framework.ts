@@ -31,14 +31,14 @@ export class Framework
 	private static initTaglib() : Map<string,Tag>
 	{
 		Framework.taglib = new Map<string,Tag>();
-		Properties.getTagLibrary().forEach((clazz,tag) => {Framework.addTag(tag.toLowerCase(),clazz);});
+		Properties.TagLibrary.forEach((clazz,tag) => {Framework.addTag(tag.toLowerCase(),clazz);});
 		return(Framework.taglib);
 	}
 
 	private static initAttrlib() : Map<string,Tag>
 	{
 		Framework.attrlib = new Map<string,Tag>();
-		Properties.getAttributeLibrary().forEach((clazz,tag) => {Framework.addAttr(tag.toLowerCase(),clazz);});
+		Properties.AttributeLibrary.forEach((clazz,tag) => {Framework.addAttr(tag.toLowerCase(),clazz);});
 		return(Framework.attrlib);
 	}
 

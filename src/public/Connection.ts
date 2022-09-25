@@ -16,6 +16,7 @@ export class Connection
 	private headers$:any = {};
 	private name$:string = null;
 	private method$:string = null;
+	private success$:boolean = true;
 
 	public constructor(name:string, url?:string|URL)
 	{
@@ -41,6 +42,11 @@ export class Connection
 	public get baseURL() : URL
 	{
 		return(this.base$);
+	}
+
+	public get success() : boolean
+	{
+		return(this.success$);
 	}
 
 	public get headers() : any
@@ -82,7 +88,7 @@ export class Connection
 	private async invoke(url:string|URL, payload:string|any, raw:boolean) : Promise<any>
 	{
 		let body:any = null;
-		let success:boolean = true;
+		this.success$ = true;
 
 		let endpoint:URL = new URL(this.base$);
 		if (url) endpoint = new URL(url,endpoint);
@@ -101,16 +107,17 @@ export class Connection
 		}).
 		catch((errmsg) =>
 		{
-			body =
+			if (raw) body = errmsg;
+			else body =
 			{
 				success: false,
 				message: errmsg
 			};
 
-			success = false;
+			this.success$ = false;
 		});
 
-		if (success)
+		if (this.success$)
 		{
 			if (raw) body = await http.text();
 			else		body = await http.json();

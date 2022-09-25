@@ -48,8 +48,8 @@ export class Connection
 
 		await fetch(endpoint,
 		{
-			method: 'POST',
-			mode: 'no-cors'
+			mode: 'cors',
+			method: 'POST'
 		})
 		.then(function(response) {console.log(response)});
 

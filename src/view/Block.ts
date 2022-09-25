@@ -676,7 +676,7 @@ export class Block
 
 	public setFilterIndicators(indicators:FilterIndicator[], flag:boolean) : void
 	{
-		indicators.forEach((ind) =>
+		indicators?.forEach((ind) =>
 		{
 			if (flag) ind.element.classList.add(Properties.Classes.FilterIndicator);
 			else      ind.element.classList.remove(Properties.Classes.FilterIndicator);

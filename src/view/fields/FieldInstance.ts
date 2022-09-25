@@ -318,12 +318,29 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.getElement().blur();
 	}
 
-	public focus(attempts?:number) : void
+	public focus(attempts?:number, hits?:number, sleep?:number) : void
 	{
+		if (hits == null) hits = 0;
+		if (sleep == null) sleep = 1;
+		if (attempts == null) attempts = 0;
+
 		setTimeout(() =>
 		{
 			this.impl.getElement().focus();
-			if (attempts == null) attempts = 0;
+
+			if (document.activeElement == this.impl.getElement())
+			{
+				hits++;
+				sleep += 5;
+			}
+			else
+			{
+				hits = 0;
+				sleep = 1;
+			}
+
+			if (hits > 2)
+				return;
 
 			if (attempts >= 10)
 			{
@@ -331,9 +348,10 @@ export class FieldInstance implements FieldEventHandler
 				return;
 			}
 
-			if (document.activeElement != this.impl.getElement())
-				this.focus(++attempts);
-		},1);
+			this.focus(++attempts);
+		},
+			sleep
+		);
 	}
 
 	public focusable(status?:Status) : boolean

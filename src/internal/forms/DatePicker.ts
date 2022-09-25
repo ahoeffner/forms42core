@@ -11,15 +11,15 @@
  */
 
 import { Form } from "../Form.js";
+import { Block } from "../../public/Block.js";
 import { dates } from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
+import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
-import { FieldProperties } from "../../public/FieldProperties.js";
-import { Block } from "../../public/Block.js";
 
 export class DatePicker extends Form
 {
@@ -62,7 +62,14 @@ export class DatePicker extends Form
 
 	private async done() : Promise<boolean>
 	{
-		console.log(this.getValue("calendar","date"))
+		let date = this.getValue("calendar","date");
+
+		let form:Form = this.parameters.get("form");
+		let block:string = this.parameters.get("block");
+		let field:string = this.parameters.get("field");
+
+		console.log("form: "+form.name+" block: "+block+" field: "+field+" value: "+date)
+		form.setValue(block,field,date);
 		return (this.close());
 	}
 
@@ -208,7 +215,7 @@ export class DatePicker extends Form
 				</div>
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
-						<span tabindex="-1" name="$day-$week$day" from="calendar"></span>
+						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
 					</div>
 				</div>
 			</div>

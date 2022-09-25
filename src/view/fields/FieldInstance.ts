@@ -319,7 +319,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public focus() : void
 	{
-		setTimeout(() => {this.impl.getElement().focus();},10);
+		setTimeout(() => {this.impl.getElement().focus();},20);
 	}
 
 	public focusable(status?:Status) : boolean

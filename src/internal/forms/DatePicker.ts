@@ -28,8 +28,6 @@ export class DatePicker extends Form
 	private disabled:FieldProperties;
 	private day:number = this.date.getDate();
 
-	space:KeyMap = new KeyMap({key:' '});
-
 	constructor()
 	{
 		super(DatePicker.page);
@@ -55,13 +53,13 @@ export class DatePicker extends Form
 
 		this.addEventListener(this.goToPrevMonth,
 		[
-			{type: EventType.Key, field: "prev", key: this.space},
+			{type: EventType.Key, field: "prev", key: KeyMap.space},
 			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
 		]);
 
 		this.addEventListener(this.goToNextMonth,
 		[
-			{type: EventType.Key, field: "next", key: this.space},
+			{type: EventType.Key, field: "next", key: KeyMap.space},
 			{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
 		]);
 	}
@@ -74,6 +72,8 @@ export class DatePicker extends Form
 
 		form.setValue(block,field,this.date);
 		this.setValue("calendar","date",this.date);
+
+		console.log(this.date);
 
 		return (this.close());
 	}

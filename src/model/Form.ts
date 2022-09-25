@@ -14,6 +14,7 @@ import { Block } from './Block.js';
 import { Record } from './Record.js';
 import { DataModel } from './DataModel.js';
 import { Alert } from '../application/Alert.js';
+import { Form as ViewForm } from '../view/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
@@ -29,6 +30,7 @@ import { BlockCoordinator } from './relations/BlockCoordinator.js';
 export class Form
 {
 	private block$:Block = null;
+	private viewfrm$:ViewForm = null;
 	private parent$:InterfaceForm = null;
 	private datamodel$:DataModel = new DataModel();
 	private qrymgr$:QueryManager = new QueryManager();
@@ -40,6 +42,7 @@ export class Form
 	{
 		this.parent$ = parent;
 		FormBacking.setModelForm(parent,this);
+		this.viewfrm$ = FormBacking.getViewForm(this.parent,true);
 		Logger.log(Type.formbinding,"Create modelform: "+this.parent.name);
 	}
 
@@ -51,6 +54,11 @@ export class Form
 	public get block() : Block
 	{
 		return(this.block$);
+	}
+
+	public get view() : ViewForm
+	{
+		return(this.viewfrm$);
 	}
 
 	public get parent() : InterfaceForm
@@ -322,6 +330,8 @@ export class Form
 		{
 			if (!await blocks[i].preQuery())
 				return(false);
+
+			this.view.setFilterIndicator(blocks[i],!blocks[i].QueryFilter.empty);
 		}
 
 		return(block.executeQuery(this.qrymgr$.startNewChain()));

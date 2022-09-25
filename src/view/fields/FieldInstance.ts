@@ -16,6 +16,7 @@ import { DataType } from "./DataType.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
+import { Alert } from "../../application/Alert.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { BrowserEvent as Event} from "../BrowserEvent.js";
@@ -317,9 +318,22 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.getElement().blur();
 	}
 
-	public focus() : void
+	public focus(attempts?:number) : void
 	{
-		setTimeout(() => {this.impl.getElement().focus();},20);
+		setTimeout(() =>
+		{
+			this.impl.getElement().focus();
+			if (attempts == null) attempts = 0;
+
+			if (attempts >= 10)
+			{
+				Alert.fatal("unable to focus on "+this,"Field");
+				return;
+			}
+
+			if (document.activeElement != this.impl.getElement())
+				this.focus(++attempts);
+		},1);
 	}
 
 	public focusable(status?:Status) : boolean

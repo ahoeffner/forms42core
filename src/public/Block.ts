@@ -84,7 +84,12 @@ export class Block
 		return(this.getRecord()?.state);
 	}
 
-	public refresh(requery:boolean) : void
+	public flush() : void
+	{
+		FormBacking.getModelBlock(this).flush();
+	}
+
+	public refresh() : void
 	{
 	}
 

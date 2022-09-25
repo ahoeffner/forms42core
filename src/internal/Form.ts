@@ -144,6 +144,11 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
+	public async flush() : Promise<boolean>
+	{
+		return(FormBacking.getModelForm(this).flush());
+	}
+
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		if (!await this.validate()) return(null);
@@ -182,7 +187,7 @@ export class Form implements CanvasComponent
 
 		if (this.canvas != null)
 		{
-			if (!this.valid)
+			if (!this.validate())
 			{
 				Alert.warning("Form must be validated before layout can be changed","Validate");
 				return;

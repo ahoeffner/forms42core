@@ -68,6 +68,19 @@ export class Form
 		return(this.blkcord$);
 	}
 
+	public async flush() : Promise<boolean>
+	{
+		let blocks:Block[] = Array.from(this.blocks$.values());
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!blocks[i].flush())
+				return(false);
+		}
+
+		return(true);
+	}
+
 	public getBlocks() : Block[]
 	{
 		let blocks:Block[] = [];
@@ -260,7 +273,7 @@ export class Form
 
 		this.blkcord$.getDetailBlocksForField(blk,field).
 		forEach((detail) => {detail.executeQuery(newid)})
-		
+
 		return(true)
 	}
 

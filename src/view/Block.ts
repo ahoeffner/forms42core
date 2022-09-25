@@ -19,6 +19,7 @@ import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
 import { Record, RecordState } from "../model/Record.js";
+import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -27,6 +28,7 @@ import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { FilterIndicator } from "../application/tags/FilterIndicator.js";
 
 
 export class Block
@@ -670,6 +672,15 @@ export class Block
 		if (prev == next) prev = null;
 		if (next != null) this.getRow(next)?.activateIndicators(true);
 		if (prev != null) this.getRow(prev)?.activateIndicators(false);
+	}
+
+	public setFilterIndicators(indicators:FilterIndicator[], flag:boolean) : void
+	{
+		indicators.forEach((ind) =>
+		{
+			if (flag) ind.element.classList.add(Properties.Classes.FilterIndicator);
+			else      ind.element.classList.remove(Properties.Classes.FilterIndicator);
+		})
 	}
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>

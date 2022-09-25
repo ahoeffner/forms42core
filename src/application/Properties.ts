@@ -23,6 +23,8 @@ import { Root } from './tags/Root.js';
 import { Field } from './tags/Field.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
+import { Indicator } from './tags/Indicator.js';
+import { FilterIndicator } from './tags/FilterIndicator.js';
 
 export enum ScrollDirection
 {
@@ -34,6 +36,7 @@ export interface ClassNames
 {
 	Invalid:string;
 	RowIndicator:string;
+	FilterIndicator:string;
 }
 
 export class Properties
@@ -47,6 +50,9 @@ export class Properties
 	public static IncludeTag:string = "include";
 	public static ForeachTag:string = "foreach";
 
+	public static IndicatorType:string = "row-indicator";
+	public static FilterIndicatorType:string = "filter-indicator";
+
 	public static AttributePrefix:string = "$";
 	public static RequireAttributePrefix:boolean = false;
 
@@ -57,7 +63,7 @@ export class Properties
 	public static ParseTags:boolean = true;
 	public static ParseEvents:boolean = true;
 
-	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator"};
+	public static Classes:ClassNames = {Invalid: "invalid", RowIndicator:"row-indicator", FilterIndicator:"filter-indicator"};
 
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
 	public static FactoryImplementation:ComponentFactory = new FactoryImpl();
@@ -72,6 +78,18 @@ export class Properties
 					[
 						[Properties.RootTag,Root],
 						[Properties.IncludeTag,Include]
+					]
+			));
+	}
+
+	public static getTypeLibrary() : Map<string,Class<Tag>>
+	{
+		return(
+			new Map<string,Class<Tag>>
+			(
+					[
+						[Properties.IndicatorType,Indicator],
+						[Properties.FilterIndicatorType,FilterIndicator]
 					]
 			));
 	}

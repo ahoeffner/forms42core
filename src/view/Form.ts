@@ -30,6 +30,7 @@ import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FlightRecorder } from '../application/FlightRecorder.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
+import { FilterIndicator } from '../application/tags/FilterIndicator.js';
 
 export class Form implements EventListenerObject
 {
@@ -43,6 +44,7 @@ export class Form implements EventListenerObject
 	private curinst$:FieldInstance = null;
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private indicators:Map<string,Indicator[]> = new Map<string,Indicator[]>();
+	private fltindicators:Map<string,FilterIndicator[]> = new Map<string,FilterIndicator[]>();
 
 	constructor(parent:InterfaceForm)
 	{
@@ -119,6 +121,25 @@ export class Form implements EventListenerObject
 		indicators.push(ind);
 	}
 
+	public setFilterIndicator(block:ModelBlock,flag:boolean)
+	{
+		block.view.setFilterIndicators(this.fltindicators.get(block.name),flag);
+	}
+
+	public addFilterIndicator(ind:FilterIndicator) : void
+	{
+		let block:string = ind.binding.toLowerCase();
+		let fltindicators:FilterIndicator[] = this.fltindicators.get(block);
+
+		if (fltindicators == null)
+		{
+			fltindicators = [];
+			this.fltindicators.set(block,fltindicators);
+		}
+
+		fltindicators.push(ind);
+	}
+
 	public focus() : void
 	{
 		if (this.curinst$)
@@ -135,7 +156,10 @@ export class Form implements EventListenerObject
 
 	public async validate() : Promise<boolean>
 	{
-		return(this.curinst$.field.block.validateBlock());
+		if (!await this.curinst$.field.block.validateBlock())
+			return(false);
+
+		return(this.model.flush());
 	}
 
 	public validated() : boolean

@@ -46,11 +46,13 @@ export class Connection
 		let endpoint:URL = new URL(this.base$);
 		if (url) endpoint = new URL(url,endpoint);
 
-		endpoint = new URL("https://www.google.com");
+		await fetch(endpoint,
+		{
+			method: 'POST',
+			mode: 'no-cors'
+		})
+		.then(function(response) {console.log(response)});
 
-		let response:any = await fetch(endpoint);
-
-		console.log(response.constructor.name)
 		return(null);
 	}
 }

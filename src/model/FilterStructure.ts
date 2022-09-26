@@ -41,6 +41,8 @@ export class FilterStructure
 				return(false);
 			}
 		})
+
+		return(true);
 	}
 
 	public size() : number

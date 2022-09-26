@@ -15,7 +15,8 @@ import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
 {
-	private conn:string = null;
+	private conn$:string = null;
+	private keepalive$:number = 20;
 
 	public async connect() : Promise<boolean>
 	{
@@ -23,13 +24,11 @@ export class Connection extends BaseConnection
 		{
 			"scope": "transaction",
 			"auth.method": "database",
-			"username": this.quote(this.username),
-			"auth.secret": this.quote(this.password)
+			"username": this.username,
+			"auth.secret": this.password
 		};
 
 		let response:any = await this.post("connect",payload);
-
-		console.log(JSON.stringify(response));
 
 		if (!response.success)
 		{
@@ -37,11 +36,56 @@ export class Connection extends BaseConnection
 			return(false);
 		}
 
+		this.conn$ = response.session;
+		this.keepalive$ = (+response.timeout * 4/5)*1000;
+
+		this.keepalive();
 		return(true);
 	}
 
-	private quote(element:string) : string
+	public async query(stmt:string) : Promise<any>
 	{
-		return('"'+element+'"');
+		return(null);
+	}
+
+	public async fetch(stmt:string) : Promise<any>
+	{
+		return(null);
+	}
+
+	public async insert(stmt:string) : Promise<any>
+	{
+		return(null);
+	}
+
+	public async update(stmt:string) : Promise<any>
+	{
+		return(null);
+	}
+
+	public async delete(stmt:string) : Promise<any>
+	{
+		return(null);
+	}
+
+	private async keepalive() : Promise<void>
+	{
+		await this.sleep(this.keepalive$);
+
+		let response:any = await this.post(this.conn$+"/ping",{keepalive: true});
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
+		console.log(JSON.stringify(response))
+		this.keepalive();
+	}
+
+	public sleep(ms:number) : Promise<void>
+	{
+		return(new Promise(resolve => setTimeout(resolve,ms)));
 	}
 }

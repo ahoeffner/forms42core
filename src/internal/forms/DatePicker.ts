@@ -21,8 +21,6 @@ import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
 
-let planetaryWeek : 'Sun'|'Mon'|'Tue'|'Wed'|'Thu'|'Fri'|'Sat';
-
 export class DatePicker extends Form
 {
 	private date:Date = new Date();
@@ -158,53 +156,14 @@ export class DatePicker extends Form
 		return(true);
 	}
 
-	private startDays(startday:typeof planetaryWeek): Array<String>
-	{	
-
-		let weekdays = ['Sun', 'Mon','Tue','Wed','Thu','Fri','Sat'];
-		let before:Boolean = false;
-		let WeekArrays = new Array();
-		WeekArrays[0] = startday;
-		let day:number = 0;
-		let index:number = 0;
-		while(WeekArrays.length != 7) 
-		{
-			if(weekdays.indexOf(startday) < index && !before)
-			{
-				console.log(weekdays.indexOf(weekdays[index]));
-				if(weekdays.indexOf(weekdays[index]) < 6 )
-					WeekArrays.push(weekdays[index]);
-				else
-				{
-					WeekArrays.push(weekdays[index])
-					before = true;
-				}
-				
-			} else if(before)
-			{
-				console.log(day);
-				WeekArrays.push(weekdays[day]);
-				day++;
-			} 
-			index++;
-		}
-		console.log(WeekArrays);
-		return WeekArrays;
-	}
-
 	private populateDates() : void
 	{
 		let dayno:number = 0;
-<<<<<<< Updated upstream
 		let block:Block = this.getBlock("calendar");
 		if(this.date == null) this.date = new Date();
 		let weekdays:Array<String> = dates.startDays("Sun");
 		let month:string = dates.format(this.date,"MMM YYYY");
-=======
-		let weekdays:Array<String> = this.startDays('Sat');
-		if(this.date == null) this.date = new Date();	
-		let Lday:string = dates.format(this.date,"MMM YYYY");
->>>>>>> Stashed changes
+
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
@@ -217,13 +176,9 @@ export class DatePicker extends Form
 			for (let day = 1; day <= 7; day++)
 			{
 				if(week == 1)
-<<<<<<< Updated upstream
 				{
 					let theday:number = weekdays.findIndex(element => element == firstdaysname);
-=======
-				{	
-					let theday:number = weekdays.findIndex((element) => element == firstdaysname);
->>>>>>> Stashed changes
+
 
 					if(theday < day)
 					{

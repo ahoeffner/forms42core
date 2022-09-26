@@ -56,7 +56,24 @@ export class Record
 		this.rec$.setValue(field,value);
 		let blk:ModelBlock = this.rec$.block;
 		let row:Row = blk?.view.displayed(this.rec$);
-		if (row != null) row.getField(field)?.setValue(value);
+
+		if (row != null)
+		{
+			let fld:Field = row.getField(field);
+
+			if (fld != null)
+			{
+				fld.setValue(value);
+			}
+			else
+			{
+				if (blk.view.row == row.rownum)
+				{
+					fld = blk.view.getRow(-1)?.getField(field);
+					if (fld != null) fld.setValue(value);
+				}
+			}
+		}
 	}
 
 	public getProperties(field?:string, clazz?:string) : FieldProperties

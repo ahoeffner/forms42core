@@ -26,7 +26,21 @@ export class FilterStructure
 
 	public get empty() : boolean
 	{
-		return(this.entries$.length == 0);
+		if (this.entries$.length == 0)
+			return(true);
+
+		this.entries$.forEach((constr) =>
+		{
+			if (constr.filter instanceof FilterStructure)
+			{
+				if (!constr.filter.empty)
+					return(false);
+			}
+			else
+			{
+				return(false);
+			}
+		})
 	}
 
 	public size() : number

@@ -132,6 +132,21 @@ export class FilterStructure
 	{
 		let stmt:string = "";
 
+		this.entries$.forEach((constr) =>
+		{
+			stmt += constr.opr + " ";
+
+			if (constr.filter instanceof FilterStructure)
+			{
+				if (!constr.filter.empty)
+					stmt += "(" + constr.filter.asSQL() + ")";
+			}
+			else
+			{
+				stmt += constr.filter.asSQL();
+			}
+		})
+
 		return(stmt);
 	}
 
@@ -171,6 +186,12 @@ class Constraint
 	get and() : boolean
 	{
 		return(this.and$);
+	}
+
+	get opr() : string
+	{
+		if (this.and) return("and");
+		return("or");
 	}
 
 	async matches(record:Record) : Promise<boolean>

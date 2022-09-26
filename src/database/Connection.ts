@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from "../application/Alert.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
@@ -29,6 +30,12 @@ export class Connection extends BaseConnection
 		let response:any = await this.post("connect",payload);
 
 		console.log(JSON.stringify(response));
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return(false);
+		}
 
 		return(true);
 	}

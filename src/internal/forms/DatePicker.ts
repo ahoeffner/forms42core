@@ -11,22 +11,22 @@
  */
 
 import { Form } from "../Form.js";
-import { Block } from "../../public/Block.js";
 import { dates } from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
-import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
 
 export class DatePicker extends Form
 {
-	private date:Date = new Date();
-	private enabled:FieldProperties;
-	private disabled:FieldProperties;
-	private day:number = this.date.getDate();
+	date:Date = new Date();
+	day:number = this.date.getDate();
+	month:number = this.date.getMonth();
+	year:number = this.date.getFullYear();
+
+	space:KeyMap = new KeyMap({key:' '});
 
 	constructor()
 	{
@@ -40,12 +40,6 @@ export class DatePicker extends Form
 			{type: EventType.WhenValidateField, field: "date"}
 		]);
 
-		this.addEventListener(this.navigate,
-		[
-			{type: EventType.Key, key: KeyMap.prevrecord},
-			{type: EventType.Key, key: KeyMap.nextrecord}
-		]);
-
 		this.addEventListener(this.setDay,{type: EventType.Mouse, mouse:MouseMap.click});
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
@@ -53,28 +47,19 @@ export class DatePicker extends Form
 
 		this.addEventListener(this.goToPrevMonth,
 		[
-			{type: EventType.Key, field: "prev", key: KeyMap.space},
+			{type: EventType.Key, field: "prev", key: this.space},
 			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
 		]);
 
 		this.addEventListener(this.goToNextMonth,
 		[
-			{type: EventType.Key, field: "next", key: KeyMap.space},
+			{type: EventType.Key, field: "next", key: this.space},
 			{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
 		]);
 	}
 
 	private async done() : Promise<boolean>
 	{
-		let form:Form = this.parameters.get("form");
-		let block:string = this.parameters.get("block");
-		let field:string = this.parameters.get("field");
-
-		form.setValue(block,field,this.date);
-		this.setValue("calendar","date",this.date);
-
-		console.log(this.date);
-
 		return (this.close());
 	}
 
@@ -85,30 +70,15 @@ export class DatePicker extends Form
 		Internals.stylePopupWindow(view);
 		Properties.styleDatePicker(view);
 
-		let props:FieldProperties = this.getBlock("calendar").
-			getDefaultProperties("day-11");
-
-		this.enabled = props;
-		this.disabled = props.clone().setEnabled(false);
-
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
 
 		this.setValue("calendar","prev","<");
 		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
-
+		
 		this.setDate();
-		return(true);
-	}
-
-	private async navigate(event:FormEvent) : Promise<boolean>
-	{
-		let prev:boolean = event.key == KeyMap.prevrecord;
-		let next:boolean = event.key == KeyMap.nextrecord;
-
-		console.log(event.field+" prev: "+prev+" next: "+next);
-
+		this.populateDates();
 		return(true);
 	}
 
@@ -121,7 +91,7 @@ export class DatePicker extends Form
 			return(true);
 
 		this.day = this.getValue(event.block,event.field);
-
+		
 		this.date.setDate(this.day);
 		this.setValue("calendar","date",this.date);
 
@@ -140,6 +110,7 @@ export class DatePicker extends Form
 	{
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
+
 		this.populateDates();
 		return(true)
 	}
@@ -148,6 +119,7 @@ export class DatePicker extends Form
 	{
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
+
 		this.populateDates();
 		return(true);
 	}
@@ -155,23 +127,21 @@ export class DatePicker extends Form
 	private populateDates() : void
 	{
 		let dayno:number = 0;
-		let block:Block = this.getBlock("calendar");
-		if(this.date == null) this.date = new Date();
-		let month:string = dates.format(this.date,"MMM YYYY");
 		let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
-		for (let day = 0; day <= 6; day++)
 			this.setValue("calendar","weekday-"+ day, weekdays[day])
+		}
 
-		this.setValue("calendar","mth",month);
 		for (let week = 1; week <= 6; week++)
 		{
 			for (let day = 1; day <= 7; day++)
 			{
+			{			
 				if(week == 1)
 				{
+				{	
 					let theday:number = weekdays.findIndex(element => element == firstdaysname);
 
 					if(theday < day)
@@ -182,6 +152,8 @@ export class DatePicker extends Form
 					}
 					else
 					{
+					} 
+					else 
 						this.setValue("calendar","day-"+week+""+day, null);
 						block.setDefaultProperties(this.disabled,"day-"+week+""+day);
 					}
@@ -189,14 +161,14 @@ export class DatePicker extends Form
 				else if(++dayno <= days)
 				{
 					// Enable
+
+				} 
+				else if(++dayno <= days) 
+				{	
 					this.setValue("calendar","day-"+week+""+day, dayno);
-					block.setDefaultProperties(this.enabled,"day-"+week+""+day);
 				}
-				else
 				{
-					// Disable
 					this.setValue("calendar","day-"+week+""+day, null);
-					block.setDefaultProperties(this.disabled,"day-"+week+""+day);
 				}
 			}
 		}

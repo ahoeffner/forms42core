@@ -107,12 +107,19 @@ export class DatePicker extends Form
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 
+		let row:number = +event.field.substring(4,5);
+		let col:number = +event.field.substring(5,6);
+		if(next)
+		{
+			console.log(event.block,'day-' + (++row) + col);
+			this.goField(event.block,'day-' + (++row) + col);
+		}
+		else if(prev)
+		{
+			console.log(event.block,'day-' + (--row) + col);
+			this.goField(event.block,'day-' + (--row) + col);
+		}
 
-		console.log(event.field);
-		let row:number = +event.field.substring(5,5);
-		let col:number = +event.field.substring(6,6);
-
-		console.log("row " + row + " col " + col);
 		return(true);
 	}
 
@@ -120,12 +127,14 @@ export class DatePicker extends Form
 	{
 		if(event.field == null)
 			return(true);
-
-		if(event.field == "prev" || event.field == "next" || event.field == "date")
+		console.log(event.field)
+		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
 			return(true);
 
+		if(event.field.substring(0,7) == "weekday")
+			return(true);
+		
 		this.day = this.getValue(event.block,event.field);
-
 		this.date.setDate(this.day);
 		this.setValue("calendar","date",this.date);
 

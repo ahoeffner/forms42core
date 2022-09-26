@@ -148,15 +148,17 @@ export class FilterStructure
 
 		this.entries$.forEach((constr) =>
 		{
-			stmt += constr.opr + " ";
-
 			if (constr.filter instanceof FilterStructure)
 			{
 				if (!constr.filter.empty)
+				{
+					stmt += constr.opr + " ";
 					stmt += "(" + constr.filter.asSQL() + ")";
+				}
 			}
 			else
 			{
+				stmt += constr.opr + " ";
 				stmt += constr.filter.asSQL();
 			}
 		})

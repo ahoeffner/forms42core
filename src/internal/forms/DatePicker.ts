@@ -109,15 +109,16 @@ export class DatePicker extends Form
 
 		let row:number = +event.field.substring(4,5);
 		let col:number = +event.field.substring(5,6);
+
 		if(next)
 		{
-			console.log(event.block,'day-' + (++row) + col);
 			this.goField(event.block,'day-' + (++row) + col);
+			return(false);
 		}
-		else if(prev)
+		else if (prev)
 		{
-			console.log(event.block,'day-' + (--row) + col);
 			this.goField(event.block,'day-' + (--row) + col);
+			return(false);
 		}
 
 		return(true);
@@ -133,7 +134,7 @@ export class DatePicker extends Form
 
 		if(event.field.substring(0,7) == "weekday")
 			return(true);
-		
+
 		this.day = this.getValue(event.block,event.field);
 		this.date.setDate(this.day);
 		this.setValue("calendar","date",this.date);

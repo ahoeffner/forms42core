@@ -11,7 +11,6 @@
  */
 
 import { Framework } from './Framework.js';
-import { Properties } from './Properties.js';
 import { CanvasComponent } from './CanvasComponent.js';
 import { Canvas as CanvasProperties } from './properties/Canvas.js';
 import { Canvas as CanvasDefinition, View } from './interfaces/Canvas.js';
@@ -357,6 +356,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	private focus() : void
 	{
 		this.zindex = Canvas.newLayer;
+		this.content.blur();
 	}
 
 	private static get newLayer() : number

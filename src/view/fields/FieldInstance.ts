@@ -318,40 +318,9 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.getElement().blur();
 	}
 
-	public focus(attempts?:number, hits?:number, sleep?:number) : void
+	public focus() : void
 	{
-		if (hits == null) hits = 0;
-		if (sleep == null) sleep = 1;
-		if (attempts == null) attempts = 0;
-
-		setTimeout(() =>
-		{
-			this.impl.getElement().focus();
-
-			if (document.activeElement == this.impl.getElement())
-			{
-				hits++;
-				sleep += 5;
-			}
-			else
-			{
-				hits = 0;
-				sleep = 1;
-			}
-
-			if (hits > 2)
-				return;
-
-			if (attempts >= 10)
-			{
-				Alert.fatal("unable to focus on "+this,"Field");
-				return;
-			}
-
-			this.focus(++attempts,hits,sleep);
-		},
-			sleep
-		);
+		setTimeout(() => {this.impl.getElement().focus()},10);
 	}
 
 	public focusable(status?:Status) : boolean

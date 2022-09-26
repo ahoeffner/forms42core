@@ -22,13 +22,6 @@ export class Connections
 		return(Connections.conns$.get(name?.toLowerCase()));
 	}
 
-	public static create(name:string, url?:string|URL) : Connection
-	{
-		let conn:Connection = new Connection(name,url);
-		Connections.conns$.set(name?.toLowerCase(),conn);
-		return(conn);
-	}
-
 	public static register(conn:Connection) : void
 	{
 		Connections.conns$.set(conn.name?.toLowerCase(),conn);

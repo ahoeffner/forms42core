@@ -10,9 +10,13 @@
  * accompanied this code).
  */
 
+import { Connections } from "./Connections.js";
+
 export class Connection
 {
 	private base$:URL = null;
+	private usr$:string = null;
+	private pwd$:string = null;
 	private headers$:any = {};
 	private name$:string = null;
 	private method$:string = null;
@@ -32,6 +36,7 @@ export class Connection
 			url = new URL(url);
 
 		this.base$ = url;
+		Connections.register(this);
 	}
 
 	public get name() : string
@@ -42,6 +47,26 @@ export class Connection
 	public get baseURL() : URL
 	{
 		return(this.base$);
+	}
+
+	public get username() : string
+	{
+		return(this.usr$);
+	}
+
+	public set username(username:string)
+	{
+		this.usr$ = username;
+	}
+
+	public get password() : string
+	{
+		return(this.pwd$);
+	}
+
+	public set password(password:string)
+	{
+		this.pwd$ = password;
 	}
 
 	public get success() : boolean

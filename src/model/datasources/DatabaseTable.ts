@@ -10,15 +10,9 @@
  * accompanied this code).
  */
 
-import { Record, RecordState } from "../Record.js";
-import { FilterStructure } from "../FilterStructure.js";
-import { DataSource } from "../interfaces/DataSource.js";
+import { DatabaseTable as RestDatabaseTable } from "../../database/DatabaseTable.js";
 
-export class DatabaseTable //implements DataSource
+export class DatabaseTable extends RestDatabaseTable
 {
-	public constructor(table:string, columns?:string|string[])
-	{
-
-	}
 
 }

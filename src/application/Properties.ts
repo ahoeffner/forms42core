@@ -34,6 +34,7 @@ export enum ScrollDirection
 
 export interface ClassNames
 {
+	Days:string,
 	Invalid:string;
 	RowIndicator:string;
 	FilterIndicator:string;
@@ -65,6 +66,7 @@ export class Properties
 
 	public static Classes:ClassNames =
 	{
+		Days: "days",
 		Invalid: "invalid",
 		RowIndicator:"row-indicator",
 		FilterIndicator:"filter-indicator"

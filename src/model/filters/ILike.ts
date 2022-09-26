@@ -86,4 +86,11 @@ export class ILike implements Filter
 
 		return(value == this.constraint$);
 	}
+
+	public asSQL(id:number): string
+	{
+		if (id == null) id = 0;
+		let whcl:string = this.column$ + " ilike :"+this.column$+id;
+		return(whcl)
+	}
 }

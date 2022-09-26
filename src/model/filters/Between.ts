@@ -71,4 +71,25 @@ export class Between implements Filter
 		if (this.incl) return(value >= this.fr && value <= this.to);
 		return(value > this.fr && value < this.to);
 	}
+
+	public asSQL(id:number): string
+	{
+		let lt:string = "<";
+		let gt:string = ">";
+
+		if (id == null)
+			id = 0;
+
+		if (this.incl)
+		{
+			lt = "<=";
+			gt = ">=";
+		}
+
+		let whcl:string = this.column$ + " " + lt + ":"+this.column$ + id + "0" +
+								" and " +
+								this.column$ + " " + gt + ":"+this.column$ + id + "1";
+
+		return(whcl)
+	}
 }

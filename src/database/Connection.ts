@@ -43,27 +43,32 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async query(stmt:string) : Promise<any>
+	public async query(stmt:string, cursor:string, rows:number) : Promise<Response>
 	{
 		return(null);
 	}
 
-	public async fetch(stmt:string) : Promise<any>
+	public async fetch(stmt:string) : Promise<Response>
 	{
 		return(null);
 	}
 
-	public async insert(stmt:string) : Promise<any>
+	public async lock(stmt:string) : Promise<Response>
 	{
 		return(null);
 	}
 
-	public async update(stmt:string) : Promise<any>
+	public async insert(stmt:string) : Promise<Response>
 	{
 		return(null);
 	}
 
-	public async delete(stmt:string) : Promise<any>
+	public async update(stmt:string) : Promise<Response>
+	{
+		return(null);
+	}
+
+	public async delete(stmt:string) : Promise<Response>
 	{
 		return(null);
 	}
@@ -84,8 +89,15 @@ export class Connection extends BaseConnection
 		this.keepalive();
 	}
 
-	public sleep(ms:number) : Promise<void>
+	private sleep(ms:number) : Promise<void>
 	{
 		return(new Promise(resolve => setTimeout(resolve,ms)));
 	}
+}
+
+export class Response
+{
+	public rows:any[];
+	public message:string = null;
+	public success:boolean = true;
 }

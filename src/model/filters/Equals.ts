@@ -54,4 +54,11 @@ export class Equals implements Filter
 
 		return(value == this.constraint$);
 	}
+
+	public asSQL(id:number): string
+	{
+		if (id == null) id = 0;
+		let whcl:string = this.column$ + " = :"+this.column$+id;
+		return(whcl)
+	}
 }

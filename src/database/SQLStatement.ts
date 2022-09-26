@@ -10,12 +10,21 @@
  * accompanied this code).
  */
 
-import { Record } from "../Record.js";
+import { FilterStructure } from "../model/FilterStructure";
 
-export interface Filter
+export class SQLStatement
 {
-	clear() : void;
-	constraint?:any|any[];
-	asSQL(id?:number) : string;
-	evaluate(record:Record) : Promise<boolean>;
+	public static select(table:string, columns:string[], filter:FilterStructure, rows:number) : void
+	{
+		let stmt:string = "select ";
+		columns.forEach((column) => {stmt += column + " "});
+		stmt += "from "+table;
+
+		if (filter)
+		{
+			stmt += " where";
+		}
+
+		console.log(stmt);
+	}
 }

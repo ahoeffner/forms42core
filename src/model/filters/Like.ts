@@ -51,7 +51,7 @@ export class Like implements Filter
 		if (!this.parsed)
 		{
 			this.parsed = true;
-			
+
 			if (this.constraint$.endsWith("%")) this.rtrunc = true;
 			if (this.constraint$.startsWith("%")) this.ltrunc = true;
 
@@ -83,5 +83,12 @@ export class Like implements Filter
 		}
 
 		return(value == this.constraint$);
+	}
+
+	public asSQL(id:number): string
+	{
+		if (id == null) id = 0;
+		let whch:string = this.column$ + " like :"+this.column$+id;
+		return(whch)
 	}
 }

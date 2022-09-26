@@ -126,4 +126,22 @@ export class In implements Filter
 
 		return(match);
 	}
+
+	public asSQL(_id:number): string
+	{
+		let whcl:string = "";
+		whcl += this.columns$[0]+" in (";
+
+		if (typeof this.constraint$[0][0] == "number")
+		{
+			this.constraint$.forEach((val) => whcl += val+",");
+		}
+		else
+		{
+			this.constraint$[0].forEach((val) => whcl += "'"+val+"',");
+		}
+
+		whcl = whcl.substring(0,whcl.length-1)+")";
+		return(whcl)
+	}
 }

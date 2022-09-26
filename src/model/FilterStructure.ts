@@ -128,6 +128,13 @@ export class FilterStructure
 		return(match);
 	}
 
+	public asSQL() : string
+	{
+		let stmt:string = "";
+
+		return(stmt);
+	}
+
 	public toString() : string
 	{
 		let str:string = "";

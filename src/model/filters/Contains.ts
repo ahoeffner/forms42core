@@ -86,4 +86,9 @@ export class Contains implements Filter
 
 		return(true);
 	}
+
+	public asSQL(_id:number): string
+	{
+		return("");
+	}
 }

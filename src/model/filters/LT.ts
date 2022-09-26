@@ -51,4 +51,12 @@ export class LT implements Filter
 		if (this.incl) return(value <= this.constraint$);
 		return(value < this.constraint$);
 	}
+
+	public asSQL(id:number): string
+	{
+		if (id == null) id = 0;
+		let gt:string = this.incl ? "<=" : "<";
+		let whch:string = this.column$ + " "+gt+" :"+this.column$+id;
+		return(whch)
+	}
 }

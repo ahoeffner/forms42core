@@ -42,6 +42,9 @@ export enum DatePart
 	Second
 }
 
+
+let planetaryWeek : 'Sun'|'Mon'|'Tue'|'Wed'|'Thu'|'Fri'|'Sat';
+
 export class dates
 {
 	public static validate() : boolean
@@ -68,6 +71,41 @@ export class dates
 
         return(utils.parse(datestr,withtime,format));
     }
+
+	public static startDays(startday:typeof planetaryWeek): Array<String>
+	{	
+
+		let day:number = 0;
+		let index:number = 0;
+		let before:Boolean = false;
+		let WeekArrays = new Array();
+		let weekdays:String[] = ['Sun', 'Mon','Tue','Wed','Thu','Fri','Sat'];
+
+		WeekArrays[0] = startday;
+		while(WeekArrays.length != 7) 
+		{
+			if(weekdays.indexOf(startday) < index && !before)
+			{
+				if(index < 7)
+				{
+					if(WeekArrays[0] != weekdays[weekdays.length - 1])
+						WeekArrays.push(weekdays[index]);	
+				}
+				else
+				{
+					before = true;
+				}
+				
+			} else if(before)
+			{
+				console.log(day);
+				WeekArrays.push(weekdays[day]);
+				day++;
+			} 
+			index++;
+		}
+		return WeekArrays;
+	}
 
     public static format(date:Date, format?:string) : string
     {

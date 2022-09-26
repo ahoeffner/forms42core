@@ -107,8 +107,12 @@ export class DatePicker extends Form
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 
-		console.log(event.field+" prev: "+prev+" next: "+next);
-
+		console.log(typeof event.field)
+		let e:string = event.field;
+		console.log(e)
+		console.log(parseInt(e)- 3 )
+		console.log("asidpjapsjd")
+		console.log(`prev: ${prev} next: ${next}`);
 		return(true);
 	}
 
@@ -157,8 +161,9 @@ export class DatePicker extends Form
 		let dayno:number = 0;
 		let block:Block = this.getBlock("calendar");
 		if(this.date == null) this.date = new Date();
+		let weekdays:Array<String> = dates.startDays("Sun");
 		let month:string = dates.format(this.date,"MMM YYYY");
-		let weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
@@ -173,6 +178,7 @@ export class DatePicker extends Form
 				if(week == 1)
 				{
 					let theday:number = weekdays.findIndex(element => element == firstdaysname);
+
 
 					if(theday < day)
 					{

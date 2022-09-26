@@ -107,12 +107,12 @@ export class DatePicker extends Form
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 
-		console.log(typeof event.field)
-		let e:string = event.field;
-		console.log(e)
-		console.log(parseInt(e)- 3 )
-		console.log("asidpjapsjd")
-		console.log(`prev: ${prev} next: ${next}`);
+
+		console.log(event.field);
+		let row:number = +event.field.substring(5,5);
+		let col:number = +event.field.substring(6,6);
+
+		console.log("row " + row + " col " + col);
 		return(true);
 	}
 
@@ -121,7 +121,7 @@ export class DatePicker extends Form
 		if(event.field == null)
 			return(true);
 
-		if(event.field == "prev" || event.field == "next")
+		if(event.field == "prev" || event.field == "next" || event.field == "date")
 			return(true);
 
 		this.day = this.getValue(event.block,event.field);

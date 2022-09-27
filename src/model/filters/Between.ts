@@ -21,6 +21,7 @@ export class Between implements Filter
 	private incl:boolean = false;
 
 	private column$:string = null;
+	private bindval$:string = null;
 	private constraint$:any[] = null;
 
 	public constructor(column:string, incl?:boolean)
@@ -32,6 +33,12 @@ export class Between implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name:string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : any|any[]
@@ -72,13 +79,16 @@ export class Between implements Filter
 		return(value > this.fr && value < this.to);
 	}
 
-	public asSQL(id:number): string
+	public asSQL() : string
 	{
+		if (this.constraint$ == null)
+			return(null);
+
 		let lt:string = "<";
 		let gt:string = ">";
 
-		if (id == null)
-			id = 0;
+		if (this.bindval$ == null)
+			this.bindval$ = this.column$;
 
 		if (this.incl)
 		{
@@ -86,9 +96,9 @@ export class Between implements Filter
 			gt = ">=";
 		}
 
-		let whcl:string = this.column$ + " " + lt + ":"+this.column$ + id + "0" +
+		let whcl:string = this.column$ + " " + lt + ":"+this.bindval$ + "0" +
 								" and " +
-								this.column$ + " " + gt + ":"+this.column$ + id + "1";
+								this.column$ + " " + gt + ":"+this.bindval$ + "1";
 
 		return(whcl)
 	}

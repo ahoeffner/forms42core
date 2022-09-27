@@ -17,6 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class ILike implements Filter
 {
 	private column$:string = null;
+	private bindval$:string = null;
 	private ltrunc:boolean = false;
 	private rtrunc:boolean = false;
 	private parsed:boolean = false;
@@ -30,6 +31,12 @@ export class ILike implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name:string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : string
@@ -87,10 +94,16 @@ export class ILike implements Filter
 		return(value == this.constraint$);
 	}
 
-	public asSQL(id:number): string
+	public asSQL() : string
 	{
-		if (id == null) id = 0;
-		let whcl:string = this.column$ + " ilike :"+this.column$+id;
+		if (this.constraint$ == null)
+			return(null);
+
+		if (this.bindval$ == null)
+			this.bindval$ = this.column$;
+
+		let whcl:string = this.column$ + " ilike :"+this.bindval$;
+
 		return(whcl)
 	}
 }

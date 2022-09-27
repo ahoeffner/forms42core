@@ -49,6 +49,11 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
+	public bindval(_name:string) : Filter
+	{
+		return(this);
+	}
+
 	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
@@ -127,8 +132,11 @@ export class In implements Filter
 		return(match);
 	}
 
-	public asSQL(_id:number): string
+	public asSQL() : string
 	{
+		if (this.constraint$ == null)
+			return(null);
+
 		let whcl:string = "";
 		whcl += this.columns$[0]+" in (";
 

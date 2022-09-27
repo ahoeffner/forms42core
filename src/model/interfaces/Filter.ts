@@ -15,7 +15,8 @@ import { Record } from "../Record.js";
 export interface Filter
 {
 	clear() : void;
+	asSQL() : string;
 	constraint?:any|any[];
-	asSQL(id?:number) : string;
+	bindval(name:string) : Filter;
 	evaluate(record:Record) : Promise<boolean>;
 }

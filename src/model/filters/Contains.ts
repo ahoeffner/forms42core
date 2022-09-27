@@ -17,6 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class Contains implements Filter
 {
 	private columns$:string[] = [];
+	private bindval$:string = null;
 	private constraint$:string[] = null;
 
 	public constructor(columns:string|string[])
@@ -47,6 +48,12 @@ export class Contains implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name:string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : string|string[]
@@ -87,8 +94,8 @@ export class Contains implements Filter
 		return(true);
 	}
 
-	public asSQL(_id:number): string
+	public asSQL() : string
 	{
-		return("");
+		return(null);
 	}
 }

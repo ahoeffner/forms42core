@@ -29,6 +29,11 @@ export class Null implements Filter
 		this.constraint$ = null;
 	}
 
+	public bindval(_name:string) : Filter
+	{
+		return(this);
+	}
+
 	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
@@ -45,7 +50,7 @@ export class Null implements Filter
 		return(record.getValue(this.column$.toLowerCase()) == null);
 	}
 
-	public asSQL(_id:number): string
+	public asSQL() : string
 	{
 		let whcl:string = this.column$ + " is null";
 		return(whcl)

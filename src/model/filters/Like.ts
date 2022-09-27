@@ -17,6 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class Like implements Filter
 {
 	private column$:string = null;
+	private bindval$:string = null;
 	private ltrunc:boolean = false;
 	private rtrunc:boolean = false;
 	private parsed:boolean = false;
@@ -30,6 +31,12 @@ export class Like implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name: string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : string
@@ -85,10 +92,16 @@ export class Like implements Filter
 		return(value == this.constraint$);
 	}
 
-	public asSQL(id:number): string
+	public asSQL() : string
 	{
-		if (id == null) id = 0;
-		let whch:string = this.column$ + " like :"+this.column$+id;
+		if (this.constraint$ == null)
+			return(null);
+
+		if (this.bindval$ == null)
+			this.bindval$ = this.column$;
+
+		let whch:string = this.column$ + " like :"+this.bindval$;
+
 		return(whch)
 	}
 }

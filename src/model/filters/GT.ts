@@ -18,6 +18,7 @@ export class GT implements Filter
 {
 	private incl:boolean = false;
 	private column$:string = null;
+	private bindval$:string = null;
 	private constraint$:any = null;
 
 	public constructor(column:string, incl?:boolean)
@@ -29,6 +30,12 @@ export class GT implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name:string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : any
@@ -52,11 +59,17 @@ export class GT implements Filter
 		return(value > this.constraint$);
 	}
 
-	public asSQL(id:number): string
+	public asSQL() : string
 	{
-		if (id == null) id = 0;
+		if (this.constraint$ == null)
+			return(null);
+
+		if (this.bindval$ == null)
+			this.bindval$ = this.column$;
+
 		let gt:string = this.incl ? ">=" : ">";
-		let whcl:string = this.column$ + " "+gt+" :"+this.column$+id;
+		let whcl:string = this.column$ + " "+gt+" :"+this.bindval$;
+
 		return(whcl)
 	}
 }

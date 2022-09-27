@@ -391,13 +391,21 @@ export class Block
 		this.clear(true,true);
 	}
 
-	public clear(props:boolean, rewind:boolean) : void
+	public clear(props:boolean, rewind:boolean, fields?:boolean) : void
 	{
 		this.current = null;
 		this.displayed$.clear();
 		if (rewind) this.row$ = -1;
 		if (props) this.recprops$.clear();
-		this.rows$.forEach((row) => {row.status = Status.na});
+
+		this.rows$.forEach((row) =>
+		{
+			row.status = Status.na;
+			if (fields) row.clear();
+			
+			if (fields && row.rownum == 0)
+				this.getRow(0).activateIndicators(true);
+		});
 	}
 
 	public addInstance(inst:FieldInstance) : void

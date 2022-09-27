@@ -328,6 +328,8 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
+			blocks[i].view.clear(true,true,true);
+
 			if (!await blocks[i].preQuery())
 				return(false);
 

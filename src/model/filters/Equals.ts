@@ -17,6 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class Equals implements Filter
 {
 	private column$:string = null;
+	private bindval$:string = null;
 	private constraint$:any = null;
 
 	public constructor(column:string)
@@ -27,6 +28,12 @@ export class Equals implements Filter
 	public clear() : void
 	{
 		this.constraint$ = null;
+	}
+
+	public bindval(name:string) : Filter
+	{
+		this.bindval$ = name;
+		return(this);
 	}
 
 	public get constraint() : any
@@ -55,10 +62,16 @@ export class Equals implements Filter
 		return(value == this.constraint$);
 	}
 
-	public asSQL(id:number): string
+	public asSQL() : string
 	{
-		if (id == null) id = 0;
-		let whcl:string = this.column$ + " = :"+this.column$+id;
+		if (this.constraint$ == null)
+			return(null);
+
+		if (this.bindval$ == null)
+			this.bindval$ = this.column$;
+
+		let whcl:string = this.column$ + " = :"+this.bindval$;
+
 		return(whcl)
 	}
 }

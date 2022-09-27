@@ -26,28 +26,22 @@ export class FilterStructure
 
 	public get empty() : boolean
 	{
-		if (this.entries$.length == 0)
-			return(true);
-
-		this.entries$.forEach((constr) =>
-		{
-			if (constr.filter instanceof FilterStructure)
-			{
-				if (!constr.filter.empty)
-					return(false);
-			}
-			else
-			{
-				return(false);
-			}
-		})
-
-		return(true);
+		return(this.entries$.length == 0);
 	}
 
 	public size() : number
 	{
 		return(this.entries$.length);
+	}
+
+	public hasChildFilters() : boolean
+	{
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			if (this.entries$[i].isFilter())
+				return(true);
+		}
+		return(false);
 	}
 
 	public clear(name?:string) : void
@@ -144,26 +138,35 @@ export class FilterStructure
 		return(match);
 	}
 
-	public asSQL() : string
+	public asSQL(first?:boolean) : string
 	{
 		let stmt:string = "";
+		if (first == null) first = true;
 
-		this.entries$.forEach((constr) =>
+		for (let i = 0; i < this.entries$.length; i++)
 		{
+			let constr:Constraint = this.entries$[i];
+
 			if (constr.filter instanceof FilterStructure)
 			{
-				if (!constr.filter.empty)
+				if (constr.filter.hasChildFilters())
 				{
-					stmt += constr.opr + " ";
-					stmt += "(" + constr.filter.asSQL() + ")";
+					if (!first) stmt += constr.opr + " ";
+					stmt += "(" + constr.filter.asSQL(first) + ")";
+					first = false;
+				}
+				else
+				{
+					stmt += constr.filter.asSQL(first);
 				}
 			}
 			else
 			{
-				stmt += constr.opr + " ";
+				if (!first) stmt += constr.opr + " ";
 				stmt += constr.filter.asSQL();
+				first = false;
 			}
-		})
+		}
 
 		return(stmt);
 	}
@@ -210,6 +213,11 @@ class Constraint
 	{
 		if (this.and) return("and");
 		return("or");
+	}
+
+	isFilter() : boolean
+	{
+		return(!(this.filter instanceof FilterStructure));
 	}
 
 	async matches(record:Record) : Promise<boolean>

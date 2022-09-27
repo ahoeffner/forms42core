@@ -96,7 +96,7 @@ export class QueryByExample
 		if (filter == null)
 			filter = this.getDefaultFilter(column);
 
-		if (filter == null) 	this.filter$.delete(filter);
+		if (filter == null) 	this.filter$.delete(column);
 		else						this.filter$.and(filter,column);
 	}
 

@@ -85,7 +85,7 @@ export class Properties
 	);
 
 
-	public static BlockTypeLibrary : Map<string,Class<Tag>> =
+	public static FieldTypeLibrary : Map<string,Class<Tag>> =
 	new Map<string,Class<Tag>>
 	(
 			[

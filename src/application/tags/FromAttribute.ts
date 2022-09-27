@@ -36,7 +36,7 @@ export class FromAttribute implements Tag
 		}
 
 		let type:string = tag.getAttribute("type")?.toLowerCase();
-		let btag:Class<Tag> = Properties.BlockTypeLibrary.get(type);
+		let btag:Class<Tag> = Properties.FieldTypeLibrary.get(type);
 
 		if (btag != null)
 			return(new btag().parse(component,tag,attr));

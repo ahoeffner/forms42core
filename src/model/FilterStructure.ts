@@ -145,6 +145,7 @@ export class FilterStructure
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
+			let clause:string = null;
 			let constr:Constraint = this.entries$[i];
 
 			if (constr.filter instanceof FilterStructure)

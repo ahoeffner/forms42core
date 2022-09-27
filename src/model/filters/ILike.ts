@@ -97,7 +97,7 @@ export class ILike implements Filter
 	public asSQL() : string
 	{
 		if (this.constraint$ == null)
-			return(null);
+			return("1 == 2");
 
 		if (this.bindval$ == null)
 			this.bindval$ = this.column$;

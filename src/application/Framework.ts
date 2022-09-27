@@ -28,14 +28,14 @@ export class Framework
 	public eventhandler:EventHandler = null;
 	public events:Map<Element,string[][]> = new Map<Element,string[][]>();
 
-	private static initTaglib() : Map<string,Tag>
+	private static loadTaglib() : Map<string,Tag>
 	{
 		Framework.taglib = new Map<string,Tag>();
 		Properties.TagLibrary.forEach((clazz,tag) => {Framework.addTag(tag.toLowerCase(),clazz);});
 		return(Framework.taglib);
 	}
 
-	private static initAttrlib() : Map<string,Tag>
+	private static loadAttrlib() : Map<string,Tag>
 	{
 		Framework.attrlib = new Map<string,Tag>();
 		Properties.AttributeLibrary.forEach((clazz,tag) => {Framework.addAttr(tag.toLowerCase(),clazz);});
@@ -112,13 +112,16 @@ export class Framework
 		this.eventhandler = new EventHandler(component);
 
 		if (Framework.taglib == null)
-			Framework.taglib = Framework.initTaglib();
+			Framework.taglib = Framework.loadTaglib();
 
 		if (Framework.attrlib == null)
-			Framework.attrlib = Framework.initAttrlib();
+			Framework.attrlib = Framework.loadAttrlib();
 
 		if (!Properties.ParseTags && !Properties.ParseEvents)
 			return;
+
+		Framework.loadTaglib();
+		Framework.loadAttrlib();
 
 		this.parseDoc(doc);
 		this.applyEvents();

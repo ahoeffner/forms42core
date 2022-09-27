@@ -397,12 +397,13 @@ export class Block
 		this.displayed$.clear();
 		if (rewind) this.row$ = -1;
 		if (props) this.recprops$.clear();
+		if (fields) this.model.querymode = false;
 
 		this.rows$.forEach((row) =>
 		{
 			row.status = Status.na;
 			if (fields) row.clear();
-			
+
 			if (fields && row.rownum == 0)
 				this.getRow(0).activateIndicators(true);
 		});
@@ -546,7 +547,9 @@ export class Block
 			{
 				this.openrow();
 				this.displaycurrent();
-				this.model.queryDetails(newqry);
+
+				if (this.getRow(this.row).status != Status.qbe)
+					this.model.queryDetails(newqry);
 			}
 
 			this.setIndicators(null,rownum);
@@ -570,7 +573,9 @@ export class Block
 		if (this.getRow(this.row).status != Status.na)
 		{
 			this.openrow();
-			this.model.queryDetails(newqry);
+
+			if (this.getRow(this.row).status != Status.qbe)
+				this.model.queryDetails(newqry);
 		}
 
 		this.displaycurrent();

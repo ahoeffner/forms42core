@@ -95,6 +95,11 @@ export class Block
 		return(this.qbe.querymode);
 	}
 
+	public set querymode(flag:boolean)
+	{
+		this.qbe.querymode = flag;
+	}
+
 	public set ctrlblk(flag:boolean)
 	{
 		this.ctrlblk$ = flag;
@@ -541,8 +546,8 @@ export class Block
 		this.qbe.querymode = false;
 		let wrapper:DataSourceWrapper = this.wrapper;
 
-		console.log(this.filter.asSQL());
-		FlightRecorder.debug("@model.block: execute query "+this.name+" filter: "+this.filter);
+		console.log("@model.block: execute query "+this.name+" filter: "+this.filter.asSQL());
+		FlightRecorder.debug("@model.block: execute query "+this.name+" filter: "+this.filter.asSQL());
 
 		this.record$ = -1;
 		let record:Record = null;

@@ -138,10 +138,11 @@ export class FilterStructure
 		return(match);
 	}
 
-	public asSQL(top?:boolean) : string
+	public asSQL(level?:number) : string
 	{
 		let stmt:string = "";
-		if (top == null) top = true;
+		let top:boolean = true;
+		if (level == null) level = 0;
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
@@ -151,13 +152,13 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (!top) stmt += constr.opr + " ";
-					stmt += "(" + constr.filter.asSQL(top) + ") ";
+					if (level > 0) stmt += constr.opr + " ";
+					stmt += "(" + constr.filter.asSQL(level+1) + ") ";
 					top = false;
 				}
 				else
 				{
-					stmt += constr.filter.asSQL(top);
+					stmt += constr.filter.asSQL(level+1);
 				}
 			}
 			else

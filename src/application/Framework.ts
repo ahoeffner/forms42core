@@ -111,17 +111,11 @@ export class Framework
 		this.component = component;
 		this.eventhandler = new EventHandler(component);
 
-		if (Framework.taglib == null)
-			Framework.taglib = Framework.loadTaglib();
-
-		if (Framework.attrlib == null)
-			Framework.attrlib = Framework.loadAttrlib();
+		Framework.loadTaglib();
+		Framework.loadAttrlib();
 
 		if (!Properties.ParseTags && !Properties.ParseEvents)
 			return;
-
-		Framework.loadTaglib();
-		Framework.loadAttrlib();
 
 		this.parseDoc(doc);
 		this.applyEvents();

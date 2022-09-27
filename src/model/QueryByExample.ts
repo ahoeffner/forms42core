@@ -56,6 +56,7 @@ export class QueryByExample
 	{
 		this.qmode$ = false;
 		this.lastqry$.clear();
+		console.log("clear "+this.block$.name)
 
 		this.record$.values.forEach((column) =>
 		{
@@ -93,6 +94,7 @@ export class QueryByExample
 
 	public setFilter(column:string, filter?:Filter|FilterStructure) : void
 	{
+		console.log("setFilter "+this.block$.name+"."+column)
 		if (filter == null)
 			filter = this.getDefaultFilter(column);
 

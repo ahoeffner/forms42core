@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class Between implements Filter
@@ -28,6 +29,7 @@ export class Between implements Filter
 	{
 		this.incl = incl;
 		this.column$ = column;
+		this.bindval$ = column;
 	}
 
 	public clear() : void
@@ -80,6 +82,13 @@ export class Between implements Filter
 		if (this.constraint$.length > 1) this.to = this.constraint$[1];
 	}
 
+	public getBindValues(): BindValue[]
+	{
+		let b1:BindValue = new BindValue(this.bindval$+"0",this.fr);
+		let b2:BindValue = new BindValue(this.bindval$+"1",this.to);
+		return([b1,b2]);
+	}
+
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		if (this.column$ == null) return(false);
@@ -109,7 +118,7 @@ export class Between implements Filter
 
 		let whcl:string = this.column$ + " " + lt + " :"+this.bindval$ + "0" +
 								" and " +
-								this.column$ + " " + gt + "  :"+this.bindval$ + "1";
+								this.column$ + " " + gt + " :"+this.bindval$ + "1";
 
 		return(whcl)
 	}

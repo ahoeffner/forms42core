@@ -52,10 +52,18 @@ export class BindValue
 	{
 		this.value$ = value;
 
+		if (this.type$ == null && !isNaN(+value))
+			this.type$ = "decimal";
+
 		if (value instanceof Date)
 		{
-			this.type$ = "date";
 			this.value$ = value.getTime();
+			if (this.type$ == null) this.type$ = "date";
 		}
+	}
+
+	public toString() : string
+	{
+		return("{"+this.name+" "+this.type+" "+this.value+"}")
 	}
 }

@@ -10,11 +10,36 @@
  * accompanied this code).
  */
 
+import { BindValue } from "./BindValue";
 import { FilterStructure } from "../model/FilterStructure";
+
+export class Parsed
+{
+	stmt:string;
+	bindvalues:Binding[];
+
+	toString() : string
+	{
+		let str = this.stmt;
+
+		if (this.bindvalues != null && this.bindvalues.length > 0)
+		{
+			str += "[";
+			for (let i = 0; i < this.bindvalues.length; i++)
+			{
+				if (i > 0) str += ", ";
+				str += this.bindvalues[i].toString();
+			}
+			str += "]";
+		}
+
+		return(str);
+	}
+}
 
 export class SQLStatement
 {
-	public static select(table:string, columns:string[], filter:FilterStructure, order:string, rows:number) : string
+	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : Parsed
 	{
 		let stmt:string = "select ";
 		columns.forEach((column) => {stmt += column + " "});
@@ -27,7 +52,11 @@ export class SQLStatement
 		if (order)
 			stmt += " "+order;
 
-		console.log(stmt);
-		return(stmt);
+		let parsed:Parsed = new Parsed();
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = filter?.getBindValues();
+
+		return(parsed);
 	}
 }

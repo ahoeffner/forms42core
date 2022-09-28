@@ -10,8 +10,10 @@
  * accompanied this code).
  */
 
+import { Parsed } from "./SQLStatement.js";
 import { Alert } from "../application/Alert.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
+import { BindValue } from "./BindValue.js";
 
 export class Connection extends BaseConnection
 {
@@ -42,11 +44,11 @@ export class Connection extends BaseConnection
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
-		this.keepalive();
+		//this.keepalive();
 		return(true);
 	}
 
-	public async select(stmt:string, cursor:string, rows:number) : Promise<Response>
+	public async select(sql:Parsed, cursor:string, rows:number) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -54,8 +56,8 @@ export class Connection extends BaseConnection
 			compact: true,
 			cursor: cursor,
 
-			sql: stmt,
-			bindvalues: []
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
@@ -104,6 +106,17 @@ export class Connection extends BaseConnection
 
 		console.log(JSON.stringify(response))
 		this.keepalive();
+	}
+
+	private convert(bindv:BindValue[]) : any[]
+	{
+		let binds:any[] = [];
+		if (bindv == null) return([]);
+
+		bindv.forEach((b) =>
+		{binds.push({name: b.name, value: b.value, type: b.type})})
+
+		return(binds);
 	}
 
 	private sleep(ms:number) : Promise<void>

@@ -12,11 +12,12 @@
 
 import { Record } from "./Record.js";
 import { Filter } from "./interfaces/Filter.js";
-
+import { BindValue } from "../database/BindValue.js";
 
 export class FilterStructure
 {
 	private entries$:Constraint[] = [];
+	private bindvalues:BindValue[] = [];
 
 	private fieldidx$:Map<string,Constraint> =
 		new Map<string,Constraint>();
@@ -140,10 +141,16 @@ export class FilterStructure
 
 	public asSQL() : string
 	{
-		return(this.build(0));
+		this.bindvalues = [];
+		return(this.build(0,this.bindvalues));
 	}
 
-	public build(level:number) : string
+	public getBindValues() : BindValue[]
+	{
+		return(this.bindvalues);
+	}
+
+	public build(level:number, bindv:BindValue[]) : string
 	{
 		let stmt:string = "";
 		let first:boolean = true;
@@ -157,18 +164,22 @@ export class FilterStructure
 				if (constr.filter.hasChildFilters())
 				{
 					if (!first || level > 0) stmt += " " + constr.opr + " ";
-					stmt += "(" + constr.filter.build(level+1) + ")";
+					stmt += "(" + constr.filter.build(level+1,this.bindvalues) + ")";
 					first = false;
 				}
 				else
 				{
-					stmt += constr.filter.build(level+1);
+					stmt += constr.filter.build(level+1,this.bindvalues);
 				}
 			}
 			else
 			{
-				if (!first) stmt += " " + constr.opr + " ";
+				if (!first)
+					stmt += " " + constr.opr + " ";
+
 				stmt += constr.filter.asSQL();
+				this.bindvalues.push(...constr.filter.getBindValues());
+
 				first = false;
 			}
 		}
@@ -178,7 +189,7 @@ export class FilterStructure
 
 	public toString() : string
 	{
-		let str:string = this.build(0);
+		let str:string = this.build(0,[]);
 		return(str);
 	}
 }

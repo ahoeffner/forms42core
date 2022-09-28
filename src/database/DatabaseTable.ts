@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { SQLStatement } from "./SQLStatement.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { Parsed, SQLStatement } from "./SQLStatement.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
@@ -182,7 +182,7 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
-		let sql:string = SQLStatement.select(this.table$,this.columns,filter,this.sorting,this.arrayfecth);
+		let sql:Parsed = SQLStatement.select(this.table$,this.columns,filter,this.sorting);
 		this.conn$.select(sql,"123",this.arrayfecth);
 
 		return(true);

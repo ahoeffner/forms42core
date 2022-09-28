@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class Null implements Filter
@@ -55,6 +56,11 @@ export class Null implements Filter
 	public set constraint(value:any|any[])
 	{
 		this.constraint$ = value;
+	}
+
+	public getBindValues(): BindValue[]
+	{
+		return([]);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

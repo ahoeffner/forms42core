@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class In implements Filter
@@ -108,6 +109,16 @@ export class In implements Filter
 		this.constraint$ = table;
 	}
 
+	public getBindValues(): BindValue[]
+	{
+		let bindvalues:BindValue[] = [];
+
+		for (let i = 0; i < this.constraint$.length; i++)
+			bindvalues.push(new BindValue(this.bindval$+"0"+i,this.constraint$[0][i]));
+
+		return(bindvalues);
+	}
+
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let values:any[] = [];
@@ -153,16 +164,12 @@ export class In implements Filter
 		let whcl:string = "";
 		whcl += this.columns$[0]+" in (";
 
-		if (typeof this.constraint$[0][0] == "number")
+		for (let i = 0; i < this.constraint$.length; i++)
 		{
-			this.constraint$.forEach((val) => whcl += val+",");
-		}
-		else
-		{
-			this.constraint$[0].forEach((val) => whcl += "'"+val+"',");
+			whcl += ":"+this.bindval$+"0"+i;
+			if (i < this.constraint$.length - 1) whcl += ","
 		}
 
-		whcl = whcl.substring(0,whcl.length-1)+")";
 		return(whcl)
 	}
 }

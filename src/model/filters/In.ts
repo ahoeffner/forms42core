@@ -17,6 +17,7 @@ import { Filter } from "../interfaces/Filter.js";
 export class In implements Filter
 {
 	private columns$:string[] = null;
+	private bindval$:string[] = null;
 	private constraint$:any[][] = null;
 
 	public constructor(columns:string|string[])
@@ -49,8 +50,20 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
-	public bindval(_name:string) : Filter
+	public getBindValueName() : string[]
 	{
+		return(this.bindval$);
+	}
+
+	public setBindValueName(name:string) : Filter
+	{
+		this.bindval$ = [name];
+		return(this);
+	}
+
+	public setConstraint(values:any|any[]|any[][]) : Filter
+	{
+		this.constraint$ = values;
 		return(this);
 	}
 

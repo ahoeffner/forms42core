@@ -140,9 +140,13 @@ export class FilterStructure
 
 	public asSQL(level?:number) : string
 	{
+		return(this.build(0));
+	}
+
+	public build(level:number) : string
+	{
 		let stmt:string = "";
 		let top:boolean = true;
-		if (level == null) level = 0;
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
@@ -153,12 +157,12 @@ export class FilterStructure
 				if (constr.filter.hasChildFilters())
 				{
 					if (level > 0) stmt += " " + constr.opr + " ";
-					stmt += "(" + constr.filter.asSQL(level+1) + ")";
+					stmt += "(" + constr.filter.build(level+1) + ")";
 					top = false;
 				}
 				else
 				{
-					stmt += constr.filter.asSQL(level+1);
+					stmt += constr.filter.build(level+1);
 				}
 			}
 			else

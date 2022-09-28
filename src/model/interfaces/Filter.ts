@@ -17,6 +17,8 @@ export interface Filter
 	clear() : void;
 	asSQL() : string;
 	constraint?:any|any[];
-	bindval(name:string) : Filter;
+	getBindValueName() : string|string[];
+	setBindValueName(name:string) : Filter;
+	setConstraint(value:any|any[]) : Filter;
 	evaluate(record:Record) : Promise<boolean>;
 }

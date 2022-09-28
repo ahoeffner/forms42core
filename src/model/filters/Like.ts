@@ -33,9 +33,20 @@ export class Like implements Filter
 		this.constraint$ = null;
 	}
 
-	public bindval(name: string) : Filter
+	public getBindValueName() : string
+	{
+		return(this.bindval$);
+	}
+
+	public setBindValueName(name: string) : Filter
 	{
 		this.bindval$ = name;
+		return(this);
+	}
+
+	public setConstraint(value:any) : Filter
+	{
+		this.constraint$ = value;
 		return(this);
 	}
 

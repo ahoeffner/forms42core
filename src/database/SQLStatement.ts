@@ -16,7 +16,7 @@ import { FilterStructure } from "../model/FilterStructure";
 export class Parsed
 {
 	stmt:string;
-	bindvalues:Binding[];
+	bindvalues:BindValue[];
 
 	toString() : string
 	{

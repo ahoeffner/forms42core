@@ -35,6 +35,9 @@ export class BindValue
 
 	public get type() : string
 	{
+		if (this.type$ == null)
+			return("string");
+
 		return(this.type$);
 	}
 

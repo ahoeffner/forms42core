@@ -178,24 +178,7 @@ export class FilterStructure
 
 	public toString() : string
 	{
-		let str:string = "";
-
-		this.entries$.forEach((cons) =>
-		{
-			if (str.length > 0) str += " ";
-
-			if (cons.filter instanceof FilterStructure)
-			{
-				str += cons.name+" ";
-				str += cons.filter.toString();
-			}
-			else
-			{
-				str += cons.filter.constructor.name+" ";
-				str += (""+cons.filter.constraint).substring(0,10);
-			}
-		})
-
+		let str:string = this.build(0);
 		return(str);
 	}
 }

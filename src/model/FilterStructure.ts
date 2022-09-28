@@ -152,7 +152,7 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (level > 0) stmt += constr.opr + " ";
+					if (level > 0) stmt += " " + constr.opr + " ";
 					stmt += "(" + constr.filter.asSQL(level+1) + ")";
 					top = false;
 				}

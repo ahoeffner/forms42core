@@ -59,6 +59,9 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
+
+		console.log(JSON.stringify(response));
+
 		return(response);
 	}
 

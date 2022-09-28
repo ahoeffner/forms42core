@@ -146,7 +146,7 @@ export class FilterStructure
 	public build(level:number) : string
 	{
 		let stmt:string = "";
-		let top:boolean = true;
+		let first:boolean = true;
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
@@ -156,9 +156,9 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (level > 0) stmt += " " + constr.opr + " ";
+					if (!first || level > 0) stmt += " " + constr.opr + " ";
 					stmt += "(" + constr.filter.build(level+1) + ")";
-					top = false;
+					first = false;
 				}
 				else
 				{
@@ -167,9 +167,9 @@ export class FilterStructure
 			}
 			else
 			{
-				if (!top) stmt += " " + constr.opr + " ";
+				if (!first) stmt += " " + constr.opr + " ";
 				stmt += constr.filter.asSQL();
-				top = false;
+				first = false;
 			}
 		}
 

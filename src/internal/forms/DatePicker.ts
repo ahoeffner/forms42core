@@ -14,6 +14,7 @@ import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
 import { dates } from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
+import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
@@ -26,7 +27,11 @@ export class DatePicker extends Form
 	private date:Date = new Date();
 	private enabled:FieldProperties;
 	private disabled:FieldProperties;
+	private leftArrow:HTMLElement = null;
+	private rightArrow:HTMLElement = null;
 	private day:number = this.date.getDate();
+	private prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
+	private nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
 
 	constructor()
 	{
@@ -40,10 +45,18 @@ export class DatePicker extends Form
 			{type: EventType.WhenValidateField, field: "date"}
 		]);
 
+		this.leftArrow = document.createElement("span");
+		this.rightArrow = document.createElement("span");
+
+		this.leftArrow.innerHTML = "&#11164;";
+		this.rightArrow.innerHTML = "&#11166;";
+
 		this.addEventListener(this.navigate,
 		[
+			{type: EventType.Key, key: this.prevstep},
+			{type: EventType.Key, key: this.nextstep},
 			{type: EventType.Key, key: KeyMap.prevrecord},
-			{type: EventType.Key, key: KeyMap.nextrecord}
+			{type: EventType.Key, key: KeyMap.nextrecord},
 		]);
 
 		this.addEventListener(this.setDay,{type: EventType.Mouse, mouse:MouseMap.click});
@@ -93,9 +106,9 @@ export class DatePicker extends Form
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-
-		this.setValue("calendar","prev","<");
-		this.setValue("calendar","next",">");
+		
+		this.setValue("calendar","prev",this.leftArrow);
+		this.setValue("calendar","next",this.rightArrow);
 		this.setValue("calendar","date",value);
 
 		this.setDate();
@@ -107,20 +120,45 @@ export class DatePicker extends Form
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 
+		let left:boolean = event.key == this.prevstep;
+		let right:boolean = event.key == this.nextstep;
+		
 		let row:number = +event.field.substring(4,5);
 		let col:number = +event.field.substring(5,6);
-
-		if(next)
+		
+		if (next)
 		{
-			this.goField(event.block,'day-' + (++row) + col);
-			return(false);
+			if (this.getValue(event.block,'day-' + (++row) + col))
+			{
+				this.goField(event.block,'day-' + row + col);
+				return(false);
+			}
 		}
 		else if (prev)
 		{
-			this.goField(event.block,'day-' + (--row) + col);
-			return(false);
+			if (this.getValue(event.block,'day-' + (--row) + col))
+			{
+				this.goField(event.block,'day-' + row + col);
+				return(false);
+			}
+		} 
+		else if (right)
+		{
+			if (this.getValue(event.block,'day-' + row + (++col)))
+			{
+				this.goField(event.block,'day-' + row + col);
+				return(false);
+			}
 		}
-
+		else if (left)
+		{
+			if (this.getValue(event.block,'day-' + row + (--col)))
+			{
+				this.goField(event.block,'day-' + row + col);
+				return(false);
+			}
+		}
+	
 		return(true);
 	}
 
@@ -128,7 +166,6 @@ export class DatePicker extends Form
 	{
 		if(event.field == null)
 			return(true);
-		console.log(event.field)
 		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
 			return(true);
 
@@ -249,6 +286,7 @@ export class DatePicker extends Form
 					<div name="day" foreach="day in 1..7">
 						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
 					</div>
+					
 				</div>
 			</div>
 		</div>

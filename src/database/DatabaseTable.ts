@@ -10,9 +10,11 @@
  * accompanied this code).
  */
 
+import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
+import { SQLStatement } from "./SQLStatement.js";
 
 export class DatabaseTable implements DataSource
 {
@@ -26,6 +28,7 @@ export class DatabaseTable implements DataSource
 
 	public arrayfecth:number = 1;
 	private filter:FilterStructure;
+	private limit$:FilterStructure = null;
 
 	public constructor(table:string, columns?:string|string[])
 	{
@@ -64,6 +67,24 @@ export class DatabaseTable implements DataSource
 			if (column && !this.columns$.includes(column))
 				this.columns$.push(column);
 		})
+	}
+
+	public limit(filters:Filter | Filter[] | FilterStructure) : void
+	{
+		if (filters instanceof FilterStructure)
+		{
+			this.limit$ = filters;
+		}
+		else
+		{
+			if (!Array.isArray(filters))
+				filters = [filters];
+
+			this.limit$ = new FilterStructure();
+
+			for (let i = 0; i < filters.length; i++)
+				this.limit$.and(filters[i]);
+		}
 	}
 
 	public async lock(_record:Record) : Promise<boolean>
@@ -139,6 +160,14 @@ export class DatabaseTable implements DataSource
 		this.pos$ = 0;
 		this.filter = filter;
 
+		if (this.limit$ != null)
+		{
+			if (!this.filter) this.filter = this.limit$;
+			else this.filter.and(this.limit$,"limit");
+		}
+
+		SQLStatement.select(this.table$,this.columns,filter,this.arrayfecth);
+
 		return(true);
 	}
 
@@ -147,12 +176,13 @@ export class DatabaseTable implements DataSource
 		if (this.pos$ >= this.records$.length)
 			return([]);
 
-		while(this.pos$ < this.records$.length)
-		{
-			return([this.records$[this.pos$++]]);
-		}
+		let fetched:Record[] = [];
+		let pos:number = this.pos$;
 
-		return([]);
+		//while(this.pos$ < this.records$.length)
+			//fetched.push(this.records$[this.pos$++]);
+
+		return(fetched);
 	}
 
 	public async closeCursor() : Promise<boolean>

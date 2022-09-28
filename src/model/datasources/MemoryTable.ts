@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Filter } from "../interfaces/Filter.js";
 import { Record, RecordState } from "../Record.js";
 import { FilterStructure } from "../FilterStructure.js";
 import { DataSource } from "../interfaces/DataSource.js";
@@ -23,6 +24,7 @@ export class MemoryTable implements DataSource
 	private columns$:string[] = [];
 	private records$:Record[] = [];
 	private sorting$:SortOrder[] = [];
+	private limit$:FilterStructure = null;
 
 	public arrayfecth:number = 1;
 	private filter:FilterStructure;
@@ -107,6 +109,24 @@ export class MemoryTable implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public limit(filters:Filter | Filter[] | FilterStructure) : void
+	{
+		if (filters instanceof FilterStructure)
+		{
+			this.limit$ = filters;
+		}
+		else
+		{
+			if (!Array.isArray(filters))
+				filters = [filters];
+
+			this.limit$ = new FilterStructure();
+
+			for (let i = 0; i < filters.length; i++)
+				this.limit$.and(filters[i]);
+		}
 	}
 
 	public addColumns(columns:string|string[]) : void
@@ -195,6 +215,12 @@ export class MemoryTable implements DataSource
 	{
 		this.pos$ = 0;
 		this.filter = filter;
+
+		if (this.limit$ != null)
+		{
+			if (!this.filter) this.filter = this.limit$;
+			else this.filter.and(this.limit$,"limit");
+		}
 
 		if (this.sorting$.length > 0)
 		{

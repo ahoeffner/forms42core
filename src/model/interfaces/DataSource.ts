@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Filter } from './Filter.js';
 import { Record } from '../Record.js';
 import { FilterStructure } from '../FilterStructure.js';
 
@@ -30,4 +31,5 @@ export interface DataSource
 	addColumns(columns:string|string[]) : void;
 	clone(columns?:string|string[]) : DataSource;
 	query(filters?:FilterStructure) : Promise<boolean>;
+	limit(filters:Filter|Filter[]|FilterStructure) : void;
 }

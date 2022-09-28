@@ -14,5 +14,4 @@ import { DatabaseTable as RestDatabaseTable } from "../../database/DatabaseTable
 
 export class DatabaseTable extends RestDatabaseTable
 {
-
 }

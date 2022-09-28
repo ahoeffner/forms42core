@@ -18,12 +18,11 @@ export class SQLStatement
 	{
 		let stmt:string = "select ";
 		columns.forEach((column) => {stmt += column + " "});
+
 		stmt += "from "+table;
 
 		if (filter)
-		{
-			stmt += " where";
-		}
+			stmt += " where " + filter.asSQL();
 
 		console.log(stmt);
 	}

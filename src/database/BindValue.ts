@@ -18,9 +18,9 @@ export class BindValue
 
 	public constructor(name:string, value:any, type?:string)
 	{
-		this.name$ = name;
-		this.type$ = type;
-		this.value$ = value;
+		this.name = name;
+		this.type = type;
+		this.value = value;
 	}
 
 	public get name() : string
@@ -56,7 +56,7 @@ export class BindValue
 		this.value$ = value;
 
 		if (this.type$ == null && !isNaN(+value))
-			this.type$ = "decimal";
+			this.type$ = "number";
 
 		if (value instanceof Date)
 		{

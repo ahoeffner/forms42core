@@ -50,7 +50,7 @@ export class Between implements Filter
 
 	public setConstraint(values:any[]) : Filter
 	{
-		this.constraint$ = values;
+		this.constraint = values;
 		return(this);
 	}
 
@@ -116,9 +116,9 @@ export class Between implements Filter
 			gt = ">=";
 		}
 
-		let whcl:string = this.column$ + " " + lt + " :"+this.bindval$ + "0" +
+		let whcl:string = this.column$ + " " + gt + " :"+this.bindval$ + "0" +
 								" and " +
-								this.column$ + " " + gt + " :"+this.bindval$ + "1";
+								this.column$ + " " + lt + " :"+this.bindval$ + "1";
 
 		return(whcl)
 	}

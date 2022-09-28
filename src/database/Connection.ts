@@ -50,6 +50,8 @@ export class Connection extends BaseConnection
 
 	public async select(sql:Parsed, cursor:string, rows:number) : Promise<Response>
 	{
+		console.log(JSON.stringify(sql))
+
 		let payload:any =
 		{
 			rows: rows,
@@ -104,7 +106,6 @@ export class Connection extends BaseConnection
 			return;
 		}
 
-		console.log(JSON.stringify(response))
 		this.keepalive();
 	}
 

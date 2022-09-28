@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { FlightRecorder } from "../application/FlightRecorder.js";
 import { Connections } from "./Connections.js";
 
 export class Connection
@@ -123,6 +124,8 @@ export class Connection
 			if (typeof payload != "string")
 				payload = JSON.stringify(payload);
 		}
+
+		FlightRecorder.add("@connection: "+endpoint+(payload ? " "+JSON.stringify(payload) : ""))
 
 		let http:any = await fetch(endpoint,
 		{

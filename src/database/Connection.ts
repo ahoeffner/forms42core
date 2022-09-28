@@ -18,8 +18,11 @@ export class Connection extends BaseConnection
 	private conn$:string = null;
 	private keepalive$:number = 20;
 
-	public async connect() : Promise<boolean>
+	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
+		if (username) this.username = username;
+		if (password) this.password = password;
+
 		let payload:any =
 		{
 			"scope": "transaction",
@@ -43,9 +46,20 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async query(stmt:string, cursor:string, rows:number) : Promise<Response>
+	public async select(stmt:string, cursor:string, rows:number) : Promise<Response>
 	{
-		return(null);
+		let payload:any =
+		{
+			rows: rows,
+			compact: true,
+			cursor: cursor,
+
+			sql: stmt,
+			bindvalues: []
+		};
+
+		let response:any = await this.post(this.conn$+"/select",payload);
+		return(response);
 	}
 
 	public async fetch(stmt:string) : Promise<Response>

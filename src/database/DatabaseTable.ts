@@ -10,11 +10,12 @@
  * accompanied this code).
  */
 
+import { SQLStatement } from "./SQLStatement.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
-import { SQLStatement } from "./SQLStatement.js";
+import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
@@ -26,18 +27,33 @@ export class DatabaseTable implements DataSource
 	private columns$:string[] = [];
 	private records$:Record[] = [];
 
-	public arrayfecth:number = 1;
+	public arrayfecth:number = 32;
 	private filter:FilterStructure;
 	private limit$:FilterStructure = null;
+	private conn$:DatabaseConnection = null;
 
-	public constructor(table:string, columns?:string|string[])
+	public constructor(connection:DatabaseConnection, table:string, columns?:string|string[])
 	{
 		this.table$ = table;
+		this.conn$ = connection;
+
+		if (columns != null)
+		{
+			if (!Array.isArray(columns))
+				columns = [columns];
+
+			this.columns$ = columns;
+		}
 	}
 
 	public clone(columns?:string|string[]) : DatabaseTable
 	{
-		return(null);
+		let clone:DatabaseTable = new DatabaseTable(this.conn$,this.table$,columns);
+
+		clone.sorting = this.sorting;
+		clone.arrayfecth = this.arrayfecth;
+
+		return(clone);
 	}
 
 	public get sorting() : string
@@ -166,7 +182,8 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
-		SQLStatement.select(this.table$,this.columns,filter,this.arrayfecth);
+		let sql:string = SQLStatement.select(this.table$,this.columns,filter,this.sorting,this.arrayfecth);
+		this.conn$.select(sql,"123",this.arrayfecth);
 
 		return(true);
 	}

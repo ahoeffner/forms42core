@@ -14,7 +14,7 @@ import { FilterStructure } from "../model/FilterStructure";
 
 export class SQLStatement
 {
-	public static select(table:string, columns:string[], filter:FilterStructure, rows:number) : void
+	public static select(table:string, columns:string[], filter:FilterStructure, order:string, rows:number) : string
 	{
 		let stmt:string = "select ";
 		columns.forEach((column) => {stmt += column + " "});
@@ -24,6 +24,10 @@ export class SQLStatement
 		if (filter)
 			stmt += " where " + filter.asSQL();
 
+		if (order)
+			stmt += " "+order;
+
 		console.log(stmt);
+		return(stmt);
 	}
 }

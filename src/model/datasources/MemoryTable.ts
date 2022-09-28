@@ -92,7 +92,12 @@ export class MemoryTable implements DataSource
 			table.push(row);
 		}
 
-		return(new MemoryTable(columns,table));
+		let clone:MemoryTable = new MemoryTable(columns,table);
+
+		clone.sorting = this.sorting;
+		clone.arrayfecth = this.arrayfecth;
+
+		return(clone);
 	}
 
 	public get sorting() : string

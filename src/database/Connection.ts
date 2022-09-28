@@ -50,7 +50,7 @@ export class Connection extends BaseConnection
 
 	public async select(sql:Parsed, cursor:string, rows:number) : Promise<Response>
 	{
-		console.log(JSON.stringify(sql))
+		console.log(sql.stmt)
 
 		let payload:any =
 		{

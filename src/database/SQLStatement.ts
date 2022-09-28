@@ -42,9 +42,14 @@ export class SQLStatement
 	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : Parsed
 	{
 		let stmt:string = "select ";
-		columns.forEach((column) => {stmt += column + " "});
 
-		stmt += "from "+table;
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += columns[i];
+		}
+
+		stmt += " from "+table;
 
 		if (filter)
 			stmt += " where " + filter.asSQL();

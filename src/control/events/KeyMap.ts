@@ -40,9 +40,6 @@ export class KeyMap
 	public static prevrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowUp});
 	public static nextrecord:KeyMap = new KeyMap({key: KeyCodes.ArrowDown});
 
-	public static nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
-	public static prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
-
    	public static prevblock:KeyMap = new KeyMap({key: KeyCodes.PageUp});
 	public static nextblock:KeyMap = new KeyMap({key: KeyCodes.PageDown});
 

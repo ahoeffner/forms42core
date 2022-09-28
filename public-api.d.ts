@@ -28,6 +28,7 @@ export { Tag as CustomTag } from './src/application/tags/Tag.js';
 
 export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';
+export { FilterStructure } from './src/model/FilterStructure.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
 export { dates } from './src/model/dates/dates.js';

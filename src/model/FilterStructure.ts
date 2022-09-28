@@ -138,7 +138,7 @@ export class FilterStructure
 		return(match);
 	}
 
-	public asSQL(level?:number) : string
+	public asSQL() : string
 	{
 		return(this.build(0));
 	}

@@ -26,6 +26,11 @@ export class DatePicker
 		border-bottom: 2px solid rgb(155, 155, 155);
 	`;
 
+	public static datePickerMthTextStyle:string =
+	`
+		margin-top:0px;
+	`
+
 	public static datePickerArrowStyle:string =
 	`
 		width: 35px;
@@ -53,12 +58,6 @@ export class DatePicker
 		justify-content: center;
 	`;
 
-	public static datePickerSpanStyle:string = 
-	`
-		width:100%;
-		justify-content: center;
-	`;
-
 	public static datePickerSelectedDay:string = 
 	`
 		background-color: #a8a8a8;
@@ -79,19 +78,19 @@ export class DatePicker
 		let body:HTMLElement = view.querySelector("div[name='date-picker']")
 		if(body)
 		{
+			let mth:HTMLElement = body.querySelector("div[name='mth']");
 			let month:HTMLElement = body.querySelector("div[name='month']");
 			let day:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='day']");
 			let week:NodeListOf<HTMLElement> = body.querySelectorAll("div[name='week']");
 			let arrow:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='prev'],div[name='next']");
-			let span:NodeListOf<HTMLElement>= body.querySelectorAll("span");
 			
 			if (body && DatePicker.datePickerStyle) body.style.cssText = DatePicker.datePickerStyle;
 
 			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
+			if(mth && DatePicker.datePickerMthTextStyle) mth.style.cssText = DatePicker.datePickerMthTextStyle;
 			
 			if (DatePicker.datePickerDayStyle) day.forEach((day) => day.style.cssText = DatePicker.datePickerDayStyle);
 			if (DatePicker.datePickerWeekStyle) week.forEach((week) => week.style.cssText = DatePicker.datePickerWeekStyle);
-			if (DatePicker.datePickerSpanStyle) span.forEach((span) => span.style.cssText = DatePicker.datePickerSpanStyle);
 			if (DatePicker.datePickerArrowStyle) arrow.forEach((arrow) => arrow.style.cssText = DatePicker.datePickerArrowStyle);
 		}
 		

@@ -20,14 +20,14 @@ import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
-	private pos$:number = 0;
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
 
 	private table$:string = null;
+	private cursor:string = null;
 	private order$:string = null;
 	private columns$:string[] = [];
-	private records$:Record[] = [];
+	private fetched$:Record[] = [];
 
 	public arrayfecth:number = 32;
 	private filter:FilterStructure;
@@ -46,6 +46,8 @@ export class DatabaseTable implements DataSource
 
 			this.columns$ = columns;
 		}
+
+		this.cursor = table+(new Date().getTime());
 	}
 
 	public clone(columns?:string|string[]) : DatabaseTable
@@ -119,7 +121,6 @@ export class DatabaseTable implements DataSource
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
-				this.records$.push(rec);
 				rec.response = "inserted";
 			}
 
@@ -133,14 +134,6 @@ export class DatabaseTable implements DataSource
 			{
 				processed.push(rec);
 				rec.response = "deleted";
-
-				let recno:number = this.indexOf(this.records$,rec.id);
-
-				if (recno >= 0)
-				{
-					this.pos$--;
-					this.records$.splice(recno,1);
-				}
 			}
 		});
 
@@ -175,8 +168,8 @@ export class DatabaseTable implements DataSource
 
 	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
-		this.pos$ = 0;
 		this.eof$ = false;
+		this.fetched$ = [];
 		this.filter = filter;
 
 		if (this.limit$ != null)
@@ -186,9 +179,19 @@ export class DatabaseTable implements DataSource
 		}
 
 		let sql:SQLStatement = SQLBuilder.select(this.table$,this.columns,filter,this.sorting);
-		let response:any = await this.conn$.select(sql,"123",this.arrayfecth);
+		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
-		console.log(response.rows);
+		let rows:any[][] = response.rows;
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			let record:Record = new Record(this);
+
+			for (let c = 0; c < rows[r].length; c++)
+				record.setValue(this.columns[c],rows[r][c]);
+
+			this.fetched$.push(record);
+		}
 
 		return(true);
 	}
@@ -198,25 +201,38 @@ export class DatabaseTable implements DataSource
 		if (this.eof$)
 			return([]);
 
+		if (this.fetched$.length > 0)
+		{
+			let fetched:Record[] = [];
+			fetched.push(...this.fetched$);
+
+			this.fetched$ = [];
+			return(fetched);
+		}
+
 		let fetched:Record[] = [];
-		let response:any = await this.conn$.fetch("123");
-		console.log(response.rows);
+		let response:any = await this.conn$.fetch(this.cursor);
+
+		this.eof$ = !response.more;
+		let rows:any[][] = response.rows;
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			let record:Record = new Record(this);
+
+			for (let c = 0; c < rows[r].length; c++)
+				record.setValue(this.columns[c],rows[r][c]);
+
+			fetched.push(record);
+		}
 
 		return(fetched);
 	}
 
 	public async closeCursor() : Promise<boolean>
 	{
+		this.eof$ = true;
+		this.fetched$ = [];
 		return(true);
-	}
-
-	private indexOf(records:Record[],oid:any) : number
-	{
-		for (let i = 0; i < records.length; i++)
-		{
-			if (records[i].id == oid)
-				return(i);
-		}
-		return(-1);
 	}
 }

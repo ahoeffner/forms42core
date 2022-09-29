@@ -44,14 +44,12 @@ export class Connection extends BaseConnection
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
-		//this.keepalive();
+		this.keepalive();
 		return(true);
 	}
 
 	public async select(sql:SQLStatement, cursor:string, rows:number) : Promise<Response>
 	{
-		console.log(sql.stmt)
-
 		let payload:any =
 		{
 			rows: rows,

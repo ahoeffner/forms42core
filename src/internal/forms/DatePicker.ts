@@ -48,8 +48,8 @@ export class DatePicker extends Form
 		this.leftArrow = document.createElement("span");
 		this.rightArrow = document.createElement("span");
 
-		this.leftArrow.innerHTML = "&#11164;";
-		this.rightArrow.innerHTML = "&#11166;";
+		this.leftArrow.textContent = "<";
+		this.rightArrow.textContent = ">";
 
 		this.addEventListener(this.navigate,
 		[
@@ -86,8 +86,6 @@ export class DatePicker extends Form
 		form.setValue(block,field,this.date);
 		this.setValue("calendar","date",this.date);
 
-		console.log(this.date);
-
 		return (this.close());
 	}
 
@@ -119,6 +117,7 @@ export class DatePicker extends Form
 	{
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
+		let space:boolean = event.key == KeyMap.space;
 
 		let left:boolean = event.key == this.prevstep;
 		let right:boolean = event.key == this.nextstep;
@@ -158,14 +157,17 @@ export class DatePicker extends Form
 				return(false);
 			}
 		}
-	
 		return(true);
 	}
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
-		if(event.field == null)
+
+		if(!event.field)
+		{
+			console.log("pajspaojpdojsa")
 			return(true);
+		}
 		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
 			return(true);
 
@@ -189,6 +191,7 @@ export class DatePicker extends Form
 
 	private async goToNextMonth () : Promise<boolean>
 	{
+		console.log("goToNextMonth");
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -197,6 +200,7 @@ export class DatePicker extends Form
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
+		console.log("goToPrevMonth");
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -285,8 +289,7 @@ export class DatePicker extends Form
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
 						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
-					</div>
-					
+					</div>		
 				</div>
 			</div>
 		</div>

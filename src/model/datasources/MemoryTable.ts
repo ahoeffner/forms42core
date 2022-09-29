@@ -216,7 +216,7 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
-	public async query(filter:FilterStructure) : Promise<boolean>
+	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
 		this.pos$ = 0;
 		this.filter = filter;

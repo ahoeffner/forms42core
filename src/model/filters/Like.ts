@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class Like implements Filter
@@ -26,6 +27,7 @@ export class Like implements Filter
 	public constructor(column:string)
 	{
 		this.column$ = column;
+		this.bindval$ = column;
 	}
 
 	public clear() : void
@@ -59,6 +61,11 @@ export class Like implements Filter
 	{
 		this.constraint$ = value;
 		this.constraint$ = this.constraint$.replace("*","%");
+	}
+
+	public getBindValues(): BindValue[]
+	{
+		return([new BindValue(this.bindval$,this.constraint$)]);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

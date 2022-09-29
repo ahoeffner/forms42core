@@ -10,24 +10,28 @@
  * accompanied this code).
  */
 
-import { FilterStructure } from "../model/FilterStructure";
+import { BindValue } from "./BindValue";
 
 export class SQLStatement
 {
-	public static select(table:string, columns:string[], filter:FilterStructure, order:string, rows:number) : string
+	stmt:string;
+	bindvalues:BindValue[];
+
+	toString() : string
 	{
-		let stmt:string = "select ";
-		columns.forEach((column) => {stmt += column + " "});
+		let str = this.stmt;
 
-		stmt += "from "+table;
+		if (this.bindvalues != null && this.bindvalues.length > 0)
+		{
+			str += "[";
+			for (let i = 0; i < this.bindvalues.length; i++)
+			{
+				if (i > 0) str += ", ";
+				str += this.bindvalues[i].toString();
+			}
+			str += "]";
+		}
 
-		if (filter)
-			stmt += " where " + filter.asSQL();
-
-		if (order)
-			stmt += " "+order;
-
-		console.log(stmt);
-		return(stmt);
+		return(str);
 	}
 }

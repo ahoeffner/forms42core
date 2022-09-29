@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class Contains implements Filter
@@ -43,6 +44,10 @@ export class Contains implements Filter
 			columns = [columns];
 
 		this.columns$ = columns;
+		this.bindval$ = columns[0];
+
+		for (let i = 1; i < columns.length; i++)
+			this.bindval$ += "."+columns[i];
 	}
 
 	public clear() : void
@@ -85,6 +90,21 @@ export class Contains implements Filter
 			if (values[i].length > 0)
 				this.constraint$.push(values[i].trim().toLocaleLowerCase());
 		}
+	}
+
+	public getBindValues(): BindValue[]
+	{
+		let str = "";
+
+		for (let i = 0; i < this.constraint$.length; i++)
+		{
+			str += this.constraint$[i];
+
+			if (i < this.constraint$.length - 1)
+				str += " ";
+		}
+
+		return([new BindValue(this.bindval$,str)]);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

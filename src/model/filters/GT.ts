@@ -12,6 +12,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { BindValue } from "../../database/BindValue.js";
 
 
 export class GT implements Filter
@@ -25,6 +26,7 @@ export class GT implements Filter
 	{
 		this.incl = incl;
 		this.column$ = column;
+		this.bindval$ = column;
 	}
 
 	public clear() : void
@@ -57,6 +59,11 @@ export class GT implements Filter
 	public set constraint(value:any)
 	{
 		this.constraint$ = value;
+	}
+
+	public getBindValues(): BindValue[]
+	{
+		return([new BindValue(this.bindval$,this.constraint$)]);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

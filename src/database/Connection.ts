@@ -10,7 +10,9 @@
  * accompanied this code).
  */
 
+import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
+import { SQLStatement } from "./SQLStatement.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
@@ -42,32 +44,33 @@ export class Connection extends BaseConnection
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
-		this.keepalive();
+		//this.keepalive();
 		return(true);
 	}
 
-	public async select(stmt:string, cursor:string, rows:number) : Promise<Response>
+	public async select(sql:SQLStatement, cursor:string, rows:number) : Promise<Response>
 	{
+		console.log(sql.stmt)
+
 		let payload:any =
 		{
 			rows: rows,
 			compact: true,
 			cursor: cursor,
 
-			sql: stmt,
-			bindvalues: []
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
-
-		console.log(JSON.stringify(response));
-
 		return(response);
 	}
 
-	public async fetch(stmt:string) : Promise<Response>
+	public async fetch(cursor:string) : Promise<Response>
 	{
-		return(null);
+		let payload:any = {cursor: cursor};
+		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+		return(response);
 	}
 
 	public async lock(stmt:string) : Promise<Response>
@@ -102,8 +105,18 @@ export class Connection extends BaseConnection
 			return;
 		}
 
-		console.log(JSON.stringify(response))
 		this.keepalive();
+	}
+
+	private convert(bindv:BindValue[]) : any[]
+	{
+		let binds:any[] = [];
+		if (bindv == null) return([]);
+
+		bindv.forEach((b) =>
+		{binds.push({name: b.name, value: b.value, type: b.type})})
+
+		return(binds);
 	}
 
 	private sleep(ms:number) : Promise<void>

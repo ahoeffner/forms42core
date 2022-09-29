@@ -11,12 +11,14 @@
  */
 
 import { Record } from "../Record.js";
+import { BindValue } from "../../database/BindValue.js";
 
 export interface Filter
 {
 	clear() : void;
 	asSQL() : string;
 	constraint?:any|any[];
+	getBindValues() : BindValue[];
 	getBindValueName() : string|string[];
 	setBindValueName(name:string) : Filter;
 	setConstraint(value:any|any[]) : Filter;

@@ -11,9 +11,8 @@
  */
 
 import { BindValue } from "./BindValue";
-import { FilterStructure } from "../model/FilterStructure";
 
-export class Parsed
+export class SQLStatement
 {
 	stmt:string;
 	bindvalues:BindValue[];
@@ -34,34 +33,5 @@ export class Parsed
 		}
 
 		return(str);
-	}
-}
-
-export class SQLStatement
-{
-	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : Parsed
-	{
-		let stmt:string = "select ";
-
-		for (let i = 0; i < columns.length; i++)
-		{
-			if (i > 0) stmt += ",";
-			stmt += columns[i];
-		}
-
-		stmt += " from "+table;
-
-		if (filter)
-			stmt += " where " + filter.asSQL();
-
-		if (order)
-			stmt += " "+order;
-
-		let parsed:Parsed = new Parsed();
-
-		parsed.stmt = stmt;
-		parsed.bindvalues = filter?.getBindValues();
-
-		return(parsed);
 	}
 }

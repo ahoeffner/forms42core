@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { Parsed } from "./SQLStatement.js";
-import { Alert } from "../application/Alert.js";
-import { Connection as BaseConnection } from "../public/Connection.js";
 import { BindValue } from "./BindValue.js";
+import { Alert } from "../application/Alert.js";
+import { SQLStatement } from "./SQLStatement.js";
+import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
 {
@@ -48,7 +48,7 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async select(sql:Parsed, cursor:string, rows:number) : Promise<Response>
+	public async select(sql:SQLStatement, cursor:string, rows:number) : Promise<Response>
 	{
 		console.log(sql.stmt)
 
@@ -65,13 +65,18 @@ export class Connection extends BaseConnection
 		let response:any = await this.post(this.conn$+"/select",payload);
 
 		console.log(JSON.stringify(response));
-
 		return(response);
 	}
 
-	public async fetch(stmt:string) : Promise<Response>
+	public async fetch(sql:SQLStatement) : Promise<Response>
 	{
-		return(null);
+		let payload:any = JSON.parse(sql.stmt);
+		console.log(JSON.stringify(payload))
+
+		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+
+		console.log(JSON.stringify(response));
+		return(response);
 	}
 
 	public async lock(stmt:string) : Promise<Response>

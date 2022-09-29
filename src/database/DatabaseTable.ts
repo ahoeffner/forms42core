@@ -10,8 +10,9 @@
  * accompanied this code).
  */
 
+import { SQLBuilder } from "./SQLBuilder.js";
+import { SQLStatement } from "./SQLStatement.js";
 import { Filter } from "../model/interfaces/Filter.js";
-import { Parsed, SQLStatement } from "./SQLStatement.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
@@ -21,6 +22,7 @@ export class DatabaseTable implements DataSource
 {
 	private pos$:number = 0;
 	private dirty$:Record[] = [];
+	private eof$:boolean = false;
 
 	private table$:string = null;
 	private order$:string = null;
@@ -171,9 +173,10 @@ export class DatabaseTable implements DataSource
 		return(true);
 	}
 
-	public async query(filter:FilterStructure) : Promise<boolean>
+	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
 		this.pos$ = 0;
+		this.eof$ = false;
 		this.filter = filter;
 
 		if (this.limit$ != null)
@@ -182,23 +185,21 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
-		let sql:Parsed = SQLStatement.select(this.table$,this.columns,filter,this.sorting);
-		this.conn$.select(sql,"123",this.arrayfecth);
+		let sql:SQLStatement = SQLBuilder.select(this.table$,this.columns,filter,this.sorting);
+		this.conn$.select(sql,"c123",this.arrayfecth);
 
 		return(true);
 	}
 
 	public async fetch() : Promise<Record[]>
 	{
-		if (this.pos$ >= this.records$.length)
+		if (this.eof$)
 			return([]);
 
 		let fetched:Record[] = [];
-		let pos:number = this.pos$;
+		let sql:SQLStatement = SQLBuilder.fetch("c123");
 
-		//while(this.pos$ < this.records$.length)
-			//fetched.push(this.records$[this.pos$++]);
-
+		this.conn$.fetch(sql);
 		return(fetched);
 	}
 

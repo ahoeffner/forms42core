@@ -186,7 +186,9 @@ export class DatabaseTable implements DataSource
 		}
 
 		let sql:SQLStatement = SQLBuilder.select(this.table$,this.columns,filter,this.sorting);
-		this.conn$.select(sql,"c123",this.arrayfecth);
+		let response:any = await this.conn$.select(sql,"c123",this.arrayfecth);
+
+		console.log(response.rows);
 
 		return(true);
 	}
@@ -199,7 +201,9 @@ export class DatabaseTable implements DataSource
 		let fetched:Record[] = [];
 		let sql:SQLStatement = SQLBuilder.fetch("c123");
 
-		this.conn$.fetch(sql);
+		let response:any = await this.conn$.fetch(sql);
+		console.log(response.rows);
+		
 		return(fetched);
 	}
 

@@ -66,9 +66,9 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async fetch(sql:SQLStatement) : Promise<Response>
+	public async fetch(cursor:string) : Promise<Response>
 	{
-		let payload:any = JSON.parse(sql.stmt);
+		let payload:any = {cursor: cursor};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
 		return(response);
 	}

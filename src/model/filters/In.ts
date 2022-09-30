@@ -75,6 +75,7 @@ export class In implements Filter
 
 	public set constraint(table:any|any[]|any[][])
 	{
+		console.log("constraint "+table)
 		this.constraint$ = null;
 		if (table == null) return;
 
@@ -98,6 +99,8 @@ export class In implements Filter
 
 		if (table.length == 0)
 			return;
+
+		console.log("isArray "+Array.isArray(table[0]))
 
 		// List
 		if (!Array.isArray(table[0]))

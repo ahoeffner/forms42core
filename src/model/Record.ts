@@ -68,6 +68,14 @@ export class Record
 		return(this.keys$);
 	}
 
+	public set keys(keys:any|any[])
+	{
+		if (!Array.isArray(keys))
+			keys = [keys];
+
+		this.keys$ = keys;
+	}
+
 	public get block() : Block
 	{
 		return(this.wrapper$?.block);
@@ -147,11 +155,6 @@ export class Record
 	public set state(status:RecordState)
 	{
 		this.status$ = status;
-	}
-
-	public addKey(value:any) : void
-	{
-		this.keys$.push(value);
 	}
 
 	public getValue(column:string) : any

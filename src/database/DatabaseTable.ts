@@ -32,7 +32,10 @@ export class DatabaseTable implements DataSource
 	private table$:string = null;
 	private cursor:string = null;
 	private order$:string = null;
+
 	private columns$:string[] = [];
+	private primary$:string[] = [];
+
 	private fetched$:Record[] = [];
 
 	private filter:FilterStructure;
@@ -50,6 +53,7 @@ export class DatabaseTable implements DataSource
 				columns = [columns];
 
 			this.columns$ = columns;
+			this.primary$ = columns;
 		}
 
 		this.cursor = table+(new Date().getTime());
@@ -78,6 +82,17 @@ export class DatabaseTable implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public get primaryKey() : string[]
+	{
+		return(this.primary$);
+	}
+
+	public set primaryKey(columns:string|string[])
+	{
+		if (!Array.isArray(columns)) columns = [columns];
+		this.primary$ = columns;
 	}
 
 	public addColumns(columns:string|string[]) : void
@@ -186,18 +201,7 @@ export class DatabaseTable implements DataSource
 		let sql:SQLStatement = SQLBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
-		let rows:any[][] = response.rows;
-
-		for (let r = 0; r < rows.length; r++)
-		{
-			let record:Record = new Record(this);
-
-			for (let c = 0; c < rows[r].length; c++)
-				record.setValue(this.columns[c],rows[r][c]);
-
-			this.fetched$.push(record);
-		}
-
+		this.fetched$ = this.parse(response);
 		return(true);
 	}
 
@@ -215,23 +219,8 @@ export class DatabaseTable implements DataSource
 			return(fetched);
 		}
 
-		let fetched:Record[] = [];
 		let response:any = await this.conn$.fetch(this.cursor);
-
-		this.eof$ = !response.more;
-		let rows:any[][] = response.rows;
-
-		for (let r = 0; r < rows.length; r++)
-		{
-			let record:Record = new Record(this);
-
-			for (let c = 0; c < rows[r].length; c++)
-				record.setValue(this.columns[c],rows[r][c]);
-
-			fetched.push(record);
-		}
-
-		return(fetched);
+		return(this.parse(response));
 	}
 
 	public async closeCursor() : Promise<boolean>
@@ -239,5 +228,29 @@ export class DatabaseTable implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 		return(true);
+	}
+
+	private parse(response:any) : Record[]
+	{
+		let fetched:Record[] = [];
+		this.eof$ = !response.more;
+		let rows:any[][] = response.rows;
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			let keys:any[] = [];
+			let record:Record = new Record(this);
+
+			for (let c = 0; c < rows[r].length; c++)
+				record.setValue(this.columns[c],rows[r][c]);
+
+			this.primary$.forEach((col) =>
+			{keys.push(record.getValue(col))})
+
+			record.keys = keys;
+			fetched.push(record);
+		}
+
+		return(fetched);
 	}
 }

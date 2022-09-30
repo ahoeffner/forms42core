@@ -99,19 +99,16 @@ export class In implements Filter
 		if (table.length == 0)
 			return;
 
-		console.log("isArray "+Array.isArray(table[0]))
-
 		// List
 		if (!Array.isArray(table[0]))
 		{
 			let list:any[] = table;	table = [];
 			list.forEach((elem) => table.push([elem]));
+			table = [table];
 		}
 
-		if (!Array.isArray(table[0]))
-			table = [table];
-
 		this.constraint$ = table;
+		console.log(this.constraint$)
 	}
 
 	public getBindValues(): BindValue[]
@@ -185,7 +182,7 @@ export class In implements Filter
 				if (i > 0) whcl += ",";
 				whcl += this.columns$[i];
 			}
-			whcl += ")";
+			whcl += ") in (";
 		}
 
 		if (this.constraint$.length > 1 || this.constraint$[0].length > 5)

@@ -86,8 +86,8 @@ export class DatePicker
 			
 			if (body && DatePicker.datePickerStyle) body.style.cssText = DatePicker.datePickerStyle;
 
-			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
 			if(mth && DatePicker.datePickerMthTextStyle) mth.style.cssText = DatePicker.datePickerMthTextStyle;
+			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
 			
 			if (DatePicker.datePickerDayStyle) day.forEach((day) => day.style.cssText = DatePicker.datePickerDayStyle);
 			if (DatePicker.datePickerWeekStyle) week.forEach((week) => week.style.cssText = DatePicker.datePickerWeekStyle);

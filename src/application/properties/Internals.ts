@@ -79,10 +79,11 @@ export class Internals
 	`
 		top: 0px;
 		right: 1px;
-		width: 10px;
+		width: 30px;
 		height: 20px;
 		display: grid;
 		cursor: default;
+		text-align:right;
 		font-weight: bold;
 		position: absolute;
 	`;

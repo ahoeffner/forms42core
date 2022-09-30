@@ -27,8 +27,8 @@ export class DatePicker extends Form
 	private date:Date = new Date();
 	private enabled:FieldProperties;
 	private disabled:FieldProperties;
-	private leftArrow:HTMLElement = null;
-	private rightArrow:HTMLElement = null;
+	private leftArrow:String = null;
+	private rightArrow:String = null;
 	private day:number = this.date.getDate();
 	private prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
 	private nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
@@ -45,23 +45,23 @@ export class DatePicker extends Form
 			{type: EventType.WhenValidateField, field: "date"}
 		]);
 
-		this.leftArrow = document.createElement("span");
-		this.rightArrow = document.createElement("span");
-
-		this.leftArrow.textContent = "<";
-		this.rightArrow.textContent = ">";
+		this.leftArrow = "<";
+		this.rightArrow = ">";
 
 		this.addEventListener(this.navigate,
 		[
 			{type: EventType.Key, key: this.prevstep},
 			{type: EventType.Key, key: this.nextstep},
+			{type: EventType.Key, key: KeyMap.space},
 			{type: EventType.Key, key: KeyMap.prevrecord},
 			{type: EventType.Key, key: KeyMap.nextrecord},
 		]);
 
-		this.addEventListener(this.setDay,{type: EventType.Mouse, mouse:MouseMap.click});
+		this.addEventListener(this.setDay,[
+			{type: EventType.Key, key:KeyMap.enter},
+			{type: EventType.Mouse, mouse:MouseMap.click}
+		]);
 
-		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.goToPrevMonth,
@@ -115,10 +115,11 @@ export class DatePicker extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
+		if(event.field == "prev"|| event.field == "next")
+			return(true);
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 		let space:boolean = event.key == KeyMap.space;
-
 		let left:boolean = event.key == this.prevstep;
 		let right:boolean = event.key == this.nextstep;
 		
@@ -153,8 +154,21 @@ export class DatePicker extends Form
 		{
 			if (this.getValue(event.block,'day-' + row + (--col)))
 			{
+
 				this.goField(event.block,'day-' + row + col);
 				return(false);
+			}
+		}
+		else if (space)
+		{
+			if (this.getValue(event.block,'day-' + row + col))
+			{
+
+				this.day = this.getValue(event.block,'day-' + row + col);
+				this.date.setDate(this.day);
+				this.setValue("calendar","date",this.date);
+		
+				return(true);
 			}
 		}
 		return(true);
@@ -162,10 +176,9 @@ export class DatePicker extends Form
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
-
+		console.log(event)
 		if(!event.field)
 		{
-			console.log("pajspaojpdojsa")
 			return(true);
 		}
 		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
@@ -191,7 +204,6 @@ export class DatePicker extends Form
 
 	private async goToNextMonth () : Promise<boolean>
 	{
-		console.log("goToNextMonth");
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -200,7 +212,6 @@ export class DatePicker extends Form
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
-		console.log("goToPrevMonth");
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();

@@ -15,6 +15,5 @@ export interface MenuEntry
 	id:any;
 	text:string;
 	command?:string;
-	html?:HTMLElement;
 	disabled?:boolean;
 }

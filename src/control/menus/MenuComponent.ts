@@ -15,7 +15,7 @@ import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
 
 
-export class MenuHandler implements EventListenerObject
+export class MenuComponent implements EventListenerObject
 {
 	private menu:Menu = null;
 	private levcls:string = null;

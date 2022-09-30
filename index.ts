@@ -55,6 +55,6 @@ export { Component, FormsPathMapping } from './src/application/annotations/Forms
 
 export { Menu } from './src/control/menus/interfaces/Menu.js';
 export { StaticMenu } from './src/control/menus/StaticMenu.js';
-export { MenuHandler } from './src/control/menus/MenuHandler.js';
+export { MenuComponent } from './src/control/menus/MenuComponent.js';
 export { MenuEntry } from './src/control/menus/interfaces/MenuEntry.js';
 export { StaticMenuEntry } from './src/control/menus/interfaces/StaticMenuEntry.js';

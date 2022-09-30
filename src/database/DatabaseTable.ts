@@ -236,6 +236,12 @@ export class DatabaseTable implements DataSource
 		this.eof$ = !response.more;
 		let rows:any[][] = response.rows;
 
+		if (response.success)
+		{
+			this.eof$ = true;
+			return(fetched);
+		}
+
 		for (let r = 0; r < rows.length; r++)
 		{
 			let keys:any[] = [];

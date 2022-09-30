@@ -105,8 +105,8 @@ export class DatePicker extends Form
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
 		
-		this.setValue("calendar","prev",this.leftArrow);
-		this.setValue("calendar","next",this.rightArrow);
+		this.setValue("calendar","prev","<");
+		this.setValue("calendar","next",">");
 		this.setValue("calendar","date",value);
 
 		this.setDate();
@@ -165,7 +165,6 @@ export class DatePicker extends Form
 
 		if(!event.field)
 		{
-			console.log("pajspaojpdojsa")
 			return(true);
 		}
 		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
@@ -191,7 +190,6 @@ export class DatePicker extends Form
 
 	private async goToNextMonth () : Promise<boolean>
 	{
-		console.log("goToNextMonth");
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -200,7 +198,6 @@ export class DatePicker extends Form
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
-		console.log("goToPrevMonth");
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();

@@ -23,7 +23,7 @@ export class MenuHandler implements EventListenerObject
 	private linkcls:string = null;
 	private target:HTMLElement = null;
 	private options$:MenuOptions = null;
-    private open:Set<string> = new Set<string>();
+	private open:Set<string> = new Set<string>();
 
 	constructor(menu:Menu, target:HTMLElement, options?:MenuOptions)
 	{
@@ -117,8 +117,8 @@ export class MenuHandler implements EventListenerObject
 		}
 
 		if (empty) return(page);
-
 		page += "<div class='"+this.levcls+"'>";
+
 		for (let i = 0; i < entries.length; i++)
 		{
 			if (entries[i].disabled != null && entries[i].disabled)
@@ -147,8 +147,8 @@ export class MenuHandler implements EventListenerObject
 			}
 
 		}
-		page += "</div>";
 
+		page += "</div>";
 		return(page);
 	}
 
@@ -161,17 +161,17 @@ export class MenuHandler implements EventListenerObject
 		else if (await this.menu.execute(path)) this.hide();
 	}
 
-    private split(path:string) : string[]
-    {
-        let parts:string[] = [];
-        let split:string[] = path.trim().split("/");
+	private split(path:string) : string[]
+	{
+		let parts:string[] = [];
+		let split:string[] = path.trim().split("/");
 
-        split.forEach((elem) =>
-        {
+		split.forEach((elem) =>
+		{
 			elem = elem.trim();
-            if (elem.length > 0) parts.push(elem);
-        });
+			if (elem.length > 0) parts.push(elem);
+		});
 
-        return(parts);
-    }
+		return(parts);
+	}
 }

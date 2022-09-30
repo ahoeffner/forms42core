@@ -13,7 +13,8 @@
 export interface MenuEntry
 {
 	id:any;
-    text:string;
-    disabled?:boolean;
-    command?:string;
+	text:string;
+	html?:boolean;
+	command?:string;
+	disabled?:boolean;
 }

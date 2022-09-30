@@ -17,18 +17,18 @@ import { MenuOptions } from './interfaces/MenuOptions.js';
 
 export class MenuComponent implements EventListenerObject
 {
-	private menu:Menu = null;
-	private levcls:string = null;
-	private menucls:string = null;
-	private linkcls:string = null;
-	private target:HTMLElement = null;
+	private menu$:Menu = null;
+	private levcls$:string = null;
+	private menucls$:string = null;
+	private linkcls$:string = null;
+	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
-	private open:Set<string> = new Set<string>();
+	private open$:Set<string> = new Set<string>();
 
-	constructor(menu:Menu, target:HTMLElement, options?:MenuOptions)
+	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
-		this.menu = menu;
-		this.target = target;
+		this.menu$ = menu;
+		this.target$ = target;
 		this.options$ = options;
 		if (options == null) this.options$ = {}
 
@@ -41,9 +41,9 @@ export class MenuComponent implements EventListenerObject
 		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
 		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
 
-		this.levcls = (this.options$.classes.common + " " + this.options$.classes.container).trim();
-		this.menucls = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
-		this.linkcls = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
+		this.levcls$ = (this.options$.classes.common + " " + this.options$.classes.container).trim();
+		this.menucls$ = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
+		this.linkcls$ = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
 	}
 
 	public get options() : MenuOptions
@@ -51,31 +51,41 @@ export class MenuComponent implements EventListenerObject
 		return(this.options$);
 	}
 
+	public get target() : HTMLElement
+	{
+		return(this.target$);
+	}
+
+	public set target(target:HTMLElement)
+	{
+		this.target$ = target;
+	}
+
 	public show() : void
 	{
-		let start:MenuEntry[] = [this.menu.getRoot()];
+		let start:MenuEntry[] = [this.menu$.getRoot()];
 
 		if (this.options$.skiproot)
-			start = this.menu.getEntries("/"+start[0].id);
+			start = this.menu$.getEntries("/"+start[0].id);
 
-		this.target.innerHTML = this.showEntry(start);
+		this.target$.innerHTML = this.showEntry(start);
 
-		let entries:NodeList = this.target.querySelectorAll("a");
+		let entries:NodeList = this.target$.querySelectorAll("a");
 		entries.forEach((link) => {link.addEventListener("click",this);});
 	}
 
 	public hide() : void
 	{
-		this.target.innerHTML = "";
+		this.target$.innerHTML = "";
 	}
 
 	public toggle(path:string) : void
 	{
-		let open:boolean = this.open.has(path);
+		let open:boolean = this.open$.has(path);
 
 		if (this.options$.singlepath)
 		{
-			this.open.clear();
+			this.open$.clear();
 
 			let opath:string = "";
 			let mpath:string[] = this.split(path);
@@ -83,16 +93,16 @@ export class MenuComponent implements EventListenerObject
 			for (let i = 0; i < mpath.length; i++)
 			{
 				opath += "/" + mpath[i];
-				this.open.add(opath);
+				this.open$.add(opath);
 			}
 
 			if (open)
-				this.open.delete(path);
+				this.open$.delete(path);
 		}
 		else
 		{
-			if (!open) this.open.add(path);
-			else	   this.open.delete(path);
+			if (!open) this.open$.add(path);
+			else	   this.open$.delete(path);
 		}
 
 		this.show();
@@ -117,7 +127,7 @@ export class MenuComponent implements EventListenerObject
 		}
 
 		if (empty) return(page);
-		page += "<div class='"+this.levcls+"'>";
+		page += "<div class='"+this.levcls$+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{
@@ -125,21 +135,21 @@ export class MenuComponent implements EventListenerObject
 				continue;
 
 			let cmd:string = "";
-			let classes:string = this.menucls;
+			let classes:string = this.menucls$;
 
 			if (entries[i].command)
 			{
-				classes = this.linkcls;
+				classes = this.linkcls$;
 				cmd = "command='"+entries[i].command+"'";
 			}
 
 			let npath:string = path+entries[i].id;
 
-			if (this.open.has(npath))
+			if (this.open$.has(npath))
 			{
 				classes += " "+this.options$.classes.open;
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].text+"</a>";
-				page = this.showEntry(this.menu.getEntries(npath),npath,page);
+				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
 			}
 			else
 			{
@@ -158,7 +168,7 @@ export class MenuComponent implements EventListenerObject
 		let path:string = elem.getAttribute("path");
 
 		if (!elem.hasAttribute("command")) this.toggle(path);
-		else if (await this.menu.execute(path)) this.hide();
+		else if (await this.menu$.execute(path)) this.hide();
 	}
 
 	private split(path:string) : string[]

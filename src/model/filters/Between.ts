@@ -63,7 +63,7 @@ export class Between implements Filter
 	{
 		this.constraint$ = [];
 		if (values == null) return;
-		if (this.constraint$.length != 2) return;
+		if (values.length != 2) return;
 
 		this.constraint$ = values;
 

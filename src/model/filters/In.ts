@@ -17,8 +17,8 @@ import { BindValue } from "../../database/BindValue.js";
 
 export class In implements Filter
 {
+	private bindval$:string = null;
 	private columns$:string[] = null;
-	private bindval$:string[] = null;
 	private constraint$:any[][] = null;
 
 	public constructor(columns:string|string[])
@@ -44,6 +44,10 @@ export class In implements Filter
 			columns = [columns];
 
 		this.columns$ = columns;
+		this.bindval$ = columns[0];
+
+		for (let i = 1; i < columns.length; i++)
+			this.bindval$ += "."+columns[i];
 	}
 
 	public clear() : void
@@ -51,14 +55,14 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
-	public getBindValueName() : string[]
+	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
 	public setBindValueName(name:string) : Filter
 	{
-		this.bindval$ = [name];
+		this.bindval$ = name;
 		return(this);
 	}
 
@@ -103,12 +107,11 @@ export class In implements Filter
 		if (!Array.isArray(table[0]))
 		{
 			let list:any[] = table;	table = [];
-			list.forEach((elem) => table.push([elem]));
+			list.forEach((elem) => table.push(elem));
 			table = [table];
 		}
 
 		this.constraint$ = table;
-		console.log(this.constraint$)
 	}
 
 	public getBindValues(): BindValue[]
@@ -166,8 +169,6 @@ export class In implements Filter
 		if (this.constraint$ == null)
 			return("1 == 2");
 
-		console.log(this.constraint$.length+" "+this.constraint$[0].length)
-
 		let whcl:string = "";
 
 		if (this.columns$.length == 1)
@@ -203,8 +204,47 @@ export class In implements Filter
 		}
 
 		whcl += ")"
-
 		return(whcl)
+	}
+
+	public toString(lenght?:number) : string
+	{
+		if (lenght == null)
+			lenght = 30;
+
+		if (this.constraint$ == null)
+			return("1 == 2");
+
+		let whcl:string = "";
+
+		if (this.columns$.length == 1)
+		{
+			whcl += this.columns$[0]+" in (";
+		}
+		else
+		{
+			whcl += "(";
+			for (let i = 0; i < this.constraint$[0].length; i++)
+			{
+				whcl += this.quoted(this.constraint$[0][i])
+				if (i < this.constraint$[0].length - 1) whcl += ","
+			}
+			whcl += ") in (";
+		}
+
+		for (let i = 0; i < this.constraint$[0].length; i++)
+		{
+			whcl += this.quoted(this.constraint$[0][i])
+			if (i < this.constraint$[0].length - 1) whcl += ","
+
+			if (whcl.length > lenght-4)
+			{
+				whcl += "...";
+				break
+			}
+		}
+		whcl += ")"
+		return(whcl);
 	}
 
 	private quoted(value:any) : any

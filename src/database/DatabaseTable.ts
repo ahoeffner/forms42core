@@ -20,6 +20,12 @@ import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
+	public arrayfecth:number = 1;
+	public queryallowed:boolean = true;
+	public insertallowed:boolean = true;
+	public updateallowed:boolean = true;
+	public deleteallowed:boolean = true;
+
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
 
@@ -29,7 +35,6 @@ export class DatabaseTable implements DataSource
 	private columns$:string[] = [];
 	private fetched$:Record[] = [];
 
-	public arrayfecth:number = 32;
 	private filter:FilterStructure;
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;

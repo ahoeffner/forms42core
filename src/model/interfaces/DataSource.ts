@@ -20,6 +20,11 @@ export interface DataSource
 	columns:string[];
 	arrayfecth:number;
 
+	queryallowed:boolean;
+	insertallowed:boolean;
+	updateallowed:boolean;
+	deleteallowed:boolean;
+
 	fetch() : Promise<Record[]>;
 	flush() : Promise<Record[]>;
 	closeCursor() : Promise<boolean>;

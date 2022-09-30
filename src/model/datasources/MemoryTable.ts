@@ -17,8 +17,13 @@ import { DataSource } from "../interfaces/DataSource.js";
 
 export class MemoryTable implements DataSource
 {
-	private pos$:number = 0;
+	public arrayfecth:number = 1;
+	public queryallowed:boolean = true;
+	public insertallowed:boolean = true;
+	public updateallowed:boolean = true;
+	public deleteallowed:boolean = true;
 
+	private pos$:number = 0;
 	private order$:string = null;
 	private dirty$:Record[] = [];
 	private columns$:string[] = [];
@@ -26,7 +31,6 @@ export class MemoryTable implements DataSource
 	private sorting$:SortOrder[] = [];
 	private limit$:FilterStructure = null;
 
-	public arrayfecth:number = 1;
 	private filter:FilterStructure;
 
 	public constructor(columns?:string|string[], records?:number|any[][])

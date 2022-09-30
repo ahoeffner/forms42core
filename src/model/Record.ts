@@ -34,6 +34,7 @@ export class Record
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
+	private dirty$:Set<string> = new Set<string>();
 	private status$:RecordState = RecordState.Query;
 
 	constructor(source:DataSource, columns?:{[name:string]: any})
@@ -75,6 +76,12 @@ export class Record
 	public clear() : void
 	{
 		this.values$ = [];
+		this.dirty$.clear();
+	}
+
+	public cleanout() : void
+	{
+		this.dirty$.clear();
 	}
 
 	public get source() : DataSource
@@ -159,10 +166,19 @@ export class Record
 
 	public setValue(column:string,value:any) : void
 	{
-		if (column == null) return;
+		if (column == null)
+			return;
+
 		column = column.toLowerCase();
 		let idx:number = this.indexOf(column);
+
+		this.dirty$.add(column);
 		this.values$[idx] = value;
+	}
+
+	public get dirty() : string[]
+	{
+		return([...this.dirty$]);
 	}
 
 	public get columns() : string[]
@@ -191,7 +207,7 @@ export class Record
 	{
 		let str:string = "";
 		let cols:number = 0;
-		
+
 		if (this.source) cols += this.source.columns.length;
 		if (this.wrapper) cols += this.wrapper.columns.length;
 

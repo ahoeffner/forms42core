@@ -236,7 +236,7 @@ export class DatabaseTable implements DataSource
 		this.eof$ = !response.more;
 		let rows:any[][] = response.rows;
 
-		if (response.success)
+		if (!response.success)
 		{
 			this.eof$ = true;
 			return(fetched);

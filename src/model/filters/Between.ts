@@ -59,27 +59,16 @@ export class Between implements Filter
 		return(this.constraint$);
 	}
 
-	public set constraint(values:any|any[])
+	public set constraint(values:any[])
 	{
 		this.constraint$ = [];
 		if (values == null) return;
+		if (this.constraint$.length != 2) return;
 
 		this.constraint$ = values;
 
-		if (typeof values === "string")
-		{
-			this.constraint$ = [];
-			values = values.split(",")
-
-			for (let i = 0; i < values.length; i++)
-			{
-				if (values[i].length > 0)
-					this.constraint$.push(values[i].trim());
-			}
-		}
-
-		if (this.constraint$.length > 0) this.fr = this.constraint$[0];
-		if (this.constraint$.length > 1) this.to = this.constraint$[1];
+		this.fr = this.constraint$[0];
+		this.to = this.constraint$[1];
 	}
 
 	public getBindValues(): BindValue[]

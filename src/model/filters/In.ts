@@ -106,6 +106,9 @@ export class In implements Filter
 			list.forEach((elem) => table.push([elem]));
 		}
 
+		if (!Array.isArray(table[0]))
+			table = [table];
+
 		this.constraint$ = table;
 	}
 
@@ -113,7 +116,10 @@ export class In implements Filter
 	{
 		let bindvalues:BindValue[] = [];
 
-		for (let i = 0; i < this.constraint$.length; i++)
+		if (this.constraint$.length > 1 || this.constraint$[0].length > 5)
+			return([]);
+
+		for (let i = 0; i < this.constraint$[0].length; i++)
 			bindvalues.push(new BindValue(this.bindval$+"0"+i,this.constraint$[0][i]));
 
 		return(bindvalues);
@@ -161,15 +167,55 @@ export class In implements Filter
 		if (this.constraint$ == null)
 			return("1 == 2");
 
-		let whcl:string = "";
-		whcl += this.columns$[0]+" in (";
+		console.log(this.constraint$.length+" "+this.constraint$[0].length)
 
-		for (let i = 0; i < this.constraint$.length; i++)
+		let whcl:string = "";
+
+		if (this.columns$.length == 1)
 		{
-			whcl += ":"+this.bindval$+"0"+i;
-			if (i < this.constraint$.length - 1) whcl += ","
+			whcl += this.columns$[0]+" in (";
+		}
+		else
+		{
+			whcl += "(";
+			for (let i = 0; i < this.columns$.length; i++)
+			{
+				if (i > 0) whcl += ",";
+				whcl += this.columns$[i];
+			}
+			whcl += ")";
 		}
 
+		if (this.constraint$.length > 1 || this.constraint$[0].length > 5)
+		{
+			for (let i = 0; i < this.constraint$[0].length; i++)
+			{
+				whcl += this.quoted(this.constraint$[0][i])
+				if (i < this.constraint$[0].length - 1) whcl += ","
+			}
+		}
+		else
+		{
+			for (let i = 0; i < this.constraint$[0].length; i++)
+			{
+				whcl += ":"+this.bindval$+"0"+i;
+				if (i < this.constraint$[0].length - 1) whcl += ","
+			}
+		}
+
+		whcl += ")"
+
 		return(whcl)
+	}
+
+	private quoted(value:any) : any
+	{
+		if (typeof value == "string")
+			return("'"+value+"'");
+
+		if (value instanceof Date)
+			return(value.getTime());
+
+		return(value);
 	}
 }

@@ -115,8 +115,12 @@ export class DatePicker extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if(event.field == "prev"|| event.field == "next")
+		if (!event.field)
 			return(true);
+
+		if (event.field == "prev"|| event.field == "next")
+			return(true);
+
 		let prev:boolean = event.key == KeyMap.prevrecord;
 		let next:boolean = event.key == KeyMap.nextrecord;
 		let space:boolean = event.key == KeyMap.space;
@@ -176,11 +180,9 @@ export class DatePicker extends Form
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
-		console.log(event)
-		if(!event.field)
-		{
+		if (!event.field)
 			return(true);
-		}
+
 		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
 			return(true);
 

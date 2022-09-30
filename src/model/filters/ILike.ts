@@ -48,7 +48,7 @@ export class ILike implements Filter
 
 	public setConstraint(value:any) : Filter
 	{
-		this.constraint$ = value;
+		this.constraint = value;
 		return(this);
 	}
 

@@ -64,7 +64,7 @@ export class In implements Filter
 
 	public setConstraint(values:any|any[]|any[][]) : Filter
 	{
-		this.constraint$ = values;
+		this.constraint = values;
 		return(this);
 	}
 
@@ -75,7 +75,6 @@ export class In implements Filter
 
 	public set constraint(table:any|any[]|any[][])
 	{
-		console.log("constraint "+table)
 		this.constraint$ = null;
 		if (table == null) return;
 

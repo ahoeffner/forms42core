@@ -68,7 +68,7 @@ export class Contains implements Filter
 
 	public setConstraint(values:any) : Filter
 	{
-		this.constraint$ = values;
+		this.constraint = values;
 		return(this);
 	}
 

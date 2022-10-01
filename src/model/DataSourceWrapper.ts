@@ -253,9 +253,7 @@ export class DataSourceWrapper
 
 	public async fetch() : Promise<Record>
 	{
-		console.log("hwm: "+this.hwm$+" cache: "+(this.cache$.length-1)+" eof: "+this.eof$);
-
-		if (this.hwm$ >= this.cache$.length-1)
+		if (this.hwm$ >= this.cache$.length)
 		{
 			if (this.eof$) return(null);
 			let recs:Record[] = await this.source.fetch();
@@ -276,7 +274,10 @@ export class DataSourceWrapper
 		let record:Record = this.cache$[this.hwm$];
 
 		if (record.prepared)
-			console.log("shit");
+		{
+			Alert.fatal("Record already prepared","Fetch");
+			return(null);
+		}
 
 		this.hwm$++;
 		record.wrapper = this;
@@ -296,13 +297,19 @@ export class DataSourceWrapper
 		}
 		else
 		{
-			while(possible < records)
+			possible = this.hwm$ - record - 1;
+			let fetch:number = records - possible;
+
+			for (let i = 0; i < fetch; i++)
 			{
 				if (await this.fetch() == null)
 					break;
 
 				possible++;
 			}
+
+			if (possible > records)
+				possible = records;
 		}
 
 		if (possible < 0) possible = 0;

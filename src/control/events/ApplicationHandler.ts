@@ -14,6 +14,7 @@ import { KeyMap, KeyMapping } from './KeyMap.js';
 import { FormEvent, FormEvents } from './FormEvents.js';
 import { MouseMap, MouseMapParser } from './MouseMap.js';
 import { BrowserEvent } from '../../view/BrowserEvent.js';
+import { FormBacking } from '../../application/FormBacking.js';
 import { FlightRecorder } from '../../application/FlightRecorder.js';
 
 
@@ -74,10 +75,16 @@ export class ApplicationHandler implements EventListenerObject
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(this.event);
 				let frmevent:FormEvent = FormEvent.KeyEvent(null,null,key);
-				await FormEvents.raise(frmevent);
 
-				if (key == KeyMap.dump)
-					FlightRecorder.dump()
+				if (await FormEvents.raise(frmevent))
+				{
+					if (key == KeyMap.save)
+						await FormBacking.getCurrentForm()?.flush()
+
+					if (key == KeyMap.dump)
+						FlightRecorder.dump();
+				}
+
 			}
 			else
 			{

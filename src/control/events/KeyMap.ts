@@ -23,6 +23,7 @@ export class KeyMap
 	public static dump:KeyMap = new KeyMap({key: KeyCodes.f1});
 	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
 
+	public static save:KeyMap = new KeyMap({key: 's', ctrl: true});
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8});
 	public static queryeditor:KeyMap = new KeyMap({key: KeyCodes.f7, ctrl: true});

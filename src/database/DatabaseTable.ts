@@ -22,7 +22,7 @@ import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
-	public arrayfecth:number = 1;
+	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
 	public updateallowed:boolean = true;

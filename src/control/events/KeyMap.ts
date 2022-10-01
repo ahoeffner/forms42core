@@ -20,7 +20,7 @@ export class KeyMap
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
 
-	public static dump:KeyMap = new KeyMap({key: KeyCodes.f2});
+	public static dump:KeyMap = new KeyMap({key: KeyCodes.f1});
 	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});

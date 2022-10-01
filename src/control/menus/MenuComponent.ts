@@ -165,10 +165,12 @@ export class MenuComponent implements EventListenerObject
 	public async handleEvent(link:Event)
 	{
 		let elem:HTMLAnchorElement = link.target as HTMLAnchorElement;
-		let path:string = elem.getAttribute("path");
 
-		if (!elem.hasAttribute("command")) this.toggle(path);
-		else if (await this.menu$.execute(path)) this.hide();
+		let path:string = elem.getAttribute("path");
+		let command:string = elem.getAttribute("command");
+
+		if (command == null) this.toggle(path);
+		else if (await this.menu$.execute(command)) this.hide();
 	}
 
 	private split(path:string) : string[]

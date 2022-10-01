@@ -15,7 +15,6 @@ import { FormBacking } from "./FormBacking.js";
 import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
-import { Block } from "../public/Block.js";
 
 
 export class FormMetaData

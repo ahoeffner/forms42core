@@ -185,6 +185,7 @@ export class DataSourceWrapper
 
 		inserted.wrapper = this;
 		inserted.prepared = true;
+		inserted.state = RecordState.New;
 
 		return(inserted);
 	}
@@ -267,6 +268,7 @@ export class DataSourceWrapper
 				this.eof$ = true;
 
 			this.cache$.push(...recs);
+			recs.forEach((rec) => rec.state = RecordState.Query);
 		}
 
 		let record:Record = this.cache$[this.hwm$];

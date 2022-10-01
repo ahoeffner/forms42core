@@ -148,17 +148,17 @@ export class Block
 
 	public get datasource() : DataSource
 	{
-		return(FormBacking.getModelBlock(this).datasource);
+		return(FormBacking.getModelBlock(this,true).datasource);
 	}
 
 	public set datasource(source:DataSource)
 	{
-		FormBacking.getModelBlock(this).datasource = source;
+		FormBacking.getModelBlock(this,true).datasource = source;
 	}
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		return(FormBacking.getModelBlock(this).insert(before));
+		return(FormBacking.getModelBlock(this)?.insert(before));
 	}
 
 	public getValue(field:string) : any

@@ -71,24 +71,54 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async lock(stmt:string) : Promise<Response>
+	public async lock(sql:SQLStatement) : Promise<Response>
 	{
-		return(null);
+		let payload:any =
+		{
+			rows: 1,
+			compact: true,
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
+		};
+
+		let response:any = await this.post(this.conn$+"/select",payload);
+		return(response);
 	}
 
-	public async insert(stmt:string) : Promise<Response>
+	public async insert(sql:SQLStatement) : Promise<Response>
 	{
-		return(null);
+		let payload:any =
+		{
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
+		};
+
+		let response:any = await this.patch(this.conn$+"/insert?returning="+sql.returnclause,payload);
+		return(response);
 	}
 
-	public async update(stmt:string) : Promise<Response>
+	public async update(sql:SQLStatement) : Promise<Response>
 	{
-		return(null);
+		let payload:any =
+		{
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
+		};
+
+		let response:any = await this.patch(this.conn$+"/update?returning="+sql.returnclause,payload);
+		return(response);
 	}
 
-	public async delete(stmt:string) : Promise<Response>
+	public async delete(sql:SQLStatement) : Promise<Response>
 	{
-		return(null);
+		let payload:any =
+		{
+			sql: sql.stmt,
+			bindvalues: this.convert(sql.bindvalues)
+		};
+
+		let response:any = await this.patch(this.conn$+"/delete?returning="+sql.returnclause,payload);
+		return(response);
 	}
 
 	private async keepalive() : Promise<void>

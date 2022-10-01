@@ -10,8 +10,10 @@
  * accompanied this code).
  */
 
+import { Record } from "../model/Record.js";
 import { SQLStatement } from "./SQLStatement.js";
 import { FilterStructure } from "../model/FilterStructure.js";
+import { BindValue } from "./BindValue.js";
 
 export class SQLBuilder
 {
@@ -46,5 +48,46 @@ export class SQLBuilder
 		let parsed:SQLStatement = new SQLStatement();
 		parsed.stmt = '{"cursor": "'+ cursor+'" }';
 		return(parsed);
+	}
+
+	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	{
+		let binds:BindValue[] = [];
+		let stmt:string = "insert into "+table+"(";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += columns[i];
+		}
+
+		stmt += ") values (";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += ":"+columns[i];
+
+			binds.push(new BindValue(columns[i],record.getValue(columns[i])))
+		}
+
+		stmt += ") "+returnclause;
+
+		let parsed:SQLStatement = new SQLStatement();
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = binds;
+
+		return(parsed);
+	}
+
+	public static update(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	{
+		return(null);
+	}
+
+	public static delete(table:string, record:Record, returnclause:string) : SQLStatement
+	{
+		return(null);
 	}
 }

@@ -42,6 +42,10 @@ export class DatabaseTable implements DataSource
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
+	private insreturnclause$:string = null;
+	private updreturnclause$:string = null;
+	private delreturnclause$:string = null;
+
 	public constructor(connection:DatabaseConnection, table:string, columns?:string|string[])
 	{
 		this.table$ = table;
@@ -95,6 +99,36 @@ export class DatabaseTable implements DataSource
 		this.primary$ = columns;
 	}
 
+	public get insertReturningClause() : string
+	{
+		return(this.insreturnclause$);
+	}
+
+	public set insertReturningClause(clause:string)
+	{
+		this.insreturnclause$ = clause;
+	}
+
+	public get updateReturningClause() : string
+	{
+		return(this.updreturnclause$);
+	}
+
+	public set updateReturningClause(clause:string)
+	{
+		this.updreturnclause$ = clause;
+	}
+
+	public get deleteReturningClause() : string
+	{
+		return(this.delreturnclause$);
+	}
+
+	public set deleteReturningClause(clause:string)
+	{
+		this.delreturnclause$ = clause;
+	}
+
 	public addColumns(columns:string|string[]) : void
 	{
 		if (!Array.isArray(columns))
@@ -135,25 +169,29 @@ export class DatabaseTable implements DataSource
 	public async flush() : Promise<Record[]>
 	{
 		let processed:Record[] = [];
+		let sql:SQLStatement = null;
 
 		this.dirty$.forEach((rec) =>
 		{
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
-				rec.response = "inserted";
+				sql = SQLBuilder.insert(this.table$,this.columns,rec,this.insreturnclause$);
+				rec.response = this.conn$.insert(sql);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				rec.response = "updated";
+				sql = SQLBuilder.update(this.table$,this.columns,rec,this.insreturnclause$);
+				rec.response = this.conn$.insert(sql);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				rec.response = "deleted";
+				sql = SQLBuilder.delete(this.table$,rec,this.insreturnclause$);
+				rec.response = this.conn$.insert(sql);
 			}
 		});
 

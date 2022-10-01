@@ -15,6 +15,7 @@ import { BindValue } from "./BindValue";
 export class SQLStatement
 {
 	stmt:string;
+	returnclause:boolean;
 	bindvalues:BindValue[];
 
 	toString() : string

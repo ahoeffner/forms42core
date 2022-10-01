@@ -275,17 +275,14 @@ export class DataSourceWrapper
 
 		let record:Record = this.cache$[this.hwm$];
 
-		if (!record.prepared)
-		{
-			record.wrapper = this;
-
-			if (!await this.block.onFetch(record))
-				return(null);
-
-			record.prepared = true;
-		}
+		if (record.prepared)
+			console.log("shit");
 
 		this.hwm$++;
+		record.wrapper = this;
+		await this.block.onFetch(record);
+		record.prepared = true;
+
 		return(record);
 	}
 
@@ -299,9 +296,6 @@ export class DataSourceWrapper
 		}
 		else
 		{
-			possible = this.cache$.length - record - 1;
-			if (possible > records) possible = records;
-
 			while(possible < records)
 			{
 				if (await this.fetch() == null)

@@ -176,6 +176,7 @@ export class MenuComponent implements EventListenerObject
 	private split(path:string) : string[]
 	{
 		let parts:string[] = [];
+		console.log("split: <"+path+">")
 		let split:string[] = path.trim().split("/");
 
 		split.forEach((elem) =>

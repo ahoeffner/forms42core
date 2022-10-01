@@ -395,7 +395,6 @@ export class Form implements EventListenerObject
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
 	{
 		let success:boolean = false;
-		console.log("key "+key)
 
 		let block:Block = inst?.field.block;
 		let mblock:ModelBlock = inst?.field.block.model;

@@ -253,8 +253,11 @@ export class DataSourceWrapper
 
 	public async fetch() : Promise<Record>
 	{
+		console.log("hwm: "+this.hwm$+" cache: "+(this.cache$.length-1)+" eof: "+this.eof$);
+
 		if (this.hwm$ >= this.cache$.length-1)
 		{
+			console.log("fetch rows");
 			if (this.eof$) return(null);
 			let recs:Record[] = await this.source.fetch();
 
@@ -269,6 +272,7 @@ export class DataSourceWrapper
 
 			this.cache$.push(...recs);
 			recs.forEach((rec) => rec.state = RecordState.Query);
+			console.log("fetched hwm: "+this.hwm$+" cache: "+this.cache$.length)
 		}
 
 		let record:Record = this.cache$[this.hwm$];

@@ -255,9 +255,6 @@ export class DatabaseTable implements DataSource
 
 	public async fetch() : Promise<Record[]>
 	{
-		if (this.eof$)
-			return([]);
-
 		if (this.fetched$.length > 0)
 		{
 			let fetched:Record[] = [];
@@ -266,6 +263,9 @@ export class DatabaseTable implements DataSource
 			this.fetched$ = [];
 			return(fetched);
 		}
+
+		if (this.eof$)
+			return([]);
 
 		let response:any = await this.conn$.fetch(this.cursor);
 		return(this.parse(response));

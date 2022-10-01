@@ -20,6 +20,7 @@ import { Block as ModelBlock } from '../model/Block.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FilterStructure } from '../model/FilterStructure.js';
+import { FormMetaData } from '../application/FormMetaData.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
@@ -148,12 +149,18 @@ export class Block
 
 	public get datasource() : DataSource
 	{
-		return(FormBacking.getModelBlock(this).datasource);
+		let mblock:ModelBlock = FormBacking.getModelBlock(this);
+
+		if (mblock != null) return(mblock.datasource);
+		return(FormMetaData.get(this.form,true).getDataSource(this.name));
 	}
 
 	public set datasource(source:DataSource)
 	{
-		FormBacking.getModelBlock(this).datasource = source;
+		let mblock:ModelBlock = FormBacking.getModelBlock(this);
+
+		if (mblock != null) mblock.datasource = source;
+		else FormMetaData.get(this.form,true).addDataSource(this.name,source);
 	}
 
 	public async insert(before?:boolean) : Promise<boolean>

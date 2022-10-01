@@ -27,7 +27,7 @@ export class FilterStructure
 
 	public get empty() : boolean
 	{
-		return(this.entries$.length == 0);
+		return(this.getFilters().length == 0);
 	}
 
 	public size() : number
@@ -191,6 +191,26 @@ export class FilterStructure
 	{
 		let str:string = this.build(0,[]);
 		return(str);
+	}
+
+	private getFilters(start?:FilterStructure) : Filter[]
+	{
+		let filters:Filter[] = [];
+		if (start == null) start = this;
+
+		for (let i = 0; i < start.entries$.length; i++)
+		{
+			if (start.entries$[i].isFilter())
+			{
+				filters.push(start.entries$[i].filter as Filter);
+			}
+			else
+			{
+				filters.push(...this.getFilters(start.entries$[i].filter as FilterStructure))
+			}
+		}
+
+		return(filters);
 	}
 }
 

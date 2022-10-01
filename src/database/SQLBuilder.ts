@@ -29,11 +29,13 @@ export class SQLBuilder
 
 		stmt += " from "+table;
 
-		if (filter)
+		console.log(filter.toString()+" empty: "+filter.empty)
+
+		if (filter && !filter.empty)
 			stmt += " where " + filter.asSQL();
 
 		if (order)
-			stmt += " "+order;
+			stmt += " order by "+order;
 
 		let parsed:SQLStatement = new SQLStatement();
 

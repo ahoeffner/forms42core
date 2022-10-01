@@ -11,7 +11,9 @@
  */
 
 import { SQLBuilder } from "./SQLBuilder.js";
+import { Alert } from "../application/Alert.js";
 import { SQLStatement } from "./SQLStatement.js";
+import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
@@ -46,9 +48,16 @@ export class DatabaseTable implements DataSource
 	private updreturnclause$:string = null;
 	private delreturnclause$:string = null;
 
-	public constructor(connection:DatabaseConnection, table:string, columns?:string|string[])
+	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
 		this.table$ = table;
+
+		if (!(connection instanceof DatabaseConnection))
+		{
+			Alert.fatal("Datasource for table '"+table+"' Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			return;
+		}
+
 		this.conn$ = connection;
 
 		if (columns != null)
@@ -96,6 +105,7 @@ export class DatabaseTable implements DataSource
 	public set primaryKey(columns:string|string[])
 	{
 		if (!Array.isArray(columns)) columns = [columns];
+		this.addColumns(columns);
 		this.primary$ = columns;
 	}
 

@@ -29,8 +29,6 @@ export class SQLBuilder
 
 		stmt += " from "+table;
 
-		console.log(filter.toString()+" empty: "+filter.empty)
-
 		if (filter && !filter.empty)
 			stmt += " where " + filter.asSQL();
 

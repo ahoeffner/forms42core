@@ -66,7 +66,6 @@ export class DatabaseTable implements DataSource
 				columns = [columns];
 
 			this.columns$ = columns;
-			this.primary$ = columns;
 		}
 
 		this.cursor = table+(new Date().getTime());
@@ -181,7 +180,8 @@ export class DatabaseTable implements DataSource
 		let processed:Record[] = [];
 		let sql:SQLStatement = null;
 
-		console.log("flush "+this.dirty$.length)
+		if (this.primary$ == null)
+			this.primary$ = this.columns$;
 
 		this.dirty$.forEach((rec) =>
 		{
@@ -291,6 +291,9 @@ export class DatabaseTable implements DataSource
 			this.eof$ = true;
 			return(fetched);
 		}
+
+		if (this.primary$ == null)
+			this.primary$ = this.columns$;
 
 		for (let r = 0; r < rows.length; r++)
 		{

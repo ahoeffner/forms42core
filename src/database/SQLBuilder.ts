@@ -10,15 +10,20 @@
  * accompanied this code).
  */
 
+import { BindValue } from "./BindValue.js";
 import { Record } from "../model/Record.js";
 import { SQLStatement } from "./SQLStatement.js";
+import { Filters } from "../model/filters/Filters.js";
+import { Filter } from "../model/interfaces/Filter.js";
 import { FilterStructure } from "../model/FilterStructure.js";
-import { BindValue } from "./BindValue.js";
 
 export class SQLBuilder
 {
 	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLStatement
 	{
+		let parsed:SQLStatement =
+			new SQLStatement();
+
 		let stmt:string = "select ";
 
 		for (let i = 0; i < columns.length; i++)
@@ -34,8 +39,6 @@ export class SQLBuilder
 
 		if (order)
 			stmt += " order by "+order;
-
-		let parsed:SQLStatement = new SQLStatement();
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filter?.getBindValues();
@@ -53,6 +56,8 @@ export class SQLBuilder
 	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
 	{
 		let binds:BindValue[] = [];
+		let parsed:SQLStatement = new SQLStatement();
+
 		let stmt:string = "insert into "+table+"(";
 
 		for (let i = 0; i < columns.length; i++)
@@ -73,8 +78,6 @@ export class SQLBuilder
 
 		stmt += ") "+returnclause;
 
-		let parsed:SQLStatement = new SQLStatement();
-
 		parsed.stmt = stmt;
 		parsed.bindvalues = binds;
 
@@ -86,8 +89,26 @@ export class SQLBuilder
 		return(null);
 	}
 
-	public static delete(table:string, record:Record, returnclause:string) : SQLStatement
+	public static delete(table:string, pkey:string[], record:Record, returnclause:string) : SQLStatement
 	{
-		return(null);
+		let parsed:SQLStatement = new SQLStatement();
+		let stmt:string = "delete from "+table+" where ";
+
+		// Mobiloplader + fuldmagt
+
+		let filters:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < pkey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+		}
+
+		stmt += " where " + filters.asSQL();
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = filters.getBindValues();
+
+		return(parsed);
 	}
 }

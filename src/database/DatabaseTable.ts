@@ -181,6 +181,8 @@ export class DatabaseTable implements DataSource
 		let processed:Record[] = [];
 		let sql:SQLStatement = null;
 
+		console.log("flush "+this.dirty$.length)
+
 		this.dirty$.forEach((rec) =>
 		{
 			if (rec.state == RecordState.Inserted)
@@ -194,14 +196,14 @@ export class DatabaseTable implements DataSource
 			{
 				processed.push(rec);
 				sql = SQLBuilder.update(this.table$,this.columns,rec,this.insreturnclause$);
-				rec.response = this.conn$.insert(sql);
+				rec.response = this.conn$.update(sql);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				sql = SQLBuilder.delete(this.table$,rec,this.insreturnclause$);
-				rec.response = this.conn$.insert(sql);
+				sql = SQLBuilder.delete(this.table$,this.primary$,rec,this.insreturnclause$);
+				rec.response = this.conn$.delete(sql);
 			}
 		});
 

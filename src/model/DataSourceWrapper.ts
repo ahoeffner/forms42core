@@ -67,8 +67,6 @@ export class DataSourceWrapper
 
 	public async flush() : Promise<boolean>
 	{
-		console.log("flush");
-
 		try
 		{
 			let succces:boolean = true;

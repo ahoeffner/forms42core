@@ -749,7 +749,7 @@ export class Block
 				return(false);
 
 			let values:any[][] = [];
-			let filter:Filter = Filters.In(rel.master.fields);
+			let filter:Filter = Filters.SubQuery(rel.master.fields);
 
 			while(true)
 			{

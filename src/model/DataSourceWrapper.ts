@@ -67,6 +67,8 @@ export class DataSourceWrapper
 
 	public async flush() : Promise<boolean>
 	{
+		console.log("flush");
+
 		try
 		{
 			let succces:boolean = true;
@@ -273,17 +275,14 @@ export class DataSourceWrapper
 
 		let record:Record = this.cache$[this.hwm$];
 
-		if (record.prepared)
+		if (!record.prepared)
 		{
-			Alert.fatal("Record already prepared","Fetch");
-			return(null);
+			record.wrapper = this;
+			await this.block.onFetch(record);
+			record.prepared = true;
 		}
 
 		this.hwm$++;
-		record.wrapper = this;
-		await this.block.onFetch(record);
-		record.prepared = true;
-
 		return(record);
 	}
 

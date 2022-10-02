@@ -70,6 +70,7 @@ export class DataSourceWrapper
 		try
 		{
 			let succces:boolean = true;
+			console.log("Wrapper flush")
 			let records:Record[] = await this.source.flush();
 
 			for (let i = 0; i < records.length; i++)

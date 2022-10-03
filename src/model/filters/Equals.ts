@@ -20,6 +20,7 @@ export class Equals implements Filter
 	private column$:string = null;
 	private bindval$:string = null;
 	private constraint$:any = null;
+	private bindvalues$:BindValue[] = null;
 
 	public constructor(column:string)
 	{
@@ -56,12 +57,16 @@ export class Equals implements Filter
 
 	public set constraint(value:any)
 	{
+		this.bindvalues$ = null;
 		this.constraint$ = value;
 	}
 
 	public getBindValues(): BindValue[]
 	{
-		return([new BindValue(this.bindval$,this.constraint$)]);
+		if (this.bindvalues$ == null)
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

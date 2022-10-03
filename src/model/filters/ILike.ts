@@ -23,6 +23,7 @@ export class ILike implements Filter
 	private rtrunc:boolean = false;
 	private parsed:boolean = false;
 	private constraint$:string = null;
+	private bindvalues$:BindValue[] = null;
 
 	public constructor(column:string)
 	{
@@ -59,12 +60,16 @@ export class ILike implements Filter
 
 	public set constraint(value:string)
 	{
+		this.bindvalues$ = null;
 		this.constraint$ = value;
 	}
 
 	public getBindValues(): BindValue[]
 	{
-		return([new BindValue(this.bindval$,this.constraint$)]);
+		if (this.bindvalues$ == null)
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

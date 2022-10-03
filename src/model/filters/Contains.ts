@@ -20,6 +20,7 @@ export class Contains implements Filter
 	private columns$:string[] = [];
 	private bindval$:string = null;
 	private constraint$:string[] = null;
+	private bindvalues$:BindValue[] = null;
 
 	public constructor(columns:string|string[])
 	{
@@ -80,7 +81,10 @@ export class Contains implements Filter
 	public set constraint(values:string|string[])
 	{
 		this.constraint$ = [];
-		if (values == null) return;
+		this.bindvalues$ = null;
+
+		if (values == null)
+			return;
 
 		if (!Array.isArray(values))
 			values = values.split(" ")
@@ -94,17 +98,22 @@ export class Contains implements Filter
 
 	public getBindValues(): BindValue[]
 	{
-		let str = "";
-
-		for (let i = 0; i < this.constraint$.length; i++)
+		if (this.bindvalues$ == null)
 		{
-			str += this.constraint$[i];
+			let str = "";
 
-			if (i < this.constraint$.length - 1)
-				str += " ";
+			for (let i = 0; i < this.constraint$.length; i++)
+			{
+				str += this.constraint$[i];
+
+				if (i < this.constraint$.length - 1)
+					str += " ";
+			}
+
+			this.bindvalues$ = [new BindValue(this.bindval$,str)];
 		}
 
-		return([new BindValue(this.bindval$,str)]);
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

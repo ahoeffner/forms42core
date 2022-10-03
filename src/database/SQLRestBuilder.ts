@@ -85,7 +85,7 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
-	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLRest
+	public static insert(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
 		let binds:BindValue[] = [];
 		let parsed:SQLRest = new SQLRest();
@@ -108,7 +108,12 @@ export class SQLRestBuilder
 			binds.push(new BindValue(columns[i],record.getValue(columns[i])))
 		}
 
-		stmt += ") "+returnclause;
+		if (returncolumns != null && returncolumns.length > 0)
+		{
+			let retclause:string = "";
+		}
+
+		stmt += ") "+returncolumns;
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = binds;
@@ -116,12 +121,12 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
-	public static update(table:string, columns:string[], record:Record, returnclause:string) : SQLRest
+	public static update(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
 		return(null);
 	}
 
-	public static delete(table:string, pkey:string[], record:Record, returnclause:string) : SQLRest
+	public static delete(table:string, pkey:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
 		let parsed:SQLRest = new SQLRest();
 		let stmt:string = "delete from "+table+" where ";

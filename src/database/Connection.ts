@@ -55,6 +55,7 @@ export class Connection extends BaseConnection
 			rows: rows,
 			compact: true,
 			cursor: cursor,
+			dateformat: "UTC",
 
 			sql: sql.stmt,
 			bindvalues: this.convert(sql.bindvalues)

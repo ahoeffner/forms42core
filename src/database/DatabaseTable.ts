@@ -214,6 +214,7 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
 
+				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
@@ -223,6 +224,7 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.updreturncolumns$);
 
+				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
@@ -232,6 +234,7 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.delreturncolumns$);
 
+				this.setTypes(sql.bindvalues);
 				response = await this.conn$.delete(sql);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
@@ -339,13 +342,32 @@ export class DatabaseTable implements DataSource
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+		let dates:boolean[] = [];
+
+		for (let c = 0; c < this.columns.length; c++)
+		{
+			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
+			if (datetypes.includes(dt)) dates.push(true);
+			else dates.push(false);
+		}
+
 		for (let r = 0; r < rows.length; r++)
 		{
 			let keys:any[] = [];
 			let record:Record = new Record(this);
 
 			for (let c = 0; c < rows[r].length; c++)
+			{
+				if (rows[r][c] && dates[c])
+				{
+					if (typeof rows[r][c] === "number")
+						rows[r][c] = new Date().setTime(+rows[r][c]);
+				}
+
 				record.setValue(this.columns[c],rows[r][c]);
+			}
 
 			this.primary$.forEach((col) =>
 			{keys.push(record.getValue(col))})

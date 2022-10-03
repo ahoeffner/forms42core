@@ -34,6 +34,12 @@ export class DatabaseResponse
 
 	public getValue(column:string) : any
 	{
+		if (!this.response$.rows)
+			return(null);
+
+		if (typeof this.response$.rows != "object")
+			return(null);
+
 		column = column?.toLowerCase();
 		let row:any = this.response$.rows[0];
 

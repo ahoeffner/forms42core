@@ -108,12 +108,19 @@ export class SQLRestBuilder
 			binds.push(new BindValue(columns[i],record.getValue(columns[i])))
 		}
 
+		stmt += ")";
+
 		if (returncolumns != null && returncolumns.length > 0)
 		{
-			let retclause:string = "";
-		}
+			stmt += " returning ";
+			parsed.returnclause = true;
 
-		stmt += ") "+returncolumns;
+			for (let i = 0; i < returncolumns.length; i++)
+			{
+				if (i > 0) stmt += ",";
+				stmt += returncolumns[i];
+			}
+		}
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = binds;
@@ -123,6 +130,22 @@ export class SQLRestBuilder
 
 	public static update(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
+		let binds:BindValue[] = [];
+		let parsed:SQLRest = new SQLRest();
+		let stmt:string = "update "+table+" set ";
+
+		if (returncolumns != null && returncolumns.length > 0)
+		{
+			stmt += " returning ";
+			parsed.returnclause = true;
+
+			for (let i = 0; i < returncolumns.length; i++)
+			{
+				if (i > 0) stmt += ",";
+				stmt += returncolumns[i];
+			}
+		}
+
 		return(null);
 	}
 
@@ -140,6 +163,19 @@ export class SQLRestBuilder
 		}
 
 		stmt += filters.asSQL();
+
+
+		if (returncolumns != null && returncolumns.length > 0)
+		{
+			stmt += " returning ";
+			parsed.returnclause = true;
+
+			for (let i = 0; i < returncolumns.length; i++)
+			{
+				if (i > 0) stmt += ",";
+				stmt += returncolumns[i];
+			}
+		}
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

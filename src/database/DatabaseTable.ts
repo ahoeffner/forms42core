@@ -16,6 +16,7 @@ import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
+import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
@@ -134,7 +135,7 @@ export class DatabaseTable implements DataSource
 		this.updreturncolumns$ = columns;
 	}
 
-	public get deleteReturgColumns() : string[]
+	public get deleteReturnColumns() : string[]
 	{
 		return(this.delreturncolumns$);
 	}
@@ -186,8 +187,9 @@ export class DatabaseTable implements DataSource
 
 	public async flush() : Promise<Record[]>
 	{
-		let processed:Record[] = [];
 		let sql:SQLRest = null;
+		let response:any = null;
+		let processed:Record[] = [];
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
@@ -198,21 +200,27 @@ export class DatabaseTable implements DataSource
 			{
 				processed.push(rec);
 				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
-				rec.response = this.conn$.insert(sql);
+
+				response = this.conn$.insert(sql);
+				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.insreturncolumns$);
-				rec.response = this.conn$.update(sql);
+				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.updreturncolumns$);
+
+				response = this.conn$.update(sql);
+				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.insreturncolumns$);
-				rec.response = this.conn$.delete(sql);
+				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.delreturncolumns$);
+
+				response = this.conn$.delete(sql);
+				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		});
 
@@ -314,6 +322,9 @@ export class DatabaseTable implements DataSource
 
 			this.primary$.forEach((col) =>
 			{keys.push(record.getValue(col))})
+
+			let response:any = {succes: true, rows: [rows[r]]};
+			record.response = new DatabaseResponse(response, this.columns);
 
 			record.keys = keys;
 			fetched.push(record);

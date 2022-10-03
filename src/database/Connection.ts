@@ -114,7 +114,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/insert?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/insert"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -133,7 +134,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/update?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/update"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -152,7 +154,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/delete?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/delete"+returnclause,payload);
+
+		console.log(response);
 
 		if (!response.success)
 		{

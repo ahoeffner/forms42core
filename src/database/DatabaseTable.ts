@@ -194,14 +194,16 @@ export class DatabaseTable implements DataSource
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
-		this.dirty$.forEach((rec) =>
+		for (let i = 0; i < this.dirty$.length; i++)
 		{
+			let rec:Record = this.dirty$[i];
+
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
 				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
 
-				response = this.conn$.insert(sql);
+				response = await this.conn$.insert(sql);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
@@ -210,7 +212,7 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.updreturncolumns$);
 
-				response = this.conn$.update(sql);
+				response = await this.conn$.update(sql);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
@@ -219,10 +221,10 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.delreturncolumns$);
 
-				response = this.conn$.delete(sql);
+				response = await this.conn$.delete(sql);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
-		});
+		}
 
 		this.dirty$ = [];
 		return(processed);

@@ -157,8 +157,6 @@ export class Connection extends BaseConnection
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.patch(this.conn$+"/delete"+returnclause,payload);
 
-		console.log(response);
-
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");

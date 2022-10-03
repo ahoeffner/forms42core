@@ -30,6 +30,11 @@ export class Record
 		return(this.rec$.state);
 	}
 
+	public get response() : any
+	{
+		return(this.rec$.response);
+	}
+
 	public getValue(field:string) : any
 	{
 		field = field?.toLowerCase();

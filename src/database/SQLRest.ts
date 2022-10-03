@@ -12,7 +12,7 @@
 
 import { BindValue } from "./BindValue";
 
-export class SQLStatement
+export class SQLRest
 {
 	stmt:string;
 	returnclause:boolean;

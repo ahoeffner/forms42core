@@ -10,19 +10,19 @@
  * accompanied this code).
  */
 
+import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Record } from "../model/Record.js";
-import { SQLStatement } from "./SQLStatement.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 
-export class SQLBuilder
+export class SQLRestBuilder
 {
-	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLStatement
+	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLRest
 	{
-		let parsed:SQLStatement =
-			new SQLStatement();
+		let parsed:SQLRest =
+			new SQLRest();
 
 		let stmt:string = "select ";
 
@@ -46,10 +46,10 @@ export class SQLBuilder
 		return(parsed);
 	}
 
-	public static lock(table:string, pkey:string[], columns:string[], record:Record) : SQLStatement
+	public static lock(table:string, pkey:string[], columns:string[], record:Record) : SQLRest
 	{
-		let parsed:SQLStatement =
-			new SQLStatement();
+		let parsed:SQLRest =
+			new SQLRest();
 
 		let stmt:string = "select ";
 
@@ -78,17 +78,17 @@ export class SQLBuilder
 		return(parsed);
 	}
 
-	public static fetch(cursor:string) : SQLStatement
+	public static fetch(cursor:string) : SQLRest
 	{
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest = new SQLRest();
 		parsed.stmt = '{"cursor": "'+ cursor+'" }';
 		return(parsed);
 	}
 
-	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLRest
 	{
 		let binds:BindValue[] = [];
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest = new SQLRest();
 
 		let stmt:string = "insert into "+table+"(";
 
@@ -116,14 +116,14 @@ export class SQLBuilder
 		return(parsed);
 	}
 
-	public static update(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	public static update(table:string, columns:string[], record:Record, returnclause:string) : SQLRest
 	{
 		return(null);
 	}
 
-	public static delete(table:string, pkey:string[], record:Record, returnclause:string) : SQLStatement
+	public static delete(table:string, pkey:string[], record:Record, returnclause:string) : SQLRest
 	{
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest = new SQLRest();
 		let stmt:string = "delete from "+table+" where ";
 
 		let filters:FilterStructure = new FilterStructure();

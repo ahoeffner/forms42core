@@ -61,6 +61,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -68,6 +75,13 @@ export class Connection extends BaseConnection
 	{
 		let payload:any = {cursor: cursor};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -82,6 +96,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -94,6 +115,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/insert?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -106,6 +134,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/update?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -118,6 +153,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/delete?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 

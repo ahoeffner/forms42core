@@ -230,6 +230,8 @@ export class Form
 				return(false);
 		}
 
+		this.flush();
+
 		if (block.querymode)
 		{
 			block.showLastQuery();
@@ -304,6 +306,8 @@ export class Form
 			if (!await block.view.validateBlock())
 				return(false);
 		}
+
+		this.flush();
 
 		if (block.querymode)
 		{

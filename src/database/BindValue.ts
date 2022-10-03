@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { DataType } from "./DataType";
+import { DataType } from "./DataType.js";
 
 export class BindValue
 {

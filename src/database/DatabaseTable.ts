@@ -11,6 +11,8 @@
  */
 
 import { SQLRest } from "./SQLRest.js";
+import { DataType } from "./DataType.js";
+import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
@@ -48,6 +50,9 @@ export class DatabaseTable implements DataSource
 	private insreturncolumns$:string[] = null;
 	private updreturncolumns$:string[] = null;
 	private delreturncolumns$:string[] = null;
+
+	private datatypes$:Map<string,DataType> =
+		new Map<string,DataType>();
 
 	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
@@ -100,6 +105,12 @@ export class DatabaseTable implements DataSource
 	public get primaryKey() : string[]
 	{
 		return(this.primary$);
+	}
+
+	public setDataType(column:string, type:DataType) : DatabaseTable
+	{
+		this.datatypes$.set(column?.toLowerCase(),type);
+		return(this);
 	}
 
 	public set primaryKey(columns:string|string[])
@@ -267,6 +278,8 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
+		this.setTypes(filter?.get("qbe").getBindValues());
+
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
@@ -297,6 +310,18 @@ export class DatabaseTable implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 		return(true);
+	}
+
+	private setTypes(bindvalues:BindValue[]) : void
+	{
+		bindvalues.forEach((b) =>
+		{
+
+			let col:string = b.name?.toLowerCase();
+			let t:DataType = this.datatypes$.get(col);
+			if (t != null) b.type = DataType[t];
+			if (t != null) console.log(b.toString());
+		})
 	}
 
 	private parse(response:any) : Record[]

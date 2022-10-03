@@ -10,14 +10,19 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType";
+
 export class BindValue
 {
 	private value$:any = null;
 	private name$:string = null;
 	private type$:string = null;
 
-	public constructor(name:string, value:any, type?:string)
+	public constructor(name:string, value:any, type?:DataType|string)
 	{
+		if (typeof type != "string")
+			type = DataType[type];
+
 		this.name = name;
 		this.type = type;
 		this.value = value;

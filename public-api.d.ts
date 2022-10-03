@@ -30,6 +30,7 @@ export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';
 export { FilterStructure } from './src/model/FilterStructure.js';
 
+export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";
 export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';

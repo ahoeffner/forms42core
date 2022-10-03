@@ -94,8 +94,6 @@ export class SQLBuilder
 		let parsed:SQLStatement = new SQLStatement();
 		let stmt:string = "delete from "+table+" where ";
 
-		// Mobiloplader + fuldmagt
-
 		let filters:FilterStructure = new FilterStructure();
 
 		for (let i = 0; i < pkey.length; i++)
@@ -104,7 +102,7 @@ export class SQLBuilder
 			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
 		}
 
-		stmt += " where " + filters.asSQL();
+		stmt += filters.asSQL();
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

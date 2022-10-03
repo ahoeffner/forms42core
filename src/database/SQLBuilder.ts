@@ -46,6 +46,38 @@ export class SQLBuilder
 		return(parsed);
 	}
 
+	public static lock(table:string, pkey:string[], columns:string[], record:Record) : SQLStatement
+	{
+		let parsed:SQLStatement =
+			new SQLStatement();
+
+		let stmt:string = "select ";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += columns[i];
+		}
+
+		stmt += " from "+table;
+
+		let filters:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < pkey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+		}
+
+		stmt += filters.asSQL();
+		stmt += " for update nowait";
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = filters.getBindValues();
+
+		return(parsed);
+	}
+
 	public static fetch(cursor:string) : SQLStatement
 	{
 		let parsed:SQLStatement = new SQLStatement();

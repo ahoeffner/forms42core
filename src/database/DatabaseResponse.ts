@@ -14,6 +14,7 @@ export class DatabaseResponse
 {
 	private response$:any;
 	private columns$:string[] = [];
+	private converted$:boolean = false;
 
 	constructor(response:any, columns?:string[])
 	{
@@ -34,9 +35,18 @@ export class DatabaseResponse
 	public getValue(column:string) : any
 	{
 		column = column?.toLowerCase();
-		let idx:number = this.columns$.indexOf(column);
-		let row:any[] = this.response$.rows[0];
-		if (row) return(row[idx]);
-		return(null);
+		let row:any = this.response$.rows[0];
+
+		if (!Array.isArray(row) && !this.converted$)
+		{
+			let flat:any[] = [];
+			Object.values(row).forEach((val) => flat.push(val));
+
+			row = flat;
+			this.converted$ = true;
+			this.response$.rows[0] = flat;
+		}
+
+		return(row[this.columns$.indexOf(column)]);
 	}
 }

@@ -319,11 +319,9 @@ export class DatabaseTable implements DataSource
 	{
 		bindvalues.forEach((b) =>
 		{
-
-			let col:string = b.name?.toLowerCase();
+			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
 			if (t != null) b.type = DataType[t];
-			if (t != null) console.log(b.toString());
 		})
 	}
 

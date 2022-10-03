@@ -10,19 +10,19 @@
  * accompanied this code).
  */
 
+import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Record } from "../model/Record.js";
-import { SQLStatement } from "./SQLStatement.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 
-export class SQLBuilder
+export class SQLRestBuilder
 {
-	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLStatement
+	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLRest
 	{
-		let parsed:SQLStatement =
-			new SQLStatement();
+		let parsed:SQLRest =
+			new SQLRest();
 
 		let stmt:string = "select ";
 
@@ -46,17 +46,49 @@ export class SQLBuilder
 		return(parsed);
 	}
 
-	public static fetch(cursor:string) : SQLStatement
+	public static lock(table:string, pkey:string[], columns:string[], record:Record) : SQLRest
 	{
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest =
+			new SQLRest();
+
+		let stmt:string = "select ";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += columns[i];
+		}
+
+		stmt += " from "+table;
+
+		let filters:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < pkey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+		}
+
+		stmt += filters.asSQL();
+		stmt += " for update nowait";
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = filters.getBindValues();
+
+		return(parsed);
+	}
+
+	public static fetch(cursor:string) : SQLRest
+	{
+		let parsed:SQLRest = new SQLRest();
 		parsed.stmt = '{"cursor": "'+ cursor+'" }';
 		return(parsed);
 	}
 
-	public static insert(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	public static insert(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
 		let binds:BindValue[] = [];
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest = new SQLRest();
 
 		let stmt:string = "insert into "+table+"(";
 
@@ -76,7 +108,12 @@ export class SQLBuilder
 			binds.push(new BindValue(columns[i],record.getValue(columns[i])))
 		}
 
-		stmt += ") "+returnclause;
+		if (returncolumns != null && returncolumns.length > 0)
+		{
+			let retclause:string = "";
+		}
+
+		stmt += ") "+returncolumns;
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = binds;
@@ -84,17 +121,15 @@ export class SQLBuilder
 		return(parsed);
 	}
 
-	public static update(table:string, columns:string[], record:Record, returnclause:string) : SQLStatement
+	public static update(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
 		return(null);
 	}
 
-	public static delete(table:string, pkey:string[], record:Record, returnclause:string) : SQLStatement
+	public static delete(table:string, pkey:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
-		let parsed:SQLStatement = new SQLStatement();
+		let parsed:SQLRest = new SQLRest();
 		let stmt:string = "delete from "+table+" where ";
-
-		// Mobiloplader + fuldmagt
 
 		let filters:FilterStructure = new FilterStructure();
 
@@ -104,7 +139,7 @@ export class SQLBuilder
 			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
 		}
 
-		stmt += " where " + filters.asSQL();
+		stmt += filters.asSQL();
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

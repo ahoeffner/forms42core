@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { SQLBuilder } from "./SQLBuilder.js";
+import { SQLRest } from "./SQLRest.js";
 import { Alert } from "../application/Alert.js";
-import { SQLStatement } from "./SQLStatement.js";
+import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
@@ -44,9 +44,9 @@ export class DatabaseTable implements DataSource
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
-	private insreturnclause$:string = null;
-	private updreturnclause$:string = null;
-	private delreturnclause$:string = null;
+	private insreturncolumns$:string[] = null;
+	private updreturncolumns$:string[] = null;
+	private delreturncolumns$:string[] = null;
 
 	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
@@ -108,34 +108,43 @@ export class DatabaseTable implements DataSource
 		this.primary$ = columns;
 	}
 
-	public get insertReturningClause() : string
+	public get insertReturnColumns() : string[]
 	{
-		return(this.insreturnclause$);
+		return(this.insreturncolumns$);
 	}
 
-	public set insertReturningClause(clause:string)
+	public set insertReturnColumns(columns:string|string[])
 	{
-		this.insreturnclause$ = clause;
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.insreturncolumns$ = columns;
 	}
 
-	public get updateReturningClause() : string
+	public get updateReturnColumns() : string[]
 	{
-		return(this.updreturnclause$);
+		return(this.updreturncolumns$);
 	}
 
-	public set updateReturningClause(clause:string)
+	public set updateReturnColumns(columns:string|string[])
 	{
-		this.updreturnclause$ = clause;
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.updreturncolumns$ = columns;
 	}
 
-	public get deleteReturningClause() : string
+	public get deleteReturgColumns() : string[]
 	{
-		return(this.delreturnclause$);
+		return(this.delreturncolumns$);
 	}
 
-	public set deleteReturningClause(clause:string)
+	public set deleteReturnColumns(columns:string|string[])
 	{
-		this.delreturnclause$ = clause;
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.delreturncolumns$ = columns;
 	}
 
 	public addColumns(columns:string|string[]) : void
@@ -178,7 +187,7 @@ export class DatabaseTable implements DataSource
 	public async flush() : Promise<Record[]>
 	{
 		let processed:Record[] = [];
-		let sql:SQLStatement = null;
+		let sql:SQLRest = null;
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
@@ -188,21 +197,21 @@ export class DatabaseTable implements DataSource
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
-				sql = SQLBuilder.insert(this.table$,this.columns,rec,this.insreturnclause$);
+				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
 				rec.response = this.conn$.insert(sql);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				sql = SQLBuilder.update(this.table$,this.columns,rec,this.insreturnclause$);
+				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.insreturncolumns$);
 				rec.response = this.conn$.update(sql);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				sql = SQLBuilder.delete(this.table$,this.primary$,rec,this.insreturnclause$);
+				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.insreturncolumns$);
 				rec.response = this.conn$.delete(sql);
 			}
 		});
@@ -248,7 +257,7 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
-		let sql:SQLStatement = SQLBuilder.select(this.table$,this.columns,filter,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);

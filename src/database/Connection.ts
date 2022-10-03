@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
+import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
-import { SQLStatement } from "./SQLStatement.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
@@ -48,7 +48,7 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async select(sql:SQLStatement, cursor:string, rows:number) : Promise<Response>
+	public async select(sql:SQLRest, cursor:string, rows:number) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -61,6 +61,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
@@ -68,10 +75,17 @@ export class Connection extends BaseConnection
 	{
 		let payload:any = {cursor: cursor};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
-	public async lock(sql:SQLStatement) : Promise<Response>
+	public async lock(sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -82,10 +96,17 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.post(this.conn$+"/select",payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
-	public async insert(sql:SQLStatement) : Promise<Response>
+	public async insert(sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -94,10 +115,17 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/insert?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
-	public async update(sql:SQLStatement) : Promise<Response>
+	public async update(sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -106,10 +134,17 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/update?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 
-	public async delete(sql:SQLStatement) : Promise<Response>
+	public async delete(sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -118,6 +153,13 @@ export class Connection extends BaseConnection
 		};
 
 		let response:any = await this.patch(this.conn$+"/delete?returning="+sql.returnclause,payload);
+
+		if (!response.success)
+		{
+			Alert.warning(response.message,"Database Connection");
+			return;
+		}
+
 		return(response);
 	}
 

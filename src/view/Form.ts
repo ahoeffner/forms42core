@@ -430,11 +430,10 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.executequery)
 				inst = this.curinst$;
 
-			if (key == KeyMap.enter && mblock.querymode)
-				inst = this.curinst$;
-
 			if (key == KeyMap.insert || KeyMap.insertAbove)
 				inst = this.curinst$;
+
+			mblock =	inst?.field.block.model;
 		}
 
 		if (inst != null)

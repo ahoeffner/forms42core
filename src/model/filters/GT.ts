@@ -47,7 +47,7 @@ export class GT implements Filter
 
 	public setConstraint(value:any) : Filter
 	{
-		this.constraint$ = value;
+		this.constraint = value;
 		return(this);
 	}
 

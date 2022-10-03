@@ -17,33 +17,14 @@ import { BindValue } from "../../database/BindValue.js";
 
 export class In implements Filter
 {
-	private columns$:string[] = null;
-	private bindval$:string[] = null;
-	private constraint$:any[][] = null;
+	private column$:string = null;
+	private bindval$:string = null;
+	private constraint$:any[] = null;
 
-	public constructor(columns:string|string[])
+	public constructor(column:string)
 	{
-		this.columns$ = [];
-
-		if (typeof columns === "string")
-		{
-			let list:string[] = [];
-
-			columns.split(",").forEach((column) =>
-			{
-				column = column.trim();
-
-				if (column.length > 0)
-					list.push(column);
-			})
-
-			columns = list;
-		}
-
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.columns$ = columns;
+		this.column$ = column;
+		this.bindval$ = column;
 	}
 
 	public clear() : void
@@ -51,20 +32,20 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
-	public getBindValueName() : string[]
+	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
 	public setBindValueName(name:string) : Filter
 	{
-		this.bindval$ = [name];
+		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any|any[]|any[][]) : Filter
+	public setConstraint(values:any|any[]) : Filter
 	{
-		this.constraint$ = values;
+		this.constraint = values;
 		return(this);
 	}
 
@@ -73,25 +54,10 @@ export class In implements Filter
 		return(this.constraint$);
 	}
 
-	public set constraint(table:any|any[]|any[][])
+	public set constraint(table:any|any[])
 	{
-		console.log("constraint "+table)
 		this.constraint$ = null;
 		if (table == null) return;
-
-		if (typeof table === "string")
-		{
-			let list:string[] = [];
-			table = table.split(",")
-
-			for (let i = 0; i < table.length; i++)
-			{
-				if (table[i].length > 0)
-					list.push(table[i].trim());
-			}
-
-			table = list;
-		}
 
 		// Single value
 		if (!Array.isArray(table))
@@ -100,18 +66,6 @@ export class In implements Filter
 		if (table.length == 0)
 			return;
 
-		console.log("isArray "+Array.isArray(table[0]))
-
-		// List
-		if (!Array.isArray(table[0]))
-		{
-			let list:any[] = table;	table = [];
-			list.forEach((elem) => table.push([elem]));
-		}
-
-		if (!Array.isArray(table[0]))
-			table = [table];
-
 		this.constraint$ = table;
 	}
 
@@ -119,47 +73,33 @@ export class In implements Filter
 	{
 		let bindvalues:BindValue[] = [];
 
-		if (this.constraint$.length > 1 || this.constraint$[0].length > 5)
+		if (this.constraint$.length > 5)
 			return([]);
 
-		for (let i = 0; i < this.constraint$[0].length; i++)
-			bindvalues.push(new BindValue(this.bindval$+"0"+i,this.constraint$[0][i]));
+		for (let i = 0; i < this.constraint$.length; i++)
+			bindvalues.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i]));
 
 		return(bindvalues);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let values:any[] = [];
-		if (this.columns$ == null) return(false);
+		let value:any = null;
+		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 
-		let table:any[][] = this.constraint$;
-
-		this.columns$.forEach((column) =>
-		{
-			column = column?.toLowerCase();
-			values.push(record.getValue(column));
-		})
-
 		let match:boolean = false;
-		for (let r = 0; r < table.length; r++)
+		let table:any[] = this.constraint$;
+		value = record.getValue(this.column$);
+
+		for (let c = 0; c < table.length; c++)
 		{
-			match = true;
-			let row:any[] = table[r];
-
-			for (let c = 0; c < row.length; c++)
+			if (value == table[c])
 			{
-				if (values[c] != row[c])
-				{
-					match = false;
-					break;
-				}
-			}
-
-			if (match)
+				match = true;
 				break;
+			}
 		}
 
 		return(match);
@@ -170,45 +110,52 @@ export class In implements Filter
 		if (this.constraint$ == null)
 			return("1 == 2");
 
-		console.log(this.constraint$.length+" "+this.constraint$[0].length)
+		let whcl:string = this.column$ + " in (";
 
-		let whcl:string = "";
-
-		if (this.columns$.length == 1)
+		if (this.constraint$.length > 5)
 		{
-			whcl += this.columns$[0]+" in (";
-		}
-		else
-		{
-			whcl += "(";
-			for (let i = 0; i < this.columns$.length; i++)
+			for (let i = 0; i < this.constraint$.length; i++)
 			{
-				if (i > 0) whcl += ",";
-				whcl += this.columns$[i];
-			}
-			whcl += ")";
-		}
-
-		if (this.constraint$.length > 1 || this.constraint$[0].length > 5)
-		{
-			for (let i = 0; i < this.constraint$[0].length; i++)
-			{
-				whcl += this.quoted(this.constraint$[0][i])
-				if (i < this.constraint$[0].length - 1) whcl += ","
+				whcl += this.quoted(this.constraint$[i])
+				if (i < this.constraint$.length - 1) whcl += ","
 			}
 		}
 		else
 		{
-			for (let i = 0; i < this.constraint$[0].length; i++)
+			for (let i = 0; i < this.constraint$.length; i++)
 			{
-				whcl += ":"+this.bindval$+"0"+i;
-				if (i < this.constraint$[0].length - 1) whcl += ","
+				whcl += ":"+this.bindval$+"_"+i;
+				if (i < this.constraint$.length - 1) whcl += ","
 			}
 		}
 
 		whcl += ")"
-
 		return(whcl)
+	}
+
+	public toString(lenght?:number) : string
+	{
+		if (lenght == null)
+			lenght = 30;
+
+		if (this.constraint$ == null)
+			return("1 == 2");
+
+		let whcl:string = this.column$ + " in (";
+
+		for (let i = 0; i < this.constraint$.length; i++)
+		{
+			whcl += this.quoted(this.constraint$[i])
+			if (i < this.constraint$.length - 1) whcl += ","
+
+			if (whcl.length > lenght-4)
+			{
+				whcl += "...";
+				break
+			}
+		}
+		whcl += ")"
+		return(whcl);
 	}
 
 	private quoted(value:any) : any

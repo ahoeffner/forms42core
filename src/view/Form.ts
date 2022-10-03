@@ -410,6 +410,12 @@ export class Form implements EventListenerObject
 			return(true);
 		}
 
+		if (key == KeyMap.save)
+		{
+			await this.model.flush();
+			return(true);
+		}
+
 		if (!await FormEvents.raise(frmevent))
 			return(false);
 
@@ -645,7 +651,7 @@ export class Form implements EventListenerObject
 	private event:BrowserEvent = BrowserEvent.get();
 	public async handleEvent(event:any) : Promise<void>
 	{
-        let bubble:boolean = false;
+      let bubble:boolean = false;
 		this.event.setEvent(event);
 
 		if (this.event.type == "wait")
@@ -663,13 +669,13 @@ export class Form implements EventListenerObject
 		if (this.event.onScrollUp)
 			bubble = true;
 
-        if (this.event.onScrollDown)
+		if (this.event.onScrollDown)
 			bubble = true;
 
-        if (this.event.onCtrlKeyDown)
+		if (this.event.onCtrlKeyDown)
 			bubble = true;
 
-        if (this.event.onFuncKey)
+		if (this.event.onFuncKey)
 			bubble = true;
 
 		this.event.preventDefault();

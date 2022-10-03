@@ -38,17 +38,17 @@ export class FormBacking
 
 	public static getCurrentForm() : Form
 	{
-		return(ViewForm.current().parent);
+		return(FormBacking.form);
 	}
 
 	public static getCurrentViewForm() : ViewForm
 	{
-		return(FormBacking.vforms.get(this.form));
+		return(FormBacking.vforms.get(FormBacking.form));
 	}
 
 	public static getCurrentModelForm() : ModelForm
 	{
-		return(FormBacking.mforms.get(this.form));
+		return(FormBacking.mforms.get(FormBacking.form));
 	}
 
 	public static setCurrentForm(form:Form|ViewForm|ModelForm) : void

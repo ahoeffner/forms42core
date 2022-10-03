@@ -42,11 +42,7 @@ export class Record
 		this.source$ = source;
 		this.id$ = new Object();
 
-		if (columns == null)
-		{
-			this.status$ = RecordState.New;
-		}
-		else
+		if (columns != null)
 		{
 			Object.keys(columns).forEach((col) =>
 			{

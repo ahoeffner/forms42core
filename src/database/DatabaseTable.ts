@@ -11,7 +11,9 @@
  */
 
 import { SQLBuilder } from "./SQLBuilder.js";
+import { Alert } from "../application/Alert.js";
 import { SQLStatement } from "./SQLStatement.js";
+import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
 import { FilterStructure } from "../model/FilterStructure.js";
@@ -20,7 +22,7 @@ import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
-	public arrayfecth:number = 1;
+	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
 	public updateallowed:boolean = true;
@@ -42,9 +44,20 @@ export class DatabaseTable implements DataSource
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
-	public constructor(connection:DatabaseConnection, table:string, columns?:string|string[])
+	private insreturnclause$:string = null;
+	private updreturnclause$:string = null;
+	private delreturnclause$:string = null;
+
+	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
 		this.table$ = table;
+
+		if (!(connection instanceof DatabaseConnection))
+		{
+			Alert.fatal("Datasource for table '"+table+"' Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			return;
+		}
+
 		this.conn$ = connection;
 
 		if (columns != null)
@@ -53,7 +66,6 @@ export class DatabaseTable implements DataSource
 				columns = [columns];
 
 			this.columns$ = columns;
-			this.primary$ = columns;
 		}
 
 		this.cursor = table+(new Date().getTime());
@@ -92,7 +104,38 @@ export class DatabaseTable implements DataSource
 	public set primaryKey(columns:string|string[])
 	{
 		if (!Array.isArray(columns)) columns = [columns];
+		this.addColumns(columns);
 		this.primary$ = columns;
+	}
+
+	public get insertReturningClause() : string
+	{
+		return(this.insreturnclause$);
+	}
+
+	public set insertReturningClause(clause:string)
+	{
+		this.insreturnclause$ = clause;
+	}
+
+	public get updateReturningClause() : string
+	{
+		return(this.updreturnclause$);
+	}
+
+	public set updateReturningClause(clause:string)
+	{
+		this.updreturnclause$ = clause;
+	}
+
+	public get deleteReturningClause() : string
+	{
+		return(this.delreturnclause$);
+	}
+
+	public set deleteReturningClause(clause:string)
+	{
+		this.delreturnclause$ = clause;
 	}
 
 	public addColumns(columns:string|string[]) : void
@@ -135,25 +178,32 @@ export class DatabaseTable implements DataSource
 	public async flush() : Promise<Record[]>
 	{
 		let processed:Record[] = [];
+		let sql:SQLStatement = null;
+
+		if (this.primary$ == null)
+			this.primary$ = this.columns$;
 
 		this.dirty$.forEach((rec) =>
 		{
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
-				rec.response = "inserted";
+				sql = SQLBuilder.insert(this.table$,this.columns,rec,this.insreturnclause$);
+				rec.response = this.conn$.insert(sql);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				rec.response = "updated";
+				sql = SQLBuilder.update(this.table$,this.columns,rec,this.insreturnclause$);
+				rec.response = this.conn$.update(sql);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				rec.response = "deleted";
+				sql = SQLBuilder.delete(this.table$,this.primary$,rec,this.insreturnclause$);
+				rec.response = this.conn$.delete(sql);
 			}
 		});
 
@@ -207,9 +257,6 @@ export class DatabaseTable implements DataSource
 
 	public async fetch() : Promise<Record[]>
 	{
-		if (this.eof$)
-			return([]);
-
 		if (this.fetched$.length > 0)
 		{
 			let fetched:Record[] = [];
@@ -218,6 +265,9 @@ export class DatabaseTable implements DataSource
 			this.fetched$ = [];
 			return(fetched);
 		}
+
+		if (this.eof$)
+			return([]);
 
 		let response:any = await this.conn$.fetch(this.cursor);
 		return(this.parse(response));
@@ -241,6 +291,9 @@ export class DatabaseTable implements DataSource
 			this.eof$ = true;
 			return(fetched);
 		}
+
+		if (this.primary$ == null)
+			this.primary$ = this.columns$;
 
 		for (let r = 0; r < rows.length; r++)
 		{

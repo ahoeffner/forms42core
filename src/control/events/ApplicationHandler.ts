@@ -14,6 +14,8 @@ import { KeyMap, KeyMapping } from './KeyMap.js';
 import { FormEvent, FormEvents } from './FormEvents.js';
 import { MouseMap, MouseMapParser } from './MouseMap.js';
 import { BrowserEvent } from '../../view/BrowserEvent.js';
+import { FormBacking } from '../../application/FormBacking.js';
+import { FlightRecorder } from '../../application/FlightRecorder.js';
 
 
 export class ApplicationHandler implements EventListenerObject
@@ -33,12 +35,12 @@ export class ApplicationHandler implements EventListenerObject
 	private event:BrowserEvent = BrowserEvent.get();
 	public async handleEvent(event:any) : Promise<void>
 	{
-        let bubble:boolean = false;
+      let bubble:boolean = false;
 		this.event.setEvent(event);
 
 		if (this.event.type == "change")
 		{
-			console.log("size changed");
+			console.log("small screen detected");
 		}
 
 		if (this.event.type == "wait")
@@ -56,13 +58,13 @@ export class ApplicationHandler implements EventListenerObject
 		if (this.event.onScrollUp)
 			bubble = true;
 
-        if (this.event.onScrollDown)
+		if (this.event.onScrollDown)
 			bubble = true;
 
-        if (this.event.onCtrlKeyDown)
+		if (this.event.onCtrlKeyDown)
 			bubble = true;
 
-        if (this.event.onFuncKey)
+		if (this.event.onFuncKey)
 			bubble = true;
 
 		this.event.preventDefault();
@@ -73,7 +75,16 @@ export class ApplicationHandler implements EventListenerObject
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(this.event);
 				let frmevent:FormEvent = FormEvent.KeyEvent(null,null,key);
-				await FormEvents.raise(frmevent)
+
+				if (await FormEvents.raise(frmevent))
+				{
+					if (key == KeyMap.save)
+						await FormBacking.getCurrentForm()?.flush()
+
+					if (key == KeyMap.dump)
+						FlightRecorder.dump();
+				}
+
 			}
 			else
 			{

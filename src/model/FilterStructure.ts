@@ -17,7 +17,6 @@ import { BindValue } from "../database/BindValue.js";
 export class FilterStructure
 {
 	private entries$:Constraint[] = [];
-	private bindvalues:BindValue[] = [];
 
 	private fieldidx$:Map<string,Constraint> =
 		new Map<string,Constraint>();
@@ -27,7 +26,7 @@ export class FilterStructure
 
 	public get empty() : boolean
 	{
-		return(this.entries$.length == 0);
+		return(this.getFilters().length == 0);
 	}
 
 	public size() : number
@@ -141,16 +140,20 @@ export class FilterStructure
 
 	public asSQL() : string
 	{
-		this.bindvalues = [];
-		return(this.build(0,this.bindvalues));
+		return(this.build(0));
 	}
 
 	public getBindValues() : BindValue[]
 	{
-		return(this.bindvalues);
+		let bindvalues:BindValue[] = [];
+
+		let filters:Filter[] = this.getFilters();
+		filters.forEach((filter) => bindvalues.push(...filter.getBindValues()));
+
+		return(bindvalues);
 	}
 
-	public build(level:number, bindv:BindValue[]) : string
+	public build(level:number) : string
 	{
 		let stmt:string = "";
 		let first:boolean = true;
@@ -164,12 +167,12 @@ export class FilterStructure
 				if (constr.filter.hasChildFilters())
 				{
 					if (!first || level > 0) stmt += " " + constr.opr + " ";
-					stmt += "(" + constr.filter.build(level+1,this.bindvalues) + ")";
+					stmt += "(" + constr.filter.build(level+1) + ")";
 					first = false;
 				}
 				else
 				{
-					stmt += constr.filter.build(level+1,this.bindvalues);
+					stmt += constr.filter.build(level+1);
 				}
 			}
 			else
@@ -178,8 +181,6 @@ export class FilterStructure
 					stmt += " " + constr.opr + " ";
 
 				stmt += constr.filter.asSQL();
-				this.bindvalues.push(...constr.filter.getBindValues());
-
 				first = false;
 			}
 		}
@@ -189,8 +190,28 @@ export class FilterStructure
 
 	public toString() : string
 	{
-		let str:string = this.build(0,[]);
+		let str:string = this.build(0);
 		return(str);
+	}
+
+	private getFilters(start?:FilterStructure) : Filter[]
+	{
+		let filters:Filter[] = [];
+		if (start == null) start = this;
+
+		for (let i = 0; i < start.entries$.length; i++)
+		{
+			if (start.entries$[i].isFilter())
+			{
+				filters.push(start.entries$[i].filter as Filter);
+			}
+			else
+			{
+				filters.push(...this.getFilters(start.entries$[i].filter as FilterStructure))
+			}
+		}
+
+		return(filters);
 	}
 }
 

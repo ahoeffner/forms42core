@@ -204,7 +204,11 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		if (!FormBacking.getViewForm(this).validated) return(false);
+		if (!FormBacking.getViewForm(this).validate())
+			return(false);
+
+		await FormBacking.getModelForm(this).flush();
+		
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
 

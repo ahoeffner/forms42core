@@ -185,6 +185,7 @@ export class DataSourceWrapper
 
 		inserted.wrapper = this;
 		inserted.prepared = true;
+		inserted.state = RecordState.New;
 
 		return(inserted);
 	}
@@ -252,7 +253,7 @@ export class DataSourceWrapper
 
 	public async fetch() : Promise<Record>
 	{
-		if (this.hwm$ >= this.cache$.length-1)
+		if (this.hwm$ >= this.cache$.length)
 		{
 			if (this.eof$) return(null);
 			let recs:Record[] = await this.source.fetch();
@@ -267,6 +268,7 @@ export class DataSourceWrapper
 				this.eof$ = true;
 
 			this.cache$.push(...recs);
+			recs.forEach((rec) => rec.state = RecordState.Query);
 		}
 
 		let record:Record = this.cache$[this.hwm$];
@@ -274,10 +276,7 @@ export class DataSourceWrapper
 		if (!record.prepared)
 		{
 			record.wrapper = this;
-
-			if (!await this.block.onFetch(record))
-				return(null);
-
+			await this.block.onFetch(record);
 			record.prepared = true;
 		}
 
@@ -295,16 +294,19 @@ export class DataSourceWrapper
 		}
 		else
 		{
-			possible = this.cache$.length - record - 1;
-			if (possible > records) possible = records;
+			possible = this.hwm$ - record - 1;
+			let fetch:number = records - possible;
 
-			while(possible < records)
+			for (let i = 0; i < fetch; i++)
 			{
 				if (await this.fetch() == null)
 					break;
 
 				possible++;
 			}
+
+			if (possible > records)
+				possible = records;
 		}
 
 		if (possible < 0) possible = 0;

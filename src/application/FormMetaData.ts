@@ -80,6 +80,20 @@ export class FormMetaData
 
 	public addDataSource(block:string, source:Class<DataSource>|DataSource) : void
 	{
-		this.blocksources$.set(block.toLowerCase(),source);
+		this.blocksources$.set(block?.toLowerCase(),source);
+	}
+
+	public getDataSource(block:string) : DataSource
+	{
+		block = block?.toLowerCase();
+		let source:Class<DataSource>|DataSource = this.blocksources$.get(block);
+
+		if (source && isClass(source))
+		{
+			source = new source();
+			this.blocksources$.set(block,source);
+		}
+
+		return(source as DataSource);
 	}
 }

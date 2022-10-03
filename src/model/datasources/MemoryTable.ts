@@ -57,7 +57,7 @@ export class MemoryTable implements DataSource
 					for (let c = 0; c < columns.length; c++)
 						row.push(null);
 
-						records.push(row);
+					records.push(row);
 				}
 			}
 		}

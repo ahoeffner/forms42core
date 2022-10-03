@@ -1011,10 +1011,10 @@ export class Block
 		switch(status)
 		{
 			case RecordState.New 			: return(Status.new);
-			case RecordState.Query 		: return(Status.update);
+			case RecordState.Query 			: return(Status.update);
 			case RecordState.Updated 		: return(Status.update);
-			case RecordState.Inserted 	: return(Status.insert);
-			case RecordState.QueryFilter : return(Status.qbe);
+			case RecordState.Inserted 		: return(Status.insert);
+			case RecordState.QueryFilter 	: return(Status.qbe);
 		}
 	}
 

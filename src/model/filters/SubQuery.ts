@@ -15,11 +15,12 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class Contains implements Filter
+export class SubQuery implements Filter
 {
-	private columns$:string[] = [];
 	private bindval$:string = null;
-	private constraint$:string[] = null;
+	private columns$:string[] = null;
+	private constraint$:any[][] = null;
+	private bindvalues$:BindValue[] = [];
 
 	public constructor(columns:string|string[])
 	{
@@ -66,67 +67,91 @@ export class Contains implements Filter
 		return(this);
 	}
 
-	public setConstraint(values:any) : Filter
+	public setConstraint(values:any[][]) : Filter
 	{
 		this.constraint = values;
 		return(this);
 	}
 
-	public get constraint() : string|string[]
+	public get constraint() : any[][]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(values:string|string[])
+	public set constraint(table:any[][])
 	{
-		this.constraint$ = [];
-		if (values == null) return;
-
-		if (!Array.isArray(values))
-			values = values.split(" ")
-
-		for (let i = 0; i < values.length; i++)
-		{
-			if (values[i].length > 0)
-				this.constraint$.push(values[i].trim().toLocaleLowerCase());
-		}
+		this.constraint$ = table;
 	}
 
 	public getBindValues(): BindValue[]
 	{
-		let str = "";
-
-		for (let i = 0; i < this.constraint$.length; i++)
-		{
-			str += this.constraint$[i];
-
-			if (i < this.constraint$.length - 1)
-				str += " ";
-		}
-
-		return([new BindValue(this.bindval$,str)]);
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		let value:string = "";
-
+		let values:any[] = [];
+		if (this.columns$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 
-		for (let c = 0; c < this.columns$.length; c++)
-			value += " " +  record.getValue(this.columns$[c]?.toLowerCase());
+		let table:any[][] = this.constraint$;
 
-		value = value.toLocaleLowerCase();
+		this.columns$.forEach((column) =>
+		{
+			column = column?.toLowerCase();
+			values.push(record.getValue(column));
+		})
 
-		for (let c = 0; c < this.constraint$.length; c++)
-			if (!value.includes(this.constraint$[c])) return(false);
+		let match:boolean = false;
+		for (let r = 0; r < table.length; r++)
+		{
+			match = true;
+			let row:any[] = table[r];
 
-		return(true);
+			for (let c = 0; c < row.length; c++)
+			{
+				if (values[c] != row[c])
+				{
+					match = false;
+					break;
+				}
+			}
+
+			if (match)
+				break;
+		}
+
+		return(match);
 	}
 
 	public asSQL() : string
 	{
-		return(null);
+		if (this.constraint$ == null)
+			return("1 == 2");
+
+		let whcl:string = "";
+
+		if (this.columns$.length == 1)
+		{
+			whcl += this.columns$[0]+" exists in (...)";
+		}
+		else
+		{
+			whcl += "(";
+			for (let i = 0; i < this.columns$.length; i++)
+			{
+				if (i > 0) whcl += ",";
+				whcl += this.columns$[i];
+			}
+			whcl += ") exists in (...)";
+		}
+
+		return(whcl)
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }

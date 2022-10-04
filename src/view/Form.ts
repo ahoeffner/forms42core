@@ -156,7 +156,12 @@ export class Form implements EventListenerObject
 
 	public async validate() : Promise<boolean>
 	{
-		if (!await this.curinst$.field.block.validateBlock())
+		let inst:FieldInstance = this.curinst$;
+
+		if (inst == null)
+			return(true);
+
+		if (!await inst.field.block.validateBlock())
 			return(false);
 
 		return(this.model.flush());

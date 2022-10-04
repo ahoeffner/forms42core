@@ -24,6 +24,7 @@ export class Between implements Filter
 	private column$:string = null;
 	private bindval$:string = null;
 	private constraint$:any[] = null;
+	private bindvalues$:BindValue[] = null;
 
 	public constructor(column:string, incl?:boolean)
 	{
@@ -65,6 +66,7 @@ export class Between implements Filter
 		if (values == null) return;
 		if (values.length != 2) return;
 
+		this.bindvalues$ = null;
 		this.constraint$ = values;
 
 		this.fr = this.constraint$[0];
@@ -73,9 +75,14 @@ export class Between implements Filter
 
 	public getBindValues(): BindValue[]
 	{
-		let b1:BindValue = new BindValue(this.bindval$+"0",this.fr);
-		let b2:BindValue = new BindValue(this.bindval$+"1",this.to);
-		return([b1,b2]);
+		if (this.bindvalues$ == null)
+		{
+			let b1:BindValue = new BindValue(this.bindval$+"0",this.fr);
+			let b2:BindValue = new BindValue(this.bindval$+"1",this.to);
+			this.bindvalues$ = [b1,b2];
+		}
+
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

@@ -55,6 +55,7 @@ export class Connection extends BaseConnection
 			rows: rows,
 			compact: true,
 			cursor: cursor,
+			dateformat: "UTC",
 
 			sql: sql.stmt,
 			bindvalues: this.convert(sql.bindvalues)
@@ -114,7 +115,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/insert?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/insert"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -133,7 +135,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/update?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/update"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -152,7 +155,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.patch(this.conn$+"/delete?returning="+sql.returnclause,payload);
+		let returnclause:string = sql.returnclause ? "?returning=true" : "";
+		let response:any = await this.patch(this.conn$+"/delete"+returnclause,payload);
 
 		if (!response.success)
 		{

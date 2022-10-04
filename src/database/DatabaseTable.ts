@@ -11,11 +11,14 @@
  */
 
 import { SQLRest } from "./SQLRest.js";
+import { DataType } from "./DataType.js";
+import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { Record, RecordState } from "../model/Record.js";
+import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
@@ -47,6 +50,9 @@ export class DatabaseTable implements DataSource
 	private insreturncolumns$:string[] = null;
 	private updreturncolumns$:string[] = null;
 	private delreturncolumns$:string[] = null;
+
+	private datatypes$:Map<string,DataType> =
+		new Map<string,DataType>();
 
 	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
@@ -101,6 +107,12 @@ export class DatabaseTable implements DataSource
 		return(this.primary$);
 	}
 
+	public setDataType(column:string, type:DataType) : DatabaseTable
+	{
+		this.datatypes$.set(column?.toLowerCase(),type);
+		return(this);
+	}
+
 	public set primaryKey(columns:string|string[])
 	{
 		if (!Array.isArray(columns)) columns = [columns];
@@ -134,7 +146,7 @@ export class DatabaseTable implements DataSource
 		this.updreturncolumns$ = columns;
 	}
 
-	public get deleteReturgColumns() : string[]
+	public get deleteReturnColumns() : string[]
 	{
 		return(this.delreturncolumns$);
 	}
@@ -186,35 +198,47 @@ export class DatabaseTable implements DataSource
 
 	public async flush() : Promise<Record[]>
 	{
-		let processed:Record[] = [];
 		let sql:SQLRest = null;
+		let response:any = null;
+		let processed:Record[] = [];
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
-		this.dirty$.forEach((rec) =>
+		for (let i = 0; i < this.dirty$.length; i++)
 		{
+			let rec:Record = this.dirty$[i];
+
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
 				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
-				rec.response = this.conn$.insert(sql);
+
+				this.setTypes(sql.bindvalues);
+				response = await this.conn$.insert(sql);
+				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.insreturncolumns$);
-				rec.response = this.conn$.update(sql);
+				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.updreturncolumns$);
+
+				this.setTypes(sql.bindvalues);
+				response = await this.conn$.update(sql);
+				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.insreturncolumns$);
-				rec.response = this.conn$.delete(sql);
+				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.delreturncolumns$);
+
+				this.setTypes(sql.bindvalues);
+				response = await this.conn$.delete(sql);
+				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
-		});
+		}
 
 		this.dirty$ = [];
 		return(processed);
@@ -257,6 +281,8 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
+		this.setTypes(filter?.get("qbe").getBindValues());
+
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
@@ -289,6 +315,16 @@ export class DatabaseTable implements DataSource
 		return(true);
 	}
 
+	private setTypes(bindvalues:BindValue[]) : void
+	{
+		bindvalues.forEach((b) =>
+		{
+			let col:string = b.column?.toLowerCase();
+			let t:DataType = this.datatypes$.get(col);
+			if (t != null) b.type = DataType[t];
+		})
+	}
+
 	private parse(response:any) : Record[]
 	{
 		let fetched:Record[] = [];
@@ -304,16 +340,38 @@ export class DatabaseTable implements DataSource
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+		let dates:boolean[] = [];
+
+		for (let c = 0; c < this.columns.length; c++)
+		{
+			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
+			if (datetypes.includes(dt)) dates.push(true);
+			else dates.push(false);
+		}
+
 		for (let r = 0; r < rows.length; r++)
 		{
 			let keys:any[] = [];
 			let record:Record = new Record(this);
 
 			for (let c = 0; c < rows[r].length; c++)
+			{
+				if (rows[r][c] && dates[c])
+				{
+					if (typeof rows[r][c] === "number")
+						rows[r][c] = new Date().setTime(+rows[r][c]);
+				}
+
 				record.setValue(this.columns[c],rows[r][c]);
+			}
 
 			this.primary$.forEach((col) =>
 			{keys.push(record.getValue(col))})
+
+			let response:any = {succes: true, rows: [rows[r]]};
+			record.response = new DatabaseResponse(response, this.columns);
 
 			record.keys = keys;
 			fetched.push(record);

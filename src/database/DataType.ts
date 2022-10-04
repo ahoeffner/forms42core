@@ -10,8 +10,30 @@
  * accompanied this code).
  */
 
-import { DatabaseTable as RestDatabaseTable } from "../../database/DatabaseTable.js";
-
-export class DatabaseTable extends RestDatabaseTable
+export enum DataType
 {
+	int,
+	integer,
+	smallint,
+
+	long,
+
+	float,
+	double,
+
+	number,
+	numeric,
+	decimal,
+
+	date,
+	datetime,
+	timestamp,
+
+	string,
+	varchar,
+	varchar2,
+
+	text,
+
+	boolean
 }

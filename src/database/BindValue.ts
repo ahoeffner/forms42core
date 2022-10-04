@@ -10,17 +10,24 @@
  * accompanied this code).
  */
 
+import { DataType } from "./DataType.js";
+
 export class BindValue
 {
 	private value$:any = null;
 	private name$:string = null;
 	private type$:string = null;
+	private column$:string = null;
 
-	public constructor(name:string, value:any, type?:string)
+	public constructor(name:string, value:any, type?:DataType|string)
 	{
+		if (typeof type != "string")
+			type = DataType[type];
+
 		this.name = name;
 		this.type = type;
 		this.value = value;
+		this.column = name;
 	}
 
 	public get name() : string
@@ -33,6 +40,16 @@ export class BindValue
 		this.name$ = name;
 	}
 
+	public get column() : string
+	{
+		return(this.column$);
+	}
+
+	public set column(column:string)
+	{
+		this.column$ = column;
+	}
+
 	public get type() : string
 	{
 		if (this.type$ == null)
@@ -41,8 +58,11 @@ export class BindValue
 		return(this.type$);
 	}
 
-	public set type(type:string)
+	public set type(type:DataType|string)
 	{
+		if (typeof type != "string")
+			type = DataType[type];
+
 		this.type$ = type;
 	}
 
@@ -55,7 +75,7 @@ export class BindValue
 	{
 		this.value$ = value;
 
-		if (this.type$ == null && !isNaN(+value))
+		if (this.type$ == null && typeof value === "number")
 			this.type$ = "number";
 
 		if (value instanceof Date)

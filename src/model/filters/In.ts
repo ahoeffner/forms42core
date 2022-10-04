@@ -20,6 +20,7 @@ export class In implements Filter
 	private column$:string = null;
 	private bindval$:string = null;
 	private constraint$:any[] = null;
+	private bindvalues$:BindValue[] = null;
 
 	public constructor(column:string)
 	{
@@ -57,7 +58,10 @@ export class In implements Filter
 	public set constraint(table:any|any[])
 	{
 		this.constraint$ = null;
-		if (table == null) return;
+		this.bindvalues$ = null;
+
+		if (table == null)
+			return;
 
 		// Single value
 		if (!Array.isArray(table))
@@ -71,15 +75,18 @@ export class In implements Filter
 
 	public getBindValues(): BindValue[]
 	{
-		let bindvalues:BindValue[] = [];
+		if (this.bindvalues$ == null)
+		{
+			this.bindvalues$ = [];
 
-		if (this.constraint$.length > 5)
-			return([]);
+			if (this.constraint$.length > 5)
+				return([]);
 
-		for (let i = 0; i < this.constraint$.length; i++)
-			bindvalues.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i]));
+			for (let i = 0; i < this.constraint$.length; i++)
+				this.bindvalues$.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i]));
+		}
 
-		return(bindvalues);
+		return(this.bindvalues$);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>

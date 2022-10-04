@@ -32,6 +32,16 @@ export class DatabaseResponse
 		return(!this.response$.success);
 	}
 
+	public getDateValue(column:string) : Date
+	{
+		let value:any = this.getValue(column);
+
+		if (typeof value === "number")
+			value = new Date(value);
+
+		return(value);
+	}
+
 	public getValue(column:string) : any
 	{
 		if (!this.response$.rows)

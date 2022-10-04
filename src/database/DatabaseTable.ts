@@ -34,6 +34,8 @@ export class DatabaseTable implements DataSource
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
 
+	private described$:boolean = false;
+
 	private table$:string = null;
 	private cursor:string = null;
 	private order$:string = null;
@@ -83,6 +85,7 @@ export class DatabaseTable implements DataSource
 
 		clone.sorting = this.sorting;
 		clone.arrayfecth = this.arrayfecth;
+		clone.datatypes$ = this.datatypes$;
 
 		return(clone);
 	}
@@ -115,7 +118,9 @@ export class DatabaseTable implements DataSource
 
 	public set primaryKey(columns:string|string[])
 	{
-		if (!Array.isArray(columns)) columns = [columns];
+		if (!Array.isArray(columns))
+			columns = [columns];
+
 		this.addColumns(columns);
 		this.primary$ = columns;
 	}
@@ -161,6 +166,8 @@ export class DatabaseTable implements DataSource
 
 	public addColumns(columns:string|string[]) : void
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -204,6 +211,8 @@ export class DatabaseTable implements DataSource
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
+
+		await this.describe();
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
@@ -275,6 +284,8 @@ export class DatabaseTable implements DataSource
 		this.fetched$ = [];
 		this.filter = filter;
 
+		await this.describe();
+
 		if (this.limit$ != null)
 		{
 			if (!this.filter) this.filter = this.limit$;
@@ -313,6 +324,38 @@ export class DatabaseTable implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 		return(true);
+	}
+
+	private async describe() : Promise<boolean>
+	{
+		let sql:SQLRest = new SQLRest();
+		if (this.described$) return(true);
+
+		sql.stmt = "select ";
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			if (i > 0) sql.stmt += ",";
+			sql.stmt += this.columns[i];
+		}
+
+		sql.stmt += " from "+this.table$;
+		sql.stmt += " where 1 = 2";
+
+		let response:any = await this.conn$.select(sql,this.cursor,1);
+
+		for (let i = 0; i < response.types.length; i++)
+		{
+			let type:string = response.types[i];
+			let cname:string = this.columns[i].toLowerCase();
+			let datatype:DataType = DataType[type.toLowerCase()];
+
+			let exist:DataType = this.datatypes$.get(cname);
+			if (!exist) this.datatypes$.set(cname,datatype);
+		}
+
+		this.described$ = true;
+		return(response.succes);
 	}
 
 	private setTypes(bindvalues:BindValue[]) : void

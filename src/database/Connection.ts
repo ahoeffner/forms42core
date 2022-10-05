@@ -52,7 +52,7 @@ export class Connection extends BaseConnection
 	{
 		if (describe == null)
 			describe = false;
-			
+
 		let payload:any =
 		{
 			rows: rows,
@@ -97,6 +97,7 @@ export class Connection extends BaseConnection
 			rows: 1,
 			compact: true,
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -116,6 +117,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -136,6 +138,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -156,6 +159,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 

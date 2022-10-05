@@ -29,6 +29,7 @@ export class Record
 	private id$:any;
 	private keys$:any[] = [];
 	private values$:any[] = [];
+	private initial$:any[] = [];
 	private response$:any = null;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
@@ -80,12 +81,15 @@ export class Record
 	public clear() : void
 	{
 		this.values$ = [];
+		this.initial$ = [];
 		this.dirty$.clear();
 	}
 
-	public cleanout() : void
+	public setClean() : void
 	{
+		this.initial$ = [];
 		this.dirty$.clear();
+		this.initial$.push(...this.values$);
 	}
 
 	public get source() : DataSource
@@ -153,6 +157,11 @@ export class Record
 		this.status$ = status;
 	}
 
+	public get dirty() : boolean
+	{
+		return(this.dirty$.size > 0);
+	}
+
 	public getValue(column:string) : any
 	{
 		if (column == null)
@@ -175,9 +184,14 @@ export class Record
 		this.values$[idx] = value;
 	}
 
-	public get dirty() : string[]
+	public getDirty() : string[]
 	{
 		return([...this.dirty$]);
+	}
+
+	public get before() : any[]
+	{
+		return(this.initial$);
 	}
 
 	public get columns() : string[]

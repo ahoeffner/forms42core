@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { FlightRecorder } from "../application/FlightRecorder.js";
 import { Connections } from "./Connections.js";
+import { FlightRecorder } from "../application/FlightRecorder.js";
 
 export class Connection
 {

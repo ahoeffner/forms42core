@@ -351,6 +351,10 @@ export class Block
 	public async validateRecord() : Promise<boolean>
 	{
 		let record:Record = this.getRecord();
+
+		if (record == null)
+			return(true);
+
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
@@ -478,7 +482,10 @@ export class Block
 		if (this.qbe.querymode)
 			return(true);
 
-		return(this.wrapper?.flush());
+		let succces:boolean = await this.validateRecord();
+		if (succces) return(this.wrapper?.flush());
+
+		return(false);
 	}
 
 	public setFilter(field:string, filter?:Filter|FilterStructure) : void

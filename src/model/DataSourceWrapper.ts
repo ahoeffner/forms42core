@@ -142,12 +142,15 @@ export class DataSourceWrapper
 	{
 		let succces:boolean = true;
 
+		if (record == null)
+			return(true);
+
 		if (deleted)
 		{
 			succces = await this.delete(record);
 			if (succces) record.state = RecordState.Deleted;
 		}
-		else
+		else if (record.dirty)
 		{
 			if (record.state == RecordState.New)
 			{

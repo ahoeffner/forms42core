@@ -157,6 +157,11 @@ export class Record
 		this.status$ = status;
 	}
 
+	public get dirty() : boolean
+	{
+		return(this.dirty$.size > 0);
+	}
+
 	public getValue(column:string) : any
 	{
 		if (column == null)
@@ -179,7 +184,7 @@ export class Record
 		this.values$[idx] = value;
 	}
 
-	public get dirty() : string[]
+	public getDirty() : string[]
 	{
 		return([...this.dirty$]);
 	}

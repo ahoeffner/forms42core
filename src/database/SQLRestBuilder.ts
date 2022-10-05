@@ -134,8 +134,8 @@ export class SQLRestBuilder
 		let value:any = null;
 		let binds:BindValue[] = [];
 
-		let dirty:string[] = record.dirty;
 		let parsed:SQLRest = new SQLRest();
+		let dirty:string[] = record.getDirty();
 		let filters:FilterStructure = new FilterStructure();
 
 		let cnames:string[] = [];

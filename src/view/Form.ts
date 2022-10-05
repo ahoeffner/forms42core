@@ -417,8 +417,10 @@ export class Form implements EventListenerObject
 
 		if (key == KeyMap.save)
 		{
-			await this.model.flush();
-			return(true);
+			if (!await inst.field.validate(inst))
+				return(false);
+
+			return(this.model.flush());
 		}
 
 		if (!await FormEvents.raise(frmevent))

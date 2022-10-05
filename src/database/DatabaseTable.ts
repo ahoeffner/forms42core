@@ -481,9 +481,10 @@ export class DatabaseTable implements DataSource
 
 		for (let r = 0; r < rows.length; r++)
 		{
-
 			for (let c = 0; c < rows[r].length; c++)
 			{
+				console.log(rows[r][c])
+
 				if (rows[r][c] && dates[c])
 				{
 					if (typeof rows[r][c] === "number")

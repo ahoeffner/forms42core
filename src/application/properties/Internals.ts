@@ -78,13 +78,14 @@ export class Internals
 	public static PopupCloseButton =
 	`
 		top: 0px;
-		right: 1px;
-		width: 30px;
+		right: 0px;
+		width: 20px;
 		height: 20px;
 		display: grid;
 		cursor: default;
 		text-align:right;
 		font-weight: bold;
+		text-align:center;
 		position: absolute;
 	`;
 

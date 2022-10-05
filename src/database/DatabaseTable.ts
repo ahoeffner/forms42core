@@ -31,6 +31,8 @@ export class DatabaseTable implements DataSource
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 
+	public OptimisticLocking:boolean = true;
+
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
 
@@ -206,6 +208,9 @@ export class DatabaseTable implements DataSource
 
 	public async lock(record:Record) : Promise<boolean>
 	{
+		if (this.OptimisticLocking)
+			return(true);
+			
 		let sql:SQLRest = null;
 		await this.describe();
 

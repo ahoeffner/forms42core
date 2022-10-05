@@ -70,7 +70,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -84,7 +84,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -106,7 +106,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -127,7 +127,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -148,7 +148,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -169,7 +169,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		return(response);
@@ -184,7 +184,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
-			return;
+			return(response);
 		}
 
 		this.keepalive();

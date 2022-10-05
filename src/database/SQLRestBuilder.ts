@@ -132,7 +132,6 @@ export class SQLRestBuilder
 	{
 		let idx:number = 0;
 		let value:any = null;
-		let binds:BindValue[] = [];
 
 		let parsed:SQLRest = new SQLRest();
 		let dirty:string[] = record.getDirty();
@@ -173,7 +172,7 @@ export class SQLRestBuilder
 		}
 
 		parsed.stmt = stmt;
-		parsed.bindvalues = binds;
+		parsed.bindvalues = filters.getBindValues();
 
 		return(parsed);
 	}

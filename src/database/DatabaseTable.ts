@@ -229,6 +229,7 @@ export class DatabaseTable implements DataSource
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
 			let rec:Record = this.dirty$[i];
+			console.log(RecordState[rec.state])
 
 			if (rec.state == RecordState.Inserted)
 			{

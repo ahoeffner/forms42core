@@ -352,19 +352,19 @@ export class DatabaseTable implements DataSource
 		let columns:string[] = [];
 		columns.push(...this.columns);
 
-		this.insreturncolumns$.forEach((col) =>
+		this.insreturncolumns$?.forEach((col) =>
 		{
 			if (!columns.includes(col))
 				columns.push(col);
 		})
 
-		this.updreturncolumns$.forEach((col) =>
+		this.updreturncolumns$?.forEach((col) =>
 		{
 			if (!columns.includes(col))
 				columns.push(col);
 		})
 
-		this.delreturncolumns$.forEach((col) =>
+		this.delreturncolumns$?.forEach((col) =>
 		{
 			if (!columns.includes(col))
 				columns.push(col);
@@ -383,10 +383,10 @@ export class DatabaseTable implements DataSource
 
 		let response:any = await this.conn$.select(sql,this.cursor,1);
 
-		for (let i = 0; i < response.types.length; i++)
+		for (let i = 0; i < columns.length; i++)
 		{
 			let type:string = response.types[i];
-			let cname:string = this.columns[i].toLowerCase();
+			let cname:string = columns[i].toLowerCase();
 			let datatype:DataType = DataType[type.toLowerCase()];
 
 			let exist:DataType = this.datatypes$.get(cname);

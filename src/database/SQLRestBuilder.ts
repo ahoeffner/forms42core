@@ -132,6 +132,8 @@ export class SQLRestBuilder
 	{
 		let idx:number = 0;
 		let value:any = null;
+		let bv:BindValue = null;
+		let binds:BindValue[] = [];
 
 		let parsed:SQLRest = new SQLRest();
 		let dirty:string[] = record.getDirty();
@@ -148,7 +150,12 @@ export class SQLRestBuilder
 			value = record.getValue(dirty[i]);
 
 			if (i > 0) stmt += ", ";
-			stmt += columns[idx] + " = " + SQLRestBuilder.quoted(value);
+			stmt += columns[idx] + " = :b"+i;
+
+			bv = new BindValue("b"+i,value);
+			bv.column = columns[idx];
+
+			binds.push(bv);
 		}
 
 		for (let i = 0; i < pkey.length; i++)
@@ -173,6 +180,7 @@ export class SQLRestBuilder
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();
+		parsed.bindvalues.push(...binds);
 
 		return(parsed);
 	}

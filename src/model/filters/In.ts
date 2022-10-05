@@ -148,7 +148,7 @@ export class In implements Filter
 			lenght = 30;
 
 		if (this.constraint$ == null)
-			return("1 == 2");
+			return("1 = 2");
 
 		let whcl:string = this.column$ + " in (";
 

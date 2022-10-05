@@ -88,7 +88,7 @@ export class GT implements Filter
 	public asSQL() : string
 	{
 		if (this.constraint$ == null)
-			return("1 == 2");
+			return("1 = 2");
 
 		if (this.bindval$ == null)
 			this.bindval$ = this.column$;

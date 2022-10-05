@@ -74,6 +74,9 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
+				if (!records[i].dirty)
+					continue;
+
 				if (records[i].state == RecordState.Inserted)
 				{
 					succces = await this.block.postInsert(records[i]);

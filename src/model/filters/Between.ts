@@ -102,7 +102,7 @@ export class Between implements Filter
 	public asSQL() : string
 	{
 		if (this.constraint$ == null)
-			return("1 == 2");
+			return("1 = 2");
 
 		let lt:string = "<";
 		let gt:string = ">";

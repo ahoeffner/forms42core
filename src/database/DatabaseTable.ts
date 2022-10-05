@@ -287,6 +287,7 @@ export class DatabaseTable implements DataSource
 			}
 		}
 
+		console.log("processed "+this.dirty$.length)
 		this.dirty$ = [];
 		return(processed);
 	}
@@ -393,7 +394,7 @@ export class DatabaseTable implements DataSource
 		sql.stmt += " from "+this.table$;
 		sql.stmt += " where 1 = 2";
 
-		let response:any = await this.conn$.select(sql,this.cursor,1);
+		let response:any = await this.conn$.select(sql,this.cursor,1,true);
 
 		for (let i = 0; i < columns.length; i++)
 		{

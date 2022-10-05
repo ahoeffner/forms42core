@@ -48,6 +48,11 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
+	public connected() : boolean
+	{
+		return(this.conn$ != null);
+	}
+
 	public async select(sql:SQLRest, cursor:string, rows:number, describe?:boolean) : Promise<Response>
 	{
 		if (describe == null)
@@ -184,6 +189,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			Alert.warning(response.message,"Database Connection");
+			this.conn$ = null;
 			return(response);
 		}
 

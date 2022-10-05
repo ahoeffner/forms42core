@@ -210,7 +210,7 @@ export class DatabaseTable implements DataSource
 	{
 		if (this.OptimisticLocking)
 			return(true);
-			
+
 		let sql:SQLRest = null;
 		await this.describe();
 
@@ -307,6 +307,12 @@ export class DatabaseTable implements DataSource
 		this.eof$ = false;
 		this.fetched$ = [];
 		this.filter = filter;
+
+		if (!this.conn$.connected())
+		{
+			Alert.warning("Not connected","Database Connection");
+			return(false);
+		}
 
 		await this.describe();
 

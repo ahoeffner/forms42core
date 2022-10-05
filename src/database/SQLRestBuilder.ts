@@ -128,11 +128,37 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
-	public static update(table:string, columns:string[], record:Record, returncolumns:string[]) : SQLRest
+	public static update(table:string, pkey:string[], columns:string[], record:Record, returncolumns:string[]) : SQLRest
 	{
+		let idx:number = 0;
+		let value:any = null;
 		let binds:BindValue[] = [];
+
+		let dirty:string[] = record.dirty;
 		let parsed:SQLRest = new SQLRest();
+		let filters:FilterStructure = new FilterStructure();
+
+		let cnames:string[] = [];
+		columns.forEach((col) => cnames.push(col.toLowerCase()));
+
 		let stmt:string = "update "+table+" set ";
+
+		for (let i = 0; i < dirty.length; i++)
+		{
+			idx = cnames.indexOf(dirty[i]);
+			value = record.getValue(dirty[i]);
+
+			if (i > 0) stmt += ", ";
+			stmt += columns[idx] + " = " + SQLRestBuilder.quoted(value);
+		}
+
+		for (let i = 0; i < pkey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+		}
+
+		stmt += " where "+filters.asSQL();
 
 		if (returncolumns != null && returncolumns.length > 0)
 		{
@@ -146,7 +172,10 @@ export class SQLRestBuilder
 			}
 		}
 
-		return(null);
+		parsed.stmt = stmt;
+		parsed.bindvalues = binds;
+
+		return(parsed);
 	}
 
 	public static delete(table:string, pkey:string[], record:Record, returncolumns:string[]) : SQLRest
@@ -181,5 +210,16 @@ export class SQLRestBuilder
 		parsed.bindvalues = filters.getBindValues();
 
 		return(parsed);
+	}
+
+	private static quoted(value:any) : any
+	{
+		if (typeof value == "string")
+			return("'"+value+"'");
+
+		if (value instanceof Date)
+			return(value.getTime());
+
+		return(value);
 	}
 }

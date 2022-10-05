@@ -238,19 +238,19 @@ export class DatabaseTable implements DataSource
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
 
-				this.cast(response);
+				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.update(this.table$,this.columns,rec,this.updreturncolumns$);
+				sql = SQLRestBuilder.update(this.table$,this.primary$,this.columns,rec,this.updreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
 
-				this.cast(response);
+				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
@@ -262,7 +262,7 @@ export class DatabaseTable implements DataSource
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.delete(sql);
 
-				this.cast(response);
+				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		}
@@ -462,9 +462,8 @@ export class DatabaseTable implements DataSource
 		return(fetched);
 	}
 
-	private cast(response:any) : void
+	private castResponse(response:any) : void
 	{
-		let dates:boolean[] = [];
 		let rows:any[][] = response.rows;
 
 		if (rows == null)
@@ -472,25 +471,17 @@ export class DatabaseTable implements DataSource
 
 		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
-		for (let c = 0; c < this.columns.length; c++)
-		{
-			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
-			if (datetypes.includes(dt)) dates.push(true);
-			else dates.push(false);
-		}
-
 		for (let r = 0; r < rows.length; r++)
 		{
-			for (let c = 0; c < rows[r].length; c++)
+			Object.keys(rows[r]).forEach((col) =>
 			{
-				console.log(rows[r][c])
+				col = col.toLowerCase();
+				let value:any = rows[r][col];
+				let dt:DataType = this.datatypes$.get(col);
 
-				if (rows[r][c] && dates[c])
-				{
-					if (typeof rows[r][c] === "number")
-						rows[r][c] = new Date().setTime(+rows[r][c]);
-				}
-			}
+				if (datetypes.includes(dt) && typeof value === "number")
+					rows[r][col] = new Date(value);
+			})
 		}
 	}
 }

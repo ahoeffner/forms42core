@@ -78,18 +78,21 @@ export class DataSourceWrapper
 				{
 					succces = await this.block.postInsert(records[i]);
 					if (succces) records[i].state = RecordState.Query;
+					if (succces) records[i].setClean();
 				}
 
 				if (records[i].state == RecordState.Updated)
 				{
 					succces = await this.block.postUpdate(records[i]);
 					if (succces) records[i].state = RecordState.Query;
+					if (succces) records[i].setClean();
 				}
 
 				if (records[i].state == RecordState.Deleted)
 				{
 					succces = await this.block.postDelete(records[i]);
 					if (succces) records[i].state = RecordState.Query;
+					if (succces) records[i].setClean();
 				}
 			}
 
@@ -275,6 +278,7 @@ export class DataSourceWrapper
 
 		if (!record.prepared)
 		{
+			record.setClean();
 			record.wrapper = this;
 			await this.block.onFetch(record);
 			record.prepared = true;

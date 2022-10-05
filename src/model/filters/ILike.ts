@@ -67,7 +67,10 @@ export class ILike implements Filter
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)
+		{
 			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+			this.bindvalues$[0].column = this.column$;
+		}
 
 		return(this.bindvalues$);
 	}

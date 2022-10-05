@@ -132,6 +132,8 @@ export class DatabaseTable implements DataSource
 
 	public set insertReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -145,6 +147,8 @@ export class DatabaseTable implements DataSource
 
 	public set updateReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -158,6 +162,8 @@ export class DatabaseTable implements DataSource
 
 	public set deleteReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -198,8 +204,14 @@ export class DatabaseTable implements DataSource
 		}
 	}
 
-	public async lock(_record:Record) : Promise<boolean>
+	public async lock(record:Record) : Promise<boolean>
 	{
+		let sql:SQLRest = null;
+		await this.describe();
+
+		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
+		await this.conn$.lock(sql);
+
 		return(true);
 	}
 
@@ -225,6 +237,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
@@ -235,6 +249,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
@@ -245,6 +261,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.delete(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		}
@@ -331,12 +349,33 @@ export class DatabaseTable implements DataSource
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
 
+		let columns:string[] = [];
+		columns.push(...this.columns);
+
+		this.insreturncolumns$.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
+		this.updreturncolumns$.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
+		this.delreturncolumns$.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
 		sql.stmt = "select ";
 
-		for (let i = 0; i < this.columns.length; i++)
+		for (let i = 0; i < columns.length; i++)
 		{
 			if (i > 0) sql.stmt += ",";
-			sql.stmt += this.columns[i];
+			sql.stmt += columns[i];
 		}
 
 		sql.stmt += " from "+this.table$;
@@ -421,5 +460,36 @@ export class DatabaseTable implements DataSource
 		}
 
 		return(fetched);
+	}
+
+	private cast(response:any) : void
+	{
+		let dates:boolean[] = [];
+		let rows:any[][] = response.rows;
+
+		if (rows == null)
+			return;
+
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+		for (let c = 0; c < this.columns.length; c++)
+		{
+			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
+			if (datetypes.includes(dt)) dates.push(true);
+			else dates.push(false);
+		}
+
+		for (let r = 0; r < rows.length; r++)
+		{
+
+			for (let c = 0; c < rows[r].length; c++)
+			{
+				if (rows[r][c] && dates[c])
+				{
+					if (typeof rows[r][c] === "number")
+						rows[r][c] = new Date().setTime(+rows[r][c]);
+				}
+			}
+		}
 	}
 }

@@ -84,6 +84,8 @@ export class In implements Filter
 
 			for (let i = 0; i < this.constraint$.length; i++)
 				this.bindvalues$.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i]));
+
+			this.bindvalues$.forEach((b) => b.column = this.column$);
 		}
 
 		return(this.bindvalues$);

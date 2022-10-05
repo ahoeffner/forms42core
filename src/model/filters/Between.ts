@@ -79,6 +79,10 @@ export class Between implements Filter
 		{
 			let b1:BindValue = new BindValue(this.bindval$+"0",this.fr);
 			let b2:BindValue = new BindValue(this.bindval$+"1",this.to);
+
+			b1.column = this.column$;
+			b2.column = this.column$;
+
 			this.bindvalues$ = [b1,b2];
 		}
 

@@ -16,9 +16,13 @@ import { EventType } from "../../control/events/EventType.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { FormEvent } from "../../control/events/FormEvents.js";
 import { Internals } from "../../application/properties/Internals.js";
+import { Login as Properties } from "../../application/properties/Login.js";
 
-export class Login extends Form{
+export class Login extends Form
+{
 
+    username:string = null;
+    password:string = null;
 
     constructor(){
         super(Login.page);
@@ -36,11 +40,13 @@ export class Login extends Form{
 
     private async setLogin():Promise<boolean>
     {
-
+     
+        this.username = this.getValue("login","username");
+        this.password = this.getValue("login","password");
+        console.log(this.username,this.password)
         this.done();
         return(true);
     }
-
 
     private async done() : Promise<boolean>
     {
@@ -50,24 +56,27 @@ export class Login extends Form{
 
     private async initialize() : Promise<boolean>
     {
+        let view:HTMLElement = this.getView();
+
+		Properties.styleLogin(view);
+		Internals.stylePopupWindow(view);
 
         return(true);
     }
-
 
     public static page: string = 
     Internals.header +
     `
     <div name="popup-body">
          <div name="login">
-            <span>
+            <div>
                 <label for="username">Username:</label>
                 <input from="login" name="username"/>
-            </span>
-            <span>
+            </div>
+            <div>
                 <label for="password">password:</label>
                 <input from="login" name="password"/>
-            </span>
+            </div>
             <div name="lowerright">
                 <div name="buttonarea">
                     <button name="close" onClick="this.close()">cancel</button>
@@ -76,5 +85,6 @@ export class Login extends Form{
             </div>
          </div>
     </div>
+
     ` + Internals.footer
 }

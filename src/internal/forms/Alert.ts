@@ -12,6 +12,8 @@
 
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
+import { MouseMap } from "../../control/events/MouseMap.js";
+import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 
@@ -19,6 +21,8 @@ export class Alert extends Form
 {
 	public static WIDTH:number = 300;
 	public static HEIGHT:number = null;
+	private closeButton:HTMLElement = null;
+
 	public static BlurStyle:string = 
 	`
 	
@@ -33,21 +37,32 @@ export class Alert extends Form
 		this.addEventListener(this.close,
 		[
 			{type: EventType.Key, key: KeyMap.enter},
-			{type: EventType.Key, key: KeyMap.escape}
+			{type: EventType.Key, key: KeyMap.escape},
+			{type: EventType.Key, key: KeyMap.space},
 		]);
+
+		this.addEventListener(this.closeAlert, 
+			{type:EventType.Mouse, mouse: MouseMap.click}
+		);
+	}
+
+	private async closeAlert(): Promise<boolean>
+	{
+		this.closeButton.focus();
+		return(true);
 	}
 
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-		let close:HTMLElement = view.querySelector('button[name="close"]');
 
 		let msg:string = this.parameters.get("message");
 		let title:string = this.parameters.get("title");
+		this.closeButton = view.querySelector('button[name="close"]');
 
 		let fatal:boolean = this.parameters.get("fatal");
 		let warning:boolean = this.parameters.get("warning");
-		
+
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
 		// Block everything else
@@ -58,10 +73,9 @@ export class Alert extends Form
 		block.style.position = "fixed";
 		block.style.width = document.body.offsetWidth+"px";
 		block.style.height = document.body.offsetHeight+"px";
-		
 		this.setValue("alert","msg",msg);
-		close.focus();
 
+		this.closeButton.focus();
 		return(true);
 	}
 
@@ -73,7 +87,6 @@ export class Alert extends Form
 		<div name="popup-body">
 			<div name="msg" from="alert"></div>
 		</div>
-
 		<div name="lowerright">
 			<div name="buttonarea">
 				<button name="close" onClick="this.close()">Ok</button>

@@ -48,13 +48,17 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async select(sql:SQLRest, cursor:string, rows:number) : Promise<Response>
+	public async select(sql:SQLRest, cursor:string, rows:number, describe?:boolean) : Promise<Response>
 	{
+		if (describe == null)
+			describe = false;
+
 		let payload:any =
 		{
 			rows: rows,
 			compact: true,
 			cursor: cursor,
+			describe: true,
 			dateformat: "UTC",
 
 			sql: sql.stmt,
@@ -93,6 +97,7 @@ export class Connection extends BaseConnection
 			rows: 1,
 			compact: true,
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -112,6 +117,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -132,6 +138,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
@@ -152,6 +159,7 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			sql: sql.stmt,
+			dateformat: "UTC",
 			bindvalues: this.convert(sql.bindvalues)
 		};
 

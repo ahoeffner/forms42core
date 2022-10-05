@@ -34,6 +34,8 @@ export class DatabaseTable implements DataSource
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
 
+	private described$:boolean = false;
+
 	private table$:string = null;
 	private cursor:string = null;
 	private order$:string = null;
@@ -83,6 +85,7 @@ export class DatabaseTable implements DataSource
 
 		clone.sorting = this.sorting;
 		clone.arrayfecth = this.arrayfecth;
+		clone.datatypes$ = this.datatypes$;
 
 		return(clone);
 	}
@@ -115,7 +118,9 @@ export class DatabaseTable implements DataSource
 
 	public set primaryKey(columns:string|string[])
 	{
-		if (!Array.isArray(columns)) columns = [columns];
+		if (!Array.isArray(columns))
+			columns = [columns];
+
 		this.addColumns(columns);
 		this.primary$ = columns;
 	}
@@ -127,6 +132,8 @@ export class DatabaseTable implements DataSource
 
 	public set insertReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -140,6 +147,8 @@ export class DatabaseTable implements DataSource
 
 	public set updateReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -153,6 +162,8 @@ export class DatabaseTable implements DataSource
 
 	public set deleteReturnColumns(columns:string|string[])
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -161,6 +172,8 @@ export class DatabaseTable implements DataSource
 
 	public addColumns(columns:string|string[]) : void
 	{
+		this.described$ = false;
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -191,8 +204,14 @@ export class DatabaseTable implements DataSource
 		}
 	}
 
-	public async lock(_record:Record) : Promise<boolean>
+	public async lock(record:Record) : Promise<boolean>
 	{
+		let sql:SQLRest = null;
+		await this.describe();
+
+		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
+		await this.conn$.lock(sql);
+
 		return(true);
 	}
 
@@ -205,6 +224,8 @@ export class DatabaseTable implements DataSource
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
+		await this.describe();
+
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
 			let rec:Record = this.dirty$[i];
@@ -216,6 +237,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
@@ -226,6 +249,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
 			}
 
@@ -236,6 +261,8 @@ export class DatabaseTable implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.delete(sql);
+
+				this.cast(response);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		}
@@ -275,6 +302,8 @@ export class DatabaseTable implements DataSource
 		this.fetched$ = [];
 		this.filter = filter;
 
+		await this.describe();
+
 		if (this.limit$ != null)
 		{
 			if (!this.filter) this.filter = this.limit$;
@@ -313,6 +342,59 @@ export class DatabaseTable implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 		return(true);
+	}
+
+	private async describe() : Promise<boolean>
+	{
+		let sql:SQLRest = new SQLRest();
+		if (this.described$) return(true);
+
+		let columns:string[] = [];
+		columns.push(...this.columns);
+
+		this.insreturncolumns$?.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
+		this.updreturncolumns$?.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
+		this.delreturncolumns$?.forEach((col) =>
+		{
+			if (!columns.includes(col))
+				columns.push(col);
+		})
+
+		sql.stmt = "select ";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) sql.stmt += ",";
+			sql.stmt += columns[i];
+		}
+
+		sql.stmt += " from "+this.table$;
+		sql.stmt += " where 1 = 2";
+
+		let response:any = await this.conn$.select(sql,this.cursor,1);
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			let type:string = response.types[i];
+			let cname:string = columns[i].toLowerCase();
+			let datatype:DataType = DataType[type.toLowerCase()];
+
+			let exist:DataType = this.datatypes$.get(cname);
+			if (!exist) this.datatypes$.set(cname,datatype);
+		}
+
+		this.described$ = true;
+		return(response.succes);
 	}
 
 	private setTypes(bindvalues:BindValue[]) : void
@@ -378,5 +460,37 @@ export class DatabaseTable implements DataSource
 		}
 
 		return(fetched);
+	}
+
+	private cast(response:any) : void
+	{
+		let dates:boolean[] = [];
+		let rows:any[][] = response.rows;
+
+		if (rows == null)
+			return;
+
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+		for (let c = 0; c < this.columns.length; c++)
+		{
+			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
+			if (datetypes.includes(dt)) dates.push(true);
+			else dates.push(false);
+		}
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			for (let c = 0; c < rows[r].length; c++)
+			{
+				console.log(rows[r][c])
+
+				if (rows[r][c] && dates[c])
+				{
+					if (typeof rows[r][c] === "number")
+						rows[r][c] = new Date().setTime(+rows[r][c]);
+				}
+			}
+		}
 	}
 }

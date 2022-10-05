@@ -59,7 +59,7 @@ export class SQLRestBuilder
 			stmt += columns[i];
 		}
 
-		stmt += " from "+table;
+		stmt += " from "+table+" where ";
 
 		let filters:FilterStructure = new FilterStructure();
 

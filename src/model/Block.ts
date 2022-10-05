@@ -176,9 +176,7 @@ export class Block
 		{
 			this.form$.datamodel.clear(this);
 			this.form$.datamodel.setWrapper(this);
-
-			this.view.clear(true,true);
-			this.view.lockUnused();
+			this.view.clear(true,true,true);
 		}
 
 		this.source$ = source;

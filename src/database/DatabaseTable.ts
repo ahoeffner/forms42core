@@ -287,7 +287,6 @@ export class DatabaseTable implements DataSource
 			}
 		}
 
-		console.log("processed "+this.dirty$.length)
 		this.dirty$ = [];
 		return(processed);
 	}

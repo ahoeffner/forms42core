@@ -475,6 +475,9 @@ export class Form implements EventListenerObject
 				}
 
 				if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
+					console.log("quit insert")
+
+				if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
 					key = KeyMap.delete;
 			}
 

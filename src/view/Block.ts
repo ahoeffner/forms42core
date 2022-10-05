@@ -388,7 +388,7 @@ export class Block
 	public cancel() : void
 	{
 		this.model.cancel();
-		this.clear(true,true);
+		this.clear(true,true,true);
 	}
 
 	public clear(props:boolean, rewind:boolean, fields?:boolean) : void
@@ -407,6 +407,9 @@ export class Block
 			if (fields && row.rownum == 0)
 				this.getRow(0).activateIndicators(true);
 		});
+
+		if (fields)
+			this.lockUnused();
 	}
 
 	public addInstance(inst:FieldInstance) : void

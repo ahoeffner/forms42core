@@ -162,6 +162,11 @@ export class Record
 		return(this.dirty$.size > 0);
 	}
 
+	public get clean() : boolean
+	{
+		return(this.dirty$.size == 0);
+	}
+
 	public getValue(column:string) : any
 	{
 		if (column == null)
@@ -180,7 +185,20 @@ export class Record
 		column = column.toLowerCase();
 		let idx:number = this.indexOf(column);
 
-		this.dirty$.add(column);
+		let update:boolean = false;
+
+		if (value != this.values$[idx])
+			update = true;
+
+		if (value instanceof Date && this.values$[idx] instanceof Date)
+		{
+			if (value.getTime() == this.values$[idx].getTime())
+				update = false;
+		}
+
+		if (update && idx < this.source$.columns.length)
+			this.dirty$.add(column);
+
 		this.values$[idx] = value;
 	}
 
@@ -197,15 +215,16 @@ export class Record
 	public get columns() : string[]
 	{
 		let columns:string[] = [];
-		columns.push(...this.source.columns);
-		columns.push(...this.wrapper.columns);
+		if (this.source) columns.push(...this.source.columns);
+		if (this.wrapper) columns.push(...this.wrapper.columns);
 		return(columns);
 	}
 
 	private indexOf(column:string) : number
 	{
+		let cols:number = this.source.columns.length;
 		let idx:number = this.source.columns.indexOf(column);
-		if (idx < 0 && this.wrapper) idx = this.wrapper.indexOf(column);
+		if (idx < 0 && this.wrapper) idx = cols + this.wrapper.indexOf(column);
 		return(idx);
 	}
 

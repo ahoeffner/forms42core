@@ -44,6 +44,7 @@ export class DatabaseTable implements DataSource
 
 	private columns$:string[] = [];
 	private primary$:string[] = [];
+	private dmlcols$:string[] = [];
 
 	private fetched$:Record[] = [];
 
@@ -112,7 +113,7 @@ export class DatabaseTable implements DataSource
 		return(this.primary$);
 	}
 
-	public setDataType(column:string, type:DataType) : DatabaseTable
+	public setDataType(column:string,type:DataType) : DatabaseTable
 	{
 		this.datatypes$.set(column?.toLowerCase(),type);
 		return(this);
@@ -172,6 +173,16 @@ export class DatabaseTable implements DataSource
 		this.delreturncolumns$ = columns;
 	}
 
+	public addDMLColumns(columns:string|string[]) : void
+	{
+		this.described$ = false;
+
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.dmlcols$ = this.mergeColumns(this.dmlcols$,columns);
+	}
+
 	public addColumns(columns:string|string[]) : void
 	{
 		this.described$ = false;
@@ -179,13 +190,7 @@ export class DatabaseTable implements DataSource
 		if (!Array.isArray(columns))
 			columns = [columns];
 
-		columns.forEach((column) =>
-		{
-			column = column?.toLowerCase();
-
-			if (column && !this.columns$.includes(column))
-				this.columns$.push(column);
-		})
+		this.columns$ = this.mergeColumns(this.columns$,columns);
 	}
 
 	public limit(filters:Filter | Filter[] | FilterStructure) : void
@@ -226,6 +231,12 @@ export class DatabaseTable implements DataSource
 		let response:any = null;
 		let processed:Record[] = [];
 
+		if (!this.conn$.connected())
+		{
+			Alert.warning("Not connected","Database Connection");
+			return([]);
+		}
+
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
@@ -234,12 +245,13 @@ export class DatabaseTable implements DataSource
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
 			let rec:Record = this.dirty$[i];
-			console.log(RecordState[rec.state])
 
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.insert(this.table$,this.columns,rec,this.insreturncolumns$);
+
+				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
+				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
@@ -251,7 +263,9 @@ export class DatabaseTable implements DataSource
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.update(this.table$,this.primary$,this.columns,rec,this.updreturncolumns$);
+
+				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
+				sql = SQLRestBuilder.update(this.table$,this.primary$,columns,rec,this.updreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
@@ -361,26 +375,12 @@ export class DatabaseTable implements DataSource
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
 
-		let columns:string[] = [];
-		columns.push(...this.columns);
+		let columns:string[] = this.columns;
 
-		this.insreturncolumns$?.forEach((col) =>
-		{
-			if (!columns.includes(col))
-				columns.push(col);
-		})
-
-		this.updreturncolumns$?.forEach((col) =>
-		{
-			if (!columns.includes(col))
-				columns.push(col);
-		})
-
-		this.delreturncolumns$?.forEach((col) =>
-		{
-			if (!columns.includes(col))
-				columns.push(col);
-		})
+		columns = this.mergeColumns(columns,this.dmlcols$);
+		columns = this.mergeColumns(columns,this.insreturncolumns$);
+		columns = this.mergeColumns(columns,this.updreturncolumns$);
+		columns = this.mergeColumns(columns,this.delreturncolumns$);
 
 		sql.stmt = "select ";
 
@@ -495,5 +495,28 @@ export class DatabaseTable implements DataSource
 					rows[r][col] = new Date(value);
 			})
 		}
+	}
+
+	private mergeColumns(list1:string[], list2:string[]) : string[]
+	{
+		let cname:string = null;
+		let cnames:string[] = [];
+		let columns:string[] = [];
+
+		if (list1) columns.push(...list1);
+		columns.forEach((col) => cnames.push(col.toLowerCase()));
+
+		list2?.forEach((col) =>
+		{
+			if (!cnames.includes(col.toLowerCase()))
+			{
+				cname = col.toLowerCase();
+
+				columns.push(col);
+				cnames.push(cname);
+			}
+		})
+
+		return(columns);
 	}
 }

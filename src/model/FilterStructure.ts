@@ -172,7 +172,7 @@ export class FilterStructure
 				}
 				else
 				{
-					stmt += constr.filter.build(level+1);
+					stmt += constr.filter.build(level);
 				}
 			}
 			else

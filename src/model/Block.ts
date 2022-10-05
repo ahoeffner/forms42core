@@ -756,6 +756,8 @@ export class Block
 			let values:any[][] = [];
 			let filter:Filter = Filters.SubQuery(rel.master.fields);
 
+			console.log(rel.master.fields)
+
 			while(true)
 			{
 				let recs:Record[] = await src.fetch();

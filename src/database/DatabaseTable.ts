@@ -336,7 +336,7 @@ export class DatabaseTable implements DataSource
 			else this.filter.and(this.limit$,"limit");
 		}
 
-		this.setTypes(filter?.get("qbe").getBindValues());
+		this.setTypes(filter?.get("qbe")?.getBindValues());
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
@@ -393,7 +393,8 @@ export class DatabaseTable implements DataSource
 		sql.stmt += " from "+this.table$;
 		sql.stmt += " where 1 = 2";
 
-		let response:any = await this.conn$.select(sql,this.cursor,1,true);
+		let cursor:string = "desc."+(new Date().getTime());
+		let response:any = await this.conn$.select(sql,cursor,1,true);
 
 		for (let i = 0; i < columns.length; i++)
 		{
@@ -411,7 +412,7 @@ export class DatabaseTable implements DataSource
 
 	private setTypes(bindvalues:BindValue[]) : void
 	{
-		bindvalues.forEach((b) =>
+		bindvalues?.forEach((b) =>
 		{
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);

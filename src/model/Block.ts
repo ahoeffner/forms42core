@@ -763,10 +763,13 @@ export class Block
 			let src:DataSource = blocks[i].datasource.clone();
 			if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
 
+			let details:FilterStructure = new FilterStructure();
 			let filters:FilterStructure = new FilterStructure();
 
-			filters.and(blocks[i].QueryFilter,"Subquery qbe");
-			filters.and(blocks[i].DetailFilter,"Subquery details");
+			filters.and(details,"details")
+
+			details.and(blocks[i].QueryFilter,"qbe");
+			details.and(blocks[i].DetailFilter,"subquery");
 
 			if (!await src.query(filters))
 				return(false);
@@ -788,6 +791,8 @@ export class Block
 					values.push(row);
 				});
 			}
+
+			console.log(rel.detail.block+" "+values);
 
 			filter.constraint = values;
 			blkflt.and(filter,blocks[i].name);

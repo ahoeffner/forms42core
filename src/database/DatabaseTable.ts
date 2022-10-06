@@ -344,14 +344,10 @@ export class DatabaseTable implements DataSource
 		this.setTypes(filter?.get("masters")?.getBindValues());
 
 		let details:FilterStructure = filter?.getFilterStructure("details");
-		console.log("----------------")
-		console.log(filter.printable())
-		console.log("----------------")
 
 		if (details != null)
 		{
 			filter.delete(details);
-
 			let filters:Filter[] = details.getFilters();
 
 			for (let i = 0; i < filters.length; i++)
@@ -366,6 +362,10 @@ export class DatabaseTable implements DataSource
 				}
 			}
 		}
+
+		console.log("----------------")
+		console.log(filter.printable())
+		console.log("----------------")
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);

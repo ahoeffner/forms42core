@@ -344,20 +344,25 @@ export class DatabaseTable implements DataSource
 		this.setTypes(filter?.get("masters")?.getBindValues());
 
 		let details:FilterStructure = filter?.getFilterStructure("details");
+		console.log("----------------")
+		console.log(filter.printable())
+		console.log("----------------")
 
 		if (details != null)
 		{
-			let subqueries:Filter[] = details.getFilters();
+			filter.delete(details);
 
-			for (let i = 0; i < subqueries.length; i++)
+			let filters:Filter[] = details.getFilters();
+
+			for (let i = 0; i < filters.length; i++)
 			{
-				if ((subqueries[i] as SubQuery).subquery == null)
+				if ((filters[i] as SubQuery).subquery == null)
 				{
 					if (this.nosql$ == null)
 						this.nosql$ = new FilterStructure();
 
-					details.delete(subqueries[i]);
-					this.nosql$.and(subqueries[i]);
+					details.delete(filters[i]);
+					this.nosql$.and(filters[i]);
 				}
 			}
 		}

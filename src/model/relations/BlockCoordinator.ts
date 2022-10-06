@@ -37,6 +37,7 @@ export class BlockCoordinator
 
 	public allowQueryMode(block:Block) : boolean
 	{
+		console.log("allowQueryMode "+block.name)
 		let masters:Block[] = this.getMasterBlocks(block);
 
 		for (let i = 0; i < masters.length; i++)

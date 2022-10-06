@@ -253,24 +253,13 @@ export class Form
 		return(true);
 	}
 
-	public clearDetails(block:Block) : void
-	{
-		block.view.clear(true,true,true);
-		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
-		for (let i = 0; i < blocks.length; i++) this.clearDetails(blocks[i]);
-
-	}
-
 	private clearDetailDepencies(block:Block) : void
 	{
-		block.QueryFilter.clear();
+		block.DetailFilter.clear();
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
 
 		for (let i = 0; i < blocks.length; i++)
-		{
-			blocks[i].clearDetailDepencies(block);
 			this.clearDetailDepencies(blocks[i]);
-		}
 	}
 
 	private async enterQueryMode(block:Block) : Promise<void>
@@ -326,26 +315,20 @@ export class Form
 		}
 		else
 		{
-			if (!this.blkcord$.allowQueryMode(block))
-				return(false);
-
-			if (!keep)
-			{
-				block.clearQueryFilters();
-				this.clearDetailDepencies(block);
-			}
+			if (!keep) block.clearQueryFilters();
 		}
 
 		this.qrymgr$.QueryMaster = block;
-		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
-
-		blocks.unshift(block);
+		let blocks:Block[] = block.getAllDetailBlocks();
 
 		for (let i = 0; i < blocks.length; i++)
 		{
 			blocks[i].view.clear(true,true,true);
 
 			if (!await blocks[i].preQuery())
+				return(false);
+
+			if (!await blocks[i].setDetailDependencies())
 				return(false);
 
 			this.view.setFilterIndicator(blocks[i],!blocks[i].QueryFilter.empty);

@@ -525,12 +525,7 @@ export class Block
 		if (qryid == null)
 			qryid = this.form.QueryManager.startNewChain();
 
-		this.getAllDetailBlocks();
-
 		if (!this.setMasterDependencies())
-			return(false);
-
-		if (!await this.setDetailDependencies())
 			return(false);
 
 		// Abort query if already obsolete
@@ -556,8 +551,8 @@ export class Block
 			}
 		}
 
+		this.view.clear(true,true);
 		this.qbe.querymode = false;
-		this.form.clearDetails(this);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		FlightRecorder.debug("@model.block: execute query "+this.name+" filter: "+this.filter.toString());
@@ -709,34 +704,16 @@ export class Block
 		return(this.form.BlockCoordinator.getDetailLinks(this));
 	}
 
-	public getAllDetailBlocks(level?:number, blocks?:any[]) : void
+	public getAllDetailBlocks() : Block[]
 	{
-		let top:boolean = false;
-
-		if (level == null)
-		{
-			level = 0;
-			top = true;
-			blocks = [];
-		}
-
+		let blocks:Block[] = [];
 		let details:Block[] = this.getDetailBlocks();
 
 		details?.forEach((blk) =>
-		{
-			blk.getAllDetailBlocks(level+1,blocks);
-			blocks.push({level: level, block: blk});
-		});
+		{blocks.push(...blk.getAllDetailBlocks());});
 
-		if (top)
-		{
-			blocks.sort(function(b1,b2)
-			{
-				return(b2.level - b1.level);
-			});
-
-			blocks.forEach((blk) => console.log(blk.block.name))
-		}
+		blocks.push(this);
+		return(blocks);
 	}
 
 	public setMasterDependencies() : boolean
@@ -773,12 +750,11 @@ export class Block
 
 	public async setDetailDependencies() : Promise<boolean>
 	{
-		console.log("setDetailDependencies for "+this.name)
 		let blocks:Block[] = this.getDetailBlocks();
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (blocks[i].QueryFilter.empty)
+			if (blocks[i].QueryFilter.empty && blocks[i].DetailFilter.empty)
 				return(true);
 
 			let blkflt:FilterStructure = this.getDetailBlockFilter(blocks[i],true);
@@ -787,7 +763,12 @@ export class Block
 			let src:DataSource = blocks[i].datasource.clone();
 			if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
 
-			if (!await src.query(blocks[i].QueryFilter))
+			let filters:FilterStructure = new FilterStructure();
+
+			filters.and(blocks[i].QueryFilter,"Subquery qbe");
+			filters.and(blocks[i].DetailFilter,"Subquery details");
+
+			if (!await src.query(filters))
 				return(false);
 
 			let values:any[][] = [];

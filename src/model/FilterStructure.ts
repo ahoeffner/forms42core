@@ -215,19 +215,6 @@ export class FilterStructure
 		return(stmt);
 	}
 
-	public toString() : string
-	{
-		let str:string = "";
-
-		for (let i = 0; i < this.entries$.length; i++)
-		{
-			if (i > 0) str += ","
-			str += this.entries$[i].name;
-		}
-
-		return(str);
-	}
-
 	public getFilters(start?:FilterStructure) : Filter[]
 	{
 		let filters:Filter[] = [];
@@ -246,6 +233,33 @@ export class FilterStructure
 		}
 
 		return(filters);
+	}
+
+	public printable() : Printable
+	{
+		let p:Printable = new Printable();
+
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			let name:string = this.entries$[i].name;
+
+			if (this.entries$[i].isFilter())
+			{
+				p.entries.push({name: name, filter: this.entries$[i].filter.toString()})
+			}
+			else
+			{
+				let sub:FilterStructure = this.entries$[i].getFilterStructure();
+				p.entries.push({name: name, sub: sub.printable()})
+			}
+		}
+
+		return(p);
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }
 
@@ -288,4 +302,9 @@ class Constraint
 	{
 		return(this.filter.evaluate(record));
 	}
+}
+
+export class Printable
+{
+	entries:any[] = [];
 }

@@ -139,7 +139,7 @@ export class SubQuery implements Filter
 	public asSQL() : string
 	{
 		if (this.subquery$ == null)
-			return("1 == 2");
+			return("subquery "+this.constraint$);
 
 		let whcl:string = "";
 

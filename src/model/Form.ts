@@ -197,6 +197,9 @@ export class Form
 		FormBacking.getBacking(this.parent).links.
 		forEach((link) => this.BlockCoordinator.link(link))
 
+		this.blocks$.forEach((block) =>
+		{block.addColumns(this.BlockCoordinator.getLinkedColumns(block))});
+
 		await this.initControlBlocks();
 	}
 

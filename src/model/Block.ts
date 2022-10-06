@@ -29,9 +29,9 @@ import { EventType } from "../control/events/EventType.js";
 import { QueryManager } from "./relations/QueryManager.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
+import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { DatabaseTable } from "../database/DatabaseTable.js";
 
 
 export class Block
@@ -198,7 +198,7 @@ export class Block
 		this.view.reset();
 	}
 
-	public addColumns() : void
+	public addColumns(fields?:string[]) : void
 	{
 		if (this.view == null)
 			return;
@@ -206,7 +206,8 @@ export class Block
 		if (this.source$ == null)
 			return;
 
-		let fields:string[] = [];
+		if (fields == null)
+			fields = [];
 
 		this.view.fieldinfo.forEach((info,field) =>
 		{if (!info.derived) fields.push(field);});

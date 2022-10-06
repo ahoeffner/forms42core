@@ -186,7 +186,6 @@ export class BlockCoordinator
 			this.blocks$.set(dependency.block,dependency);
 		}
 
-		console.log("Link master "+JSON.stringify(link))
 		dependency.link(link);
 
 		dependency = this.blocks$.get(link.detail.block);
@@ -197,7 +196,6 @@ export class BlockCoordinator
 			this.blocks$.set(dependency.block,dependency);
 		}
 
-		console.log("Link detail "+JSON.stringify(link))
 		dependency.link(link);
 	}
 
@@ -212,6 +210,25 @@ export class BlockCoordinator
 		}
 
 		return(block);
+	}
+
+	public getLinkedColumns(block:Block) : string[]
+	{
+		let fields:Set<string> = new Set<string>();
+
+		this.getDetailLinks(block)?.forEach((rel) =>
+		{
+			rel.master.fields.forEach((fld) =>
+				{fields.add(fld);})
+		})
+
+		this.getMasterLinks(block)?.forEach((rel) =>
+		{
+			rel.detail.fields.forEach((fld) =>
+				{fields.add(fld);})
+		})
+
+		return(Array.from(fields));
 	}
 }
 

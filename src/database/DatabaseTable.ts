@@ -366,19 +366,7 @@ export class DatabaseTable implements DataSource
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);
-
-		if (this.nosql$)
-		{
-			let passed:Record[] = [];
-
-			for (let i = 0; i < this.fetched$.length; i++)
-			{
-				if (await this.nosql$.evaluate(this.fetched$[i]))
-					passed.push(this.fetched$[i]);
-			}
-
-			this.fetched$ = passed;
-		}
+		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
 	}
@@ -400,18 +388,10 @@ export class DatabaseTable implements DataSource
 		let response:any = await this.conn$.fetch(this.cursor);
 		let fetched:Record[] = this.parse(response);
 
-		if (this.nosql$)
-		{
-			let passed:Record[] = [];
+		fetched = await this.filter(fetched);
 
-			for (let i = 0; i < fetched.length; i++)
-			{
-				if (this.nosql$.evaluate(fetched[i]))
-					passed.push(fetched[i]);
-			}
-
-			fetched = passed;
-		}
+		if (fetched.length == 0)
+			return(this.fetch());
 
 		return(fetched);
 	}
@@ -421,6 +401,24 @@ export class DatabaseTable implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 		return(true);
+	}
+
+	private async filter(records:Record[]) : Promise<Record[]>
+	{
+		if (this.nosql$)
+		{
+			let passed:Record[] = [];
+
+			for (let i = 0; i < records.length; i++)
+			{
+				if (await this.nosql$.evaluate(records[i]))
+					passed.push(records[i]);
+			}
+
+			records = passed;
+		}
+
+		return(records);
 	}
 
 	private async describe() : Promise<boolean>

@@ -751,7 +751,7 @@ export class Block
 			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 
 			let src:DataSource = blocks[i].datasource.clone();
-			//if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
+			if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
 
 			if (!await src.query(blocks[i].QueryFilter))
 				return(false);

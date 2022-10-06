@@ -17,12 +17,12 @@ import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
-import { SubQuery } from "../model/filters/SubQuery.js";
 
 export class DatabaseTable implements DataSource
 {
@@ -49,7 +49,8 @@ export class DatabaseTable implements DataSource
 
 	private fetched$:Record[] = [];
 
-	private filter:FilterStructure;
+	private nosql$:FilterStructure;
+	private filter$:FilterStructure;
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
@@ -311,7 +312,9 @@ export class DatabaseTable implements DataSource
 	{
 		this.eof$ = false;
 		this.fetched$ = [];
-		this.filter = filter;
+
+		this.nosql$ = null;
+		this.filter$ = filter;
 
 		if (!this.conn$.connected())
 		{
@@ -323,8 +326,8 @@ export class DatabaseTable implements DataSource
 
 		if (this.limit$ != null)
 		{
-			if (!this.filter) this.filter = this.limit$;
-			else this.filter.and(this.limit$,"limit");
+			if (!this.filter$) this.filter$ = this.limit$;
+			else this.filter$.and(this.limit$,"limit");
 		}
 
 		this.setTypes(filter?.get("qbe")?.getBindValues());
@@ -339,10 +342,14 @@ export class DatabaseTable implements DataSource
 
 			for (let i = 0; i < subqueries.length; i++)
 			{
-				let found:boolean;
 				if ((subqueries[i] as SubQuery).subquery == null)
-					found = details.delete(subqueries[i]);
-				console.log("found: "+found)
+				{
+					if (this.nosql$ == null)
+						this.nosql$ = new FilterStructure();
+
+					details.delete(subqueries[i]);
+					this.nosql$.and(subqueries[i]);
+				}
 			}
 		}
 
@@ -350,6 +357,20 @@ export class DatabaseTable implements DataSource
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);
+
+		if (this.nosql$)
+		{
+			let passed:Record[] = [];
+
+			for (let i = 0; i < this.fetched$.length; i++)
+			{
+				if (this.nosql$.evaluate(this.fetched$[i]))
+					passed.push(this.fetched$[i]);
+			}
+
+			this.fetched$ = passed;
+		}
+
 		return(true);
 	}
 
@@ -368,7 +389,22 @@ export class DatabaseTable implements DataSource
 			return([]);
 
 		let response:any = await this.conn$.fetch(this.cursor);
-		return(this.parse(response));
+		let fetched:Record[] = this.parse(response);
+
+		if (this.nosql$)
+		{
+			let passed:Record[] = [];
+
+			for (let i = 0; i < fetched.length; i++)
+			{
+				if (this.nosql$.evaluate(fetched[i]))
+					passed.push(fetched[i]);
+			}
+
+			fetched = passed;
+		}
+
+		return(fetched);
 	}
 
 	public async closeCursor() : Promise<boolean>

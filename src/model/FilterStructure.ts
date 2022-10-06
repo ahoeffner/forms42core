@@ -178,7 +178,7 @@ export class FilterStructure
 		return(bindvalues);
 	}
 
-	public build(clauses:number) : string
+	private build(clauses:number) : string
 	{
 		let stmt:string = "";
 		let first:boolean = true;

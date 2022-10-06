@@ -361,6 +361,7 @@ export class DatabaseTable implements DataSource
 		if (this.nosql$)
 		{
 			let passed:Record[] = [];
+			console.log("filter "+this.nosql$.asSQL())
 
 			for (let i = 0; i < this.fetched$.length; i++)
 			{
@@ -448,7 +449,6 @@ export class DatabaseTable implements DataSource
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
 			if (t != null) b.type = DataType[t];
-			console.log(col+" "+DataType[t])
 		})
 	}
 

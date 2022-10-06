@@ -191,7 +191,7 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (!first || clauses > 0) stmt += " " + constr.opr + " ";
+					if (clauses > 0) stmt += " " + constr.opr + " ";
 					stmt += "(" + constr.filter.build(clauses) + ")";
 					first = false;
 					clauses++;
@@ -208,6 +208,7 @@ export class FilterStructure
 
 				stmt += constr.filter.asSQL();
 				first = false;
+				clauses++;
 			}
 		}
 

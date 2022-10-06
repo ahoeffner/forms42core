@@ -90,6 +90,7 @@ export class DatabaseTable implements DataSource
 
 		clone.sorting = this.sorting;
 		clone.columns$ = this.columns$;
+		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
 

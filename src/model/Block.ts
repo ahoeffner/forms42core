@@ -792,7 +792,7 @@ export class Block
 				});
 			}
 
-			console.log(rel.detail.block+" "+values);
+			console.log(rel.detail.block+" "+values.length);
 
 			filter.constraint = values;
 			blkflt.and(filter,blocks[i].name);

@@ -60,6 +60,7 @@ export class Block
 		this.filter.and(new FilterStructure(),"details");
 
 		this.datasource = form.datamodel.getDataSource(this.name);
+		this.datasource.name = this.name;
 	}
 
 	public get name() : string
@@ -182,6 +183,7 @@ export class Block
 		}
 
 		this.source$ = source;
+		this.source$.name = this.name;
 		this.ctrlblk = (source == null);
 
 		this.addColumns();
@@ -694,9 +696,9 @@ export class Block
 		return(this.form.BlockCoordinator.getDetailBlock(link));
 	}
 
-	public getDetailBlocks() : Block[]
+	public getDetailBlocks(all:boolean) : Block[]
 	{
-		return(this.form.BlockCoordinator.getDetailBlocks(this));
+		return(this.form.BlockCoordinator.getDetailBlocks(this,all));
 	}
 
 	public getDetailLinks() : Relation[]
@@ -704,13 +706,13 @@ export class Block
 		return(this.form.BlockCoordinator.getDetailLinks(this));
 	}
 
-	public getAllDetailBlocks() : Block[]
+	public getAllDetailBlocks(all:boolean) : Block[]
 	{
 		let blocks:Block[] = [];
-		let details:Block[] = this.getDetailBlocks();
+		let details:Block[] = this.getDetailBlocks(all);
 
 		details?.forEach((blk) =>
-		{blocks.push(...blk.getAllDetailBlocks());});
+		{blocks.push(...blk.getAllDetailBlocks(all));});
 
 		blocks.push(this);
 		return(blocks);
@@ -750,7 +752,7 @@ export class Block
 
 	public async setDetailDependencies() : Promise<boolean>
 	{
-		let blocks:Block[] = this.getDetailBlocks();
+		let blocks:Block[] = this.getDetailBlocks(false);
 
 		for (let i = 0; i < blocks.length; i++)
 		{
@@ -770,6 +772,8 @@ export class Block
 
 			details.and(blocks[i].QueryFilter,"qbe");
 			details.and(blocks[i].DetailFilter,"subquery");
+
+			console.log(blocks[i].name+" retreive "+rel.detail.fields+" for join with "+rel.master.fields)
 
 			if (!await src.query(filters))
 				return(false);
@@ -824,7 +828,7 @@ export class Block
 		let qryid:object = this.getQueryID();
 		if (newqry) qryid = this.startNewQueryChain();
 
-		this.getDetailBlocks().forEach((detail) =>
+		this.getDetailBlocks(true).forEach((detail) =>
 			{detail.executeQuery(qryid)})
 
 		return(true);

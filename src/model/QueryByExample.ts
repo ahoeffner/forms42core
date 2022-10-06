@@ -36,6 +36,7 @@ export class QueryByExample
 		this.table$ = new MemoryTable();
 		this.wrapper$ = new DataSourceWrapper();
 
+		this.table$.name = "qbe";
 		this.wrapper$.block = block;
 		this.wrapper$.source = this.table$;
 		this.record$ = this.wrapper$.create(0);

@@ -69,7 +69,7 @@ export class BlockCoordinator
 		return(this.getBlock(link.detail.block));
 	}
 
-	public getDetailBlocks(block:Block,masterless?:boolean) : Block[]
+	public getDetailBlocks(block:Block,all:boolean) : Block[]
 	{
 		let blocks:Block[] = [];
 
@@ -80,7 +80,7 @@ export class BlockCoordinator
 			if (block == null)
 				return([]);
 
-			if (masterless || link.orphanQueries)
+			if (all || link.orphanQueries)
 				blocks.push(block);
 		})
 

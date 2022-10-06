@@ -256,7 +256,7 @@ export class Form
 	private clearDetailDepencies(block:Block) : void
 	{
 		block.DetailFilter.clear();
-		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 
 		for (let i = 0; i < blocks.length; i++)
 			this.clearDetailDepencies(blocks[i]);
@@ -319,7 +319,7 @@ export class Form
 		}
 
 		this.qrymgr$.QueryMaster = block;
-		let blocks:Block[] = block.getAllDetailBlocks();
+		let blocks:Block[] = block.getAllDetailBlocks(true);
 
 		for (let i = 0; i < blocks.length; i++)
 		{

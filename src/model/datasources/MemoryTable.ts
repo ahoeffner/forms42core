@@ -17,6 +17,7 @@ import { DataSource } from "../interfaces/DataSource.js";
 
 export class MemoryTable implements DataSource
 {
+	public name:string;
 	public arrayfecth:number = 1;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;

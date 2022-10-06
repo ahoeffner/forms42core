@@ -26,6 +26,7 @@ import { Connection as DatabaseConnection } from "../database/Connection.js";
 
 export class DatabaseTable implements DataSource
 {
+	public name:string;
 	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
@@ -419,6 +420,8 @@ export class DatabaseTable implements DataSource
 			{
 				if (await this.nosql$.evaluate(records[i]))
 					passed.push(records[i]);
+
+				else console.log(this.name+" rejected "+records[i])
 			}
 
 			records = passed;

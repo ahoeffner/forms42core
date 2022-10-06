@@ -16,6 +16,7 @@ import { FilterStructure } from '../FilterStructure.js';
 
 export interface DataSource
 {
+	name:string;
 	sorting:string;
 	columns:string[];
 	arrayfecth:number;

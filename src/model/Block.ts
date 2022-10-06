@@ -525,6 +525,8 @@ export class Block
 		if (qryid == null)
 			qryid = this.form.QueryManager.startNewChain();
 
+		this.getAllDetailBlocks();
+
 		if (!this.setMasterDependencies())
 			return(false);
 
@@ -554,8 +556,8 @@ export class Block
 			}
 		}
 
-		this.view.clear(true,true);
 		this.qbe.querymode = false;
+		this.form.clearDetails(this);
 		let wrapper:DataSourceWrapper = this.wrapper;
 
 		FlightRecorder.debug("@model.block: execute query "+this.name+" filter: "+this.filter.toString());
@@ -707,6 +709,36 @@ export class Block
 		return(this.form.BlockCoordinator.getDetailLinks(this));
 	}
 
+	public getAllDetailBlocks(level?:number, blocks?:any[]) : void
+	{
+		let top:boolean = false;
+
+		if (level == null)
+		{
+			level = 0;
+			top = true;
+			blocks = [];
+		}
+
+		let details:Block[] = this.getDetailBlocks();
+
+		details?.forEach((blk) =>
+		{
+			blk.getAllDetailBlocks(level+1,blocks);
+			blocks.push({level: level, block: blk});
+		});
+
+		if (top)
+		{
+			blocks.sort(function(b1,b2)
+			{
+				return(b2.level - b1.level);
+			});
+
+			blocks.forEach((blk) => console.log(blk.block.name))
+		}
+	}
+
 	public setMasterDependencies() : boolean
 	{
 		this.MasterFilter.clear();
@@ -741,6 +773,7 @@ export class Block
 
 	public async setDetailDependencies() : Promise<boolean>
 	{
+		console.log("setDetailDependencies for "+this.name)
 		let blocks:Block[] = this.getDetailBlocks();
 
 		for (let i = 0; i < blocks.length; i++)

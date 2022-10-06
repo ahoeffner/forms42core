@@ -253,6 +253,14 @@ export class Form
 		return(true);
 	}
 
+	public clearDetails(block:Block) : void
+	{
+		block.view.clear(true,true,true);
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block);
+		for (let i = 0; i < blocks.length; i++) this.clearDetails(blocks[i]);
+
+	}
+
 	private clearDetailDepencies(block:Block) : void
 	{
 		block.QueryFilter.clear();

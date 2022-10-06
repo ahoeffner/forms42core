@@ -60,7 +60,6 @@ export class Block
 		this.filter.and(new FilterStructure(),"details");
 
 		this.datasource = form.datamodel.getDataSource(this.name);
-		this.datasource.name = this.name;
 	}
 
 	public get name() : string
@@ -183,8 +182,8 @@ export class Block
 		}
 
 		this.source$ = source;
-		this.source$.name = this.name;
 		this.ctrlblk = (source == null);
+		if (this.source$) this.source$.name = this.name;
 
 		this.addColumns();
 	}

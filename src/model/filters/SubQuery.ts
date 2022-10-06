@@ -120,7 +120,7 @@ export class SubQuery implements Filter
 			match = true;
 			let row:any[] = table[r];
 
-			for (let c = 0; c < row.length; c++)
+			for (let c = 0; c < values.length; c++)
 			{
 				if (values[c] != row[c])
 				{

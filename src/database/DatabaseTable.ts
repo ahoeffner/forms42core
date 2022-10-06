@@ -89,6 +89,7 @@ export class DatabaseTable implements DataSource
 		let clone:DatabaseTable = new DatabaseTable(this.conn$,this.table$,columns);
 
 		clone.sorting = this.sorting;
+		clone.columns$ = this.columns$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
 
@@ -108,6 +109,14 @@ export class DatabaseTable implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public set columns(columns:string|string[])
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.columns$ = columns;
 	}
 
 	public get primaryKey() : string[]
@@ -361,11 +370,10 @@ export class DatabaseTable implements DataSource
 		if (this.nosql$)
 		{
 			let passed:Record[] = [];
-			console.log("filter "+this.nosql$.asSQL())
 
 			for (let i = 0; i < this.fetched$.length; i++)
 			{
-				if (this.nosql$.evaluate(this.fetched$[i]))
+				if (await this.nosql$.evaluate(this.fetched$[i]))
 					passed.push(this.fetched$[i]);
 			}
 

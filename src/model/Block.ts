@@ -31,6 +31,7 @@ import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { DatabaseTable } from "../database/DatabaseTable.js";
 
 
 export class Block
@@ -749,7 +750,8 @@ export class Block
 			let blkflt:FilterStructure = this.getDetailBlockFilter(blocks[i],true);
 			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 
-			let src:DataSource = blocks[i].datasource.clone(); // if sql rel.detail.fields
+			let src:DataSource = blocks[i].datasource.clone();
+			//if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
 
 			if (!await src.query(blocks[i].QueryFilter))
 				return(false);

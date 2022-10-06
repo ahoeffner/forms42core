@@ -171,6 +171,12 @@ export class BlockCoordinator
 
 	public link(link:Relation) : void
 	{
+		if (link.detail.block == link.master.block)
+		{
+			Alert.fatal("Relation '"+link.master.name+"->"+link.detail.name+" is self referencing","Master Detail");
+			return;
+		}
+
 		let dependency:Dependency = null;
 		dependency = this.blocks$.get(link.master.block);
 
@@ -180,6 +186,7 @@ export class BlockCoordinator
 			this.blocks$.set(dependency.block,dependency);
 		}
 
+		console.log("Link master "+JSON.stringify(link))
 		dependency.link(link);
 
 		dependency = this.blocks$.get(link.detail.block);
@@ -190,6 +197,7 @@ export class BlockCoordinator
 			this.blocks$.set(dependency.block,dependency);
 		}
 
+		console.log("Link detail "+JSON.stringify(link))
 		dependency.link(link);
 	}
 

@@ -97,8 +97,33 @@ export class FilterStructure
 		return(this.fieldidx$.get(field?.toLowerCase())?.filter);
 	}
 
+	public getFilter(field:string) : Filter
+	{
+		let constr:Constraint = this.fieldidx$.get(field?.toLowerCase());
+		if (!constr || !constr.isFilter()) return(null);
+		return(constr.filter as Filter);
+	}
+
+	public getFilterStructure(field:string) : FilterStructure
+	{
+		let constr:Constraint = this.fieldidx$.get(field?.toLowerCase());
+		if (!constr || constr.isFilter()) return(null);
+		return(constr.filter as FilterStructure);
+	}
+
 	public delete(filter:string|Filter|FilterStructure) : boolean
 	{
+		let found:boolean = false;
+
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			if (!this.entries$[i].isFilter())
+			{
+				if ((this.entries$[i].getFilterStructure()).delete(filter))
+					found = true;
+			}
+		}
+
 		if (typeof filter === "string")
 			filter = this.get(filter);
 
@@ -110,14 +135,14 @@ export class FilterStructure
 
 			if (pos >= 0)
 			{
+				found = true;
 				this.entries$.splice(pos,1);
 				this.filteridx$.delete(filter);
 				this.fieldidx$.delete(cstr.name);
-				return(true);
 			}
 		}
 
-		return(false);
+		return(found);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
@@ -153,7 +178,7 @@ export class FilterStructure
 		return(bindvalues);
 	}
 
-	public build(level:number) : string
+	public build(clauses:number) : string
 	{
 		let stmt:string = "";
 		let first:boolean = true;
@@ -166,13 +191,14 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (!first || level > 0) stmt += " " + constr.opr + " ";
-					stmt += "(" + constr.filter.build(level+1) + ")";
+					if (!first || clauses > 0) stmt += " " + constr.opr + " ";
+					stmt += "(" + constr.filter.build(clauses) + ")";
 					first = false;
+					clauses++;
 				}
 				else
 				{
-					stmt += constr.filter.build(level);
+					stmt += constr.filter.build(clauses);
 				}
 			}
 			else
@@ -190,11 +216,18 @@ export class FilterStructure
 
 	public toString() : string
 	{
-		let str:string = this.build(0);
+		let str:string = "";
+
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			if (i > 0) str += ","
+			str += this.entries$[i].name;
+		}
+
 		return(str);
 	}
 
-	private getFilters(start?:FilterStructure) : Filter[]
+	public getFilters(start?:FilterStructure) : Filter[]
 	{
 		let filters:Filter[] = [];
 		if (start == null) start = this;
@@ -238,6 +271,16 @@ class Constraint
 	isFilter() : boolean
 	{
 		return(!(this.filter instanceof FilterStructure));
+	}
+
+	getFilter() : Filter
+	{
+		return(this.filter as Filter);
+	}
+
+	getFilterStructure() : FilterStructure
+	{
+		return(this.filter as FilterStructure);
 	}
 
 	async matches(record:Record) : Promise<boolean>

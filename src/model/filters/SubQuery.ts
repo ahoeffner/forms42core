@@ -18,6 +18,7 @@ import { BindValue } from "../../database/BindValue.js";
 export class SubQuery implements Filter
 {
 	private bindval$:string = null;
+	private subquery$:string = null;
 	private columns$:string[] = null;
 	private constraint$:any[][] = null;
 	private bindvalues$:BindValue[] = [];
@@ -49,6 +50,16 @@ export class SubQuery implements Filter
 
 		for (let i = 1; i < columns.length; i++)
 			this.bindval$ += "."+columns[i];
+	}
+
+	public get subquery() : string
+	{
+		return(this.subquery$);
+	}
+
+	public set subquery(sql:string)
+	{
+		this.subquery$ = sql;
 	}
 
 	public clear() : void
@@ -127,7 +138,7 @@ export class SubQuery implements Filter
 
 	public asSQL() : string
 	{
-		if (this.constraint$ == null)
+		if (this.subquery$ == null)
 			return("1 == 2");
 
 		let whcl:string = "";

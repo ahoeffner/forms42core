@@ -22,6 +22,7 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
+import { SubQuery } from "../model/filters/SubQuery.js";
 
 export class DatabaseTable implements DataSource
 {
@@ -135,8 +136,6 @@ export class DatabaseTable implements DataSource
 
 	public set insertReturnColumns(columns:string|string[])
 	{
-		this.described$ = false;
-
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -150,8 +149,6 @@ export class DatabaseTable implements DataSource
 
 	public set updateReturnColumns(columns:string|string[])
 	{
-		this.described$ = false;
-
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -165,8 +162,6 @@ export class DatabaseTable implements DataSource
 
 	public set deleteReturnColumns(columns:string|string[])
 	{
-		this.described$ = false;
-
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -175,8 +170,6 @@ export class DatabaseTable implements DataSource
 
 	public addDMLColumns(columns:string|string[]) : void
 	{
-		this.described$ = false;
-
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -185,8 +178,6 @@ export class DatabaseTable implements DataSource
 
 	public addColumns(columns:string|string[]) : void
 	{
-		this.described$ = false;
-
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -337,6 +328,23 @@ export class DatabaseTable implements DataSource
 		}
 
 		this.setTypes(filter?.get("qbe")?.getBindValues());
+		this.setTypes(filter?.get("limit")?.getBindValues());
+		this.setTypes(filter?.get("masters")?.getBindValues());
+
+		let details:FilterStructure = filter?.getFilterStructure("details");
+
+		if (details != null)
+		{
+			let subqueries:Filter[] = details.getFilters();
+
+			for (let i = 0; i < subqueries.length; i++)
+			{
+				let found:boolean;
+				if ((subqueries[i] as SubQuery).subquery == null)
+					found = details.delete(subqueries[i]);
+				console.log("found: "+found)
+			}
+		}
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
@@ -375,26 +383,13 @@ export class DatabaseTable implements DataSource
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
 
-		let columns:string[] = this.columns;
-
-		columns = this.mergeColumns(columns,this.dmlcols$);
-		columns = this.mergeColumns(columns,this.insreturncolumns$);
-		columns = this.mergeColumns(columns,this.updreturncolumns$);
-		columns = this.mergeColumns(columns,this.delreturncolumns$);
-
-		sql.stmt = "select ";
-
-		for (let i = 0; i < columns.length; i++)
-		{
-			if (i > 0) sql.stmt += ",";
-			sql.stmt += columns[i];
-		}
-
-		sql.stmt += " from "+this.table$;
+		sql.stmt += "select * from "+this.table$;
 		sql.stmt += " where 1 = 2";
 
 		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,cursor,1,true);
+
+		let columns:string[] = response.columns;
 
 		for (let i = 0; i < columns.length; i++)
 		{
@@ -417,6 +412,7 @@ export class DatabaseTable implements DataSource
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
 			if (t != null) b.type = DataType[t];
+			console.log(col+" "+DataType[t])
 		})
 	}
 

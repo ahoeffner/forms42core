@@ -16,6 +16,7 @@ import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
+import { SubQuery } from "./filters/SubQuery.js";
 import { Relation } from "./relations/Relation.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -754,9 +755,7 @@ export class Block
 				return(false);
 
 			let values:any[][] = [];
-			let filter:Filter = Filters.SubQuery(rel.master.fields);
-
-			console.log(rel.master.fields)
+			let filter:SubQuery = Filters.SubQuery(rel.master.fields);
 
 			while(true)
 			{

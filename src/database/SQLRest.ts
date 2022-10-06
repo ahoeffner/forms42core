@@ -14,7 +14,7 @@ import { BindValue } from "./BindValue";
 
 export class SQLRest
 {
-	stmt:string;
+	stmt:string = "";
 	returnclause:boolean;
 	bindvalues:BindValue[];
 

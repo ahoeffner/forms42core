@@ -847,6 +847,19 @@ export class Block
 		return(inst != null);
 	}
 
+	public hasInsertableFields() : boolean
+	{
+		let row:Row = this.getRow(0);
+		let curr:Row = this.getRow(-1);
+
+		let inst:FieldInstance = null;
+
+		inst = row?.getFirstEditableInstance(Status.new);
+		if (!inst) inst = curr?.getFirstEditableInstance(Status.new);
+
+		return(inst != null);
+	}
+
 	public findFirstEditable(record:Record) : FieldInstance
 	{
 		let inst:FieldInstance = null;

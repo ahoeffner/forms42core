@@ -125,7 +125,8 @@ export class Connection
 				payload = JSON.stringify(payload);
 		}
 
-		FlightRecorder.add("@connection: "+endpoint+(payload ? " "+JSON.stringify(payload) : ""))
+		if (!endpoint.toString().endsWith("ping"))
+			FlightRecorder.add("@connection: "+endpoint+(payload ? " "+JSON.stringify(payload) : ""))
 
 		let http:any = await fetch(endpoint,
 		{

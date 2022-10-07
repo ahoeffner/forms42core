@@ -357,8 +357,8 @@ export class Block
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
 
-		if (success) success =
-			await this.wrapper.modified(record,false);
+		if (success)
+			success = await this.wrapper.modified(record,false);
 
 		return(success);
 	}
@@ -412,22 +412,28 @@ export class Block
 		if (this.querymode)
 			return(false);
 
+		if (!this.view.hasInsertableFields())
+		{
+			Alert.warning("'"+this.name+"' has no allowed input fields","Insert Record");
+			return(false);
+		}
+
 		if (!await this.view.validateRow())
 			return(false);
 
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		if (!this.view.getCurrentRow().exist)
-		{
-			before = true;
-			this.view.openrow();
-		}
-
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)
 		{
+			if (!this.view.getCurrentRow().exist)
+			{
+				before = true;
+				this.view.openrow();
+			}
+
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
 

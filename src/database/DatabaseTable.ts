@@ -80,8 +80,6 @@ export class DatabaseTable implements DataSource
 
 			this.columns$ = columns;
 		}
-
-		this.cursor = table+(new Date().getTime());
 	}
 
 	public clone(columns?:string|string[]) : DatabaseTable
@@ -372,6 +370,7 @@ export class DatabaseTable implements DataSource
 			}
 		}
 
+		this.cursor = this.table$+(new Date().getTime());
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 

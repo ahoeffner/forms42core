@@ -177,6 +177,16 @@ export class Record
 		return(this.values$[idx]);
 	}
 
+	public getInitialValue(column:string) : any
+	{
+		if (column == null)
+			return(null);
+
+		column = column.toLowerCase();
+		let idx:number = this.indexOf(column);
+		return(this.initial$[idx]);
+	}
+
 	public setValue(column:string,value:any) : void
 	{
 		if (column == null)
@@ -205,11 +215,6 @@ export class Record
 	public getDirty() : string[]
 	{
 		return([...this.dirty$]);
-	}
-
-	public get before() : any[]
-	{
-		return(this.initial$);
 	}
 
 	public get columns() : string[]

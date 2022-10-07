@@ -161,7 +161,8 @@ export class SQLRestBuilder
 		for (let i = 0; i < pkey.length; i++)
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
-			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),value);
 		}
 
 		stmt += " where "+filters.asSQL();
@@ -195,7 +196,8 @@ export class SQLRestBuilder
 		for (let i = 0; i < pkey.length; i++)
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
-			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			filters.and(filter.setConstraint(record.keys[i]),value);
 		}
 
 		stmt += filters.asSQL();

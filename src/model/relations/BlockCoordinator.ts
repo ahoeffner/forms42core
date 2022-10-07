@@ -107,7 +107,7 @@ export class BlockCoordinator
 	{
 		let blocks:Block[] = [];
 
-		this.blocks$.get(block.name)?.getFieldRelations(field).
+		this.blocks$.get(block.name)?.getFieldRelations(field)?.
 		forEach((rel) => blocks.push(this.getBlock(rel.detail.block)))
 
 		return(blocks);

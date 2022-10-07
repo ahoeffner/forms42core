@@ -51,7 +51,6 @@ export class DatabaseTable implements DataSource
 	private fetched$:Record[] = [];
 
 	private nosql$:FilterStructure;
-	private filter$:FilterStructure;
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
@@ -90,6 +89,7 @@ export class DatabaseTable implements DataSource
 		let clone:DatabaseTable = new DatabaseTable(this.conn$,this.table$,columns);
 
 		clone.sorting = this.sorting;
+		clone.primary$ = this.primary$;
 		clone.columns$ = this.columns$;
 		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
@@ -123,13 +123,13 @@ export class DatabaseTable implements DataSource
 
 	public get primaryKey() : string[]
 	{
-		return(this.primary$);
-	}
+		if (this.primary$ == null || this.primary$.length == 0)
+		{
+			this.primary$ = [];
+			this.primary$.push(...this.columns$);
+		}
 
-	public setDataType(column:string,type:DataType) : DatabaseTable
-	{
-		this.datatypes$.set(column?.toLowerCase(),type);
-		return(this);
+		return(this.primary$);
 	}
 
 	public set primaryKey(columns:string|string[])
@@ -139,6 +139,12 @@ export class DatabaseTable implements DataSource
 
 		this.addColumns(columns);
 		this.primary$ = columns;
+	}
+
+	public setDataType(column:string,type:DataType) : DatabaseTable
+	{
+		this.datatypes$.set(column?.toLowerCase(),type);
+		return(this);
 	}
 
 	public get insertReturnColumns() : string[]
@@ -268,7 +274,7 @@ export class DatabaseTable implements DataSource
 				processed.push(rec);
 
 				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
-				sql = SQLRestBuilder.update(this.table$,this.primary$,columns,rec,this.updreturncolumns$);
+				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
@@ -280,7 +286,7 @@ export class DatabaseTable implements DataSource
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primary$,rec,this.delreturncolumns$);
+				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.delete(sql);
@@ -323,10 +329,8 @@ export class DatabaseTable implements DataSource
 	{
 		this.eof$ = false;
 		this.fetched$ = [];
-		filter = filter?.clone();
-
 		this.nosql$ = null;
-		this.filter$ = filter;
+		filter = filter?.clone();
 
 		if (!this.conn$.connected())
 		{
@@ -338,7 +342,7 @@ export class DatabaseTable implements DataSource
 
 		if (this.limit$ != null)
 		{
-			if (!filter) this.filter$ = this.limit$;
+			if (!filter) filter = this.limit$;
 			else filter.and(this.limit$,"limit");
 		}
 
@@ -431,6 +435,8 @@ export class DatabaseTable implements DataSource
 	{
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
+
+		console.log("descibe "+this.name)
 
 		sql.stmt += "select * from "+this.table$;
 		sql.stmt += " where 1 = 2";

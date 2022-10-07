@@ -109,10 +109,7 @@ export class SubQuery implements Filter
 		let table:any[][] = this.constraint$;
 
 		this.columns$.forEach((column) =>
-		{
-			column = column?.toLowerCase();
-			values.push(record.getValue(column));
-		})
+		{values.push(record.getValue(column))})
 
 		let match:boolean = false;
 		for (let r = 0; r < table.length; r++)

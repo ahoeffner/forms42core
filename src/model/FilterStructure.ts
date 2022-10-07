@@ -245,7 +245,7 @@ export class FilterStructure
 
 			if (this.entries$[i].isFilter())
 			{
-				p.entries.push({name: name, filter: this.entries$[i].filter.toString()})
+				p.entries.push({name: name, filter: this.entries$[i].filter})
 			}
 			else
 			{

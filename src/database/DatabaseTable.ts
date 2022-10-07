@@ -354,20 +354,18 @@ export class DatabaseTable implements DataSource
 
 			for (let i = 0; i < filters.length; i++)
 			{
-				if ((filters[i] as SubQuery).subquery == null)
+				let df:Filter = filters[i];
+
+				if (df instanceof SubQuery && df.subquery == null)
 				{
 					if (this.nosql$ == null)
 						this.nosql$ = new FilterStructure();
 
-					details.delete(filters[i]);
-					this.nosql$.and(filters[i]);
+					details.delete(df);
+					this.nosql$.and(df);
 				}
 			}
 		}
-
-		console.log("----------------")
-		console.log(filter.printable())
-		console.log("----------------")
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
@@ -420,8 +418,6 @@ export class DatabaseTable implements DataSource
 			{
 				if (await this.nosql$.evaluate(records[i]))
 					passed.push(records[i]);
-
-				else console.log(this.name+" rejected "+records[i])
 			}
 
 			records = passed;

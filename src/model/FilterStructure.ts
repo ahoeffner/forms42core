@@ -16,6 +16,8 @@ import { BindValue } from "../database/BindValue.js";
 
 export class FilterStructure
 {
+	public name:string = null;
+
 	private entries$:Constraint[] = [];
 
 	private fieldidx$:Map<string,Constraint> =
@@ -23,6 +25,11 @@ export class FilterStructure
 
 	private filteridx$:Map<Filter|FilterStructure,Constraint> =
 		new Map<Filter|FilterStructure,Constraint>();
+
+	public constructor(name?:string)
+	{
+		this.name = name;
+	}
 
 	public get empty() : boolean
 	{
@@ -32,6 +39,29 @@ export class FilterStructure
 	public size() : number
 	{
 		return(this.entries$.length);
+	}
+
+	public clone() : FilterStructure
+	{
+		let clone = new FilterStructure();
+
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			let cstr:Constraint = this.entries$[i];
+
+			if (cstr.isFilter())
+			{
+				if (cstr.and) 	clone.and(cstr.filter,cstr.name);
+				else 				clone.or(cstr.filter,cstr.name)
+			}
+			else
+			{
+				if (cstr.and) 	clone.and(cstr.getFilterStructure().clone(),cstr.name);
+				else 				clone.or(cstr.getFilterStructure().clone(),cstr.name)
+			}
+		}
+
+		return(clone);
 	}
 
 	public hasChildFilters() : boolean
@@ -114,6 +144,8 @@ export class FilterStructure
 	public delete(filter:string|Filter|FilterStructure) : boolean
 	{
 		let found:boolean = false;
+		if (this.name == "employees")
+			console.log("delete "+filter)
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
@@ -237,11 +269,13 @@ export class FilterStructure
 
 	public printable() : Printable
 	{
+		let name:string = null;
 		let p:Printable = new Printable();
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{
-			let name:string = this.entries$[i].name;
+			name = this.entries$[i].name;
+			if (name == null) name = this.name;
 
 			if (this.entries$[i].isFilter())
 			{

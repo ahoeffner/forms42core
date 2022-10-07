@@ -55,6 +55,7 @@ export class Block
 		this.form.addBlock(this);
 		this.intfrm = form.parent;
 
+		this.filter.name = this.name;
 		this.filter.and(this.qbe.filters,"qbe");
 		this.filter.and(new FilterStructure(),"masters");
 		this.filter.and(new FilterStructure(),"details");
@@ -758,7 +759,6 @@ export class Block
 			if (blocks[i].QueryFilter.empty && blocks[i].DetailFilter.empty)
 				return(true);
 
-			let blkflt:FilterStructure = this.getDetailBlockFilter(blocks[i],true);
 			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 
 			let src:DataSource = blocks[i].datasource.clone();
@@ -773,11 +773,18 @@ export class Block
 			filters.and(blocks[i].QueryFilter,"qbe");
 			details.and(blocks[i].DetailFilter,"subquery");
 
+			let filter:SubQuery = Filters.SubQuery(rel.master.fields);
+			this.getDetailBlockFilter(blocks[i],true).and(filter,blocks[i].name);
+
+			console.log(this.name+" - "+blocks[i].name)
+			console.log(this.filter.printable())
+			console.log("*******************")
+
+
 			if (!await src.query(filters))
 				return(false);
 
 			let values:any[][] = [];
-			let filter:SubQuery = Filters.SubQuery(rel.master.fields);
 
 			while(true)
 			{
@@ -795,15 +802,9 @@ export class Block
 			}
 
 			filter.constraint = values;
-			blkflt.and(filter,blocks[i].name);
 		}
 
 		return(true);
-	}
-
-	public clearDetailDepencies(block:Block) : void
-	{
-		block.DetailFilter.clear(this.name);
 	}
 
 	public getQueryID() : object

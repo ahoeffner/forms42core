@@ -347,34 +347,38 @@ export class DatabaseTable implements DataSource
 
 		let details:FilterStructure = filter?.getFilterStructure("details");
 
+		console.log(this.name);
+		console.log(filter?.printable());
+		console.log("--------------")
+
+		let sqlfilter:FilterStructure = this.filter$.clone();
+
 		if (details != null)
 		{
 			let filters:Filter[] = details.getFilters();
 
 			for (let i = 0; i < filters.length; i++)
 			{
-				filter.delete("details");
 				let df:Filter = filters[i];
 
 				if (df instanceof SubQuery && df.subquery == null)
 				{
 					if (this.nosql$ == null)
-						this.nosql$ = new FilterStructure();
+						this.nosql$ = new FilterStructure(this.name+".nosql");
 
 					details.delete(df);
 					this.nosql$.and(df);
+					console.log("remove")
 
 					this.addColumns(df.columns);
 				}
 			}
 		}
 
-		console.log(this.name);
-		console.log(filter.printable())
-
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
+		this.filter$ = sqlfilter;
 		this.fetched$ = this.parse(response);
 		this.fetched$ = await this.filter(this.fetched$);
 

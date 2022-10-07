@@ -137,11 +137,6 @@ export class Block
 		return(this.intblk.deleteallowed);
 	}
 
-	public clearQueryFilters() : void
-	{
-		this.qbe.clear();
-	}
-
 	public hasEventTransaction() : boolean
 	{
 		return(this.form.hasEventTransaction(this));

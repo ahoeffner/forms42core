@@ -253,10 +253,22 @@ export class Form
 		return(true);
 	}
 
+	private clearQueryFilters(block:Block) : void
+	{
+		block.QueryFilter.clear();
+		console.log("clearQueryFilters for "+block.name)
+
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
+
+		for (let i = 0; i < blocks.length; i++)
+			this.clearQueryFilters(blocks[i]);
+	}
+
 	private clearDetailDepencies(block:Block) : void
 	{
 		block.DetailFilter.clear();
 		console.log("clearDetailDepencies for "+block.name)
+
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 
 		for (let i = 0; i < blocks.length; i++)
@@ -319,7 +331,7 @@ export class Form
 			console.log("exe "+block.name+" keep: "+keep)
 			if (!keep)
 			{
-				block.clearQueryFilters();
+				this.clearQueryFilters(block);
 				this.clearDetailDepencies(block);
 			}
 		}
@@ -338,8 +350,8 @@ export class Form
 				return(false);
 
 			let filters:boolean = false;
-			if (blocks[i].QueryFilter.getFilters().length > 0) filters = true;
-			if (blocks[i].DetailFilter.getFilters().length > 0) filters = true;
+			if (!blocks[i].QueryFilter.empty) filters = true;
+			if (!blocks[i].DetailFilter.empty) filters = true;
 
 			this.view.setFilterIndicator(blocks[i],filters);
 		}

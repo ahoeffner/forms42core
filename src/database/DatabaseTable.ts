@@ -240,14 +240,14 @@ export class DatabaseTable implements DataSource
 		let response:any = null;
 		let processed:Record[] = [];
 
+		if (this.dirty$.length == 0)
+			return([]);
+
 		if (!this.conn$.connected())
 		{
 			Alert.warning("Not connected","Database Connection");
 			return([]);
 		}
-
-		if (this.primary$ == null)
-			this.primary$ = this.columns$;
 
 		await this.describe();
 
@@ -396,6 +396,13 @@ export class DatabaseTable implements DataSource
 			return([]);
 
 		let response:any = await this.conn$.fetch(this.cursor);
+
+		if (!response.succces)
+		{
+			console.error(this.name+" failed to fetch: "+response.message);
+			return([]);
+		}
+
 		let fetched:Record[] = this.parse(response);
 
 		fetched = await this.filter(fetched);
@@ -436,8 +443,6 @@ export class DatabaseTable implements DataSource
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
 
-		console.log("descibe "+this.name)
-
 		sql.stmt += "select * from "+this.table$;
 		sql.stmt += " where 1 = 2";
 
@@ -456,8 +461,8 @@ export class DatabaseTable implements DataSource
 			if (!exist) this.datatypes$.set(cname,datatype);
 		}
 
-		this.described$ = true;
-		return(response.succes);
+		this.described$ = response.success;
+		return(this.described$);
 	}
 
 	private setTypes(bindvalues:BindValue[]) : void
@@ -518,7 +523,6 @@ export class DatabaseTable implements DataSource
 			let response:any = {succes: true, rows: [rows[r]]};
 			record.response = new DatabaseResponse(response, this.columns);
 
-			record.keys = keys;
 			fetched.push(record);
 		}
 

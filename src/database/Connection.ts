@@ -37,6 +37,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("failed to connect as "+this.username);
 			Alert.warning(response.message,"Database Connection");
 			return(false);
 		}
@@ -74,6 +75,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("stmt: "+sql.stmt+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -88,6 +90,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("fetch from cursor: "+cursor+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -110,6 +113,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("stmt: "+sql.stmt+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -131,6 +135,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("stmt: "+sql.stmt+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -152,6 +157,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("stmt: "+sql.stmt+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -173,6 +179,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error("stmt: "+sql.stmt+" failed");
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}

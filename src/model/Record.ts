@@ -27,7 +27,6 @@ export enum RecordState
 export class Record
 {
 	private id$:any;
-	private keys$:any[] = [];
 	private values$:any[] = [];
 	private initial$:any[] = [];
 	private response$:any = null;
@@ -58,19 +57,6 @@ export class Record
 	public get id() : any
 	{
 		return(this.id$);
-	}
-
-	public get keys() : any[]
-	{
-		return(this.keys$);
-	}
-
-	public set keys(keys:any|any[])
-	{
-		if (!Array.isArray(keys))
-			keys = [keys];
-
-		this.keys$ = keys;
 	}
 
 	public get block() : Block

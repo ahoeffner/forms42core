@@ -66,7 +66,8 @@ export class SQLRestBuilder
 		for (let i = 0; i < pkey.length; i++)
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
-			filters.and(filter.setConstraint(record.keys[i]),pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			filters.and(filter.setConstraint(value),pkey[i]);
 		}
 
 		stmt += filters.asSQL();
@@ -162,7 +163,7 @@ export class SQLRestBuilder
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);
-			filters.and(filter.setConstraint(record.keys[i]),value);
+			filters.and(filter.setConstraint(value),pkey[i]);
 		}
 
 		stmt += " where "+filters.asSQL();
@@ -197,7 +198,7 @@ export class SQLRestBuilder
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);
-			filters.and(filter.setConstraint(record.keys[i]),value);
+			filters.and(filter.setConstraint(value),pkey[i]);
 		}
 
 		stmt += filters.asSQL();
@@ -219,16 +220,5 @@ export class SQLRestBuilder
 		parsed.bindvalues = filters.getBindValues();
 
 		return(parsed);
-	}
-
-	private static quoted(value:any) : any
-	{
-		if (typeof value == "string")
-			return("'"+value+"'");
-
-		if (value instanceof Date)
-			return(value.getTime());
-
-		return(value);
 	}
 }

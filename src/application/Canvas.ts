@@ -264,7 +264,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		let parent:HTMLElement = this.canvas.parentElement;
 		this.boundary = {x: parent.offsetLeft, y: parent.offsetTop, w: parent.offsetWidth, h: parent.offsetHeight};
 
-		let type:string = this.canvas.parentElement?.style.position;
+		let type:string = window.getComputedStyle(this.canvas.parentElement).position;
 
 		if (type == "static") type = "";
 		if (type == "fixed")	type = "absolute";

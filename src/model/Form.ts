@@ -256,6 +256,7 @@ export class Form
 	private clearDetailDepencies(block:Block) : void
 	{
 		block.DetailFilter.clear();
+		console.log("clearDetailDepencies for "+block.name)
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 
 		for (let i = 0; i < blocks.length; i++)
@@ -315,7 +316,12 @@ export class Form
 		}
 		else
 		{
-			if (!keep) block.clearQueryFilters();
+			console.log("exe "+block.name+" keep: "+keep)
+			if (!keep)
+			{
+				block.clearQueryFilters();
+				this.clearDetailDepencies(block);
+			}
 		}
 
 		this.qrymgr$.QueryMaster = block;
@@ -331,7 +337,11 @@ export class Form
 			if (!await blocks[i].setDetailDependencies())
 				return(false);
 
-			this.view.setFilterIndicator(blocks[i],!blocks[i].QueryFilter.empty);
+			let filters:boolean = false;
+			if (blocks[i].QueryFilter.getFilters().length > 0) filters = true;
+			if (blocks[i].DetailFilter.getFilters().length > 0) filters = true;
+
+			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
 		return(block.executeQuery(this.qrymgr$.startNewChain()));

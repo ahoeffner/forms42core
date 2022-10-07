@@ -326,7 +326,6 @@ export class Form
 		}
 		else
 		{
-			console.log("exe "+block.name+" keep: "+keep)
 			if (!keep)
 			{
 				this.clearQueryFilters(block);

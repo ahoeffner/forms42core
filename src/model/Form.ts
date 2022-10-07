@@ -256,7 +256,6 @@ export class Form
 	private clearQueryFilters(block:Block) : void
 	{
 		block.QueryFilter.clear();
-		console.log("clearQueryFilters for "+block.name)
 
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 
@@ -267,7 +266,6 @@ export class Form
 	private clearDetailDepencies(block:Block) : void
 	{
 		block.DetailFilter.clear();
-		console.log("clearDetailDepencies for "+block.name)
 
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 

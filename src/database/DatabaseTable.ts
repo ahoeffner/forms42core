@@ -349,11 +349,11 @@ export class DatabaseTable implements DataSource
 
 		if (details != null)
 		{
-			filter.delete(details);
 			let filters:Filter[] = details.getFilters();
 
 			for (let i = 0; i < filters.length; i++)
 			{
+				filter.delete("details");
 				let df:Filter = filters[i];
 
 				if (df instanceof SubQuery && df.subquery == null)
@@ -363,9 +363,14 @@ export class DatabaseTable implements DataSource
 
 					details.delete(df);
 					this.nosql$.and(df);
+
+					this.addColumns(df.columns);
 				}
 			}
 		}
+
+		console.log(this.name);
+		console.log(filter.printable())
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);

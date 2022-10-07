@@ -642,17 +642,17 @@ export class Block
 
 	public get MasterFilter() : FilterStructure
 	{
-		return(this.filter.get("masters") as FilterStructure);
+		return(this.filter.getFilterStructure("masters"));
 	}
 
 	public get DetailFilter() : FilterStructure
 	{
-		return(this.filter.get("details") as FilterStructure);
+		return(this.filter.getFilterStructure("details"));
 	}
 
 	public getDetailBlockFilter(block:Block, create?:boolean) : FilterStructure
 	{
-		let flt:FilterStructure = this.DetailFilter.get(block.name) as FilterStructure;
+		let flt:FilterStructure = this.DetailFilter.getFilterStructure(block.name);
 
 		if (flt == null && create)
 		{
@@ -665,7 +665,7 @@ export class Block
 
 	public getMasterBlockFilter(block:Block, create?:boolean) : FilterStructure
 	{
-		let flt:FilterStructure = this.MasterFilter.get(block.name) as FilterStructure;
+		let flt:FilterStructure = this.MasterFilter.getFilterStructure(block.name);
 
 		if (flt == null && create)
 		{
@@ -775,11 +775,6 @@ export class Block
 
 			let filter:SubQuery = Filters.SubQuery(rel.master.fields);
 			this.getDetailBlockFilter(blocks[i],true).and(filter,blocks[i].name);
-
-			console.log(this.name+" - "+blocks[i].name)
-			console.log(this.filter.printable())
-			console.log("*******************")
-
 
 			if (!await src.query(filters))
 				return(false);

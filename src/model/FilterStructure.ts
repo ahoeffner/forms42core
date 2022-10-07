@@ -144,8 +144,6 @@ export class FilterStructure
 	public delete(filter:string|Filter|FilterStructure) : boolean
 	{
 		let found:boolean = false;
-		if (this.name == "employees")
-			console.log("delete "+filter)
 
 		for (let i = 0; i < this.entries$.length; i++)
 		{

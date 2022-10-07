@@ -323,6 +323,7 @@ export class DatabaseTable implements DataSource
 	{
 		this.eof$ = false;
 		this.fetched$ = [];
+		filter = filter?.clone();
 
 		this.nosql$ = null;
 		this.filter$ = filter;
@@ -337,8 +338,8 @@ export class DatabaseTable implements DataSource
 
 		if (this.limit$ != null)
 		{
-			if (!this.filter$) this.filter$ = this.limit$;
-			else this.filter$.and(this.limit$,"limit");
+			if (!filter) this.filter$ = this.limit$;
+			else filter.and(this.limit$,"limit");
 		}
 
 		this.setTypes(filter?.get("qbe")?.getBindValues());
@@ -346,12 +347,6 @@ export class DatabaseTable implements DataSource
 		this.setTypes(filter?.get("masters")?.getBindValues());
 
 		let details:FilterStructure = filter?.getFilterStructure("details");
-
-		console.log(this.name);
-		console.log(filter?.printable());
-		console.log("--------------")
-
-		let sqlfilter:FilterStructure = this.filter$.clone();
 
 		if (details != null)
 		{
@@ -368,8 +363,6 @@ export class DatabaseTable implements DataSource
 
 					details.delete(df);
 					this.nosql$.and(df);
-					console.log("remove")
-
 					this.addColumns(df.columns);
 				}
 			}
@@ -378,7 +371,6 @@ export class DatabaseTable implements DataSource
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 
-		this.filter$ = sqlfilter;
 		this.fetched$ = this.parse(response);
 		this.fetched$ = await this.filter(this.fetched$);
 

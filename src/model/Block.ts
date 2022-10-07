@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record } from "./Record.js";
+import { Record, RecordState } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
@@ -454,7 +454,13 @@ export class Block
 		if (success)
 		{
 			this.move(-1);
-			await this.prefetch(0,offset);
+			let avail:number = await this.prefetch(0,offset);
+
+			if (avail == 0)
+			{
+				this.view.close();
+				return(true);
+			}
 
 			this.scroll(0,this.view.row);
 
@@ -516,20 +522,23 @@ export class Block
 
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
-		let newid:object = null;
 		let runid:object = null;
-
-		if (qryid == null)
-			qryid = this.form.QueryManager.startNewChain();
+		let thisid:object = null;
 
 		if (!this.setMasterDependencies())
 			return(false);
 
-		// Abort query if already obsolete
-		newid = this.form.QueryManager.getQueryID();
+		if (qryid == null)
+			qryid = this.form.QueryManager.startNewChain();
 
-		if (qryid != newid)
+		// Abort query if already obsolete
+		thisid = this.form.QueryManager.getQueryID();
+
+		if (qryid != thisid)
+		{
+			console.log("Stale query for '"+this.name+"' aborted");
 			return(true);
+		}
 
 		let waits:number = 0;
 		runid = this.form.QueryManager.getRunning(this);
@@ -539,6 +548,7 @@ export class Block
 			waits++;
 			await QueryManager.sleep(10);
 			runid = this.form.QueryManager.getRunning(this);
+			console.log("waiting for former query to finish");
 			// Wait for stale query to finish displaying rows
 
 			if (runid && waits > 1000)
@@ -559,6 +569,12 @@ export class Block
 
 		if (!await wrapper.query(this.filter))
 			return(false);
+
+		while(!this.view.empty())
+		{
+			Alert.fatal("Data provider for '"+this.name+"' is lacking. Please requiry","Query");
+			return(false);
+		}
 
 		this.form.QueryManager.setRunning(this,qryid);
 
@@ -716,9 +732,17 @@ export class Block
 	public setMasterDependencies() : boolean
 	{
 		this.MasterFilter.clear();
-		this.getMasterLinks().forEach((link) =>
+		let rels:Relation[] = this.getMasterLinks();
+
+		for (let i = 0; i < rels.length; i++)
 		{
+			let link:Relation = rels[i];
 			let master:Block = this.getMasterBlock(link);
+
+			console.log(this.name+" "+master.view.empty())
+
+			if (master.view.empty())
+				return(false);
 
 			if (master.empty)
 			{
@@ -740,7 +764,7 @@ export class Block
 					this.getMasterBlockFilter(master,true).and(flt,dfld);
 				}
 			}
-		})
+		}
 
 		return(true);
 	}
@@ -810,6 +834,9 @@ export class Block
 	public async queryDetails(newqry:boolean) : Promise<boolean>
 	{
 		if (this.querymode)
+			return(true);
+
+		if (this.view.empty())
 			return(true);
 
 		let qryid:object = this.getQueryID();

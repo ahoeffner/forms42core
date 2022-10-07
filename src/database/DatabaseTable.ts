@@ -80,6 +80,8 @@ export class DatabaseTable implements DataSource
 
 			this.columns$ = columns;
 		}
+
+		this.cursor = this.table$+(new Date().getTime());
 	}
 
 	public clone(columns?:string|string[]) : DatabaseTable

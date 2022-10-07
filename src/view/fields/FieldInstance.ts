@@ -99,6 +99,8 @@ export class FieldInstance implements FieldEventHandler
 			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
 		}
 
+		console.log(this+" "+Status[this.field.row.status]+" "+props)
+
 		if (props != null)
 			this.applyProperties(props);
 

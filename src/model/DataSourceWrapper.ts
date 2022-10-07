@@ -27,7 +27,7 @@ export class DataSourceWrapper
 	constructor(public block?:ModelBlock)
 	{
 		this.cache$ = [];
-		this.eof$ = false;
+		this.eof$ = true;
 	}
 
 	public get source() : DataSource

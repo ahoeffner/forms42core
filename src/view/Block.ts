@@ -103,6 +103,19 @@ export class Block
 		this.current?.focus();
 	}
 
+	public empty(rownum?:number) : boolean
+	{
+		if (rownum == null)
+			rownum = this.row;
+
+		let row:Row = this.getRow(rownum);
+		if (row.status == Status.na) return(true);
+		if (row.status == Status.new) return(true);
+		if (row.status == Status.qbe) return(true);
+
+		return(false);
+	}
+
 	public get fieldinfo() : Map<string,FieldInfo>
 	{
 		return(this.fieldinfo$);
@@ -372,6 +385,14 @@ export class Block
 	public get validated() : boolean
 	{
 		return(this.getRow(this.row).validated);
+	}
+
+	public close() : void
+	{
+		let row:Row = this.getCurrentRow();
+		console.log("clear "+row.rownum)
+		row.status = Status.na;
+		row.clear();
 	}
 
 	public reset() : void

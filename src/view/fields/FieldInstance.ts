@@ -68,10 +68,11 @@ export class FieldInstance implements FieldEventHandler
 		this.properties$.removeAttribute("query");
 		this.properties$.removeAttribute("insert");
 
+		this.insproperties$ = FieldFeatureFactory.clone(this.properties$);
+
 		if (insert != null)
 		{
 			let flag:boolean = insert.toLowerCase() == "true";
-			this.insproperties$ = FieldFeatureFactory.clone(this.properties$);
 			this.insproperties$.setReadOnly(!flag);
 		}
 
@@ -98,8 +99,6 @@ export class FieldInstance implements FieldEventHandler
 			case Status.update 	: if (this.properties$ != this.defproperties$) props = this.defproperties$; break;
 			case Status.insert 	: if (this.properties$ != this.insproperties$) props = this.insproperties$; break;
 		}
-
-		console.log(this+" "+Status[this.field.row.status]+" "+props)
 
 		if (props != null)
 			this.applyProperties(props);

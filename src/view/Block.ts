@@ -387,14 +387,6 @@ export class Block
 		return(this.getRow(this.row).validated);
 	}
 
-	public close() : void
-	{
-		let row:Row = this.getCurrentRow();
-		console.log("clear "+row.rownum)
-		row.status = Status.na;
-		row.clear();
-	}
-
 	public reset() : void
 	{
 		this.rows$.forEach((row) =>

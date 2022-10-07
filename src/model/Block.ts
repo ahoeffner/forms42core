@@ -11,7 +11,7 @@
  */
 
 import { Form } from "./Form.js";
-import { Record, RecordState } from "./Record.js";
+import { Record } from "./Record.js";
 import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
@@ -454,13 +454,7 @@ export class Block
 		if (success)
 		{
 			this.move(-1);
-			let avail:number = await this.prefetch(0,offset);
-
-			if (avail == 0)
-			{
-				this.view.close();
-				return(true);
-			}
+			await this.prefetch(0,offset);
 
 			this.scroll(0,this.view.row);
 
@@ -548,7 +542,6 @@ export class Block
 			waits++;
 			await QueryManager.sleep(10);
 			runid = this.form.QueryManager.getRunning(this);
-			console.log("waiting for former query to finish");
 			// Wait for stale query to finish displaying rows
 
 			if (runid && waits > 1000)
@@ -557,6 +550,8 @@ export class Block
 				Alert.warning("Waiting for former query to finish","Execute Query");
 			}
 		}
+
+		this.form.QueryManager.setRunning(this,qryid);
 
 		this.view.clear(true,true);
 		this.qbe.querymode = false;
@@ -570,14 +565,13 @@ export class Block
 		if (!await wrapper.query(this.filter))
 			return(false);
 
-		while(!this.view.empty())
+		while(!this.view.empty(0))
 		{
-			Alert.fatal("Data provider for '"+this.name+"' is lacking. Please requiry","Query");
+			Alert.fatal("Data provider for '"+this.name+"' is lacking. Please requery","Query");
 			return(false);
 		}
 
-		this.form.QueryManager.setRunning(this,qryid);
-
+		let found:boolean = false;
 		for (let i = 0; i < this.view.rows; i++)
 		{
 			record = await wrapper.fetch();
@@ -585,9 +579,16 @@ export class Block
 			if (record == null)
 				break;
 
+			found = true;
 			this.record$ = 0;
 			this.view.display(i,record);
 			if (i == 0)	this.view$.setCurrentRow(0,false);
+		}
+
+		if (!found)
+		{
+			let blocks:Block[] = this.getAllDetailBlocks(true);
+			blocks.forEach((det) => {det.view.clear(true,true,true)})
 		}
 
 		this.form.QueryManager.setRunning(this,null);
@@ -738,11 +739,6 @@ export class Block
 		{
 			let link:Relation = rels[i];
 			let master:Block = this.getMasterBlock(link);
-
-			console.log(this.name+" "+master.view.empty())
-
-			if (master.view.empty())
-				return(false);
 
 			if (master.empty)
 			{

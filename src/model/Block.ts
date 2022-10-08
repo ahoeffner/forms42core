@@ -795,6 +795,9 @@ export class Block
 
 			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
 
+			if (await this.asSubQuery(this,blocks[i],rel))
+				continue;
+
 			let src:DataSource = blocks[i].datasource.clone();
 			if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
 
@@ -894,15 +897,18 @@ export class Block
 		this.addColumns();
 	}
 
-	private async asSubQuery(master:Block, detail:Block, rel:Relation, filter:FilterStructure) : Promise<boolean>
+	private async asSubQuery(master:Block, detail:Block, rel:Relation) : Promise<boolean>
 	{
 		if (!(master.datasource instanceof SQLSource)) return(false);
 		if (!(detail.datasource instanceof SQLSource)) return(false);
 
 		let source:SQLSource = detail.datasource;
-		let sql:SQLRest = await source.getSubQuery(filter,rel.master.fields,rel.detail.fields);
+		let sql:SQLRest = await source.getSubQuery(detail.filter,rel.master.fields,rel.detail.fields);
 
-		console.log(sql.stmt)
+		if (sql != null)
+		{
+			console.log(sql.stmt)
+		}
 
 		return(false);
 	}

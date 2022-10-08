@@ -16,8 +16,10 @@ import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
+import { SQLRest } from "../database/SQLRest.js";
 import { SubQuery } from "./filters/SubQuery.js";
 import { Relation } from "./relations/Relation.js";
+import { SQLSource } from "../database/SQLSource.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
 import { FilterStructure } from "./FilterStructure.js";
@@ -890,6 +892,19 @@ export class Block
 		}
 
 		this.addColumns();
+	}
+
+	private async asSubQuery(master:Block, detail:Block, rel:Relation, filter:FilterStructure) : Promise<boolean>
+	{
+		if (!(master.datasource instanceof SQLSource)) return(false);
+		if (!(detail.datasource instanceof SQLSource)) return(false);
+
+		let source:SQLSource = detail.datasource;
+		let sql:SQLRest = await source.getSubQuery(filter,rel.master.fields,rel.detail.fields);
+
+		console.log(sql.stmt)
+
+		return(false);
 	}
 
 	private async fire(type:EventType) : Promise<boolean>

@@ -23,8 +23,9 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
+import { SQLSource } from "./SQLSource.js";
 
-export class DatabaseTable implements DataSource
+export class DatabaseTable extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
@@ -63,6 +64,7 @@ export class DatabaseTable implements DataSource
 
 	public constructor(connection:Connection, table:string, columns?:string|string[])
 	{
+		super();
 		this.table$ = table;
 
 		if (!(connection instanceof DatabaseConnection))

@@ -496,9 +496,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		let response:any = await this.conn$.fetch(this.cursor);
 
-		if (!response.succces)
+		if (!response.success)
 		{
-			console.error(this.name+" failed to fetch: "+response.message);
+			console.error(this.name+" failed to fetch: "+JSON.stringify(response));
 			return([]);
 		}
 

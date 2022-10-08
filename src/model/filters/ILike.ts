@@ -137,9 +137,7 @@ export class ILike implements Filter
 		if (this.bindval$ == null)
 			this.bindval$ = this.column$;
 
-		let whcl:string = this.column$ + " ilike :"+this.bindval$;
-
-		return(whcl)
+		return(this.column$ + " ilike :"+this.bindval$)
 	}
 
 	public toString() : string

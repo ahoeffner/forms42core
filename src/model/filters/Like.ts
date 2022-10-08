@@ -136,9 +136,7 @@ export class Like implements Filter
 		if (this.bindval$ == null)
 			this.bindval$ = this.column$;
 
-		let whch:string = this.column$ + " like :"+this.bindval$;
-
-		return(whch)
+		return(this.column$ + " like :"+this.bindval$)
 	}
 
 	public toString() : string

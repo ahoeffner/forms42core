@@ -55,7 +55,15 @@ export class ILike implements Filter
 
 	public get constraint() : string
 	{
-		return(this.constraint$);
+		let constr:string = this.constraint$;
+
+		if (this.parsed)
+		{
+			if (this.ltrunc) constr = "%"+constr;
+			if (this.rtrunc) constr = constr+"%";
+		}
+
+		return(constr);
 	}
 
 	public set constraint(value:string)
@@ -92,12 +100,13 @@ export class ILike implements Filter
 			if (this.rtrunc) this.constraint$ = this.constraint$.substring(0,this.constraint$.length-1);
 		}
 
-		let value:string = record.getValue(this.column$.toLowerCase())+"";
+
+		let value:any = record.getValue(this.column$.toLocaleLowerCase());
 
 		if (value == null)
 			return(false);
 
-		value = value.toLocaleLowerCase();
+		value = (value+"").toLocaleLowerCase();
 
 		if (this.rtrunc && this.ltrunc)
 		{
@@ -131,5 +140,10 @@ export class ILike implements Filter
 		let whcl:string = this.column$ + " ilike :"+this.bindval$;
 
 		return(whcl)
+	}
+
+	public toString() : string
+	{
+		return(this.column$+" ilike "+this.constraint);
 	}
 }

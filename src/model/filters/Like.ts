@@ -55,7 +55,15 @@ export class Like implements Filter
 
 	public get constraint() : string
 	{
-		return(this.constraint$);
+		let constr:string = this.constraint$;
+
+		if (this.parsed)
+		{
+			if (this.ltrunc) constr = "%"+constr;
+			if (this.rtrunc) constr = constr+"%";
+		}
+
+		return(constr);
 	}
 
 	public set constraint(value:string)
@@ -92,10 +100,12 @@ export class Like implements Filter
 			if (this.rtrunc) this.constraint$ = this.constraint$.substring(0,this.constraint$.length-1);
 		}
 
-		let value:string = record.getValue(this.column$.toLowerCase())+"";
+		let value:any = record.getValue(this.column$.toLowerCase());
 
 		if (value == null)
 			return(false);
+
+		value = value+"";
 
 		if (this.rtrunc && this.ltrunc)
 		{
@@ -129,5 +139,10 @@ export class Like implements Filter
 		let whch:string = this.column$ + " like :"+this.bindval$;
 
 		return(whch)
+	}
+
+	public toString() : string
+	{
+		return(this.column$+" like "+this.constraint);
 	}
 }

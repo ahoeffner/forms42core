@@ -35,18 +35,24 @@ export class LT implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): LT
+	{
+		let clone:LT = new LT(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name: string) : Filter
+	public setBindValueName(name: string) : LT
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : LT
 	{
 		this.constraint = value;
 		return(this);
@@ -97,5 +103,10 @@ export class LT implements Filter
 		let whch:string = this.column$ + " "+gt+" :"+this.bindval$;
 
 		return(whch)
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }

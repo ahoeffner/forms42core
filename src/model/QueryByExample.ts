@@ -138,7 +138,6 @@ export class QueryByExample
 		if (type == DataType.date || type == DataType.datetime)
 			filter.constraint = [fr,to];
 
-		filter.getBindValues().forEach((b) => b.column = column);
 		return(filter);
 	}
 }

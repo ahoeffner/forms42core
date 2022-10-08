@@ -375,9 +375,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 		return(true);
 	}
 
-	public async getSubQuery(filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
+	public async getSubQuery(name:string, filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
 	{
-		let sql:SQLRest = null;
 		filter = filter?.clone();
 
 		if (!Array.isArray(mstcols))
@@ -400,10 +399,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			else filter.and(this.limit$,"limit");
 		}
 
-		this.setTypes(filter?.get("qbe")?.getBindValues());
-		this.setTypes(filter?.get("limit")?.getBindValues());
-		this.setTypes(filter?.get("masters")?.getBindValues());
-
 		let details:FilterStructure = filter?.getFilterStructure("details");
 
 		if (details != null)
@@ -419,7 +414,13 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 		}
 
-		sql = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
+		filter?.getFilters().forEach((f) =>
+		{f.setBindValueName(name+"."+f.getBindValueName())})
+
+		this.setTypes(filter?.get("qbe")?.getBindValues());
+		this.setTypes(filter?.get("limit")?.getBindValues());
+
+		let sql:SQLRest = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
 		return(sql);
 	}
 

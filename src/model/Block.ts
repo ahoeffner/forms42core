@@ -903,11 +903,12 @@ export class Block
 		if (!(detail.datasource instanceof SQLSource)) return(false);
 
 		let source:SQLSource = detail.datasource;
-		let sql:SQLRest = await source.getSubQuery(detail.filter,rel.master.fields,rel.detail.fields);
+		let sql:SQLRest = await source.getSubQuery(detail.name,detail.filter,rel.master.fields,rel.detail.fields);
 
 		if (sql != null)
 		{
 			console.log(sql.stmt)
+			sql.bindvalues.forEach((b) => console.log(b.toString()));
 		}
 
 		return(false);

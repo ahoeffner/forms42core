@@ -33,18 +33,24 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): In
+	{
+		let clone:In = new In(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : In
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any|any[]) : Filter
+	public setConstraint(values:any|any[]) : In
 	{
 		this.constraint = values;
 		return(this);

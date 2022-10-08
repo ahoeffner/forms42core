@@ -38,18 +38,24 @@ export class Between implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): Between
+	{
+		let clone:Between = new Between(this.column$,this.incl);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : Between
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any[]) : Filter
+	public setConstraint(values:any[]) : Between
 	{
 		this.constraint = values;
 		return(this);
@@ -121,5 +127,10 @@ export class Between implements Filter
 								this.column$ + " " + lt + " :"+this.bindval$ + "1";
 
 		return(whcl)
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }

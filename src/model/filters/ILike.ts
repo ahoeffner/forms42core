@@ -36,18 +36,24 @@ export class ILike implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): ILike
+	{
+		let clone:ILike = new ILike(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : ILike
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : ILike
 	{
 		this.constraint = value;
 		return(this);

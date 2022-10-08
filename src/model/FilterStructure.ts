@@ -51,8 +51,8 @@ export class FilterStructure
 
 			if (cstr.isFilter())
 			{
-				if (cstr.and) 	clone.and(cstr.filter,cstr.name);
-				else 				clone.or(cstr.filter,cstr.name)
+				if (cstr.and) 	clone.and(cstr.filter.clone(),cstr.name);
+				else 				clone.or(cstr.filter.clone(),cstr.name)
 			}
 			else
 			{

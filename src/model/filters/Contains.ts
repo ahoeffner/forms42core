@@ -56,6 +56,12 @@ export class Contains implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): Contains
+	{
+		let clone:Contains = new Contains(this.columns$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
@@ -67,7 +73,7 @@ export class Contains implements Filter
 		return(this);
 	}
 
-	public setConstraint(values:any) : Filter
+	public setConstraint(values:any) : Contains
 	{
 		this.constraint = values;
 		return(this);
@@ -136,6 +142,6 @@ export class Contains implements Filter
 
 	public asSQL() : string
 	{
-		return(null);
+		return(this.columns$+" contains "+this.constraint$);
 	}
 }

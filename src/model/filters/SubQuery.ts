@@ -67,6 +67,12 @@ export class SubQuery implements Filter
 		this.subquery$ = sql;
 	}
 
+	public clone() : SubQuery
+	{
+		let clone:SubQuery = new SubQuery(this.columns$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public clear() : void
 	{
 		this.constraint$ = null;
@@ -77,13 +83,13 @@ export class SubQuery implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : SubQuery
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any[][]) : Filter
+	public setConstraint(values:any[][]) : SubQuery
 	{
 		this.constraint = values;
 		return(this);
@@ -140,27 +146,8 @@ export class SubQuery implements Filter
 
 	public asSQL() : string
 	{
-		if (this.subquery$ == null)
-			return("subquery "+this.constraint$);
-
-		let whcl:string = "";
-
-		if (this.columns$.length == 1)
-		{
-			whcl += this.columns$[0]+" exists in (...)";
-		}
-		else
-		{
-			whcl += "(";
-			for (let i = 0; i < this.columns$.length; i++)
-			{
-				if (i > 0) whcl += ",";
-				whcl += this.columns$[i];
-			}
-			whcl += ") exists in (...)";
-		}
-
-		return(whcl)
+		if (this.subquery$ == null) return("subquery "+this.constraint$);
+		return(this.subquery$)
 	}
 
 	public toString() : string

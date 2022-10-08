@@ -33,18 +33,24 @@ export class Equals implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): Equals
+	{
+		let clone:Equals = new Equals(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : Equals
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : Equals
 	{
 		this.constraint = value;
 		return(this);
@@ -99,5 +105,10 @@ export class Equals implements Filter
 		let whcl:string = this.column$ + " = :"+this.bindval$;
 
 		return(whcl)
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }

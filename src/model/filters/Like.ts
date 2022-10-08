@@ -36,18 +36,24 @@ export class Like implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone() : Like
+	{
+		let clone:Like = new Like(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name: string) : Filter
+	public setBindValueName(name: string) : Like
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : Like
 	{
 		this.constraint = value;
 		return(this);

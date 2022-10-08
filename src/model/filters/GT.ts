@@ -35,18 +35,24 @@ export class GT implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone(): GT
+	{
+		let clone:GT = new GT(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : GT
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : GT
 	{
 		this.constraint = value;
 		return(this);
@@ -97,5 +103,10 @@ export class GT implements Filter
 		let whcl:string = this.column$ + " "+gt+" :"+this.bindval$;
 
 		return(whcl)
+	}
+
+	public toString() : string
+	{
+		return(this.asSQL());
 	}
 }

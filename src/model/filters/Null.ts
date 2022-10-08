@@ -31,18 +31,24 @@ export class Null implements Filter
 		this.constraint$ = null;
 	}
 
+	public clone() : Null
+	{
+		let clone:Null = new Null(this.column$);
+		return(clone.setConstraint(this.constraint$));
+	}
+
 	public getBindValueName() : string
 	{
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : Filter
+	public setBindValueName(name:string) : Null
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : Filter
+	public setConstraint(value:any) : Null
 	{
 		this.constraint = value;
 		return(this);

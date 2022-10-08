@@ -492,7 +492,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.requery)
 			{
-				if (!mblock.querymode)
+				if (mblock.querymode)
 					return(false);
 
 				await mblock.refresh();

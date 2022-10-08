@@ -412,7 +412,7 @@ export class Block
 		let record:Record = this.getRecord(recno);
 		await this.wrapper.refresh(record);
 
-		this.view.displayed(record);
+		this.view.refresh(record);
 	}
 
 	public async insert(before?:boolean) : Promise<boolean>

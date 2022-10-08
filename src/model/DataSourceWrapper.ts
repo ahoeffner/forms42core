@@ -147,6 +147,7 @@ export class DataSourceWrapper
 			return;
 
 		await this.source.refresh(record);
+		await this.block.onFetch(record);
 	}
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>

@@ -196,8 +196,13 @@ export class MemoryTable implements DataSource
 		return(processed);
 	}
 
-	public async refresh(_record:Record) : Promise<void>
+	public async refresh(record:Record) : Promise<void>
 	{
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			let lv:any = record.getInitialValue(this.columns[i]);
+			record.setValue(this.columns[i],lv);
+		}
 	}
 
 	public async insert(record:Record) : Promise<boolean>

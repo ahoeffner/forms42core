@@ -33,7 +33,7 @@ export class DatabaseTable implements DataSource
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 
-	public OptimisticLocking:boolean = false;
+	public OptimisticLocking:boolean = true;
 
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;

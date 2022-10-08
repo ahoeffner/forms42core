@@ -431,6 +431,9 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.delete)
 				inst = this.curinst$;
 
+			if (key == KeyMap.requery)
+				inst = this.curinst$;
+
 			if (key == KeyMap.enterquery)
 				inst = this.curinst$;
 
@@ -485,6 +488,15 @@ export class Form implements EventListenerObject
 
 				success = await block.validateRow();
 				return(success);
+			}
+
+			if (key == KeyMap.requery)
+			{
+				if (!mblock.querymode)
+					return(false);
+
+				await mblock.refresh();
+				return(true);
 			}
 
 			if (key == KeyMap.enterquery)

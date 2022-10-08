@@ -196,7 +196,6 @@ export class Record
 		{
 			if (update) this.dirty$.add(column);
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
-			if (value == this.initial$[idx]) console.log("reset "+column+" "+this.dirty$.has(column))
 		}
 
 		this.values$[idx] = value;

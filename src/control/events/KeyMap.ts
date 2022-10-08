@@ -20,10 +20,12 @@ export class KeyMap
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
 
-	public static dump:KeyMap = new KeyMap({key: KeyCodes.f1});
 	public static sysdate:KeyMap = new KeyMap({key: ' ', ctrl: true});
+	public static dump:KeyMap = new KeyMap({key: KeyCodes.f12, shift: true});
 
 	public static save:KeyMap = new KeyMap({key: 's', ctrl: true});
+	public static requery:KeyMap = new KeyMap({key: 'u', ctrl: true});
+
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7});
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8});
 	public static queryeditor:KeyMap = new KeyMap({key: KeyCodes.f7, ctrl: true});

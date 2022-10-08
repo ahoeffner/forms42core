@@ -70,6 +70,12 @@ export class DataSourceWrapper
 	{
 		try
 		{
+			this.cache$.forEach((record) =>
+			{
+				if (record.state == RecordState.Inserted)
+					this.linkToMasters(record);
+			});
+
 			let succces:boolean = true;
 			let records:Record[] = await this.source.flush();
 
@@ -80,7 +86,6 @@ export class DataSourceWrapper
 
 				if (records[i].state == RecordState.Inserted)
 				{
-					this.linkToMasters(records[i]);
 					succces = await this.block.postInsert(records[i]);
 					if (succces) records[i].state = RecordState.Query;
 					if (succces) records[i].setClean();

@@ -373,6 +373,54 @@ export class DatabaseTable implements DataSource
 		return(true);
 	}
 
+	public async getSubQuery(filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
+	{
+		let sql:SQLRest = null;
+		filter = filter?.clone();
+
+		if (!Array.isArray(mstcols))
+			mstcols = [mstcols];
+
+		if (!Array.isArray(detcols))
+			detcols = [detcols];
+
+		if (!this.conn$.connected())
+		{
+			Alert.warning("Not connected","Database Connection");
+			return(null);
+		}
+
+		await this.describe();
+
+		if (this.limit$ != null)
+		{
+			if (!filter) filter = this.limit$;
+			else filter.and(this.limit$,"limit");
+		}
+
+		this.setTypes(filter?.get("qbe")?.getBindValues());
+		this.setTypes(filter?.get("limit")?.getBindValues());
+		this.setTypes(filter?.get("masters")?.getBindValues());
+
+		let details:FilterStructure = filter?.getFilterStructure("details");
+
+		if (details != null)
+		{
+			let filters:Filter[] = details.getFilters();
+
+			for (let i = 0; i < filters.length; i++)
+			{
+				let df:Filter = filters[i];
+
+				if (df instanceof SubQuery && df.subquery == null)
+					return(null);
+			}
+		}
+
+		sql = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
+		return(sql);
+	}
+
 	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
 		this.eof$ = false;

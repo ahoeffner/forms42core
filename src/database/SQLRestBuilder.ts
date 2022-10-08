@@ -253,4 +253,35 @@ export class SQLRestBuilder
 
 		return(parsed);
 	}
+
+	public static subquery(table:string, mstcols:string[], detcols:string[], filter:FilterStructure) : SQLRest
+	{
+		let sql:SQLRest = new SQLRest();
+
+		sql.stmt = "(";
+
+		for (let i = 0; i < mstcols.length; i++)
+		{
+			if (i > 0) sql.stmt += ",";
+			sql.stmt += mstcols[i];
+		}
+
+		sql.stmt += ") in (select ";
+
+		for (let i = 0; i < detcols.length; i++)
+		{
+			if (i > 0) sql.stmt += ",";
+			sql.stmt += detcols[i];
+		}
+
+		sql.stmt += " from "+table;
+
+		if (filter && !filter.empty)
+			sql.stmt += " where " + filter.asSQL();
+
+		sql.stmt += ")";
+		sql.bindvalues = filter?.getBindValues();
+
+		return(sql);
+	}
 }

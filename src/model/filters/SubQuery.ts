@@ -110,6 +110,14 @@ export class SubQuery implements Filter
 		return(this.bindvalues$);
 	}
 
+	public setBindValues(bindvalues:BindValue|BindValue[]) : void
+	{
+		if (!Array.isArray(bindvalues))
+			bindvalues = [bindvalues];
+
+		this.bindvalues$ = bindvalues;
+	}
+
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let values:any[] = [];

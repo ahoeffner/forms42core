@@ -907,8 +907,13 @@ export class Block
 
 		if (sql != null)
 		{
-			console.log(sql.stmt)
-			sql.bindvalues.forEach((b) => console.log(b.toString()));
+			let filter:SubQuery = new SubQuery(rel.master.fields);
+			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
+
+			filter.subquery = sql.stmt;
+			filter.setBindValues(sql.bindvalues);
+
+			//return(true);
 		}
 
 		return(false);

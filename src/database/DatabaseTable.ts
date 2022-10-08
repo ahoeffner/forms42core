@@ -415,7 +415,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 
 		filter?.getFilters().forEach((f) =>
-		{f.setBindValueName(name+"."+f.getBindValueName())})
+		{f.setBindValueName(name+"_"+f.getBindValueName())})
 
 		this.setTypes(filter?.get("qbe")?.getBindValues());
 		this.setTypes(filter?.get("limit")?.getBindValues());
@@ -472,6 +472,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 
 		this.cursor = this.table$+(new Date().getTime());
+
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor,this.arrayfecth);
 

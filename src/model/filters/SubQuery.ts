@@ -70,6 +70,10 @@ export class SubQuery implements Filter
 	public clone() : SubQuery
 	{
 		let clone:SubQuery = new SubQuery(this.columns$);
+
+		clone.subquery$ = this.subquery$;
+		clone.bindvalues$ = this.bindvalues$;
+
 		return(clone.setConstraint(this.constraint$));
 	}
 

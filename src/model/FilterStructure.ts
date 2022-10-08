@@ -229,6 +229,7 @@ export class FilterStructure
 				else
 				{
 					stmt += constr.filter.build(clauses);
+					if (stmt.length > 0) clauses++;
 				}
 			}
 			else
@@ -277,7 +278,7 @@ export class FilterStructure
 
 			if (this.entries$[i].isFilter())
 			{
-				p.entries.push({name: name, filter: this.entries$[i].filter})
+				p.entries.push({name: name, filter: this.entries$[i].filter.toString()})
 			}
 			else
 			{

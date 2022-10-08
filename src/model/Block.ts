@@ -913,7 +913,7 @@ export class Block
 			filter.subquery = sql.stmt;
 			filter.setBindValues(sql.bindvalues);
 
-			//return(true);
+			return(true);
 		}
 
 		return(false);

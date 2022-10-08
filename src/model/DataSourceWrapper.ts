@@ -12,6 +12,7 @@
 
 import { Alert } from "../application/Alert.js";
 import { Record, RecordState } from "./Record.js";
+import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
@@ -79,6 +80,7 @@ export class DataSourceWrapper
 
 				if (records[i].state == RecordState.Inserted)
 				{
+					this.linkToMasters(records[i]);
 					succces = await this.block.postInsert(records[i]);
 					if (succces) records[i].state = RecordState.Query;
 					if (succces) records[i].setClean();
@@ -382,5 +384,26 @@ export class DataSourceWrapper
 		}
 
 		return(-1);
+	}
+
+	private linkToMasters(record:Record) : void
+	{
+		let masters:ModelBlock[] = this.block.getMasterBlocks();
+
+		for (let i = 0; i < masters.length; i++)
+		{
+			let rel:Relation = this.block.findMasterRelation(masters[i]);
+
+			for (let f = 0; f < rel.detail.fields.length; f++)
+			{
+				let col:string = rel.detail.fields[i];
+				let mst:string = rel.master.fields[i];
+
+				console.log(col+" prev: "+record.getValue(col)+" set: "+masters[i].getValue(mst))
+
+				if (record.getValue(col) == null)
+					record.setValue(col,masters[i].getValue(mst));
+			}
+		}
 	}
 }

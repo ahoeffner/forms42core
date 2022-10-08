@@ -714,6 +714,7 @@ export class Block
 
 	public getMasterBlocks() : Block[]
 	{
+		if (!this.form) return([]);
 		return(this.form.BlockCoordinator.getMasterBlocks(this));
 	}
 
@@ -730,6 +731,11 @@ export class Block
 	public getDetailBlocks(all:boolean) : Block[]
 	{
 		return(this.form.BlockCoordinator.getDetailBlocks(this,all));
+	}
+
+	public findMasterRelation(master:Block) : Relation
+	{
+		return(this.form.BlockCoordinator.findRelation(master,this));
 	}
 
 	public getDetailLinks() : Relation[]
@@ -793,7 +799,7 @@ export class Block
 			if (blocks[i].QueryFilter.empty && blocks[i].DetailFilter.empty)
 				return(true);
 
-			let rel:Relation = this.form.BlockCoordinator.findRelation(this,blocks[i]);
+			let rel:Relation = blocks[i].findMasterRelation(this);
 
 			if (await this.asSubQuery(this,blocks[i],rel))
 				continue;

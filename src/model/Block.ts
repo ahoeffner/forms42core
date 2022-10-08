@@ -404,6 +404,17 @@ export class Block
 		return(this.wrapper.lock(record));
 	}
 
+	public async refresh(recno?:number) : Promise<void>
+	{
+		if (this.querymode) return;
+		if (recno == null) recno = 0;
+
+		let record:Record = this.getRecord(recno);
+		await this.wrapper.refresh(record);
+
+		this.view.displayed(record);
+	}
+
 	public async insert(before?:boolean) : Promise<boolean>
 	{
 		if (before == null)

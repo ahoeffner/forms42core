@@ -79,6 +79,38 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
+	public static refresh(table:string, pkey:string[], columns:string[], record:Record) : SQLRest
+	{
+		let parsed:SQLRest =
+			new SQLRest();
+
+		let stmt:string = "select ";
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			if (i > 0) stmt += ",";
+			stmt += columns[i];
+		}
+
+		stmt += " from "+table+" where ";
+
+		let filters:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < pkey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			filters.and(filter.setConstraint(value),pkey[i]);
+		}
+
+		stmt += filters.asSQL();
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = filters.getBindValues();
+
+		return(parsed);
+	}
+
 	public static fetch(cursor:string) : SQLRest
 	{
 		let parsed:SQLRest = new SQLRest();

@@ -141,6 +141,14 @@ export class DataSourceWrapper
 		return(success);
 	}
 
+	public async refresh(record:Record) : Promise<void>
+	{
+		if (record.state == RecordState.New || record.state == RecordState.Inserted)
+			return;
+
+		await this.source.refresh(record);
+	}
+
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
 		let succces:boolean = true;

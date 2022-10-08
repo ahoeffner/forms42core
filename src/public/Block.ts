@@ -89,12 +89,16 @@ export class Block
 		FormBacking.getModelBlock(this).flush();
 	}
 
-	public refresh() : void
+	public refresh(offset?:number) : void
 	{
+		if (offset == null) offset = 0;
+		FormBacking.getModelBlock(this).refresh(offset);
 	}
 
 	public querydetails(field?:string) : void
 	{
+		if (!field) FormBacking.getModelBlock(this).queryDetails(true);
+		else FormBacking.getModelForm(this.form).queryFieldDetails(this.name,field);
 	}
 
 	public async prevrecord() : Promise<boolean>

@@ -192,8 +192,12 @@ export class Record
 				update = false;
 		}
 
-		if (update && idx < this.source$.columns.length)
-			this.dirty$.add(column);
+		if (idx < this.source$.columns.length)
+		{
+			if (update) this.dirty$.add(column);
+			if (value == this.initial$[idx]) this.dirty$.delete(column);
+			if (value == this.initial$[idx]) console.log("reset "+column+" "+this.dirty$.has(column))
+		}
 
 		this.values$[idx] = value;
 	}

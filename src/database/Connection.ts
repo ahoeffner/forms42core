@@ -109,16 +109,21 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		let response:any = await this.post(this.conn$+"/select",payload);
+		return(await this.post(this.conn$+"/select",payload));
+	}
 
-		if (!response.success)
+	public async refresh(sql:SQLRest) : Promise<Response>
+	{
+		let payload:any =
 		{
-			console.error("stmt: "+sql.stmt+" failed");
-			Alert.warning(response.message,"Database Connection");
-			return(response);
-		}
+			rows: 1,
+			compact: true,
+			sql: sql.stmt,
+			dateformat: "UTC",
+			bindvalues: this.convert(sql.bindvalues)
+		};
 
-		return(response);
+		return(await this.post(this.conn$+"/select",payload));
 	}
 
 	public async insert(sql:SQLRest) : Promise<Response>

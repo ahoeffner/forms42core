@@ -607,6 +607,19 @@ export class Block
 		return(this.rows$.get(rownum));
 	}
 
+	public refrsh(record:Record) : void
+	{
+		let row:Row = this.displayed(record);
+
+		if (row != null)
+		{
+			this.display(row.rownum,record);
+
+			if (row.rownum == this.row)
+				this.setCurrentRow(row.rownum,true);
+		}
+	}
+
 	public displayed(record:Record) : Row
 	{
 		return(this.displayed$.get(record.id));

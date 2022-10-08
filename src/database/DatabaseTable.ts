@@ -33,7 +33,7 @@ export class DatabaseTable implements DataSource
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 
-	public OptimisticLocking:boolean = true;
+	public OptimisticLocking:boolean = false;
 
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
@@ -229,7 +229,35 @@ export class DatabaseTable implements DataSource
 		await this.describe();
 
 		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
-		await this.conn$.lock(sql);
+		this.setTypes(sql.bindvalues);
+
+		let response:any = await this.conn$.lock(sql);
+		let fetched:Record[] = this.parse(response);
+
+		if (!response.success)
+		{
+			console.error(response.message);
+			Alert.warning("Record is locked by another user. Requery to see changes","Lock Record");
+			return(false);
+		}
+
+		if (fetched.length == 0)
+		{
+			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
+			return(false);
+		}
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			let lv:any = fetched[0].getValue(this.columns[i]);
+			let cv:any = record.getInitialValue(this.columns[i]);
+
+			if (lv != cv)
+			{
+				Alert.warning("Record has been changed by another user. Requery to see changes","Lock Record");
+				return(false);
+			}
+		}
 
 		return(true);
 	}
@@ -300,8 +328,28 @@ export class DatabaseTable implements DataSource
 		return(processed);
 	}
 
-	public async refresh(_record:Record) : Promise<void>
+	public async refresh(record:Record) : Promise<void>
 	{
+		let sql:SQLRest = null;
+		await this.describe();
+
+		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
+		this.setTypes(sql.bindvalues);
+
+		let response:any = await this.conn$.refresh(sql);
+		let fetched:Record[] = this.parse(response);
+
+		if (fetched.length == 0)
+		{
+			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
+			return(null);
+		}
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			let nv:any = fetched[0].getValue(this.columns[i]);
+			record.setValue(this.columns[i],nv)
+		}
 	}
 
 	public async insert(record:Record) : Promise<boolean>

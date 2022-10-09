@@ -21,9 +21,11 @@ import { Connection as DatabaseConnection } from "./Connection.js";
 export class DatabaseProcedure
 {
 	private name$:string;
+	private response$:any = null;
 	private patch$:boolean = false;
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
+	private values$:Map<string,any> = new Map<string,any>();
 
 	constructor(connection:Connection)
 	{
@@ -52,11 +54,33 @@ export class DatabaseProcedure
 		this.params$.push(p);
 	}
 
+	public getOutParameter(name:string) : any
+	{
+		return(this.values$.get(name?.toLowerCase()));
+	}
+
+	public getOutParameterNames() : string[]
+	{
+		return([...this.values$.keys()]);
+	}
+
 	public async execute() : Promise<boolean>
 	{
+		let name:string = null;
+		let names:string[] = null;
+
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
-		let response:any = await this.conn$.call(this.patch$,sql);
-		console.log(response);
-		return(response.success);
+		this.response$ = await this.conn$.call(this.patch$,sql);
+
+		names = Object.keys(this.response$);
+
+		for (let i = 1; i < names.length; i++)
+		{
+			name = names[i].toLowerCase();
+			this.values$.set(name,this.response$[names[i]]);
+		}
+
+		console.log(this.response$);
+		return(this.response$.success);
 	}
 }

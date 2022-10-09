@@ -21,6 +21,7 @@ export interface DataSource
 	columns:string[];
 	arrayfecth:number;
 
+	rowlocking:boolean;
 	queryallowed:boolean;
 	insertallowed:boolean;
 	updateallowed:boolean;

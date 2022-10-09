@@ -131,6 +131,9 @@ export class DataSourceWrapper
 
 	public locked(record:Record) : boolean
 	{
+		if (!this.source.rowlocking)
+			return(true);
+
 		if (record.state == RecordState.New || record.state == RecordState.Inserted)
 			return(true);
 
@@ -139,6 +142,9 @@ export class DataSourceWrapper
 
 	public async lock(record:Record) : Promise<boolean>
 	{
+		if (!this.source.rowlocking)
+			return(true);
+
 		if (record.state == RecordState.New || record.state == RecordState.Inserted)
 			return(true);
 

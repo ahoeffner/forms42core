@@ -74,6 +74,11 @@ export class MemoryTable implements DataSource
 		});
 	}
 
+	public get rowlocking() : boolean
+	{
+		return(false);
+	}
+
 	public clone(columns?:string|string[]) : MemoryTable
 	{
 		let table:any[][] = [];

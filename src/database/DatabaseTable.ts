@@ -29,12 +29,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
+	public rowlocking: boolean = true;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
-
-	public OptimisticLocking:boolean = true;
 
 	private dirty$:Record[] = [];
 	private eof$:boolean = false;
@@ -231,7 +230,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	public async lock(record:Record) : Promise<boolean>
 	{
-		if (this.OptimisticLocking)
+		if (!this.rowlocking)
 			return(true);
 
 		let sql:SQLRest = null;

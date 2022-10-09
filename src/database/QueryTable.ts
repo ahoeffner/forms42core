@@ -98,6 +98,11 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this.columns$);
 	}
 
+	public get rowlocking() : boolean
+	{
+		return(false);
+	}
+
 	public get insertallowed() : boolean
 	{
 		return(false);

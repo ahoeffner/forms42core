@@ -165,54 +165,8 @@ export class QueryTable extends SQLSource implements DataSource
 		throw new Error("Cannot delete records on a datasource based on a query");
 	}
 
-	public async getSubQuery(name:string, filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
+	public async getSubQuery(_name:string, _filter:FilterStructure, _mstcols:string|string[], _detcols:string|string[]) : Promise<SQLRest>
 	{
-		filter = filter?.clone();
-
-		if (!Array.isArray(mstcols))
-			mstcols = [mstcols];
-
-		if (!Array.isArray(detcols))
-			detcols = [detcols];
-
-		if (!this.conn$.connected())
-		{
-			Alert.warning("Not connected","Database Connection");
-			return(null);
-		}
-
-		await this.describe();
-
-		if (this.limit$ != null)
-		{
-			if (!filter) filter = this.limit$;
-			else filter.and(this.limit$,"limit");
-		}
-
-		let details:FilterStructure = filter?.getFilterStructure("details");
-
-		if (details != null)
-		{
-			let filters:Filter[] = details.getFilters();
-
-			for (let i = 0; i < filters.length; i++)
-			{
-				let df:Filter = filters[i];
-
-				if (df instanceof SubQuery && df.subquery == null)
-					return(null);
-			}
-		}
-
-		filter?.getFilters().forEach((f) =>
-		{f.setBindValueName(name+"_"+f.getBindValueName())})
-
-		this.setTypes(filter?.get("qbe")?.getBindValues());
-		this.setTypes(filter?.get("limit")?.getBindValues());
-
-		//let sql:SQLRest = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
-		//return(sql);
-
 		return(null);
 	}
 

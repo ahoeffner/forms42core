@@ -332,10 +332,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	public async refresh(record:Record) : Promise<void>
 	{
-		let sql:SQLRest = null;
+		record.refresh();
 		await this.describe();
 
-		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
+		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
 
 		let response:any = await this.conn$.refresh(sql);

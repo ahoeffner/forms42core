@@ -150,11 +150,27 @@ export class DataSourceWrapper
 
 	public async refresh(record:Record) : Promise<void>
 	{
-		if (record.state == RecordState.New || record.state == RecordState.Inserted)
-			return;
-
 		await this.source.refresh(record);
-		await this.block.onFetch(record);
+
+		record.setClean();
+
+		switch(record.state)
+		{
+			case RecordState.New : break;
+
+			case RecordState.Inserted :
+			{
+				record.state = RecordState.New;
+				await this.block.preInsert(record);
+				break;
+			}
+
+			default:
+			{
+				record.state = RecordState.Query;
+				await this.block.onFetch(record);
+			}
+		}
 	}
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>

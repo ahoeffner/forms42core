@@ -153,6 +153,23 @@ export class Record
 		return(this.dirty$.size == 0);
 	}
 
+	public refresh() : void
+	{
+		let value:any = null;
+		let values:{column:string; value:any}[] = [];
+
+		this.source?.columns?.forEach((col) =>
+		{
+			value = this.getInitialValue(col);
+			values.push({column: col, value: value})
+		});
+
+		this.clear();
+
+		values.forEach((entry) =>
+		{this.initialize(entry.column, entry.value)})
+	}
+
 	public getValue(column:string) : any
 	{
 		if (column == null)
@@ -241,5 +258,17 @@ export class Record
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));
 
 		return(str.substring(2));
+	}
+
+	private initialize(column:string,value:any) : void
+	{
+		if (column == null)
+			return;
+
+		column = column.toLowerCase();
+		let idx:number = this.indexOf(column);
+
+		this.values$[idx] = value;
+		this.initial$[idx] = value;
 	}
 }

@@ -147,11 +147,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async refresh(record:Record) : Promise<void>
 	{
-		record.columns?.forEach((column) =>
-		{
-			let lv:any = record.getInitialValue(column);
-			record.setValue(column,lv);
-		})
+		record.refresh();
 	}
 
 	public async insert(_record:Record) : Promise<boolean>
@@ -159,12 +155,12 @@ export class QueryTable extends SQLSource implements DataSource
 		throw new Error("Cannot insert records into a datasource based on a query");
 	}
 
-	public async update(record:Record) : Promise<boolean>
+	public async update(_record:Record) : Promise<boolean>
 	{
 		throw new Error("Cannot update records on a datasource based on a query");
 	}
 
-	public async delete(record:Record) : Promise<boolean>
+	public async delete(_record:Record) : Promise<boolean>
 	{
 		throw new Error("Cannot delete records on a datasource based on a query");
 	}

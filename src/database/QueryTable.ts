@@ -144,7 +144,8 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async lock(_record:Record) : Promise<boolean>
 	{
-		throw new Error("Cannot lock records on a datasource based on a query");
+		Alert.fatal("Cannot lock records on datasource based on a query","Datasource");
+		return(false);
 	}
 
 	public async flush() : Promise<Record[]>
@@ -159,17 +160,20 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async insert(_record:Record) : Promise<boolean>
 	{
-		throw new Error("Cannot insert records into a datasource based on a query");
+		Alert.fatal("Cannot insert records into a datasource based on a query","Datasource");
+		return(false);
 	}
 
 	public async update(_record:Record) : Promise<boolean>
 	{
-		throw new Error("Cannot update records on a datasource based on a query");
+		Alert.fatal("Cannot update records on a datasource based on a query","Datasource");
+		return(false);
 	}
 
 	public async delete(_record:Record) : Promise<boolean>
 	{
-		throw new Error("Cannot delete records on a datasource based on a query");
+		Alert.fatal("Cannot delete records on a datasource based on a query","Datasource");
+		return(false);
 	}
 
 	public async getSubQuery(_name:string, _filter:FilterStructure, _mstcols:string|string[], _detcols:string|string[]) : Promise<SQLRest>

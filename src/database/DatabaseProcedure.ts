@@ -10,10 +10,11 @@
  * accompanied this code).
  */
 
+import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
-import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { Connection } from "../public/Connection.js";
+import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Parameter, ParameterType } from "./Parameter.js";
 import { Connection as DatabaseConnection } from "./Connection.js";
 
@@ -47,24 +48,9 @@ export class DatabaseProcedure
 
 	public async execute() : Promise<boolean>
 	{
-		let plist:string = "";
-		let p:Parameter = null;
-		let bindvalues:BindValue[] = [];
-
-		for (let i = 0; i < this.params$.length; i++)
-		{
-			p = this.params$[i];
-			if (i > 0) plist += ",";
-
-			if (p.ptype == ParameterType.in) plist += "&";
-			else										plist += ":";
-
-			plist += p.name;
-			bindvalues.push(new BindValue(p.name,p.value,p.dtype));
-		}
-
-		let stmt:string = this.name$+"("+plist+")";
-
-		return(true);
+		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
+		let response:any = await this.conn$.call(sql);
+		console.log(response);
+		return(response.success);
 	}
 }

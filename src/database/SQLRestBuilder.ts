@@ -15,10 +15,39 @@ import { BindValue } from "./BindValue.js";
 import { Record } from "../model/Record.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { Parameter, ParameterType } from "./Parameter.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 
 export class SQLRestBuilder
 {
+	public static proc(name:string, parameters:Parameter[]) : SQLRest
+	{
+		let plist:string = "";
+		let param:Parameter = null;
+		let bindvalues:BindValue[] = [];
+
+		for (let i = 0; i < parameters.length; i++)
+		{
+			param = parameters[i];
+			if (i > 0) plist += ",";
+
+			if (param.ptype == ParameterType.in) plist += ":";
+			else											 plist += "&";
+
+			plist += param.name;
+			bindvalues.push(new BindValue(param.name,param.value,param.dtype));
+		}
+
+		let stmt:string = name+"("+plist+")";
+
+		let parsed:SQLRest = new SQLRest();
+
+		parsed.stmt = stmt;
+		parsed.bindvalues = bindvalues;
+
+		return(parsed);
+	}
+
 	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLRest
 	{
 		let parsed:SQLRest =

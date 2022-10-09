@@ -48,18 +48,25 @@ export class QueryTable extends SQLSource implements DataSource
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:Connection, sql:string)
+	public constructor(connection:Connection, sql?:string)
 	{
 		super();
 		this.sql$ = sql;
 
 		if (!(connection instanceof DatabaseConnection))
 		{
-			Alert.fatal("Datasource for table '"+sql+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			Alert.fatal("Datasource for query '"+sql+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
 			return;
 		}
 
 		this.conn$ = connection;
+		this.cursor$ = "select"+(new Date().getTime());
+	}
+
+	public set sql(sql:string)
+	{
+		this.sql$ = sql;
+		this.described$ = false;
 		this.cursor$ = "select"+(new Date().getTime());
 	}
 
@@ -68,6 +75,7 @@ export class QueryTable extends SQLSource implements DataSource
 		let clone:QueryTable = new QueryTable(this.conn$,this.sql$);
 
 		clone.sorting = this.sorting;
+		clone.columns$ = this.columns$;
 		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
@@ -114,7 +122,6 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public addColumns(_columns:string|string[]) : void
 	{
-		throw new Error("Cannot add columns to a datasource based on a query");
 	}
 
 	public limit(filters:Filter | Filter[] | FilterStructure) : void
@@ -218,7 +225,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		this.cursor$ = "select"+(new Date().getTime());
 
-		let sql:SQLRest = SQLRestBuilder.finish(filter,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);

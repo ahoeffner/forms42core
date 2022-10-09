@@ -46,9 +46,19 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
-	public static finish(filter:FilterStructure, order:string) : SQLRest
+	public static finish(sql:string, filter:FilterStructure, order:string) : SQLRest
 	{
 		let parsed:SQLRest = new SQLRest();
+
+		parsed.stmt = sql;
+
+		if (filter && !filter.empty)
+			parsed.stmt += " and " + filter.asSQL();
+
+		if (order)
+			parsed.stmt += " order by "+order;
+
+		parsed.bindvalues = filter?.getBindValues();
 		return(parsed);
 	}
 

@@ -62,7 +62,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:Connection, table:string, columns?:string|string[])
+	public constructor(connection:Connection, table?:string, columns?:string|string[])
 	{
 		super();
 		this.table$ = table;
@@ -83,6 +83,13 @@ export class DatabaseTable extends SQLSource implements DataSource
 			this.columns$ = columns;
 		}
 
+		this.cursor$ = this.table$+(new Date().getTime());
+	}
+
+	public set table(table:string)
+	{
+		this.table$ = table;
+		this.described$ = false;
 		this.cursor$ = this.table$+(new Date().getTime());
 	}
 

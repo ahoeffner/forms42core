@@ -26,6 +26,7 @@ export interface DataSource
 	updateallowed:boolean;
 	deleteallowed:boolean;
 
+	clone() : DataSource;
 	fetch() : Promise<Record[]>;
 	flush() : Promise<Record[]>;
 	closeCursor() : Promise<boolean>;
@@ -35,7 +36,6 @@ export interface DataSource
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
 	addColumns(columns:string|string[]) : void;
-	clone(columns?:string|string[]) : DataSource;
 	query(filters?:FilterStructure) : Promise<boolean>;
 	limit(filters:Filter|Filter[]|FilterStructure) : void;
 }

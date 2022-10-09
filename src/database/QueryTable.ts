@@ -25,29 +25,18 @@ import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Connection as DatabaseConnection } from "../database/Connection.js";
 
-export class DatabaseTable extends SQLSource implements DataSource
+export class QueryTable extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
-	public insertallowed:boolean = true;
-	public updateallowed:boolean = true;
-	public deleteallowed:boolean = true;
 
-	public OptimisticLocking:boolean = true;
-
-	private dirty$:Record[] = [];
 	private eof$:boolean = false;
-
 	private described$:boolean = false;
 
-	private table$:string = null;
+	private sql$:string = null;
 	private order$:string = null;
 	private cursor$:string = null;
-
-	private columns$:string[] = [];
-	private primary$:string[] = [];
-	private dmlcols$:string[] = [];
 
 	private fetched$:Record[] = [];
 
@@ -55,44 +44,30 @@ export class DatabaseTable extends SQLSource implements DataSource
 	private limit$:FilterStructure = null;
 	private conn$:DatabaseConnection = null;
 
-	private insreturncolumns$:string[] = null;
-	private updreturncolumns$:string[] = null;
-	private delreturncolumns$:string[] = null;
-
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:Connection, table:string, columns?:string|string[])
+	public constructor(connection:Connection, sql:string)
 	{
 		super();
-		this.table$ = table;
+		this.sql$ = sql;
 
 		if (!(connection instanceof DatabaseConnection))
 		{
-			Alert.fatal("Datasource for table '"+table+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			Alert.fatal("Datasource for table '"+sql+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
 			return;
 		}
 
 		this.conn$ = connection;
 
-		if (columns != null)
-		{
-			if (!Array.isArray(columns))
-				columns = [columns];
-
-			this.columns$ = columns;
-		}
-
-		this.cursor$ = this.table$+(new Date().getTime());
+		this.cursor$ = "select"+(new Date().getTime());
 	}
 
-	public clone() : DatabaseTable
+	public clone() : QueryTable
 	{
-		let clone:DatabaseTable = new DatabaseTable(this.conn$,this.table$);
+		let clone:QueryTable = new QueryTable(this.conn$,this.sql$);
 
 		clone.sorting = this.sorting;
-		clone.primary$ = this.primary$;
-		clone.columns$ = this.columns$;
 		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
@@ -110,98 +85,26 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.order$ = order;
 	}
 
-	public get columns() : string[]
+	public get insertallowed() : boolean
 	{
-		return(this.columns$);
+		return(false);
 	}
 
-	public set columns(columns:string|string[])
+	public get updateallowed() : boolean
 	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.columns$ = columns;
+		return(false);
 	}
 
-	public get primaryKey() : string[]
+	public get deleteallowed() : boolean
 	{
-		if (this.primary$ == null || this.primary$.length == 0)
-		{
-			this.primary$ = [];
-			this.primary$.push(...this.columns$);
-		}
-
-		return(this.primary$);
+		return(false);
 	}
 
-	public set primaryKey(columns:string|string[])
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
 
-		this.addColumns(columns);
-		this.primary$ = columns;
-	}
-
-	public setDataType(column:string,type:DataType) : DatabaseTable
+	public setDataType(column:string,type:DataType) : QueryTable
 	{
 		this.datatypes$.set(column?.toLowerCase(),type);
 		return(this);
-	}
-
-	public get insertReturnColumns() : string[]
-	{
-		return(this.insreturncolumns$);
-	}
-
-	public set insertReturnColumns(columns:string|string[])
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.insreturncolumns$ = columns;
-	}
-
-	public get updateReturnColumns() : string[]
-	{
-		return(this.updreturncolumns$);
-	}
-
-	public set updateReturnColumns(columns:string|string[])
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.updreturncolumns$ = columns;
-	}
-
-	public get deleteReturnColumns() : string[]
-	{
-		return(this.delreturncolumns$);
-	}
-
-	public set deleteReturnColumns(columns:string|string[])
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.delreturncolumns$ = columns;
-	}
-
-	public addDMLColumns(columns:string|string[]) : void
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.dmlcols$ = this.mergeColumns(this.dmlcols$,columns);
-	}
-
-	public addColumns(columns:string|string[]) : void
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		this.columns$ = this.mergeColumns(this.columns$,columns);
 	}
 
 	public limit(filters:Filter | Filter[] | FilterStructure) : void
@@ -222,157 +125,33 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 	}
 
-	public async lock(record:Record) : Promise<boolean>
-	{
-		if (this.OptimisticLocking)
-			return(true);
-
-		let sql:SQLRest = null;
-		await this.describe();
-
-		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
-		this.setTypes(sql.bindvalues);
-
-		let response:any = await this.conn$.lock(sql);
-		let fetched:Record[] = this.parse(response);
-
-		if (!response.success)
-		{
-			console.error(response.message);
-			Alert.warning("Record is locked by another user. Requery to see changes","Lock Record");
-			return(false);
-		}
-
-		if (fetched.length == 0)
-		{
-			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
-			return(false);
-		}
-
-		for (let i = 0; i < this.columns.length; i++)
-		{
-			let lv:any = fetched[0].getValue(this.columns[i]);
-			let cv:any = record.getInitialValue(this.columns[i]);
-
-			if (lv != cv)
-			{
-				Alert.warning("Record has been changed by another user. Requery to see changes","Lock Record");
-				return(false);
-			}
-		}
-
-		return(true);
-	}
-
 	public async flush() : Promise<Record[]>
 	{
-		let sql:SQLRest = null;
-		let response:any = null;
-		let processed:Record[] = [];
-
-		if (this.dirty$.length == 0)
-			return([]);
-
-		if (!this.conn$.connected())
-		{
-			Alert.warning("Not connected","Database Connection");
-			return([]);
-		}
-
-		await this.describe();
-
-		for (let i = 0; i < this.dirty$.length; i++)
-		{
-			let rec:Record = this.dirty$[i];
-
-			if (rec.state == RecordState.Inserted)
-			{
-				processed.push(rec);
-
-				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
-				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.insert(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
-			}
-
-			if (rec.state == RecordState.Updated)
-			{
-				processed.push(rec);
-
-				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
-				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.update(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
-			}
-
-			if (rec.state == RecordState.Deleted)
-			{
-				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.delete(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
-			}
-		}
-
-		this.dirty$ = [];
-		return(processed);
+		return([]);
 	}
 
 	public async refresh(record:Record) : Promise<void>
 	{
-		let sql:SQLRest = null;
-		await this.describe();
-
-		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
-		this.setTypes(sql.bindvalues);
-
-		let response:any = await this.conn$.refresh(sql);
-		let fetched:Record[] = this.parse(response);
-
-		if (fetched.length == 0)
+		record.columns?.forEach((column) =>
 		{
-			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
-			return(null);
-		}
-
-		for (let i = 0; i < this.columns.length; i++)
-		{
-			let nv:any = fetched[0].getValue(this.columns[i]);
-			record.setValue(this.columns[i],nv)
-		}
+			let lv:any = record.getInitialValue(column);
+			record.setValue(column,lv);
+		})
 	}
 
 	public async insert(record:Record) : Promise<boolean>
 	{
-		if (!this.dirty$.includes(record))
-			this.dirty$.push(record);
-		return(true);
+		return(false);
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		if (!this.dirty$.includes(record))
-			this.dirty$.push(record);
-		return(true);
+		return(false);
 	}
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		if (!this.dirty$.includes(record))
-			this.dirty$.push(record);
-		return(true);
+		return(false);
 	}
 
 	public async getSubQuery(name:string, filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
@@ -420,8 +199,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.setTypes(filter?.get("qbe")?.getBindValues());
 		this.setTypes(filter?.get("limit")?.getBindValues());
 
-		let sql:SQLRest = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
-		return(sql);
+		//let sql:SQLRest = SQLRestBuilder.subquery(this.table$,mstcols,detcols,filter);
+		//return(sql);
+
+		return(null);
 	}
 
 	public async query(filter?:FilterStructure) : Promise<boolean>
@@ -466,7 +247,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 					details.delete(df);
 					this.nosql$.and(df);
-					this.addColumns(df.columns);
 				}
 			}
 		}
@@ -588,9 +368,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		if (this.primary$ == null)
-			this.primary$ = this.columns$;
-
 		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 		let dates:boolean[] = [];
@@ -628,51 +405,5 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 
 		return(fetched);
-	}
-
-	private castResponse(response:any) : void
-	{
-		let rows:any[][] = response.rows;
-
-		if (rows == null)
-			return;
-
-		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
-
-		for (let r = 0; r < rows.length; r++)
-		{
-			Object.keys(rows[r]).forEach((col) =>
-			{
-				col = col.toLowerCase();
-				let value:any = rows[r][col];
-				let dt:DataType = this.datatypes$.get(col);
-
-				if (datetypes.includes(dt) && typeof value === "number")
-					rows[r][col] = new Date(value);
-			})
-		}
-	}
-
-	private mergeColumns(list1:string[], list2:string[]) : string[]
-	{
-		let cname:string = null;
-		let cnames:string[] = [];
-		let columns:string[] = [];
-
-		if (list1) columns.push(...list1);
-		columns.forEach((col) => cnames.push(col.toLowerCase()));
-
-		list2?.forEach((col) =>
-		{
-			if (!cnames.includes(col.toLowerCase()))
-			{
-				cname = col.toLowerCase();
-
-				columns.push(col);
-				cnames.push(cname);
-			}
-		})
-
-		return(columns);
 	}
 }

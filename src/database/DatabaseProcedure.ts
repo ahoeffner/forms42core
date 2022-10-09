@@ -26,6 +26,7 @@ export class DatabaseProcedure
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
 	private values$:Map<string,any> = new Map<string,any>();
+	private datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 	constructor(connection:Connection)
 	{
@@ -66,7 +67,9 @@ export class DatabaseProcedure
 
 	public async execute() : Promise<boolean>
 	{
+		let value:any = null;
 		let name:string = null;
+		let dates:string[] = [];
 		let names:string[] = null;
 
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
@@ -74,13 +77,26 @@ export class DatabaseProcedure
 
 		names = Object.keys(this.response$);
 
+		this.params$.forEach((param) =>
+		{
+			let bn:string = param.name?.toLowerCase();
+			let dt:DataType = DataType[param.dtype?.toLowerCase()];
+
+			if (this.datetypes$.includes(dt))
+				dates.push(bn)
+		})
+
 		for (let i = 1; i < names.length; i++)
 		{
 			name = names[i].toLowerCase();
-			this.values$.set(name,this.response$[names[i]]);
+			value = this.response$[names[i]];
+
+			if (dates.includes(name))
+				value = new Date(value);
+
+			this.values$.set(name,value);
 		}
 
-		console.log(this.response$);
 		return(this.response$.success);
 	}
 }

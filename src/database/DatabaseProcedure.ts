@@ -55,7 +55,7 @@ export class DatabaseProcedure
 	public async execute() : Promise<boolean>
 	{
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
-		let response:any = await this.conn$.call(this.patch,sql);
+		let response:any = await this.conn$.call(this.patch$,sql);
 		console.log(response);
 		return(response.success);
 	}

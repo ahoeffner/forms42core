@@ -46,6 +46,12 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
+	public static finish(filter:FilterStructure, order:string) : SQLRest
+	{
+		let parsed:SQLRest = new SQLRest();
+		return(parsed);
+	}
+
 	public static lock(table:string, pkey:string[], columns:string[], record:Record) : SQLRest
 	{
 		let parsed:SQLRest =

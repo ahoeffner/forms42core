@@ -604,7 +604,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		for (let r = 0; r < rows.length; r++)
 		{
-			let keys:any[] = [];
 			let record:Record = new Record(this);
 
 			for (let c = 0; c < rows[r].length; c++)
@@ -617,9 +616,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				record.setValue(this.columns[c],rows[r][c]);
 			}
-
-			this.primary$.forEach((col) =>
-			{keys.push(record.getValue(col))})
 
 			let response:any = {succes: true, rows: [rows[r]]};
 			record.response = new DatabaseResponse(response, this.columns);

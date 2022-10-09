@@ -14,12 +14,12 @@ import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
 import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
+import { Record } from "../model/Record.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../public/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
-import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
@@ -38,6 +38,7 @@ export class QueryTable extends SQLSource implements DataSource
 	private order$:string = null;
 	private cursor$:string = null;
 
+	private columns$:string[] = [];
 	private fetched$:Record[] = [];
 
 	private nosql$:FilterStructure;
@@ -59,7 +60,6 @@ export class QueryTable extends SQLSource implements DataSource
 		}
 
 		this.conn$ = connection;
-
 		this.cursor$ = "select"+(new Date().getTime());
 	}
 
@@ -85,6 +85,11 @@ export class QueryTable extends SQLSource implements DataSource
 		this.order$ = order;
 	}
 
+	public get columns() : string[]
+	{
+		return(this.columns$);
+	}
+
 	public get insertallowed() : boolean
 	{
 		return(false);
@@ -107,6 +112,11 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this);
 	}
 
+	public addColumns(_columns:string|string[]) : void
+	{
+		throw new Error("Cannot add columns to a datasource based on a query");
+	}
+
 	public limit(filters:Filter | Filter[] | FilterStructure) : void
 	{
 		if (filters instanceof FilterStructure)
@@ -125,6 +135,11 @@ export class QueryTable extends SQLSource implements DataSource
 		}
 	}
 
+	public async lock(_record:Record) : Promise<boolean>
+	{
+		throw new Error("Cannot lock records on a datasource based on a query");
+	}
+
 	public async flush() : Promise<Record[]>
 	{
 		return([]);
@@ -139,19 +154,19 @@ export class QueryTable extends SQLSource implements DataSource
 		})
 	}
 
-	public async insert(record:Record) : Promise<boolean>
+	public async insert(_record:Record) : Promise<boolean>
 	{
-		return(false);
+		throw new Error("Cannot insert records into a datasource based on a query");
 	}
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		return(false);
+		throw new Error("Cannot update records on a datasource based on a query");
 	}
 
 	public async delete(record:Record) : Promise<boolean>
 	{
-		return(false);
+		throw new Error("Cannot delete records on a datasource based on a query");
 	}
 
 	public async getSubQuery(name:string, filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
@@ -251,9 +266,9 @@ export class QueryTable extends SQLSource implements DataSource
 			}
 		}
 
-		this.cursor$ = this.table$+(new Date().getTime());
+		this.cursor$ = "select"+(new Date().getTime());
 
-		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.finish(filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);
@@ -324,8 +339,7 @@ export class QueryTable extends SQLSource implements DataSource
 		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
 
-		sql.stmt += "select * from "+this.table$;
-		sql.stmt += " where 1 = 2";
+		sql.stmt += this.sql$ + " and 1 = 2";
 
 		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,cursor,1,true);
@@ -342,6 +356,7 @@ export class QueryTable extends SQLSource implements DataSource
 			if (!exist) this.datatypes$.set(cname,datatype);
 		}
 
+		this.columns$ = columns;
 		this.described$ = response.success;
 		return(this.described$);
 	}
@@ -381,7 +396,6 @@ export class QueryTable extends SQLSource implements DataSource
 
 		for (let r = 0; r < rows.length; r++)
 		{
-			let keys:any[] = [];
 			let record:Record = new Record(this);
 
 			for (let c = 0; c < rows[r].length; c++)
@@ -394,9 +408,6 @@ export class QueryTable extends SQLSource implements DataSource
 
 				record.setValue(this.columns[c],rows[r][c]);
 			}
-
-			this.primary$.forEach((col) =>
-			{keys.push(record.getValue(col))})
 
 			let response:any = {succes: true, rows: [rows[r]]};
 			record.response = new DatabaseResponse(response, this.columns);

@@ -192,7 +192,7 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async call(sql:SQLRest) : Promise<Response>
+	public async call(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =
 		{
@@ -201,7 +201,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		return(await this.post(this.conn$+"/exec",payload));
+		if (patch)	return(this.patch(this.conn$+"/exec",payload));
+		return(this.post(this.conn$+"/exec",payload));
 	}
 
 	private async keepalive() : Promise<void>
@@ -226,7 +227,10 @@ export class Connection extends BaseConnection
 		if (bindv == null) return([]);
 
 		bindv.forEach((b) =>
-		{binds.push({name: b.name, value: b.value, type: b.type})})
+		{
+			if (b.outtype) binds.push({name: b.name, type: b.type});
+			else binds.push({name: b.name, value: b.value, type: b.type});
+		})
 
 		return(binds);
 	}

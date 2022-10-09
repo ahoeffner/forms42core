@@ -37,6 +37,7 @@ export { ParameterType } from './src/database/Parameter.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
+export { DatabaseProcedure } from './src/database/DatabaseProcedure.js';
 
 export { dates } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";

@@ -21,6 +21,7 @@ import { Connection as DatabaseConnection } from "./Connection.js";
 export class DatabaseProcedure
 {
 	private name$:string;
+	private patch$:boolean = false;
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
 
@@ -33,6 +34,11 @@ export class DatabaseProcedure
 		}
 
 		this.conn$ = connection;
+	}
+
+	public set patch(flag:boolean)
+	{
+		this.patch$ = flag;
 	}
 
 	public setName(name:string) : void
@@ -49,7 +55,7 @@ export class DatabaseProcedure
 	public async execute() : Promise<boolean>
 	{
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
-		let response:any = await this.conn$.call(sql);
+		let response:any = await this.conn$.call(this.patch,sql);
 		console.log(response);
 		return(response.success);
 	}

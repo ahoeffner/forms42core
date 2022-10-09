@@ -24,6 +24,7 @@ export class SQLRestBuilder
 	{
 		let plist:string = "";
 		let param:Parameter = null;
+		let bindv:BindValue = null;
 		let bindvalues:BindValue[] = [];
 
 		for (let i = 0; i < parameters.length; i++)
@@ -35,7 +36,12 @@ export class SQLRestBuilder
 			else											 plist += "&";
 
 			plist += param.name;
-			bindvalues.push(new BindValue(param.name,param.value,param.dtype));
+			bindv = new BindValue(param.name,param.value,param.dtype);
+
+			if (param.ptype == ParameterType.out)
+				bindv.outtype = true;
+
+			bindvalues.push(bindv);
 		}
 
 		let stmt:string = name+"("+plist+")";

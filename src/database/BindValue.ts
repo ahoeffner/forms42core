@@ -17,6 +17,7 @@ export class BindValue
 	private value$:any = null;
 	private name$:string = null;
 	private type$:string = null;
+	private out$:boolean = false;
 	private column$:string = null;
 
 	public constructor(name:string, value:any, type?:DataType|string)
@@ -48,6 +49,16 @@ export class BindValue
 	public set column(column:string)
 	{
 		this.column$ = column;
+	}
+
+	public get outtype() : boolean
+	{
+		return(this.out$);
+	}
+
+	public set outtype(flag:boolean)
+	{
+		this.out$ = flag;
 	}
 
 	public get type() : string

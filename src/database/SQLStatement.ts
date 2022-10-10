@@ -163,6 +163,7 @@ export class SQLStatement
 				row[i] = new Date(row[i]);
 		}
 
+		console.log("cols: "+row.length+" row: "+row);
 		return(row);
 	}
 }

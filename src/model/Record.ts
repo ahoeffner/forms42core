@@ -209,7 +209,7 @@ export class Record
 				update = false;
 		}
 
-		if (idx < this.source$.columns.length)
+		if (idx < this.source$?.columns.length)
 		{
 			if (update) this.dirty$.add(column);
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
@@ -233,17 +233,24 @@ export class Record
 
 	private indexOf(column:string) : number
 	{
-		let cols:number = this.source.columns.length;
-		let idx:number = this.source.columns.indexOf(column);
+		let cols:number = this.source?.columns.length;
+		let idx:number = this.source?.columns.indexOf(column);
+
+		if (cols == null)
+		{
+			idx = -1;
+			cols = 0;
+		}
+
 		if (idx < 0 && this.wrapper) idx = cols + this.wrapper.indexOf(column);
 		return(idx);
 	}
 
 	private column(pos:number) : string
 	{
-		let len:number = this.source.columns.length;
-		if (pos < len) return(this.source.columns[pos]);
-		else    	      return(this.wrapper.columns[pos-len]);
+		let len:number = this.source?.columns.length;
+		if (pos < len) return(this.source?.columns[pos]);
+		else    	      return(this.wrapper?.columns[pos-len]);
 	}
 
 	public toString() : string
@@ -251,8 +258,8 @@ export class Record
 		let str:string = "";
 		let cols:number = 0;
 
-		if (this.source) cols += this.source.columns.length;
-		if (this.wrapper) cols += this.wrapper.columns.length;
+		if (this.source) cols += this.source?.columns.length;
+		if (this.wrapper) cols += this.wrapper?.columns.length;
 
 		for (let i = 0; i < cols; i++)
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));

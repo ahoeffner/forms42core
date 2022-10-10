@@ -22,13 +22,13 @@ export class StoredFunction extends StoredProcedure
 		this.setReturnType("string");
 	}
 
-	public setReturnType(datatype?:DataType|string) : void
-	{
-		this.setReturnType(datatype);
-	}
-
 	public getReturnValue()
 	{
 		return(super.getReturnValue());
+	}
+
+	public setReturnType(datatype?:DataType|string) : void
+	{
+		this.setReturnType(datatype);
 	}
 }

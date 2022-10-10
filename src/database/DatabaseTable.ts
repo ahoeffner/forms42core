@@ -82,14 +82,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 			this.columns$ = columns;
 		}
 
-		this.cursor$ = this.table$+(new Date().getTime());
+		this.name = table;
 	}
 
 	public set table(table:string)
 	{
 		this.table$ = table;
 		this.described$ = false;
-		this.cursor$ = this.table$+(new Date().getTime());
+		if (this.name == null) this.name = table;
 	}
 
 	public clone() : DatabaseTable
@@ -381,7 +381,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		return(true);
 	}
 
-	public async getSubQuery(name:string, filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
+	public async getSubQuery(filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>
 	{
 		filter = filter?.clone();
 
@@ -420,8 +420,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 		}
 
+		filter.delete("masters");
+
 		filter?.getFilters().forEach((f) =>
-		{f.setBindValueName(name+"_"+f.getBindValueName())})
+		{f.setBindValueName(this.name+"_"+f.getBindValueName())})
 
 		this.setTypes(filter?.get("qbe")?.getBindValues());
 		this.setTypes(filter?.get("limit")?.getBindValues());
@@ -477,7 +479,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 		}
 
-		this.cursor$ = this.table$+(new Date().getTime());
+		this.cursor$ = this.name+(new Date().getTime());
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);

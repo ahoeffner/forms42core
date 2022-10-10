@@ -181,7 +181,7 @@ export class QueryTable extends SQLSource implements DataSource
 		return(false);
 	}
 
-	public async getSubQuery(_name:string, _filter:FilterStructure, _mstcols:string|string[], _detcols:string|string[]) : Promise<SQLRest>
+	public async getSubQuery(_filter:FilterStructure, _mstcols:string|string[], _detcols:string|string[]) : Promise<SQLRest>
 	{
 		return(null);
 	}

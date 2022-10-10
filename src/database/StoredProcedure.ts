@@ -23,6 +23,7 @@ export class StoredProcedure
 	private name$:string;
 	private response$:any = null;
 	private patch$:boolean = false;
+	private message$:string = null;
 	private retparm$:string = null;
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
@@ -44,6 +45,11 @@ export class StoredProcedure
 	public set patch(flag:boolean)
 	{
 		this.patch$ = flag;
+	}
+
+	public get error() : string
+	{
+		return(this.message$);
 	}
 
 	public setName(name:string) : void
@@ -110,6 +116,12 @@ export class StoredProcedure
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$,retparam);
 		this.response$ = await this.conn$.call(this.patch$,sql);
 
+		if (!this.response$.success)
+		{
+			this.message$ = this.response$.message;
+			return(false);
+		}
+
 		names = Object.keys(this.response$);
 
 		this.params$.forEach((param) =>
@@ -132,6 +144,6 @@ export class StoredProcedure
 			this.values$.set(name,value);
 		}
 
-		return(this.response$.success);
+		return(true);
 	}
 }

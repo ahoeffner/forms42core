@@ -24,6 +24,7 @@ export class SQLStatement
 	private response$:any = null;
 	private cursor$:string = null;
 	private patch$:boolean = false;
+	private message$:string = null;
 	private conn$:DatabaseConnection = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
@@ -53,6 +54,11 @@ export class SQLStatement
 		this.patch$ = flag;
 	}
 
+	public get error() : string
+	{
+		return(this.message$);
+	}
+
 	public addBindValue(bindvalue:BindValue) : void
 	{
 		this.bindvalues$.set(bindvalue.name?.toLowerCase(),bindvalue);
@@ -74,6 +80,13 @@ export class SQLStatement
 			return(null);
 
 		this.response$ = await this.conn$.fetch(this.cursor$);
+
+		if (!this.response$.success)
+		{
+			this.message$ = this.response$.message;
+			return(null);
+		}
+
 		this.record$ = this.parse(this.record$);
 
 		return(this.record$);
@@ -105,7 +118,10 @@ export class SQLStatement
 		let success:boolean = this.response$.success;
 
 		if (!success)
+		{
 			this.cursor$ = null;
+			this.message$ = this.response$.message;
+		}
 
 		if (success && type == "select")
 			this.record$ = this.parse(this.response$);

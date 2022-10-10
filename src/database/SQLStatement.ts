@@ -22,9 +22,11 @@ export class SQLStatement
 	private eof$:boolean = true;
 	private record$:any[] = null;
 	private response$:any = null;
+	private types:string[] = null;
 	private cursor$:string = null;
 	private patch$:boolean = false;
 	private message$:string = null;
+	private columns$:string[] = null;
 	private conn$:DatabaseConnection = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
@@ -52,6 +54,11 @@ export class SQLStatement
 	public set patch(flag:boolean)
 	{
 		this.patch$ = flag;
+	}
+
+	public get columns() : string[]
+	{
+		return(this.columns$);
 	}
 
 	public error() : string
@@ -87,8 +94,7 @@ export class SQLStatement
 			return(null);
 		}
 
-		this.record$ = this.parse(this.record$);
-
+		this.record$ = this.parse(this.response$);
 		return(this.record$);
 	}
 
@@ -124,7 +130,11 @@ export class SQLStatement
 		}
 
 		if (success && type == "select")
+		{
+			this.types = this.response$.types;
+			this.columns$ = this.response$.columns;
 			this.record$ = this.parse(this.response$);
+		}
 
 		return(success);
 	}
@@ -143,15 +153,13 @@ export class SQLStatement
 			return(null);
 
 		let row:any[] = response.rows[0];
-
-		let types:string[] = response.types;
 		let columns:string[] = response.columns;
 
 		let datetypes:string[] = ["date","datetime","timestamp"];
 
 		for (let i = 0; i < columns.length; i++)
 		{
-			if (datetypes.includes(types[i].toLowerCase()))
+			if (datetypes.includes(this.types[i].toLowerCase()))
 				row[i] = new Date(row[i]);
 		}
 

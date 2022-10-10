@@ -29,7 +29,8 @@ export class SQLRestBuilder
 
 		if (retparam != null)
 		{
-			bindv = new BindValue(param.name,param.value,param.dtype);
+			bindv = new BindValue(retparam.name,retparam.value,retparam.dtype);
+			bindv.outtype = true;
 			bindvalues.push(bindv);
 		}
 
@@ -53,7 +54,7 @@ export class SQLRestBuilder
 		let stmt:string = name+"("+plist+")";
 
 		if (retparam != null)
-			stmt = retparam.name+" = ";
+			stmt = retparam.name+" = " + stmt;
 
 		let parsed:SQLRest = new SQLRest();
 

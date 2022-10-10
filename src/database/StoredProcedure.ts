@@ -85,7 +85,7 @@ export class StoredProcedure
 
 		if (this.returntype$ != null)
 		{
-			let retparm$ = "retval";
+			this.retparm$ = "retval";
 
 			while(!unique)
 			{
@@ -93,16 +93,15 @@ export class StoredProcedure
 
 				for (let i = 0; i < this.params$.length; i++)
 				{
-					if (this.params$[i].name == retparm$)
+					if (this.params$[i].name == this.retparm$)
 					{
 						unique = false;
-						retparm$ += "0";
+						this.retparm$ += "0";
 					}
 				}
 			}
 
-			retparam = new Parameter(retparm$,null,this.returntype$,ParameterType.out);
-			console.log("retparm: "+retparam.name);
+			retparam = new Parameter(this.retparm$,null,this.returntype$,ParameterType.out);
 		}
 
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$,retparam);
@@ -113,6 +112,9 @@ export class StoredProcedure
 			this.message$ = this.response$.message;
 			return(false);
 		}
+
+		if (this.returntype$ != null)
+			this.params$.unshift(retparam);
 
 		names = Object.keys(this.response$);
 

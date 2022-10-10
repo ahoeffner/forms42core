@@ -36,6 +36,7 @@ export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";
 export { QueryTable } from './src/database/QueryTable.js';
 export { ParameterType } from './src/database/Parameter.js';
+export { SQLStatement } from './src/database/SQLStatement.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { StoredFunction } from './src/database/StoredFunction.js';
 export { StoredProcedure } from './src/database/StoredProcedure.js';

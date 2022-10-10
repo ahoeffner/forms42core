@@ -70,6 +70,9 @@ export class SQLStatement
 			return(exist);
 		}
 
+		if (this.eof$)
+			return(null);
+
 		this.response$ = await this.conn$.fetch(this.cursor$);
 		this.record$ = this.parse(this.record$);
 

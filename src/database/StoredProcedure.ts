@@ -24,12 +24,13 @@ export class StoredProcedure
 	private response$:any = null;
 	private patch$:boolean = false;
 	private message$:string = null;
-	private retparm$:string = null;
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
-	private returntype$:DataType|string = null;
 	private values$:Map<string,any> = new Map<string,any>();
 	private datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+	protected retparm$:string = null;
+	protected returntype$:DataType|string = null;
 
 	public constructor(connection:Connection)
 	{
@@ -55,16 +56,6 @@ export class StoredProcedure
 	public setName(name:string) : void
 	{
 		this.name$ = name;
-	}
-
-	protected getReturnValue() : any
-	{
-		return(this.getOutParameter(this.retparm$));
-	}
-
-	protected setReturnType(datatype?:DataType|string) : void
-	{
-		this.returntype$ = datatype;
 	}
 
 	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType) : void
@@ -111,6 +102,7 @@ export class StoredProcedure
 			}
 
 			retparam = new Parameter(retparm$,null,this.returntype$,ParameterType.out);
+			console.log("retparm: "+retparam.name);
 		}
 
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$,retparam);

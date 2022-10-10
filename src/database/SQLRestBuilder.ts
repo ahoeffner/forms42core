@@ -20,12 +20,18 @@ import { FilterStructure } from "../model/FilterStructure.js";
 
 export class SQLRestBuilder
 {
-	public static proc(name:string, parameters:Parameter[]) : SQLRest
+	public static proc(name:string, parameters:Parameter[], retparam:Parameter) : SQLRest
 	{
 		let plist:string = "";
 		let param:Parameter = null;
 		let bindv:BindValue = null;
 		let bindvalues:BindValue[] = [];
+
+		if (retparam != null)
+		{
+			bindv = new BindValue(param.name,param.value,param.dtype);
+			bindvalues.push(bindv);
+		}
 
 		for (let i = 0; i < parameters.length; i++)
 		{
@@ -45,6 +51,9 @@ export class SQLRestBuilder
 		}
 
 		let stmt:string = name+"("+plist+")";
+
+		if (retparam != null)
+			stmt = retparam.name+" = ";
 
 		let parsed:SQLRest = new SQLRest();
 

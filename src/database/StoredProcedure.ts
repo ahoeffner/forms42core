@@ -18,17 +18,19 @@ import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Parameter, ParameterType } from "./Parameter.js";
 import { Connection as DatabaseConnection } from "./Connection.js";
 
-export class DatabaseProcedure
+export class StoredProcedure
 {
 	private name$:string;
 	private response$:any = null;
 	private patch$:boolean = false;
+	private retparm$:string = null;
 	private params$:Parameter[] = [];
 	private conn$:DatabaseConnection = null;
+	private returntype$:DataType|string = null;
 	private values$:Map<string,any> = new Map<string,any>();
 	private datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
-	constructor(connection:Connection)
+	public constructor(connection:Connection)
 	{
 		if (!(connection instanceof DatabaseConnection))
 		{
@@ -49,10 +51,20 @@ export class DatabaseProcedure
 		this.name$ = name;
 	}
 
-	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType)
+	protected getReturnValue() : any
 	{
-		let p:Parameter = new Parameter(name,value,datatype,paramtype);
-		this.params$.push(p);
+		return(this.getOutParameter(this.retparm$));
+	}
+
+	protected setReturnType(datatype?:DataType|string) : void
+	{
+		this.returntype$ = datatype;
+	}
+
+	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType) : void
+	{
+		let param:Parameter = new Parameter(name,value,datatype,paramtype);
+		this.params$.push(param);
 	}
 
 	public getOutParameter(name:string) : any
@@ -71,8 +83,31 @@ export class DatabaseProcedure
 		let name:string = null;
 		let dates:string[] = [];
 		let names:string[] = null;
+		let unique:boolean = false;
+		let retparam:Parameter = null;
 
-		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$);
+		if (this.returntype$ != null)
+		{
+			let retparm$ = "retval";
+
+			while(!unique)
+			{
+				unique = true;
+
+				for (let i = 0; i < this.params$.length; i++)
+				{
+					if (this.params$[i].name == retparm$)
+					{
+						unique = false;
+						retparm$ += "0";
+					}
+				}
+			}
+
+			retparam = new Parameter(retparm$,null,this.returntype$,ParameterType.out);
+		}
+
+		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$,retparam);
 		this.response$ = await this.conn$.call(this.patch$,sql);
 
 		names = Object.keys(this.response$);

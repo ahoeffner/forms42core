@@ -37,9 +37,10 @@ export { BindValue } from "./src/database/BindValue.js";
 export { QueryTable } from './src/database/QueryTable.js';
 export { ParameterType } from './src/database/Parameter.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { StoredFunction } from './src/database/StoredFunction.js';
+export { StoredProcedure } from './src/database/StoredProcedure.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
-export { DatabaseProcedure } from './src/database/DatabaseProcedure.js';
 
 export { dates } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";

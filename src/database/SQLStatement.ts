@@ -73,14 +73,16 @@ export class SQLStatement
 
 	public async fetch() : Promise<any[]>
 	{
+		let record:any[] = null;
+
 		if (!this.cursor$)
 			return(null);
 
 		if (this.record$ != null)
 		{
-			let exist:any[] = this.record$;
+			record = this.record$;
 			this.record$ = null;
-			return(exist);
+			return(record);
 		}
 
 		if (this.eof$)
@@ -94,8 +96,8 @@ export class SQLStatement
 			return(null);
 		}
 
-		this.record$ = this.parse(this.response$);
-		return(this.record$);
+		record = this.parse(this.response$);
+		return(record);
 	}
 
 	public async execute() : Promise<boolean>
@@ -163,7 +165,6 @@ export class SQLStatement
 				row[i] = new Date(row[i]);
 		}
 
-		console.log("cols: "+row.length+" row: "+row);
 		return(row);
 	}
 }

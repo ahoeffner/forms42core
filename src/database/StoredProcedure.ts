@@ -47,7 +47,7 @@ export class StoredProcedure
 		this.patch$ = flag;
 	}
 
-	public get error() : string
+	public error() : string
 	{
 		return(this.message$);
 	}

@@ -19,7 +19,7 @@ export class StoredFunction extends StoredProcedure
 	public constructor(connection:Connection)
 	{
 		super(connection);
-		this.setReturnType("string");
+		super.setReturnType("string");
 	}
 
 	public getReturnValue()
@@ -29,6 +29,6 @@ export class StoredFunction extends StoredProcedure
 
 	public setReturnType(datatype?:DataType|string) : void
 	{
-		this.setReturnType(datatype);
+		super.setReturnType(datatype);
 	}
 }

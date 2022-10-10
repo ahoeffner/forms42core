@@ -17,6 +17,7 @@ import { Login } from './forms/Login.js';
 import { Alert } from './forms/Alert.js';
 import { DatePicker } from './forms/DatePicker.js';
 import { QueryEditor } from './forms/QueryEditor.js';
+import { ListOfValues } from './forms/ListOfValues.js';
 
 export class Classes
 {
@@ -24,7 +25,7 @@ export class Classes
 	public static LoginClass:Class<Form> = Login;
 	public static DatePickerClass:Class<Form> = DatePicker;
 	public static QueryEditorClass:Class<Form> = QueryEditor;
-	public static ListOfValuesClass:Class<Form> = null;
+	public static ListOfValuesClass:Class<Form> = ListOfValues;
 
 	public static isInternal(clazz:Class<Form>) : boolean
 	{

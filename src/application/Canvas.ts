@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from './Alert.js';
 import { Framework } from './Framework.js';
 import { CanvasComponent } from './CanvasComponent.js';
 import { Canvas as CanvasProperties } from './properties/Canvas.js';
@@ -168,6 +169,12 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 			let root:HTMLDivElement = document.createElement("div");
 			root.innerHTML = page;
 			page = Framework.prepare(root);
+		}
+
+		if (page == null)
+		{
+			Alert.fatal("Component '"+component.constructor.name+"' has no html view","Form")
+			return;
 		}
 
 		this.container.appendChild(page);

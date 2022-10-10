@@ -561,6 +561,32 @@ export class Form implements EventListenerObject
 				return(true);
 			}
 
+			if (key == KeyMap.lov)
+			{
+				let params:Map<string,any> = new Map<string,any>();
+
+				params.set("form",this.parent);
+				params.set("field",inst.name);
+				params.set("block",inst.block);
+				params.set("value",inst.getValue());
+
+				this.parent.callform(Classes.ListOfValuesClass,params);
+				return(true);
+			}
+
+			if (key == KeyMap.login)
+			{
+				let params:Map<string,any> = new Map<string,any>();
+
+				params.set("form",this.parent);
+				params.set("field",inst.name);
+				params.set("block",inst.block);
+				params.set("value",inst.getValue());
+
+				this.parent.callform(Classes.LoginClass,params);
+				return(true);
+			}
+
 			if (key == KeyMap.dates)
 			{
 				let block:Block = inst.field.block;

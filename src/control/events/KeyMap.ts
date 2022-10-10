@@ -51,6 +51,8 @@ export class KeyMap
 	public static insert:KeyMap = new KeyMap({key: KeyCodes.f5});
 	public static insertAbove:KeyMap = new KeyMap({key: KeyCodes.f5, shift: true});
 
+	public static lov:KeyMap = new KeyMap({key: KeyCodes.f9});
+	public static login:KeyMap = new KeyMap({key: 'C', ctrl: true});
 	public static dates:KeyMap = new KeyMap({key: 'D', ctrl: true});
 
 

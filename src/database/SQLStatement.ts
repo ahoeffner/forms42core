@@ -12,7 +12,6 @@
 
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
-import { Record } from "../model/Record.js";
 import { Alert } from "../application/Alert.js";
 import { Connection } from "../public/Connection.js";
 import { Connection as DatabaseConnection } from "./Connection.js";
@@ -21,9 +20,10 @@ export class SQLStatement
 {
 	private sql$:string = null;
 	private eof$:boolean = true;
+	private record$:any[] = null;
 	private response$:any = null;
-	private record:Record = null;
 	private cursor$:string = null;
+	private patch$:boolean = false;
 	private conn$:DatabaseConnection = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
@@ -48,17 +48,32 @@ export class SQLStatement
 		this.sql$ = sql;
 	}
 
+	public set patch(flag:boolean)
+	{
+		this.patch$ = flag;
+	}
+
 	public addBindValue(bindvalue:BindValue) : void
 	{
 		this.bindvalues$.set(bindvalue.name?.toLowerCase(),bindvalue);
 	}
 
-	public async fetch() : Promise<Record>
+	public async fetch() : Promise<any[]>
 	{
 		if (!this.cursor$)
 			return(null);
 
-		return(null);
+		if (this.record$ != null)
+		{
+			let exist:any[] = this.record$;
+			this.record$ = null;
+			return(exist);
+		}
+
+		this.response$ = await this.conn$.fetch(this.cursor$);
+		this.record$ = this.parse(this.record$);
+
+		return(this.record$);
 	}
 
 	public async execute() : Promise<boolean>
@@ -81,10 +96,7 @@ export class SQLStatement
 			case "delete" : this.response$ = await this.conn$.delete(sql); break;
 			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,1,true); break;
 
-			default:
-
-			Alert.warning("Unknown sql statement. Only insert, update, delete and select is supported","SQL Statement");
-			return(false);
+			default: this.response$ = await this.conn$.execute(this.patch$,sql);
 		}
 
 		let success:boolean = this.response$.success;
@@ -93,24 +105,23 @@ export class SQLStatement
 			this.cursor$ = null;
 
 		if (success && type == "select")
-			this.parse(this.response$);
+			this.record$ = this.parse(this.response$);
 
 		return(success);
 	}
 
-	private parse(response:any) : Record
+	private parse(response:any) : any[]
 	{
-		let fetched:Record = null;
 		this.eof$ = !response.more;
 
 		if (!response.success)
 		{
 			this.eof$ = true;
-			return(fetched);
+			return(null);
 		}
 
 		if (response.rows.length == 0)
-			return(fetched);
+			return(null);
 
 		let row:any[] = response.rows[0];
 
@@ -125,8 +136,6 @@ export class SQLStatement
 				row[i] = new Date(row[i]);
 		}
 
-		fetched = new Record(null,columns);
-
-		return(fetched);
+		return(row);
 	}
 }

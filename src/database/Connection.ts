@@ -205,6 +205,19 @@ export class Connection extends BaseConnection
 		return(this.post(this.conn$+"/exec",payload));
 	}
 
+	public async execute(patch:boolean, sql:SQLRest) : Promise<Response>
+	{
+		let payload:any =
+		{
+			sql: sql.stmt,
+			dateformat: "UTC",
+			bindvalues: this.convert(sql.bindvalues)
+		};
+
+		if (patch)	return(this.patch(this.conn$+"/exec",payload));
+		return(this.post(this.conn$+"/exec",payload));
+	}
+
 	private async keepalive() : Promise<void>
 	{
 		await this.sleep(this.keepalive$);

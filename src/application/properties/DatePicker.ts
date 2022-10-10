@@ -12,11 +12,12 @@
 
 export class DatePicker
 {
-	public static datePickerStyle:string =
+	public static datePickerStyle:string = 
 	`
 		width: 160px;
 	`;
-	public static datePickerMonthStyle:string = 
+
+	public static datePickerMonthStyle:string =
 	`
 		display:flex;
 		font-size: 13px;
@@ -42,13 +43,13 @@ export class DatePicker
 		justify-content: center;
 	`;
 
-	public static datePickerWeekStyle:string = 
+	public static datePickerWeekStyle:string =
 	`
 		display:grid;
 		grid-template-columns: repeat(7,1fr);
 	`;
 
-	public static datePickerDayStyle:string = 
+	public static datePickerDayStyle:string =
 	`
 		height:15px;
 		display:flex;
@@ -58,12 +59,12 @@ export class DatePicker
 		justify-content: center;
 	`;
 
-	public static datePickerSelectedDay:string = 
+	public static datePickerSelectedDay:string =
 	`
 		background-color: #a8a8a8;
 	`;
 
-	public static datePickerSelectedDate:string = 
+	public static datePickerSelectedDate:string =
 	`
 		width:100%;
 		height: 100%;
@@ -72,7 +73,7 @@ export class DatePicker
 		align-items: center;
 		justify-content: center;
 	`;
-	
+
 	public static styleDatePicker(view:HTMLElement) : void
 	{
 		let body:HTMLElement = view.querySelector("div[name='date-picker']")
@@ -83,19 +84,16 @@ export class DatePicker
 			let day:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='day']");
 			let week:NodeListOf<HTMLElement> = body.querySelectorAll("div[name='week']");
 			let arrow:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='prev'],div[name='next']");
-			
+
 			if (body && DatePicker.datePickerStyle) body.style.cssText = DatePicker.datePickerStyle;
 
 			if(mth && DatePicker.datePickerMthTextStyle) mth.style.cssText = DatePicker.datePickerMthTextStyle;
 			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
-			
+
 			if (DatePicker.datePickerDayStyle) day.forEach((day) => day.style.cssText = DatePicker.datePickerDayStyle);
 			if (DatePicker.datePickerWeekStyle) week.forEach((week) => week.style.cssText = DatePicker.datePickerWeekStyle);
 			if (DatePicker.datePickerArrowStyle) arrow.forEach((arrow) => arrow.style.cssText = DatePicker.datePickerArrowStyle);
 		}
-		
+
 	}
 }
-
-
-

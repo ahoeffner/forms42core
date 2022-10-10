@@ -37,20 +37,15 @@ export class Record
 	private dirty$:Set<string> = new Set<string>();
 	private status$:RecordState = RecordState.Query;
 
-	constructor(source:DataSource, columns?:{[name:string]: any})
+	constructor(source:DataSource, data?:any[])
 	{
 		this.source$ = source;
 		this.id$ = new Object();
 
-		if (columns != null)
+		if (data != null)
 		{
-			Object.keys(columns).forEach((col) =>
-			{
-				col = col.toLowerCase();
-
-				let idx:number = this.indexOf(col);
-				if (idx >= 0) this.values$[idx] = columns[col];
-			});
+			for (let i = 0; i < data.length; i++)
+				this.values$.push(data[i]);
 		}
 	}
 
@@ -158,7 +153,7 @@ export class Record
 		let value:any = null;
 		let values:{column:string; value:any}[] = [];
 
-		this.source?.columns?.forEach((col) =>
+		this.source.columns?.forEach((col) =>
 		{
 			value = this.getInitialValue(col);
 			values.push({column: col, value: value})
@@ -209,7 +204,7 @@ export class Record
 				update = false;
 		}
 
-		if (idx < this.source$?.columns.length)
+		if (idx < this.source.columns.length)
 		{
 			if (update) this.dirty$.add(column);
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
@@ -233,8 +228,8 @@ export class Record
 
 	private indexOf(column:string) : number
 	{
-		let cols:number = this.source?.columns.length;
-		let idx:number = this.source?.columns.indexOf(column);
+		let cols:number = this.source.columns.length;
+		let idx:number = this.source.columns.indexOf(column);
 
 		if (cols == null)
 		{
@@ -248,8 +243,8 @@ export class Record
 
 	private column(pos:number) : string
 	{
-		let len:number = this.source?.columns.length;
-		if (pos < len) return(this.source?.columns[pos]);
+		let len:number = this.source.columns.length;
+		if (pos < len) return(this.source.columns[pos]);
 		else    	      return(this.wrapper?.columns[pos-len]);
 	}
 
@@ -258,7 +253,7 @@ export class Record
 		let str:string = "";
 		let cols:number = 0;
 
-		if (this.source) cols += this.source?.columns.length;
+		if (this.source) cols += this.source.columns.length;
 		if (this.wrapper) cols += this.wrapper?.columns.length;
 
 		for (let i = 0; i < cols; i++)

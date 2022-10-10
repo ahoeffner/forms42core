@@ -65,12 +65,7 @@ export class MemoryTable implements DataSource
 
 		records.forEach((rec) =>
 		{
-			let data:{[name:string]: any} = {};
-
-			for (let i = 0; i < rec.length && i < columns.length; i++)
-				data[columns[i]] = rec[i];
-
-			this.records$.push(new Record(this,data));
+			this.records$.push(new Record(this,rec));
 		});
 	}
 

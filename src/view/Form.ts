@@ -576,14 +576,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.login)
 			{
-				let params:Map<string,any> = new Map<string,any>();
-
-				params.set("form",this.parent);
-				params.set("field",inst.name);
-				params.set("block",inst.block);
-				params.set("value",inst.getValue());
-
-				this.parent.callform(Classes.LoginClass,params);
+				this.parent.callform(Classes.LoginClass);
 				return(true);
 			}
 

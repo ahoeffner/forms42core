@@ -49,7 +49,7 @@ export class ListOfValues extends Form implements Lov
 
 		await this.setView(page);
 		let view:HTMLElement = this.getView();
-		Internals.stylePopupWindow(view,"List of Values");
+		Internals.stylePopupWindow(view,this.props$.title);
 
 		this.goField("search","search");
 		this.results = this.getBlock("results");

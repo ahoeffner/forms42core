@@ -17,8 +17,6 @@ import { BindValue } from "../../database/BindValue.js";
 
 export class Between implements Filter
 {
-	private fr:any = null;
-	private to:any = null;
 	private incl:boolean = false;
 
 	private column$:string = null;
@@ -69,22 +67,20 @@ export class Between implements Filter
 	public set constraint(values:any[])
 	{
 		this.constraint$ = [];
+		this.bindvalues$ = null;
+
 		if (values == null) return;
 		if (values.length != 2) return;
 
-		this.bindvalues$ = null;
 		this.constraint$ = values;
-
-		this.fr = this.constraint$[0];
-		this.to = this.constraint$[1];
 	}
 
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)
 		{
-			let b1:BindValue = new BindValue(this.bindval$+"0",this.fr);
-			let b2:BindValue = new BindValue(this.bindval$+"1",this.to);
+			let b1:BindValue = new BindValue(this.bindval$+"0",this.bindvalues$[0].value);
+			let b2:BindValue = new BindValue(this.bindval$+"1",this.bindvalues$[1].value);
 
 			b1.column = this.column$;
 			b2.column = this.column$;
@@ -97,17 +93,24 @@ export class Between implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
+		if (this.bindvalues$)
+		{
+			this.constraint$[0] = this.bindvalues$[0].value;
+			this.constraint$[1] = this.bindvalues$[1].value;
+		}
+
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 		let value:any = record.getValue(this.column$.toLowerCase());
 
-		if (this.incl) return(value >= this.fr && value <= this.to);
-		return(value > this.fr && value < this.to);
+		if (!this.incl)
+		return(value > this.bindvalues$[0].value && value < this.bindvalues$[1].value);
+		return(value >= this.bindvalues$[0].value && value <= this.bindvalues$[1].value);
 	}
 
 	public asSQL() : string
 	{
-		if (this.constraint$ == null)
+		if (!this.constraint$ && !this.bindvalues$)
 			return("1 = 2");
 
 		let lt:string = "<";

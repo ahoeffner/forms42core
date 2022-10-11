@@ -100,6 +100,13 @@ export class In implements Filter
 	public async evaluate(record:Record) : Promise<boolean>
 	{
 		let value:any = null;
+
+		if (this.bindvalues$)
+		{
+			this.constraint$ = [];
+			this.bindvalues$.forEach((b) => this.constraint$.push(b.value))
+		}
+
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
@@ -122,7 +129,7 @@ export class In implements Filter
 
 	public asSQL() : string
 	{
-		if (this.constraint$ == null)
+		if (!this.constraint$ && !this.bindvalues$)
 			return("1 == 2");
 
 		let whcl:string = this.column$ + " in (";

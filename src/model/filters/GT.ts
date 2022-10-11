@@ -82,6 +82,9 @@ export class GT implements Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
+		if (this.bindvalues$)
+			this.constraint$ = this.bindvalues$[0].value;
+
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 
@@ -93,7 +96,7 @@ export class GT implements Filter
 
 	public asSQL() : string
 	{
-		if (this.constraint$ == null)
+		if (!this.constraint$ && !this.bindvalues$)
 			return("1 = 2");
 
 		if (this.bindval$ == null)

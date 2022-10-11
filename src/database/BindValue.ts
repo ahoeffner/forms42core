@@ -90,10 +90,10 @@ export class BindValue
 			this.type$ = "number";
 
 		if (value instanceof Date)
-		{
-			this.value$ = value.getTime();
 			if (this.type$ == null) this.type$ = "date";
-		}
+
+		if (this.type$ == null)
+			this.type$ = "string";
 	}
 
 	public toString() : string

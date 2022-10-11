@@ -129,6 +129,9 @@ export class Contains implements Filter
 	{
 		let value:string = "";
 
+		if (this.bindvalues$)
+			this.constraint$ = this.bindvalues$[0].value;
+
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 

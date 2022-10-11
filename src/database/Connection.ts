@@ -241,6 +241,8 @@ export class Connection extends BaseConnection
 
 		bindv.forEach((b) =>
 		{
+			let value:any = b.value;
+			if (value instanceof Date) value = value.getTime();
 			if (b.outtype) binds.push({name: b.name, type: b.type});
 			else binds.push({name: b.name, value: b.value, type: b.type});
 		})

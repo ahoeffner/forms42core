@@ -41,7 +41,10 @@ export class ListOfValues extends Form implements Lov
 		if (this.props$ == null)
 			return(true);
 
+		let css:string = this.props$.cssclass;
 		let page:string = ListOfValues.page;
+
+		page = page.replace("CSS",css ? css : "lov");
 		page = page.replace("ROWS",this.props$.rows+"");
 
 		await this.setView(page);
@@ -83,10 +86,10 @@ export class ListOfValues extends Form implements Lov
 	Internals.header +
 	`
 	<div name="popup-body">
-		<div name="search">
+		<div name="search" class="CSS">
 			<div><input style="margin-bottom: 15px" size=20 name="search" from="search"></div>
 			<div name="results">
-				<div name="row" foreach="row in 0..ROWS">
+				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly>
 				</div>
 			</div>

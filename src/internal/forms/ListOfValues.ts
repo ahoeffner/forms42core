@@ -48,6 +48,7 @@ export class ListOfValues extends Form implements Lov
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view,"List of Values");
 
+		this.goField("search","search");
 		this.results = this.getBlock("results");
 		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
 

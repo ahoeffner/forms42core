@@ -16,11 +16,14 @@ import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
 import { ListOfValues as Properties } from "../../application/properties/ListOfValues.js";
+import { Block } from "../../public/Block.js";
+import { FormEvent } from "../../control/events/FormEvents.js";
 
 
 export class ListOfValues extends Form implements Lov
 {
-	private props$:Properties;
+	private results:Block = null;
+	private props$:Properties = null;
 
 	constructor()
 	{
@@ -45,6 +48,21 @@ export class ListOfValues extends Form implements Lov
 		await this.setView(page);
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view,"List of Values");
+
+
+		this.results = this.getBlock("results");
+		this.results.datasource = this.props$.datasource;
+		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
+
+		this.results.executeQuery();
+		return(true);
+	}
+
+	private async onFetch(event:FormEvent) : Promise<boolean>
+	{
+		console.log("onfetch")
+		let fn:string = this.results.getValue("first_name");
+		this.results.setValue("display",fn);
 		return(true);
 	}
 
@@ -53,10 +71,10 @@ export class ListOfValues extends Form implements Lov
 	`
 	<div name="popup-body">
 		<div name="search">
-			<div><input name="search" from="search"></div>
+			<div><input style="margin-bottom: 15px" size=20 name="search" from="search"></div>
 			<div name="results">
 				<div name="row" foreach="row in 0..ROWS">
-					<input name="display" from="results" readonly>
+					<input name="display" from="results" row="$row" readonly>
 				</div>
 			</div>
 		</div>

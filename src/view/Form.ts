@@ -428,6 +428,9 @@ export class Form implements EventListenerObject
 
 		if (inst == null)
 		{
+			if (key == KeyMap.dates)
+				inst = this.curinst$;
+
 			if (key == KeyMap.delete)
 				inst = this.curinst$;
 
@@ -571,12 +574,6 @@ export class Form implements EventListenerObject
 				params.set("value",inst.getValue());
 
 				this.parent.callform(Classes.ListOfValuesClass,params);
-				return(true);
-			}
-
-			if (key == KeyMap.login)
-			{
-				this.parent.callform(Classes.LoginClass);
 				return(true);
 			}
 

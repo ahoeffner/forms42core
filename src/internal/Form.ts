@@ -21,6 +21,7 @@ import { FormBacking } from '../application/FormBacking.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
+import { CallbackFunction } from '../public/CallbackFunction.js';
 import { Canvas, View } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
@@ -169,8 +170,10 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
-	public callback(_form:Form) : void
+
+	public callback(_form:Form) : CallbackFunction
 	{
+		return;
 	}
 
 	public async setView(page:string|HTMLElement) : Promise<void>

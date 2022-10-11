@@ -16,6 +16,7 @@ import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
+import { CallbackFunction } from './CallbackFunction.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';
@@ -163,8 +164,9 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
-	public callback(_form:Form) : void
+	public callback(_form:Form) : CallbackFunction
 	{
+		return;
 	}
 
 	public async setView(page:string|HTMLElement) : Promise<void>
@@ -208,7 +210,7 @@ export class Form implements CanvasComponent
 			return(false);
 
 		await FormBacking.getModelForm(this).flush();
-		
+
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
 

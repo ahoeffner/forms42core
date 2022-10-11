@@ -10,11 +10,13 @@
  * accompanied this code).
  */
 
-import { FormEvent } from "../control/events/FormEvents.js";
+import { Classes } from "./Classes.js";
+import { FormsModule } from "../application/FormsModule.js";
 
-export interface TriggerFunction
+export class BuiltIns
 {
-    (event?:FormEvent) : Promise<boolean>;
+	public static callUsernamePasswordForm()
+	{
+			FormsModule.get().showform(Classes.LoginClass);
+	}
 }
-
-//export type TriggerFunction = (event?:FormEvent) => Promise<boolean>;

@@ -10,11 +10,5 @@
  * accompanied this code).
  */
 
-import { FormEvent } from "../control/events/FormEvents.js";
-
-export interface TriggerFunction
-{
-    (event?:FormEvent) : Promise<boolean>;
-}
-
-//export type TriggerFunction = (event?:FormEvent) => Promise<boolean>;
+import { Form } from "./Form.js";
+export type CallbackFunction = (form:Form) => void;

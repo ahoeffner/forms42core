@@ -86,7 +86,7 @@ export class ListOfValues extends Form implements Lov
 	Internals.header +
 	`
 	<div name="popup-body">
-		<div name="search" class="CSS">
+		<div name="lov" class="CSS">
 			<div><input style="margin-bottom: 15px" size=20 name="search" from="search"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">

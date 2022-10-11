@@ -17,7 +17,11 @@ export class ListOfValues
 {
 	public rows:number = 8;
 	public autoquery:boolean = false;
+	public minfilterlength:number = 0;
 	public bindvalue:BindValue = null;
 	public datasource:DataSource = null;
 	public displayfields:string|string[];
+
+	public searchfieldsize:number = 20;
+	public displayfieldsize:number = 20;
 }

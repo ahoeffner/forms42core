@@ -21,6 +21,7 @@ import { ListOfValues as Properties } from "../../application/properties/ListOfV
 export class ListOfValues extends Form implements Lov
 {
 	private results:Block = null;
+	private columns:string[] = null;
 	private props$:Properties = null;
 
 	constructor()
@@ -47,19 +48,33 @@ export class ListOfValues extends Form implements Lov
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view,"List of Values");
 
-
 		this.results = this.getBlock("results");
-		this.results.datasource = this.props$.datasource;
 		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
 
-		this.results.executeQuery();
+		this.results.qbeallowed = false;
+		this.results.datasource = this.props$.datasource;
+		let cols:string|string[] = this.props$.displayfields;
+
+		if (Array.isArray(cols)) this.columns = cols;
+		else 							 this.columns = [cols];
+
+		if (this.props$.autoquery)
+			this.results.executeQuery();
+
 		return(true);
 	}
 
 	private async onFetch() : Promise<boolean>
 	{
-		let fn:string = this.results.getValue("first_name");
-		this.results.setValue("display",fn);
+		let display:string = "";
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			if (i > 0) display += " ";
+			display += this.results.getValue(this.columns[i]);
+		}
+
+		this.results.setValue("display",display);
 		return(true);
 	}
 

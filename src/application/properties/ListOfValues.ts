@@ -16,6 +16,8 @@ import { DataSource } from "../../model/interfaces/DataSource.js";
 export class ListOfValues
 {
 	public rows:number = 8;
+	public autoquery:boolean = false;
 	public bindvalue:BindValue = null;
 	public datasource:DataSource = null;
+	public displayfields:string|string[];
 }

@@ -11,13 +11,11 @@
  */
 
 import { Form } from "../Form.js";
-import { Alert } from "../../application/Alert.js";
+import { Block } from "../../public/Block.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
 import { ListOfValues as Properties } from "../../application/properties/ListOfValues.js";
-import { Block } from "../../public/Block.js";
-import { FormEvent } from "../../control/events/FormEvents.js";
 
 
 export class ListOfValues extends Form implements Lov
@@ -58,9 +56,8 @@ export class ListOfValues extends Form implements Lov
 		return(true);
 	}
 
-	private async onFetch(event:FormEvent) : Promise<boolean>
+	private async onFetch() : Promise<boolean>
 	{
-		console.log("onfetch")
 		let fn:string = this.results.getValue("first_name");
 		this.results.setValue("display",fn);
 		return(true);

@@ -37,6 +37,6 @@ export interface DataSource
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
 	addColumns(columns:string|string[]) : void;
+	addFilter(filter:Filter|FilterStructure) : void;
 	query(filters?:FilterStructure) : Promise<boolean>;
-	limit(filters:Filter|Filter[]|FilterStructure) : void;
 }

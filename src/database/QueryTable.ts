@@ -129,22 +129,20 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 	}
 
-	public limit(filters:Filter | Filter[] | FilterStructure) : void
+	public addFilter(filter:Filter | FilterStructure) : void
 	{
-		if (filters instanceof FilterStructure)
+		if (this.limit$ == null)
 		{
-			this.limit$ = filters;
-		}
-		else
-		{
-			if (!Array.isArray(filters))
-				filters = [filters];
+			if (filter instanceof FilterStructure)
+			{
+				this.limit$ = filter;
+				return;
+			}
 
 			this.limit$ = new FilterStructure();
-
-			for (let i = 0; i < filters.length; i++)
-				this.limit$.and(filters[i]);
 		}
+
+		this.limit$.and(filter);
 	}
 
 	public async lock(_record:Record) : Promise<boolean>

@@ -108,12 +108,15 @@ export class Contains implements Filter
 		{
 			let str = "";
 
-			for (let i = 0; i < this.constraint$.length; i++)
+			if (this.constraint$ != null)
 			{
-				str += this.constraint$[i];
+				for (let i = 0; i < this.constraint$.length; i++)
+				{
+					str += this.constraint$[i];
 
-				if (i < this.constraint$.length - 1)
-					str += " ";
+					if (i < this.constraint$.length - 1)
+						str += " ";
+				}
 			}
 
 			this.bindvalues$ = [new BindValue(this.bindval$,str)];

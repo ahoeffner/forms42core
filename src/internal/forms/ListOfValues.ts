@@ -62,6 +62,7 @@ export class ListOfValues extends Form implements Lov
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
+		this.props$.bindvalue.value = "le";
 		if (this.props$.autoquery)
 			this.results.executeQuery();
 

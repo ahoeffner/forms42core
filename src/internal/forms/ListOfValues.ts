@@ -29,6 +29,7 @@ export class ListOfValues extends Form implements Lov
 
 	private async initialize() : Promise<boolean>
 	{
+		await this.setView(ListOfValues.page);
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view);
 		return(true);

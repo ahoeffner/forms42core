@@ -192,13 +192,12 @@ export class Form implements CanvasComponent
 			FormBacking.cleanup(this);
 		}
 
-
 		page = Framework.prepare(page);
 		Framework.parse(this,page);
 		back.page = page;
 
 		if (this.canvas != null)
-			this.canvas.refresh();
+			this.canvas.replace(page);
 
 		await FormBacking.getViewForm(this,true).finalize();
 		await FormBacking.getModelForm(this,true).finalize();

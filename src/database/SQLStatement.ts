@@ -108,7 +108,7 @@ export class SQLStatement
 		let sql:SQLRest = new SQLRest();
 
 		sql.stmt = this.sql$;
-		sql.bindvalues = [...Object.values(this.bindvalues$)];
+		sql.bindvalues = [...this.bindvalues$.values()];
 
 		if (type == "select")
 			this.cursor$ = "sql"+(new Date().getTime());

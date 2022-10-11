@@ -20,7 +20,7 @@ import { ListOfValues as Properties } from "../../application/properties/ListOfV
 
 export class ListOfValues extends Form implements Lov
 {
-	properties: Properties;
+	private props$:Properties;
 
 	constructor()
 	{
@@ -28,17 +28,21 @@ export class ListOfValues extends Form implements Lov
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 	}
 
+	public set properties(props:Properties)
+	{
+		this.props$ = props;
+		this.initialize();
+	}
+
 	private async initialize() : Promise<boolean>
 	{
-		if (this.properties == null)
-		{
-			Alert.fatal("List of values called without a datasource","List Of Values");
-			return(false);
-		}
+		console.log("Lov")
+		if (this.props$ == null)
+			return(true);
 
 		await this.setView(ListOfValues.page);
 		let view:HTMLElement = this.getView();
-		Internals.stylePopupWindow(view);
+		Internals.stylePopupWindow(view,"List of Values");
 		return(true);
 	}
 

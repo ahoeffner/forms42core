@@ -28,6 +28,9 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
+import { ListOfValues } from '../internal/forms/ListOfValues.js';
+import { ListOfValues as LOVProps } from '../application/properties/ListOfValues.js';
+
 export class FormsModule
 {
 	private root$:HTMLElement;
@@ -119,6 +122,12 @@ export class FormsModule
 			}
 		}
 		return(false);
+	}
+
+	public async showLOV(props:LOVProps)
+	{
+		let form:ListOfValues = await this.showform(ListOfValues) as ListOfValues;
+		form.properties = props;
 	}
 
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>

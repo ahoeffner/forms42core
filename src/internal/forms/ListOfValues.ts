@@ -11,6 +11,7 @@
  */
 
 import { Form } from "../Form.js";
+import { Alert } from "../../application/Alert.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
@@ -29,6 +30,12 @@ export class ListOfValues extends Form implements Lov
 
 	private async initialize() : Promise<boolean>
 	{
+		if (this.properties == null)
+		{
+			Alert.fatal("List of values called without a datasource","List Of Values");
+			return(false);
+		}
+
 		await this.setView(ListOfValues.page);
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view);

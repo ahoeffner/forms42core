@@ -23,7 +23,7 @@ export class ListOfValues extends Form implements Lov
 
 	constructor()
 	{
-		super(ListOfValues.page);
+		super("");
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 	}
 
@@ -41,7 +41,7 @@ export class ListOfValues extends Form implements Lov
 		<div name="search">
 			<div><input name="search" from="search"></div>
 			<div name="results">
-				<div name="row" foreach="row in 0..8">
+				<div name="row" foreach="row in 0..10">
 					<input name="display" from="results" readonly>
 				</div>
 			</div>

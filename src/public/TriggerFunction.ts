@@ -16,5 +16,3 @@ export interface TriggerFunction
 {
     (event?:FormEvent) : Promise<boolean>;
 }
-
-//export type TriggerFunction = (event?:FormEvent) => Promise<boolean>;

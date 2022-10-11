@@ -36,11 +36,13 @@ export class ListOfValues extends Form implements Lov
 
 	private async initialize() : Promise<boolean>
 	{
-		console.log("Lov")
 		if (this.props$ == null)
 			return(true);
 
-		await this.setView(ListOfValues.page);
+		let page:string = ListOfValues.page;
+		page = page.replace("ROWS",this.props$.rows+"");
+
+		await this.setView(page);
 		let view:HTMLElement = this.getView();
 		Internals.stylePopupWindow(view,"List of Values");
 		return(true);
@@ -53,7 +55,7 @@ export class ListOfValues extends Form implements Lov
 		<div name="search">
 			<div><input name="search" from="search"></div>
 			<div name="results">
-				<div name="row" foreach="row in 0..10">
+				<div name="row" foreach="row in 0..ROWS">
 					<input name="display" from="results" readonly>
 				</div>
 			</div>

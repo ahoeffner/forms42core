@@ -11,9 +11,11 @@ export { FieldProperties } from './src/public/FieldProperties.js';
 export { Connection as DatabaseConnection } from './src/database/Connection.js';
 
 export { Alert } from './src/internal/forms/Alert.js';
+export { BuiltIns } from './src/internal/BuiltIns.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';
+export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { DatePicker as DatePickerConfig } from './src/application/properties/DatePicker.js';

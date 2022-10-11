@@ -91,12 +91,6 @@ export class ApplicationHandler implements EventListenerObject
 						await FormBacking.getCurrentForm()?.flush()
 						return;
 					}
-
-					if (key == KeyMap.login)
-					{
-						FormsModule.get().showform(Classes.LoginClass);
-						return;
-					}
 				}
 			}
 			else

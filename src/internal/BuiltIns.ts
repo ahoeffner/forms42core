@@ -10,13 +10,13 @@
  * accompanied this code).
  */
 
-import { Classes } from "./Classes.js";
 import { FormsModule } from "../application/FormsModule.js";
+import { UsernamePassword } from "./forms/UsernamePassword.js";
 
 export class BuiltIns
 {
 	public static callUsernamePasswordForm()
 	{
-			FormsModule.get().showform(Classes.LoginClass);
+		FormsModule.get().showform(UsernamePassword);
 	}
 }

@@ -19,8 +19,8 @@ import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
 import { FormEvent as Interface } from "./FormEvent.js";
 import { Logger, Type } from "../../application/Logger.js";
-import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
+import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 
 export class KeyEventSource
 {

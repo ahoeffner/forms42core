@@ -17,7 +17,7 @@ import { KeyMap } from "../../control/events/KeyMap.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { EventType } from "../../control/events/EventType.js";
-import { FormEvent } from "../../control/events/FormEvents.js";
+import { FormEvent } from "../../control/events/FormEvent.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { MemoryTable } from "../../model/datasources/MemoryTable.js";
 import { Internals } from "../../application/properties/Internals.js";

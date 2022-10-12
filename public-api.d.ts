@@ -16,7 +16,7 @@ export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';
 export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 
-export { QueryFunction } from './src/public/QueryFunction.js';
+export { QueryFilter } from './src/public/QueryFilter.js';
 export { DateConstraint } from './src/public/DateConstraint.js';
 export { ListOfValues } from './src/application/properties/ListOfValues.js';
 

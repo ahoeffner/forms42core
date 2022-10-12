@@ -138,7 +138,6 @@ export class Contains implements Filter
 			this.constraint$ = this.bindvalues$[0].value;
 
 		if (this.constraint$ == null) return(false);
-		if (this.constraint$.length == 0) return(false);
 
 		for (let c = 0; c < this.columns$.length; c++)
 			value += " " +  record.getValue(this.columns$[c]?.toLowerCase());

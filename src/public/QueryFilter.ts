@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-export interface QueryFunction
+export interface QueryFilter
 {
 	query(criteria:string) : boolean;
 }

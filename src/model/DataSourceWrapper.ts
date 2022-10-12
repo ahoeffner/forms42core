@@ -250,14 +250,12 @@ export class DataSourceWrapper
 
 	public async update(record:Record) : Promise<boolean>
 	{
-		console.log("1 preupdate "+record.getValue("first_name"))
 		if (!await this.block.preUpdate(record))
 			return(false);
 
 		if (!await this.source.update(record))
 			return(false);
 
-		console.log("2 preupdate "+record.getValue("first_name"))
 		return(true);
 	}
 

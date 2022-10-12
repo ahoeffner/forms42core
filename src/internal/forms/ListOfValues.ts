@@ -151,7 +151,7 @@ export class ListOfValues extends Form implements Lov
 			<div><input style="margin-bottom: 15px" size=20 name="search" from="filter"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
-					<input name="display" from="results" row="$row" readonly>
+					<input name="display" from="results" row="$row" readonly derived>
 				</div>
 			</div>
 		</div>

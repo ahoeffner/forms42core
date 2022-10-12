@@ -32,7 +32,6 @@ export class Record
 	private response$:any = null;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
-	private validated$:boolean = true;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
@@ -84,16 +83,6 @@ export class Record
 	public get response() : any
 	{
 		return(this.response$);
-	}
-
-	public get validated() : boolean
-	{
-		return(this.validated$);
-	}
-
-	public set validated(flag:boolean)
-	{
-		this.validated$ = flag;
 	}
 
 	public set response(response:any)

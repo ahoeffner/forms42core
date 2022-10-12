@@ -229,7 +229,7 @@ export class Form
 
 		if (!block.view.validated)
 		{
-			if (!await block.view.validateBlock())
+			if (!await block.view.validate())
 				return(false);
 		}
 
@@ -314,7 +314,7 @@ export class Form
 
 		if (!block.view.validated)
 		{
-			if (!await block.view.validateBlock())
+			if (!await block.view.validate())
 				return(false);
 		}
 

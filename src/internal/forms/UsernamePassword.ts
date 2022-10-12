@@ -22,72 +22,80 @@ export class UsernamePassword extends Form
     public username:string = null;
     public password:string = null;
 
-    constructor(){
-        super(UsernamePassword.page);
-        this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-        this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+	constructor()
+	{
+		super(UsernamePassword.page);
 
-        this.addEventListener(this.setUsrPwd,[
+		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
+		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+
+		this.addEventListener(this.setUsrPwd,
+		[
 			{type: EventType.Mouse,field:"ok", mouse:MouseMap.click},
 			{type: EventType.Key, key:KeyMap.enter}
 		]);
 
-        this.addEventListener(this.cancel,[
-            {type:EventType.Key, field:"close", key: KeyMap.enter},
-            {type:EventType.Mouse, field:"close", mouse:MouseMap.click}
-        ]);
-    }
+		this.addEventListener(this.cancel,
+		[
+			{type:EventType.Key, field:"close", key: KeyMap.enter},
+			{type:EventType.Mouse, field:"close", mouse:MouseMap.click}
+		]);
+   }
 
-    public async cancel(): Promise<boolean>
-    {
-        return(this.close());
-    }
-	public accepted() : boolean
+	public async cancel(): Promise<boolean>
 	{
-        console.log(this.username,this.password)
-	    return(false);
+		return(this.close());
 	}
 
-    private async setUsrPwd():Promise<boolean>
-    {
-        this.username = this.getValue("login","username");
-        this.password = this.getValue("login","password");
-        
-        this.accepted();
-        return(true);
-    }
+	public accepted() : boolean
+	{
+		console.log(this.username,this.password)
+		return(false);
+	}
 
-    private async initialize() : Promise<boolean>
-    {
+	private async setUsrPwd():Promise<boolean>
+	{
+		this.username = this.getValue("login","username");
+		this.password = this.getValue("login","password");
+
+		this.accepted();
+		return(true);
+	}
+
+	private async initialize() : Promise<boolean>
+	{
 		let view:HTMLElement = this.getView();
-        if (this.title == null) this.title = "Login";
+
 		this.setValue("login","username",this.username);
 		this.setValue("login","password",this.password);
 
+		if (this.title == null)
+			this.title = "Login";
+
 		Internals.stylePopupWindow(view,this.title);
 		return(true);
-    }
+	}
 
-    public static page: string =
-    Internals.header +
-    `
+	public static page: string =
+	Internals.header +
+	`
     <div name="popup-body">
-         <div name="login">
-            <p>
-                <label for="username">Username</label>:
-                <input from="login" tabindex="0" name="username" size="11"/>
-            </p>
-            <p>
-                <label for="password">Password</label>:
-                <input type="password" tabindex="1" from="login" name="password" size="11"/>
-            </p>
-        </div>
-        <div name="lowerright">
-            <div name="buttonarea">
-                <button  name="close" tabindex="2">Cancel</button>
-                <button name="ok" tabindex="3">Ok</button>
-            </div>
-        </div>
-    </div>
-    ` + Internals.footer
+		<div name="login">
+			<p>
+					<label for="username">Username</label>:
+					<input from="login" tabindex="0" name="username" size="11"/>
+			</p>
+			<p>
+					<label for="password">Password</label>:
+					<input type="password" tabindex="1" from="login" name="password" size="11"/>
+			</p>
+		</div>
+		<div name="lowerright">
+			<div name="buttonarea">
+					<button  name="close" tabindex="2">Cancel</button>
+					<button name="ok" tabindex="3">Ok</button>
+			</div>
+		</div>
+	</div>
+   ` + Internals.footer
 }

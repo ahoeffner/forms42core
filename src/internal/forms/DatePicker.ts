@@ -33,6 +33,7 @@ export class DatePicker extends Form
 	private day:number = this.date.getDate();
 	private prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
 	private nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
+
 	constructor()
 	{
 		super(DatePicker.page);
@@ -91,7 +92,7 @@ export class DatePicker extends Form
 	{
 		let view:HTMLElement = this.getView();
 
-		Internals.stylePopupWindow(view);
+		Internals.stylePopupWindow(view,"Calendar");
 		Properties.styleDatePicker(view);
 
 		this.input = document.querySelector('input[name="date"]');
@@ -103,7 +104,7 @@ export class DatePicker extends Form
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-		
+
 		this.setValue("calendar","prev",this.leftArrow);
 		this.setValue("calendar","next",this.rightArrow);
 		this.setValue("calendar","date",value);
@@ -125,10 +126,10 @@ export class DatePicker extends Form
 		let space:boolean = event.key == KeyMap.space;
 		let left:boolean = event.key == this.prevstep;
 		let right:boolean = event.key == this.nextstep;
-		
+
 		let row:number = +event.field.substring(4,5);
 		let col:number = +event.field.substring(5,6);
-		
+
 		if (next)
 		{
 			if (this.getValue(event.block,'day-' + (++row) + col))
@@ -144,7 +145,7 @@ export class DatePicker extends Form
 				this.goField(event.block,'day-' + row + col);
 				return(false);
 			}
-		} 
+		}
 		else if (right)
 		{
 			if (this.getValue(event.block,'day-' + row + (++col)))
@@ -170,7 +171,7 @@ export class DatePicker extends Form
 				this.day = this.getValue(event.block,'day-' + row + col);
 				this.date.setDate(this.day);
 				this.setValue("calendar","date",this.date);
-		
+
 				return(true);
 			}
 		}
@@ -189,11 +190,11 @@ export class DatePicker extends Form
 		{
 			this.input && this.input.focus();
 			return(true);
-		}	
+		}
 
 		if (event.field.substring(0,7) == "weekday")
 			return(true);
-		
+
 		this.day = this.getValue(event.block,event.field);
 
 		this.date.setDate(this.day);
@@ -308,7 +309,7 @@ export class DatePicker extends Form
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
 						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
-					</div>		
+					</div>
 				</div>
 			</div>
 		</div>

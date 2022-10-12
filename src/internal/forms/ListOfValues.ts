@@ -16,6 +16,8 @@ import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
 import { ListOfValues as Properties } from "../../application/properties/ListOfValues.js";
+import { KeyMap } from "../../control/events/KeyMap.js";
+import { FormEvent } from "../../../index.js";
 
 
 export class ListOfValues extends Form implements Lov
@@ -24,6 +26,7 @@ export class ListOfValues extends Form implements Lov
 	private results:Block = null;
 	private columns:string[] = null;
 	private props:Properties = null;
+	private cancelled:boolean = true;
 
 	public static DELAY:number = 200;
 
@@ -37,6 +40,18 @@ export class ListOfValues extends Form implements Lov
 	{
 		this.props = props;
 		this.initialize();
+	}
+
+	public accepted() : boolean
+	{
+		return(!this.cancelled);
+	}
+
+	private async done() : Promise<boolean>
+	{
+		this.cancelled = false;
+		console.log(this.results.getValue("display"));
+		return(this.close());
 	}
 
 	private async onKeyStroke() : Promise<boolean>
@@ -57,6 +72,26 @@ export class ListOfValues extends Form implements Lov
 		}
 	}
 
+	private async navigate(event:FormEvent) : Promise<boolean>
+	{
+		//if (event.block == "filter")
+		return(true);
+	}
+
+	private async onFetch() : Promise<boolean>
+	{
+		let display:string = "";
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			if (i > 0) display += " ";
+			display += this.results.getValue(this.columns[i]);
+		}
+
+		this.results.setValue("display",display);
+		return(true);
+	}
+
 	private async initialize() : Promise<boolean>
 	{
 		if (this.props == null)
@@ -75,8 +110,7 @@ export class ListOfValues extends Form implements Lov
 		this.goField("filter","search");
 		this.results = this.getBlock("results");
 
-		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
-		this.addEventListener(this.onKeyStroke,{type: EventType.OnEdit, block: "filter"});
+		this.addListeners();
 
 		this.results.qbeallowed = false;
 		this.results.datasource = this.props.datasource;
@@ -85,25 +119,25 @@ export class ListOfValues extends Form implements Lov
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
-
 		if (this.props.filter.query(this.last))
 			this.results.executeQuery();
 
 		return(true);
 	}
 
-	private async onFetch() : Promise<boolean>
+	private addListeners() : void
 	{
-		let display:string = "";
+		this.addEventListener(this.navigate,
+		[
+			{type: EventType.Key, key: KeyMap.nextfield},
+			{type: EventType.Key, key: KeyMap.prevfield}
+		]);
 
-		for (let i = 0; i < this.columns.length; i++)
-		{
-			if (i > 0) display += " ";
-			display += this.results.getValue(this.columns[i]);
-		}
+		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
+		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 
-		this.results.setValue("display",display);
-		return(true);
+		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
+		this.addEventListener(this.onKeyStroke,{type: EventType.OnEdit, block: "filter"});
 	}
 
 	public static page:string =

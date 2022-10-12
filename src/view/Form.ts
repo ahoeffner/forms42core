@@ -161,7 +161,7 @@ export class Form implements EventListenerObject
 		if (inst == null)
 			return(true);
 
-		if (!await inst.field.block.validateBlock())
+		if (!await inst.field.block.validate())
 			return(false);
 
 		return(this.model.flush());
@@ -209,8 +209,9 @@ export class Form implements EventListenerObject
 				{
 					preform = Form.current();
 
-					if (!preform.validated())
+					if (!await preform.validate())
 					{
+						FlightRecorder.debug("Form '"+preform.name+"' not validated");
 						preform.focus();
 						return(false);
 					}
@@ -240,8 +241,9 @@ export class Form implements EventListenerObject
 
 			if (preblock != nxtblock)
 			{
-				if (!await preblock.validateBlock())
+				if (!await preblock.validate())
 				{
+					FlightRecorder.debug("Block '"+preblock.name+"' not validated");
 					this.focus();
 					return(false);
 				}
@@ -262,6 +264,7 @@ export class Form implements EventListenerObject
 			{
 				if (!await nxtblock.validateRow())
 				{
+					FlightRecorder.debug("Row in '"+nxtblock.name+"' not validated");
 					this.focus();
 					return(false);
 				}

@@ -6,6 +6,7 @@ export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { Connections } from './src/public/Connections.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
+export { DataSource } from './src/model/interfaces/DataSource.js';
 export { Connection as DatabaseConnection } from './src/database/Connection.js';
 
 export { Alert } from './src/internal/forms/Alert.js';

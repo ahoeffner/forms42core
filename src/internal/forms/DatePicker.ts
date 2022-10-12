@@ -29,14 +29,13 @@ export class DatePicker extends Form
 	private disabled:FieldProperties;
 	private leftArrow:String = null;
 	private rightArrow:String = null;
+	private input:HTMLElement = null;
 	private day:number = this.date.getDate();
 	private prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
 	private nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
-
 	constructor()
 	{
 		super(DatePicker.page);
-
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
 		this.addEventListener(this.setDate,
@@ -59,10 +58,9 @@ export class DatePicker extends Form
 
 		this.addEventListener(this.setDay,[
 			{type: EventType.Key, key:KeyMap.enter},
-			{type: EventType.Mouse, mouse:MouseMap.click}
+			{type: EventType.Key, key:KeyMap.escape},
+			{type: EventType.Mouse, mouse:MouseMap.click},
 		]);
-
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.goToPrevMonth,
 		[
@@ -96,6 +94,7 @@ export class DatePicker extends Form
 		Internals.stylePopupWindow(view);
 		Properties.styleDatePicker(view);
 
+		this.input = document.querySelector('input[name="date"]');
 		let props:FieldProperties = this.getBlock("calendar").
 			getDefaultProperties("day-11");
 
@@ -180,16 +179,23 @@ export class DatePicker extends Form
 
 	private async setDay(event:FormEvent) : Promise<boolean>
 	{
+		if (event.key == KeyMap.escape)
+			return(this.close());
+
+		if (event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
+			return(true);
+
 		if (!event.field)
+		{
+			this.input && this.input.focus();
 			return(true);
+		}	
 
-		if(event.field == "prev" || event.field == "next" || event.field == "date" || event.field == "mth")
+		if (event.field.substring(0,7) == "weekday")
 			return(true);
-
-		if(event.field.substring(0,7) == "weekday")
-			return(true);
-
+		
 		this.day = this.getValue(event.block,event.field);
+
 		this.date.setDate(this.day);
 		this.setValue("calendar","date",this.date);
 

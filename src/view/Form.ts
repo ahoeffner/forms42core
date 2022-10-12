@@ -164,7 +164,6 @@ export class Form implements EventListenerObject
 		if (!await inst.field.block.validate())
 			return(false);
 
-		console.log("view flush")
 		return(this.model.flush());
 	}
 

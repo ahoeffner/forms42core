@@ -64,14 +64,12 @@ export class Record
 		this.values$ = [];
 		this.initial$ = [];
 		this.dirty$.clear();
-		this.validated$ = true;
 	}
 
 	public setClean() : void
 	{
 		this.initial$ = [];
 		this.dirty$.clear();
-		this.validated$ = true;
 		this.initial$.push(...this.values$);
 	}
 
@@ -212,7 +210,6 @@ export class Record
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
 		}
 
-		this.validated$ = false;
 		this.values$[idx] = value;
 	}
 

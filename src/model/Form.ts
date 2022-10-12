@@ -78,7 +78,6 @@ export class Form
 
 	public async flush() : Promise<boolean>
 	{
-		console.log("form flush")
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)

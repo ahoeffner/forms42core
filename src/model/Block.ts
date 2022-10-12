@@ -499,7 +499,6 @@ export class Block
 		if (this.qbe.querymode)
 			return(true);
 
-		console.log("block flush")
 		let succces:boolean = await this.validateRecord();
 		if (succces) return(this.wrapper?.flush());
 

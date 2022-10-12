@@ -217,8 +217,6 @@ export class Form implements CanvasComponent
 		if (!await FormBacking.getViewForm(this).validate())
 			return(false);
 
-		await FormBacking.getModelForm(this).flush();
-
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
 

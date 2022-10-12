@@ -26,6 +26,10 @@ import { Canvas, View } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
+/*
+ * Any change to this, must be carried forward to interal/form.
+ * These 2 classes must be identical to avoid a severe javascript brain damage
+ */
 
 export class Form implements CanvasComponent
 {
@@ -67,6 +71,11 @@ export class Form implements CanvasComponent
 	{
 		if (orphanQueries == null) orphanQueries = true;
 		FormBacking.getBacking(this).setLink(master,detail, orphanQueries);
+	}
+
+	public goBlock(block:string) : void
+	{
+		this.getBlock(block)?.focus();
 	}
 
 	public goField(block:string, field:string, clazz?:string) : void

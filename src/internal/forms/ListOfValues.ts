@@ -74,7 +74,8 @@ export class ListOfValues extends Form implements Lov
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		//if (event.block == "filter")
+		if (event.block == "filter") this.goBlock("result");
+		else return(this.results.nextrecord());
 		return(true);
 	}
 

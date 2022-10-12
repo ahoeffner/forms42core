@@ -75,6 +75,11 @@ export class Form implements CanvasComponent
 		FormBacking.getBacking(this).setLink(master,detail, orphanQueries);
 	}
 
+	public goBlock(block:string) : void
+	{
+		this.getBlock(block)?.focus();
+	}
+
 	public goField(block:string, field:string, clazz?:string) : void
 	{
 		this.getBlock(block)?.goField(field,clazz);
@@ -170,7 +175,6 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
-
 	public callback(_form:Form) : CallbackFunction
 	{
 		return;
@@ -199,7 +203,6 @@ export class Form implements CanvasComponent
 			FormBacking.cleanup(this);
 		}
 
-
 		page = Framework.prepare(page);
 		Framework.parse(this,page);
 		back.page = page;
@@ -213,7 +216,11 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		if (!FormBacking.getViewForm(this).validated) return(false);
+		if (!FormBacking.getViewForm(this).validate())
+			return(false);
+
+		await FormBacking.getModelForm(this).flush();
+
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
 

@@ -10,18 +10,7 @@
  * accompanied this code).
  */
 
-import { BindValue } from "../../database/BindValue.js";
-import { QueryFunction } from "../../public/QueryFunction.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
-
-export class ListOfValues
+export interface QueryFunction
 {
-	public rows:number = 8;
-	public title:string = null;
-	public query:QueryFunction;
-	public cssclass:string = null;
-	public autoquery:boolean = false;
-	public bindvalue:BindValue = null;
-	public datasource:DataSource = null;
-	public displayfields:string|string[];
+	query(criteria:string) : boolean;
 }

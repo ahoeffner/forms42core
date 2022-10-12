@@ -17,11 +17,14 @@ export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';
 export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 
+export { QueryFunction } from './src/public/QueryFunction.js';
+export { DateConstraint } from './src/public/DateConstraint.js';
+export { ListOfValues } from './src/application/properties/ListOfValues.js';
+
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { DatePicker as DatePickerConfig } from './src/application/properties/DatePicker.js';
 export { Internals as InternalFormsConfig } from './src/application/properties/Internals.js';
 export { Properties as FormProperties, ScrollDirection } from './src/application/Properties.js';
-
 
 export { block } from './src/application/annotations/block.js';
 export { formevent } from './src/application/annotations/formevent.js';

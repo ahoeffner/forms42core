@@ -79,6 +79,11 @@ export class In implements Filter
 		this.constraint$ = table;
 	}
 
+	public getBindValue(): BindValue
+	{
+		return(this.getBindValues()[0]);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)

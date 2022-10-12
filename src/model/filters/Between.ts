@@ -75,6 +75,11 @@ export class Between implements Filter
 		this.constraint$ = values;
 	}
 
+	public getBindValue(): BindValue
+	{
+		return(this.getBindValues()[0]);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)

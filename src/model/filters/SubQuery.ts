@@ -109,6 +109,14 @@ export class SubQuery implements Filter
 		this.constraint$ = table;
 	}
 
+	public getBindValue(): BindValue
+	{
+		if (this.bindvalues$)
+			return(this.getBindValues()[0]);
+
+		return(null);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		return(this.bindvalues$);

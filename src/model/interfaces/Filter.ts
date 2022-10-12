@@ -19,6 +19,7 @@ export interface Filter
 	asSQL() : string;
 	clone() : Filter;
 	constraint?:any|any[];
+	getBindValue() : BindValue;
 	getBindValues() : BindValue[];
 	getBindValueName() : string|string[];
 	setBindValueName(name:string) : Filter;

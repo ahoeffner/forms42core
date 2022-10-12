@@ -79,6 +79,11 @@ export class Like implements Filter
 		this.constraint$ = this.constraint$.replace("*","%");
 	}
 
+	public getBindValue(): BindValue
+	{
+		return(this.getBindValues()[0]);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)

@@ -67,6 +67,11 @@ export class Equals implements Filter
 		this.constraint$ = value;
 	}
 
+	public getBindValue(): BindValue
+	{
+		return(this.getBindValues()[0]);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		if (this.bindvalues$ == null)

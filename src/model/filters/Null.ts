@@ -64,6 +64,11 @@ export class Null implements Filter
 		this.constraint$ = value;
 	}
 
+	public getBindValue(): BindValue
+	{
+		return(null);
+	}
+
 	public getBindValues(): BindValue[]
 	{
 		return([]);

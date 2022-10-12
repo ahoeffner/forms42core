@@ -12,12 +12,12 @@
 
 import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
+import { KeyMap } from "../../control/events/KeyMap.js";
+import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
 import { ListOfValues as Properties } from "../../application/properties/ListOfValues.js";
-import { KeyMap } from "../../control/events/KeyMap.js";
-import { FormEvent } from "../../../index.js";
 
 
 export class ListOfValues extends Form implements Lov
@@ -49,10 +49,9 @@ export class ListOfValues extends Form implements Lov
 
 	private async done() : Promise<boolean>
 	{
-		await this.close();
 		this.cancelled = false;
 		console.log(this.results.getValue("display"));
-		return(false);
+		return(this.close());
 	}
 
 	private async onKeyStroke() : Promise<boolean>

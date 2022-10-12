@@ -28,7 +28,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 /*
  * Any change to this, must be carried forward to interal/form.
- * These 2 classes must be identical to avoid a severe javascript brain damage
+ * These 2 classes must be identical to avoid asevere javascript brain damage
  */
 
 export class Form implements CanvasComponent
@@ -214,7 +214,7 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		if (!FormBacking.getViewForm(this).validate())
+		if (!await FormBacking.getViewForm(this).validate())
 			return(false);
 
 		await FormBacking.getModelForm(this).flush();

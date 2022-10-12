@@ -32,6 +32,7 @@ export class Record
 	private response$:any = null;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
+	private validated$:boolean = true;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
@@ -64,12 +65,14 @@ export class Record
 		this.values$ = [];
 		this.initial$ = [];
 		this.dirty$.clear();
+		this.validated$ = true;
 	}
 
 	public setClean() : void
 	{
 		this.initial$ = [];
 		this.dirty$.clear();
+		this.validated$ = true;
 		this.initial$.push(...this.values$);
 	}
 
@@ -81,6 +84,16 @@ export class Record
 	public get response() : any
 	{
 		return(this.response$);
+	}
+
+	public get validated() : boolean
+	{
+		return(this.validated$);
+	}
+
+	public set validated(flag:boolean)
+	{
+		this.validated$ = flag;
 	}
 
 	public set response(response:any)
@@ -210,6 +223,7 @@ export class Record
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
 		}
 
+		this.validated$ = false;
 		this.values$[idx] = value;
 	}
 

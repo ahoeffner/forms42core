@@ -355,12 +355,18 @@ export class Block
 		if (record == null)
 			return(true);
 
+		if (record.validated)
+			return(true);
+
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
 
 		if (success)
+		{
+			record.validated = true;
 			success = await this.wrapper.modified(record,false);
+		}
 
 		return(success);
 	}
@@ -499,6 +505,7 @@ export class Block
 		if (this.qbe.querymode)
 			return(true);
 
+		console.log("block flush")
 		let succces:boolean = await this.validateRecord();
 		if (succces) return(this.wrapper?.flush());
 

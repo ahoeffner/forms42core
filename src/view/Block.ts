@@ -100,7 +100,15 @@ export class Block
 
 	public focus() : void
 	{
-		this.current?.focus();
+		if (this.current)
+		{
+			this.current.focus();
+		}
+		else
+		{
+			let state:RecordState = this.model.getRecord().state;
+			this.getCurrentRow()?.getFirstInstance(this.convert(state))?.focus();
+		}
 	}
 
 	public empty(rownum?:number) : boolean

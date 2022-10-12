@@ -78,6 +78,7 @@ export class Form
 
 	public async flush() : Promise<boolean>
 	{
+		console.log("form flush")
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)
@@ -138,9 +139,10 @@ export class Form
 
 	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
 	{
-		if (!await this.eventTransaction.getTrxSlot(block))
+		let running:EventType = this.eventTransaction.getTrxSlot(block);
+
+		if (running)
 		{
-			let running:EventType = this.eventTransaction.getEvent(block);
 			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
@@ -150,9 +152,10 @@ export class Form
 
 	public async setEventTransaction(event:EventType, block:Block, record:Record) : Promise<boolean>
 	{
-		if (!await this.eventTransaction.start(event,block,record))
+		let running:EventType = this.eventTransaction.start(event,block,record);
+
+		if (running)
 		{
-			let running:EventType = this.eventTransaction.getEvent(block);
 			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
@@ -233,7 +236,7 @@ export class Form
 				return(false);
 		}
 
-		this.flush();
+		await this.flush();
 
 		if (block.querymode)
 		{
@@ -318,7 +321,7 @@ export class Form
 				return(false);
 		}
 
-		this.flush();
+		await this.flush();
 
 		if (block.querymode)
 		{

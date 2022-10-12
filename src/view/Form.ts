@@ -164,6 +164,7 @@ export class Form implements EventListenerObject
 		if (!await inst.field.block.validate())
 			return(false);
 
+		console.log("view flush")
 		return(this.model.flush());
 	}
 
@@ -380,6 +381,7 @@ export class Form implements EventListenerObject
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
+		console.log("leave block")
 		if (!await block.model.wait4EventTransaction(EventType.PostBlock)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
 		if (success) success = await block.model.flush();

@@ -216,7 +216,7 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		if (!FormBacking.getViewForm(this).validate())
+		if (!await FormBacking.getViewForm(this).validate())
 			return(false);
 
 		await FormBacking.getModelForm(this).flush();

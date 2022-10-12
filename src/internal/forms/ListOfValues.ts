@@ -49,9 +49,10 @@ export class ListOfValues extends Form implements Lov
 
 	private async done() : Promise<boolean>
 	{
+		await this.close();
 		this.cancelled = false;
 		console.log(this.results.getValue("display"));
-		return(this.close());
+		return(false);
 	}
 
 	private async onKeyStroke() : Promise<boolean>
@@ -74,9 +75,10 @@ export class ListOfValues extends Form implements Lov
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if (event.block == "filter") this.goBlock("result");
-		else return(this.results.nextrecord());
-		return(true);
+		if (event.block == "results") this.goBlock("filter");
+		else 									this.goBlock("results");
+
+		return(false);
 	}
 
 	private async onFetch() : Promise<boolean>

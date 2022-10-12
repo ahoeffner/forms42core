@@ -242,7 +242,7 @@ export class DataSourceWrapper
 		if (!await this.block.preInsert(record))
 			return(false);
 
-		if (!this.source.insert(record))
+		if (!await this.source.insert(record))
 			return(false);
 
 		return(true);
@@ -250,12 +250,14 @@ export class DataSourceWrapper
 
 	public async update(record:Record) : Promise<boolean>
 	{
+		console.log("1 preupdate "+record.getValue("first_name"))
 		if (!await this.block.preUpdate(record))
 			return(false);
 
-		if (!this.source.update(record))
+		if (!await this.source.update(record))
 			return(false);
 
+		console.log("2 preupdate "+record.getValue("first_name"))
 		return(true);
 	}
 
@@ -269,7 +271,7 @@ export class DataSourceWrapper
 		if (!await this.block.preDelete(record))
 			return(false);
 
-		if (!this.source.delete(record))
+		if (!await this.source.delete(record))
 			return(false);
 
 		this.hwm$--;

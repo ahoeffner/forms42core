@@ -19,13 +19,13 @@ export class EventTransaction
 	private transactions:Map<string,Transaction> =
 		new Map<string,Transaction>();
 
-	public async start(event:EventType, block:Block, record:Record) : Promise<boolean>
+	public start(event:EventType, block:Block, record:Record) : EventType
 	{
-		if (!await this.getTrxSlot(block))
-			return(false);
+		let running:EventType = this.getTrxSlot(block);
+		if (running) return(running);
 
 		this.transactions.set(block?.name,new Transaction(event,block,record));
-		return(true);
+		return(null);
 	}
 
 	public running() : number
@@ -53,10 +53,10 @@ export class EventTransaction
 		return(this.transactions.get(block?.name)?.record);
 	}
 
-	public async getTrxSlot(block:Block) : Promise<boolean>
+	public getTrxSlot(block:Block) : EventType
 	{
 		let trx:Transaction = this.transactions.get(block?.name);
-		return(trx == null);
+		return(trx?.event);
 	}
 }
 

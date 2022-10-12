@@ -48,7 +48,7 @@ export class Contains implements Filter
 		this.bindval$ = columns[0];
 
 		for (let i = 1; i < columns.length; i++)
-			this.bindval$ += "."+columns[i];
+			this.bindval$ += "_"+columns[i];
 	}
 
 	public clear() : void

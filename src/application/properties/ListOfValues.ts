@@ -18,8 +18,7 @@ export class ListOfValues
 	public rows:number = 8;
 	public title:string = null;
 	public cssclass:string = null;
-	public query:QueryFilter = null;
-	public autoquery:boolean = false;
+	public filter:QueryFilter = null;
 	public datasource:DataSource = null;
 	public displayfields:string|string[];
 }

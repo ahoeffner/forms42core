@@ -20,9 +20,12 @@ import { ListOfValues as Properties } from "../../application/properties/ListOfV
 
 export class ListOfValues extends Form implements Lov
 {
+	private last:string = "";
 	private results:Block = null;
 	private columns:string[] = null;
-	private props$:Properties = null;
+	private props:Properties = null;
+
+	public static DELAY:number = 200;
 
 	constructor()
 	{
@@ -32,38 +35,58 @@ export class ListOfValues extends Form implements Lov
 
 	public set properties(props:Properties)
 	{
-		this.props$ = props;
+		this.props = props;
 		this.initialize();
+	}
+
+	private async onKeyStroke() : Promise<boolean>
+	{
+		let search:string = this.getValue("filter","search");
+		setTimeout(() => {this.query(search)},ListOfValues.DELAY);
+		return(true);
+	}
+
+	private query(flt:string) : void
+	{
+		if (flt != this.last)
+		{
+			this.last = flt;
+
+			if (this.props.filter.query(flt))
+				this.results.executeQuery();
+		}
 	}
 
 	private async initialize() : Promise<boolean>
 	{
-		if (this.props$ == null)
+		if (this.props == null)
 			return(true);
 
-		let css:string = this.props$.cssclass;
+		let css:string = this.props.cssclass;
 		let page:string = ListOfValues.page;
 
 		page = page.replace("CSS",css ? css : "lov");
-		page = page.replace("ROWS",this.props$.rows+"");
+		page = page.replace("ROWS",this.props.rows+"");
 
 		await this.setView(page);
 		let view:HTMLElement = this.getView();
-		Internals.stylePopupWindow(view,this.props$.title);
+		Internals.stylePopupWindow(view,this.props.title);
 
-		this.goField("search","search");
+		this.goField("filter","search");
 		this.results = this.getBlock("results");
+
 		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
+		this.addEventListener(this.onKeyStroke,{type: EventType.OnEdit, block: "filter"});
 
 		this.results.qbeallowed = false;
-		this.results.datasource = this.props$.datasource;
-		let cols:string|string[] = this.props$.displayfields;
+		this.results.datasource = this.props.datasource;
+		let cols:string|string[] = this.props.displayfields;
 
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
 
-		if (this.props$.autoquery)
+		if (this.props.filter.query(this.last))
 			this.results.executeQuery();
 
 		return(true);
@@ -88,7 +111,7 @@ export class ListOfValues extends Form implements Lov
 	`
 	<div name="popup-body">
 		<div name="lov" class="CSS">
-			<div><input style="margin-bottom: 15px" size=20 name="search" from="search"></div>
+			<div><input style="margin-bottom: 15px" size=20 name="search" from="filter"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly>

@@ -28,7 +28,7 @@ export class ListOfValues extends Form implements Lov
 	private props:Properties = null;
 	private cancelled:boolean = true;
 
-	public static DELAY:number = 200;
+	public static DELAY:number = 167;
 
 	constructor()
 	{

@@ -82,7 +82,7 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!blocks[i].flush())
+			if (!await blocks[i].flush())
 				return(false);
 		}
 
@@ -142,7 +142,8 @@ export class Form
 
 		if (running)
 		{
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			let source:string = this.name+(block ? "."+block.name : "")
+			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
 			return(false);
 		}
 
@@ -155,7 +156,8 @@ export class Form
 
 		if (running)
 		{
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			let source:string = this.name+(block ? "."+block.name : "")
+			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
 			return(false);
 		}
 

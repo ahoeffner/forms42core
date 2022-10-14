@@ -36,6 +36,16 @@ export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';
 export { FilterStructure } from './src/model/FilterStructure.js';
 
+export { Like } from './src/model/filters/Like.js';
+export { ILike } from './src/model/filters/ILike.js';
+export { Equals } from './src/model/filters/Equals.js';
+export { AnyOff } from './src/model/filters/AnyOff.js';
+export { Between } from './src/model/filters/Between.js';
+export { Contains } from './src/model/filters/Contains.js';
+export { LessThan } from './src/model/filters/LessThan.js';
+export { NullFilter } from './src/model/filters/NullFilter.js';
+export { GreaterThan } from './src/model/filters/GreaterThan.js';
+
 export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";
 export { QueryTable } from './src/database/QueryTable.js';

@@ -15,7 +15,7 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class In implements Filter
+export class AnyOff implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -33,9 +33,9 @@ export class In implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): In
+	public clone(): AnyOff
 	{
-		let clone:In = new In(this.column$);
+		let clone:AnyOff = new AnyOff(this.column$);
 		return(clone.setConstraint(this.constraint$));
 	}
 
@@ -44,13 +44,13 @@ export class In implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : In
+	public setBindValueName(name:string) : AnyOff
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any|any[]) : In
+	public setConstraint(values:any|any[]) : AnyOff
 	{
 		this.constraint = values;
 		return(this);

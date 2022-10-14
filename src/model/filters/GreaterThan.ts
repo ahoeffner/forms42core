@@ -15,7 +15,7 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class GT implements Filter
+export class GreaterThan implements Filter
 {
 	private incl:boolean = false;
 	private column$:string = null;
@@ -35,9 +35,9 @@ export class GT implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): GT
+	public clone(): GreaterThan
 	{
-		let clone:GT = new GT(this.column$);
+		let clone:GreaterThan = new GreaterThan(this.column$,this.incl);
 		return(clone.setConstraint(this.constraint$));
 	}
 
@@ -46,13 +46,13 @@ export class GT implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : GT
+	public setBindValueName(name:string) : GreaterThan
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : GT
+	public setConstraint(value:any) : GreaterThan
 	{
 		this.constraint = value;
 		return(this);

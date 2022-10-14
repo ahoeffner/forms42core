@@ -15,19 +15,15 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class LT implements Filter
+export class NullFilter implements Filter
 {
-	private constraint$:any;
-	private incl:boolean = false;
 	private column$:string = null;
 	private bindval$:string = null;
-	private bindvalues$:BindValue[] = null;
+	private constraint$:string = null;
 
-	public constructor(column:string, incl?:boolean)
+	public constructor(column:string)
 	{
-		this.incl = incl;
 		this.column$ = column;
-		this.bindval$ = column;
 	}
 
 	public clear() : void
@@ -35,9 +31,9 @@ export class LT implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): LT
+	public clone() : NullFilter
 	{
-		let clone:LT = new LT(this.column$);
+		let clone:NullFilter = new NullFilter(this.column$);
 		return(clone.setConstraint(this.constraint$));
 	}
 
@@ -46,75 +42,47 @@ export class LT implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name: string) : LT
+	public setBindValueName(name:string) : NullFilter
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(value:any) : LT
+	public setConstraint(value:any) : NullFilter
 	{
 		this.constraint = value;
 		return(this);
 	}
 
-	public get constraint() : any
+	public get constraint() : any|any[]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(value:any)
+	public set constraint(value:any|any[])
 	{
-		this.bindvalues$ = null;
 		this.constraint$ = value;
 	}
 
 	public getBindValue(): BindValue
 	{
-		return(this.getBindValues()[0]);
+		return(null);
 	}
 
 	public getBindValues(): BindValue[]
 	{
-		if (this.bindvalues$ == null)
-		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
-			this.bindvalues$[0].column = this.column$;
-		}
-
-		return(this.bindvalues$);
+		return([]);
 	}
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		if (this.bindvalues$)
-			this.constraint$ = this.bindvalues$[0].value;
-
 		if (this.column$ == null) return(false);
-		if (this.constraint$ == null) return(false);
-
-		let value:any = record.getValue(this.column$.toLowerCase());
-
-		if (this.incl) return(value <= this.constraint$);
-		return(value < this.constraint$);
+		return(record.getValue(this.column$.toLowerCase()) == null);
 	}
 
 	public asSQL() : string
 	{
-		if (!this.constraint$ && !this.bindvalues$)
-			return("1 = 2");
-
-		if (this.bindval$ == null)
-			this.bindval$ = this.column$;
-
-		let gt:string = this.incl ? "<=" : "<";
-		let whch:string = this.column$ + " "+gt+" :"+this.bindval$;
-
-		return(whch)
-	}
-
-	public toString() : string
-	{
-		return(this.asSQL());
+		let whcl:string = this.column$ + " is null";
+		return(whcl)
 	}
 }

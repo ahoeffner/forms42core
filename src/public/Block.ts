@@ -24,6 +24,7 @@ import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
+import { DateConstraint } from './DateConstraint.js';
 
 export class Block
 {
@@ -127,6 +128,11 @@ export class Block
 
 		if (inst != null)
 			inst.focus();
+	}
+
+	public setDateConstraint(field:string, constraint:DateConstraint) : void
+	{
+		FormBacking.getBacking(this.form);
 	}
 
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<any[][]>
@@ -360,8 +366,13 @@ export class Block
 		FieldFeatureFactory.replace(props,inst,Status.update);
 	}
 
-	public async executeQuery(requery?:boolean) : Promise<boolean>
+	public async reQuery() : Promise<boolean>
 	{
-		return(FormBacking.getModelForm(this.form).executeQuery(this.name,requery));
+		return(FormBacking.getModelForm(this.form).executeQuery(this.name,true));
+	}
+
+	public async executeQuery() : Promise<boolean>
+	{
+		return(FormBacking.getModelForm(this.form).executeQuery(this.name,false));
 	}
 }

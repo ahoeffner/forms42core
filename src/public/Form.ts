@@ -28,7 +28,8 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 /*
  * Any change to this, must be carried forward to interal/form.
- * These 2 classes must be identical to avoid asevere javascript brain damage
+ * These 2 classes must be identical to avoid the severe javascript brain damage:
+ * ReferenceError: Cannot access 'Form' before initialization, when forms calling forms
  */
 
 export class Form implements CanvasComponent
@@ -197,6 +198,9 @@ export class Form implements CanvasComponent
 				Alert.warning("Form must be validated before layout can be changed","Validate");
 				return;
 			}
+
+			if (FormBacking.getBacking(this).hasEventListeners())
+				console.warn("Replacing view will remove all event listeners");
 
 			FormBacking.cleanup(this);
 		}

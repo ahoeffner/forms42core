@@ -200,6 +200,9 @@ export class Form implements CanvasComponent
 				return;
 			}
 
+			if (FormBacking.getBacking(this).hasEventListeners())
+				console.warn("Replacing view will remove all event listeners");
+
 			FormBacking.cleanup(this);
 		}
 

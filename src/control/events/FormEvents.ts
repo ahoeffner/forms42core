@@ -175,6 +175,41 @@ export class FormEvents
 		return(id);
 	}
 
+	public static getListener(id:object) : EventListener
+	{
+		let map:Map<EventType,EventListener[]> = null;
+
+		for (let i = 0; i < FormEvents.listeners.length; i++)
+		{
+			let lsnr:EventListener = FormEvents.listeners[i];
+			if (lsnr.id == id) return(lsnr);
+		}
+
+		for (let m = 0; m < 4; m++)
+		{
+			switch(m)
+			{
+				case 0: map = FormEvents.fldlisteners; break;
+				case 1: map = FormEvents.blklisteners; break;
+				case 2: map = FormEvents.frmlisteners; break;
+				case 3: map = FormEvents.applisteners; break;
+			}
+
+			for(let key of map.keys())
+			{
+				let listeners:EventListener[] = map.get(key);
+
+				for (let i = 0; listeners != null &&  i < listeners.length; i++)
+				{
+					if (listeners[i].id == id)
+						return(listeners[i]);
+				}
+			}
+		}
+
+		return(null);
+	}
+
 
 	public static removeListener(id:object) : void
 	{

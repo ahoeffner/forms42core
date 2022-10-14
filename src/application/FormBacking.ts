@@ -210,6 +210,29 @@ export class FormBacking
 		this.listeners$ = listeners;
 	}
 
+	public getListOfValues(block:string, field:string) : ListOfValues
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		return(this.lovs$.get(block).get(field));
+	}
+
+	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
+		let lovs:Map<string,ListOfValues> = this.lovs$.get(block);
+
+		if (lovs == null)
+		{
+			lovs = new Map<string,ListOfValues>();
+			this.lovs$.set(block,lovs);
+		}
+
+		lovs.set(field,lov);
+	}
+
 	public getDateConstaing(block:string, field:string) : DateConstraint
 	{
 		block = block?.toLowerCase();

@@ -31,6 +31,7 @@ import { FlightRecorder } from '../application/FlightRecorder.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
+import { DateConstraint } from '../public/DateConstraint.js';
 
 export class Form implements EventListenerObject
 {
@@ -570,20 +571,8 @@ export class Form implements EventListenerObject
 				return(true);
 			}
 
-			if (key == KeyMap.lov)
-			{
-				let params:Map<string,any> = new Map<string,any>();
-
-				params.set("form",this.parent);
-				params.set("field",inst.name);
-				params.set("block",inst.block);
-				params.set("value",inst.getValue());
-
-				this.parent.callform(Classes.ListOfValuesClass,params);
-				return(true);
-			}
-
-			if (key == KeyMap.calendar)
+			// Allow calendar and lov to map to same key
+			if (key.signature == KeyMap.calendar.signature)
 			{
 				let block:Block = inst.field.block;
 				let type:DataType = block.fieldinfo.get(inst.name).type;
@@ -591,15 +580,33 @@ export class Form implements EventListenerObject
 				if (type == DataType.date || type == DataType.datetime)
 				{
 					let params:Map<string,any> = new Map<string,any>();
+					let backing:FormBacking = FormBacking.getBacking(this.parent);
+					let datecstr:DateConstraint = backing.getDateConstaing(this.name,inst.name)
 
 					params.set("form",this.parent);
 					params.set("field",inst.name);
 					params.set("block",inst.block);
+					params.set("constraint",datecstr);
 					params.set("value",inst.getValue());
 
 					this.parent.callform(Classes.DatePickerClass,params);
 				}
 
+				return(true);
+			}
+
+			// As with calendar
+			if (key.signature == KeyMap.lov.signature)
+			{
+				let params:Map<string,any> = new Map<string,any>();
+				let backing:FormBacking = FormBacking.getBacking(this.parent);
+
+				params.set("form",this.parent);
+				params.set("field",inst.name);
+				params.set("block",inst.block);
+				params.set("value",inst.getValue());
+
+				this.parent.callform(Classes.ListOfValuesClass,params);
 				return(true);
 			}
 

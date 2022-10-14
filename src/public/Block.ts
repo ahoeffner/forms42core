@@ -132,7 +132,7 @@ export class Block
 
 	public setDateConstraint(field:string, constraint:DateConstraint) : void
 	{
-		FormBacking.getBacking(this.form);
+		FormBacking.getBacking(this.form).setDateConstaing(this.name,field,constraint);
 	}
 
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<any[][]>

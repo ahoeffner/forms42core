@@ -82,10 +82,10 @@ export class Between implements Filter
 
 	public getBindValues(): BindValue[]
 	{
-		if (this.bindvalues$ == null)
+		if (this.bindvalues$ == null && this.constraint$ != null)
 		{
-			let b1:BindValue = new BindValue(this.bindval$+"0",this.bindvalues$[0].value);
-			let b2:BindValue = new BindValue(this.bindval$+"1",this.bindvalues$[1].value);
+			let b1:BindValue = new BindValue(this.bindval$+"0",this.constraint$[0]);
+			let b2:BindValue = new BindValue(this.bindval$+"1",this.constraint$[1]);
 
 			b1.column = this.column$;
 			b2.column = this.column$;

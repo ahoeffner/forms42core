@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-import { ListOfValues as Properties } from "../properties/ListOfValues.js";
+import { ListOfValues as Properties } from "../../public/ListOfValues.js";
 
 export interface ListOfValues
 {

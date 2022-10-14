@@ -431,7 +431,10 @@ export class Form implements EventListenerObject
 
 		if (inst == null)
 		{
-			if (key == KeyMap.dates)
+			if (key == KeyMap.lov)
+				inst = this.curinst$;
+
+			if (key == KeyMap.calendar)
 				inst = this.curinst$;
 
 			if (key == KeyMap.delete)
@@ -580,7 +583,7 @@ export class Form implements EventListenerObject
 				return(true);
 			}
 
-			if (key == KeyMap.dates)
+			if (key == KeyMap.calendar)
 			{
 				let block:Block = inst.field.block;
 				let type:DataType = block.fieldinfo.get(inst.name).type;

@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { QueryFilter } from "../../public/QueryFilter.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
+import { QueryFilter } from "./QueryFilter.js";
+import { DataSource } from "../model/interfaces/DataSource.js";
 
 export class ListOfValues
 {
@@ -21,4 +21,7 @@ export class ListOfValues
 	public filter:QueryFilter = null;
 	public datasource:DataSource = null;
 	public displayfields:string|string[];
+
+	public sourcefields:string|string[];
+	public targetfields:string|string[];
 }

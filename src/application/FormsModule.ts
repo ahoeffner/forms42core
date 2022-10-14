@@ -29,7 +29,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
 import { ListOfValues } from '../internal/forms/ListOfValues.js';
-import { ListOfValues as LOVProps } from '../application/properties/ListOfValues.js';
+import { ListOfValues as LOVProps } from '../public/ListOfValues.js';
 
 export class FormsModule
 {
@@ -126,6 +126,7 @@ export class FormsModule
 
 	public async showLOV(props:LOVProps)
 	{
+		console.log(KeyMap.calendar+" "+KeyMap.lov+" "+(KeyMap.calendar == KeyMap.lov))
 		let form:ListOfValues = await this.showform(ListOfValues) as ListOfValues;
 		form.properties = props;
 	}

@@ -16,8 +16,8 @@ import { KeyMap } from "../../control/events/KeyMap.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
+import { ListOfValues as Properties } from "../../public/ListOfValues.js";
 import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
-import { ListOfValues as Properties } from "../../application/properties/ListOfValues.js";
 
 
 export class ListOfValues extends Form implements Lov
@@ -28,7 +28,7 @@ export class ListOfValues extends Form implements Lov
 	private props:Properties = null;
 	private cancelled:boolean = true;
 
-	public static DELAY:number = 167;
+	public static DELAY:number = 150;
 
 	constructor()
 	{
@@ -50,7 +50,27 @@ export class ListOfValues extends Form implements Lov
 	private async done() : Promise<boolean>
 	{
 		this.cancelled = false;
-		console.log(this.results.getValue("display"));
+
+		let form:Form = this.parameters.get("form");
+		let block:string = this.parameters.get("block");
+		let source:string|string[] = this.props.sourcefields;
+		let target:string|string[] = this.props.targetfields;
+
+		if (form && block && source && target)
+		{
+			if (!Array.isArray(source))
+				source = [source];
+
+			if (!Array.isArray(target))
+				target = [target];
+
+			for (let i = 0; i < source.length && i < target.length; i++)
+			{
+				let value:any = this.results.getValue(source[i]);
+				form.setValue(block,target[i],value);
+			}
+		}
+
 		return(this.close());
 	}
 
@@ -99,8 +119,8 @@ export class ListOfValues extends Form implements Lov
 		if (this.props == null)
 			return(true);
 
-		let css:string = this.props.cssclass;
 		let page:string = ListOfValues.page;
+		let css:string = this.props.cssclass;
 
 		page = page.replace("CSS",css ? css : "lov");
 		page = page.replace("ROWS",this.props.rows+"");

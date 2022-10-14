@@ -18,6 +18,7 @@ import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
+import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
@@ -27,9 +28,6 @@ import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
-
-import { ListOfValues } from '../internal/forms/ListOfValues.js';
-import { ListOfValues as LOVProps } from '../public/ListOfValues.js';
 
 export class FormsModule
 {
@@ -126,23 +124,11 @@ export class FormsModule
 
 	public async sendkey(key:KeyMap|string) : Promise<boolean>
 	{
-		let form:Form = FormBacking.getCurrentForm();
 		if (typeof key === "string") key = KeyMap.from(key);
-		let block:string = FormBacking.getCurrentViewForm()?.block?.name;
-		let field:string = FormBacking.getCurrentViewForm()?.instance?.name;
+		let form:ViewForm = FormBacking.getCurrentViewForm();
 
-		let event:FormEvent = null;
-
-		FormEvent.FormEvent()
-
-		return(FormEvents.raise(event))
-	}
-
-	public async showLOV(props:LOVProps)
-	{
-		console.log(KeyMap.calendar+" "+KeyMap.lov+" "+(KeyMap.calendar == KeyMap.lov))
-		let form:ListOfValues = await this.showform(ListOfValues) as ListOfValues;
-		form.properties = props;
+		if (form != null) return(form.keyhandler(key));
+		return(ApplicationHandler.instance.keyhandler(key));
 	}
 
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>

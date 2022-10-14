@@ -16,8 +16,6 @@ import { MouseMap, MouseMapParser } from './MouseMap.js';
 import { BrowserEvent } from '../../view/BrowserEvent.js';
 import { FormBacking } from '../../application/FormBacking.js';
 import { FlightRecorder } from '../../application/FlightRecorder.js';
-import { FormsModule } from '../../application/FormsModule.js';
-import { Classes } from '../../internal/Classes.js';
 
 
 export class ApplicationHandler implements EventListenerObject
@@ -79,39 +77,51 @@ export class ApplicationHandler implements EventListenerObject
 				let frmevent:FormEvent = FormEvent.KeyEvent(null,null,key);
 
 				if (await FormEvents.raise(frmevent))
-				{
-					if (key == KeyMap.dump)
-					{
-						FlightRecorder.dump();
-						return;
-					}
-
-					if (key == KeyMap.save)
-					{
-						await FormBacking.getCurrentForm()?.flush()
-						return;
-					}
-				}
+					this.keyhandler(key);
 			}
 			else
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(this.event);
 				let frmevent:FormEvent = FormEvent.MouseEvent(null,mevent);
-				FormEvents.raise(frmevent);
+				
+				if (await FormEvents.raise(frmevent))
+					this.mousehandler(mevent);
 			}
 		}
 	}
 
-    private addEvents() : void
-    {
-        document.addEventListener("keyup",this);
-        document.addEventListener("keydown",this);
-        document.addEventListener("keypress",this);
+	public async keyhandler(key:KeyMap) : Promise<boolean>
+	{
+		if (key == KeyMap.dump)
+		{
+			FlightRecorder.dump();
+			return(true);
+		}
 
-        document.addEventListener("click",this);
-        document.addEventListener("dblclick",this);
-        //document.addEventListener("contextmenu",this);
+		if (key == KeyMap.save)
+		{
+			await FormBacking.getCurrentForm()?.flush()
+			return(true);
+		}
+
+		return(true);
+	}
+
+	public async mousehandler(_mevent:MouseMap) : Promise<boolean>
+	{
+		return(true);
+	}
+
+	private addEvents() : void
+	{
+		document.addEventListener("keyup",this);
+		document.addEventListener("keydown",this);
+		document.addEventListener("keypress",this);
+
+		document.addEventListener("click",this);
+		document.addEventListener("dblclick",this);
+		//document.addEventListener("contextmenu",this);
 
 		window.matchMedia("(min-width: 600px)").addEventListener("change",this);
-    }
+	}
 }

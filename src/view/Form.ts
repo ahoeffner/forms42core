@@ -19,20 +19,21 @@ import { Classes } from '../internal/Classes.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
+import { ListOfValues } from '../public/ListOfValues.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { Indicator } from '../application/tags/Indicator.js';
+import { DateConstraint } from '../public/DateConstraint.js';
 import { FieldProperties } from '../public/FieldProperties.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FlightRecorder } from '../application/FlightRecorder.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
-import { DateConstraint } from '../public/DateConstraint.js';
-import { ListOfValues } from '../public/ListOfValues.js';
+import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
 export class Form implements EventListenerObject
 {
@@ -610,12 +611,33 @@ export class Form implements EventListenerObject
 					params.set("value",inst.getValue());
 					this.parent.callform(Classes.ListOfValuesClass,params);
 				}
-				
+
 				return(true);
 			}
 
 			return(true);
 		}
+
+		if (!await ApplicationHandler.instance.keyhandler(key))
+			return(false);
+
+		return(true);
+	}
+
+	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
+	{
+		let blk:ModelBlock = inst?.field.block.model;
+
+		if (!this.model.checkEventTransaction(EventType.Mouse,blk))
+			return(false);
+
+		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
+
+		if (!await FormEvents.raise(frmevent))
+			return(false);
+
+		if (!await ApplicationHandler.instance.mousehandler(mevent))
+			return(false);
 
 		return(true);
 	}
@@ -673,17 +695,6 @@ export class Form implements EventListenerObject
 
 		if (next) next.focus();
 		return(next != null);
-	}
-
-	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
-	{
-		let blk:ModelBlock = inst?.field.block.model;
-
-		if (!this.model.checkEventTransaction(EventType.Mouse,blk))
-			return(false);
-
-		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
-		return(FormEvents.raise(frmevent));
 	}
 
 	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>
@@ -786,14 +797,14 @@ export class Form implements EventListenerObject
 		return(FormEvents.raise(frmevent));
 	}
 
-    private addEvents(element:HTMLElement) : void
-    {
-        element.addEventListener("keyup",this);
-        element.addEventListener("keydown",this);
-        element.addEventListener("keypress",this);
+	private addEvents(element:HTMLElement) : void
+	{
+		element.addEventListener("keyup",this);
+		element.addEventListener("keydown",this);
+		element.addEventListener("keypress",this);
 
-        element.addEventListener("click",this);
-        element.addEventListener("dblclick",this);
-        element.addEventListener("contextmenu",this);
-    }
+		element.addEventListener("click",this);
+		element.addEventListener("dblclick",this);
+		element.addEventListener("contextmenu",this);
+	}
 }

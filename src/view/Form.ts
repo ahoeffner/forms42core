@@ -32,6 +32,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
 import { DateConstraint } from '../public/DateConstraint.js';
+import { ListOfValues } from '../public/ListOfValues.js';
 
 export class Form implements EventListenerObject
 {
@@ -588,7 +589,6 @@ export class Form implements EventListenerObject
 					params.set("block",inst.block);
 					params.set("constraint",datecstr);
 					params.set("value",inst.getValue());
-
 					this.parent.callform(Classes.DatePickerClass,params);
 				}
 
@@ -600,13 +600,17 @@ export class Form implements EventListenerObject
 			{
 				let params:Map<string,any> = new Map<string,any>();
 				let backing:FormBacking = FormBacking.getBacking(this.parent);
+				let lov:ListOfValues = backing.getListOfValues(this.name,inst.name);
 
-				params.set("form",this.parent);
-				params.set("field",inst.name);
-				params.set("block",inst.block);
-				params.set("value",inst.getValue());
-
-				this.parent.callform(Classes.ListOfValuesClass,params);
+				if (lov != null)
+				{
+					params.set("form",this.parent);
+					params.set("field",inst.name);
+					params.set("block",inst.block);
+					params.set("value",inst.getValue());
+					this.parent.callform(Classes.ListOfValuesClass,params);
+				}
+				
 				return(true);
 			}
 

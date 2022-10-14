@@ -54,6 +54,11 @@ export class KeyMap
 	public static lov:KeyMap = new KeyMap({key: KeyCodes.f9});
 	public static calendar:KeyMap = new KeyMap({key: KeyCodes.f9});
 
+	public static from(key:string) : KeyMap
+	{
+		return(KeyMap[key]);
+	}
+
 
 	private key$:string;
 	private alt$:boolean;

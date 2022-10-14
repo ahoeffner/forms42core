@@ -124,6 +124,20 @@ export class FormsModule
 		return(false);
 	}
 
+	public async sendkey(key:KeyMap|string) : Promise<boolean>
+	{
+		let form:Form = FormBacking.getCurrentForm();
+		if (typeof key === "string") key = KeyMap.from(key);
+		let block:string = FormBacking.getCurrentViewForm()?.block?.name;
+		let field:string = FormBacking.getCurrentViewForm()?.instance?.name;
+
+		let event:FormEvent = null;
+
+		FormEvent.FormEvent()
+
+		return(FormEvents.raise(event))
+	}
+
 	public async showLOV(props:LOVProps)
 	{
 		console.log(KeyMap.calendar+" "+KeyMap.lov+" "+(KeyMap.calendar == KeyMap.lov))

@@ -28,6 +28,11 @@ export class DatabaseConnection extends URLConnection
 		return(this.conn$.connect(username,password));
 	}
 
+	public connected() : boolean
+	{
+		return(this.conn$.connected());
+	}
+
 	public async commit() : Promise<boolean>
 	{
 		return(this.conn$.commit());

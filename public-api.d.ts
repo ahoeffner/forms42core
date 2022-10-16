@@ -6,8 +6,12 @@ export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { Connections } from './src/public/Connections.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
-export { DataSource } from './src/model/interfaces/DataSource.js';
 export { DatabaseConnection } from './src/public/DatabaseConnection.js';
+
+export { QueryTable } from './src/database/QueryTable.js';
+export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { DataSource } from './src/model/interfaces/DataSource.js';
+export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
 export { Alert } from './src/internal/forms/Alert.js';
 export { BuiltIns } from './src/internal/BuiltIns.js';
@@ -17,8 +21,8 @@ export { Classes as InternalClasses } from './src/internal/Classes.js';
 export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 
 export { QueryFilter } from './src/public/QueryFilter.js';
-export { DateConstraint } from './src/public/DateConstraint.js';
 export { ListOfValues } from './src/public/ListOfValues.js';
+export { DateConstraint } from './src/public/DateConstraint.js';
 
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { DatePicker as DatePickerConfig } from './src/application/properties/DatePicker.js';
@@ -48,13 +52,10 @@ export { GreaterThan } from './src/model/filters/GreaterThan.js';
 
 export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";
-export { QueryTable } from './src/database/QueryTable.js';
 export { ParameterType } from './src/database/Parameter.js';
 export { SQLStatement } from './src/database/SQLStatement.js';
-export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { StoredFunction } from './src/database/StoredFunction.js';
 export { StoredProcedure } from './src/database/StoredProcedure.js';
-export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
 
 export { dates } from './src/model/dates/dates.js';

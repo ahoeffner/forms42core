@@ -20,6 +20,21 @@ export class Connection extends BaseConnection
 	private conn$:string = null;
 	private keepalive$:number = 20;
 
+	// Be able to get the real connection from the public
+	private static conns$:Map<string,Connection> =
+		new Map<string,Connection>();
+
+	public static getConnection(name:string) : Connection
+	{
+		return(this.conns$.get(name));
+	}
+
+	public constructor(name:string, url?:string|URL)
+	{
+		super(name,url);
+		Connection.conns$.set(name,this);
+	}
+
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
 		if (username) this.username = username;

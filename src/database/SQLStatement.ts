@@ -32,13 +32,15 @@ export class SQLStatement
 
 	public constructor(connection:Connection)
 	{
-		if (!(connection instanceof DatabaseConnection))
+		connection = DatabaseConnection.getConnection(connection.name);
+
+		if (connection == null)
 		{
 			Alert.fatal("Connection for database procedure '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 
-		this.conn$ = connection;
+		this.conn$ = connection as DatabaseConnection;
 	}
 
 	public get sql() : string

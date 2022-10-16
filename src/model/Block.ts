@@ -491,6 +491,11 @@ export class Block
 		return(true);
 	}
 
+	public getDirtyCount() : number
+	{
+		return(this.wrapper.getDirtyCount());
+	}
+
 	public async flush() : Promise<boolean>
 	{
 		if (this.ctrlblk)

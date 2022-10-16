@@ -66,6 +66,19 @@ export class DataSourceWrapper
 		return(this.flush());
 	}
 
+	public getDirtyCount() : number
+	{
+		let dirty:number = 0;
+
+		for (let i = 0; i < this.cache$.length; i++)
+		{
+			if (this.cache$[i].dirty)
+				dirty++;
+		}
+
+		return(dirty);
+	}
+
 	public async flush() : Promise<boolean>
 	{
 		try

@@ -13,6 +13,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { Record } from '../model/Record.js';
+import { Alert } from '../application/Alert.js'
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Classes } from '../internal/Classes.js';
@@ -426,7 +427,18 @@ export class Form implements EventListenerObject
 			if (!await inst.field.validate(inst))
 				return(false);
 
-			return(this.model.flush());
+			let dirty:number = this.model.getDirtyCount();
+
+			if (dirty == 0)
+			{
+				Alert.message("Nothing to save","Transactions");
+				return(true);
+			}
+
+			success = await this.model.flush();
+			if (success) Alert.message(dirty+" records successfully saved","Transactions");
+
+			return(success);
 		}
 
 		if (!await FormEvents.raise(frmevent))

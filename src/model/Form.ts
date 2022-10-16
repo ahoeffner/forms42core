@@ -76,6 +76,17 @@ export class Form
 		return(this.blkcord$);
 	}
 
+	public getDirtyCount() : number
+	{
+		let dirty:number = 0;
+		let blocks:Block[] = Array.from(this.blocks$.values());
+
+		for (let i = 0; i < blocks.length; i++)
+			dirty +=  blocks[i].getDirtyCount();
+
+		return(dirty);
+	}
+
 	public async flush() : Promise<boolean>
 	{
 		let blocks:Block[] = Array.from(this.blocks$.values());

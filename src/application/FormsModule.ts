@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from './Alert.js';
 import { Form } from '../public/Form.js';
 import { Class } from '../types/Class.js';
 import { Framework } from './Framework.js';
@@ -129,6 +130,16 @@ export class FormsModule
 
 		if (form != null) return(form.keyhandler(key));
 		return(ApplicationHandler.instance.keyhandler(key));
+	}
+
+	public message(msg:string, title?:string) : void
+	{
+		Alert.message(msg,title);
+	}
+
+	public warning(msg:string, title?:string) : void
+	{
+		Alert.warning(msg,title);
 	}
 
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>

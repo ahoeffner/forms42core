@@ -111,6 +111,22 @@ export class Block
 		}
 	}
 
+	public goField(field:string, clazz?:string) : void
+	{
+		field = field?.toLowerCase();
+		clazz = clazz?.toLowerCase();
+
+		let inst:FieldInstance = null;
+		let ifield:Field = this.getCurrentRow().getField(field);
+
+		if (ifield != null)
+		{
+			let instances:FieldInstance[] = ifield?.getInstancesByClass(clazz);
+			if (instances.length > 0) inst = instances[0];
+			inst?.focus();
+		}
+	}
+
 	public empty(rownum?:number) : boolean
 	{
 		if (rownum == null)
@@ -442,7 +458,7 @@ export class Block
 	public async onEdit(inst:FieldInstance) : Promise<boolean>
 	{
 		this.curinst$ = inst;
-		if (!this.lock(inst)) return(false);
+		if (!await this.lock(inst)) return(false);
 		await this.setEventTransaction(EventType.OnEdit);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnEdit,inst);
 		this.endEventTransaction(EventType.OnEdit,success);

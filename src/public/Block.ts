@@ -13,8 +13,8 @@
 import { Form } from './Form.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
-import { Field } from '../view/fields/Field.js';
 import { Alert } from '../application/Alert.js';
+import { DateConstraint } from './DateConstraint.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { EventType } from '../control/events/EventType.js';
@@ -24,7 +24,6 @@ import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
-import { DateConstraint } from './DateConstraint.js';
 
 export class Block
 {
@@ -114,20 +113,7 @@ export class Block
 
 	public goField(field:string, clazz?:string) : void
 	{
-		field = field?.toLowerCase();
-		clazz = clazz?.toLowerCase();
-
-		let inst:FieldInstance = null;
-		let ifield:Field = FormBacking.getViewBlock(this).getCurrentRow().getField(field);
-
-		if (ifield != null)
-		{
-			let instances:FieldInstance[] = ifield?.getInstancesByClass(clazz);
-			if (instances.length > 0) inst = instances[0];
-		}
-
-		if (inst != null)
-			inst.focus();
+		FormBacking.getViewBlock(this).goField(field,clazz);
 	}
 
 	public setDateConstraint(field:string, constraint:DateConstraint) : void

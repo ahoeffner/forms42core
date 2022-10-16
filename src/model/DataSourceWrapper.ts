@@ -72,7 +72,7 @@ export class DataSourceWrapper
 
 		for (let i = 0; i < this.cache$.length; i++)
 		{
-			if (this.cache$[i].dirty)
+			if (this.cache$[i].dirty && this.cache$[i].prepared)
 				dirty++;
 		}
 

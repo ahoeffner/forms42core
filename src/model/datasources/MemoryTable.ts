@@ -74,6 +74,13 @@ export class MemoryTable implements DataSource
 		return(false);
 	}
 
+	public setData(data:any[][]) : void
+	{
+		this.records$ = [];
+		data.forEach((row) =>
+		{this.records$.push(new Record(this,row));})
+	}
+
 	public clone(columns?:string|string[]) : MemoryTable
 	{
 		let table:any[][] = [];

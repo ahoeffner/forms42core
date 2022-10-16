@@ -67,12 +67,15 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.table$ = table;
 
 		if (!(connection instanceof DatabaseConnection))
+			connection = DatabaseConnection.getConnection(connection.name);
+
+		if (connection == null)
 		{
-			Alert.fatal("Datasource for table '"+table+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			Alert.fatal("Connection for database table '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 
-		this.conn$ = connection;
+		this.conn$ = connection as DatabaseConnection;
 
 		if (columns != null)
 		{

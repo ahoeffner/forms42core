@@ -10,15 +10,17 @@
  * accompanied this code).
  */
 
-import { Connection } from "../database/Connection.js";
+import { Connection as URLConnection } from "../public/Connection.js";
+import { Connection as RestConnection } from "../database/Connection.js";
 
-export class DatabaseConnection
+export class DatabaseConnection extends URLConnection
 {
-	private conn$:Connection = null;
+	private conn$:RestConnection = null;
 
 	public constructor(name:string, url?:string|URL)
 	{
-		this.conn$ = new Connection(name,url);
+		super(name,url);
+		this.conn$ = new RestConnection(name,url);
 	}
 
 	public async connect(username?:string, password?:string) : Promise<boolean>

@@ -32,7 +32,8 @@ export class SQLStatement
 
 	public constructor(connection:Connection)
 	{
-		connection = DatabaseConnection.getConnection(connection.name);
+		if (!(connection instanceof DatabaseConnection))
+			connection = DatabaseConnection.getConnection(connection.name);
 
 		if (connection == null)
 		{

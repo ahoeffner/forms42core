@@ -54,12 +54,15 @@ export class QueryTable extends SQLSource implements DataSource
 		this.sql$ = sql;
 
 		if (!(connection instanceof DatabaseConnection))
+			connection = DatabaseConnection.getConnection(connection.name);
+
+		if (connection == null)
 		{
-			Alert.fatal("Datasource for query '"+sql+"', Connection '"+connection.name+"' is not a DatabaseConnection","Datasource");
+			Alert.fatal("Connection for database statement '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 
-		this.conn$ = connection;
+		this.conn$ = connection as DatabaseConnection;
 		this.cursor$ = "select"+(new Date().getTime());
 	}
 

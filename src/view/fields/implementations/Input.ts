@@ -551,13 +551,13 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.onScrollUp)
 			bubble = true;
 
-		  if (this.event.onScrollDown)
+		if (this.event.onScrollDown)
 			bubble = true;
 
-		  if (this.event.onCtrlKeyDown)
+		if (this.event.onCtrlKeyDown)
 			bubble = true;
 
-		  if (this.event.onFuncKey)
+		if (this.event.onFuncKey)
 			bubble = true;
 
 		if (!this.event.isMouseEvent)

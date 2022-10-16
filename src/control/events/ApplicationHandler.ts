@@ -83,7 +83,7 @@ export class ApplicationHandler implements EventListenerObject
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(this.event);
 				let frmevent:FormEvent = FormEvent.MouseEvent(null,mevent);
-				
+
 				if (await FormEvents.raise(frmevent))
 					this.mousehandler(mevent);
 			}

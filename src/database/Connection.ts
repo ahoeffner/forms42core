@@ -54,6 +54,18 @@ export class Connection extends BaseConnection
 		return(this.conn$ != null);
 	}
 
+	public async commit() : Promise<boolean>
+	{
+		let response:any = await this.patch(this.conn$+"/commit");
+		return(response.success);
+	}
+
+	public async rollback() : Promise<boolean>
+	{
+		let response:any = await this.patch(this.conn$+"/rollback");
+		return(response.success);
+	}
+
 	public async select(sql:SQLRest, cursor:string, rows:number, describe?:boolean) : Promise<Response>
 	{
 		if (describe == null)

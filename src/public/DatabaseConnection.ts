@@ -25,4 +25,14 @@ export class DatabaseConnection
 	{
 		return(this.conn$.connect(username,password));
 	}
+
+	public async commit() : Promise<boolean>
+	{
+		return(this.conn$.commit());
+	}
+
+	public async rollback() : Promise<boolean>
+	{
+		return(this.conn$.rollback());
+	}
 }

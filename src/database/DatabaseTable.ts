@@ -245,8 +245,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!response.success)
 		{
-			console.error(response.message);
-			Alert.warning("Record is locked by another user. Requery to see changes","Lock Record");
+			Alert.warning("Record is locked by another user. Try again later","Lock Record");
 			return(false);
 		}
 
@@ -345,7 +344,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		record.refresh();
 		await this.describe();
 
-		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
+		let sql:SQLRest = SQLRestBuilder.refresh(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
 
 		let response:any = await this.conn$.refresh(sql);

@@ -351,15 +351,19 @@ export class Block
 	public async lock(inst?:FieldInstance) : Promise<boolean>
 	{
 		if (this.model.locked()) return(true);
+		let orig:any = this.model.getValue(inst.name);
 
 		await this.setEventTransaction(EventType.OnLockRecord);
 		let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
 		this.endEventTransaction(EventType.OnLockRecord,success);
 
-		if (!success)
-			return(false);
+		if (success)
+		{
+			success = await this.model.lock();
+			if (!success) inst.setValue(orig);
+		}
 
-		return(this.model.lock());
+		return(success);
 	}
 
 	public async validateField(inst:FieldInstance, value?:any) : Promise<boolean>

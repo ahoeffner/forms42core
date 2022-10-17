@@ -407,6 +407,7 @@ export class Form implements EventListenerObject
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
 	{
 		let success:boolean = false;
+		if (key == null) return(true);
 
 		let block:Block = inst?.field.block;
 		let mblock:ModelBlock = inst?.field.block.model;
@@ -586,7 +587,7 @@ export class Form implements EventListenerObject
 			}
 
 			// Allow calendar and lov to map to same key
-			if (key.signature == KeyMap.calendar.signature)
+			if (key?.signature == KeyMap.calendar.signature)
 			{
 				let block:Block = inst.field.block;
 				let type:DataType = block.fieldinfo.get(inst.name).type;
@@ -609,7 +610,7 @@ export class Form implements EventListenerObject
 			}
 
 			// As with calendar
-			if (key.signature == KeyMap.lov.signature)
+			if (key?.signature == KeyMap.lov.signature)
 			{
 				let params:Map<string,any> = new Map<string,any>();
 				let backing:FormBacking = FormBacking.getBacking(this.parent);

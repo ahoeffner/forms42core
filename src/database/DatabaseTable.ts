@@ -292,6 +292,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			let rec:Record = this.dirty$[i];
 
+			if (rec.failed)
+				continue;
+
 			if (rec.state == RecordState.Inserted)
 			{
 				processed.push(rec);

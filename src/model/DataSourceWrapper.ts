@@ -94,7 +94,7 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
-				if (!records[i].dirty)
+				if (!records[i].dirty || records[i].failed)
 					continue;
 
 				if (records[i].state == RecordState.Inserted)
@@ -162,7 +162,9 @@ export class DataSourceWrapper
 			return(true);
 
 		let success:boolean = await this.source.lock(record);
+
 		if (success) record.locked = true;
+		else 			 record.failed = true;
 
 		return(success);
 	}

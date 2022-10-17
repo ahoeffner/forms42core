@@ -30,6 +30,7 @@ export class Record
 	private values$:any[] = [];
 	private initial$:any[] = [];
 	private response$:any = null;
+	private failed$:boolean = false;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
 	private source$:DataSource = null;
@@ -64,12 +65,16 @@ export class Record
 		this.values$ = [];
 		this.initial$ = [];
 		this.dirty$.clear();
+		this.locked$ = false;
+		this.failed$ = false;
 	}
 
 	public setClean() : void
 	{
 		this.initial$ = [];
 		this.dirty$.clear();
+		this.locked$ = false;
+		this.failed$ = false;
 		this.initial$.push(...this.values$);
 	}
 
@@ -106,6 +111,16 @@ export class Record
 	public set locked(flag:boolean)
 	{
 		this.locked$ = flag;
+	}
+
+	public get failed() : boolean
+	{
+		return(this.failed$);
+	}
+
+	public set failed(flag:boolean)
+	{
+		this.failed$ = flag;
 	}
 
 	public get prepared() : boolean

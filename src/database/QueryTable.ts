@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
 import { BindValue } from "./BindValue.js";
@@ -36,7 +37,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 	private sql$:string = null;
 	private order$:string = null;
-	private cursor$:string = null;
+	private cursor$:Cursor = null;
 
 	private columns$:string[] = [];
 	private fetched$:Record[] = [];
@@ -284,6 +285,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		this.eof$ = true;
 		this.fetched$ = [];
+		this.cursor$ = null;
 
 		if (response)
 			return(response.success);
@@ -294,7 +296,8 @@ export class QueryTable extends SQLSource implements DataSource
 	private createCursor() : void
 	{
 		this.closeCursor();
-		this.cursor$ = "select"+(new Date().getTime());
+		this.cursor$ = new Cursor();
+		this.cursor$.name = "select"+(new Date().getTime());
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>
@@ -323,7 +326,7 @@ export class QueryTable extends SQLSource implements DataSource
 		sql.stmt += this.sql$ + " and 1 = 2";
 
 		let cursor:string = "desc."+(new Date().getTime());
-		let response:any = await this.conn$.select(sql,cursor,1,true);
+		let response:any = await this.conn$.select(sql,null,1,true);
 
 		if (!response.success)
 		{

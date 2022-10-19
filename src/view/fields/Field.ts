@@ -367,7 +367,6 @@ export class Field
 
 		if (!await this.block.validateField(inst,inst.getValue()))
 		{
-			inst.focus();
 			inst.valid = false;
 			this.valid = false;
 

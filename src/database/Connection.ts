@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
@@ -86,7 +87,7 @@ export class Connection extends BaseConnection
 		return(response.success);
 	}
 
-	public async select(sql:SQLRest, cursor:string, rows:number, describe?:boolean) : Promise<Response>
+	public async select(sql:SQLRest, cursor:Cursor, rows:number, describe?:boolean) : Promise<Response>
 	{
 		if (describe == null)
 			describe = false;
@@ -95,13 +96,15 @@ export class Connection extends BaseConnection
 		{
 			rows: rows,
 			compact: true,
-			cursor: cursor,
 			dateformat: "UTC",
 			describe: describe,
 
 			sql: sql.stmt,
 			bindvalues: this.convert(sql.bindvalues)
 		};
+
+		if (cursor)
+			payload.cursor = cursor.name;
 
 		let response:any = await this.post(this.conn$+"/select",payload);
 
@@ -115,9 +118,9 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async fetch(cursor:string) : Promise<Response>
+	public async fetch(cursor:Cursor) : Promise<Response>
 	{
-		let payload:any = {cursor: cursor};
+		let payload:any = {cursor: cursor.name};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
 
 		if (!response.success)
@@ -130,9 +133,9 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async close(cursor:string) : Promise<Response>
+	public async close(cursor:Cursor) : Promise<Response>
 	{
-		let payload:any = {cursor: cursor, close: true};
+		let payload:any = {cursor: cursor.name, close: true};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
 
 		if (!response.success)

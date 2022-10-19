@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
@@ -23,7 +24,7 @@ export class SQLStatement
 	private record$:any[] = null;
 	private response$:any = null;
 	private types:string[] = null;
-	private cursor$:string = null;
+	private cursor$:Cursor = null;
 	private patch$:boolean = false;
 	private message$:string = null;
 	private columns$:string[] = null;
@@ -74,6 +75,50 @@ export class SQLStatement
 		this.bindvalues$.set(bindvalue.name?.toLowerCase(),bindvalue);
 	}
 
+	public async execute() : Promise<boolean>
+	{
+		if (this.sql$ == null) return(false);
+		let type:string = this.sql$.trim().substring(0,6);
+
+		let sql:SQLRest = new SQLRest();
+
+		sql.stmt = this.sql$;
+		sql.bindvalues = [...this.bindvalues$.values()];
+
+		if (type == "select")
+		{
+			this.cursor$ = new Cursor();
+			this.cursor$.name = "sql"+(new Date().getTime());
+		}
+
+		switch(type?.toLowerCase())
+		{
+			case "insert" : this.response$ = await this.conn$.insert(sql); break;
+			case "update" : this.response$ = await this.conn$.update(sql); break;
+			case "delete" : this.response$ = await this.conn$.delete(sql); break;
+			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,1,true); break;
+
+			default: this.response$ = await this.conn$.execute(this.patch$,sql);
+		}
+
+		let success:boolean = this.response$.success;
+
+		if (!success)
+		{
+			this.cursor$ = null;
+			this.message$ = this.response$.message;
+		}
+
+		if (success && type == "select")
+		{
+			this.types = this.response$.types;
+			this.columns$ = this.response$.columns;
+			this.record$ = this.parse(this.response$);
+		}
+
+		return(success);
+	}
+
 	public async fetch() : Promise<any[]>
 	{
 		let record:any[] = null;
@@ -103,45 +148,22 @@ export class SQLStatement
 		return(record);
 	}
 
-	public async execute() : Promise<boolean>
+	public async close() : Promise<boolean>
 	{
-		if (this.sql$ == null) return(false);
-		let type:string = this.sql$.trim().substring(0,6);
+		let response:any = null;
 
-		let sql:SQLRest = new SQLRest();
+		if (this.cursor$ != null && !this.eof$)
+			response = await this.conn$.close(this.cursor$);
 
-		sql.stmt = this.sql$;
-		sql.bindvalues = [...this.bindvalues$.values()];
+		this.eof$ = true;
+		this.record$ = null;
+		this.cursor$ = null;
 
-		if (type == "select")
-			this.cursor$ = "sql"+(new Date().getTime());
+		if (response)
+			return(response.success);
 
-		switch(type?.toLowerCase())
-		{
-			case "insert" : this.response$ = await this.conn$.insert(sql); break;
-			case "update" : this.response$ = await this.conn$.update(sql); break;
-			case "delete" : this.response$ = await this.conn$.delete(sql); break;
-			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,1,true); break;
+		return(true);
 
-			default: this.response$ = await this.conn$.execute(this.patch$,sql);
-		}
-
-		let success:boolean = this.response$.success;
-
-		if (!success)
-		{
-			this.cursor$ = null;
-			this.message$ = this.response$.message;
-		}
-
-		if (success && type == "select")
-		{
-			this.types = this.response$.types;
-			this.columns$ = this.response$.columns;
-			this.record$ = this.parse(this.response$);
-		}
-
-		return(success);
 	}
 
 	private parse(response:any) : any[]

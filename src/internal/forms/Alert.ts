@@ -13,7 +13,6 @@
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
-import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 
@@ -23,9 +22,8 @@ export class Alert extends Form
 	public static HEIGHT:number = null;
 	private closeButton:HTMLElement = null;
 
-	public static BlurStyle:string = 
+	public static BlurStyle:string =
 	`
-	
 	`;
 
 	constructor()
@@ -41,14 +39,14 @@ export class Alert extends Form
 			{type: EventType.Key, key: KeyMap.space},
 		]);
 
-		this.addEventListener(this.closeAlert, 
+		this.addEventListener(this.closeAlert,
 			{type:EventType.Mouse, mouse: MouseMap.click}
 		);
 	}
 
 	private async closeAlert(): Promise<boolean>
 	{
-		this.closeButton.focus();
+		setTimeout(() => {this.closeButton.focus()},5);
 		return(true);
 	}
 
@@ -67,7 +65,7 @@ export class Alert extends Form
 
 		// Block everything else
 		let block:HTMLElement = view.querySelector('div[id="block"]');
-		
+
 		block.style.top = "0";
 		block.style.left = "0";
 		block.style.position = "fixed";
@@ -75,7 +73,7 @@ export class Alert extends Form
 		block.style.height = document.body.offsetHeight+"px";
 		this.setValue("alert","msg",msg);
 
-		this.closeButton.focus();
+		setTimeout(() => {this.closeButton.focus()},5);
 		return(true);
 	}
 

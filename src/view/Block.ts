@@ -351,7 +351,6 @@ export class Block
 	public async lock(inst?:FieldInstance) : Promise<boolean>
 	{
 		if (this.model.locked()) return(true);
-		let orig:any = this.model.getValue(inst.name);
 
 		await this.setEventTransaction(EventType.OnLockRecord);
 		let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
@@ -360,7 +359,13 @@ export class Block
 		if (success)
 		{
 			success = await this.model.lock();
-			if (!success) inst.setValue(orig);
+
+			if (!success)
+			{
+				await this.model.refresh();
+				this.display(this.row,this.model.getRecord());
+				return(false);
+			}
 		}
 
 		return(success);

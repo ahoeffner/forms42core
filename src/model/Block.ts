@@ -402,7 +402,7 @@ export class Block
 	public async lock(record?:Record) : Promise<boolean>
 	{
 		if (this.querymode) return(true);
-		if (record == null)	record = this.getRecord(0);
+		if (record == null) record = this.getRecord(0);
 		return(this.wrapper.lock(record));
 	}
 

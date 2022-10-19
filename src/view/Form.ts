@@ -591,9 +591,9 @@ export class Form implements EventListenerObject
 					params.set("constraint",datecstr);
 					params.set("value",inst.getValue());
 					this.parent.callform(Classes.DatePickerClass,params);
-				}
 
-				return(true);
+					return(true);
+				}
 			}
 
 			// As with calendar
@@ -605,6 +605,7 @@ export class Form implements EventListenerObject
 
 				if (lov != null)
 				{
+					params.set("properties",lov);
 					params.set("form",this.parent);
 					params.set("field",inst.name);
 					params.set("block",inst.block);

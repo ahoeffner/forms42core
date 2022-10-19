@@ -12,15 +12,15 @@
 
 import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
+import { Alert } from "../../application/Alert.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Properties } from "../../public/ListOfValues.js";
-import { ListOfValues as Lov } from "../../application/interfaces/ListOfValues.js";
 
 
-export class ListOfValues extends Form implements Lov
+export class ListOfValues extends Form
 {
 	private last:string = "";
 	private results:Block = null;
@@ -34,12 +34,6 @@ export class ListOfValues extends Form implements Lov
 	{
 		super("");
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-	}
-
-	public set properties(props:Properties)
-	{
-		this.props = props;
-		this.initialize();
 	}
 
 	public accepted() : boolean
@@ -116,8 +110,31 @@ export class ListOfValues extends Form implements Lov
 
 	private async initialize() : Promise<boolean>
 	{
+		this.props = this.parameters.get("properties");
+
 		if (this.props == null)
+		{
+			Alert.fatal("No ListOfValues properties passed","List Of Values");
 			return(true);
+		}
+
+		if (this.props.filter == null)
+		{
+			Alert.fatal("No filter defined in ListOfValues","List Of Values");
+			return(true);
+		}
+
+		if (this.props.datasource == null)
+		{
+			Alert.fatal("No datasource defined in ListOfValues","List Of Values");
+			return(true);
+		}
+
+		if (this.props.displayfields == null)
+		{
+			Alert.fatal("No display fields defined in ListOfValues","List Of Values");
+			return(true);
+		}
 
 		let page:string = ListOfValues.page;
 		let css:string = this.props.cssclass;

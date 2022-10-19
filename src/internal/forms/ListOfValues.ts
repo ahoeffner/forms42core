@@ -80,9 +80,7 @@ export class ListOfValues extends Form
 		if (flt != this.last)
 		{
 			this.last = flt;
-
-			if (this.props.filter.query(flt))
-				this.results.executeQuery();
+			this.results.executeQuery();
 		}
 	}
 
@@ -118,12 +116,6 @@ export class ListOfValues extends Form
 			return(true);
 		}
 
-		if (this.props.filter == null)
-		{
-			Alert.fatal("No filter defined in ListOfValues","List Of Values");
-			return(true);
-		}
-
 		if (this.props.datasource == null)
 		{
 			Alert.fatal("No datasource defined in ListOfValues","List Of Values");
@@ -135,6 +127,12 @@ export class ListOfValues extends Form
 			Alert.fatal("No display fields defined in ListOfValues","List Of Values");
 			return(true);
 		}
+
+		if (this.props.rows == null)
+			this.props.rows = 8;
+
+		this.props.datasource.addColumns(this.props.sourcefields);
+		this.props.datasource.addColumns(this.props.displayfields);
 
 		let page:string = ListOfValues.page;
 		let css:string = this.props.cssclass;
@@ -158,9 +156,7 @@ export class ListOfValues extends Form
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
-		if (this.props.filter.query(this.last))
-			this.results.executeQuery();
-
+		this.results.executeQuery();
 		return(true);
 	}
 

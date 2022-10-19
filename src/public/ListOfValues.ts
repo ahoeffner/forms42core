@@ -10,18 +10,19 @@
  * accompanied this code).
  */
 
-import { QueryFilter } from "./QueryFilter.js";
+import { Filter } from "../model/interfaces/Filter.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 
-export class ListOfValues
+export interface ListOfValues
 {
-	public rows:number = 8;
-	public title:string = null;
-	public cssclass:string = null;
-	public filter:QueryFilter = null;
-	public datasource:DataSource = null;
-	public displayfields:string|string[];
+	rows?:number;
+	title?:string;
+	cssclass?:string;
 
-	public sourcefields:string|string[];
-	public targetfields:string|string[];
+	filter:Filter;
+	datasource:DataSource;
+	displayfields:string|string[];
+
+	sourcefields?:string|string[];
+	targetfields?:string|string[];
 }

@@ -63,14 +63,12 @@ export class QueryTable extends SQLSource implements DataSource
 		}
 
 		this.conn$ = connection as DatabaseConnection;
-		this.cursor$ = "select"+(new Date().getTime());
 	}
 
 	public set sql(sql:string)
 	{
 		this.sql$ = sql;
 		this.described$ = false;
-		this.cursor$ = "select"+(new Date().getTime());
 	}
 
 	public clone() : QueryTable
@@ -234,6 +232,9 @@ export class QueryTable extends SQLSource implements DataSource
 			}
 		}
 
+		if (this.cursor$ != null)
+			this.conn$.close(this.cursor$);
+
 		this.cursor$ = "select"+(new Date().getTime());
 
 		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.sorting);
@@ -312,7 +313,7 @@ export class QueryTable extends SQLSource implements DataSource
 		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,cursor,1,true);
 
-		if (!response.succces)
+		if (!response.success)
 		{
 			Alert.warning("Unable to describe query '"+this.sql$+"'","Database");
 			return(false);

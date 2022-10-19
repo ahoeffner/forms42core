@@ -489,6 +489,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 		}
 
+		if (this.cursor$ != null)
+			this.conn$.close(this.cursor$);
+
 		this.cursor$ = this.name+(new Date().getTime());
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
@@ -568,7 +571,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,cursor,1,true);
 
-		if (!response.succces)
+		if (!response.success)
 		{
 			Alert.warning("Unable to describe table '"+this.table$+"'","Database");
 			return(false);

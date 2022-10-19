@@ -130,6 +130,21 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
+	public async close(cursor:string) : Promise<Response>
+	{
+		let payload:any = {cursor: cursor, close: true};
+		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+
+		if (!response.success)
+		{
+			console.error("close cursor: "+cursor+" failed");
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
+
+		return(response);
+	}
+
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
 		let payload:any =

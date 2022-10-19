@@ -587,7 +587,10 @@ export class Block
 		let record:Record = null;
 
 		if (!await wrapper.query(this.filter))
+		{
+			this.form.QueryManager.setRunning(this,null);
 			return(false);
+		}
 
 		while(!this.view.empty(0))
 		{

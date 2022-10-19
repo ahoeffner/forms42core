@@ -285,7 +285,10 @@ export class QueryTable extends SQLSource implements DataSource
 		this.eof$ = true;
 		this.fetched$ = [];
 
-		return(response.success);
+		if (response)
+			return(response.success);
+
+		return(true);
 	}
 
 	private createCursor() : void

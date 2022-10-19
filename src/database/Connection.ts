@@ -29,6 +29,11 @@ export class Connection extends BaseConnection
 		return(this.conns$.get(name));
 	}
 
+	public static getAllConnections() : Connection[]
+	{
+		return([...this.conns$.values()]);
+	}
+
 	public constructor(name:string, url?:string|URL)
 	{
 		super(name,url);

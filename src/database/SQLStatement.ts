@@ -106,7 +106,7 @@ export class SQLStatement
 	public async execute() : Promise<boolean>
 	{
 		if (this.sql$ == null) return(false);
-		let type:string = this.sql$.substring(0,6);
+		let type:string = this.sql$.trim().substring(0,6);
 
 		let sql:SQLRest = new SQLRest();
 

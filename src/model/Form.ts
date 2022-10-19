@@ -15,6 +15,7 @@ import { Record } from './Record.js';
 import { DataModel } from './DataModel.js';
 import { Alert } from '../application/Alert.js';
 import { Form as ViewForm } from '../view/Form.js';
+import { Connection } from '../database/Connection.js';
 import { Logger, Type } from '../application/Logger.js';
 import { DataSource } from './interfaces/DataSource.js';
 import { EventTransaction } from './EventTransaction.js';
@@ -87,17 +88,18 @@ export class Form
 		return(dirty);
 	}
 
-	public async flush() : Promise<boolean>
+	public async flush() : Promise<number>
 	{
+		let dirty:number = this.getDirtyCount();
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)
 		{
 			if (!await blocks[i].flush())
-				return(false);
+				return(-1);
 		}
 
-		return(true);
+		return(dirty);
 	}
 
 	public getBlocks() : Block[]
@@ -221,6 +223,23 @@ export class Form
 	public getQueryMaster() : Block
 	{
 		return(this.qrymgr$.QueryMaster);
+	}
+
+	public async save() : Promise<boolean>
+	{
+		if (!await this.view.validate())
+			return(false);
+
+		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].connected())
+				await dbconns[i].commit();
+		}
+
+		Alert.message("Transactions successfully saved","Transactions");
+		return(true);
 	}
 
 	public async enterQuery(block:Block|string) : Promise<boolean>

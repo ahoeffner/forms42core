@@ -168,7 +168,8 @@ export class Form implements EventListenerObject
 		if (!await inst.field.block.validate())
 			return(false);
 
-		return(this.model.flush());
+		let saved:number = await this.model.flush();
+		return(saved >= 0);
 	}
 
 	public validated() : boolean
@@ -425,21 +426,7 @@ export class Form implements EventListenerObject
 
 		if (key == KeyMap.save)
 		{
-			if (!await inst.field.validate(inst))
-				return(false);
-
-			let dirty:number = this.model.getDirtyCount();
-
-			if (dirty == 0)
-			{
-				Alert.message("Nothing to save","Transactions");
-				return(true);
-			}
-
-			success = await this.model.flush();
-			if (success) Alert.message(dirty+" records successfully saved","Transactions");
-
-			return(success);
+			return(this.model.save());
 		}
 
 		if (!await FormEvents.raise(frmevent))

@@ -104,7 +104,14 @@ export class Connection extends BaseConnection
 		};
 
 		if (cursor)
+		{
 			payload.cursor = cursor.name;
+
+			cursor.pos = 0;
+			cursor.rows = rows;
+			cursor.stmt = sql.stmt;
+			cursor.bindvalues = sql.bindvalues;
+		}
 
 		let response:any = await this.post(this.conn$+"/select",payload);
 
@@ -130,6 +137,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		cursor.pos += response.rows.length;
 		return(response);
 	}
 

@@ -10,8 +10,13 @@
  * accompanied this code).
  */
 
+import { BindValue } from "./BindValue";
+
 export class Cursor
 {
 	pos:number = 0;
+	rows:number = 0;
 	name:string = null;
+	stmt:string = null;
+	bindvalues:BindValue[] = null;
 }

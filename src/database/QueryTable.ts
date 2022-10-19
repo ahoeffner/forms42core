@@ -295,7 +295,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 	private createCursor() : void
 	{
-		if (this.cursor$ != null)
+		if (this.cursor$ && !this.cursor$.eof)
 			this.conn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor();

@@ -235,7 +235,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(true);
 
 		let sql:SQLRest = null;
-		await this.describe();
+
+		if (!await this.describe())
+			return(false);
 
 		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
@@ -285,7 +287,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return([]);
 		}
 
-		await this.describe();
+		if (!await this.describe())
+			return(null);
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
@@ -341,8 +344,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	public async refresh(record:Record) : Promise<void>
 	{
+		if (!await this.describe())
+			return;
+
 		record.refresh();
-		await this.describe();
 
 		let sql:SQLRest = SQLRestBuilder.refresh(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
@@ -400,7 +405,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(null);
 		}
 
-		await this.describe();
+		if (!await this.describe())
+			return(null);
 
 		if (this.limit$ != null)
 		{
@@ -448,7 +454,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(false);
 		}
 
-		await this.describe();
+		if (!await this.describe())
+			return(false);
 
 		if (this.limit$ != null)
 		{
@@ -560,6 +567,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,cursor,1,true);
+
+		if (!response.succces)
+		{
+			Alert.warning("Unable to describe table '"+this.table$+"'","Database");
+			return(false);
+		}
 
 		let columns:string[] = response.columns;
 

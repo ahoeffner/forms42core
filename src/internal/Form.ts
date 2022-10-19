@@ -140,6 +140,11 @@ export class Form implements CanvasComponent
 		FormBacking.getModelForm(this).setDataSource(block?.toLowerCase(),source);
 	}
 
+	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
+	{
+		FormBacking.getBacking(this).setListOfValues(block,field,lov);
+	}
+
 	public getValue(block:string, field:string) : any
 	{
 		return(this.getBlock(block)?.getValue(field));

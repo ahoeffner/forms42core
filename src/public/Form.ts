@@ -25,6 +25,7 @@ import { EventFilter } from '../control/events/EventFilter.js';
 import { Canvas, View } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { ListOfValues } from './ListOfValues.js';
 
 /*
  * Any change to this, must be carried forward to interal/form.
@@ -137,6 +138,11 @@ export class Form implements CanvasComponent
 	public setDataSource(block:string,source:DataSource) : void
 	{
 		FormBacking.getModelForm(this).setDataSource(block?.toLowerCase(),source);
+	}
+
+	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
+	{
+		FormBacking.getBacking(this).setListOfValues(block,field,lov);
 	}
 
 	public getValue(block:string, field:string) : any

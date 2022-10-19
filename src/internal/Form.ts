@@ -15,6 +15,7 @@ import { Block } from '../public/Block.js';
 import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
 import { Framework } from '../application/Framework.js';
+import { ListOfValues } from '../public/ListOfValues.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';

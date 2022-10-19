@@ -14,6 +14,7 @@ import { Block } from './Block.js';
 import { Class } from '../types/Class.js';
 import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
+import { ListOfValues } from './ListOfValues.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
 import { CallbackFunction } from './CallbackFunction.js';
@@ -25,7 +26,6 @@ import { EventFilter } from '../control/events/EventFilter.js';
 import { Canvas, View } from '../application/interfaces/Canvas.js';
 import { CanvasComponent } from '../application/CanvasComponent.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
-import { ListOfValues } from './ListOfValues.js';
 
 /*
  * Any change to this, must be carried forward to interal/form.

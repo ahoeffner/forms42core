@@ -232,10 +232,7 @@ export class QueryTable extends SQLSource implements DataSource
 			}
 		}
 
-		if (this.cursor$ != null)
-			this.conn$.close(this.cursor$);
-
-		this.cursor$ = "select"+(new Date().getTime());
+		this.createCursor();
 
 		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
@@ -280,9 +277,21 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async closeCursor() : Promise<boolean>
 	{
+		let response:any = null;
+
+		if (this.cursor$ != null && !this.eof$)
+			response = await this.conn$.close(this.cursor$);
+
 		this.eof$ = true;
 		this.fetched$ = [];
-		return(true);
+
+		return(response.success);
+	}
+
+	private createCursor() : void
+	{
+		this.closeCursor();
+		this.cursor$ = "select"+(new Date().getTime());
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>

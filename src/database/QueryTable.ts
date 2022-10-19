@@ -32,7 +32,6 @@ export class QueryTable extends SQLSource implements DataSource
 	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
 
-	private eof$:boolean = false;
 	private described$:boolean = false;
 
 	private sql$:string = null;
@@ -188,7 +187,6 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async query(filter?:FilterStructure) : Promise<boolean>
 	{
-		this.eof$ = false;
 		this.fetched$ = [];
 		this.nosql$ = null;
 		filter = filter?.clone();
@@ -246,6 +244,9 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public async fetch() : Promise<Record[]>
 	{
+		if (this.cursor$ == null)
+			return([]);
+
 		if (this.fetched$.length > 0)
 		{
 			let fetched:Record[] = [];
@@ -255,7 +256,7 @@ export class QueryTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		if (this.eof$)
+		if (this.cursor$.eof)
 			return([]);
 
 		let response:any = await this.conn$.fetch(this.cursor$);
@@ -280,10 +281,9 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 		let response:any = null;
 
-		if (this.cursor$ != null && !this.eof$)
+		if (this.cursor$ && !this.cursor$.eof)
 			response = await this.conn$.close(this.cursor$);
 
-		this.eof$ = true;
 		this.fetched$ = [];
 		this.cursor$ = null;
 
@@ -295,7 +295,9 @@ export class QueryTable extends SQLSource implements DataSource
 
 	private createCursor() : void
 	{
-		this.closeCursor();
+		if (this.cursor$ != null)
+			this.conn$.close(this.cursor$);
+
 		this.cursor$ = new Cursor();
 		this.cursor$.name = "select"+(new Date().getTime());
 	}
@@ -324,8 +326,6 @@ export class QueryTable extends SQLSource implements DataSource
 		if (this.described$) return(true);
 
 		sql.stmt += this.sql$ + " and 1 = 2";
-
-		let cursor:string = "desc."+(new Date().getTime());
 		let response:any = await this.conn$.select(sql,null,1,true);
 
 		if (!response.success)
@@ -364,12 +364,12 @@ export class QueryTable extends SQLSource implements DataSource
 	private parse(response:any) : Record[]
 	{
 		let fetched:Record[] = [];
-		this.eof$ = !response.more;
 		let rows:any[][] = response.rows;
+		this.cursor$.eof = !response.more;
 
 		if (!response.success)
 		{
-			this.eof$ = true;
+			this.cursor$ = null;
 			return(fetched);
 		}
 

@@ -18,5 +18,6 @@ export class Cursor
 	rows:number = 0;
 	name:string = null;
 	stmt:string = null;
+	eof:boolean = false;
 	bindvalues:BindValue[] = null;
 }

@@ -15,6 +15,7 @@ import { Case } from "../../public/Case.js";
 import { Block } from "../../public/Block.js";
 import { Alert } from "../../application/Alert.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
+import { MouseMap } from "../../control/events/MouseMap.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
@@ -231,6 +232,7 @@ export class ListOfValues extends Form
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.done,{type: EventType.Mouse, mouse: MouseMap.dblclick});
 
 		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});
 		this.addEventListener(this.onKeyStroke,{type: EventType.OnEdit, block: "filter"});

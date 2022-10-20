@@ -77,13 +77,13 @@ export class Connection extends BaseConnection
 
 	public async commit() : Promise<boolean>
 	{
-		let response:any = await this.patch(this.conn$+"/commit");
+		let response:any = await this.post(this.conn$+"/commit");
 		return(response.success);
 	}
 
 	public async rollback() : Promise<boolean>
 	{
-		let response:any = await this.patch(this.conn$+"/rollback");
+		let response:any = await this.post(this.conn$+"/rollback");
 		return(response.success);
 	}
 
@@ -194,7 +194,7 @@ export class Connection extends BaseConnection
 		};
 
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
-		let response:any = await this.patch(this.conn$+"/insert"+returnclause,payload);
+		let response:any = await this.post(this.conn$+"/insert"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -216,7 +216,7 @@ export class Connection extends BaseConnection
 		};
 
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
-		let response:any = await this.patch(this.conn$+"/update"+returnclause,payload);
+		let response:any = await this.post(this.conn$+"/update"+returnclause,payload);
 
 		if (!response.success)
 		{
@@ -238,7 +238,7 @@ export class Connection extends BaseConnection
 		};
 
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
-		let response:any = await this.patch(this.conn$+"/delete"+returnclause,payload);
+		let response:any = await this.post(this.conn$+"/delete"+returnclause,payload);
 
 		if (!response.success)
 		{

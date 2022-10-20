@@ -138,7 +138,7 @@ export class QueryTable extends SQLSource implements DataSource
 			if (filter instanceof FilterStructure)
 			{
 				this.limit$ = filter;
-				return;
+				return(this);
 			}
 
 			this.limit$ = new FilterStructure();

@@ -30,7 +30,7 @@ export class ListOfValues extends Form
 	private props:Properties = null;
 	private cancelled:boolean = true;
 
-	public static DELAY:number = 150;
+	public static DELAY:number = 350;
 
 	constructor()
 	{

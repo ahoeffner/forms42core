@@ -88,7 +88,7 @@ export class FilterStructure
 		}
 	}
 
-	public or(filter:Filter|FilterStructure, name?:string) : void
+	public or(filter:Filter|FilterStructure, name?:string) : FilterStructure
 	{
 		if (filter == this)
 			return;
@@ -103,9 +103,11 @@ export class FilterStructure
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
+
+		return(this);
 	}
 
-	public and(filter:Filter|FilterStructure, name?:string) : void
+	public and(filter:Filter|FilterStructure, name?:string) : FilterStructure
 	{
 		if (filter == this)
 			return;
@@ -120,6 +122,8 @@ export class FilterStructure
 			this.filteridx$.set(filter,cstr);
 			this.entries$.push(cstr);
 		}
+
+		return(this);
 	}
 
 	public get(field:string) : Filter|FilterStructure

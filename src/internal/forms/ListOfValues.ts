@@ -199,7 +199,10 @@ export class ListOfValues extends Form
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
-		this.query(null);
+		let start:string = this.parameters.get("value")+"";
+		this.setValue("filter","search",start);
+
+		this.query(start);
 		return(true);
 	}
 

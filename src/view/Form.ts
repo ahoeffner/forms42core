@@ -483,6 +483,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.escape)
 			{
+				if (inst.field.block.empty())
+					return(true);
+
 				if (inst.field.row.status == Status.qbe)
 				{
 					inst.field.block.cancel();
@@ -495,6 +498,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.enter)
 			{
+				if (inst.field.block.empty())
+					return(true);
+
 				if (!await inst.field.validate(inst))
 					return(false);
 
@@ -504,6 +510,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.requery)
 			{
+				if (inst.field.block.empty())
+					return(true);
+
 				if (mblock.querymode)
 					return(false);
 
@@ -567,6 +576,8 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.delete)
 			{
+				if (inst.field.block.empty()) return(true);
+
 				if (!mblock.ctrlblk && mblock.deleteallowed)
 					mblock.delete();
 
@@ -577,6 +588,7 @@ export class Form implements EventListenerObject
 			if (key?.signature == KeyMap.calendar.signature)
 			{
 				let block:Block = inst.field.block;
+				if (inst.field.block.empty()) return(true);
 				let type:DataType = block.fieldinfo.get(inst.name).type;
 
 				if (type == DataType.date || type == DataType.datetime)
@@ -599,6 +611,7 @@ export class Form implements EventListenerObject
 			// As with calendar
 			if (key?.signature == KeyMap.lov.signature)
 			{
+				if (inst.field.block.empty()) return(true);
 				let params:Map<string,any> = new Map<string,any>();
 				let backing:FormBacking = FormBacking.getBacking(this.parent);
 				let lov:ListOfValues = backing.getListOfValues(this.name,inst.name);

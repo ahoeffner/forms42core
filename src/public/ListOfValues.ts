@@ -11,6 +11,7 @@
  */
 
 import { Case } from "./Case.js";
+import { BindValue } from "../database/BindValue.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 
@@ -21,7 +22,8 @@ export interface ListOfValues
 	cssclass?:string;
 
 	datasource:DataSource;
-	filter:Filter|Filter[];
+	filter?:Filter|Filter[];
+	bindvalue?:BindValue|BindValue[];
 
 	filterCase?:Case;
 	filterPrefix?:string;

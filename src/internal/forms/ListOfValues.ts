@@ -81,9 +81,6 @@ export class ListOfValues extends Form
 		if (flt == null)
 			flt = "";
 
-		if (!this.props.filter)
-			return;
-
 		if (flt.length < this.props.filterMinLength)
 			return;
 
@@ -104,8 +101,17 @@ export class ListOfValues extends Form
 			if (this.props.filterPostfix)
 				flt += this.props.filterPostfix;
 
-			if (!Array.isArray(this.props.filter)) this.props.filter = [this.props.filter];
-			this.props.filter.forEach((filter) => {filter.constraint = flt});
+			if (this.props.filter)
+			{
+				if (!Array.isArray(this.props.filter)) this.props.filter = [this.props.filter];
+				this.props.filter.forEach((filter) => {filter.constraint = flt});
+			}
+
+			if (this.props.bindvalue)
+			{
+				if (!Array.isArray(this.props.bindvalue)) this.props.bindvalue = [this.props.bindvalue];
+				this.props.bindvalue.forEach((bindvalue) => {bindvalue.value = flt});
+			}
 
 			this.results.executeQuery();
 		}

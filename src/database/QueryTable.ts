@@ -126,11 +126,12 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this);
 	}
 
-	public addColumns(_columns:string|string[]) : void
+	public addColumns(_columns:string|string[]) : QueryTable
 	{
+		return(this);
 	}
 
-	public addFilter(filter:Filter | FilterStructure) : void
+	public addFilter(filter:Filter | FilterStructure) : QueryTable
 	{
 		if (this.limit$ == null)
 		{
@@ -144,6 +145,7 @@ export class QueryTable extends SQLSource implements DataSource
 		}
 
 		this.limit$.and(filter);
+		return(this);
 	}
 
 	public async lock(_record:Record) : Promise<boolean>

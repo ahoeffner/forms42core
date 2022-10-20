@@ -128,7 +128,23 @@ export class MemoryTable implements DataSource
 		return(this.columns$);
 	}
 
-	public addFilter(filter:Filter | FilterStructure) : void
+	public addColumns(columns:string|string[]) : MemoryTable
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		columns.forEach((column) =>
+		{
+			column = column?.toLowerCase();
+
+			if (column && !this.columns$.includes(column))
+				this.columns$.push(column);
+		})
+
+		return(this);
+	}
+
+	public addFilter(filter:Filter | FilterStructure) : MemoryTable
 	{
 		if (this.limit$ == null)
 		{
@@ -142,20 +158,7 @@ export class MemoryTable implements DataSource
 		}
 
 		this.limit$.and(filter);
-	}
-
-	public addColumns(columns:string|string[]) : void
-	{
-		if (!Array.isArray(columns))
-			columns = [columns];
-
-		columns.forEach((column) =>
-		{
-			column = column?.toLowerCase();
-
-			if (column && !this.columns$.includes(column))
-				this.columns$.push(column);
-		})
+		return(this);
 	}
 
 	public async lock(_record:Record) : Promise<boolean>

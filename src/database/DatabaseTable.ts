@@ -204,15 +204,16 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.dmlcols$ = this.mergeColumns(this.dmlcols$,columns);
 	}
 
-	public addColumns(columns:string|string[]) : void
+	public addColumns(columns:string|string[]) : DatabaseTable
 	{
 		if (!Array.isArray(columns))
 			columns = [columns];
 
 		this.columns$ = this.mergeColumns(this.columns$,columns);
+		return(this);
 	}
 
-	public addFilter(filter:Filter | FilterStructure) : void
+	public addFilter(filter:Filter | FilterStructure) : DatabaseTable
 	{
 		if (this.limit$ == null)
 		{
@@ -226,6 +227,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 
 		this.limit$.and(filter);
+		return(this);
 	}
 
 	public async lock(record:Record) : Promise<boolean>

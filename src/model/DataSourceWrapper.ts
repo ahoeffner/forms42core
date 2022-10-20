@@ -99,23 +99,41 @@ export class DataSourceWrapper
 
 				if (records[i].state == RecordState.Inserted)
 				{
+					records[i].flushing = true;
 					succces = await this.block.postInsert(records[i]);
-					if (succces) records[i].state = RecordState.Query;
-					if (succces) records[i].setClean();
+					records[i].flushing = false;
+
+					if (succces)
+					{
+						records[i].state = RecordState.Query;
+						records[i].setClean();
+					}
 				}
 
 				if (records[i].state == RecordState.Updated)
 				{
+					records[i].flushing = true;
 					succces = await this.block.postUpdate(records[i]);
-					if (succces) records[i].state = RecordState.Query;
-					if (succces) records[i].setClean();
+					records[i].flushing = false;
+
+					if (succces)
+					{
+						records[i].state = RecordState.Query;
+						records[i].setClean();
+					}
 				}
 
 				if (records[i].state == RecordState.Deleted)
 				{
+					records[i].flushing = true;
 					succces = await this.block.postDelete(records[i]);
-					if (succces) records[i].state = RecordState.Query;
-					if (succces) records[i].setClean();
+					records[i].flushing = false;
+
+					if (succces)
+					{
+						records[i].state = RecordState.Query;
+						records[i].setClean();
+					}
 				}
 			}
 

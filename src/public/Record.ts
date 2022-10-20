@@ -15,6 +15,7 @@ import { Field } from "../view/fields/Field.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { Record as Internal, RecordState } from "../model/Record.js";
+import { Column } from "../application/Column.js";
 
 export class Record
 {
@@ -55,6 +56,11 @@ export class Record
 		return(this.rec$.getValue(field));
 	}
 
+	public setDirty(field:string) : void
+	{
+		this.rec$.setDirty(field);
+	}
+
 	public setValue(field:string, value:any) : void
 	{
 		field = field?.toLowerCase();
@@ -65,6 +71,7 @@ export class Record
 		if (row != null)
 		{
 			let fld:Field = row.getField(field);
+			if (this.rec$.dirty) row.invalidate();
 
 			if (fld != null)
 			{

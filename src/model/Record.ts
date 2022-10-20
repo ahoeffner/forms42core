@@ -33,6 +33,7 @@ export class Record
 	private failed$:boolean = false;
 	private locked$:boolean = false;
 	private prepared$:boolean = false;
+	private flushing$:boolean = false;
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
@@ -133,6 +134,16 @@ export class Record
 		this.prepared$ = flag;
 	}
 
+	public get flushing() : boolean
+	{
+		return(this.flushing$);
+	}
+
+	public set flushing(flag:boolean)
+	{
+		this.flushing$ = flag;
+	}
+
 	public get values() : {name:string,value:any}[]
 	{
 		let values:{name:string, value:any}[] = [];
@@ -221,7 +232,7 @@ export class Record
 
 		if (idx < this.source.columns.length)
 		{
-			if (update) this.dirty$.add(column);
+			if (update && !this.flushing) this.dirty$.add(column);
 			if (value == this.initial$[idx]) this.dirty$.delete(column);
 		}
 
@@ -231,6 +242,15 @@ export class Record
 	public getDirty() : string[]
 	{
 		return([...this.dirty$]);
+	}
+
+	public setDirty(column:string) : void
+	{
+		column = column.toLowerCase();
+		let idx:number = this.indexOf(column);
+
+		if (idx < this.source.columns.length)
+			this.dirty$.add(column);
 	}
 
 	public get columns() : string[]

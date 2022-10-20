@@ -15,7 +15,6 @@ import { Field } from "../view/fields/Field.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { Record as Internal, RecordState } from "../model/Record.js";
-import { Column } from "../application/Column.js";
 
 export class Record
 {
@@ -57,7 +56,7 @@ export class Record
 	}
 
 	/**
-	 * Make sure the datasource marks this record updated
+	 * Make sure the datasource marks this record updated.
 	 * @param field any non derived field
 	 */
 	public setDirty(field:string) : void

@@ -246,7 +246,7 @@ export class Record
 
 	public setDirty(column:string) : void
 	{
-		column = column.toLowerCase();
+		column = column?.toLowerCase();
 		let idx:number = this.indexOf(column);
 
 		if (idx < this.source.columns.length)

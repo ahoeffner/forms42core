@@ -10,25 +10,10 @@
  * accompanied this code).
  */
 
-import { Case } from "./Case.js";
-import { Filter } from "../model/interfaces/Filter.js";
-import { DataSource } from "../model/interfaces/DataSource.js";
-
-export interface ListOfValues
+export enum Case
 {
-	rows?:number;
-	title?:string;
-	cssclass?:string;
-
-	datasource:DataSource;
-	filter:Filter|Filter[];
-
-	filterCase?:Case;
-	filterPrefix?:string;
-	filterPostfix?:string;
-	filterMinLength?:number;
-
-	displayfields:string|string[];
-	sourcefields?:string|string[];
-	targetfields?:string|string[];
+	mixed,
+	lower,
+	upper,
+	initcap
 }

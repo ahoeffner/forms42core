@@ -99,11 +99,14 @@ export class Form
 				return(-1);
 		}
 
+		let masters:Block[] = [...this.blocks$.values()];
 		let newid:object = this.QueryManager.startNewChain();
-		let masters:Block[] = this.blkcord$.getMasterBlocks();
 
 		for (let i = 0; i < masters.length; i++)
-			masters[i].executeQuery(newid)
+		{
+			if (this.blkcord$.getMasterBlocks(masters[i]).length == 0)
+				masters[i].executeQuery(newid)
+		}
 
 		console.log("undo "+dirty+" records")
 		return(dirty);

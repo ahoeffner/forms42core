@@ -623,8 +623,6 @@ export class Form implements EventListenerObject
 
 				return(true);
 			}
-
-			return(true);
 		}
 
 		if (!await ApplicationHandler.instance.keyhandler(key))

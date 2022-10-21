@@ -30,7 +30,7 @@ export class ListOfValues extends Form
 	private props:Properties = null;
 	private cancelled:boolean = true;
 
-	public static DELAY:number = 350;
+	public static DELAY:number = 200;
 
 	constructor()
 	{
@@ -72,15 +72,14 @@ export class ListOfValues extends Form
 
 	private async onKeyStroke() : Promise<boolean>
 	{
-		let search:string = this.getValue("filter","search");
-		setTimeout(() => {this.query(search)},ListOfValues.DELAY);
+		setTimeout(() => {this.query()},ListOfValues.DELAY);
 		return(true);
 	}
 
-	private query(flt:string) : void
+	private query() : void
 	{
-		if (flt == null)
-			flt = "";
+		let flt:string = this.getValue("filter","search");
+		if (flt == null) flt = "";
 
 		if (flt.length < this.props.filterMinLength)
 			return;
@@ -202,7 +201,7 @@ export class ListOfValues extends Form
 		let start:string = this.parameters.get("value")+"";
 		this.setValue("filter","search",start);
 
-		this.query(start);
+		this.query();
 		return(true);
 	}
 

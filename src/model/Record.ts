@@ -244,8 +244,11 @@ export class Record
 		return([...this.dirty$]);
 	}
 
-	public setDirty(column:string) : void
+	public setDirty(column?:string) : void
 	{
+		if (column == null)
+			column = this.columns[0];
+			
 		column = column?.toLowerCase();
 		let idx:number = this.indexOf(column);
 

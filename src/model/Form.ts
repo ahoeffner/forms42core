@@ -105,6 +105,7 @@ export class Form
 		for (let i = 0; i < masters.length; i++)
 			masters[i].executeQuery(newid)
 
+		console.log("undo "+dirty+" records")
 		return(dirty);
 	}
 
@@ -119,6 +120,7 @@ export class Form
 				return(-1);
 		}
 
+		console.log("flush "+dirty+" records")
 		return(dirty);
 	}
 

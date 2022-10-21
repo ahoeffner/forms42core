@@ -260,7 +260,7 @@ export class FormBacking
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
-		return(this.lovs$.get(block).get(field));
+		return(this.lovs$.get(block)?.get(field));
 	}
 
 	public setListOfValues(block:string, field:string, lov:ListOfValues) : void

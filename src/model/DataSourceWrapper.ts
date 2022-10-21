@@ -226,6 +226,7 @@ export class DataSourceWrapper
 
 		if (deleted)
 		{
+			record.setDirty();
 			succces = await this.delete(record);
 			if (succces) record.state = RecordState.Deleted;
 		}

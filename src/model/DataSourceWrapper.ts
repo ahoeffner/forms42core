@@ -106,6 +106,7 @@ export class DataSourceWrapper
 					if (succces)
 					{
 						records[i].state = RecordState.Query;
+						this.block.view.setStatus(records[i]);
 						records[i].setClean();
 					}
 				}
@@ -119,6 +120,7 @@ export class DataSourceWrapper
 					if (succces)
 					{
 						records[i].state = RecordState.Query;
+						this.block.view.setStatus(records[i]);
 						records[i].setClean();
 					}
 				}
@@ -128,12 +130,7 @@ export class DataSourceWrapper
 					records[i].flushing = true;
 					succces = await this.block.postDelete(records[i]);
 					records[i].flushing = false;
-
-					if (succces)
-					{
-						records[i].state = RecordState.Query;
-						records[i].setClean();
-					}
+					records[i].setClean();
 				}
 			}
 
@@ -189,6 +186,9 @@ export class DataSourceWrapper
 
 	public async refresh(record:Record) : Promise<void>
 	{
+		if (record.state == RecordState.Deleted)
+			return;
+
 		await this.source.refresh(record);
 
 		record.setClean();

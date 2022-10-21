@@ -159,9 +159,10 @@ export class QueryTable extends SQLSource implements DataSource
 		return([]);
 	}
 
-	public async refresh(record:Record) : Promise<void>
+	public async refresh(record:Record) : Promise<boolean>
 	{
 		record.refresh();
+		return(true);
 	}
 
 	public async insert(_record:Record) : Promise<boolean>

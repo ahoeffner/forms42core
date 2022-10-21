@@ -32,10 +32,10 @@ export interface DataSource
 	flush() : Promise<Record[]>;
 	closeCursor() : Promise<boolean>;
 	lock(record:Record) : Promise<boolean>;
-	refresh(record:Record) : Promise<void>;
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
+	refresh(record:Record) : Promise<boolean>;
 	query(filters?:FilterStructure) : Promise<boolean>;
 
 	addColumns(columns:string|string[]) : DataSource;

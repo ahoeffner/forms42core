@@ -645,6 +645,12 @@ export class Block
 		return(this.displayed$.get(record.id));
 	}
 
+	public setStatus(record:Record) : void
+	{
+		let row:Row = this.displayed(record);
+		row?.setState(this.convert(record.state));
+	}
+
 	public display(rownum:number, record:Record) : void
 	{
 		let row:Row = this.getRow(rownum);
@@ -1077,6 +1083,7 @@ export class Block
 			case RecordState.New 			: return(Status.new);
 			case RecordState.Query 			: return(Status.update);
 			case RecordState.Updated 		: return(Status.update);
+			case RecordState.Deleted 		: return(Status.delete);
 			case RecordState.Inserted 		: return(Status.insert);
 			case RecordState.QueryFilter 	: return(Status.qbe);
 		}

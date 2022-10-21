@@ -254,7 +254,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (fetched.length == 0)
 		{
-			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
+			record.state = RecordState.Deleted;
+			Alert.warning("Record has been deleted by another user","Lock Record");
 			return(false);
 		}
 
@@ -343,7 +344,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		return(processed);
 	}
 
-	public async refresh(record:Record) : Promise<void>
+	public async refresh(record:Record) : Promise<boolean>
 	{
 		if (!await this.describe())
 			return;
@@ -358,8 +359,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (fetched.length == 0)
 		{
-			Alert.warning("Record has been deleted by another user. Requery to see changes","Lock Record");
-			return(null);
+			record.state = RecordState.Deleted;
+			Alert.warning("Record has been deleted by another user","Lock Record");
+			return(false);
 		}
 
 		for (let i = 0; i < this.columns.length; i++)
@@ -367,6 +369,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 			let nv:any = fetched[0].getValue(this.columns[i]);
 			record.setValue(this.columns[i],nv)
 		}
+
+		return(true);
 	}
 
 	public async insert(record:Record) : Promise<boolean>

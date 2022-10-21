@@ -99,10 +99,7 @@ export class ApplicationHandler implements EventListenerObject
 		}
 
 		if (key == KeyMap.save)
-		{
-			await FormBacking.getCurrentForm()?.flush()
-			return(true);
-		}
+			return(FormBacking.getCurrentForm()?.save());
 
 		return(true);
 	}

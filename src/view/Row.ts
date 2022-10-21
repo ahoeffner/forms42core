@@ -16,6 +16,7 @@ import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Indicator } from "../application/tags/Indicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
+import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 export enum Status
 {
@@ -24,6 +25,7 @@ export enum Status
 	new,
 	update,
 	insert,
+	delete
 }
 
 
@@ -358,6 +360,14 @@ export class Row
 	{
 		this.activateIndicators(false);
 		this.getFields().forEach((fld) => {fld.clear()});
+	}
+
+	public setState(state:Status) : void
+	{
+		this.status = state;
+
+		this.instances.forEach((inst) =>
+			{inst.resetProperties()})
 	}
 
 	public distribute(field:string, value:any, dirty:boolean) : void

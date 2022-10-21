@@ -227,6 +227,12 @@ export class FieldFeatureFactory
 				tag.setAttribute(Properties.RecordModeAttr,"update");
 		}
 
+		if (inst.field.row.status == Status.delete)
+		{
+			if (props.enabled && !props.readonly)
+				tag.setAttribute(Properties.RecordModeAttr,"delete");
+		}
+
 		if (inst.field.row.status == Status.qbe)
 		{
 			if (props.enabled && !props.readonly)

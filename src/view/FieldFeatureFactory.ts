@@ -230,7 +230,7 @@ export class FieldFeatureFactory
 		if (inst.field.row.status == Status.delete)
 		{
 			if (props.enabled && !props.readonly)
-				tag.setAttribute(Properties.RecordModeAttr,"delete");
+				tag.setAttribute(Properties.RecordModeAttr,"deleted");
 		}
 
 		if (inst.field.row.status == Status.qbe)

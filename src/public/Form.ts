@@ -155,7 +155,7 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValue(field,value);
 	}
 
-	public async flush() : Promise<number>
+	public async flush() : Promise<boolean>
 	{
 		return(FormBacking.getModelForm(this).flush());
 	}

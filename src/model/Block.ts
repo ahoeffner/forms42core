@@ -491,6 +491,11 @@ export class Block
 		return(true);
 	}
 
+	public isDirty() : boolean
+	{
+		return(this.wrapper?.dirty);
+	}
+
 	public getDirtyCount() : number
 	{
 		return(this.wrapper.getDirtyCount());

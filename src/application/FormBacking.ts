@@ -166,7 +166,10 @@ export class FormBacking
 		for (let i = 0; i < dbconns.length; i++)
 		{
 			if (dbconns[i].connected())
-				await dbconns[i].commit();
+			{
+				if (await dbconns[i].commit())
+					console.log("mark clean");
+			}
 		}
 
 		Alert.message("Transactions successfully saved","Transactions");
@@ -179,7 +182,7 @@ export class FormBacking
 
 		for (let i = 0; i < forms.length; i++)
 		{
-			if (await forms[i].undo() < 0)
+			if (!await forms[i].undo())
 				return(false);
 		}
 
@@ -188,7 +191,10 @@ export class FormBacking
 		for (let i = 0; i < dbconns.length; i++)
 		{
 			if (dbconns[i].connected())
-				await dbconns[i].rollback();
+			{
+				if (await dbconns[i].rollback())
+					console.log("mark clean");
+			}
 		}
 
 		Alert.message("Transactions successfully rolled back","Transactions");

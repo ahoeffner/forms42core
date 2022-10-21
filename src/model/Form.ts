@@ -88,43 +88,53 @@ export class Form
 		return(dirty);
 	}
 
-	public async undo() : Promise<number>
+	public async undo() : Promise<boolean>
 	{
-		let dirty:number = this.getDirtyCount();
+		let dirty:Block[] = [];
+		let requery:Set<Block> = new Set<Block>();
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!await blocks[i].undo())
-				return(-1);
+			if (blocks[i].isDirty())
+			{
+				dirty.push(blocks[i]);
+
+				if (!await blocks[i].undo())
+					return(false);
+			}
 		}
 
-		let masters:Block[] = [...this.blocks$.values()];
-		let newid:object = this.QueryManager.startNewChain();
+		// Only requery top-level blocks
 
-		for (let i = 0; i < masters.length; i++)
+		for (let i = 0; i < dirty.length; i++)
+			requery.add(dirty[i]);
+
+		for (let i = 0; i < dirty.length; i++)
 		{
-			if (this.blkcord$.getMasterBlocks(masters[i]).length == 0)
-				masters[i].executeQuery(newid)
+			this.blkcord$.getDetailBlocks(dirty[i],true).
+			forEach((detail) => {requery.delete(detail)});
 		}
 
-		console.log("undo "+dirty+" records")
-		return(dirty);
+		dirty = [...requery];
+
+		for (let i = 0; i < dirty.length; i++)
+			await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+
+		return(true);
 	}
 
-	public async flush() : Promise<number>
+	public async flush() : Promise<boolean>
 	{
-		let dirty:number = this.getDirtyCount();
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)
 		{
 			if (!await blocks[i].flush())
-				return(-1);
+				return(false);
 		}
 
-		console.log("flush "+dirty+" records")
-		return(dirty);
+		return(true);
 	}
 
 	public getBlocks() : Block[]

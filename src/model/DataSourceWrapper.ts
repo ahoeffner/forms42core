@@ -24,6 +24,7 @@ export class DataSourceWrapper
 	private hwm$:number = 0;
 	private columns$:string[] = [];
 	private source$:DataSource = null;
+	private modified$:boolean = false;
 
 	constructor(public block?:ModelBlock)
 	{
@@ -52,6 +53,16 @@ export class DataSourceWrapper
 	public set columns(columns:string[])
 	{
 		this.columns$ = columns;
+	}
+
+	public get dirty() : boolean
+	{
+		return(this.modified$);
+	}
+
+	public set dirty(flag:boolean)
+	{
+		this.modified$ = flag;
 	}
 
 	public async clear() : Promise<boolean>
@@ -227,6 +238,7 @@ export class DataSourceWrapper
 		if (deleted)
 		{
 			record.setDirty();
+			this.modified$ = true;
 			succces = await this.delete(record);
 			if (succces) record.state = RecordState.Deleted;
 		}
@@ -234,23 +246,27 @@ export class DataSourceWrapper
 		{
 			if (record.state == RecordState.New)
 			{
+				this.modified$ = true;
 				succces = await this.insert(record);
 				if (succces) record.state = RecordState.Inserted;
 			}
 
 			if (record.state == RecordState.Query)
 			{
+				this.modified$ = true;
 				succces = await this.update(record);
 				if (succces) record.state = RecordState.Updated;
 			}
 
 			if (record.state == RecordState.Inserted)
 			{
+				this.modified$ = true;
 				succces = await this.update(record);
 			}
 
 			if (record.state == RecordState.Updated)
 			{
+				this.modified$ = true;
 				succces = await this.update(record);
 			}
 		}

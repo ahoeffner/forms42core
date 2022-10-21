@@ -168,8 +168,7 @@ export class Form implements EventListenerObject
 		if (!await inst.field.block.validate())
 			return(false);
 
-		let saved:number = await this.model.flush();
-		return(saved >= 0);
+		return(this.model.flush());
 	}
 
 	public validated() : boolean

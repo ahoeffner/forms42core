@@ -266,7 +266,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (lv != cv)
 			{
-				Alert.warning("Record has been changed by another user. Requery to see changes","Lock Record");
+				Alert.warning("Record has been changed by another user","Lock Record");
 				return(false);
 			}
 		}
@@ -360,7 +360,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (fetched.length == 0)
 		{
 			record.state = RecordState.Deleted;
-			Alert.warning("Record has been deleted by another user","Lock Record");
+			Alert.warning("Record has been deleted by another user","Database");
 			return(false);
 		}
 

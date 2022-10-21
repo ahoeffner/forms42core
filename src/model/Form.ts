@@ -88,6 +88,11 @@ export class Form
 		return(dirty);
 	}
 
+	public setClean() : void
+	{
+		this.blocks$.forEach((block) => {block.setClean()});
+	}
+
 	public async undo() : Promise<boolean>
 	{
 		let dirty:Block[] = [];

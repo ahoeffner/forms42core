@@ -48,7 +48,7 @@ export class Connection extends BaseConnection
 
 		let payload:any =
 		{
-			"scope": "transaction",
+			"scope": "dedicated",
 			"auth.method": "database",
 			"username": this.username,
 			"auth.secret": this.password

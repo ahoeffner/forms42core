@@ -501,6 +501,11 @@ export class Block
 		return(this.wrapper.getDirtyCount());
 	}
 
+	public setClean() : void
+	{
+		this.wrapper.dirty = false;
+	}
+
 	public async undo() : Promise<boolean>
 	{
 		if (this.ctrlblk)

@@ -153,6 +153,7 @@ export class FormBacking
 
 	public static async save() : Promise<boolean>
 	{
+		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
 
 		for (let i = 0; i < forms.length; i++)
@@ -167,17 +168,26 @@ export class FormBacking
 		{
 			if (dbconns[i].connected())
 			{
-				if (await dbconns[i].commit())
-					console.log("mark clean");
+				if (!await dbconns[i].commit())
+					failed = true;
 			}
 		}
 
-		Alert.message("Transactions successfully saved","Transactions");
-		return(true);
+		if (!failed)
+		{
+			for (let i = 0; i < forms.length; i++)
+				forms[i].setClean();
+		}
+
+		if (!failed) Alert.message("Transactions successfully saved","Transactions");
+		else 			 Alert.warning("Failed to push transactions to backend","Transactions");
+
+		return(failed);
 	}
 
 	public static async undo() : Promise<boolean>
 	{
+		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
 
 		for (let i = 0; i < forms.length; i++)
@@ -192,13 +202,21 @@ export class FormBacking
 		{
 			if (dbconns[i].connected())
 			{
-				if (await dbconns[i].rollback())
-					console.log("mark clean");
+				if (!await dbconns[i].rollback())
+					failed = true;
 			}
 		}
 
-		Alert.message("Transactions successfully rolled back","Transactions");
-		return(true);
+		if (!failed)
+		{
+			for (let i = 0; i < forms.length; i++)
+				forms[i].setClean();
+		}
+
+		if (failed) Alert.warning("Failed to roll back transactions","Transactions");
+		else 			Alert.message("Transactions successfully rolled back","Transactions");
+
+		return(failed);
 	}
 
 

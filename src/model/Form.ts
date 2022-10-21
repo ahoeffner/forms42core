@@ -99,6 +99,12 @@ export class Form
 				return(-1);
 		}
 
+		let newid:object = this.QueryManager.startNewChain();
+		let masters:Block[] = this.blkcord$.getMasterBlocks();
+
+		for (let i = 0; i < masters.length; i++)
+			masters[i].executeQuery(newid)
+
 		return(dirty);
 	}
 

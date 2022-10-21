@@ -86,19 +86,29 @@ export class BlockCoordinator
 		return(blocks);
 	}
 
-	public getMasterBlocks(block:Block) : Block[]
+	public getMasterBlocks(block?:Block) : Block[]
 	{
 		let blocks:Block[] = [];
 
-		this.blocks$.get(block.name)?.masters.forEach((link) =>
+		if (block == null)
 		{
-			let block:Block = this.getBlock(link.master.block);
-
-			if (block == null)
-				return([]);
-
-			blocks.push(block);
-		})
+			this.blocks$.forEach((dep,blk) =>
+			{
+				if (dep.masters.length == 0)
+				{
+					let master:Block = this.getBlock(blk);
+					if (master != null) blocks.push(master);
+				}
+			})
+		}
+		else
+		{
+			this.blocks$.get(block.name)?.masters.forEach((link) =>
+			{
+				let master:Block = this.getBlock(link.master.block);
+				if (master != null) blocks.push(master);
+			})
+		}
 
 		return(blocks);
 	}

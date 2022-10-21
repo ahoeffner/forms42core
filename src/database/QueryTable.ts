@@ -367,7 +367,6 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 		let fetched:Record[] = [];
 		let rows:any[][] = response.rows;
-		this.cursor$.eof = !response.more;
 
 		if (!response.success)
 		{
@@ -375,9 +374,11 @@ export class QueryTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+		if (this.cursor$)
+			this.cursor$.eof = !response.more;
 
 		let dates:boolean[] = [];
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 		for (let c = 0; c < this.columns.length; c++)
 		{

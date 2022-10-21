@@ -622,7 +622,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 	{
 		let fetched:Record[] = [];
 		let rows:any[][] = response.rows;
-		this.cursor$.eof = !response.more;
 
 		if (!response.success)
 		{
@@ -630,12 +629,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
+		if (this.cursor$)
+			this.cursor$.eof = !response.more;
+
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 
-		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
-
 		let dates:boolean[] = [];
+		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 		for (let c = 0; c < this.columns.length; c++)
 		{

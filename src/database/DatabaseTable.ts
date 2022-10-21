@@ -244,7 +244,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.setTypes(sql.bindvalues);
 
 		let response:any = await this.conn$.lock(sql);
-		let fetched:Record[] = this.parse(response);
+		let fetched:Record[] = this.parse(response,null);
 
 		if (!response.success)
 		{
@@ -355,7 +355,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.setTypes(sql.bindvalues);
 
 		let response:any = await this.conn$.refresh(sql);
-		let fetched:Record[] = this.parse(response);
+		let fetched:Record[] = this.parse(response,null);
 
 		if (fetched.length == 0)
 		{
@@ -498,7 +498,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
-		this.fetched$ = this.parse(response);
+		this.fetched$ = this.parse(response,this.cursor$);
 		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
@@ -525,11 +525,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!response.success)
 		{
+			this.cursor$ = null;
 			console.error(this.name+" failed to fetch: "+JSON.stringify(response));
 			return([]);
 		}
 
-		let fetched:Record[] = this.parse(response);
+		let fetched:Record[] = this.parse(response,this.cursor$);
 
 		fetched = await this.filter(fetched);
 
@@ -622,19 +623,19 @@ export class DatabaseTable extends SQLSource implements DataSource
 		})
 	}
 
-	private parse(response:any) : Record[]
+	private parse(response:any, cursor:Cursor) : Record[]
 	{
 		let fetched:Record[] = [];
 		let rows:any[][] = response.rows;
 
 		if (!response.success)
 		{
-			this.cursor$ = null;
+			if (cursor) cursor.eof = true;
 			return(fetched);
 		}
 
-		if (this.cursor$)
-			this.cursor$.eof = !response.more;
+		if (cursor)
+			cursor.eof = !response.more;
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;

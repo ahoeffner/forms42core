@@ -523,7 +523,7 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.enterquery)
 			{
 				success = await this.model.enterQuery(inst.field.block.model);
-				if (success) block.findFirstEditable(block.model.qberec).focus();
+				if (success) block.findFirstEditable(block.model.qberec)?.focus();
 				return(success);
 			}
 

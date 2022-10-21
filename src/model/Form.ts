@@ -88,6 +88,20 @@ export class Form
 		return(dirty);
 	}
 
+	public async undo() : Promise<number>
+	{
+		let dirty:number = this.getDirtyCount();
+		let blocks:Block[] = Array.from(this.blocks$.values());
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!await blocks[i].undo())
+				return(-1);
+		}
+
+		return(dirty);
+	}
+
 	public async flush() : Promise<number>
 	{
 		let dirty:number = this.getDirtyCount();

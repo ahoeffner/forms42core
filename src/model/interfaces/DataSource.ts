@@ -28,6 +28,7 @@ export interface DataSource
 	deleteallowed:boolean;
 
 	clone() : DataSource;
+	undo() : Promise<Record[]>;
 	fetch() : Promise<Record[]>;
 	flush() : Promise<Record[]>;
 	closeCursor() : Promise<boolean>;

@@ -166,6 +166,38 @@ export class MemoryTable implements DataSource
 		return(true);
 	}
 
+	public async undo() : Promise<Record[]>
+	{
+		let undo:Record[] = [];
+
+		for (let i = 0; i < this.dirty$.length; i++)
+		{
+			this.dirty$[i].refresh();
+			undo.push(this.dirty$[i]);
+
+			switch(this.dirty$[i].state)
+			{
+				case RecordState.New:
+
+				case RecordState.Inserted:
+
+					this.delete(this.dirty$[i]);
+					this.dirty$[i].state = RecordState.Deleted;
+					break;
+
+				case RecordState.Updated:
+					this.dirty$[i].state = RecordState.Query;
+					break;
+
+				case RecordState.Deleted:
+					this.dirty$[i].state = RecordState.Query;
+					break;
+			}
+		}
+
+		return(undo);
+	}
+
 	public async flush() : Promise<Record[]>
 	{
 		let processed:Record[] = [];

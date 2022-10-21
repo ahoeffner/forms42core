@@ -154,6 +154,11 @@ export class QueryTable extends SQLSource implements DataSource
 		return(false);
 	}
 
+	public async undo() : Promise<Record[]>
+	{
+		return([]);
+	}
+
 	public async flush() : Promise<Record[]>
 	{
 		return([]);

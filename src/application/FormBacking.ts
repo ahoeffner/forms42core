@@ -25,6 +25,8 @@ import { ListOfValues } from '../public/ListOfValues.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { DateConstraint } from '../public/DateConstraint.js';
+import { Connection } from '../database/Connection.js';
+import { Alert } from './Alert.js';
 
 export class FormBacking
 {
@@ -147,6 +149,50 @@ export class FormBacking
 		if (blk == null && create) blk = new ModelBlock(form,block.name);
 
 		return(blk);
+	}
+
+	public static async save() : Promise<boolean>
+	{
+		let forms:ModelForm[] = [...FormBacking.mforms.values()];
+
+		for (let i = 0; i < forms.length; i++)
+		{
+			if (!await forms[i].view.validate())
+				return(false);
+		}
+
+		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].connected())
+				await dbconns[i].commit();
+		}
+
+		Alert.message("Transactions successfully saved","Transactions");
+		return(true);
+	}
+
+	public static async undo() : Promise<boolean>
+	{
+		let forms:ModelForm[] = [...FormBacking.mforms.values()];
+
+		for (let i = 0; i < forms.length; i++)
+		{
+			if (await forms[i].undo() < 0)
+				return(false);
+		}
+
+		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].connected())
+				await dbconns[i].rollback();
+		}
+
+		Alert.message("Transactions successfully rolled back","Transactions");
+		return(true);
 	}
 
 

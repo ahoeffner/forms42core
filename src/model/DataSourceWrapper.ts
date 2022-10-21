@@ -79,6 +79,11 @@ export class DataSourceWrapper
 		return(dirty);
 	}
 
+	public async undo() : Promise<Record[]>
+	{
+		return(this.source.undo());
+	}
+
 	public async flush() : Promise<boolean>
 	{
 		try

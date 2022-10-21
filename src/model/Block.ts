@@ -496,6 +496,27 @@ export class Block
 		return(this.wrapper.getDirtyCount());
 	}
 
+	public async undo() : Promise<boolean>
+	{
+		if (this.ctrlblk)
+			return(true);
+
+		if (this.qbe.querymode)
+			return(true);
+
+		let succces:boolean = await this.validateRecord();
+
+		if (succces)
+		{
+			let undo:Record[] = await this.wrapper?.undo();
+
+			for (let i = 0; i < undo.length; i++)
+				this.view.refresh(undo[i]);
+		}
+
+		return(succces);
+	}
+
 	public async flush() : Promise<boolean>
 	{
 		if (this.ctrlblk)

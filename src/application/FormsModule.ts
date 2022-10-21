@@ -132,6 +132,16 @@ export class FormsModule
 		return(ApplicationHandler.instance.keyhandler(key));
 	}
 
+	public async save() : Promise<boolean>
+	{
+		return(FormBacking.save());
+	}
+
+	public async undo() : Promise<boolean>
+	{
+		return(FormBacking.undo());
+	}
+
 	public message(msg:string, title?:string) : void
 	{
 		Alert.message(msg,title);

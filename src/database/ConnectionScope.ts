@@ -10,7 +10,7 @@
  * accompanied this code).
  */
 
-export enum ConnectionState
+export enum ConnectionScope
 {
 	stateless,
 	dedicated,

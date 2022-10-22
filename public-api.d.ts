@@ -6,10 +6,12 @@ export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { Connections } from './src/public/Connections.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
-export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 
 export { QueryTable } from './src/database/QueryTable.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { ConnectionScope } from './src/database/ConnectionScope.js';
+export { DatabaseConnection } from './src/public/DatabaseConnection.js';
+
 export { DataSource } from './src/model/interfaces/DataSource.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 

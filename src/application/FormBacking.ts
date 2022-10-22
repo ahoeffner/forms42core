@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Alert } from './Alert.js';
 import { Form } from '../public/Form.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
@@ -20,13 +21,12 @@ import { Relation } from '../model/relations/Relation.js';
 import { Block } from '../public/Block.js';
 import { FormMetaData } from './FormMetaData.js';
 import { Block as ViewBlock } from '../view/Block.js';
+import { Connection } from '../database/Connection.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { DateConstraint } from '../public/DateConstraint.js';
-import { Connection } from '../database/Connection.js';
-import { Alert } from './Alert.js';
 
 export class FormBacking
 {

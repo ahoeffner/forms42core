@@ -14,7 +14,7 @@ import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
-import { ConnectionState } from "./ConnectionState.js";
+import { ConnectionScope } from "./ConnectionScope.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
@@ -24,9 +24,10 @@ export class Connection extends BaseConnection
 	private touched$:Date = null;
 	private modified$:Date = null;
 	private keepalive$:number = 20;
-	private state$:ConnectionState = ConnectionState.transactional;
+	private scope$:ConnectionScope = ConnectionScope.transactional;
 
 	public static TIMEOUT = 20;
+	public static IDLEWARN = 20;
 
 
 	// Be able to get the real connection from the public
@@ -49,14 +50,19 @@ export class Connection extends BaseConnection
 		Connection.conns$.set(name,this);
 	}
 
-	public get state() : ConnectionState
+	public get scope() : ConnectionScope
 	{
-		return(this.state$);
+		return(this.scope);
 	}
 
-	public set state(state:ConnectionState)
+	public set scope(state:ConnectionScope)
 	{
-		this.state$ = state;
+		if (this.connected())
+		{
+			Alert.warning("Connection scope cannot be changed after connect","Database Connection");
+			return;
+		}
+		this.scope = state;
 	}
 
 	public async connect(username?:string, password?:string) : Promise<boolean>
@@ -66,14 +72,14 @@ export class Connection extends BaseConnection
 
 		let scope:string = null;
 
-		switch(this.state$)
+		switch(this.scope)
 		{
-			case ConnectionState.stateless: scope = "none"; break;
-			case ConnectionState.dedicated: scope = "dedicated"; break;
-			case ConnectionState.transactional: scope = "transaction"; break;
+			case ConnectionScope.stateless: scope = "none"; break;
+			case ConnectionScope.dedicated: scope = "dedicated"; break;
+			case ConnectionScope.transactional: scope = "transaction"; break;
 		}
 
-		if (this.state$ == ConnectionState.stateless) scope = "none";
+		if (this.scope == ConnectionScope.stateless) scope = "none";
 
 		let payload:any =
 		{
@@ -145,7 +151,7 @@ export class Connection extends BaseConnection
 		if (cursor && cursor.trx != this.trx$)
 			skip = cursor.pos;
 
-		if (cursor && this.state == ConnectionState.stateless)
+		if (cursor && this.state == ConnectionScope.stateless)
 			skip = cursor.pos;
 
 		let payload:any =
@@ -191,7 +197,7 @@ export class Connection extends BaseConnection
 		if (cursor.trx != this.trx$)
 			restore = true;
 
-		if (this.state == ConnectionState.stateless)
+		if (this.scope == ConnectionScope.stateless)
 			restore = true;
 
 		if (restore)
@@ -220,7 +226,7 @@ export class Connection extends BaseConnection
 
 	public async close(cursor:Cursor) : Promise<Response>
 	{
-		if (this.state == ConnectionState.stateless)
+		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
 
 		let payload:any = {cursor: cursor.name, close: true};
@@ -238,7 +244,7 @@ export class Connection extends BaseConnection
 
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
-		if (this.state == ConnectionState.stateless)
+		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
 
 		let payload:any =
@@ -388,12 +394,27 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
-		if (this.touched$ && !this.modified$)
+		if (this.scope == ConnectionScope.transactional)
 		{
-			if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.TIMEOUT)
+			if (this.modified$)
 			{
-				console.log("release");
-				await this.commit();
+				let idle:number = ((new Date()).getTime() - this.modified$.getTime())/1000;
+
+				if (idle > 2 * Connection.IDLEWARN)
+				{
+					await this.rollback();
+				}
+				else
+				{
+					if (idle > Connection.IDLEWARN)
+						Alert.warning("Transaction will be rolled back in "+Connection.IDLEWARN+" seconds","Database Connection");
+				}
+			}
+
+			if (this.touched$ && !this.modified$)
+			{
+				if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.TIMEOUT)
+					await this.commit();
 			}
 		}
 

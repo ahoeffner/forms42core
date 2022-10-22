@@ -52,7 +52,7 @@ export class Connection extends BaseConnection
 
 	public get scope() : ConnectionScope
 	{
-		return(this.scope);
+		return(this.scope$);
 	}
 
 	public set scope(state:ConnectionScope)
@@ -62,7 +62,7 @@ export class Connection extends BaseConnection
 			Alert.warning("Connection scope cannot be changed after connect","Database Connection");
 			return;
 		}
-		this.scope = state;
+		this.scope$ = state;
 	}
 
 	public async connect(username?:string, password?:string) : Promise<boolean>
@@ -151,7 +151,7 @@ export class Connection extends BaseConnection
 		if (cursor && cursor.trx != this.trx$)
 			skip = cursor.pos;
 
-		if (cursor && this.state == ConnectionScope.stateless)
+		if (cursor && this.scope == ConnectionScope.stateless)
 			skip = cursor.pos;
 
 		let payload:any =

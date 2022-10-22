@@ -68,6 +68,8 @@ export class Connection extends BaseConnection
 
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
+		this.tmowarned$ = false;
+
 		if (username) this.username = username;
 		if (password) this.password = password;
 
@@ -148,6 +150,7 @@ export class Connection extends BaseConnection
 			describe = false;
 
 		let skip:number = 0;
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 
 		if (cursor && cursor.trx != this.trx$)
@@ -193,6 +196,7 @@ export class Connection extends BaseConnection
 
 	public async fetch(cursor:Cursor) : Promise<Response>
 	{
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		let restore:boolean = false;
 
@@ -228,6 +232,8 @@ export class Connection extends BaseConnection
 
 	public async close(cursor:Cursor) : Promise<Response>
 	{
+		this.tmowarned$ = false;
+
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
 
@@ -258,8 +264,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
+
 		return(await this.post(this.conn$+"/select",payload));
 	}
 
@@ -274,7 +282,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.tmowarned$ = false;
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
+
 		return(await this.post(this.conn$+"/select",payload));
 	}
 
@@ -297,6 +308,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -322,6 +334,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -347,6 +360,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -362,9 +376,12 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
+
 		if (patch) this.modified$ = new Date();
 		if (patch) return(this.patch(this.conn$+"/exec",payload));
+
 		return(this.post(this.conn$+"/exec",payload));
 	}
 
@@ -377,9 +394,12 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.tmowarned$ = false;
 		this.touched$ = new Date();
+
 		if (patch) this.modified$ = new Date();
 		if (patch) return(this.patch(this.conn$+"/exec",payload));
+
 		return(this.post(this.conn$+"/exec",payload));
 	}
 

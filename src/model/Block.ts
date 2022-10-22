@@ -479,8 +479,8 @@ export class Block
 
 			if (!this.view.getCurrentRow().exist)
 			{
-				this.move(1);
-				this.view.prevrecord();
+				await this.view.prevrecord();
+				this.view.findFirstEditable(this.getRecord())?.focus();
 				return(true);
 			}
 

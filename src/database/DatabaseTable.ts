@@ -361,14 +361,17 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (rec.state == RecordState.Deleted)
 			{
-				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
+				if (await this.lock(rec))
+				{
+					processed.push(rec);
+					sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.delete(sql);
+					this.setTypes(sql.bindvalues);
+					response = await this.conn$.delete(sql);
 
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
+					this.castResponse(response);
+					rec.response = new DatabaseResponse(response,this.delreturncolumns$);
+				}
 			}
 		}
 

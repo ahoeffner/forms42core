@@ -144,11 +144,7 @@ export class DataSourceWrapper
 				if (records[i].state == RecordState.Deleted)
 				{
 					records[i].flushing = true;
-					succces = await this.lock(records[i]);
-
-					if (succces)
-						succces = await this.block.postDelete(records[i]);
-						
+					succces = await this.block.postDelete(records[i]);
 					records[i].flushing = false;
 					records[i].setClean();
 				}

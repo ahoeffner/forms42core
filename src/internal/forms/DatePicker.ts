@@ -18,6 +18,7 @@ import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
+import { DateConstraint } from "../../public/DateConstraint.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
@@ -30,6 +31,7 @@ export class DatePicker extends Form
 	private leftArrow:String = null;
 	private rightArrow:String = null;
 	private input:HTMLElement = null;
+	private constraint:DateConstraint;
 	private day:number = this.date.getDate();
 	private prevstep:KeyMap = new KeyMap({key: KeyCodes.ArrowLeft});
 	private nextstep:KeyMap = new KeyMap({key: KeyCodes.ArrowRight});
@@ -95,7 +97,9 @@ export class DatePicker extends Form
 		Internals.stylePopupWindow(view,"Calendar");
 		Properties.styleDatePicker(view);
 
+		this.constraint = this.parameters.get("constraint");
 		this.input = document.querySelector('input[name="date"]');
+
 		let props:FieldProperties = this.getBlock("calendar").
 			getDefaultProperties("day-11");
 

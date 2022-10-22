@@ -117,6 +117,7 @@ export class Form
 
 		for (let i = 0; i < dirty.length; i++)
 		{
+			console.log(dirty[i].name+" is dirty")
 			this.blkcord$.getDetailBlocks(dirty[i],true).
 			forEach((detail) => {requery.delete(detail)});
 		}

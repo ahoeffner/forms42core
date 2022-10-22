@@ -190,12 +190,6 @@ export class FormBacking
 		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
 
-		for (let i = 0; i < forms.length; i++)
-		{
-			if (!await forms[i].undo())
-				return(false);
-		}
-
 		let dbconns:Connection[] = Connection.getAllConnections();
 
 		for (let i = 0; i < dbconns.length; i++)
@@ -205,6 +199,12 @@ export class FormBacking
 				if (!await dbconns[i].rollback())
 					failed = true;
 			}
+		}
+
+		for (let i = 0; i < forms.length; i++)
+		{
+			if (!await forms[i].undo())
+				return(false);
 		}
 
 		if (!failed)

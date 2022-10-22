@@ -19,6 +19,7 @@ import { ListOfValues } from '../public/ListOfValues.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';
+import { DateConstraint } from '../public/DateConstraint.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
@@ -144,6 +145,11 @@ export class Form implements CanvasComponent
 	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
 	{
 		FormBacking.getBacking(this).setListOfValues(block,field,lov);
+	}
+
+	public setDateConstraint(block:string, field:string, datecstr:DateConstraint) : void
+	{
+		FormBacking.getBacking(this).setDateConstraint(block,field,datecstr);
 	}
 
 	public getValue(block:string, field:string) : any

@@ -303,14 +303,14 @@ export class FormBacking
 		lovs.set(field,lov);
 	}
 
-	public getDateConstaing(block:string, field:string) : DateConstraint
+	public getDateConstraint(block:string, field:string) : DateConstraint
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
 		return(this.datectr$.get(block).get(field));
 	}
 
-	public setDateConstaing(block:string, field:string, constr:DateConstraint) : void
+	public setDateConstraint(block:string, field:string, constr:DateConstraint) : void
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();

@@ -24,6 +24,7 @@ export class Connection extends BaseConnection
 	private touched$:Date = null;
 	private modified$:Date = null;
 	private keepalive$:number = 20;
+	private tmowarned$:boolean = false;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
 	public static TIMEOUT = 20;
@@ -113,6 +114,7 @@ export class Connection extends BaseConnection
 
 	public async commit() : Promise<boolean>
 	{
+		this.tmowarned$ = false;
 		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/commit");
 
@@ -127,7 +129,7 @@ export class Connection extends BaseConnection
 
 	public async rollback() : Promise<boolean>
 	{
-		this.modified$ = null;
+		this.tmowarned$ = false;
 		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/rollback");
 
@@ -400,14 +402,18 @@ export class Connection extends BaseConnection
 			{
 				let idle:number = ((new Date()).getTime() - this.modified$.getTime())/1000;
 
-				if (idle > 2 * Connection.IDLEWARN)
+				if (idle > 2 * Connection.IDLEWARN && this.tmowarned$)
 				{
 					await this.rollback();
+					Alert.warning("Transaction has been rolled back. Requery to see current state","Database Connection");
 				}
 				else
 				{
-					if (idle > Connection.IDLEWARN)
+					if (idle > Connection.IDLEWARN && !this.tmowarned$)
+					{
+						this.tmowarned$ = true;
 						Alert.warning("Transaction will be rolled back in "+Connection.IDLEWARN+" seconds","Database Connection");
+					}
 				}
 			}
 

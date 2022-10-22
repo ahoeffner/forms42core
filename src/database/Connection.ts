@@ -14,12 +14,16 @@ import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
+import { ConnectionState } from "./ConnectionState.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
 {
+	private trx$:object = null;
 	private conn$:string = null;
 	private keepalive$:number = 20;
+	private state$:ConnectionState = ConnectionState.transactional;
+
 
 	// Be able to get the real connection from the public
 	private static conns$:Map<string,Connection> =
@@ -41,14 +45,35 @@ export class Connection extends BaseConnection
 		Connection.conns$.set(name,this);
 	}
 
+	public get state() : ConnectionState
+	{
+		return(this.state$);
+	}
+
+	public set state(state:ConnectionState)
+	{
+		this.state$ = state;
+	}
+
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
 		if (username) this.username = username;
 		if (password) this.password = password;
 
+		let scope:string = null;
+
+		switch(this.state$)
+		{
+			case ConnectionState.stateless: scope = "none"; break;
+			case ConnectionState.dedicated: scope = "dedicated"; break;
+			case ConnectionState.transactional: scope = "transaction"; break;
+		}
+
+		if (this.state$ == ConnectionState.stateless) scope = "none";
+
 		let payload:any =
 		{
-			"scope": "dedicated",
+			"scope": scope,
 			"auth.method": "database",
 			"username": this.username,
 			"auth.secret": this.password
@@ -63,6 +88,7 @@ export class Connection extends BaseConnection
 			return(false);
 		}
 
+		this.trx$ = new Object();
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
@@ -77,12 +103,14 @@ export class Connection extends BaseConnection
 
 	public async commit() : Promise<boolean>
 	{
+		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/commit");
 		return(response.success);
 	}
 
 	public async rollback() : Promise<boolean>
 	{
+		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/rollback");
 		return(response.success);
 	}
@@ -92,9 +120,18 @@ export class Connection extends BaseConnection
 		if (describe == null)
 			describe = false;
 
+		let skip:number = 0;
+
+		if (cursor && cursor.trx != this.trx$)
+			skip = cursor.pos;
+
+		if (cursor && this.state == ConnectionState.stateless)
+			skip = cursor.pos;
+
 		let payload:any =
 		{
 			rows: rows,
+			skip: skip,
 			compact: true,
 			dateformat: "UTC",
 			describe: describe,
@@ -107,8 +144,9 @@ export class Connection extends BaseConnection
 		{
 			payload.cursor = cursor.name;
 
-			cursor.pos = 0;
 			cursor.rows = rows;
+			cursor.pos += rows;
+			cursor.trx = this.trx$;
 			cursor.stmt = sql.stmt;
 			cursor.bindvalues = sql.bindvalues;
 		}
@@ -127,6 +165,25 @@ export class Connection extends BaseConnection
 
 	public async fetch(cursor:Cursor) : Promise<Response>
 	{
+		let restore:boolean = false;
+
+		if (cursor.trx != this.trx$)
+			restore = true;
+
+		if (this.state == ConnectionState.stateless)
+			restore = true;
+
+		if (restore)
+		{
+			let sql:SQLRest = new SQLRest();
+
+			sql.stmt = cursor.stmt;
+			sql.bindvalues = cursor.bindvalues;
+
+			console.log("restore cursor");
+			return(this.select(sql,cursor,cursor.rows,false));
+		}
+
 		let payload:any = {cursor: cursor.name};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
 
@@ -143,6 +200,9 @@ export class Connection extends BaseConnection
 
 	public async close(cursor:Cursor) : Promise<Response>
 	{
+		if (this.state == ConnectionState.stateless)
+			return({success: true, message: null, rows: []});
+
 		let payload:any = {cursor: cursor.name, close: true};
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
 
@@ -158,6 +218,9 @@ export class Connection extends BaseConnection
 
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
+		if (this.state == ConnectionState.stateless)
+			return({success: true, message: null, rows: []});
+
 		let payload:any =
 		{
 			rows: 1,

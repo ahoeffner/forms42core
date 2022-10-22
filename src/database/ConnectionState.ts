@@ -10,15 +10,9 @@
  * accompanied this code).
  */
 
-import { BindValue } from "./BindValue";
-
-export class Cursor
+export enum ConnectionState
 {
-	pos:number = 0;
-	rows:number = 0;
-	trx:object = null;
-	name:string = null;
-	stmt:string = null;
-	eof:boolean = false;
-	bindvalues:BindValue[] = null;
+	stateless,
+	dedicated,
+	transactional
 }

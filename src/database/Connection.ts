@@ -21,8 +21,12 @@ export class Connection extends BaseConnection
 {
 	private trx$:object = null;
 	private conn$:string = null;
+	private touched$:Date = null;
+	private modified$:Date = null;
 	private keepalive$:number = 20;
 	private state$:ConnectionState = ConnectionState.transactional;
+
+	public static TIMEOUT = 20;
 
 
 	// Be able to get the real connection from the public
@@ -105,13 +109,28 @@ export class Connection extends BaseConnection
 	{
 		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/commit");
+
+		if (response.success)
+		{
+			this.touched$ = null;
+			this.modified$ = null;
+		}
+
 		return(response.success);
 	}
 
 	public async rollback() : Promise<boolean>
 	{
+		this.modified$ = null;
 		this.trx$ = new Object();
 		let response:any = await this.post(this.conn$+"/rollback");
+
+		if (response.success)
+		{
+			this.touched$ = null;
+			this.modified$ = null;
+		}
+
 		return(response.success);
 	}
 
@@ -121,6 +140,7 @@ export class Connection extends BaseConnection
 			describe = false;
 
 		let skip:number = 0;
+		this.touched$ = new Date();
 
 		if (cursor && cursor.trx != this.trx$)
 			skip = cursor.pos;
@@ -165,6 +185,7 @@ export class Connection extends BaseConnection
 
 	public async fetch(cursor:Cursor) : Promise<Response>
 	{
+		this.touched$ = new Date();
 		let restore:boolean = false;
 
 		if (cursor.trx != this.trx$)
@@ -180,7 +201,6 @@ export class Connection extends BaseConnection
 			sql.stmt = cursor.stmt;
 			sql.bindvalues = cursor.bindvalues;
 
-			console.log("restore cursor");
 			return(this.select(sql,cursor,cursor.rows,false));
 		}
 
@@ -230,6 +250,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.touched$ = new Date();
+		this.modified$ = new Date();
 		return(await this.post(this.conn$+"/select",payload));
 	}
 
@@ -244,6 +266,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		this.touched$ = new Date();
 		return(await this.post(this.conn$+"/select",payload));
 	}
 
@@ -265,6 +288,9 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
+
+		this.touched$ = new Date();
+		this.modified$ = new Date();
 
 		return(response);
 	}
@@ -288,6 +314,9 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		this.touched$ = new Date();
+		this.modified$ = new Date();
+
 		return(response);
 	}
 
@@ -310,6 +339,9 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		this.touched$ = new Date();
+		this.modified$ = new Date();
+
 		return(response);
 	}
 
@@ -322,7 +354,9 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		if (patch)	return(this.patch(this.conn$+"/exec",payload));
+		this.touched$ = new Date();
+		if (patch) this.modified$ = new Date();
+		if (patch) return(this.patch(this.conn$+"/exec",payload));
 		return(this.post(this.conn$+"/exec",payload));
 	}
 
@@ -335,7 +369,9 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		if (patch)	return(this.patch(this.conn$+"/exec",payload));
+		this.touched$ = new Date();
+		if (patch) this.modified$ = new Date();
+		if (patch) return(this.patch(this.conn$+"/exec",payload));
 		return(this.post(this.conn$+"/exec",payload));
 	}
 
@@ -350,6 +386,15 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			this.conn$ = null;
 			return(response);
+		}
+
+		if (this.touched$ && !this.modified$)
+		{
+			if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.TIMEOUT)
+			{
+				console.log("release");
+				await this.commit();
+			}
 		}
 
 		this.keepalive();

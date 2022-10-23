@@ -10,7 +10,9 @@
  * accompanied this code).
  */
 
+import { Form } from '../public/Form.js';
 import { FormsModule } from './FormsModule.js';
+import { FormBacking } from './FormBacking.js';
 import { Classes } from '../internal/Classes.js';
 import { FlightRecorder } from './FlightRecorder.js';
 
@@ -71,6 +73,8 @@ export class Alert
 		params.set("fatal",fatal);
 		params.set("warning",warning);
 
-		FormsModule.get().showform(Classes.AlertClass,params);
+		let curr:Form = FormBacking.getCurrentForm();
+		if (curr) curr.callform(Classes.AlertClass,params);
+		else FormsModule.get().showform(Classes.AlertClass,params);
 	}
 }

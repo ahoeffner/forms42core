@@ -18,7 +18,7 @@ import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
-import { BrowserEvent as Event} from "../BrowserEvent.js";
+import { BrowserEvent, BrowserEvent as Event} from "../BrowserEvent.js";
 import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
@@ -320,7 +320,15 @@ export class FieldInstance implements FieldEventHandler
 
 	public focus() : void
 	{
-		setTimeout(() => {this.impl.getElement().focus()},10);
+		setTimeout(() =>
+		{
+			let event:BrowserEvent = BrowserEvent.get();
+
+			event.setFocusEvent();
+			this.impl.getElement().focus();
+			this.field.handleEvent(this,event);
+			
+		},10);
 	}
 
 	public focusable(status?:Status) : boolean

@@ -244,9 +244,9 @@ export class Form implements CanvasComponent
 
 			if (parent != null)
 			{
-				parent.focus();
 				parent.canvas.unblock();
 
+				parent.focus();
 				parent.callback(this);
 				FormBacking.getBacking(parent).hasModalChild = false;
 			}

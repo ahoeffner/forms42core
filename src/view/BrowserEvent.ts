@@ -73,6 +73,11 @@ export class BrowserEvent
 	{
 	}
 
+	public setFocusEvent() : void
+	{
+		this.event$ = {type: "focus"};
+	}
+
 	public setEvent(event:any) : void
 	{
 		this.event$ = event;

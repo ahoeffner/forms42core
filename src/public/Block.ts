@@ -96,6 +96,16 @@ export class Block
 		FormBacking.getModelBlock(this).refresh(offset);
 	}
 
+	public showDatePicker(field?:string, clazz?:string) : void
+	{
+		this.sendkey(KeyMap.calendar,field,clazz);
+	}
+
+	public showListOfValues(field?:string, clazz?:string) : void
+	{
+		this.sendkey(KeyMap.lov,field,clazz);
+	}
+
 	public async sendkey(key:KeyMap, field?:string, clazz?:string) : Promise<boolean>
 	{
 		return(this.form.sendkey(key,this.name,field,clazz));

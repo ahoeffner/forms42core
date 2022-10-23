@@ -404,6 +404,42 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
+	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
+	{
+		if (this.curinst$)
+		{
+			if (!field) field = this.curinst$.field.name;
+			if (!block) block = this.curinst$.field.block.name;
+		}
+
+		if (!block || !field)
+			return(false);
+
+		block = block.toLowerCase();
+		field = field.toLowerCase();
+
+		if (this.curinst$)
+		{
+			if (field == this.curinst$.field.name && block == this.curinst$.field.block.name)
+			{
+				if (!clazz || (clazz && !this.curinst$.properties.hasClass(clazz)))
+				{
+					this.curinst$.focus();
+					return(this.keyhandler(key,this.curinst$));
+				}
+			}
+		}
+
+		let blk:Block = this.getBlock(block.toLowerCase());
+		let match:FieldInstance[] = blk.getFieldsByClass(field,clazz);
+
+		if (match.length)
+			return(false);
+
+		match[0].focus();
+		return(this.keyhandler(key,match[0]));
+	}
+
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>
 	{
 		let success:boolean = false;

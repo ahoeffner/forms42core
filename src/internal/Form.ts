@@ -14,6 +14,7 @@ import { Class } from '../types/Class.js';
 import { Block } from '../public/Block.js';
 import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
+import { KeyMap } from '../control/events/KeyMap.js';
 import { Framework } from '../application/Framework.js';
 import { ListOfValues } from '../public/ListOfValues.js';
 import { EventType } from '../control/events/EventType.js';
@@ -69,6 +70,21 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.restore();
 		this.focus();
+	}
+
+	public showDatePicker(block?:string, field?:string, clazz?:string) : void
+	{
+		this.sendkey(KeyMap.calendar,block,field,clazz);
+	}
+
+	public showListOfValues(block?:string, field?:string, clazz?:string) : void
+	{
+		this.sendkey(KeyMap.lov,block,field,clazz);
+	}
+
+	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
+	{
+		return(FormBacking.getViewForm(this).sendkey(key,block,field,clazz));
 	}
 
 	public link(master:Key, detail:Key, orphanQueries?:boolean) : void

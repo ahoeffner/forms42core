@@ -15,6 +15,7 @@ import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Alert } from '../application/Alert.js';
 import { DateConstraint } from './DateConstraint.js';
+import { KeyMap } from '../control/events/KeyMap.js';
 import { FieldProperties } from './FieldProperties.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { EventType } from '../control/events/EventType.js';
@@ -93,6 +94,11 @@ export class Block
 	{
 		if (offset == null) offset = 0;
 		FormBacking.getModelBlock(this).refresh(offset);
+	}
+
+	public async sendkey(key:KeyMap, field?:string, clazz?:string) : Promise<boolean>
+	{
+		return(this.form.sendkey(key,this.name,field,clazz));
 	}
 
 	public querydetails(field?:string) : void

@@ -75,6 +75,7 @@ export class BrowserEvent
 
 	public setFocusEvent() : void
 	{
+		this.reset();
 		this.event$ = {type: "focus"};
 	}
 

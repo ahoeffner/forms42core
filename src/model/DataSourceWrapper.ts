@@ -186,6 +186,8 @@ export class DataSourceWrapper
 
 	public async lock(record:Record) : Promise<boolean>
 	{
+		this.dirty = true;
+
 		if (!this.source.rowlocking)
 			return(true);
 
@@ -238,7 +240,11 @@ export class DataSourceWrapper
 		if (deleted)
 		{
 			record.setDirty();
-			this.modified$ = true;
+			this.dirty = true;
+
+			if (!await this.source.lock(record))
+				return(false);
+
 			succces = await this.delete(record);
 			if (succces) record.state = RecordState.Deleted;
 		}
@@ -246,27 +252,27 @@ export class DataSourceWrapper
 		{
 			if (record.state == RecordState.New)
 			{
-				this.modified$ = true;
+				this.dirty = true;
 				succces = await this.insert(record);
 				if (succces) record.state = RecordState.Inserted;
 			}
 
 			if (record.state == RecordState.Query)
 			{
-				this.modified$ = true;
+				this.dirty = true;
 				succces = await this.update(record);
 				if (succces) record.state = RecordState.Updated;
 			}
 
 			if (record.state == RecordState.Inserted)
 			{
-				this.modified$ = true;
+				this.dirty = true;
 				succces = await this.update(record);
 			}
 
 			if (record.state == RecordState.Updated)
 			{
-				this.modified$ = true;
+				this.dirty = true;
 				succces = await this.update(record);
 			}
 		}

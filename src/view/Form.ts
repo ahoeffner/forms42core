@@ -13,7 +13,6 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { Record } from '../model/Record.js';
-import { Alert } from '../application/Alert.js'
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Classes } from '../internal/Classes.js';

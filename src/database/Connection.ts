@@ -69,6 +69,7 @@ export class Connection extends BaseConnection
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
 		this.tmowarned$ = false;
+		this.touched$ = new Date();
 
 		if (username) this.username = username;
 		if (password) this.password = password;
@@ -118,6 +119,8 @@ export class Connection extends BaseConnection
 	{
 		this.tmowarned$ = false;
 		this.trx$ = new Object();
+		this.touched$ = new Date();
+
 		let response:any = await this.post(this.conn$+"/commit");
 
 		if (response.success)
@@ -133,6 +136,8 @@ export class Connection extends BaseConnection
 	{
 		this.tmowarned$ = false;
 		this.trx$ = new Object();
+		this.touched$ = new Date();
+
 		let response:any = await this.post(this.conn$+"/rollback");
 
 		if (response.success)
@@ -233,18 +238,22 @@ export class Connection extends BaseConnection
 	public async close(cursor:Cursor) : Promise<Response>
 	{
 		this.tmowarned$ = false;
+		let response:any = null;
 
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
 
-		let payload:any = {cursor: cursor.name, close: true};
-		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
-
-		if (!response.success)
+		if (cursor.trx == this.trx$)
 		{
-			console.error("close cursor: "+cursor+" failed");
-			Alert.warning(response.message,"Database Connection");
-			return(response);
+			let payload:any = {cursor: cursor.name, close: true};
+			response = await this.post(this.conn$+"/exec/fetch",payload);
+
+			if (!response.success)
+			{
+				console.error("close cursor: "+cursor+" failed");
+				Alert.warning(response.message,"Database Connection");
+				return(response);
+			}
 		}
 
 		return(response);
@@ -282,7 +291,6 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		this.tmowarned$ = false;
 		this.tmowarned$ = false;
 		this.touched$ = new Date();
 

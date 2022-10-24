@@ -307,7 +307,7 @@ export class FormBacking
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
-		return(this.datectr$.get(block).get(field));
+		return(this.datectr$.get(block)?.get(field));
 	}
 
 	public setDateConstraint(block:string, field:string, constr:DateConstraint) : void

@@ -157,6 +157,7 @@ export class Connection extends BaseConnection
 		let skip:number = 0;
 		this.tmowarned$ = false;
 		this.touched$ = new Date();
+		if (this.modified$) this.modified$ = new Date();
 
 		if (cursor && cursor.trx != this.trx$)
 			skip = cursor.pos;
@@ -204,6 +205,7 @@ export class Connection extends BaseConnection
 		this.tmowarned$ = false;
 		this.touched$ = new Date();
 		let restore:boolean = false;
+		if (this.modified$) this.modified$ = new Date();
 
 		if (cursor.trx != this.trx$)
 			restore = true;
@@ -237,8 +239,9 @@ export class Connection extends BaseConnection
 
 	public async close(cursor:Cursor) : Promise<Response>
 	{
-		this.tmowarned$ = false;
 		let response:any = null;
+		this.tmowarned$ = false;
+		if (this.modified$) this.modified$ = new Date();
 
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});

@@ -13,6 +13,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { Record } from '../model/Record.js';
+import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
 import { Classes } from '../internal/Classes.js';
@@ -412,7 +413,10 @@ export class Form implements EventListenerObject
 		}
 
 		if (!block || !field)
+		{
+			Alert.warning("field and block undefined","Send Key");
 			return(false);
+		}
 
 		block = block.toLowerCase();
 		field = field.toLowerCase();
@@ -430,10 +434,13 @@ export class Form implements EventListenerObject
 		}
 
 		let blk:Block = this.getBlock(block.toLowerCase());
-		let match:FieldInstance[] = blk.getFieldsByClass(field,clazz);
+		let match:FieldInstance[] = blk?.getFieldsByClass(field,clazz);
 
-		if (match.length)
+		if (!match || match.length == 0)
+		{
+			Alert.warning("unable to locate field '"+field+"' or block '"+block+"'","Send Key");
 			return(false);
+		}
 
 		match[0].focus();
 		return(this.keyhandler(key,match[0]));

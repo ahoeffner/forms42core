@@ -135,7 +135,6 @@ export class KeyMap
 			str = "mod: "+str.substring(0,str.length-1)+", ";
 
 		str += "key: ["+this.key$+"]";
-
 		return("{"+str+"}");
 	}
 }

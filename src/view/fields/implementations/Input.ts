@@ -893,7 +893,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.datetokens != null)
 		{
-			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.sysdate)
+			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.now)
 			{
 				this.pattern.setValue(this.getCurrentDate());
 				this.setElementValue(this.pattern.getValue());

@@ -200,7 +200,8 @@ export class ListOfValues extends Form
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
-		this.setValue("filter","search",this.form.getValue(this.block,this.props.filterInitialValueFrom)+"");
+		if (this.props.filterInitialValueFrom)
+			this.setValue("filter","search",this.form.getValue(this.block,this.props.filterInitialValueFrom)+"");
 
 		this.query();
 		return(true);

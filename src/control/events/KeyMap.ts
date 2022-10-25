@@ -21,8 +21,8 @@ export class KeyMap
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
 	public static requery:KeyMap = new KeyMap({key: 'u', ctrl: true});
 
-	public static now:KeyMap = new KeyMap({key: ' ', ctrl: true}, "(space) now", "Todays date");
 	public static dump:KeyMap = new KeyMap({key: KeyCodes.f12, shift: true});
+	public static now:KeyMap = new KeyMap({key: ' ', ctrl: true}, "(space) now", "Todays date");
 
 	public static commit:KeyMap = new KeyMap({key: KeyCodes.f10},"commit","commit all transactions");
 	public static rollback:KeyMap = new KeyMap({key: KeyCodes.f10, shift: true},"rollback","rollback all transactions");

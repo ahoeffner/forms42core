@@ -19,6 +19,7 @@ import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
 import { FormEvent as Interface } from "./FormEvent.js";
 import { Logger, Type } from "../../application/Logger.js";
+import { ApplicationHandler } from "./ApplicationHandler.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
 import { FieldInstance as ViewFieldInstance } from "../../view/fields/FieldInstance.js";
 
@@ -112,7 +113,6 @@ export class FormEvent implements Interface
 	}
 }
 
-
 export class FormEvents
 {
 	private static listeners:EventListener[] = [];
@@ -157,6 +157,9 @@ export class FormEvents
 
 				if (lsnr.filter.block != null) ltype = 2;
 				if (lsnr.filter.field != null) ltype = 3;
+
+				if (ltype == 0 && lsnr.filter.mouse == MouseMap.contextmenu)
+					ApplicationHandler.addContextListener();
 
 				switch(ltype)
 				{
@@ -210,7 +213,6 @@ export class FormEvents
 		return(null);
 	}
 
-
 	public static removeListener(id:object) : void
 	{
 		let map:Map<EventType,EventListener[]> = null;
@@ -256,7 +258,6 @@ export class FormEvents
 			}
 		}
 	}
-
 
 	public static async raise(event:FormEvent) : Promise<boolean>
 	{

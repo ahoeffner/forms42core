@@ -20,11 +20,21 @@ import { FlightRecorder } from '../../application/FlightRecorder.js';
 
 export class ApplicationHandler implements EventListenerObject
 {
+	public static contextmenu:boolean = false;
 	public static instance:ApplicationHandler;
 
 	public static init() : void
 	{
 		ApplicationHandler.instance = new ApplicationHandler();
+	}
+
+	public static addContextListener() : void
+	{
+		if (!ApplicationHandler.contextmenu)
+		{
+			ApplicationHandler.contextmenu = true;
+			document.addEventListener("contextmenu",ApplicationHandler.instance);
+		}
 	}
 
 	private constructor()
@@ -120,7 +130,6 @@ export class ApplicationHandler implements EventListenerObject
 
 		document.addEventListener("click",this);
 		document.addEventListener("dblclick",this);
-		//document.addEventListener("contextmenu",this);
 
 		window.matchMedia("(min-width: 600px)").addEventListener("change",this);
 	}

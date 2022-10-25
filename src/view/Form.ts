@@ -658,7 +658,6 @@ export class Form implements EventListenerObject
 					params.set("form",this.parent);
 					params.set("field",inst.name);
 					params.set("block",inst.block);
-					params.set("value",inst.getValue());
 					this.parent.callform(Classes.ListOfValuesClass,params);
 				}
 

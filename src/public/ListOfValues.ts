@@ -29,6 +29,7 @@ export interface ListOfValues
 	filterPrefix?:string;
 	filterPostfix?:string;
 	filterMinLength?:number;
+	filterInitialValueFrom?:string;
 
 	displayfields:string|string[];
 	sourcefields?:string|string[];

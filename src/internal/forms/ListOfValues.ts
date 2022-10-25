@@ -24,6 +24,8 @@ import { ListOfValues as Properties } from "../../public/ListOfValues.js";
 
 export class ListOfValues extends Form
 {
+	private form:Form = null;
+	private block:Block = null;
 	private last:string = null;
 	private results:Block = null;
 	private columns:string[] = null;
@@ -47,12 +49,10 @@ export class ListOfValues extends Form
 	{
 		this.cancelled = false;
 
-		let form:Form = this.parameters.get("form");
-		let block:string = this.parameters.get("block");
 		let source:string|string[] = this.props.sourcefields;
 		let target:string|string[] = this.props.targetfields;
 
-		if (form && block && source && target)
+		if (this.form && this.block && source && target)
 		{
 			if (!Array.isArray(source))
 				source = [source];
@@ -63,7 +63,7 @@ export class ListOfValues extends Form
 			for (let i = 0; i < source.length && i < target.length; i++)
 			{
 				let value:any = this.results.getValue(source[i]);
-				form.setValue(block,target[i],value);
+				this.form.setValue(this.block.name,target[i],value);
 			}
 		}
 
@@ -141,6 +141,8 @@ export class ListOfValues extends Form
 
 	private async initialize() : Promise<boolean>
 	{
+		this.form = this.parameters.get("form");
+		this.block = this.parameters.get("block");
 		this.props = this.parameters.get("properties");
 
 		if (this.props == null)
@@ -198,8 +200,7 @@ export class ListOfValues extends Form
 		if (Array.isArray(cols)) this.columns = cols;
 		else 							 this.columns = [cols];
 
-		let start:string = this.parameters.get("value")+"";
-		this.setValue("filter","search",start);
+		this.setValue("filter","search",this.form.getValue(this.block.name,this.props.filterInitialValueFrom)+"");
 
 		this.query();
 		return(true);

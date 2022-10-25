@@ -54,6 +54,7 @@ export class DatePicker extends Form
 		[
 			{type: EventType.Key, key: this.prevstep},
 			{type: EventType.Key, key: this.nextstep},
+			{type: EventType.Key, key:KeyMap.enter},
 			{type: EventType.Key, key: KeyMap.space},
 			{type: EventType.Key, key: KeyMap.prevrecord},
 			{type: EventType.Key, key: KeyMap.nextrecord},
@@ -125,11 +126,12 @@ export class DatePicker extends Form
 		if (event.field == "prev"|| event.field == "next")
 			return(true);
 
-		let prev:boolean = event.key == KeyMap.prevrecord;
-		let next:boolean = event.key == KeyMap.nextrecord;
 		let space:boolean = event.key == KeyMap.space;
-		let left:boolean = event.key == this.prevstep;
+		let enter:boolean = event.key == KeyMap.enter;
+		let left:boolean  = event.key == this.prevstep;
 		let right:boolean = event.key == this.nextstep;
+		let next:boolean  = event.key == KeyMap.nextrecord;
+		let prev:boolean  = event.key == KeyMap.prevrecord;
 
 		let row:number = +event.field.substring(4,5);
 		let col:number = +event.field.substring(5,6);
@@ -178,6 +180,11 @@ export class DatePicker extends Form
 
 				return(true);
 			}
+		}
+		else if(enter)
+		{
+			this.done();
+			return(true);
 		}
 		return(true);
 	}

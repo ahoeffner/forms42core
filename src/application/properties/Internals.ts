@@ -39,7 +39,6 @@ export class Internals
 	public static PopupStyle =
 	`
 		gap:2px;
-		margin:10px;
 		display:grid;
 		overflow: hidden;
 		padding:10px 20px;

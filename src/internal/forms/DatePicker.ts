@@ -87,7 +87,7 @@ export class DatePicker extends Form
 		form.setValue(block,field,this.date);
 		this.setValue("calendar","date",this.date);
 
-		return (this.close());
+		return(this.close());
 	}
 
 	private async initialize() : Promise<boolean>
@@ -204,8 +204,8 @@ export class DatePicker extends Form
 		this.date.setDate(this.day);
 		this.setValue("calendar","date",this.date);
 
-		this.done();
-		return(true);
+		await this.done();
+		return(false);
 	}
 
 	private async setDate() : Promise<boolean>

@@ -183,6 +183,11 @@ export class Block
 		this.getRecord(0)?.setValue(field,value);
 	}
 
+	public async setDirty(field?:string) : Promise<void>
+	{
+		this.getRecord().setDirty(field);
+	}
+
 	public getRecord(offset?:number) : Record
 	{
 		let intrec:ModelRecord = null;

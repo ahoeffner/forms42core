@@ -67,7 +67,8 @@ export class ListOfValues extends Form
 			}
 		}
 
-		return(this.close());
+		await this.form.getBlock(this.block)?.getRecord()?.setDirty();
+		return(await this.close());
 	}
 
 	private async onKeyStroke() : Promise<boolean>

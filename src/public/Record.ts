@@ -56,15 +56,28 @@ export class Record
 	}
 
 	/**
+	 * Make sure the datasource marks current record locked.
+	 */
+	public async lock() : Promise<boolean>
+	{
+		return(this.rec$.wrapper?.lock(this.rec$));
+	}
+
+	/**
 	 * Make sure the datasource marks this record updated.
 	 * @param field any non derived field
 	 */
-	public setDirty(field:string) : void
+	public async setDirty(field?:string) : Promise<void>
 	{
 		this.rec$.setDirty(field);
-		this.rec$.wrapper?.modified(this.rec$,false);
+		await this.rec$.wrapper?.modified(this.rec$,false);
 	}
 
+	/**
+	 * Set the field value. This operation neither locks the record, nor marks it dirty
+	 * @param field
+	 * @param value
+	 */
 	public setValue(field:string, value:any) : void
 	{
 		field = field?.toLowerCase();

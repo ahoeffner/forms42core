@@ -168,6 +168,11 @@ export class Block
 		FormBacking.getModelBlock(this,true).datasource = source;
 	}
 
+	public async delete() : Promise<boolean>
+	{
+		return(FormBacking.getModelBlock(this)?.delete());
+	}
+
 	public async insert(before?:boolean) : Promise<boolean>
 	{
 		return(FormBacking.getModelBlock(this)?.insert(before));
@@ -181,6 +186,16 @@ export class Block
 	public setValue(field:string, value:any) : void
 	{
 		this.getRecord(0)?.setValue(field,value);
+	}
+
+	public async lock() : Promise<void>
+	{
+		this.getRecord().lock();
+	}
+
+	public async setDirty(field?:string) : Promise<void>
+	{
+		this.getRecord().setDirty(field);
 	}
 
 	public getRecord(offset?:number) : Record

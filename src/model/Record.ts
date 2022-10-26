@@ -248,7 +248,7 @@ export class Record
 	{
 		if (column == null)
 			column = this.columns[0];
-			
+
 		column = column?.toLowerCase();
 		let idx:number = this.indexOf(column);
 

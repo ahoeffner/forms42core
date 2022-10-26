@@ -147,15 +147,11 @@ export class DatePicker extends Form
 
 		if (next)
 		{
-			if(event.field)
-			{
+			if(event.field == "date")
 				this.goField(event.block,"prev");
-			}
-			if (this.getValue(event.block,'day-' + (++row) + col))
-			{
+			else if (this.getValue(event.block,'day-' + (++row) + col))
 				this.goField(event.block,'day-' + row + col);
-				return(false);
-			}
+			return(false);
 		}
 		else if (prev)
 		{
@@ -165,7 +161,7 @@ export class DatePicker extends Form
 			    else this.goField(event.block,"prev");
 				return(false);
 			}
-			if (this.getValue(event.block,'day-' + (--row) + col))
+			else (this.getValue(event.block,'day-' + (--row) + col))
 			{
 				this.goField(event.block,'day-' + row + col);
 				return(false);
@@ -240,7 +236,6 @@ export class DatePicker extends Form
 
 	private async goToNextMonth (event:FormEvent) : Promise<boolean>
 	{
-		
 		if(this.navigateMonth(event))
 		{	
 			this.date.setMonth(this.date.getMonth()+1);
@@ -270,12 +265,12 @@ export class DatePicker extends Form
 		let right:boolean 	= event.key == this.nextstep;
 		let next:boolean  	= event.key == KeyMap.nextrecord;
 		let prev:boolean  	= event.key == KeyMap.prevrecord;
-		if (left)
+		if (left && event.field == "next")
 		{
 			this.goField(event.block,"prev")
 			return(false);
 		}
-		else if (right)
+		else if (right && event.field == "prev")
 		{ 
 			this.goField(event.block,"next")
 			return(false);
@@ -289,7 +284,6 @@ export class DatePicker extends Form
 		{
 			for (let index = 0; index <= 7; index++) 
 			{
-				console.log(this.getValue(event.block,"day-1"+index))
 				if(this.getValue(event.block,"day-1"+index) == 1)
 				{
 					this.goField(event.block,"day-1"+index)

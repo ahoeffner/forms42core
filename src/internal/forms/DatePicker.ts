@@ -255,19 +255,26 @@ export class DatePicker extends Form
 		let right:boolean 	= event.key == this.nextstep;
 		let next:boolean  	= event.key == KeyMap.nextrecord;
 		let prev:boolean  	= event.key == KeyMap.prevrecord;
-		if (left && event.field == "next")
+		if (left)
 		{
+			if(event.field == "next")
+			{
 			this.goField(event.block,"prev")
 			return(false);
-		}
-		else if (left)
-			this.goToPrevMonth();
-		else if (right && event.field == "prev")
+			}
+			else
+				this.goToPrevMonth();
+		}			
+		else if (right)
 		{ 
-			this.goField(event.block,"next")
-			return(false);
-		} else if(right)
-			this.goToNextMonth();
+			if(event.field == "prev")
+			{
+				this.goField(event.block,"next")
+				return(false);
+			} 
+			else
+				this.goToNextMonth();
+		} 	
 		else if (prev)
 		{
 			this.goField(event.block,"date")

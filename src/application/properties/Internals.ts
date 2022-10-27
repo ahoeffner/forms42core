@@ -88,19 +88,30 @@ export class Internals
 		position: absolute;
 	`;
 
+	public static LoaderStyle:string =
+	`
+	border: 16px solid #f3f3f3;
+	border-top: 16px solid #3498db;
+	border-radius: 50%;
+	width: 70px;
+	height: 70px;
+	animation: spin 2s linear infinite;
+	`;
+
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
+		let loader:HTMLElement = view.querySelector('div.loader');
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
 		let lowerright:HTMLElement = view.querySelector('div[name="lowerright"]');
-
 		let buttonarea:HTMLElement = lowerright?.querySelector('div[name="buttonarea"]');
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
 		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
+		if (loader && Internals.LoaderStyle) loader.style.cssText = Internals.LoaderStyle;
 		if (close && Internals.PopupCloseButton) close.style.cssText = Internals.PopupCloseButton;
 		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;

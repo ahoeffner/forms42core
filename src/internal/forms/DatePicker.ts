@@ -50,15 +50,6 @@ export class DatePicker extends Form
 		this.leftArrow = "<";
 		this.rightArrow = ">";
 
-		this.addEventListener(this.navigate,
-		[
-			{type: EventType.Key, key: this.prevstep},
-			{type: EventType.Key, key: this.nextstep},
-			{type: EventType.Key, key:KeyMap.enter},
-			{type: EventType.Key, key: KeyMap.space},
-			{type: EventType.Key, key: KeyMap.prevrecord},
-			{type: EventType.Key, key: KeyMap.nextrecord},
-		]);
 
 		this.addEventListener(this.setDay,[
 			{type: EventType.Key, key:KeyMap.enter},
@@ -68,14 +59,24 @@ export class DatePicker extends Form
 
 		this.addEventListener(this.goToPrevMonth,
 		[
-			{type: EventType.Key, field: "prev", key: KeyMap.space},
-			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
+			{type: EventType.Key, 	field: "prev", 	key: KeyMap.space},
+			{type: EventType.Mouse, field: "prev", 	mouse: MouseMap.click}
 		]);
 
 		this.addEventListener(this.goToNextMonth,
 		[
-			{type: EventType.Key, field: "next", key: KeyMap.space},
-			{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
+			{type: EventType.Key, 	field: 	"next", key: KeyMap.space},
+			{type: EventType.Mouse, field: 	"next", mouse: MouseMap.click}
+		]);
+
+		this.addEventListener(this.navigate,
+		[
+				{type: EventType.Key, key: this.prevstep},
+				{type: EventType.Key, key: this.nextstep},
+				{type: EventType.Key, key:KeyMap.enter},
+				{type: EventType.Key, key: KeyMap.space},
+				{type: EventType.Key, key: KeyMap.prevrecord},
+				{type: EventType.Key, key: KeyMap.nextrecord},
 		]);
 	}
 
@@ -84,6 +85,10 @@ export class DatePicker extends Form
 		let form:Form = this.parameters.get("form");
 		let block:string = this.parameters.get("block");
 		let field:string = this.parameters.get("field");
+		if(this.constraint)
+		{
+			console.log(this.constraint.valid(this.date));
+		}
 
 		form.setValue(block,field,this.date);
 		this.setValue("calendar","date",this.date);
@@ -122,31 +127,38 @@ export class DatePicker extends Form
 	{
 		if (!event.field)
 			return(true);
-
-		if (event.field == "prev"|| event.field == "next")
-			return(true);
-
+			
 		let space:boolean = event.key == KeyMap.space;
 		let enter:boolean = event.key == KeyMap.enter;
 		let left:boolean  = event.key == this.prevstep;
 		let right:boolean = event.key == this.nextstep;
 		let next:boolean  = event.key == KeyMap.nextrecord;
 		let prev:boolean  = event.key == KeyMap.prevrecord;
-
-		let row:number = +event.field.substring(4,5);
-		let col:number = +event.field.substring(5,6);
+		let row:number = 	+event.field.substring(4,5);
+		let col:number = 	+event.field.substring(5,6);
+		if( event.field == "prev"|| event.field == "next")
+		{
+			this.navigateMonth(event);
+			return(false);
+		}
 
 		if (next)
 		{
-			if (this.getValue(event.block,'day-' + (++row) + col))
-			{
+			if(event.field == "date")
+				this.goField(event.block,"prev");
+			else if (this.getValue(event.block,'day-' + (++row) + col))
 				this.goField(event.block,'day-' + row + col);
-				return(false);
-			}
+			return(false);
 		}
 		else if (prev)
 		{
-			if (this.getValue(event.block,'day-' + (--row) + col))
+			if ( 8 >= this.getValue(event.block,'day-' + (row) + col))
+			{
+			    if(this.getValue(event.block,'day-' + (--row) + col)) this.goField(event.block,'day-' + row + col);
+			    else this.goField(event.block,"prev");
+				return(false);
+			}
+			else (this.getValue(event.block,'day-' + (--row) + col))
 			{
 				this.goField(event.block,'day-' + row + col);
 				return(false);
@@ -164,7 +176,6 @@ export class DatePicker extends Form
 		{
 			if (this.getValue(event.block,'day-' + row + (--col)))
 			{
-
 				this.goField(event.block,'day-' + row + col);
 				return(false);
 			}
@@ -173,11 +184,9 @@ export class DatePicker extends Form
 		{
 			if (this.getValue(event.block,'day-' + row + col))
 			{
-
 				this.day = this.getValue(event.block,'day-' + row + col);
 				this.date.setDate(this.day);
 				this.setValue("calendar","date",this.date);
-
 				return(true);
 			}
 		}
@@ -222,19 +231,67 @@ export class DatePicker extends Form
 		return(true)
 	}
 
-	private async goToNextMonth () : Promise<boolean>
+	private async goToNextMonth() : Promise<boolean>
 	{
+		
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
-		return(true)
+		return(false);
 	}
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
+	
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
+		return(false);
+	}
+
+	private navigateMonth(event:FormEvent) : boolean
+	{
+		let left:boolean 	= event.key == this.prevstep;
+		let right:boolean 	= event.key == this.nextstep;
+		let next:boolean  	= event.key == KeyMap.nextrecord;
+		let prev:boolean  	= event.key == KeyMap.prevrecord;
+		if (left)
+		{
+			if(event.field == "next")
+			{
+			this.goField(event.block,"prev")
+			return(false);
+			}
+			else
+				this.goToPrevMonth();
+		}			
+		else if (right)
+		{ 
+			if(event.field == "prev")
+			{
+				this.goField(event.block,"next")
+				return(false);
+			} 
+			else
+				this.goToNextMonth();
+		} 	
+		else if (prev)
+		{
+			this.goField(event.block,"date")
+			return(false);
+		}
+		else if (next)
+		{
+			for (let index = 0; index <= 7; index++) 
+			{
+				if(this.getValue(event.block,"day-1"+index) == 1)
+				{
+					this.goField(event.block,"day-1"+index)
+					return(false);
+				}
+			}
+			return(true);
+		}
 		return(true);
 	}
 

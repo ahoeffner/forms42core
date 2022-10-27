@@ -54,7 +54,7 @@ export class QueryTable extends SQLSource implements DataSource
 		this.sql$ = sql;
 
 		if (!(connection instanceof DatabaseConnection))
-			connection = DatabaseConnection.getConnection(connection.name);
+			connection = DatabaseConnection.getConnection(connection?.name);
 
 		if (connection == null)
 		{

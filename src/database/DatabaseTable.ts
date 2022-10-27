@@ -66,7 +66,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.table$ = table;
 
 		if (!(connection instanceof DatabaseConnection))
-			connection = DatabaseConnection.getConnection(connection.name);
+			connection = DatabaseConnection.getConnection(connection?.name);
 
 		if (connection == null)
 		{

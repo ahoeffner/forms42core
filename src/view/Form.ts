@@ -565,8 +565,8 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.executequery)
 			{
+				this.model.getQueryMaster()?.view.focus(false);
 				success = await this.model.executeQuery(inst.field.block.model);
-				if (success) this.model.getQueryMaster()?.view.focus();
 				return(success);
 			}
 

@@ -318,8 +318,9 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.getElement().blur();
 	}
 
-	public focus() : void
+	public focus(events?:boolean) : void
 	{
+		if (events == null) events = true;
 		let focus:Element = document.activeElement;
 		let inst:HTMLElement = this.impl.getElement();
 
@@ -330,8 +331,12 @@ export class FieldInstance implements FieldEventHandler
 				let event:BrowserEvent = BrowserEvent.get();
 
 				inst.focus();
-				event.setFocusEvent();
-				this.field.handleEvent(this,event);
+
+				if (events)
+				{
+					event.setFocusEvent();
+					this.field.handleEvent(this,event);
+				}
 
 			},10);
 		}

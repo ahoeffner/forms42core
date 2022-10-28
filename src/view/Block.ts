@@ -98,16 +98,16 @@ export class Block
 		this.current?.blur();
 	}
 
-	public focus() : void
+	public focus(events?:boolean) : void
 	{
 		if (this.current)
 		{
-			this.current.focus();
+			this.current.focus(events);
 		}
 		else
 		{
 			let state:RecordState = this.model.getRecord().state;
-			this.getCurrentRow()?.getFirstInstance(this.convert(state))?.focus();
+			this.getCurrentRow()?.getFirstInstance(this.convert(state))?.focus(events);
 		}
 	}
 

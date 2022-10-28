@@ -63,6 +63,12 @@ export class DataSourceWrapper
 	public set dirty(flag:boolean)
 	{
 		this.modified$ = flag;
+
+		if (!this.dirty)
+		{
+			for (let i = 0; i < this.cache$.length; i++)
+				this.cache$[i].setClean();
+		}
 	}
 
 	public async clear() : Promise<boolean>

@@ -330,6 +330,9 @@ export class FieldInstance implements FieldEventHandler
 			{
 				let event:BrowserEvent = BrowserEvent.get();
 
+				if (!events)
+					this.ignore = "focus";
+
 				inst.focus();
 
 				if (events)

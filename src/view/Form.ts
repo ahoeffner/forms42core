@@ -650,7 +650,7 @@ export class Form implements EventListenerObject
 				if (inst.field.block.empty()) return(true);
 				let params:Map<string,any> = new Map<string,any>();
 				let backing:FormBacking = FormBacking.getBacking(this.parent);
-				let lov:ListOfValues = backing.getListOfValues(this.name,inst.name);
+				let lov:ListOfValues = backing.getListOfValues(inst.block,inst.name);
 
 				if (lov != null)
 				{

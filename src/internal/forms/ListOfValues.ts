@@ -63,7 +63,7 @@ export class ListOfValues extends Form
 			for (let i = 0; i < source.length && i < target.length; i++)
 			{
 				let value:any = this.results.getValue(source[i]);
-				await this.form.getBlock(this.block)?.getRecord()?.setAndValidate(target[i],value);
+				await this.form.getBlock(this.block)?.setAndValidate(target[i],value);
 			}
 		}
 

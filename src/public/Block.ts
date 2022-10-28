@@ -194,6 +194,15 @@ export class Block
 		this.getRecord()?.setValue(field,value);
 	}
 
+	/**
+	 * setAndValidate field value as if changed by a user.
+	 * @param field
+	 */
+	public async setAndValidate(field:string, value:any) : Promise<boolean>
+	{
+		return(this.getRecord(0).setAndValidate(field,value));
+	}
+
 	public async lock() : Promise<void>
 	{
 		this.getRecord().lock();

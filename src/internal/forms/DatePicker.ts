@@ -85,13 +85,14 @@ export class DatePicker extends Form
 		let form:Form = this.parameters.get("form");
 		let block:string = this.parameters.get("block");
 		let field:string = this.parameters.get("field");
+
 		if(this.constraint)
 		{
 			console.log(this.constraint.valid(this.date));
 		}
 
-		form.setValue(block,field,this.date);
 		this.setValue("calendar","date",this.date);
+		await form.getBlock(block)?.getRecord()?.setAndValidate(field,this.date);
 
 		return(this.close());
 	}
@@ -127,7 +128,7 @@ export class DatePicker extends Form
 	{
 		if (!event.field)
 			return(true);
-			
+
 		let space:boolean = event.key == KeyMap.space;
 		let enter:boolean = event.key == KeyMap.enter;
 		let left:boolean  = event.key == this.prevstep;
@@ -233,7 +234,7 @@ export class DatePicker extends Form
 
 	private async goToNextMonth() : Promise<boolean>
 	{
-		
+
 		this.date.setMonth(this.date.getMonth()+1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -242,7 +243,7 @@ export class DatePicker extends Form
 
 	private async goToPrevMonth() : Promise<boolean>
 	{
-	
+
 		this.date.setMonth(this.date.getMonth()-1);
 		this.setValue("calendar","date",this.date);
 		this.populateDates();
@@ -264,17 +265,17 @@ export class DatePicker extends Form
 			}
 			else
 				this.goToPrevMonth();
-		}			
+		}
 		else if (right)
-		{ 
+		{
 			if(event.field == "prev")
 			{
 				this.goField(event.block,"next")
 				return(false);
-			} 
+			}
 			else
 				this.goToNextMonth();
-		} 	
+		}
 		else if (prev)
 		{
 			this.goField(event.block,"date")
@@ -282,7 +283,7 @@ export class DatePicker extends Form
 		}
 		else if (next)
 		{
-			for (let index = 0; index <= 7; index++) 
+			for (let index = 0; index <= 7; index++)
 			{
 				if(this.getValue(event.block,"day-1"+index) == 1)
 				{

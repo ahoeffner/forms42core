@@ -64,10 +64,10 @@ export class ListOfValues extends Form
 			{
 				let value:any = this.results.getValue(source[i]);
 				this.form.setValue(this.block,target[i],value);
+				await this.form.getBlock(this.block)?.getRecord()?.validateField(target[i]);
 			}
 		}
 
-		await this.form.getBlock(this.block)?.getRecord()?.setDirty();
 		return(await this.close());
 	}
 

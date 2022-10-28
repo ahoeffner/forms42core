@@ -74,6 +74,21 @@ export class Record
 	}
 
 	/**
+	 * Validate the field as if changed by a user.
+	 * @param field
+	 */
+	 public async validateField(field:string) : Promise<boolean>
+	 {
+		this.rec$.setDirty(field);
+		field = field?.toLowerCase();
+		let blk:ModelBlock = this.rec$.block;
+		let row:Row = blk?.view.displayed(this.rec$);
+
+		if (row) return(row.validateField(field));
+		return(false);
+	 }
+
+	/**
 	 * Set the field value. This operation neither locks the record, nor marks it dirty
 	 * @param field
 	 * @param value

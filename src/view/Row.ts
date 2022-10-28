@@ -164,6 +164,13 @@ export class Row
 		if (this.status == Status.new) this.status = Status.insert;
 	}
 
+	public async validateField(field:string) : Promise<boolean>
+	{
+		let inst:FieldInstance = this.getField(field)?.getInstance(0);
+		if (inst) return(this.block.validateField(inst,inst.getValue()));
+		return(false);
+	}
+
 	public async validate() : Promise<boolean>
 	{
 		if (this.validated)

@@ -348,12 +348,12 @@ export class Block
 		this.model.endEventTransaction(event,apply);
 	}
 
-	public async lock(inst:FieldInstance) : Promise<boolean>
+	public async lock(inst?:FieldInstance) : Promise<boolean>
 	{
 		if (this.model.locked()) return(true);
 
 		await this.setEventTransaction(EventType.OnLockRecord);
-		let success:boolean = await this.fireFieldEvent(EventType.OnLockRecord,inst);
+		let success:boolean = await this.fireBlockEvent(EventType.OnLockRecord,inst);
 		this.endEventTransaction(EventType.OnLockRecord,success);
 
 		if (success)
@@ -1097,6 +1097,12 @@ export class Block
 	private async fireFieldEvent(type:EventType, inst:FieldInstance) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.FieldEvent(type,inst);
+		return(FormEvents.raise(frmevent));
+	}
+
+	private async fireBlockEvent(type:EventType, inst?:FieldInstance) : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.form.parent,this.name,inst);
 		return(FormEvents.raise(frmevent));
 	}
 }

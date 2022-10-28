@@ -186,12 +186,12 @@ export class Block
 
 	public getValue(field:string) : any
 	{
-		return(this.getRecord(0)?.getValue(field));
+		return(this.getRecord()?.getValue(field));
 	}
 
 	public setValue(field:string, value:any) : void
 	{
-		this.getRecord(0)?.setValue(field,value);
+		this.getRecord()?.setValue(field,value);
 	}
 
 	public async lock() : Promise<void>

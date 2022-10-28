@@ -167,10 +167,10 @@ export class Row
 	public async validateField(field:string) : Promise<boolean>
 	{
 		let inst:FieldInstance = this.getField(field)?.getInstance(0);
-		
+
 		if (inst)
 		{
-			if (await this.block.lock())
+			if (await this.block.lock(inst))
 				return(this.block.validateField(inst,inst.getValue()));
 		}
 

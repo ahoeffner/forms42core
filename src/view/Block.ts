@@ -348,7 +348,7 @@ export class Block
 		this.model.endEventTransaction(event,apply);
 	}
 
-	public async lock(inst?:FieldInstance) : Promise<boolean>
+	public async lock(inst:FieldInstance) : Promise<boolean>
 	{
 		if (this.model.locked()) return(true);
 

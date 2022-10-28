@@ -16,7 +16,6 @@ import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { Indicator } from "../application/tags/Indicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
-import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
 
 export enum Status
 {
@@ -162,19 +161,6 @@ export class Row
 		if (this.rownum >= 0) this.validated = false;
 		else this.block.getCurrentRow().validated = false;
 		if (this.status == Status.new) this.status = Status.insert;
-	}
-
-	public async validateField(field:string) : Promise<boolean>
-	{
-		let inst:FieldInstance = this.getField(field)?.getInstance(0);
-
-		if (inst)
-		{
-			if (await this.block.lock(inst))
-				return(this.block.validateField(inst,inst.getValue()));
-		}
-
-		return(false);
 	}
 
 	public async validate() : Promise<boolean>

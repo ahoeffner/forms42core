@@ -35,9 +35,9 @@ export class FormEvent implements Interface
 		return(new FormEvent(type,form));
 	}
 
-	public static BlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance) : FormEvent
+	public static BlockEvent(type:EventType, form:Form, block:string, inst?:ViewFieldInstance|string) : FormEvent
 	{
-		return(new FormEvent(type,form,inst,inst != null ? inst.block : block));
+		return(new FormEvent(type,form,inst,block));
 	}
 
 	public static FieldEvent(type:EventType, inst:ViewFieldInstance) : FormEvent
@@ -58,11 +58,11 @@ export class FormEvent implements Interface
 	private constructor
 		(
 			private type$:EventType,
-			private form$:Form, private inst?:ViewFieldInstance,
+			private form$:Form, private inst?:ViewFieldInstance|string,
 			private block$?:string, private key$?:KeyMap,private mevent$?:MouseMap
 		)
 	{
-		if (inst != null)
+		if (inst instanceof ViewFieldInstance)
 			this.block$ = inst.block;
 	}
 
@@ -88,7 +88,13 @@ export class FormEvent implements Interface
 
 	public get field() : string
 	{
-		return(this.inst?.name);
+		if (typeof this.inst === "string")
+			return(this.inst);
+
+		if (this.inst instanceof ViewFieldInstance)
+			return(this.inst?.name);
+
+		return(null);
 	}
 
 	public get mouse() : MouseMap

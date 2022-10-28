@@ -79,12 +79,14 @@ export class Record
 	 */
 	 public async setAndValidate(field:string, value:any) : Promise<boolean>
 	 {
+		if (!await this.lock())
+			return(false);
+
 		this.setValue(field,value);
 		field = field?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
-		let row:Row = blk?.view.displayed(this.rec$);
-		if (row) return(row.validateField(field));
-		return(false);
+		
+		return(blk.validateField(this.rec$,field));
 	 }
 
 	/**

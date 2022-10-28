@@ -348,6 +348,21 @@ export class Block
 		return(success);
 	}
 
+	public async validateField(record:Record, field:string) : Promise<boolean>
+	{
+		if (record == null)
+			return(true);
+
+		if (!await this.setEventTransaction(EventType.WhenValidateField,record)) return(false);
+		let success:boolean = await this.fire(EventType.WhenValidateField,field);
+		this.endEventTransaction(EventType.WhenValidateField,success);
+
+		if (success)
+			success = await this.wrapper.modified(record,false);
+
+		return(success);
+	}
+
 	public async validateRecord() : Promise<boolean>
 	{
 		let record:Record = this.getRecord();
@@ -959,9 +974,9 @@ export class Block
 		return(false);
 	}
 
-	private async fire(type:EventType) : Promise<boolean>
+	private async fire(type:EventType, field?:string) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.intfrm,this.name);
+		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.intfrm,this.name,field);
 		return(FormEvents.raise(frmevent));
 	}
 }

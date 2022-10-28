@@ -25,6 +25,7 @@ import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
+import { ListOfValues } from './ListOfValues.js';
 
 export class Block
 {
@@ -130,6 +131,11 @@ export class Block
 	public goField(field:string, clazz?:string) : void
 	{
 		FormBacking.getViewBlock(this).goField(field,clazz);
+	}
+
+	public setListOfValues(field:string, lov:ListOfValues) : void
+	{
+		FormBacking.getBacking(this.form).setListOfValues(this.name,field,lov);
 	}
 
 	public setDateConstraint(field:string, constraint:DateConstraint) : void

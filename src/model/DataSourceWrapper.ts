@@ -188,6 +188,9 @@ export class DataSourceWrapper
 	{
 		this.dirty = true;
 
+		if (this.locked(record))
+			return(true);
+
 		if (!this.source.rowlocking)
 			return(true);
 

@@ -67,23 +67,22 @@ export class Record
 	 * Make sure the datasource marks this record updated.
 	 * @param field any non derived field
 	 */
-	public async setDirty(field?:string) : Promise<void>
+	public setDirty(field?:string) : void
 	{
 		this.rec$.setDirty(field);
-		await this.rec$.wrapper?.modified(this.rec$,false);
+		this.rec$.wrapper.dirty = true;
 	}
 
 	/**
-	 * Validate the field as if changed by a user.
+	 * setAndValidate field value as if changed by a user.
 	 * @param field
 	 */
-	 public async validateField(field:string) : Promise<boolean>
+	 public async setAndValidate(field:string, value:any) : Promise<boolean>
 	 {
-		this.rec$.setDirty(field);
+		this.setValue(field,value);
 		field = field?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
 		let row:Row = blk?.view.displayed(this.rec$);
-
 		if (row) return(row.validateField(field));
 		return(false);
 	 }

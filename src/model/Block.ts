@@ -514,17 +514,12 @@ export class Block
 		if (this.qbe.querymode)
 			return(true);
 
-		let succces:boolean = await this.validateRecord();
+		let undo:Record[] = await this.wrapper?.undo();
 
-		if (succces)
-		{
-			let undo:Record[] = await this.wrapper?.undo();
+		for (let i = 0; i < undo.length; i++)
+			this.view.refresh(undo[i]);
 
-			for (let i = 0; i < undo.length; i++)
-				this.view.refresh(undo[i]);
-		}
-
-		return(succces);
+		return(true);
 	}
 
 	public async flush() : Promise<boolean>

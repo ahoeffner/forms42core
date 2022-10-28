@@ -199,7 +199,7 @@ export class Block
 		this.getRecord().lock();
 	}
 
-	public async setDirty(field?:string) : Promise<void>
+	public setDirty(field?:string) : void
 	{
 		this.getRecord().setDirty(field);
 	}

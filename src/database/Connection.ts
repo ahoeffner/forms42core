@@ -389,6 +389,7 @@ export class Connection extends BaseConnection
 
 		this.tmowarned$ = false;
 		this.touched$ = new Date();
+		if (this.modified$) this.modified$ = new Date();
 
 		if (patch) this.modified$ = new Date();
 		if (patch) return(this.patch(this.conn$+"/exec",payload));
@@ -407,6 +408,7 @@ export class Connection extends BaseConnection
 
 		this.tmowarned$ = false;
 		this.touched$ = new Date();
+		if (this.modified$) this.modified$ = new Date();
 
 		if (patch) this.modified$ = new Date();
 		if (patch) return(this.patch(this.conn$+"/exec",payload));

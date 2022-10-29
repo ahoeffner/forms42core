@@ -265,21 +265,23 @@ export class Framework
 		if (!Array.isArray(replace))
 			replace = [replace];
 
+		let nested:Map<number,HTMLElement[]> =
+			new Map<number,HTMLElement[]>();
+
 		for(let r=0; r < replace.length; r++)
 		{
 			let deep:Implementation = this.getImplementation(replace[r]);
-
-			if (deep)
-			{
-				let deeprep:HTMLElement[] = this.getReplacement(deep);
-				console.log("deep "+deeprep[0])
-			}
+			if (deep) nested.set(r,this.getReplacement(deep));
+			else	nested.set(r,[replace[r]]);
 		}
 
-		return(replace);
+		let nodes:HTMLElement[] = [];
+		nested.forEach((nrep) => nodes.push(...nrep));
+
+		return(nodes);
 }
 
-	private apply(doc:Element, impl:Implementation)
+	private apply(doc:Element, impl:Implementation) : void
 	{
 		let replace:HTMLElement[] = this.getReplacement(impl);
 

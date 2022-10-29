@@ -38,6 +38,7 @@ export class Field implements Tag
 		if (tag.getAttribute("type")?.toLowerCase() == "row-indicator")
 			return(new Indicator().parse(component,tag,attr));
 
+		console.log("field")
 		if (attr != Properties.BindAttr) tag.removeAttribute(attr);
 		let field:FieldInstance = new FieldInstance(component,tag);
 

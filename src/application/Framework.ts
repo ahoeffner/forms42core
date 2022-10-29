@@ -129,7 +129,6 @@ export class Framework
 	private parseDoc(doc:Element, form?:Element) : void
 	{
 		if (doc == null) return;
-		let prefix:string = Properties.AttributePrefix;
 
 		let nodes:Node[] = [];
 		let inform:boolean = form != null;
@@ -141,41 +140,12 @@ export class Framework
 			let element:Node = nodes[i];
 			if (!(element instanceof HTMLElement)) continue;
 
-			let impl:Tag = null;
-			let attr:string = null;
-			let tag:string = element.nodeName.toLowerCase();
-
-			if (Properties.ParseTags)
-			{
-				impl = Framework.taglib.get(tag);
-				let attrnames:string[] = element.getAttributeNames();
-
-				for (let an = 0; impl == null && an < attrnames.length; an++)
-				{
-					let atrnm:string = attrnames[an].toLowerCase();
-
-					if (!Properties.RequireAttributePrefix)
-					{
-						impl = Framework.attrlib.get(atrnm);
-						if (impl != null) attr = atrnm;
-					}
-
-					if (impl == null)
-					{
-						if (attrnames[an].startsWith(prefix))
-						{
-							atrnm = attrnames[an].substring(prefix.length).toLowerCase();
-							impl = Framework.attrlib.get(atrnm);
-							if (impl != null) attr = atrnm;
-						}
-					}
-				}
-			}
+			let impl:Implementation = this.getImplementation(element);
 
 			if (impl != null)
 			{
-				let replace:HTMLElement|HTMLElement[]|string = impl.parse(this.component,element,attr);
-				Logger.log(Type.htmlparser,"Resolved tag: '"+tag+"' using class: "+impl.constructor.name);
+				let replace:HTMLElement|HTMLElement[]|string = impl.tag.parse(this.component,element,impl.attr);
+				Logger.log(Type.htmlparser,"Resolved tag: '"+impl.name+"' using class: "+impl.tag.constructor.name);
 
 				if (replace == null)
 				{
@@ -199,7 +169,7 @@ export class Framework
 
 					element.remove();
 
-					if (tag == Properties.RootTag)
+					if (impl.name == Properties.RootTag)
 						this.root = replace[0];
 
 					for(let r=0; r < replace.length; r++)
@@ -271,6 +241,46 @@ export class Framework
 				Logger.log(Type.eventparser,"Add event: '"+attrvalue+"' for: "+attrnames[an]);
 			}
 		}
+	}
+
+	private getImplementation(element:HTMLElement) : Implementation
+	{
+		let impl:Tag = null;
+		let attr:string = null;
+		let prefix:string = Properties.AttributePrefix;
+		let tag:string = element?.nodeName.toLowerCase();
+
+		if (Properties.ParseTags)
+		{
+			impl = Framework.taglib.get(tag);
+			let attrnames:string[] = element.getAttributeNames();
+
+			for (let an = 0; impl == null && an < attrnames.length; an++)
+			{
+				let atrnm:string = attrnames[an].toLowerCase();
+
+				if (!Properties.RequireAttributePrefix)
+				{
+					impl = Framework.attrlib.get(atrnm);
+					if (impl != null) attr = atrnm;
+				}
+
+				if (impl == null)
+				{
+					if (attrnames[an].startsWith(prefix))
+					{
+						atrnm = attrnames[an].substring(prefix.length).toLowerCase();
+						impl = Framework.attrlib.get(atrnm);
+						if (impl != null) attr = atrnm;
+					}
+				}
+			}
+		}
+
+		if (impl)
+			return(new Implementation(impl,tag,attr));
+
+		return(null);
 	}
 
 	private applyEvents() : void
@@ -450,4 +460,10 @@ class EventHandler implements EventListenerObject
 			Alert.fatal(msg,"Invoke Method");
 		}
 	}
+}
+
+
+class Implementation
+{
+	constructor(public tag:Tag, public name:string, public attr:string) {}
 }

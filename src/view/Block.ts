@@ -774,6 +774,7 @@ export class Block
 		if (this.row + scroll < 0 || this.row + scroll >= this.rows)
 		{
 			let available:number = 0;
+			let crow:number = this.row;
 
 			// fetch up from first, down from last
 			if (scroll < 0) available = await this.model.prefetch(scroll,-this.row);
@@ -786,8 +787,15 @@ export class Block
 			{
 				inst.ignore = "blur";
 
-				let idx:number = this.getCurrentRow().getFieldIndex(inst);
-				next = this.getRow(available-1).getFieldByIndex(idx);
+				if (inst.row < 0)
+				{
+					next = inst;
+				}
+				else
+				{
+					let idx:number = this.getCurrentRow().getFieldIndex(inst);
+					next = this.getRow(available-1).getFieldByIndex(idx);
+				}
 
 				next.ignore = "focus";
 			}
@@ -798,7 +806,7 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			this.model.scroll(scroll,this.row);
+			let moved:number = this.model.scroll(scroll,this.row);
 
 			success = await this.form.enterRecord(this,0);
 			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter record. block: "+this.name+" inst: "+inst);
@@ -806,18 +814,12 @@ export class Block
 			success = await this.form.enterField(inst,0);
 			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter field. block: "+this.name+" inst: "+inst);
 
-			if (move)
-			{
-				this.setIndicators(this.row$,next.row);
-				this.row$ = next.row;
-			}
-			else
-			{
-				this.setIndicators(this.row$,next.row);
-			}
+			if (moved < scroll)
+				this.row$ -= scroll - moved;
 
 			this.displaycurrent();
 			this.model.queryDetails(true);
+			this.setIndicators(crow,this.row$);
 
 			return(next);
 		}

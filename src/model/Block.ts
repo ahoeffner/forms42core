@@ -673,10 +673,10 @@ export class Block
 		this.view$.setCurrentRow(0,false);
 	}
 
-	public scroll(records:number, offset:number) : boolean
+	public scroll(records:number, offset:number) : number
 	{
 		if (this.querymode)
-			return(false);
+			return(0);
 
 		let displayed:number = 0;
 		this.view.clear(false,false);
@@ -707,7 +707,7 @@ export class Block
 		this.move(records);
 
 		this.view.lockUnused();
-		return(true);
+		return(records);
 	}
 
 	public getQueryMaster() : Block

@@ -126,13 +126,11 @@ export class Framework
 		return(this.root);
 	}
 
-	private parseDoc(doc:Element, form?:Element) : void
+	private parseDoc(doc:Element) : void
 	{
 		if (doc == null) return;
 
 		let nodes:Node[] = [];
-		let inform:boolean = form != null;
-		if (doc instanceof HTMLFormElement) form = doc;
 		doc.childNodes.forEach((node) => {nodes.push(node)});
 
 		for (let i = 0; i < nodes.length; i++)
@@ -141,49 +139,15 @@ export class Framework
 			if (!(element instanceof HTMLElement)) continue;
 
 			let impl:Implementation = this.getImplementation(element);
-
 			if (impl != null)
 			{
-				let replace:HTMLElement|HTMLElement[]|string = impl.tag.parse(this.component,element,impl.attr);
-				Logger.log(Type.htmlparser,"Resolved tag: '"+impl.name+"' using class: "+impl.tag.constructor.name);
-
-				if (replace == null)
-				{
-					element.remove();
-					element = null;
-				}
-				else if (replace != element)
-				{
-					if (typeof replace === "string")
-					{
-						let template:HTMLDivElement = document.createElement('div');
-						template.innerHTML = replace;
-						replace = Framework.prepare(template);
-					}
-
-					if (!Array.isArray(replace))
-						replace = [replace];
-
-					for(let r=0; r < replace.length; r++)
-						replace[r] = doc.insertBefore(replace[r],element);
-
-					element.remove();
-
-					if (impl.name == Properties.RootTag)
-						this.root = replace[0];
-
-					for(let r=0; r < replace.length; r++)
-						this.parseDoc(replace[r],form);
-				}
-
+				this.apply(doc,impl);
 				continue;
 			}
 
 			this.addEvents(element);
-			this.parseDoc(element,form);
+			this.parseDoc(element);
 		}
-
-		if (!inform) form = null;
 	}
 
 	private addEvents(element:Element) : void
@@ -245,42 +209,77 @@ export class Framework
 
 	private getImplementation(element:HTMLElement) : Implementation
 	{
-		let impl:Tag = null;
+		let tag:Tag = null;
 		let attr:string = null;
 		let prefix:string = Properties.AttributePrefix;
-		let tag:string = element?.nodeName.toLowerCase();
+		let name:string = element?.nodeName.toLowerCase();
 
 		if (Properties.ParseTags)
 		{
-			impl = Framework.taglib.get(tag);
+			tag = Framework.taglib.get(name);
 			let attrnames:string[] = element.getAttributeNames();
 
-			for (let an = 0; impl == null && an < attrnames.length; an++)
+			for (let an = 0; tag == null && an < attrnames.length; an++)
 			{
 				let atrnm:string = attrnames[an].toLowerCase();
 
 				if (!Properties.RequireAttributePrefix)
 				{
-					impl = Framework.attrlib.get(atrnm);
-					if (impl != null) attr = atrnm;
+					tag = Framework.attrlib.get(atrnm);
+					if (tag != null) attr = atrnm;
 				}
 
-				if (impl == null)
+				if (tag == null)
 				{
 					if (attrnames[an].startsWith(prefix))
 					{
 						atrnm = attrnames[an].substring(prefix.length).toLowerCase();
-						impl = Framework.attrlib.get(atrnm);
-						if (impl != null) attr = atrnm;
+						tag = Framework.attrlib.get(atrnm);
+						if (tag != null) attr = atrnm;
 					}
 				}
 			}
 		}
 
-		if (impl)
-			return(new Implementation(impl,tag,attr));
+		if (tag)
+			return(new Implementation(element,tag,name,attr));
 
 		return(null);
+	}
+
+	private apply(doc:Element, impl:Implementation)
+	{
+		let replace:HTMLElement|HTMLElement[]|string = impl.tag.parse(this.component,impl.element,impl.attr);
+		Logger.log(Type.htmlparser,"Resolved tag: '"+impl.name+"' using class: "+impl.tag.constructor.name);
+
+		if (replace == null)
+		{
+			impl.element.remove();
+			impl.element = null;
+		}
+		else if (replace != impl.element)
+		{
+			if (typeof replace === "string")
+			{
+				let template:HTMLDivElement = document.createElement('div');
+				template.innerHTML = replace;
+				replace = Framework.prepare(template);
+			}
+
+			if (!Array.isArray(replace))
+				replace = [replace];
+
+			for(let r=0; r < replace.length; r++)
+				replace[r] = doc.insertBefore(replace[r],impl.element);
+
+			impl.element.remove();
+
+			if (impl.name == Properties.RootTag)
+				this.root = replace[0];
+
+			for(let r=0; r < replace.length; r++)
+				this.parseDoc(replace[r]);
+		}
 	}
 
 	private applyEvents() : void
@@ -465,5 +464,5 @@ class EventHandler implements EventListenerObject
 
 class Implementation
 {
-	constructor(public tag:Tag, public name:string, public attr:string) {}
+	constructor(public element, public tag:Tag, public name:string, public attr:string) {}
 }

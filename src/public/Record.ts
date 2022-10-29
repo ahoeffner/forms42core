@@ -85,7 +85,7 @@ export class Record
 		this.setValue(field,value);
 		field = field?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
-		
+
 		return(blk.validateField(this.rec$,field));
 	 }
 

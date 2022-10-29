@@ -265,37 +265,30 @@ export class Framework
 		if (!Array.isArray(replace))
 			replace = [replace];
 
+		for(let r=0; r < replace.length; r++)
+		{
+			let deep:Implementation = this.getImplementation(replace[r]);
+
+			if (deep)
+			{
+				let deeprep:HTMLElement[] = this.getReplacement(deep);
+				console.log("deep "+deeprep[0])
+			}
+		}
+
 		return(replace);
 }
 
 	private apply(doc:Element, impl:Implementation)
 	{
-		let replace:HTMLElement|HTMLElement[]|string = impl.tag.parse(this.component,impl.element,impl.attr);
-		Logger.log(Type.htmlparser,"Resolved tag: '"+impl.name+"' using class: "+impl.tag.constructor.name);
+		let replace:HTMLElement[] = this.getReplacement(impl);
 
 		if (replace == null)
 		{
 			impl.element.remove();
-			impl.element = null;
 		}
-		else if (replace != impl.element)
+		else if (replace.length > 0)
 		{
-			if (typeof replace === "string")
-			{
-				let template:HTMLDivElement = document.createElement('div');
-				template.innerHTML = replace;
-				replace = Framework.prepare(template);
-			}
-
-			if (!Array.isArray(replace))
-				replace = [replace];
-
-			for(let r=0; r < replace.length; r++)
-			{
-				let deep:Implementation = this.getImplementation(replace[r]);
-				if (deep) console.log("deep: "+replace[r].tagName)
-			}
-
 			for(let r=0; r < replace.length; r++)
 				replace[r] = doc.insertBefore(replace[r],impl.element);
 

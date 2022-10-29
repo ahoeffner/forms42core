@@ -252,8 +252,14 @@ export class Framework
 		let replace:HTMLElement|HTMLElement[]|string = impl.tag.parse(this.component,impl.element,impl.attr);
 		Logger.log(Type.htmlparser,"Resolved tag: '"+impl.name+"' using class: "+impl.tag.constructor.name);
 
-		if (!replace) return(null);
-		if (replace == impl.element) return([]);
+		if (replace == impl.element)
+			return([]);
+
+		if (replace == null)
+		{
+			impl.element.remove();
+			return([]);
+		}
 
 		if (typeof replace === "string")
 		{
@@ -272,7 +278,7 @@ export class Framework
 		{
 			let deep:Implementation = this.getImplementation(replace[r]);
 			if (deep) nested.set(r,this.getReplacement(deep));
-			else	nested.set(r,[replace[r]]);
+			else nested.set(r,[replace[r]]);
 		}
 
 		let nodes:HTMLElement[] = [];
@@ -285,11 +291,7 @@ export class Framework
 	{
 		let replace:HTMLElement[] = this.getReplacement(impl);
 
-		if (replace == null)
-		{
-			impl.element.remove();
-		}
-		else if (replace.length > 0)
+		if (replace.length > 0)
 		{
 			for(let r=0; r < replace.length; r++)
 				replace[r] = doc.insertBefore(replace[r],impl.element);

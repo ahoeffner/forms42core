@@ -26,11 +26,11 @@ import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
-import { Indicator } from '../application/tags/Indicator.js';
 import { DateConstraint } from '../public/DateConstraint.js';
 import { FieldProperties } from '../public/FieldProperties.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { FlightRecorder } from '../application/FlightRecorder.js';
+import { RowIndicator } from '../application/tags/RowIndicator.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
@@ -47,7 +47,7 @@ export class Form implements EventListenerObject
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
 	private blocks$:Map<string,Block> = new Map<string,Block>();
-	private indicators:Map<string,Indicator[]> = new Map<string,Indicator[]>();
+	private indicators:Map<string,RowIndicator[]> = new Map<string,RowIndicator[]>();
 	private fltindicators:Map<string,FilterIndicator[]> = new Map<string,FilterIndicator[]>();
 
 	constructor(parent:InterfaceForm)
@@ -104,17 +104,17 @@ export class Form implements EventListenerObject
 		Logger.log(Type.formbinding,"Add block '"+block.name+"' to viewform: "+this.parent.name);
 	}
 
-	public getIndicators(block:string) : Indicator[]
+	public getIndicators(block:string) : RowIndicator[]
 	{
-		let indicators:Indicator[] = this.indicators.get(block);
+		let indicators:RowIndicator[] = this.indicators.get(block);
 		if (indicators == null) return([]);
 		return(indicators);
 	}
 
-	public addIndicator(ind:Indicator) : void
+	public addIndicator(ind:RowIndicator) : void
 	{
 		let block:string = ind.binding.toLowerCase();
-		let indicators:Indicator[] = this.indicators.get(block);
+		let indicators:RowIndicator[] = this.indicators.get(block);
 
 		if (indicators == null)
 		{

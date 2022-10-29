@@ -22,7 +22,7 @@ import { Tag } from './tags/Tag.js';
 import { Root } from './tags/Root.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
-import { Indicator } from './tags/Indicator.js';
+import { RowIndicator } from './tags/RowIndicator.js';
 import { FromAttribute } from './tags/FromAttribute.js';
 import { FilterIndicator } from './tags/FilterIndicator.js';
 
@@ -89,7 +89,7 @@ export class Properties
 	new Map<string,Class<Tag>>
 	(
 			[
-				[Properties.IndicatorType,Indicator],
+				[Properties.IndicatorType,RowIndicator],
 				[Properties.FilterIndicatorType,FilterIndicator]
 			]
 	);

@@ -15,7 +15,7 @@ import { Form } from "../../public/Form.js";
 import { Properties } from "../Properties.js";
 import { FormBacking } from "../FormBacking.js";
 
-export class Indicator implements Tag
+export class RowIndicator implements Tag
 {
 	public row:number = -1;
 	public binding:string = null;

@@ -14,7 +14,7 @@ import { Block } from "./Block.js";
 import { Field } from "./fields/Field.js";
 import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
-import { Indicator } from "../application/tags/Indicator.js";
+import { RowIndicator } from "../application/tags/RowIndicator.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 
 export enum Status
@@ -35,7 +35,7 @@ export class Row
 	private validated$:boolean = true;
 	private indicator$:boolean = false;
 	private status$:Status = Status.na;
-	private indicators:Indicator[] = [];
+	private indicators:RowIndicator[] = [];
 	private instances:FieldInstance[] = [];
 	private state$:FieldState = FieldState.DISABLED;
 	private fields:Map<string,Field> = new Map<string,Field>();
@@ -104,7 +104,7 @@ export class Row
 		});
 	}
 
-	public setIndicator(ind:Indicator) : void
+	public setIndicator(ind:RowIndicator) : void
 	{
 		this.indicators.push(ind);
 	}

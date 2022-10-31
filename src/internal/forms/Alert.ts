@@ -53,7 +53,6 @@ export class Alert extends Form
 	private async initialize() : Promise<boolean>
 	{
 		let view:HTMLElement = this.getView();
-
 		let msg:string = this.parameters.get("message");
 		let title:string = this.parameters.get("title");
 		this.closeButton = view.querySelector('button[name="close"]');
@@ -63,6 +62,7 @@ export class Alert extends Form
 
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
+	
 		// Block everything else
 		let block:HTMLElement = view.querySelector('div[id="block"]');
 
@@ -72,7 +72,6 @@ export class Alert extends Form
 		block.style.width = document.body.offsetWidth+"px";
 		block.style.height = document.body.offsetHeight+"px";
 		this.setValue("alert","msg",msg);
-
 		setTimeout(() => {this.closeButton.focus()},5);
 		return(true);
 	}

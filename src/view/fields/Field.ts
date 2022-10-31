@@ -365,6 +365,7 @@ export class Field
 		if (!this.dirty)
 			return(true);
 
+		console.log("validate 1 "+inst)
 		if (!await this.block.validateField(inst,inst.getValue()))
 		{
 			inst.valid = false;
@@ -381,6 +382,7 @@ export class Field
 			this.value$ = value;
 			this.validated = true;
 
+			console.log("validate 2.2 "+inst)
 			await this.block.postValidateField(inst);
 			return(true);
 		}

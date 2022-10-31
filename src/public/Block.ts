@@ -200,7 +200,7 @@ export class Block
 	 */
 	public async setAndValidate(field:string, value:any) : Promise<boolean>
 	{
-		return(this.getRecord(0).setAndValidate(field,value));
+		return(this.getRecord().setAndValidate(field,value));
 	}
 
 	public async lock() : Promise<void>

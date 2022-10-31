@@ -156,8 +156,7 @@ export class Block
 
 	public async setEventTransaction(event:EventType, record:Record) : Promise<boolean>
 	{
-		this.form.setEventTransaction(event,this,record);
-		return(true);
+		return(this.form.setEventTransaction(event,this,record));
 	}
 
 	public endEventTransaction(event:EventType, success:boolean) : void

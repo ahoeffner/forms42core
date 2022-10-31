@@ -94,7 +94,8 @@ export class DatePicker extends Form
 		this.setValue("calendar","date",this.date);
 		await form.getBlock(block)?.setAndValidate(field,this.date);
 
-		return(this.close());
+		await this.close();
+		return(false);
 	}
 
 	private async initialize() : Promise<boolean>

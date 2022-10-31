@@ -21,6 +21,7 @@ export class EventTransaction
 
 	public start(event:EventType, block:Block, record:Record) : EventType
 	{
+		if (block && block.name == "calendar") console.log("start trx "+EventType[event]+" "+block?.name)
 		let running:EventType = this.getTrxSlot(block);
 		if (running) return(running);
 
@@ -30,6 +31,7 @@ export class EventTransaction
 
 	public running() : number
 	{
+		this.transactions.forEach((trx) => console.log(EventType[trx.event]+" "+trx.block.name))
 		return(this.transactions.size);
 	}
 
@@ -40,6 +42,7 @@ export class EventTransaction
 
 	public finish(block:Block) : void
 	{
+		if (block && block.name == "calendar") console.log("End trx "+block?.name)
 		this.transactions.delete(block?.name);
 	}
 

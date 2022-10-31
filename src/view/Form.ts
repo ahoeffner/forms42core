@@ -537,9 +537,6 @@ export class Form implements EventListenerObject
 				if (inst.field.block.empty())
 					return(true);
 
-				if (!await inst.field.validate(inst))
-					return(false);
-
 				success = await block.validateRow();
 				return(success);
 			}

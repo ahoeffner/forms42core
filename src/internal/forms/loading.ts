@@ -5,7 +5,14 @@ import { Internals } from "../../application/properties/Internals.js";
 
 
 export class Loading extends Form {
-    constructor() {
+
+
+    public static WIDTH:number = 300;
+	public static HEIGHT:number = null;
+
+
+    constructor() 
+    {
         super(Loading.page);
 
         this.addEventListener(this.initialize, { type: EventType.PostViewInit });
@@ -23,12 +30,13 @@ export class Loading extends Form {
 
     private async initialize(): Promise<boolean> 
     {
-        let msg:string = this.parameters.get("message");
-
         let view:HTMLElement = this.getView();
+        
+        let msg:string = this.parameters.get("message");
+        
         let block:HTMLElement = view.querySelector('div[id="block"]');
 
-        Internals.stylePopupWindow(view);
+        Internals.stylePopupWindow(view,"",Loading.HEIGHT,Loading.WIDTH);
 
         block.style.top = "0";
 		block.style.left = "0";

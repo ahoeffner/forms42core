@@ -382,7 +382,6 @@ export class Field
 			this.value$ = value;
 			this.validated = true;
 
-			console.log("validate 2.2 "+inst)
 			await this.block.postValidateField(inst);
 			return(true);
 		}

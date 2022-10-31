@@ -189,13 +189,13 @@ export class DatePicker extends Form
 				this.day = this.getValue(event.block,'day-' + row + col);
 				this.date.setDate(this.day);
 				this.setValue("calendar","date",this.date);
-				return(true);
+				return(false);
 			}
 		}
 		else if(enter)
 		{
-			this.done();
-			return(true);
+			await this.done();
+			return(false);
 		}
 		return(true);
 	}
@@ -210,6 +210,7 @@ export class DatePicker extends Form
 
 		if (!event.field)
 		{
+			// Jonas ????
 			this.input && this.input.focus();
 			return(true);
 		}

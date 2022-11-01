@@ -1068,6 +1068,36 @@ export class Block
 		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);
 	}
 
+	public disableQuery() : void
+	{
+		let instances:FieldInstance[] = this.getFieldInstances();
+
+		for (let i = 0; i < instances.length; i++)
+		{
+			instances[i].qbeProperties.readonly = true;
+		}
+	}
+
+	public disableInsert() : void
+	{
+		let instances:FieldInstance[] = this.getFieldInstances();
+
+		for (let i = 0; i < instances.length; i++)
+		{
+			instances[i].insertProperties.readonly = true;
+		}
+	}
+
+	public disableUpdate() : void
+	{
+		let instances:FieldInstance[] = this.getFieldInstances();
+
+		for (let i = 0; i < instances.length; i++)
+		{
+			instances[i].updateProperties.readonly = true;
+		}
+	}
+
 	public distribute(field:Field, value:any, dirty:boolean) : void
 	{
 		let cr:number = this.row$;

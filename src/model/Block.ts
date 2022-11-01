@@ -182,6 +182,18 @@ export class Block
 		this.ctrlblk = (source == null);
 		if (this.source$) this.source$.name = this.name;
 
+		if (this.source$ != null)
+		{
+			if (!this.qbeallowed)
+				this.view.disableQuery();
+
+			if (!this.insertallowed)
+				this.view.disableInsert();
+
+			if (!this.updateallowed)
+				this.view.disableUpdate();
+		}
+
 		this.addColumns();
 	}
 

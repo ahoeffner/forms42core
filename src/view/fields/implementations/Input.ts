@@ -403,14 +403,14 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (datepattern.length > 0)
 		{
-			if (this.element.getAttribute("size") == null)
-				this.element.setAttribute("size",""+datesize);
-
+			this.element.type = "text";
 			this.pattern = new Pattern(datepattern);
 			this.placeholder = this.placeholder.toLowerCase();
 		}
 		else if (this.pattern != null)
 		{
+			this.element.type = "text";
+
 			if (this.element.getAttribute("size") == null)
 				this.element.setAttribute("size",""+this.pattern.getPlaceholder().length);
 		}

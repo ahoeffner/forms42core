@@ -257,7 +257,9 @@ export class Framework
 
 		if (replace == null)
 		{
-			impl.element.remove();
+			if (impl.element.parent != null)
+				impl.element.remove();
+
 			return([]);
 		}
 

@@ -1073,9 +1073,7 @@ export class Block
 		let instances:FieldInstance[] = this.getFieldInstances();
 
 		for (let i = 0; i < instances.length; i++)
-		{
 			instances[i].qbeProperties.readonly = true;
-		}
 	}
 
 	public disableInsert() : void
@@ -1083,9 +1081,7 @@ export class Block
 		let instances:FieldInstance[] = this.getFieldInstances();
 
 		for (let i = 0; i < instances.length; i++)
-		{
 			instances[i].insertProperties.readonly = true;
-		}
 	}
 
 	public disableUpdate() : void
@@ -1093,9 +1089,7 @@ export class Block
 		let instances:FieldInstance[] = this.getFieldInstances();
 
 		for (let i = 0; i < instances.length; i++)
-		{
 			instances[i].updateProperties.readonly = true;
-		}
 	}
 
 	public distribute(field:Field, value:any, dirty:boolean) : void

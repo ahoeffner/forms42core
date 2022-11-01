@@ -56,11 +56,6 @@ export class Form implements CanvasComponent
 		return(this.constructor.name.toLowerCase());
 	}
 
-	public focus() : void
-	{
-		FormBacking.getViewForm(this).focus();
-	}
-
 	public hide() : void
 	{
 		this.canvas.remove();
@@ -70,6 +65,11 @@ export class Form implements CanvasComponent
 	{
 		this.canvas.restore();
 		this.focus();
+	}
+
+	public focus() : void
+	{
+		FormBacking.getViewForm(this)?.focus();
 	}
 
 	public showDatePicker(block?:string, field?:string, clazz?:string) : void
@@ -264,7 +264,9 @@ export class Form implements CanvasComponent
 
 				parent.focus();
 				parent.callback(this);
-				FormBacking.getBacking(parent).hasModalChild = false;
+
+				if (FormBacking.getBacking(parent))
+					FormBacking.getBacking(parent).hasModalChild = false;
 			}
 
 			FormBacking.removeBacking(this);

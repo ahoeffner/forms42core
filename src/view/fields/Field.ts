@@ -359,13 +359,21 @@ export class Field
 		if (inst.implementation instanceof Input)
 			value = inst.implementation.bonusstuff(value);
 
-		if (value != this.value$)
-			this.dirty = true;
+		if (value instanceof Date && this.value$ instanceof Date)
+		{
+			if (value.getTime() != this.value$.getTime())
+				this.dirty = true;
+		}
+		else
+		{
+			if (value != this.value$)
+				this.dirty = true;
+		}
 
 		if (!this.dirty)
 			return(true);
 
-		console.log("validate 1 "+inst)
+
 		if (!await this.block.validateField(inst,inst.getValue()))
 		{
 			inst.valid = false;

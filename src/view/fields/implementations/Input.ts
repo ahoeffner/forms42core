@@ -219,7 +219,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			this.pattern.setValue(value);
 			if (this.pattern.isNull()) value = "";
-			else  value = this.pattern.getValue();
+			else value = this.pattern.getValue();
 		}
 
 		if (value == null)
@@ -229,6 +229,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.before = value;
 		this.initial = value;
 		this.setElementValue(value);
+
+		if (this.pattern != null)
+			this.setPosition(this.pattern.findPosition(0));
 
 		return(true);
 	}

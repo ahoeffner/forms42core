@@ -356,8 +356,21 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			this.blkcord$.allowMasterLess(block,blocks[i])
+			if (this.blkcord$.allowMasterLess(block,blocks[i]))
 				await this.enterQueryMode(blocks[i]);
+		}
+	}
+
+	public cancelQueryMode(block:Block) : void
+	{
+		block.view.cancel();
+
+		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (this.blkcord$.allowMasterLess(block,blocks[i]))
+				this.cancelQueryMode(blocks[i]);
 		}
 	}
 

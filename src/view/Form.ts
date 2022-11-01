@@ -519,14 +519,14 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.escape)
 			{
-				if (inst.field.block.empty())
-					return(true);
-
 				if (inst.field.row.status == Status.qbe)
 				{
-					inst.field.block.cancel();
+					this.model.cancelQueryMode(inst.field.block.model);
 					return(success);
 				}
+
+				if (inst.field.block.empty())
+					return(true);
 
 				if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
 					key = KeyMap.delete;

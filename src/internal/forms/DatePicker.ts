@@ -106,6 +106,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		this.constraint = this.parameters.get("constraint");
+		console.log("constraint: "+this.constraint)
 		this.input = document.querySelector('input[name="date"]');
 
 		let props:FieldProperties = this.getBlock("calendar").

@@ -357,7 +357,15 @@ export class Block
 		this.endEventTransaction(EventType.WhenValidateField,success);
 
 		if (success)
+		{
 			success = await this.wrapper.modified(record,false);
+
+			if (success)
+			{
+				if (this.querymode) this.setFilter(field);
+				else success = await this.form.queryFieldDetails(this.name,field);
+			}
+		}
 
 		return(success);
 	}

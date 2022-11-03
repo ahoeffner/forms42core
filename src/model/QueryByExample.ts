@@ -94,6 +94,7 @@ export class QueryByExample
 
 	public setFilter(column:string, filter?:Filter|FilterStructure) : void
 	{
+		console.log(column+" ")
 		if (filter == null)
 			filter = this.getDefaultFilter(column);
 

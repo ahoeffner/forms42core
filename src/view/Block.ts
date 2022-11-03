@@ -379,9 +379,13 @@ export class Block
 
 		if (success)
 		{
-			this.model.setValue(inst.name,value);
-			if (this.model.querymode) this.model.setFilter(inst.name);
-			else success = await this.model.form.queryFieldDetails(this.name,inst.name);
+			success = this.model.setValue(inst.name,value);
+
+			if (success)
+			{
+				if (this.model.querymode) this.model.setFilter(inst.name);
+				else success = await this.model.form.queryFieldDetails(this.name,inst.name);
+			}
 		}
 
 		return(success);

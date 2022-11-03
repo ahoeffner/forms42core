@@ -37,7 +37,7 @@ export class LessThan implements Filter
 
 	public clone(): LessThan
 	{
-		let clone:LessThan = new LessThan(this.column$,this.incl);
+		let clone:LessThan = Reflect.construct(this.constructor,[this.column$]);
 		return(clone.setConstraint(this.constraint$));
 	}
 

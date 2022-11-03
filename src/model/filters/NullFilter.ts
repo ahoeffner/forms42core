@@ -33,7 +33,7 @@ export class NullFilter implements Filter
 
 	public clone() : NullFilter
 	{
-		let clone:NullFilter = new NullFilter(this.column$);
+		let clone:NullFilter = Reflect.construct(this.constructor,[this.column$]);
 		return(clone.setConstraint(this.constraint$));
 	}
 

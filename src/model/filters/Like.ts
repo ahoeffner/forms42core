@@ -14,7 +14,6 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
-
 export class Like implements Filter
 {
 	private column$:string = null;
@@ -38,7 +37,7 @@ export class Like implements Filter
 
 	public clone() : Like
 	{
-		let clone:Like = new Like(this.column$);
+		let clone:Like = Reflect.construct(this.constructor,[this.column$]);
 		return(clone.setConstraint(this.constraint$));
 	}
 
@@ -76,7 +75,6 @@ export class Like implements Filter
 	{
 		this.bindvalues$ = null;
 		this.constraint$ = value;
-		this.constraint$ = this.constraint$.replace("*","%");
 	}
 
 	public getBindValue(): BindValue

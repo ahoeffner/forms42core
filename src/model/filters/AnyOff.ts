@@ -35,7 +35,7 @@ export class AnyOff implements Filter
 
 	public clone(): AnyOff
 	{
-		let clone:AnyOff = new AnyOff(this.column$);
+		let clone:AnyOff = Reflect.construct(this.constructor,[this.column$]);
 		return(clone.setConstraint(this.constraint$));
 	}
 

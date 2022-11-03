@@ -491,12 +491,15 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.insert || KeyMap.insertAbove)
 				inst = this.curinst$;
 
+			block = inst?.field.block;
 			mblock =	inst?.field.block.model;
 		}
 
 		if (inst != null)
 		{
-			if (key == KeyMap.enter && mblock.querymode)
+			let qmode:boolean = mblock?.querymode;
+
+			if (key == KeyMap.enter && qmode)
 				key = KeyMap.executequery;
 
 			if (KeyMapping.isRowNav(key))
@@ -543,11 +546,11 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.requery)
 			{
+				if (qmode)
+					return(false);
+
 				if (inst.field.block.empty())
 					return(true);
-
-				if (mblock.querymode)
-					return(false);
 
 				await mblock.refresh();
 				return(true);
@@ -570,9 +573,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.queryeditor)
 			{
-				if (!mblock.querymode)
-					return(false);
-
+				if (!qmode) return(false);
 				let params:Map<string,any> = new Map<string,any>();
 
 				params.set("form",this.parent);
@@ -588,6 +589,8 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insert)
 			{
+				if (qmode) return(false);
+
 				if (!await inst.field.validate(inst))
 					return(false);
 
@@ -599,6 +602,8 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.insertAbove)
 			{
+				if (qmode) return(false);
+
 				if (!await inst.field.validate(inst))
 					return(false);
 
@@ -610,7 +615,10 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.delete)
 			{
-				if (inst.field.block.empty()) return(true);
+				if (qmode) return(false);
+
+				if (inst.field.block.empty())
+					return(true);
 
 				if (!mblock.ctrlblk && mblock.deleteallowed)
 					mblock.delete();
@@ -622,7 +630,7 @@ export class Form implements EventListenerObject
 			if (key?.signature == KeyMap.calendar.signature)
 			{
 				let block:Block = inst.field.block;
-				if (inst.field.block.empty()) return(true);
+				if (inst.field.block.empty() && !qmode) return(true);
 				let type:DataType = block.fieldinfo.get(inst.name).type;
 
 				if (type == DataType.date || type == DataType.datetime)
@@ -645,7 +653,9 @@ export class Form implements EventListenerObject
 			// As with calendar
 			if (key?.signature == KeyMap.lov.signature)
 			{
-				if (inst.field.block.empty()) return(true);
+				if (inst.field.block.empty() && !qmode)
+					return(true);
+
 				let params:Map<string,any> = new Map<string,any>();
 				let backing:FormBacking = FormBacking.getBacking(this.parent);
 				let lov:ListOfValues = backing.getListOfValues(inst.block,inst.name);

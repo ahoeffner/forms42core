@@ -18,10 +18,10 @@ import { FieldTypes } from "./FieldType.js";
 import { Class } from "../../types/Class.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
-import { BrowserEvent, BrowserEvent as Event} from "../BrowserEvent.js";
 import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
+import { BrowserEvent, BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
 
 

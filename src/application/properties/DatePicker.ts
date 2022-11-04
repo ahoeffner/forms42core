@@ -14,7 +14,14 @@ export class DatePicker
 {
 	public static datePickerStyle:string = 
 	`
-		width: 160px;
+		width: 180px;
+	`;
+
+	public static datePickerDateStyle:string = 
+	`
+		margin-top: 10px;
+    	display: flex;
+    	justify-content: center;
 	`;
 
 	public static datePickerMonthStyle:string =
@@ -80,13 +87,15 @@ export class DatePicker
 		if(body)
 		{
 			let mth:HTMLElement = body.querySelector("div[name='mth']");
+			let date:HTMLElement = body.querySelector("div[name='date']");
 			let month:HTMLElement = body.querySelector("div[name='month']");
 			let day:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='day']");
 			let week:NodeListOf<HTMLElement> = body.querySelectorAll("div[name='week']");
 			let arrow:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='prev'],div[name='next']");
 
 			if (body && DatePicker.datePickerStyle) body.style.cssText = DatePicker.datePickerStyle;
-
+			
+			if (date && DatePicker.datePickerStyle) date.style.cssText = DatePicker.datePickerDateStyle;
 			if(mth && DatePicker.datePickerMthTextStyle) mth.style.cssText = DatePicker.datePickerMthTextStyle;
 			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
 

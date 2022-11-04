@@ -43,7 +43,18 @@ export enum DatePart
 }
 
 
-let planetaryWeek : 'Sun'|'Mon'|'Tue'|'Wed'|'Thu'|'Fri'|'Sat';
+
+
+export enum WeekDays
+{
+	Sun,
+	Mon,
+	Tue,
+	Wed,
+	Thu,
+	Fri,
+	Sat
+}
 
 export class dates
 {
@@ -72,24 +83,22 @@ export class dates
         return(utils.parse(datestr,withtime,format));
     }
 
-	public static startDays(startday:typeof planetaryWeek): Array<String>
+	public static startDays(startday: WeekDays): Array<String>
 	{
 
 		let day:number = 0;
 		let index:number = 0;
 		let before:Boolean = false;
 		let WeekArrays = new Array();
-		let weekdays:String[] = ['Sun', 'Mon','Tue','Wed','Thu','Fri','Sat'];
 
-		WeekArrays[0] = startday;
-		while(WeekArrays.length != 7)
+		WeekArrays[0] = WeekDays[startday];
+		while(WeekArrays.length < 7)
 		{
-			if(weekdays.indexOf(startday) < index && !before)
+			if(startday < index && !before)
 			{
 				if(index < 7)
 				{
-					if(WeekArrays[0] != weekdays[weekdays.length - 1])
-						WeekArrays.push(weekdays[index]);
+					WeekArrays.push(WeekDays[index]);
 				}
 				else
 				{
@@ -98,7 +107,7 @@ export class dates
 
 			} else if(before)
 			{
-				WeekArrays.push(weekdays[day]);
+				WeekArrays.push(WeekDays[day]);
 				day++;
 			}
 			index++;

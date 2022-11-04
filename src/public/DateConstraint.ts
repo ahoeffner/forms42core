@@ -12,13 +12,7 @@
 
 export interface DateConstraint
 {
+	message:string;
+	dateclazz:string;
 	valid(date:Date) : boolean;
-}
-
-export class AllDates
-{
-	public valid(_date:Date) : boolean
-	{
-		return(true);
-	}
 }

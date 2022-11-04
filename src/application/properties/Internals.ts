@@ -118,7 +118,6 @@ export class Internals
 		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;
 		
-		console.log(Internals.LoaderStyle);
 		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
 		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
@@ -127,16 +126,16 @@ export class Internals
 
 		if (loader && Internals.LoaderStyle)
 		{ 
-	
 			loader.style.cssText = Internals.LoaderStyle;
 
 			loader.animate(
 			[
 				{ transform: 'rotate(0deg)'},
 				{ transform: 'rotate(360deg)' }
-			], {
-				   duration: 1000,
-				   iterations: Infinity
+			], 
+			{
+				duration: 1000,
+				iterations: Infinity
 			})
 		}
 

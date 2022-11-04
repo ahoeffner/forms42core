@@ -52,7 +52,7 @@ export class Loading extends Form {
     <div id="block"></div>
     <div name="popup-body">
         <div name="msg" from="waiting"></div>
-        <div class="loader"></div>
+        <div name="loader"></div>
     </div>
 	`
 }

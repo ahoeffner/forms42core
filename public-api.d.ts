@@ -60,7 +60,7 @@ export { StoredFunction } from './src/database/StoredFunction.js';
 export { StoredProcedure } from './src/database/StoredProcedure.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
 
-export { dates } from './src/model/dates/dates.js';
+export { dates, WeekDays } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";
 
 export { MouseMap } from './src/control/events/MouseMap.js';
@@ -83,3 +83,5 @@ export { StaticMenu } from './src/control/menus/StaticMenu.js';
 export { MenuComponent } from './src/control/menus/MenuComponent.js';
 export { MenuEntry } from './src/control/menus/interfaces/MenuEntry.js';
 export { StaticMenuEntry } from './src/control/menus/interfaces/StaticMenuEntry.js';
+
+export { Loading } from './src/internal/forms/Loading.js';

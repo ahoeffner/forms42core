@@ -13,7 +13,6 @@
 import { Status } from "./Row.js";
 import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
-import { DatePart, dates, FormatToken } from "../model/dates/dates.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
 
@@ -164,23 +163,11 @@ export class FieldFeatureFactory
 				props.setAttribute(name,tag.getAttribute(name));
 		});
 
-		let date:boolean = false;
-		let time:boolean = false;
-
 		if (props.getAttributes().has("date"))
-			date = true;
+			props.setAttribute("size",Properties.DateFormat.length);
 
 		if (props.getAttributes().has("datetime"))
-		{
-			date = true;
-			time = true;
-		}
-
-		if (date)
-		{
-			let size:number = FieldFeatureFactory.getDateSize(time);
-			props.setAttribute("size",size);
-		}
+			props.setAttribute("size",(Properties.DateFormat+Properties.TimeFormat).length);
 
 		return(props);
 	}
@@ -410,22 +397,5 @@ export class FieldFeatureFactory
 		})
 
 		options.forEach((option) => tag.options.add(option));
-	}
-
-	private static getDateSize(time:boolean) : number
-	{
-		let size:number = 0;
-		let types:FormatToken[] = dates.tokenizeFormat();
-
-		types.forEach((type) =>
-		{
-			if (type.type == DatePart.Year || type.type == DatePart.Month || type.type == DatePart.Day)
-				size += type.length;
-
-			if (time && (type.type == DatePart.Hour || type.type == DatePart.Minute || type.type == DatePart.Second))
-				size += type.length;
-		});
-
-		return(size);
 	}
 }

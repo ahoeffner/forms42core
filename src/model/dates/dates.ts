@@ -42,9 +42,6 @@ export enum DatePart
 	Second
 }
 
-
-
-
 export enum WeekDays
 {
 	Sun,

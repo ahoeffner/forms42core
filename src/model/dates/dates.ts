@@ -87,29 +87,24 @@ export class dates
 		let index:number = 0;
 		let before:Boolean = false;
 		let WeekArrays = new Array();
-
 		WeekArrays[0] = WeekDays[startday];
+
 		while(WeekArrays.length < 7)
 		{
-			if(startday < index && !before)
+			if (startday < index && !before)
 			{
-				if(index < 7)
-				{
-					WeekArrays.push(WeekDays[index]);
-				}
-				else
-				{
-					before = true;
-				}
-
-			} else if(before)
+				if (index < 7) WeekArrays.push(WeekDays[index]);
+				else before = true;
+			} 
+			else if (before)
 			{
 				WeekArrays.push(WeekDays[day]);
 				day++;
 			}
+
 			index++;
 		}
-		return WeekArrays;
+		return(WeekArrays);
 	}
 
     public static format(date:Date, format?:string) : string

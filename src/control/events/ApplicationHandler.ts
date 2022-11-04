@@ -48,11 +48,6 @@ export class ApplicationHandler implements EventListenerObject
       let bubble:boolean = false;
 		this.event.setEvent(event);
 
-		if (this.event.type == "change")
-		{
-			console.log("small screen detected");
-		}
-
 		if (this.event.type == "wait")
 			await this.event.wait();
 
@@ -130,7 +125,5 @@ export class ApplicationHandler implements EventListenerObject
 
 		document.addEventListener("click",this);
 		document.addEventListener("dblclick",this);
-
-		window.matchMedia("(min-width: 600px)").addEventListener("change",this);
 	}
 }

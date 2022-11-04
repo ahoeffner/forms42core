@@ -496,8 +496,6 @@ export class DataSourceWrapper
 				let col:string = rel.detail.fields[i];
 				let mst:string = rel.master.fields[i];
 
-				console.log(col+" prev: "+record.getValue(col)+" set: "+masters[i].getValue(mst))
-
 				if (record.getValue(col) == null)
 					record.setValue(col,masters[i].getValue(mst));
 			}

@@ -67,8 +67,6 @@ export class EventStack
 
 	public static async handle() : Promise<void>
 	{
-		FlightRecorder.debug("@eventstack: run events");
-
 		if (EventStack.running)
 			return;
 
@@ -78,16 +76,12 @@ export class EventStack
 		if (cmd == undefined)
 		{
 			EventStack.running = false;
-			FlightRecorder.debug("@eventstack: stop EventStack");
 			return;
 		}
-
-		FlightRecorder.debug("@eventstack: "+cmd.field.name+"["+cmd.field.row.rownum+"] "+cmd.brwevent.type);
 
 		try
 		{
 			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
-			FlightRecorder.debug("@eventstack:  comleted");
 
 			EventStack.running = false;
 			setTimeout(() => {EventStack.handle();},0);

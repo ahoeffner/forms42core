@@ -70,7 +70,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (connection == null)
 		{
-			Alert.fatal("Connection for database table '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
+			Alert.fatal("Connection for database table '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 

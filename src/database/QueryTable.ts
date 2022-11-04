@@ -58,7 +58,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		if (connection == null)
 		{
-			Alert.fatal("Connection for database statement '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
+			Alert.fatal("Connection for database statement '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 

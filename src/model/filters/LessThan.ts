@@ -107,7 +107,6 @@ export class LessThan implements Filter
 		if (this.bindval$ == null)
 			this.bindval$ = this.column$;
 
-		console.log("incl 2 "+this.incl);
 		let lt:string = this.incl ? "<=" : "<";
 		let whch:string = this.column$ + " "+lt+" :"+this.bindval$;
 

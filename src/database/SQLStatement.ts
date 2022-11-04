@@ -38,7 +38,7 @@ export class SQLStatement
 
 		if (connection == null)
 		{
-			Alert.fatal("Connection for database procedure '"+connection.name+"' is not a DatabaseConnection","Database Procedure");
+			Alert.fatal("Connection for database procedure '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
 			return;
 		}
 

@@ -323,13 +323,6 @@ export class Framework
 			});
 		}
 	}
-
-	public print(elem:HTMLElement) : void
-	{
-		console.log(elem.tagName);
-		let attrs:string[] = elem.getAttributeNames();
-		attrs.forEach((attr) => {console.log(attr+"="+elem.getAttribute(attr))});
-	}
 }
 
 

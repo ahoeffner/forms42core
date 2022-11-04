@@ -73,7 +73,7 @@ export class dates
     }
 
 	public static startDays(startday:typeof planetaryWeek): Array<String>
-	{	
+	{
 
 		let day:number = 0;
 		let index:number = 0;
@@ -82,26 +82,25 @@ export class dates
 		let weekdays:String[] = ['Sun', 'Mon','Tue','Wed','Thu','Fri','Sat'];
 
 		WeekArrays[0] = startday;
-		while(WeekArrays.length != 7) 
+		while(WeekArrays.length != 7)
 		{
 			if(weekdays.indexOf(startday) < index && !before)
 			{
 				if(index < 7)
 				{
 					if(WeekArrays[0] != weekdays[weekdays.length - 1])
-						WeekArrays.push(weekdays[index]);	
+						WeekArrays.push(weekdays[index]);
 				}
 				else
 				{
 					before = true;
 				}
-				
+
 			} else if(before)
 			{
-				console.log(day);
 				WeekArrays.push(weekdays[day]);
 				day++;
-			} 
+			}
 			index++;
 		}
 		return WeekArrays;

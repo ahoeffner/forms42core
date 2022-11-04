@@ -30,7 +30,6 @@ export class EventTransaction
 
 	public running() : number
 	{
-		this.transactions.forEach((trx) => console.log(EventType[trx.event]+" "+trx.block.name))
 		return(this.transactions.size);
 	}
 

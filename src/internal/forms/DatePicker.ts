@@ -12,7 +12,7 @@
 
 import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
-import { dates } from "../../model/dates/dates.js";
+import { dates, WeekDays } from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
@@ -25,6 +25,8 @@ import { DatePicker as Properties } from "../../application/properties/DatePicke
 
 export class DatePicker extends Form
 {
+	public static WeekDayStart:WeekDays = WeekDays.Mon;
+
 	private date:Date = new Date();
 	private enabled:FieldProperties;
 	private disabled:FieldProperties;
@@ -73,7 +75,7 @@ export class DatePicker extends Form
 		[
 				{type: EventType.Key, key: this.prevstep},
 				{type: EventType.Key, key: this.nextstep},
-				{type: EventType.Key, key:KeyMap.enter},
+				{type: EventType.Key, key: KeyMap.enter},
 				{type: EventType.Key, key: KeyMap.space},
 				{type: EventType.Key, key: KeyMap.prevrecord},
 				{type: EventType.Key, key: KeyMap.nextrecord},
@@ -88,14 +90,18 @@ export class DatePicker extends Form
 
 		if(this.constraint)
 		{
-			console.log(this.constraint.valid(this.date));
+			if(this.constraint.valid(this.date))
+			{
+				this.setValue("calendar","date",this.date);
+				await form.getBlock(block)?.setAndValidate(field,this.date);
+
+				await this.close();
+				return(false);
+			}
+			this.warning(this.constraint.message);
+		
 		}
-
-		this.setValue("calendar","date",this.date);
-		await form.getBlock(block)?.setAndValidate(field,this.date);
-
-		await this.close();
-		return(false);
+		return(true);	
 	}
 
 	private async initialize() : Promise<boolean>
@@ -106,7 +112,8 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		this.constraint = this.parameters.get("constraint");
-		console.log("constraint: "+this.constraint)
+		console.log("constraint: "+this.constraint);
+
 		this.input = document.querySelector('input[name="date"]');
 
 		let props:FieldProperties = this.getBlock("calendar").
@@ -117,7 +124,7 @@ export class DatePicker extends Form
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-
+		
 		this.setValue("calendar","prev",this.leftArrow);
 		this.setValue("calendar","next",this.rightArrow);
 		this.setValue("calendar","date",value);
@@ -131,8 +138,8 @@ export class DatePicker extends Form
 		if (!event.field)
 			return(true);
 
-		let row:number = 	+event.field.substring(4,5);
-		let col:number = 	+event.field.substring(5,6);
+		let row:number = +event.field.substring(4,5);
+		let col:number = +event.field.substring(5,6);
 		let space:boolean = event.key == KeyMap.space;
 		let enter:boolean = event.key == KeyMap.enter;
 		let left:boolean  = event.key == this.prevstep;
@@ -292,7 +299,7 @@ export class DatePicker extends Form
 		{
 			for (let index = 0; index <= 7; index++)
 			{
-				if(this.getValue(event.block,"day-1"+index) == 1)
+				if(this.getValue(event.block,"day-1"+index))
 				{
 					this.goField(event.block,"day-1"+index)
 					return(false);
@@ -305,14 +312,17 @@ export class DatePicker extends Form
 
 	private populateDates() : void
 	{
-		let dayno:number = 0;
+		let dayno:number = 1;
 		let block:Block = this.getBlock("calendar");
 		if(this.date == null) this.date = new Date();
-		let weekdays:Array<String> = dates.startDays("Sun");
 		let month:string = dates.format(this.date,"MMM YYYY");
+		let weekdays:Array<String> = dates.startDays(DatePicker.WeekDayStart);
 
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
+
+
+		let theday:number = weekdays.findIndex(day => day == firstdaysname);
 
 		for (let day = 0; day <= 6; day++)
 			this.setValue("calendar","weekday-"+ day, weekdays[day])
@@ -322,38 +332,63 @@ export class DatePicker extends Form
 		{
 			for (let day = 1; day <= 7; day++)
 			{
+				let date:Date = this.getDate(dayno);
 				if(week == 1)
 				{
-					let theday:number = weekdays.findIndex(element => element == firstdaysname);
-
-					if(theday < day)
+					if (theday < day && this.constraint)
 					{
-						++dayno
-						this.setValue("calendar","day-"+week+""+day, dayno);
-						block.setDefaultProperties(this.enabled,"day-"+week+""+day);
+						// Enable
+						if(this.constraint?.valid(date))
+						{
+							this.setValue("calendar","day-"+week+""+day, dayno);
+							block.setDefaultProperties(this.enabled,"day-"+week+""+day);
+						} 
+						else
+						{
+							let props:FieldProperties = this.disabled.clone().setClass(this.constraint.dateclazz);
+							this.setValue("calendar","day-"+week+""+day, dayno);
+							block.setDefaultProperties(props,"day-"+week+""+day);
+						}
+						++dayno;
 					}
 					else
 					{
+						// Disable
 						this.setValue("calendar","day-"+week+""+day, null);
 						block.setDefaultProperties(this.disabled,"day-"+week+""+day);
 					}
 				}
-				else if(++dayno <= days)
+				else if (dayno <= days && this.constraint)
 				{
-					// Enable
-					this.setValue("calendar","day-"+week+""+day, dayno);
-					block.setDefaultProperties(this.enabled,"day-"+week+""+day);
+					
+					if(this.constraint?.valid(date))
+					{
+						// Enable
+						this.setValue("calendar","day-"+week+""+day, dayno);
+						block.setDefaultProperties(this.enabled,"day-"+week+""+day);
+					} 
+					else
+					{
+						let props:FieldProperties = this.disabled.clone().setClass(this.constraint.dateclazz);
+						this.setValue("calendar","day-"+week+""+day, dayno);
+						block.setDefaultProperties(props,"day-"+week+""+day);
+					}
+					++dayno
 				}
 				else
 				{
 					// Disable
 					this.setValue("calendar","day-"+week+""+day, null);
 					block.setDefaultProperties(this.disabled,"day-"+week+""+day);
-				}
+				}	
 			}
 		}
 	}
 
+	private getDate(day:number)
+	{
+		return new Date(this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + day);
+	}
 	private getDaysNameMonth(year:number,month:number,day:number) : string
 	{
 		return new Date(`${year}-${month + 1}-${day}`).toLocaleDateString("en-US", {weekday: "short"});
@@ -369,7 +404,7 @@ export class DatePicker extends Form
 	`
 	<div name="popup-body">
 		<div name="date-picker">
-			<div><span>Date</span>:<input name="date" from="calendar" date></div>
+			<div name="date"><span>Date</span>:<input name="date" from="calendar" date></div>
 			<div name="dates">
 				<div name="month">
 					<div tabindex="0" name="prev" from="calendar"></div>

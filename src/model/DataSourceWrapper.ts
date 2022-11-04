@@ -469,7 +469,7 @@ export class DataSourceWrapper
 		return(table);
 	}
 
-	private index(record:Record) : number
+	public index(record:Record) : number
 	{
 		if (record == null)
 			return(-1);

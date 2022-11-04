@@ -119,10 +119,30 @@ export class ListOfValues extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if (event.block == "results") this.goBlock("filter");
-		else 									this.goBlock("results");
+		if (event.key == KeyMap.nextfield || event.key == KeyMap.prevfield)
+		{
+			if (event.block == "results") this.goBlock("filter");
+			else 									this.goBlock("results");
 
-		return(false);
+			return(false);
+		}
+
+		if (event.key == KeyMap.nextrecord && event.block == "filter")
+		{
+			this.goBlock("results");
+			return(false);
+		}
+
+		if (event.key == KeyMap.prevrecord && event.block == "results")
+		{
+			if (this.getBlock("results").getRecord().recno == 0)
+			{
+				this.goBlock("filter");
+				return(false);
+			}
+		}
+
+		return(true);
 	}
 
 	private async onFetch() : Promise<boolean>
@@ -234,7 +254,9 @@ export class ListOfValues extends Form
 		this.addEventListener(this.navigate,
 		[
 			{type: EventType.Key, key: KeyMap.nextfield},
-			{type: EventType.Key, key: KeyMap.prevfield}
+			{type: EventType.Key, key: KeyMap.prevfield},
+			{type: EventType.Key, key: KeyMap.nextrecord},
+			{type: EventType.Key, key: KeyMap.prevrecord},
 		]);
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
@@ -250,7 +272,7 @@ export class ListOfValues extends Form
 	`
 	<div name="popup-body">
 		<div name="lov" class="CSS">
-			<div><input style="margin-bottom: 15px" size=20 name="search" from="filter"></div>
+			<div><input name="search" from="filter"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly derived>

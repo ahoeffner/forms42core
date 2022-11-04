@@ -25,6 +25,11 @@ export class Record
 		this.rec$ = rec;
 	}
 
+	public get recno() : number
+	{
+		return(this.rec$.wrapper.index(this.rec$));
+	}
+
 	public get state() : RecordState
 	{
 		return(this.rec$.state);

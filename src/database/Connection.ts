@@ -15,6 +15,7 @@ import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { ConnectionScope } from "./ConnectionScope.js";
+import { FormBacking } from "../application/FormBacking.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
 export class Connection extends BaseConnection
@@ -24,11 +25,11 @@ export class Connection extends BaseConnection
 	private touched$:Date = null;
 	private modified$:Date = null;
 	private keepalive$:number = 20;
-	private tmowarned$:boolean = false;
+	private tmowarn$:boolean = false;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
-	public static TIMEOUT = 20;
-	public static IDLEWARN = 20;
+	public static TRXTIMEOUT = 60;
+	public static CONNTIMEOUT = 40;
 
 
 	// Be able to get the real connection from the public
@@ -68,7 +69,7 @@ export class Connection extends BaseConnection
 
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 
 		if (username) this.username = username;
@@ -117,7 +118,7 @@ export class Connection extends BaseConnection
 
 	public async commit() : Promise<boolean>
 	{
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
@@ -134,7 +135,7 @@ export class Connection extends BaseConnection
 
 	public async rollback() : Promise<boolean>
 	{
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
@@ -155,7 +156,7 @@ export class Connection extends BaseConnection
 			describe = false;
 
 		let skip:number = 0;
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
@@ -202,7 +203,7 @@ export class Connection extends BaseConnection
 
 	public async fetch(cursor:Cursor) : Promise<Response>
 	{
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		let restore:boolean = false;
 		if (this.modified$) this.modified$ = new Date();
@@ -240,7 +241,7 @@ export class Connection extends BaseConnection
 	public async close(cursor:Cursor) : Promise<Response>
 	{
 		let response:any = null;
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		if (this.modified$) this.modified$ = new Date();
 
 		if (this.scope == ConnectionScope.stateless)
@@ -276,7 +277,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -294,7 +295,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 
 		return(await this.post(this.conn$+"/select",payload));
@@ -319,7 +320,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -345,7 +346,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -371,7 +372,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
@@ -387,7 +388,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
@@ -406,7 +407,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		this.tmowarned$ = false;
+		this.tmowarn$ = false;
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
@@ -435,24 +436,24 @@ export class Connection extends BaseConnection
 			{
 				let idle:number = ((new Date()).getTime() - this.modified$.getTime())/1000;
 
-				if (idle > 2 * Connection.IDLEWARN && this.tmowarned$)
+				if (idle > Connection.TRXTIMEOUT && this.tmowarn$)
 				{
-					await this.rollback();
-					Alert.warning("Transaction has been rolled back. Requery to see current state","Database Connection");
+					Alert.warning("Transaction is being rolled back","Database Connection");
+					await FormBacking.undo();
 				}
 				else
 				{
-					if (idle > Connection.IDLEWARN && !this.tmowarned$)
+					if (idle > Connection.TRXTIMEOUT*2/3 && !this.tmowarn$)
 					{
-						this.tmowarned$ = true;
-						Alert.warning("Transaction will be rolled back in "+Connection.IDLEWARN+" seconds","Database Connection");
+						this.tmowarn$ = true;
+						Alert.warning("Transaction will be rolled back in "+Connection.TRXTIMEOUT+" seconds","Database Connection");
 					}
 				}
 			}
 
 			if (this.touched$ && !this.modified$)
 			{
-				if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.TIMEOUT)
+				if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.CONNTIMEOUT)
 					await this.commit();
 			}
 		}

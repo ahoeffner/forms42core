@@ -12,7 +12,7 @@
 
 import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
-import { dates, WeekDays } from "../../model/dates/dates.js";
+import { dates ,WeekDays} from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { KeyCodes } from "../../control/events/KeyCodes.js";
 import { MouseMap } from "../../control/events/MouseMap.js";

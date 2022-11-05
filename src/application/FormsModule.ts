@@ -21,7 +21,7 @@ import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
-import { Loading } from '../internal/forms/Loading.js';
+import { Loading } from '../internal/forms/Loadingxx.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';

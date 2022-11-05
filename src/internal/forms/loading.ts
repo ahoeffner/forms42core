@@ -4,55 +4,31 @@ import { Internals } from "../../application/properties/Internals.js";
 
 
 
-export class Loading extends Form {
-
-
-	public static WIDTH:number = 300;
-	public static HEIGHT:number = null;
-
-
+export class Loading extends Form
+{
 	constructor()
 	{
 		super(Loading.page);
-
 		this.addEventListener(this.initialize, { type: EventType.PostViewInit });
 	}
 
-	private async stop(): Promise<boolean>
+	public start(message:string) : void
 	{
+		console.log(document.activeElement);
+		this.setValue("loading","msg",message);
+	}
+
+	private async initialize() : Promise<boolean>
+	{
+		Internals.stylePopupWindow(this.getView());
 		return (true);
 	}
 
-	private async start(): Promise<boolean>
-	{
-		return (true);
-	}
-
-	private async initialize(): Promise<boolean>
-	{
-		let view:HTMLElement = this.getView();
-
-		let msg:string = this.parameters.get("message");
-
-		let block:HTMLElement = view.querySelector('div[id="block"]');
-
-		Internals.stylePopupWindow(view,"",Loading.HEIGHT,Loading.WIDTH);
-
-		block.style.top = "0";
-		block.style.left = "0";
-		block.style.position = "fixed";
-		block.style.width = document.body.offsetWidth+"px";
-		block.style.height = document.body.offsetHeight+"px";
-		this.setValue("waiting","msg",msg);
-
-		return (true);
-	}
-
-    public static page: string = `
-    <div id="block"></div>
-    <div name="popup-body">
-        <div name="msg" from="waiting"></div>
-        <div name="loader"></div>
-    </div>
+	public static page:string =
+	`
+		<div style="width: 100%; height: 100%">
+			<div name="msg" from="loading"></div>
+			<div name="loading"></div>
+		</div>
 	`
 }

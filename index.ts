@@ -85,5 +85,3 @@ export { StaticMenu } from './src/control/menus/StaticMenu.js';
 export { MenuComponent } from './src/control/menus/MenuComponent.js';
 export { MenuEntry } from './src/control/menus/interfaces/MenuEntry.js';
 export { StaticMenuEntry } from './src/control/menus/interfaces/StaticMenuEntry.js';
-
-export { Loading } from './src/internal/forms/Loading.js';

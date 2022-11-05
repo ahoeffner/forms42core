@@ -94,15 +94,13 @@ export class Internals
 		height: 30px;
 		border-radius: 50%;
 		border: 4px solid #f3f3f3;
-		border-top: 4px solid #3498db;	
-		
-	`;
+		border-top: 4px solid #3498db;
 
-	
+	`;
 
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
-		let loader:HTMLElement = view.querySelector('div[name="loader"]');
+		let loading:HTMLElement = view.querySelector('div[name="loading"]');
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
@@ -113,26 +111,26 @@ export class Internals
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
 		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
-		
+
 		if (close && Internals.PopupCloseButton) close.style.cssText = Internals.PopupCloseButton;
 		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;
-		
+
 		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
 		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
 		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;
 
-		if (loader && Internals.LoaderStyle)
-		{ 
-			loader.style.cssText = Internals.LoaderStyle;
+		if (loading && Internals.LoaderStyle)
+		{
+			loading.style.cssText = Internals.LoaderStyle;
 
-			loader.animate(
+			loading.animate(
 			[
 				{ transform: 'rotate(0deg)'},
 				{ transform: 'rotate(360deg)' }
-			], 
+			],
 			{
 				duration: 1000,
 				iterations: Infinity

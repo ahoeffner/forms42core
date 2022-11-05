@@ -21,6 +21,7 @@ import { dates } from '../model/dates/dates.js';
 import { Canvas } from './interfaces/Canvas.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
+import { Loading } from '../internal/forms/Loading.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
@@ -185,6 +186,25 @@ export class FormsModule
 
 		instance.focus();
 		return(instance);
+	}
+
+	public async showLoading(message:string, form?:Form) : Promise<Loading>
+	{
+		let root:HTMLElement = document.body;
+		let zindex:number = Number.MAX_SAFE_INTEGER;
+
+		if (form != null)
+		{
+			root = form.canvas.getContent()
+			zindex = form.canvas.zindex + 1;
+		}
+
+		let loading:Loading = (await this.showform(Loading,null,root)) as Loading;
+
+		loading.start(message);
+		loading.canvas.zindex = zindex;
+
+		return(loading);
 	}
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void

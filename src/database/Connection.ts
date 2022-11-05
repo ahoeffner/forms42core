@@ -15,6 +15,7 @@ import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { ConnectionScope } from "./ConnectionScope.js";
+import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 
@@ -189,6 +190,7 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
+		FormsModule.get().showLoading("Query");
 		let response:any = await this.post(this.conn$+"/select",payload);
 
 		if (!response.success)

@@ -406,6 +406,9 @@ export class Form implements EventListenerObject
 
 	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
 	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+
 		if (this.curinst$)
 		{
 			if (!field) field = this.curinst$.field.name;
@@ -414,12 +417,9 @@ export class Form implements EventListenerObject
 
 		if (!block || !field)
 		{
-			Alert.warning("field and block undefined","Send Key");
+			Alert.warning("field or block undefined","Send Key");
 			return(false);
 		}
-
-		block = block.toLowerCase();
-		field = field.toLowerCase();
 
 		if (this.curinst$)
 		{

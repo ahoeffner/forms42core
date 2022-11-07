@@ -72,14 +72,46 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this)?.focus();
 	}
 
-	public async enterQueryMode() : Promise<boolean>
+	public async reQuery(block:string) : Promise<boolean>
 	{
-		return(this.sendkey(KeyMap.enterquery));
+		block = block?.toLowerCase();
+		let blk:Block = this.getBlock(block);
+
+		if (blk == null)
+		{
+			Alert.fatal("Block '"+block+"' does not exist","Re Query");
+			return(false);
+		}
+
+		return(blk.reQuery());
 	}
 
-	public async executeQuery() : Promise<boolean>
+	public async enterQueryMode(block:string) : Promise<boolean>
 	{
-		return(this.sendkey(KeyMap.enterquery));
+		block = block?.toLowerCase();
+		let blk:Block = this.getBlock(block);
+
+		if (blk == null)
+		{
+			Alert.fatal("Block '"+block+"' does not exist","Execute Query");
+			return(false);
+		}
+
+		return(blk.enterQueryMode());
+	}
+
+	public async executeQuery(block:string) : Promise<boolean>
+	{
+		block = block?.toLowerCase();
+		let blk:Block = this.getBlock(block);
+
+		if (blk == null)
+		{
+			Alert.fatal("Block '"+block+"' does not exist","Enter Query Mode");
+			return(false);
+		}
+
+		return(blk.executeQuery());
 	}
 
 	public showDatePicker(block?:string, field?:string, clazz?:string) : void

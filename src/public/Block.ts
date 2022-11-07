@@ -86,6 +86,16 @@ export class Block
 		return(this.getRecord()?.state);
 	}
 
+	public get fields() : string[]
+	{
+		let fields:Set<string> = new Set<string>();
+
+		FormBacking.getViewBlock(this).getAllFields().
+			forEach((fld) => fields.add(fld.name))
+
+		return(Array.from(fields));
+	}
+
 	public flush() : void
 	{
 		FormBacking.getModelBlock(this).flush();
@@ -401,6 +411,11 @@ export class Block
 	public async reQuery() : Promise<boolean>
 	{
 		return(FormBacking.getModelForm(this.form).executeQuery(this.name,true));
+	}
+
+	public async enterQueryMode() : Promise<boolean>
+	{
+		return(FormBacking.getModelForm(this.form).enterQuery(this.name));
 	}
 
 	public async executeQuery() : Promise<boolean>

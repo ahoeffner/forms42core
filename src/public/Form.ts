@@ -71,6 +71,16 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this)?.focus();
 	}
 
+	public async enterQueryMode() : Promise<boolean>
+	{
+		return(this.sendkey(KeyMap.enterquery));
+	}
+
+	public async executeQuery() : Promise<boolean>
+	{
+		return(this.sendkey(KeyMap.enterquery));
+	}
+
 	public showDatePicker(block?:string, field?:string, clazz?:string) : void
 	{
 		this.sendkey(KeyMap.calendar,block,field,clazz);

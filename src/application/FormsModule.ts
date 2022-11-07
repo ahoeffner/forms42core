@@ -180,11 +180,11 @@ export class FormsModule
 		container.appendChild(canvas.getView());
 
 		let mform:ModelForm = FormBacking.getModelForm(instance);
-
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
-		await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
 
-		instance.focus();
+		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
+			instance.focus();
+
 		return(instance);
 	}
 

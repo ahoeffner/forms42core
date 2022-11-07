@@ -14,6 +14,7 @@ import { Form } from './Form.js';
 import { Record } from './Record.js';
 import { Status } from '../view/Row.js';
 import { Alert } from '../application/Alert.js';
+import { ListOfValues } from './ListOfValues.js';
 import { DateConstraint } from './DateConstraint.js';
 import { KeyMap } from '../control/events/KeyMap.js';
 import { FieldProperties } from './FieldProperties.js';
@@ -25,7 +26,6 @@ import { DataSource } from '../model/interfaces/DataSource.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
-import { ListOfValues } from './ListOfValues.js';
 
 export class Block
 {
@@ -99,6 +99,11 @@ export class Block
 	public flush() : void
 	{
 		FormBacking.getModelBlock(this).flush();
+	}
+
+	public async clear() : Promise<boolean>
+	{
+		return(FormBacking.getModelBlock(this).clear());
 	}
 
 	public refresh(offset?:number) : void
@@ -247,18 +252,6 @@ export class Block
 		}
 
 		return(intrec == null ? null : new Record(intrec));
-	}
-
-	public addKey(name:string, fields:string|string[]) : void
-	{
-		if (name == null) throw "@Block: Key name is madatory";
-		if (fields == null) throw "@Block: Key fields is madatory";
-		FormBacking.getModelBlock(this).addKey(name,fields);
-	}
-
-	public removeKey(name:string) : boolean
-	{
-		return(FormBacking.getModelBlock(this).removeKey(name));
 	}
 
 	public getQBEProperties(field:string) : FieldProperties

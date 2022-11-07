@@ -502,6 +502,9 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.enter && qmode)
 				key = KeyMap.executequery;
 
+			if (key == KeyMap.clearblock)
+				return(inst.field.block.model.clear());
+
 			if (KeyMapping.isRowNav(key))
 			{
 				success = await block.navigateRow(key,inst);

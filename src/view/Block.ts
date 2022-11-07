@@ -444,7 +444,13 @@ export class Block
 	{
 		this.current = null;
 		this.displayed$.clear();
-		if (rewind) this.row$ = -1;
+
+		if (rewind)
+		{
+			this.row$ = -1;
+			this.model.rewind();
+		}
+
 		if (props) this.recprops$.clear();
 		if (fields) this.model.querymode = false;
 

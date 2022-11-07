@@ -12,7 +12,6 @@
 
 import { Form } from "./Form.js";
 import { Record } from "./Record.js";
-import { Key } from "./relations/Key.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
@@ -39,7 +38,6 @@ import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 export class Block
 {
 	private form$:Form = null;
-	private keys$:Key[] = [];
 	private name$:string = null;
 	private record$:number = -1;
 	private view$:ViewBlock = null;
@@ -137,6 +135,15 @@ export class Block
 	{
 		if (!this.source$.deleteallowed) return(false);
 		return(this.intblk.deleteallowed);
+	}
+
+	public async clear() : Promise<boolean>
+	{
+		if (!await this.wrapper.clear())
+			return(false);
+
+		this.form.clearBlock(this);
+		return(true);
 	}
 
 	public hasEventTransaction() : boolean
@@ -241,30 +248,6 @@ export class Block
 	{
 		if (this.querymode) return(this.qbe.wrapper);
 		return(this.form.datamodel.getWrapper(this));
-	}
-
-	public get keys() : Key[]
-	{
-		return(this.keys$);
-	}
-
-	public addKey(name:string, fields:string|string[]) : void
-	{
-		this.keys$.push(new Key(name,this,fields));
-	}
-
-	public removeKey(name:string) : boolean
-	{
-		for (let i = 0; i < this.keys$.length; i++)
-		{
-			if (name == this.keys$[i].name)
-			{
-				this.keys$.splice(i,1);
-				return(true);
-			}
-		}
-
-		return(false);
 	}
 
 	public async preInsert(record:Record) : Promise<boolean>
@@ -385,6 +368,11 @@ export class Block
 			success = await this.wrapper.modified(record,false);
 
 		return(success);
+	}
+
+	public rewind() : void
+	{
+		this.record$ = -1;
 	}
 
 	public move(delta:number) : number

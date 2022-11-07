@@ -20,14 +20,8 @@ export class Key
 	private fields$:string[] = null;
 
 
-	constructor(name:string, block:string|Block, fields:string|string[])
+	constructor(block:string|Block, fields:string|string[])
 	{
-		if (name == null)
-		{
-			Alert.fatal("Invalid key name: 'null'","Key");
-			return;
-		}
-
 		if (block == null)
 		{
 			Alert.fatal("Invalid key definition, block: 'null'","Key");
@@ -52,7 +46,6 @@ export class Key
 		if (typeof block != "string")
 			block = block.name;
 
-		this.name$ = name.toLowerCase();
 		this.block$ = block.toLowerCase();
 
 		this.fields$ = fields;

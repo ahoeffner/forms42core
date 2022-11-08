@@ -95,7 +95,9 @@ export class Connection extends BaseConnection
 			"auth.secret": this.password
 		};
 
+		FormsModule.get().showLoading("Connecting");
 		let response:any = await this.post("connect",payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -123,7 +125,9 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		FormsModule.get().showLoading("Comitting");
 		let response:any = await this.post(this.conn$+"/commit");
+		FormsModule.get().hideLoading();
 
 		if (response.success)
 		{
@@ -140,7 +144,9 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		FormsModule.get().showLoading("Rolling back");
 		let response:any = await this.post(this.conn$+"/rollback");
+		FormsModule.get().hideLoading();
 
 		if (response.success)
 		{
@@ -190,8 +196,9 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
-		FormsModule.get().showLoading("Query");
+		FormsModule.get().showLoading("Querying");
 		let response:any = await this.post(this.conn$+"/select",payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -227,7 +234,9 @@ export class Connection extends BaseConnection
 		}
 
 		let payload:any = {cursor: cursor.name};
+		FormsModule.get().showLoading("Fetching data");
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -242,8 +251,8 @@ export class Connection extends BaseConnection
 
 	public async close(cursor:Cursor) : Promise<Response>
 	{
-		let response:any = null;
 		this.tmowarn$ = false;
+		let response:any = null;
 		if (this.modified$) this.modified$ = new Date();
 
 		if (this.scope == ConnectionScope.stateless)
@@ -267,6 +276,8 @@ export class Connection extends BaseConnection
 
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
+		let response:any = null;
+
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
 
@@ -283,11 +294,17 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
-		return(await this.post(this.conn$+"/select",payload));
+		FormsModule.get().showLoading("Locking");
+		response = await this.post(this.conn$+"/select",payload);
+		FormsModule.get().hideLoading();
+
+		return(response);
 	}
 
 	public async refresh(sql:SQLRest) : Promise<Response>
 	{
+		let response:any = null;
+
 		let payload:any =
 		{
 			rows: 1,
@@ -300,7 +317,11 @@ export class Connection extends BaseConnection
 		this.tmowarn$ = false;
 		this.touched$ = new Date();
 
-		return(await this.post(this.conn$+"/select",payload));
+		FormsModule.get().showLoading("Refresh row");
+		response = await this.post(this.conn$+"/select",payload);
+		FormsModule.get().hideLoading();
+
+		return(response);
 	}
 
 	public async insert(sql:SQLRest) : Promise<Response>
@@ -312,8 +333,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		FormsModule.get().showLoading("Insert");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/insert"+returnclause,payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -338,8 +361,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		FormsModule.get().showLoading("Update");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/update"+returnclause,payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -364,8 +389,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		FormsModule.get().showLoading("Delete");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/delete"+returnclause,payload);
+		FormsModule.get().hideLoading();
 
 		if (!response.success)
 		{
@@ -383,6 +410,8 @@ export class Connection extends BaseConnection
 
 	public async call(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
+		let response:any = null;
+
 		let payload:any =
 		{
 			sql: sql.stmt,
@@ -395,13 +424,18 @@ export class Connection extends BaseConnection
 		if (this.modified$) this.modified$ = new Date();
 
 		if (patch) this.modified$ = new Date();
-		if (patch) return(this.patch(this.conn$+"/exec",payload));
 
-		return(this.post(this.conn$+"/exec",payload));
+		FormsModule.get().showLoading("Call procedure");
+		if (patch) response = this.patch(this.conn$+"/exec",payload);
+		else 		  response = this.post(this.conn$+"/exec",payload);
+
+		return(response);
 	}
 
 	public async execute(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
+		let response:any = null;
+
 		let payload:any =
 		{
 			sql: sql.stmt,
@@ -413,10 +447,11 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
-		if (patch) this.modified$ = new Date();
-		if (patch) return(this.patch(this.conn$+"/exec",payload));
+		FormsModule.get().showLoading("Execute procedure");
+		if (patch) response = this.patch(this.conn$+"/exec",payload);
+		else 		  response = this.post(this.conn$+"/exec",payload);
 
-		return(this.post(this.conn$+"/exec",payload));
+		return(response);
 	}
 
 	private async keepalive() : Promise<void>

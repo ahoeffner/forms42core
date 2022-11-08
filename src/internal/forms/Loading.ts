@@ -14,6 +14,8 @@ import { Internals } from "../../application/properties/Internals.js";
 
 export class Loading
 {
+	public static SHORTWHILE = 1;
+
 	private static loader = null;
 	private static threads:number = 0;
 
@@ -22,14 +24,12 @@ export class Loading
 
 	public static show(message:string) : void
 	{
-		console.log("show "+Loading.threads);
-
 		if (Loading.loader == null)
 			Loading.loader = new Loading();
 
 		Loading.threads++;
 		Loading.loader?.setMessage(message);
-		setTimeout(() => {Loading.loader?.display()},10);
+		setTimeout(() => {Loading.loader?.display()},Loading.SHORTWHILE*1000);
 	}
 
 	public static hide() : void
@@ -39,8 +39,6 @@ export class Loading
 			Loading.loader?.remove();
 			Loading.loader = null;
 		}
-
-		console.log("hide "+Loading.threads);
 	}
 
 	private constructor()

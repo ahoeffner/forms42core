@@ -188,23 +188,14 @@ export class FormsModule
 		return(instance);
 	}
 
-	public async showLoading(message:string, form?:Form) : Promise<Loading>
+	public hideLoading() : void
 	{
-		let root:HTMLElement = document.body;
-		let zindex:number = Number.MAX_SAFE_INTEGER;
+		Loading.hide();
+	}
 
-		if (form != null)
-		{
-			root = form.canvas.getContent()
-			zindex = form.canvas.zindex + 1;
-		}
-
-		let loading:Loading = (await this.showform(Loading,null,root)) as Loading;
-
-		loading.start(message);
-		loading.canvas.zindex = zindex;
-
-		return(loading);
+	public showLoading(message:string) : void
+	{
+		Loading.show(message);
 	}
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void

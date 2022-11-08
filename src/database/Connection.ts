@@ -190,7 +190,7 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
-		//FormsModule.get().showLoading("Query");
+		FormsModule.get().showLoading("Query");
 		let response:any = await this.post(this.conn$+"/select",payload);
 
 		if (!response.success)

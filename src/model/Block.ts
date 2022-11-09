@@ -577,7 +577,6 @@ export class Block
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
 		let runid:object = null;
-		let thisid:object = null;
 
 		if (!this.setMasterDependencies())
 			return(false);
@@ -585,10 +584,8 @@ export class Block
 		if (qryid == null)
 			qryid = this.form.QueryManager.startNewChain();
 
-		// Abort query if already obsolete
-		thisid = this.form.QueryManager.getQueryID();
-
-		if (qryid != thisid)
+		// Abort query if obsolete
+		if (qryid != this.form.QueryManager.getQueryID())
 		{
 			console.log("Stale query for '"+this.name+"' aborted");
 			return(true);
@@ -601,13 +598,21 @@ export class Block
 		{
 			waits++;
 			await QueryManager.sleep(10);
+
+		// Abort query if obsolete
+		if (qryid != this.form.QueryManager.getQueryID())
+			{
+				console.log("Stale query for '"+this.name+"' aborted");
+				return(true);
+			}
+
 			runid = this.form.QueryManager.getRunning(this);
 			// Wait for stale query to finish displaying rows
 
 			if (runid && waits > 1000)
 			{
 				waits = 0;
-				Alert.warning("Waiting for former query to finish","Execute Query");
+				Alert.warning("Waiting for previous query to finish","Execute Query");
 			}
 		}
 

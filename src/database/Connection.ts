@@ -198,6 +198,7 @@ export class Connection extends BaseConnection
 
 		let thread:number = FormsModule.get().showLoading("Querying");
 		let response:any = await this.post(this.conn$+"/select",payload);
+		await this.sleep(200);
 		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)

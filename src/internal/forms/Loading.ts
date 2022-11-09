@@ -14,7 +14,7 @@ import { Internals } from "../../application/properties/Internals.js";
 
 export class Loading
 {
-	public static SHORTWHILE = 1.0;
+	public static SHORTWHILE = 1;
 	private static loader = new Loading();
 
 	private threads:number = 0;
@@ -44,13 +44,23 @@ export class Loading
 
 	private display() : void
 	{
-		if (!this.displayed && this.threads > 0)
+		if (!this.displayed)
+			this.element = document.activeElement as HTMLElement;
+
+		if (this.getOldest() < Loading.SHORTWHILE * 1000)
 		{
+			setTimeout(() => {Loading.loader.display()},Loading.SHORTWHILE*1000);
+			return;
+		}
+
+		if (!this.displayed)
+		{
+			this.displayed = true;
+
 			this.watch();
 			this.prepare();
-			this.displayed = true;
+
 			document.body.appendChild(this.view);
-			this.element = document.activeElement as HTMLElement;
 			this.view.focus();
 		}
 	}
@@ -80,6 +90,20 @@ export class Loading
 			this.view = this.view.childNodes.item(1) as HTMLDivElement;
 			this.view.style.zIndex = Number.MAX_SAFE_INTEGER+"";
 		}
+	}
+
+	private getOldest() : number
+	{
+		let oldest:number = 0;
+		let now:Date = new Date();
+
+		this.jobs.forEach((job) =>
+		{
+			let spend:number = now.getTime() - job.start.getTime();
+			if (spend > oldest) oldest = spend;
+		});
+
+		return(oldest);
 	}
 
 	private watch() : void

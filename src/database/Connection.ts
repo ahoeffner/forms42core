@@ -97,7 +97,7 @@ export class Connection extends BaseConnection
 
 		let thread:number = FormsModule.get().showLoading("Connecting");
 		let response:any = await this.post("connect",payload);
-		//FormsModule.get().hideLoading(thread);
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{

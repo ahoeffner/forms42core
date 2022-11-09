@@ -51,6 +51,7 @@ export class Loading
 			this.displayed = true;
 			document.body.appendChild(this.view);
 			this.element = document.activeElement as HTMLElement;
+			this.view.focus();
 		}
 	}
 
@@ -97,7 +98,7 @@ export class Loading
 
 	public static page:string =
 	`
-		<div style="position:absolute; top:0; left:0; width: 100%; height: 100%">
+		<div tabindex="-1" style="position:absolute; top:0; left:0; width: 100%; height: 100%">
 			<div name="loading"></div>
 		</div>
 	`

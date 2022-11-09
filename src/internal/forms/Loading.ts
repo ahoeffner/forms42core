@@ -14,7 +14,7 @@ import { Internals } from "../../application/properties/Internals.js";
 
 export class Loading
 {
-	public static SHORTWHILE = 1;
+	public static SHORTWHILE = 1.0;
 	private static loader = new Loading();
 
 	private threads:number = 0;
@@ -34,13 +34,10 @@ export class Loading
 		Loading.loader.remove(thread);
 	}
 
-	private constructor()
-	{
-	}
-
 	private start(message:string) : number
 	{
-		this.jobs.set(++this.threads,new Running(message));
+		this.threads++;
+		this.jobs.set(this.threads,new Running(message));
 		setTimeout(() => {Loading.loader.display()},Loading.SHORTWHILE*1000);
 		return(this.threads);
 	}
@@ -52,6 +49,7 @@ export class Loading
 			this.watch();
 			this.prepare();
 			this.displayed = true;
+			document.body.appendChild(this.view);
 			this.element = document.activeElement as HTMLElement;
 		}
 	}
@@ -63,9 +61,9 @@ export class Loading
 
 		if (this.displayed && this.threads == 0)
 		{
-			console.log("hide")
 			this.view.remove();
 			this.element?.focus();
+			this.displayed = false;
 		}
 	}
 
@@ -76,7 +74,6 @@ export class Loading
 			this.view = document.createElement("div") as HTMLDivElement;
 
 			this.view.innerHTML = Loading.page;
-			document.body.appendChild(this.view);
 			Internals.stylePopupWindow(this.view);
 
 			this.view = this.view.childNodes.item(1) as HTMLDivElement;

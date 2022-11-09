@@ -137,6 +137,8 @@ export class Internals
 				duration: 1000,
 				iterations: Infinity
 			})
+
+			return;
 		}
 
 		if (title)

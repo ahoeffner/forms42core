@@ -587,11 +587,12 @@ export class Block
 		// Abort query if obsolete
 		if (qryid != this.form.QueryManager.getQueryID())
 		{
-			console.log("Stale query for '"+this.name+"' aborted");
+			//console.log("Stale query for '"+this.name+"' aborted");
 			return(true);
 		}
 
 		let waits:number = 0;
+		// Wait for stale query to finish displaying rows
 		runid = this.form.QueryManager.getRunning(this);
 
 		while(runid)
@@ -599,15 +600,14 @@ export class Block
 			waits++;
 			await QueryManager.sleep(10);
 
-		// Abort query if obsolete
-		if (qryid != this.form.QueryManager.getQueryID())
+			// Abort query if obsolete
+			if (qryid != this.form.QueryManager.getQueryID())
 			{
-				console.log("Stale query for '"+this.name+"' aborted");
+				//console.log("Stale query for '"+this.name+"' aborted");
 				return(true);
 			}
 
 			runid = this.form.QueryManager.getRunning(this);
-			// Wait for stale query to finish displaying rows
 
 			if (runid && waits > 1000)
 			{

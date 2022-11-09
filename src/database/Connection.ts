@@ -95,9 +95,9 @@ export class Connection extends BaseConnection
 			"auth.secret": this.password
 		};
 
-		FormsModule.get().showLoading("Connecting");
+		let thread:number = FormsModule.get().showLoading("Connecting");
 		let response:any = await this.post("connect",payload);
-		FormsModule.get().hideLoading();
+		//FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -125,9 +125,9 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
-		FormsModule.get().showLoading("Comitting");
+		let thread:number = FormsModule.get().showLoading("Comitting");
 		let response:any = await this.post(this.conn$+"/commit");
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (response.success)
 		{
@@ -144,9 +144,9 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
-		FormsModule.get().showLoading("Rolling back");
+		let thread:number = FormsModule.get().showLoading("Rolling back");
 		let response:any = await this.post(this.conn$+"/rollback");
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (response.success)
 		{
@@ -196,9 +196,9 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
-		FormsModule.get().showLoading("Querying");
+		let thread:number = FormsModule.get().showLoading("Querying");
 		let response:any = await this.post(this.conn$+"/select",payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -234,9 +234,9 @@ export class Connection extends BaseConnection
 		}
 
 		let payload:any = {cursor: cursor.name};
-		FormsModule.get().showLoading("Fetching data");
+		let thread:number = FormsModule.get().showLoading("Fetching data");
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -294,9 +294,9 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
-		FormsModule.get().showLoading("Locking");
+		let thread:number = FormsModule.get().showLoading("Locking");
 		response = await this.post(this.conn$+"/select",payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		return(response);
 	}
@@ -317,9 +317,9 @@ export class Connection extends BaseConnection
 		this.tmowarn$ = false;
 		this.touched$ = new Date();
 
-		FormsModule.get().showLoading("Refresh row");
+		let thread:number = FormsModule.get().showLoading("Refresh row");
 		response = await this.post(this.conn$+"/select",payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		return(response);
 	}
@@ -333,10 +333,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		FormsModule.get().showLoading("Insert");
+		let thread:number = FormsModule.get().showLoading("Insert");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/insert"+returnclause,payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -361,10 +361,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		FormsModule.get().showLoading("Update");
+		let thread:number = FormsModule.get().showLoading("Update");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/update"+returnclause,payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -389,10 +389,10 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		FormsModule.get().showLoading("Delete");
+		let thread:number = FormsModule.get().showLoading("Delete");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/delete"+returnclause,payload);
-		FormsModule.get().hideLoading();
+		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -425,9 +425,10 @@ export class Connection extends BaseConnection
 
 		if (patch) this.modified$ = new Date();
 
-		FormsModule.get().showLoading("Call procedure");
+		let thread:number = FormsModule.get().showLoading("Call procedure");
 		if (patch) response = this.patch(this.conn$+"/exec",payload);
 		else 		  response = this.post(this.conn$+"/exec",payload);
+		FormsModule.get().hideLoading(thread);
 
 		return(response);
 	}
@@ -447,9 +448,10 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
-		FormsModule.get().showLoading("Execute procedure");
+		let thread:number = FormsModule.get().showLoading("Execute procedure");
 		if (patch) response = this.patch(this.conn$+"/exec",payload);
 		else 		  response = this.post(this.conn$+"/exec",payload);
+		FormsModule.get().hideLoading(thread);
 
 		return(response);
 	}

@@ -92,10 +92,12 @@ export class Internals
 	`
 		width: 30px;
 		height: 30px;
+		position: absolute;
 		border-radius: 50%;
+		top: calc(40% - 15px);
+		left: calc(50% - 15px);
 		border: 4px solid #f3f3f3;
 		border-top: 4px solid #3498db;
-
 	`;
 
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void

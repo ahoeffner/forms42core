@@ -188,14 +188,14 @@ export class FormsModule
 		return(instance);
 	}
 
-	public hideLoading() : void
+	public hideLoading(thread:number) : void
 	{
-		Loading.hide();
+		Loading.hide(thread);
 	}
 
-	public showLoading(message:string) : void
+	public showLoading(message:string) : number
 	{
-		Loading.show(message);
+		return(Loading.show(message));
 	}
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void

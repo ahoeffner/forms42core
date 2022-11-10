@@ -97,10 +97,9 @@ export class DatePicker extends Form
 
 				await this.close();
 				return(false);
-			}
+			} 
 			this.warning(this.constraint.message);
-		
-		}
+		}		
 		return(true);	
 	}
 
@@ -112,7 +111,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		this.constraint = this.parameters.get("constraint");
-		console.log("constraint: "+this.constraint);
+		if(!this.constraint) this.constraint = new AnyDate(); 
 
 		this.input = document.querySelector('input[name="date"]');
 
@@ -350,7 +349,7 @@ export class DatePicker extends Form
 							block.setDefaultProperties(props,"day-"+week+""+day);
 						}
 						++dayno;
-					}
+					} 
 					else
 					{
 						// Disable
@@ -426,4 +425,16 @@ export class DatePicker extends Form
 	</div>
 	`
 	+ Internals.footer;
+}
+
+class AnyDate implements DateConstraint
+{
+	message: string;
+	dateclazz: string;
+
+	valid(date: Date): boolean 
+	{
+		return(true);
+	}
+	
 }

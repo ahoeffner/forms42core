@@ -320,6 +320,8 @@ export class DatePicker extends Form
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
+		console.log(this.getView().innerHTML)
+
 
 		let theday:number = weekdays.findIndex(day => day == firstdaysname);
 
@@ -405,7 +407,7 @@ export class DatePicker extends Form
 				</div>
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
-						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
+						<span tabindex="-1" name="day-$week$day" style="width:100%; text-align:center;" from="calendar"></span>
 					</div>
 				</div>
 			</div>

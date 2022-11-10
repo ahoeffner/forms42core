@@ -87,7 +87,7 @@ export class FieldFeatureFactory
 		props.readonly = exist.readonly;
 		props.required = exist.required;
 
-		props.setStyles(props.getStyles());
+		props.setStyles(exist.getStyles());
 		props.setClasses(exist.getClasses());
 		props.setAttributes(exist.getAttributes());
 	}
@@ -150,8 +150,6 @@ export class FieldFeatureFactory
 			props.hidden = tag.hidden;
 		}
 
-		if (props.name.startsWith("day"))
-			console.log("consume styles: "+props.name+" <"+tag.style.cssText+">");
 		props.setStyles(tag.style.cssText);
 
 		for (let cls of tag.classList.values())
@@ -188,9 +186,6 @@ export class FieldFeatureFactory
 		props.getClasses().forEach((clazz) => {tag.classList.add(clazz)});
 		props.getAttributes().forEach((value,name) => {tag.setAttribute(name,value)});
 		props.getStyles().forEach((element) => {styles += element.style+":"+element.value+";"});
-
-		if (props.name.startsWith("day"))
-			console.log("apply styles: "+props.getStyles().length+" "+props.name+" <"+tag.style.cssText+">");
 
 		if (styles.length > 0)
 			tag.style.cssText = styles;

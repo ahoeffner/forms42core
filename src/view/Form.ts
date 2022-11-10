@@ -454,6 +454,12 @@ export class Form implements EventListenerObject
 		let block:Block = inst?.field.block;
 		let mblock:ModelBlock = inst?.field.block.model;
 
+		if (key == KeyMap.enter)
+		{
+			if (mblock && mblock.querymode) key = KeyMap.executequery;
+			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
+		}
+
 		if (!this.model.checkEventTransaction(EventType.Key,mblock))
 			return(false);
 
@@ -498,9 +504,6 @@ export class Form implements EventListenerObject
 		if (inst != null)
 		{
 			let qmode:boolean = mblock?.querymode;
-
-			if (key == KeyMap.enter && qmode)
-				key = KeyMap.executequery;
 
 			if (key == KeyMap.clearblock)
 				return(inst.field.block.model.clear());

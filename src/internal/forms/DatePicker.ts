@@ -97,10 +97,10 @@ export class DatePicker extends Form
 
 				await this.close();
 				return(false);
-			} 
+			}
 			this.warning(this.constraint.message);
-		}		
-		return(true);	
+		}
+		return(true);
 	}
 
 	private async initialize() : Promise<boolean>
@@ -111,7 +111,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		this.constraint = this.parameters.get("constraint");
-		if(!this.constraint) this.constraint = new AnyDate(); 
+		if(!this.constraint) this.constraint = new AnyDate();
 
 		this.input = document.querySelector('input[name="date"]');
 
@@ -123,7 +123,7 @@ export class DatePicker extends Form
 
 		let value:Date = this.parameters.get("value");
 		if (value == null) value = new Date();
-		
+
 		this.setValue("calendar","prev",this.leftArrow);
 		this.setValue("calendar","next",this.rightArrow);
 		this.setValue("calendar","date",value);
@@ -320,9 +320,6 @@ export class DatePicker extends Form
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
 		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
 
-		console.log(this.getView().innerHTML)
-
-
 		let theday:number = weekdays.findIndex(day => day == firstdaysname);
 
 		for (let day = 0; day <= 6; day++)
@@ -337,15 +334,15 @@ export class DatePicker extends Form
 				if(week == 1)
 				{
 					if (theday < day && this.constraint)
-					{		
+					{
 						this.setValue("calendar","day-"+week+""+day, dayno);
 						let weekday = this.enabled.clone().setClass("weekend");
 
 						if(day > 5) block.setDefaultProperties(weekday,"day-"+week+""+day);
 						else block.setDefaultProperties(this.enabled,"day-"+week+""+day);
-							
+
 						++dayno;
-					} 
+					}
 					else
 					{
 						// Disable
@@ -355,7 +352,7 @@ export class DatePicker extends Form
 				}
 				else if (dayno <= days && this.constraint)
 				{
-					
+
 					// Enable
 					this.setValue("calendar","day-"+week+""+day, dayno);
 					let weekday = this.enabled.clone().setClass("weekend");
@@ -369,7 +366,7 @@ export class DatePicker extends Form
 					// Disable
 					this.setValue("calendar","day-"+week+""+day, null);
 					block.setDefaultProperties(this.disabled,"day-"+week+""+day);
-				}	
+				}
 			}
 		}
 	}
@@ -422,9 +419,9 @@ class AnyDate implements DateConstraint
 	message: string;
 	dateclazz: string;
 
-	valid(date: Date): boolean 
+	valid(date: Date): boolean
 	{
 		return(true);
 	}
-	
+
 }

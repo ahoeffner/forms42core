@@ -12,9 +12,9 @@
 
 import { Form } from "../Form.js";
 import { Block } from "../../public/Block.js";
-import { dates ,WeekDays} from "../../model/dates/dates.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { KeyCodes } from "../../control/events/KeyCodes.js";
+import { dates ,WeekDays} from "../../model/dates/dates.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
@@ -330,7 +330,6 @@ export class DatePicker extends Form
 		{
 			for (let day = 1; day <= 7; day++)
 			{
-				let date:Date = this.getDate(dayno);
 				if(week == 1)
 				{
 					if (theday < day && this.constraint)
@@ -419,7 +418,7 @@ class AnyDate implements DateConstraint
 	message: string;
 	dateclazz: string;
 
-	valid(date: Date): boolean
+	valid(_date: Date): boolean
 	{
 		return(true);
 	}

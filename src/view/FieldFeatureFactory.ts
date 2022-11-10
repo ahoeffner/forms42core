@@ -150,6 +150,8 @@ export class FieldFeatureFactory
 			props.hidden = tag.hidden;
 		}
 
+		if (props.name.startsWith("day"))
+			console.log("consume styles: "+props.name+" <"+tag.style.cssText+">");
 		props.setStyles(tag.style.cssText);
 
 		for (let cls of tag.classList.values())

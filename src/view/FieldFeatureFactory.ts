@@ -151,6 +151,7 @@ export class FieldFeatureFactory
 		}
 
 		props.setStyles(tag.style.cssText);
+		console.log("consume styles: "+props.name+" "+tag+" "+tag.style.cssText);
 
 		for (let cls of tag.classList.values())
 			props.setClass(cls);

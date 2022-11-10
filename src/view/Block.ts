@@ -262,10 +262,18 @@ export class Block
 		return(matched);
 	}
 
-	public getFieldInstances() : FieldInstance[]
+	public getFieldInstances(allrows?:boolean) : FieldInstance[]
 	{
 		let row:Row = null;
 		let instances:FieldInstance[] = [];
+
+		if (allrows)
+		{
+			this.rows$.forEach((row) =>
+			{instances.push(...row.getFieldInstances())})
+
+			return(instances);
+		}
 
 		row = this.getRow(this.row);
 		if (row != null) instances.push(...row.getFieldInstances());
@@ -1080,7 +1088,7 @@ export class Block
 
 	public disableQuery() : void
 	{
-		let instances:FieldInstance[] = this.getFieldInstances();
+		let instances:FieldInstance[] = this.getFieldInstances(true);
 
 		for (let i = 0; i < instances.length; i++)
 			instances[i].qbeProperties.readonly = true;
@@ -1088,7 +1096,7 @@ export class Block
 
 	public disableInsert() : void
 	{
-		let instances:FieldInstance[] = this.getFieldInstances();
+		let instances:FieldInstance[] = this.getFieldInstances(true);
 
 		for (let i = 0; i < instances.length; i++)
 			instances[i].insertProperties.readonly = true;
@@ -1096,7 +1104,7 @@ export class Block
 
 	public disableUpdate() : void
 	{
-		let instances:FieldInstance[] = this.getFieldInstances();
+		let instances:FieldInstance[] = this.getFieldInstances(true);
 
 		for (let i = 0; i < instances.length; i++)
 			instances[i].updateProperties.readonly = true;

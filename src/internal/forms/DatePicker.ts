@@ -97,10 +97,9 @@ export class DatePicker extends Form
 
 				await this.close();
 				return(false);
-			}
+			} 
 			this.warning(this.constraint.message);
-		
-		}
+		}		
 		return(true);	
 	}
 
@@ -112,7 +111,7 @@ export class DatePicker extends Form
 		Properties.styleDatePicker(view);
 
 		this.constraint = this.parameters.get("constraint");
-		console.log("constraint: "+this.constraint);
+		if(!this.constraint) this.constraint = new AnyDate(); 
 
 		this.input = document.querySelector('input[name="date"]');
 
@@ -325,7 +324,7 @@ export class DatePicker extends Form
 		let theday:number = weekdays.findIndex(day => day == firstdaysname);
 
 		for (let day = 0; day <= 6; day++)
-			this.setValue("calendar","weekday-"+ day, weekdays[day])
+			this.setValue("calendar","weekday-"+ day, weekdays[day]);
 
 		this.setValue("calendar","mth",month);
 		for (let week = 1; week <= 6; week++)
@@ -336,21 +335,15 @@ export class DatePicker extends Form
 				if(week == 1)
 				{
 					if (theday < day && this.constraint)
-					{
-						// Enable
-						if(this.constraint?.valid(date))
-						{
-							this.setValue("calendar","day-"+week+""+day, dayno);
-							block.setDefaultProperties(this.enabled,"day-"+week+""+day);
-						} 
-						else
-						{
-							let props:FieldProperties = this.disabled.clone().setClass(this.constraint.dateclazz);
-							this.setValue("calendar","day-"+week+""+day, dayno);
-							block.setDefaultProperties(props,"day-"+week+""+day);
-						}
+					{		
+						this.setValue("calendar","day-"+week+""+day, dayno);
+						let weekday = this.enabled.clone().setClass("weekend");
+
+						if(day > 5) block.setDefaultProperties(weekday,"day-"+week+""+day);
+						else block.setDefaultProperties(this.enabled,"day-"+week+""+day);
+							
 						++dayno;
-					}
+					} 
 					else
 					{
 						// Disable
@@ -361,18 +354,12 @@ export class DatePicker extends Form
 				else if (dayno <= days && this.constraint)
 				{
 					
-					if(this.constraint?.valid(date))
-					{
-						// Enable
-						this.setValue("calendar","day-"+week+""+day, dayno);
-						block.setDefaultProperties(this.enabled,"day-"+week+""+day);
-					} 
-					else
-					{
-						let props:FieldProperties = this.disabled.clone().setClass(this.constraint.dateclazz);
-						this.setValue("calendar","day-"+week+""+day, dayno);
-						block.setDefaultProperties(props,"day-"+week+""+day);
-					}
+					// Enable
+					this.setValue("calendar","day-"+week+""+day, dayno);
+					let weekday = this.enabled.clone().setClass("weekend");
+
+					if(day > 5) block.setDefaultProperties(weekday,"day-"+week+""+day);
+					else block.setDefaultProperties(this.enabled,"day-"+week+""+day);
 					++dayno
 				}
 				else
@@ -426,4 +413,16 @@ export class DatePicker extends Form
 	</div>
 	`
 	+ Internals.footer;
+}
+
+class AnyDate implements DateConstraint
+{
+	message: string;
+	dateclazz: string;
+
+	valid(date: Date): boolean 
+	{
+		return(true);
+	}
+	
 }

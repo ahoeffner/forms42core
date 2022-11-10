@@ -151,7 +151,6 @@ export class FieldFeatureFactory
 		}
 
 		props.setStyles(tag.style.cssText);
-		console.log("consume styles: "+props.name+" "+tag+" "+tag.style.cssText);
 
 		for (let cls of tag.classList.values())
 			props.setClass(cls);
@@ -187,6 +186,9 @@ export class FieldFeatureFactory
 		props.getClasses().forEach((clazz) => {tag.classList.add(clazz)});
 		props.getAttributes().forEach((value,name) => {tag.setAttribute(name,value)});
 		props.getStyles().forEach((element) => {styles += element.style+":"+element.value+";"});
+
+		if (props.name.startsWith("day"))
+			console.log("apply styles: "+props.getStyles().length+" "+props.name+" <"+tag.style.cssText+">");
 
 		if (styles.length > 0)
 			tag.style.cssText = styles;

@@ -66,7 +66,10 @@ export class MenuComponent implements EventListenerObject
 		let start:MenuEntry[] = [this.menu$.getRoot()];
 
 		if (this.options$.skiproot)
+		{
+			this.open$.add("/"+this.menu$.getRoot().id);
 			start = this.menu$.getEntries("/"+start[0].id);
+		}
 
 		this.target$.innerHTML = this.showEntry(start);
 

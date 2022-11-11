@@ -30,7 +30,7 @@ export class MenuComponent implements EventListenerObject
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;
-		if (options == null) this.options$ = {}
+		if (options == null) this.options$ = {};
 
 		if (this.options$.classes == null) this.options$.classes = {};
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
@@ -66,10 +66,7 @@ export class MenuComponent implements EventListenerObject
 		let start:MenuEntry[] = [this.menu$.getRoot()];
 
 		if (this.options$.skiproot)
-		{
-			this.open$.add("/"+this.menu$.getRoot().id);
 			start = this.menu$.getEntries("/"+start[0].id);
-		}
 
 		this.target$.innerHTML = this.showEntry(start);
 
@@ -85,6 +82,7 @@ export class MenuComponent implements EventListenerObject
 	public toggle(path:string) : void
 	{
 		let open:boolean = this.open$.has(path);
+		console.log("toggle "+path+" open: "+open)
 
 		if (this.options$.singlepath)
 		{
@@ -150,6 +148,7 @@ export class MenuComponent implements EventListenerObject
 
 			if (this.open$.has(npath))
 			{
+				console.log("show: "+entries[i].id+" "+npath+" children: "+this.menu$.getEntries(npath)?.length)
 				classes += " "+this.options$.classes.open;
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);

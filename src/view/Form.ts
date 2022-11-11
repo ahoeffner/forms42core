@@ -623,8 +623,8 @@ export class Form implements EventListenerObject
 			{
 				if (qmode) return(false);
 
-				if (inst.field.block.empty())
-					return(true);
+				if (inst.field.row.status == Status.na)
+					return(false);
 
 				if (!mblock.ctrlblk && mblock.deleteallowed)
 					mblock.delete();

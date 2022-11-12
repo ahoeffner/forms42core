@@ -15,9 +15,11 @@ import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { ConnectionScope } from "./ConnectionScope.js";
+import { EventType } from "../control/events/EventType.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
+import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 export class Connection extends BaseConnection
 {
@@ -68,6 +70,11 @@ export class Connection extends BaseConnection
 		this.scope$ = state;
 	}
 
+	public connected() : boolean
+	{
+		return(this.conn$ != null);
+	}
+
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
 		this.tmowarn$ = false;
@@ -106,6 +113,8 @@ export class Connection extends BaseConnection
 			return(false);
 		}
 
+		await FormEvents.raise(FormEvent.AppEvent(EventType.Connect));
+
 		this.trx$ = new Object();
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
@@ -114,9 +123,22 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public connected() : boolean
+	public async disconnect() : Promise<boolean>
 	{
-		return(this.conn$ != null);
+		this.tmowarn$ = false;
+		this.trx$ = new Object();
+		this.touched$ = new Date();
+
+		let response:any = await this.post(this.conn$+"/disconnect");
+
+		if (response.success)
+		{
+			this.touched$ = null;
+			this.modified$ = null;
+		}
+
+		await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
+		return(response.success);
 	}
 
 	public async commit() : Promise<boolean>
@@ -133,6 +155,13 @@ export class Connection extends BaseConnection
 		{
 			this.touched$ = null;
 			this.modified$ = null;
+		}
+
+		if (!response.success)
+		{
+			console.error("failed to commit "+response);
+			Alert.warning(response.message,"Database Connection");
+			return(response);
 		}
 
 		return(response.success);
@@ -152,6 +181,13 @@ export class Connection extends BaseConnection
 		{
 			this.touched$ = null;
 			this.modified$ = null;
+		}
+
+		if (!response.success)
+		{
+			console.error("failed to rollback "+response);
+			Alert.warning(response.message,"Database Connection");
+			return(response);
 		}
 
 		return(response.success);
@@ -298,6 +334,13 @@ export class Connection extends BaseConnection
 		response = await this.post(this.conn$+"/select",payload);
 		FormsModule.get().hideLoading(thread);
 
+		if (!response.success)
+		{
+			console.error("failed to lock "+response);
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
+
 		return(response);
 	}
 
@@ -321,6 +364,13 @@ export class Connection extends BaseConnection
 		response = await this.post(this.conn$+"/select",payload);
 		FormsModule.get().hideLoading(thread);
 
+		if (!response.success)
+		{
+			console.error("failed to refresh "+response);
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
+
 		return(response);
 	}
 
@@ -337,6 +387,13 @@ export class Connection extends BaseConnection
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/insert"+returnclause,payload);
 		FormsModule.get().hideLoading(thread);
+
+		if (!response.success)
+		{
+			console.error("stmt: "+sql.stmt+" failed");
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
 
 		if (!response.success)
 		{
@@ -430,6 +487,13 @@ export class Connection extends BaseConnection
 		else 		  response = this.post(this.conn$+"/exec",payload);
 		FormsModule.get().hideLoading(thread);
 
+		if (!response.success)
+		{
+			console.error("stmt: "+sql.stmt+" failed");
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
+
 		return(response);
 	}
 
@@ -452,6 +516,13 @@ export class Connection extends BaseConnection
 		if (patch) response = this.patch(this.conn$+"/exec",payload);
 		else 		  response = this.post(this.conn$+"/exec",payload);
 		FormsModule.get().hideLoading(thread);
+
+		if (!response.success)
+		{
+			console.error("stmt: "+sql.stmt+" failed");
+			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
 
 		return(response);
 	}

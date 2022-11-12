@@ -30,6 +30,11 @@ export class KeyEventSource
 
 export class FormEvent implements Interface
 {
+	public static AppEvent(type:EventType) : FormEvent
+	{
+		return(new FormEvent(type,null));
+	}
+
 	public static FormEvent(type:EventType, form:Form) : FormEvent
 	{
 		return(new FormEvent(type,form));

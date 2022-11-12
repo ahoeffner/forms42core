@@ -52,7 +52,6 @@ export class DatePicker extends Form
 		this.leftArrow = "<";
 		this.rightArrow = ">";
 
-
 		this.addEventListener(this.setDay,[
 			{type: EventType.Key, key:KeyMap.enter},
 			{type: EventType.Key, key:KeyMap.escape},
@@ -100,6 +99,7 @@ export class DatePicker extends Form
 			}
 			this.warning(this.constraint.message);
 		}
+
 		return(true);
 	}
 
@@ -315,12 +315,12 @@ export class DatePicker extends Form
 		let block:Block = this.getBlock("calendar");
 		if(this.date == null) this.date = new Date();
 		let month:string = dates.format(this.date,"MMM YYYY");
-		let weekdays:Array<String> = dates.startDays(DatePicker.WeekDayStart);
+		let weekdays:Array<String> = dates.getDays(DatePicker.WeekDayStart);
 
 		let days:number = this.getDaysInMonth(this.date.getFullYear(),this.date.getMonth());
-		let firstdaysname:string = this.getDaysNameMonth(this.date.getFullYear(),this.date.getMonth() ,1);
+		let first:string = this.getFirstDayInMonth(this.date.getFullYear(),this.date.getMonth());
 
-		let theday:number = weekdays.findIndex(day => day == firstdaysname);
+		let theday:number = weekdays.findIndex(day => day == first);
 
 		for (let day = 0; day <= 6; day++)
 			this.setValue("calendar","weekday-"+ day, weekdays[day]);
@@ -370,18 +370,14 @@ export class DatePicker extends Form
 		}
 	}
 
-	private getDate(day:number)
+	private getFirstDayInMonth(year:number,month:number) : string
 	{
-		return new Date(this.date.getFullYear() + "-" + (this.date.getMonth() + 1) + "-" + day);
-	}
-	private getDaysNameMonth(year:number,month:number,day:number) : string
-	{
-		return new Date(`${year}-${month + 1}-${day}`).toLocaleDateString("en-US", {weekday: "short"});
+		return(WeekDays[new Date(year,month,1).getDay()]);
 	}
 
-	private  getDaysInMonth(year:number, month:number): number
+	private  getDaysInMonth(year:number, month:number) : number
 	{
-		return new Date(year, month + 1,0).getDate();
+		return(new Date(year, month + 1,0).getDate());
 	}
 
 	public static page:string =
@@ -422,5 +418,4 @@ class AnyDate implements DateConstraint
 	{
 		return(true);
 	}
-
 }

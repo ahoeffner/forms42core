@@ -63,12 +63,16 @@ export class MenuComponent implements EventListenerObject
 
 	public show() : void
 	{
+		let path:string = null;
 		let start:MenuEntry[] = [this.menu$.getRoot()];
 
 		if (this.options$.skiproot)
-			start = this.menu$.getEntries("/"+start[0].id);
+		{
+			path = "/"+start[0].id;
+			start = this.menu$.getEntries(path);
+		}
 
-		this.target$.innerHTML = this.showEntry(start);
+		this.target$.innerHTML = this.showEntry(start,path);
 
 		let entries:NodeList = this.target$.querySelectorAll("a");
 		entries.forEach((link) => {link.addEventListener("click",this);});
@@ -82,7 +86,6 @@ export class MenuComponent implements EventListenerObject
 	public toggle(path:string) : void
 	{
 		let open:boolean = this.open$.has(path);
-		console.log("toggle "+path+" open: "+open)
 
 		if (this.options$.singlepath)
 		{
@@ -148,7 +151,6 @@ export class MenuComponent implements EventListenerObject
 
 			if (this.open$.has(npath))
 			{
-				console.log("show: "+entries[i].id+" "+npath+" children: "+this.menu$.getEntries(npath)?.length)
 				classes += " "+this.options$.classes.open;
 				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);

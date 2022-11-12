@@ -80,31 +80,14 @@ export class dates
         return(utils.parse(datestr,withtime,format));
     }
 
-	public static startDays(startday: WeekDays): Array<String>
+	public static getDays(start:WeekDays): Array<String>
 	{
+		let names:string[] = [];
 
-		let day:number = 0;
-		let index:number = 0;
-		let before:Boolean = false;
-		let WeekArrays = new Array();
-		WeekArrays[0] = WeekDays[startday];
+		for (let i = 0; i < 7; i++)
+			names.push(WeekDays[(i+start)%7])
 
-		while(WeekArrays.length < 7)
-		{
-			if (startday < index && !before)
-			{
-				if (index < 7) WeekArrays.push(WeekDays[index]);
-				else before = true;
-			} 
-			else if (before)
-			{
-				WeekArrays.push(WeekDays[day]);
-				day++;
-			}
-
-			index++;
-		}
-		return(WeekArrays);
+		return(names);
 	}
 
     public static format(date:Date, format?:string) : string

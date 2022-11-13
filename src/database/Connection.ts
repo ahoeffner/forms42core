@@ -159,7 +159,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to commit "+response);
+			console.error("failed to commit "+JSON.stringify(response));
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -185,7 +185,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to rollback "+response);
+			console.error("failed to rollback "+JSON.stringify(response));
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -336,7 +336,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to lock "+response);
+			console.error("failed to lock "+JSON.stringify(response));
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -366,7 +366,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to refresh "+response);
+			console.error("failed to refresh "+JSON.stringify(response));
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}

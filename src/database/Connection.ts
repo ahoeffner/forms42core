@@ -163,7 +163,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to commit "+JSON.stringify(response));
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -191,7 +191,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to rollback "+JSON.stringify(response));
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -246,7 +246,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -285,7 +285,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("fetch from cursor: "+cursor+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -311,7 +311,7 @@ export class Connection extends BaseConnection
 
 			if (!response.success)
 			{
-				console.error("close cursor: "+cursor+" failed");
+				console.error(response);
 				Alert.warning(response.message,"Database Connection");
 				return(response);
 			}
@@ -348,7 +348,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to lock "+JSON.stringify(response));
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -382,7 +382,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to refresh "+JSON.stringify(response));
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -409,14 +409,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
-			Alert.warning(response.message,"Database Connection");
-			return(response);
-		}
-
-		if (!response.success)
-		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -450,7 +443,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -484,7 +477,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -519,13 +512,13 @@ export class Connection extends BaseConnection
 
 		Logger.log(Type.database,"call");
 		let thread:number = FormsModule.get().showLoading("Call procedure");
-		if (patch) response = this.patch(this.conn$+"/exec",payload);
-		else 		  response = this.post(this.conn$+"/exec",payload);
+		if (patch) response = await this.patch(this.conn$+"/exec",payload);
+		else 		  response = await this.post(this.conn$+"/exec",payload);
 		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -554,13 +547,13 @@ export class Connection extends BaseConnection
 
 		Logger.log(Type.database,"execute");
 		let thread:number = FormsModule.get().showLoading("Execute procedure");
-		if (patch) response = this.patch(this.conn$+"/exec",payload);
-		else 		  response = this.post(this.conn$+"/exec",payload);
+		if (patch) response = await this.patch(this.conn$+"/exec",payload);
+		else 		  response = await this.post(this.conn$+"/exec",payload);
 		FormsModule.get().hideLoading(thread);
 
 		if (!response.success)
 		{
-			console.error("stmt: "+sql.stmt+" failed");
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}

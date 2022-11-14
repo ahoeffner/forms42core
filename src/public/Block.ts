@@ -106,6 +106,16 @@ export class Block
 		return(FormBacking.getModelBlock(this).clear());
 	}
 
+	public insertMode() : boolean
+	{
+		return(this.getRecord().state == RecordState.New || this.getRecord().state == RecordState.Inserted);
+	}
+
+	public queryMode() : boolean
+	{
+		return(FormBacking.getModelBlock(this).querymode);
+	}
+
 	public empty() : boolean
 	{
 		return(FormBacking.getModelBlock(this).empty);

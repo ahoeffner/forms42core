@@ -213,6 +213,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 		return(this);
 	}
 
+	public getFilters() : FilterStructure
+	{
+		return(this.limit$);
+	}
+
 	public addFilter(filter:Filter | FilterStructure) : DatabaseTable
 	{
 		if (this.limit$ == null)

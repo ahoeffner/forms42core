@@ -106,6 +106,11 @@ export class Block
 		return(FormBacking.getModelBlock(this).clear());
 	}
 
+	public empty() : boolean
+	{
+		return(FormBacking.getModelBlock(this).empty);
+	}
+
 	public refresh(offset?:number) : void
 	{
 		if (offset == null) offset = 0;

@@ -15,6 +15,12 @@ import { BindValue } from "../database/BindValue.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 
+export interface LOVFilterPreProcessor
+{
+    (filter?:string) : string;
+}
+
+
 export interface ListOfValues
 {
 	rows?:number;
@@ -30,6 +36,7 @@ export interface ListOfValues
 	filterPostfix?:string;
 	filterMinLength?:number;
 	filterInitialValueFrom?:string;
+	filterPreProcesser?:LOVFilterPreProcessor;
 
 	displayfields:string|string[];
 	sourcefields?:string|string[];

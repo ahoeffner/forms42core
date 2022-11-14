@@ -152,12 +152,13 @@ export class MenuComponent implements EventListenerObject
 			if (this.open$.has(npath))
 			{
 				classes += " "+this.options$.classes.open;
-				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
+				page += "<div><a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
+				page += "</div>";
 			}
 			else
 			{
-				page += "<a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
+				page += "<div><a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a></div>";
 			}
 
 		}

@@ -81,6 +81,9 @@ export class ListOfValues extends Form
 		let flt:string = this.getValue("filter","search");
 		if (flt == null) flt = "";
 
+		if (this.props.filterPreProcesser != null)
+			flt = this.props.filterPreProcesser(flt);
+
 		if (flt.length < this.props.filterMinLength)
 			return;
 

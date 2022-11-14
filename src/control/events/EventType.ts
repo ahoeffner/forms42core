@@ -20,6 +20,10 @@ export enum EventType
 	Key,
 	Mouse,
 
+	Commit,
+	Rollback,
+	OnTransaction,
+
 	Connect,
 	Disconnect,
 

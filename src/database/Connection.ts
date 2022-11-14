@@ -164,6 +164,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		await FormEvents.raise(FormEvent.AppEvent(EventType.Commit));
 		return(response.success);
 	}
 
@@ -190,6 +191,7 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		await FormEvents.raise(FormEvent.AppEvent(EventType.Rollback));
 		return(response.success);
 	}
 
@@ -313,6 +315,7 @@ export class Connection extends BaseConnection
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
+		let trxstart:boolean = this.modified$ == null;
 
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
@@ -340,6 +343,9 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
+
+		if (trxstart)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
 		return(response);
 	}
@@ -376,6 +382,8 @@ export class Connection extends BaseConnection
 
 	public async insert(sql:SQLRest) : Promise<Response>
 	{
+		let trxstart:boolean = this.modified$ == null;
+
 		let payload:any =
 		{
 			sql: sql.stmt,
@@ -406,11 +414,16 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
+		if (trxstart)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
 		return(response);
 	}
 
 	public async update(sql:SQLRest) : Promise<Response>
 	{
+		let trxstart:boolean = this.modified$ == null;
+
 		let payload:any =
 		{
 			sql: sql.stmt,
@@ -434,11 +447,16 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
+		if (trxstart)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
 		return(response);
 	}
 
 	public async delete(sql:SQLRest) : Promise<Response>
 	{
+		let trxstart:boolean = this.modified$ == null;
+
 		let payload:any =
 		{
 			sql: sql.stmt,
@@ -462,12 +480,16 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
+		if (trxstart)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
 		return(response);
 	}
 
 	public async call(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
+		let trxstart:boolean = this.modified$ == null;
 
 		let payload:any =
 		{
@@ -494,12 +516,16 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		if (trxstart && patch)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
 		return(response);
 	}
 
 	public async execute(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
+		let trxstart:boolean = this.modified$ == null;
 
 		let payload:any =
 		{
@@ -523,6 +549,9 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
+
+		if (trxstart && patch)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
 		return(response);
 	}

@@ -594,6 +594,8 @@ export class Connection extends BaseConnection
 			{
 				if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.CONNTIMEOUT)
 					await this.commit();
+
+				console.log("after "+this.touched$+" "+this.modified$)
 			}
 		}
 

@@ -59,6 +59,7 @@ export class Contains implements Filter
 	public clone(): Contains
 	{
 		let clone:Contains = Reflect.construct(this.constructor,this.columns$);
+		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
 

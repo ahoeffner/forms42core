@@ -36,6 +36,7 @@ export class Equals implements Filter
 	public clone(): Equals
 	{
 		let clone:Equals = Reflect.construct(this.constructor,[this.column$]);
+		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
 

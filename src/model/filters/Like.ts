@@ -38,6 +38,7 @@ export class Like implements Filter
 	public clone() : Like
 	{
 		let clone:Like = Reflect.construct(this.constructor,[this.column$]);
+		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
 

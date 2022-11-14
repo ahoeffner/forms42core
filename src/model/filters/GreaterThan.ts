@@ -38,6 +38,7 @@ export class GreaterThan implements Filter
 	public clone(): GreaterThan
 	{
 		let clone:GreaterThan = Reflect.construct(this.constructor,[this.column$]);
+		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
 

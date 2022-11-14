@@ -39,6 +39,7 @@ export class ILike implements Filter
 	public clone(): ILike
 	{
 		let clone:ILike = Reflect.construct(this.constructor,[this.column$]);
+		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
 

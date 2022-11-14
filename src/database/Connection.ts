@@ -15,6 +15,7 @@ import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { ConnectionScope } from "./ConnectionScope.js";
+import { Logger, Type } from "../application/Logger.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -77,8 +78,8 @@ export class Connection extends BaseConnection
 
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
+		this.touched$ = null;
 		this.tmowarn$ = false;
-		this.touched$ = new Date();
 
 		if (username) this.username = username;
 		if (password) this.password = password;
@@ -102,6 +103,7 @@ export class Connection extends BaseConnection
 			"auth.secret": this.password
 		};
 
+		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.get().showLoading("Connecting");
 		let response:any = await this.post("connect",payload);
 		FormsModule.get().hideLoading(thread);
@@ -129,6 +131,7 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		Logger.log(Type.database,"disconnect");
 		let response:any = await this.post(this.conn$+"/disconnect");
 
 		if (response.success)
@@ -147,6 +150,7 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		Logger.log(Type.database,"commit");
 		let thread:number = FormsModule.get().showLoading("Comitting");
 		let response:any = await this.post(this.conn$+"/commit");
 		FormsModule.get().hideLoading(thread);
@@ -174,6 +178,7 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		Logger.log(Type.database,"rollback");
 		let thread:number = FormsModule.get().showLoading("Rolling back");
 		let response:any = await this.post(this.conn$+"/rollback");
 		FormsModule.get().hideLoading(thread);
@@ -234,6 +239,7 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
+		Logger.log(Type.database,"select");
 		let thread:number = FormsModule.get().showLoading("Querying");
 		let response:any = await this.post(this.conn$+"/select",payload);
 		FormsModule.get().hideLoading(thread);
@@ -271,6 +277,7 @@ export class Connection extends BaseConnection
 			return(this.select(sql,cursor,cursor.rows,false));
 		}
 
+		Logger.log(Type.database,"fetch");
 		let payload:any = {cursor: cursor.name};
 		let thread:number = FormsModule.get().showLoading("Fetching data");
 		let response:any = await this.post(this.conn$+"/exec/fetch",payload);
@@ -298,6 +305,7 @@ export class Connection extends BaseConnection
 
 		if (cursor.trx == this.trx$)
 		{
+			Logger.log(Type.database,"close cursor");
 			let payload:any = {cursor: cursor.name, close: true};
 			response = await this.post(this.conn$+"/exec/fetch",payload);
 
@@ -333,6 +341,7 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		this.modified$ = new Date();
 
+		Logger.log(Type.database,"lock");
 		let thread:number = FormsModule.get().showLoading("Locking");
 		response = await this.post(this.conn$+"/select",payload);
 		FormsModule.get().hideLoading(thread);
@@ -366,6 +375,7 @@ export class Connection extends BaseConnection
 		this.tmowarn$ = false;
 		this.touched$ = new Date();
 
+		Logger.log(Type.database,"refresh");
 		let thread:number = FormsModule.get().showLoading("Refresh row");
 		response = await this.post(this.conn$+"/select",payload);
 		FormsModule.get().hideLoading(thread);
@@ -391,6 +401,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		Logger.log(Type.database,"insert");
 		let thread:number = FormsModule.get().showLoading("Insert");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/insert"+returnclause,payload);
@@ -431,6 +442,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		Logger.log(Type.database,"update");
 		let thread:number = FormsModule.get().showLoading("Update");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/update"+returnclause,payload);
@@ -464,6 +476,7 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		Logger.log(Type.database,"delete");
 		let thread:number = FormsModule.get().showLoading("Delete");
 		let returnclause:string = sql.returnclause ? "?returning=true" : "";
 		let response:any = await this.post(this.conn$+"/delete"+returnclause,payload);
@@ -504,6 +517,7 @@ export class Connection extends BaseConnection
 
 		if (patch) this.modified$ = new Date();
 
+		Logger.log(Type.database,"call");
 		let thread:number = FormsModule.get().showLoading("Call procedure");
 		if (patch) response = this.patch(this.conn$+"/exec",payload);
 		else 		  response = this.post(this.conn$+"/exec",payload);
@@ -538,6 +552,7 @@ export class Connection extends BaseConnection
 		this.touched$ = new Date();
 		if (this.modified$) this.modified$ = new Date();
 
+		Logger.log(Type.database,"execute");
 		let thread:number = FormsModule.get().showLoading("Execute procedure");
 		if (patch) response = this.patch(this.conn$+"/exec",payload);
 		else 		  response = this.post(this.conn$+"/exec",payload);

@@ -225,25 +225,40 @@ export class FilterStructure
 			{
 				if (constr.filter.hasChildFilters())
 				{
-					if (clauses > 0) stmt += " " + constr.opr + " ";
-					stmt += "(" + constr.filter.build(clauses) + ")";
-					first = false;
-					clauses++;
+					let clause:string = constr.filter.build(clauses);
+
+					if (clause != null && clause.length > 0)
+					{
+						if (clauses > 0) stmt += " " + constr.opr + " ";
+						stmt += "(" + clause + ")";
+						first = false;
+						clauses++;
+					}
 				}
 				else
 				{
-					stmt += constr.filter.build(clauses);
-					if (stmt.length > 0) clauses++;
+					let clause:string = constr.filter.build(clauses);
+
+					if (clause != null && clause.length > 0)
+					{
+						clauses++;
+						stmt += clause;
+					}
 				}
 			}
 			else
 			{
-				if (!first)
-					stmt += " " + constr.opr + " ";
+				let clause:string = constr.filter.asSQL();
 
-				stmt += constr.filter.asSQL();
-				first = false;
-				clauses++;
+				if (clause != null && clause.length > 0)
+				{
+					if (!first)
+						stmt += " " + constr.opr + " ";
+
+					stmt += clause;
+					first = false;
+					clauses++;
+				}
 			}
 		}
 

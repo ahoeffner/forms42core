@@ -460,9 +460,6 @@ export class Form implements EventListenerObject
 			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
-		if (!this.model.checkEventTransaction(EventType.Key,mblock))
-			return(false);
-
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
 
 		if (key == KeyMap.dump)
@@ -687,11 +684,6 @@ export class Form implements EventListenerObject
 
 	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
 	{
-		let blk:ModelBlock = inst?.field.block.model;
-
-		if (!this.model.checkEventTransaction(EventType.Mouse,blk))
-			return(false);
-
 		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
 
 		if (!await FormEvents.raise(frmevent))

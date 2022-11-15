@@ -387,6 +387,7 @@ export class Block
 
 		if (success)
 		{
+			value = inst.getValue();
 			success = this.model.setValue(inst.name,value);
 
 			if (success)

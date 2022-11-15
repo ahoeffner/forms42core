@@ -74,7 +74,7 @@ export class MenuComponent implements EventListenerObject
 
 		this.target$.innerHTML = this.showEntry(start,path);
 
-		let entries:NodeList = this.target$.querySelectorAll("div[name='link']");
+		let entries:NodeList = this.target$.querySelectorAll("div[name='entry']");
 		entries.forEach((link) => {link.addEventListener("click",this);});
 	}
 
@@ -153,17 +153,16 @@ export class MenuComponent implements EventListenerObject
 			{
 				classes += " "+this.options$.classes.open;
 				page += "<div class='"+this.menucls$+"'>";
-				page += "  <div name='link' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>";
+				page += "  <div name='entry' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
 			else
 			{
 				page += "<div class='"+this.menucls$+"'>"
-				page += "  <div name='link' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>"
+				page += "  <div name='entry' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>"
 				page += "</div>";
 			}
-
 		}
 
 		page += "</div>";

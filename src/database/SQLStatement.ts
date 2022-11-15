@@ -12,6 +12,7 @@
 
 import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
+import { DataType } from "./DataType.js";
 import { BindValue } from "./BindValue.js";
 import { Alert } from "../application/Alert.js";
 import { Connection } from "../public/Connection.js";
@@ -68,6 +69,11 @@ export class SQLStatement
 	public error() : string
 	{
 		return(this.message$);
+	}
+
+	public bind(name:string, value:any, type?:DataType|string) : void
+	{
+		this.addBindValue(new BindValue(name,value,type));
 	}
 
 	public addBindValue(bindvalue:BindValue) : void

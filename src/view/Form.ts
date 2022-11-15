@@ -632,48 +632,13 @@ export class Form implements EventListenerObject
 			// Allow calendar and lov to map to same key
 			if (key?.signature == KeyMap.calendar.signature)
 			{
-				let block:Block = inst.field.block;
-				if (inst.field.block.empty() && !qmode) return(true);
-				let type:DataType = block.fieldinfo.get(inst.name).type;
-
-				if (type == DataType.date || type == DataType.datetime)
-				{
-					let params:Map<string,any> = new Map<string,any>();
-					let backing:FormBacking = FormBacking.getBacking(this.parent);
-					let datecstr:DateConstraint = backing.getDateConstraint(inst.block,inst.name)
-
-					params.set("form",this.parent);
-					params.set("field",inst.name);
-					params.set("block",inst.block);
-					params.set("constraint",datecstr);
-					params.set("value",inst.getValue());
-					this.parent.callform(Classes.DatePickerClass,params);
-
+				if (await this.showDatePicker(inst.block,inst.name))
 					return(true);
-				}
 			}
 
 			// As with calendar
 			if (key?.signature == KeyMap.lov.signature)
-			{
-				if (inst.field.block.empty() && !qmode)
-					return(true);
-
-				let params:Map<string,any> = new Map<string,any>();
-				let backing:FormBacking = FormBacking.getBacking(this.parent);
-				let lov:ListOfValues = backing.getListOfValues(inst.block,inst.name);
-
-				if (lov != null)
-				{
-					params.set("properties",lov);
-					params.set("form",this.parent);
-					params.set("field",inst.name);
-					params.set("block",inst.block);
-					this.parent.callform(Classes.ListOfValuesClass,params);
-				}
-
-				return(true);
-			}
+				return(this.showListOfValues(inst.block,inst.name));
 		}
 
 		if (!await ApplicationHandler.instance.keyhandler(key))
@@ -691,6 +656,54 @@ export class Form implements EventListenerObject
 
 		if (!await ApplicationHandler.instance.mousehandler(mevent))
 			return(false);
+
+		return(true);
+	}
+
+	public async showDatePicker(block:string, field:string) : Promise<boolean>
+	{
+		let blk:Block = this.getBlock(block);
+
+		if (blk.empty() && !blk.model.querymode) return(true);
+		let type:DataType = blk.fieldinfo.get(field)?.type;
+
+		if (type == DataType.date || type == DataType.datetime)
+		{
+			let value:Date = blk.model.getValue(field);
+			let params:Map<string,any> = new Map<string,any>();
+			let backing:FormBacking = FormBacking.getBacking(this.parent);
+			let datecstr:DateConstraint = backing.getDateConstraint(block,field)
+
+			params.set("field",field);
+			params.set("block",block);
+			params.set("value",value);
+			params.set("form",this.parent);
+			params.set("constraint",datecstr);
+			this.parent.callform(Classes.DatePickerClass,params);
+
+			return(true);
+		}
+
+		return(false);
+	}
+
+	public async showListOfValues(block:string, field:string) : Promise<boolean>
+	{
+		let blk:Block = this.getBlock(block);
+		if (blk.empty() && !blk.model.querymode) return(true);
+
+		let params:Map<string,any> = new Map<string,any>();
+		let backing:FormBacking = FormBacking.getBacking(this.parent);
+		let lov:ListOfValues = backing.getListOfValues(block,field);
+
+		if (lov != null)
+		{
+			params.set("field",field);
+			params.set("block",block);
+			params.set("properties",lov);
+			params.set("form",this.parent);
+			this.parent.callform(Classes.ListOfValuesClass,params);
+		}
 
 		return(true);
 	}

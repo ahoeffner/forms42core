@@ -113,14 +113,18 @@ export class Form implements CanvasComponent
 		return(blk.executeQuery());
 	}
 
-	public showDatePicker(block?:string, field?:string, clazz?:string) : void
+	public showDatePicker(block:string, field:string) : void
 	{
-		this.sendkey(KeyMap.calendar,block,field,clazz);
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		FormBacking.getViewForm(this).showDatePicker(block,field);
 	}
 
-	public showListOfValues(block?:string, field?:string, clazz?:string) : void
+	public showListOfValues(block:string, field:string) : void
 	{
-		this.sendkey(KeyMap.lov,block,field,clazz);
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		FormBacking.getViewForm(this).showListOfValues(block,field);
 	}
 
 	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
@@ -199,14 +203,22 @@ export class Form implements CanvasComponent
 		FormBacking.getModelForm(this).setDataSource(block?.toLowerCase(),source);
 	}
 
-	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
+	public setListOfValues(lov:ListOfValues, block:string, field:string|string[]) : void
 	{
-		FormBacking.getBacking(this).setListOfValues(block,field,lov);
+		if (!Array.isArray(field))
+			field = [field];
+
+		for (let i = 0; i < field.length; i++)
+			FormBacking.getBacking(this).setListOfValues(block,field[i],lov);
 	}
 
-	public setDateConstraint(block:string, field:string, datecstr:DateConstraint) : void
+	public setDateConstraint(datecstr:DateConstraint, block:string, field:string|string[]) : void
 	{
-		FormBacking.getBacking(this).setDateConstraint(block,field,datecstr);
+		if (!Array.isArray(field))
+			field = [field];
+
+		for (let i = 0; i < field.length; i++)
+			FormBacking.getBacking(this).setDateConstraint(block,field[i],datecstr);
 	}
 
 	public getValue(block:string, field:string) : any

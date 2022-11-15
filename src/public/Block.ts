@@ -127,14 +127,16 @@ export class Block
 		FormBacking.getModelBlock(this).refresh(offset);
 	}
 
-	public showDatePicker(field?:string, clazz?:string) : void
+	public showDatePicker(field:string) : void
 	{
-		this.sendkey(KeyMap.calendar,field,clazz);
+		field = field?.toLowerCase();
+		FormBacking.getViewForm(this.form).showDatePicker(this.name,field);
 	}
 
-	public showListOfValues(field?:string, clazz?:string) : void
+	public showListOfValues(field:string) : void
 	{
-		this.sendkey(KeyMap.lov,field,clazz);
+		field = field?.toLowerCase();
+		FormBacking.getViewForm(this.form).showListOfValues(this.name,field);
 	}
 
 	public async sendkey(key:KeyMap, field?:string, clazz?:string) : Promise<boolean>
@@ -163,14 +165,22 @@ export class Block
 		FormBacking.getViewBlock(this).goField(field,clazz);
 	}
 
-	public setListOfValues(field:string, lov:ListOfValues) : void
+	public setListOfValues(lov:ListOfValues, field:string|string[]) : void
 	{
-		FormBacking.getBacking(this.form).setListOfValues(this.name,field,lov);
+		if (!Array.isArray(field))
+			field = [field];
+
+		for (let i = 0; i < field.length; i++)
+			FormBacking.getBacking(this.form).setListOfValues(this.name,field[i],lov);
 	}
 
-	public setDateConstraint(field:string, constraint:DateConstraint) : void
+	public setDateConstraint(constraint:DateConstraint, field:string|string[]) : void
 	{
-		FormBacking.getBacking(this.form).setDateConstraint(this.name,field,constraint);
+		if (!Array.isArray(field))
+			field = [field];
+
+		for (let i = 0; i < field.length; i++)
+			FormBacking.getBacking(this.form).setDateConstraint(this.name,field[i],constraint);
 	}
 
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<any[][]>

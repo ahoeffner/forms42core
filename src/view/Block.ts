@@ -299,6 +299,7 @@ export class Block
 		if (props == null)
 		{
 			let fld:Field = this.getCurrentRow().getField(field);
+			if (fld == null) fld = this.getRow(-1)?.getField(field);
 			if (fld != null) props = fld.getInstance(0)?.properties;
 		}
 

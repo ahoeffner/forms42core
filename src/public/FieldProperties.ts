@@ -74,6 +74,12 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
+	public setStyle(style:string, value:string) : FieldProperties
+	{
+		super.setStyle(style,value);
+		return(this);
+	}
+
 	public setStyles(styles:string) : FieldProperties
 	{
 		this.styles = styles;

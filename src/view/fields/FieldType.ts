@@ -39,7 +39,7 @@ export class FieldTypes
 
 	public static get(tag:string, type?:string) : Class<FieldImplementation>
 	{
-		let impl:Class<FieldImplementation> = FieldTypes.implementations.get(tag.toLowerCase());
+		let impl:Class<FieldImplementation> = FieldTypes.implementations.get(tag?.toLowerCase());
 		if (impl == null) return(Display);
 
 		if (impl == Input && type?.toLowerCase() == "radio")

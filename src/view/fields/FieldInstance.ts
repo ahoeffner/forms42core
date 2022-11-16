@@ -141,7 +141,7 @@ export class FieldInstance implements FieldEventHandler
 		let valid:boolean = this.valid;
 
 		if (!this.field.dirty) value = this.impl.getValue();
-		else				   value = this.impl.getIntermediateValue();
+		else				   	  value = this.impl.getIntermediateValue();
 
 		this.impl.apply(newprops,false);
 		FieldFeatureFactory.reset(this.element);
@@ -150,7 +150,7 @@ export class FieldInstance implements FieldEventHandler
 		this.valid = valid;
 
 		if (!this.field.dirty) this.impl.setValue(value);
-		else				   this.impl.setIntermediateValue(value);
+		else				        this.impl.setIntermediateValue(value);
 	}
 
 	// Properties changed, build new field

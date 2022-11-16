@@ -629,16 +629,19 @@ export class Form implements EventListenerObject
 				return(true);
 			}
 
-			// Allow calendar and lov to map to same key
+			// Allow Lov and Calendar to map to same key
+			if (key?.signature == KeyMap.lov.signature)
+			{
+				if (await this.showListOfValues(inst.block,inst.name))
+					return(true);
+			}
+
+			// As with Lov
 			if (key?.signature == KeyMap.calendar.signature)
 			{
 				if (await this.showDatePicker(inst.block,inst.name))
 					return(true);
 			}
-
-			// As with calendar
-			if (key?.signature == KeyMap.lov.signature)
-				return(this.showListOfValues(inst.block,inst.name));
 		}
 
 		if (!await ApplicationHandler.instance.keyhandler(key))
@@ -703,9 +706,10 @@ export class Form implements EventListenerObject
 			params.set("properties",lov);
 			params.set("form",this.parent);
 			this.parent.callform(Classes.ListOfValuesClass,params);
+			return(true);
 		}
 
-		return(true);
+		return(false);
 	}
 
 	public async navigateForm(key:KeyMap, inst:FieldInstance) : Promise<boolean>

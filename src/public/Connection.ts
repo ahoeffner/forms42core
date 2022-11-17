@@ -23,11 +23,8 @@ export class Connection
 
 	public constructor(url?:string|URL)
 	{
-		let host:string = window.location.host;
-		let prot:string = window.location.protocol;
-
 		if (url == null)
-			url = prot+'//'+host;
+			url = window.location.origin;
 
 		if (typeof url === "string")
 			url = new URL(url);

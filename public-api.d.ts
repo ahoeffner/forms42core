@@ -4,7 +4,6 @@ export { Record } from './src/public/Record.js';
 export { Key } from './src/model/relations/Key.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
-export { Connections } from './src/public/Connections.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 
 export { QueryTable } from './src/database/QueryTable.js';

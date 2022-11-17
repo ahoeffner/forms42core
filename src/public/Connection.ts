@@ -10,7 +10,6 @@
  * accompanied this code).
  */
 
-import { Connections } from "./Connections.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 
 export class Connection
@@ -19,14 +18,11 @@ export class Connection
 	private usr$:string = null;
 	private pwd$:string = null;
 	private headers$:any = {};
-	private name$:string = null;
 	private method$:string = null;
 	private success$:boolean = true;
 
-	public constructor(name:string, url?:string|URL)
+	public constructor(url?:string|URL)
 	{
-		this.name$ = name;
-
 		let host:string = window.location.host;
 		let prot:string = window.location.protocol;
 
@@ -37,12 +33,6 @@ export class Connection
 			url = new URL(url);
 
 		this.base$ = url;
-		Connections.register(this);
-	}
-
-	public get name() : string
-	{
-		return(this.name$);
 	}
 
 	public get baseURL() : URL

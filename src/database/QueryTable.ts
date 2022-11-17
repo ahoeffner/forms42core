@@ -18,13 +18,13 @@ import { SQLSource } from "./SQLSource.js";
 import { Record } from "../model/Record.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
-import { Connection } from "../public/Connection.js";
+import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
-import { Connection as DatabaseConnection } from "../database/Connection.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class QueryTable extends SQLSource implements DataSource
 {
@@ -41,28 +41,20 @@ export class QueryTable extends SQLSource implements DataSource
 	private columns$:string[] = [];
 	private fetched$:Record[] = [];
 
-	private nosql$:FilterStructure;
+	private conn$:Connection = null;
+	private nosql$:FilterStructure = null;
 	private limit$:FilterStructure = null;
-	private conn$:DatabaseConnection = null;
+	private pubconn$:DatabaseConnection = null;
 
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:Connection, sql?:string)
+	public constructor(connection:DatabaseConnection, sql?:string)
 	{
 		super();
 		this.sql$ = sql;
-
-		if (!(connection instanceof DatabaseConnection))
-			connection = DatabaseConnection.getConnection(connection?.name);
-
-		if (connection == null)
-		{
-			Alert.fatal("Connection for database statement '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
-			return;
-		}
-
-		this.conn$ = connection as DatabaseConnection;
+		this.pubconn$ = connection;
+		this.conn$ = connection["conn$"];
 	}
 
 	public set sql(sql:string)
@@ -73,7 +65,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public clone() : QueryTable
 	{
-		let clone:QueryTable = new QueryTable(this.conn$,this.sql$);
+		let clone:QueryTable = new QueryTable(this.pubconn$,this.sql$);
 
 		clone.sorting = this.sorting;
 		clone.columns$ = this.columns$;

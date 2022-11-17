@@ -11,12 +11,12 @@
  */
 
 import { DataType } from "./DataType.js";
-import { Connection } from "../public/Connection.js";
 import { StoredProcedure } from "./StoredProcedure.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class StoredFunction extends StoredProcedure
 {
-	public constructor(connection:Connection)
+	public constructor(connection:DatabaseConnection)
 	{
 		super(connection);
 		super.returntype$ = "string";

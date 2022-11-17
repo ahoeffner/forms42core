@@ -37,23 +37,18 @@ export class Connection extends BaseConnection
 
 
 	// Be able to get the real connection from the public
-	private static conns$:Map<string,Connection> =
-		new Map<string,Connection>();
+	private static conns$:Connection[] = [];
 
-	public static getConnection(name:string) : Connection
-	{
-		return(this.conns$.get(name));
-	}
 
 	public static getAllConnections() : Connection[]
 	{
-		return([...this.conns$.values()]);
+		return(this.conns$);
 	}
 
-	public constructor(name:string, url?:string|URL)
+	public constructor(url?:string|URL)
 	{
-		super(name,url);
-		Connection.conns$.set(name,this);
+		super(url);
+		Connection.conns$.push(this);
 	}
 
 	public get scope() : ConnectionScope

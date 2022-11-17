@@ -17,14 +17,14 @@ import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
-import { Connection } from "../public/Connection.js";
+import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
-import { Connection as DatabaseConnection } from "../database/Connection.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class DatabaseTable extends SQLSource implements DataSource
 {
@@ -49,9 +49,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	private fetched$:Record[] = [];
 
-	private nosql$:FilterStructure;
+	private conn$:Connection = null;
+	private nosql$:FilterStructure = null;
 	private limit$:FilterStructure = null;
-	private conn$:DatabaseConnection = null;
+	private pubconn$:DatabaseConnection = null;
 
 	private insreturncolumns$:string[] = null;
 	private updreturncolumns$:string[] = null;
@@ -60,21 +61,13 @@ export class DatabaseTable extends SQLSource implements DataSource
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:Connection, table?:string, columns?:string|string[])
+	public constructor(connection:DatabaseConnection, table?:string, columns?:string|string[])
 	{
 		super();
+
 		this.table$ = table;
-
-		if (!(connection instanceof DatabaseConnection))
-			connection = DatabaseConnection.getConnection(connection?.name);
-
-		if (connection == null)
-		{
-			Alert.fatal("Connection for database table '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
-			return;
-		}
-
-		this.conn$ = connection as DatabaseConnection;
+		this.pubconn$ = connection;
+		this.conn$ = connection["conn$"];
 
 		if (columns != null)
 		{
@@ -96,7 +89,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	public clone() : DatabaseTable
 	{
-		let clone:DatabaseTable = new DatabaseTable(this.conn$,this.table$);
+		let clone:DatabaseTable = new DatabaseTable(this.pubconn$,this.table$);
 
 		clone.sorting = this.sorting;
 		clone.primary$ = this.primary$;

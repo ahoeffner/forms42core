@@ -12,11 +12,10 @@
 
 import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
-import { Alert } from "../application/Alert.js";
-import { Connection } from "../public/Connection.js";
+import { Connection } from "./Connection.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Parameter, ParameterType } from "./Parameter.js";
-import { Connection as DatabaseConnection } from "./Connection.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class StoredProcedure
 {
@@ -24,25 +23,17 @@ export class StoredProcedure
 	private response$:any = null;
 	private patch$:boolean = false;
 	private message$:string = null;
+	private conn$:Connection = null;
 	private params$:Parameter[] = [];
-	private conn$:DatabaseConnection = null;
 	private values$:Map<string,any> = new Map<string,any>();
 	private datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 	protected retparm$:string = null;
 	protected returntype$:DataType|string = null;
 
-	public constructor(connection:Connection)
+	public constructor(connection:DatabaseConnection)
 	{
-		connection = DatabaseConnection.getConnection(connection.name);
-
-		if (connection == null)
-		{
-			Alert.fatal("Connection for database procedure '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
-			return;
-		}
-
-		this.conn$ = connection as DatabaseConnection;
+		this.conn$ = connection["conn$"];
 	}
 
 	public set patch(flag:boolean)

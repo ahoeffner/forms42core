@@ -14,9 +14,8 @@ import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
 import { BindValue } from "./BindValue.js";
-import { Alert } from "../application/Alert.js";
-import { Connection } from "../public/Connection.js";
-import { Connection as DatabaseConnection } from "./Connection.js";
+import { Connection } from "./Connection.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class SQLStatement
 {
@@ -28,22 +27,13 @@ export class SQLStatement
 	private cursor$:Cursor = null;
 	private patch$:boolean = false;
 	private message$:string = null;
+	private conn$:Connection = null;
 	private columns$:string[] = null;
-	private conn$:DatabaseConnection = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
-	public constructor(connection:Connection)
+	public constructor(connection:DatabaseConnection)
 	{
-		if (!(connection instanceof DatabaseConnection))
-			connection = DatabaseConnection.getConnection(connection.name);
-
-		if (connection == null)
-		{
-			Alert.fatal("Connection for database procedure '"+connection?.name+"' is not a DatabaseConnection","Database Procedure");
-			return;
-		}
-
-		this.conn$ = connection as DatabaseConnection;
+		this.conn$ = connection["conn$"];
 	}
 
 	public get sql() : string

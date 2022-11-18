@@ -632,6 +632,8 @@ export class Form implements EventListenerObject
 			// Allow Lov and Calendar to map to same key
 			if (key?.signature == KeyMap.lov.signature)
 			{
+				if (inst.properties.readonly) return(true);
+
 				if (await this.showListOfValues(inst.block,inst.name))
 					return(true);
 			}
@@ -639,6 +641,8 @@ export class Form implements EventListenerObject
 			// As with Lov
 			if (key?.signature == KeyMap.calendar.signature)
 			{
+				if (inst.properties.readonly) return(true);
+
 				if (await this.showDatePicker(inst.block,inst.name))
 					return(true);
 			}

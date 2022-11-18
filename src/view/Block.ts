@@ -313,7 +313,7 @@ export class Block
 			}
 		}
 
-		return(null);
+		return(props);
 	}
 
 	public setRecordProperties(record:Record, field:string, clazz:string, props:BasicProperties) : void
@@ -325,7 +325,7 @@ export class Block
 			let row:Row = this.displayed(record);
 			this.recprops$.reset(row,field,clazz);
 
-			if (this.row == row.rownum)
+			if (this.row == row?.rownum)
 			{
 				row = this.getRow(-1);
 				this.recprops$.reset(row,field,clazz);

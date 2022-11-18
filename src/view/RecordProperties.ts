@@ -67,7 +67,7 @@ export class RecordProperties
 		{
 			let fld:Field = row.getField(field);
 
-			fld.getInstances().forEach((inst) =>
+			fld?.getInstances().forEach((inst) =>
 			{
 				if (clazz == null || inst.properties.hasClass(clazz))
 					inst.resetProperties();

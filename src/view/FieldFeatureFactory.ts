@@ -74,11 +74,7 @@ export class FieldFeatureFactory
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void
 	{
-		let list:Map<string,string> = new Map<string,string>();
-		exist.getValidValues().forEach((value,key) => {list.set(key,value)});
-
 		props.tag = exist.tag;
-		props.validValues = list;
 		props.value = exist.value;
 		props.mapper = exist.mapper;
 		props.hidden = exist.hidden;
@@ -87,9 +83,10 @@ export class FieldFeatureFactory
 		props.readonly = exist.readonly;
 		props.required = exist.required;
 
-		props.setStyles(exist.getStyles());
-		props.setClasses(exist.getClasses());
-		props.setAttributes(exist.getAttributes());
+		props.setStyles([...exist.getStyles()]);
+		props.setClasses([...exist.getClasses()]);
+		props.setAttributes(new Map(exist.getAttributes()));
+		props.validValues = new Map(exist.getValidValues());
 	}
 
 	public static reset(tag:HTMLElement) : void

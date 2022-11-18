@@ -298,12 +298,22 @@ export class Block
 
 		if (props == null)
 		{
-			let fld:Field = this.getCurrentRow().getField(field);
-			if (fld == null) fld = this.getRow(-1)?.getField(field);
-			if (fld != null) props = fld.getInstance(0)?.properties;
+			let instances:FieldInstance[] = this.getFieldInstances();
+
+			for (let i = 0; i < instances.length; i++)
+			{
+				if (instances[i].name == field)
+				{
+					if (clazz == null)
+						return(instances[i].properties);
+
+					if (instances[i].properties.hasClass(clazz))
+						return(instances[i].properties);
+				}
+			}
 		}
 
-		return(props);
+		return(null);
 	}
 
 	public setRecordProperties(record:Record, field:string, clazz:string, props:BasicProperties) : void

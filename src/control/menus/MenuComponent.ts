@@ -74,7 +74,7 @@ export class MenuComponent implements EventListenerObject
 
 		this.target$.innerHTML = this.showEntry(start,path);
 
-		let entries:NodeList = this.target$.querySelectorAll("div[name='entry']");
+		let entries:NodeList = this.target$.querySelectorAll("a");
 		entries.forEach((link) => {link.addEventListener("click",this);});
 	}
 
@@ -152,15 +152,15 @@ export class MenuComponent implements EventListenerObject
 			if (this.open$.has(npath))
 			{
 				classes += " "+this.options$.classes.open;
-				page += "<div class='"+this.menucls$+"'>";
-				page += "  <div name='entry' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>";
+				page += "<div class='"+classes+"'>";
+				page += "  <a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
 			else
 			{
-				page += "<div class='"+this.menucls$+"'>"
-				page += "  <div name='entry' class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</div>"
+				page += "<div class='"+classes+"'>"
+				page += "  <a class='"+classes+"' path='"+npath+"' "+cmd+">"+entries[i].display+"</a>"
 				page += "</div>";
 			}
 		}

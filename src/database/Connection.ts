@@ -145,6 +145,9 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.touched$ = new Date();
 
+		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreCommit)))
+			return(false);
+
 		Logger.log(Type.database,"commit");
 		let thread:number = FormsModule.get().showLoading("Comitting");
 		let response:any = await this.post(this.conn$+"/commit");
@@ -160,11 +163,10 @@ export class Connection extends BaseConnection
 		{
 			console.error(response);
 			Alert.warning(response.message,"Database Connection");
-			return(response);
+			return(false);
 		}
 
-		await FormEvents.raise(FormEvent.AppEvent(EventType.Commit));
-		return(response.success);
+		return(await FormEvents.raise(FormEvent.AppEvent(EventType.PostCommit)));
 	}
 
 	public async rollback() : Promise<boolean>
@@ -172,6 +174,9 @@ export class Connection extends BaseConnection
 		this.tmowarn$ = false;
 		this.trx$ = new Object();
 		this.touched$ = new Date();
+
+		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
+			return(false);
 
 		Logger.log(Type.database,"rollback");
 		let thread:number = FormsModule.get().showLoading("Rolling back");
@@ -188,11 +193,10 @@ export class Connection extends BaseConnection
 		{
 			console.error(response);
 			Alert.warning(response.message,"Database Connection");
-			return(response);
+			return(false);
 		}
 
-		await FormEvents.raise(FormEvent.AppEvent(EventType.Rollback));
-		return(response.success);
+		return(await FormEvents.raise(FormEvent.AppEvent(EventType.PostRollback)));
 	}
 
 	public async select(sql:SQLRest, cursor:Cursor, rows:number, describe?:boolean) : Promise<Response>
@@ -596,7 +600,7 @@ export class Connection extends BaseConnection
 			if (this.touched$ && !this.modified$)
 			{
 				if ((new Date()).getTime() - this.touched$.getTime() > 1000 * Connection.CONNTIMEOUT)
-					await this.commit();
+					await this.rollback();
 
 				this.touched$ = null;
 				this.modified$ = null;

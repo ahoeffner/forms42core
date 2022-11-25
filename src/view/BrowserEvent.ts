@@ -333,6 +333,7 @@ export class BrowserEvent
 					{
 						case '+':
 						case '-':
+						case '@':
 						case 'a':
 						case 'c':
 						case 'x':

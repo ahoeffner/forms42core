@@ -286,7 +286,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.placeholder = null;
 		this.datatype$ = DataType.string;
 
-		let datesize:number = 0;
 		let datepattern:string = "";
 		let types:FormatToken[] = dates.tokenizeFormat();
 
@@ -342,14 +341,12 @@ export class Input implements FieldImplementation, EventListenerObject
 					if (type.type == DatePart.Year || type.type == DatePart.Month || type.type == DatePart.Day)
 					{
 						parts--;
-						datesize += type.length;
 						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
 						if (parts > 0)
 						{
-							datesize++;
 							datepattern += type.delimitor;
 							this.placeholder += type.delimitor;
 						}
@@ -362,7 +359,6 @@ export class Input implements FieldImplementation, EventListenerObject
 				let parts:number = 3;
 				this.datatype$ = DataType.datetime;
 
-				datesize++;
 				datepattern += " ";
 				this.placeholder += " ";
 
@@ -371,14 +367,12 @@ export class Input implements FieldImplementation, EventListenerObject
 					if (type.type == DatePart.Hour || type.type == DatePart.Minute || type.type == DatePart.Second)
 					{
 						parts--;
-						datesize += type.length;
 						this.datetokens.push(type);
 						this.placeholder += type.mask;
 						datepattern += "{"+type.length+"#}";
 
 						if (parts > 0)
 						{
-							datesize++;
 							datepattern += type.delimitor;
 							this.placeholder += type.delimitor;
 						}

@@ -32,8 +32,8 @@ export class Connection extends BaseConnection
 	private tmowarn$:boolean = false;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
-	public static TRXTIMEOUT = 60;
-	public static CONNTIMEOUT = 40;
+	public static TRXTIMEOUT:number = 240;
+	public static CONNTIMEOUT:number = 120;
 
 
 	// Be able to get the real connection from the public

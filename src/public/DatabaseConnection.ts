@@ -16,6 +16,26 @@ export class DatabaseConnection
 {
 	private conn$:RestConnection = null;
 
+	public static get TRXTIMEOUT() : number
+	{
+		return(RestConnection.TRXTIMEOUT);
+	}
+
+	public static set TRXTIMEOUT(timeout:number)
+	{
+		RestConnection.TRXTIMEOUT = timeout;
+	}
+
+	public static get CONNTIMEOUT() : number
+	{
+		return(RestConnection.CONNTIMEOUT);
+	}
+
+	public static set CONNTIMEOUT(timeout:number)
+	{
+		RestConnection.CONNTIMEOUT = timeout;
+	}
+
 	public constructor(url?:string|URL)
 	{
 		this.conn$ = new RestConnection(url);

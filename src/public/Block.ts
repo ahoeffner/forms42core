@@ -165,6 +165,16 @@ export class Block
 		FormBacking.getViewBlock(this).goField(field,clazz);
 	}
 
+	public message(msg:string, title?:string) : void
+	{
+		Alert.message(msg,title);
+	}
+
+	public warning(msg:string, title?:string) : void
+	{
+		Alert.warning(msg,title);
+	}
+
 	public setListOfValues(lov:ListOfValues, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))

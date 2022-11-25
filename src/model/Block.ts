@@ -463,10 +463,23 @@ export class Block
 			if (before)	this.view.refresh(record);
 			else success = await this.view.nextrecord();
 
-			if (success) this.view.findFirstEditable(record)?.focus();
+			if (success)
+			{
+				let details:Block[] = this.getAllDetailBlocks(true);
+
+				for (let i = 0; i < details.length; i++)
+				{
+					if (details[i]!= this)
+						await details[i].clear();
+				}
+
+				this.view.findFirstEditable(record)?.focus();
+			}
+
+			return(success);
 		}
 
-		return(record != null);
+		return(false);
 	}
 
 	public async delete() : Promise<boolean>

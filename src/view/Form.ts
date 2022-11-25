@@ -531,9 +531,6 @@ export class Form implements EventListenerObject
 					return(success);
 				}
 
-				if (inst.field.block.empty())
-					return(true);
-
 				if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
 					key = KeyMap.delete;
 			}

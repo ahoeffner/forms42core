@@ -224,10 +224,15 @@ export class Record
 		if (value != this.values$[idx])
 			update = true;
 
-		if (value instanceof Date && this.values$[idx] instanceof Date)
+		if (value instanceof Date || this.values$[idx] instanceof Date)
 		{
-			if (value.getTime() == this.values$[idx].getTime())
-				update = false;
+			let nv:number|Date = value;
+			if (nv instanceof Date) nv = nv.getTime();
+
+			let ov:number|Date = value;
+			if (ov instanceof Date) ov = ov.getTime();
+
+			if (nv == ov) update = false;
 		}
 
 		if (idx < this.source.columns.length)

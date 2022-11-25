@@ -262,8 +262,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 			let lv:any = fetched[0].getValue(this.columns[i]);
 			let cv:any = record.getInitialValue(this.columns[i]);
 
+			if (lv instanceof Date) lv = lv.getTime();
+			if (cv instanceof Date) cv = cv.getTime();
+
 			if (lv != cv)
 			{
+				console.log(lv+" != "+cv);
 				Alert.warning("Record has been changed by another user","Lock Record");
 				return(false);
 			}

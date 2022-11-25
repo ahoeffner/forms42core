@@ -671,7 +671,7 @@ export class Block
 
 	public displayed(record:Record) : Row
 	{
-		return(this.displayed$.get(record.id));
+		return(this.displayed$.get(record?.id));
 	}
 
 	public setStatus(record:Record) : void
@@ -890,7 +890,7 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
-		let status:Status = this.convert(record.state);
+		let status:Status = this.convert(record?.state);
 
 		if (curr)
 		{
@@ -937,7 +937,7 @@ export class Block
 		let inst:FieldInstance = null;
 		let row:Row = this.displayed(record);
 		let curr:boolean = this.current.row < 0;
-		let status:Status = this.convert(record.state);
+		let status:Status = this.convert(record?.state);
 
 		if (curr)
 		{
@@ -1135,6 +1135,7 @@ export class Block
 	{
 		switch(status)
 		{
+			case null							: return(Status.na);
 			case RecordState.New 			: return(Status.new);
 			case RecordState.Query 			: return(Status.update);
 			case RecordState.Updated 		: return(Status.update);

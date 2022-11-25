@@ -252,7 +252,10 @@ export class DataSourceWrapper
 			this.dirty = true;
 
 			if (record.state != RecordState.New && record.state != RecordState.Inserted)
-				await this.source.lock(record);
+			{
+				if (!await this.source.lock(record))
+					return(false);
+			}
 
 			succces = await this.delete(record);
 			if (succces) record.state = RecordState.Deleted;

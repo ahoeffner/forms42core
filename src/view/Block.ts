@@ -677,7 +677,14 @@ export class Block
 	public setStatus(record:Record) : void
 	{
 		let row:Row = this.displayed(record);
-		row?.setState(this.convert(record.state));
+
+		if (row == null)
+			return;
+
+		row.setState(this.convert(record.state));
+
+		if (row.rownum == this.row)
+			this.getRow(-1)?.setState(this.convert(record.state));
 	}
 
 	public display(rownum:number, record:Record) : void

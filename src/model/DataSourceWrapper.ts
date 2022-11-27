@@ -200,9 +200,6 @@ export class DataSourceWrapper
 		if (!this.source.rowlocking)
 			return(true);
 
-		if (record.state == RecordState.New || record.state == RecordState.Inserted)
-			return(true);
-
 		let success:boolean = await this.source.lock(record);
 
 		if (success) record.locked = true;
@@ -251,7 +248,11 @@ export class DataSourceWrapper
 			record.setDirty();
 			this.dirty = true;
 
-			if (record.state != RecordState.New && record.state != RecordState.Inserted)
+			if (record.state == RecordState.New || record.state == RecordState.Inserted)
+			{
+				record.locked = true;
+			}
+			else
 			{
 				if (!await this.source.lock(record))
 					return(false);

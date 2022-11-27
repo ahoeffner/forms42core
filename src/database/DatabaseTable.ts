@@ -230,10 +230,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	public async lock(record:Record) : Promise<boolean>
 	{
-		if (!this.rowlocking)
+		if (record.locked)
 			return(true);
 
-		if (record.state == RecordState.Deleted)
+		if (!this.rowlocking)
 			return(true);
 
 		let sql:SQLRest = null;

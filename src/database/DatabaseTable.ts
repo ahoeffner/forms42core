@@ -233,6 +233,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (!this.rowlocking)
 			return(true);
 
+		if (record.state == RecordState.Deleted)
+			return(true);
+
 		let sql:SQLRest = null;
 
 		if (!await this.describe())

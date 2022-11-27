@@ -67,7 +67,7 @@ export class DataSourceWrapper
 		if (!this.dirty)
 		{
 			for (let i = 0; i < this.cache$.length; i++)
-				this.cache$[i].setClean();
+				this.cache$[i].setClean(true);
 		}
 	}
 
@@ -129,7 +129,7 @@ export class DataSourceWrapper
 					{
 						records[i].state = RecordState.Query;
 						this.block.view.setStatus(records[i]);
-						records[i].setClean();
+						records[i].setClean(false);
 					}
 				}
 
@@ -143,7 +143,7 @@ export class DataSourceWrapper
 					{
 						records[i].state = RecordState.Query;
 						this.block.view.setStatus(records[i]);
-						records[i].setClean();
+						records[i].setClean(false);
 					}
 				}
 
@@ -152,7 +152,7 @@ export class DataSourceWrapper
 					records[i].flushing = true;
 					succces = await this.block.postDelete(records[i]);
 					records[i].flushing = false;
-					records[i].setClean();
+					records[i].setClean(false);
 				}
 			}
 
@@ -215,7 +215,7 @@ export class DataSourceWrapper
 
 		await this.source.refresh(record);
 
-		record.setClean();
+		record.setClean(false);
 
 		switch(record.state)
 		{
@@ -396,7 +396,7 @@ export class DataSourceWrapper
 
 		if (!record.prepared)
 		{
-			record.setClean();
+			record.setClean(true);
 			record.wrapper = this;
 			await this.block.onFetch(record);
 			record.prepared = true;

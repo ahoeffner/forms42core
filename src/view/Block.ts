@@ -1012,6 +1012,7 @@ export class Block
 			let type:DataType = null;
 			let tdiff:boolean = false;
 			let ddiff:boolean = false;
+			let query:boolean = false;
 			let derived:boolean = null;
 
 			this.getAllFields(name).forEach((fld) =>
@@ -1029,6 +1030,9 @@ export class Block
 
 					if (inst.properties.derived)
 						derived = true;
+
+					if (!inst.qbeProperties.readonly)
+						query = true;
 
 					if (inst.datatype != type)
 					{
@@ -1099,7 +1103,7 @@ export class Block
 				});
 			}
 
-			this.fieldinfo$.set(name,new FieldInfo(type,derived))
+			this.fieldinfo$.set(name,new FieldInfo(type,query,derived))
 		});
 
 		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);

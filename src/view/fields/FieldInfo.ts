@@ -15,11 +15,13 @@ import { DataType } from "./DataType.js";
 export class FieldInfo
 {
 	type:DataType = null;
+	query:boolean = false;
 	derived:boolean = false;
 
-	constructor(type:DataType, derived:boolean)
+	constructor(type:DataType, query:boolean, derived:boolean)
 	{
 		this.type = type;
+		this.query = query;
 		this.derived = derived;
 	}
 }

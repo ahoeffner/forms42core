@@ -561,7 +561,8 @@ export class Block
 
 	public setFilter(field:string, filter?:Filter|FilterStructure) : void
 	{
-		this.qbe.setFilter(field,filter);
+		if (this.view.fieldinfo.get(field)?.query)
+			this.qbe.setFilter(field,filter);
 	}
 
 	public cancel() : void

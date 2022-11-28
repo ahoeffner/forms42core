@@ -18,6 +18,7 @@ import { DataType } from "../view/fields/DataType.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
+import { FlightRecorder } from "../application/FlightRecorder.js";
 
 
 export class QueryByExample
@@ -112,7 +113,13 @@ export class QueryByExample
 		if (value == null)
 			return(null);
 
-		let type:DataType = this.block$.view.fieldinfo.get(column).type;
+		let type:DataType = this.block$.view.fieldinfo.get(column)?.type;
+
+		if (type == null)
+		{
+			FlightRecorder.add("filter: could not find "+column);
+			return(null);
+		}
 
 		if (type == DataType.date || type == DataType.datetime)
 		{

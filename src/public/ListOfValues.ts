@@ -27,6 +27,8 @@ export interface ListOfValues
 	title?:string;
 	cssclass?:string;
 
+	inReadOnlyMode?:boolean;
+
 	datasource:DataSource;
 	filter?:Filter|Filter[];
 	bindvalue?:BindValue|BindValue[];

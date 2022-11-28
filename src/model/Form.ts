@@ -338,6 +338,7 @@ export class Form
 
 	private clearQueryFilters(block:Block) : void
 	{
+		block.qberec.clear();
 		block.QueryFilter.clear();
 
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);

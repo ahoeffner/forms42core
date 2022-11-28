@@ -629,7 +629,14 @@ export class Form implements EventListenerObject
 			// Allow Lov and Calendar to map to same key
 			if (key?.signature == KeyMap.lov.signature)
 			{
-				if (inst.properties.readonly) return(true);
+				if (mblock.empty && !qmode)
+					return(true);
+
+				let backing:FormBacking = FormBacking.getBacking(this.parent);
+				let lov:ListOfValues = backing.getListOfValues(inst.block,inst.name);
+
+				if (inst.properties.readonly && !lov.inReadOnlyMode)
+					return(true);
 
 				if (await this.showListOfValues(inst.block,inst.name))
 					return(true);
@@ -638,7 +645,11 @@ export class Form implements EventListenerObject
 			// As with Lov
 			if (key?.signature == KeyMap.calendar.signature)
 			{
-				if (inst.properties.readonly) return(true);
+				if (mblock.empty && !qmode)
+					return(true);
+
+				if (inst.properties.readonly)
+					return(true);
 
 				if (await this.showDatePicker(inst.block,inst.name))
 					return(true);
@@ -667,8 +678,6 @@ export class Form implements EventListenerObject
 	public async showDatePicker(block:string, field:string) : Promise<boolean>
 	{
 		let blk:Block = this.getBlock(block);
-
-		if (blk.empty() && !blk.model.querymode) return(true);
 		let type:DataType = blk.fieldinfo.get(field)?.type;
 
 		if (type == DataType.date || type == DataType.datetime)
@@ -693,9 +702,6 @@ export class Form implements EventListenerObject
 
 	public async showListOfValues(block:string, field:string) : Promise<boolean>
 	{
-		let blk:Block = this.getBlock(block);
-		if (blk.empty() && !blk.model.querymode) return(true);
-
 		let params:Map<string,any> = new Map<string,any>();
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
 		let lov:ListOfValues = backing.getListOfValues(block,field);

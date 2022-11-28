@@ -27,6 +27,7 @@ export interface ListOfValues
 	title?:string;
 	cssclass?:string;
 
+	inQueryMode?:boolean;
 	inReadOnlyMode?:boolean;
 
 	datasource:DataSource;

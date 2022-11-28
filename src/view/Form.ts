@@ -635,6 +635,9 @@ export class Form implements EventListenerObject
 				let backing:FormBacking = FormBacking.getBacking(this.parent);
 				let lov:ListOfValues = backing.getListOfValues(inst.block,inst.name);
 
+				if (qmode && lov.inQueryMode == false)
+					return(true);
+
 				if (inst.properties.readonly && !lov.inReadOnlyMode)
 					return(true);
 

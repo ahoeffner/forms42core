@@ -640,7 +640,7 @@ export class Form implements EventListenerObject
 					if (qmode && lov.inQueryMode == false)
 						return(true);
 
-					if (inst.properties.readonly && !lov.inReadOnlyMode)
+					if (!qmode && inst.properties.readonly && !lov.inReadOnlyMode)
 						return(true);
 
 					if (await this.showListOfValues(inst.block,inst.name))

@@ -95,7 +95,7 @@ export class ListOfValues extends Form
 			{
 				case Case.upper: 		flt = flt?.toLocaleUpperCase(); 	break;
 				case Case.lower: 		flt = flt?.toLocaleLowerCase(); 	break;
-				case Case.initcap: 	flt = this.initcap(flt); 			break;
+				case Case.initcap: 	flt = this.initcap(flt); 				break;
 			}
 
 			if (this.props.filterPrefix)
@@ -124,8 +124,8 @@ export class ListOfValues extends Form
 	{
 		if (event.key == KeyMap.nextfield || event.key == KeyMap.prevfield)
 		{
-			if (event.block == "results") this.goBlock("filter");
-			else 									this.goBlock("results");
+			if (event.block == "results") 	this.goBlock("filter");
+			else 							this.goBlock("results");
 
 			return(false);
 		}
@@ -275,7 +275,7 @@ export class ListOfValues extends Form
 	`
 	<div name="popup-body">
 		<div name="lov" class="CSS">
-			<div><input name="search" from="filter"></div>
+			<label><input name="search" from="filter"></label>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly derived>

@@ -74,7 +74,7 @@ export class QueryByExample
 		this.lastqry$.forEach((qf,column) =>
 		{
 			this.record$.setValue(column,qf.value);
-			this.setFilter(column,qf.filter);
+			if (qf.filter) this.filter$.and(qf.filter,column);
 		})
 	}
 

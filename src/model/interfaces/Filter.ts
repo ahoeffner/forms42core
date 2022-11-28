@@ -18,11 +18,15 @@ export interface Filter
 	clear() : void;
 	asSQL() : string;
 	clone() : Filter;
+
 	constraint?:any|any[];
+
 	getBindValue() : BindValue;
 	getBindValues() : BindValue[];
-	getBindValueName() : string|string[];
+
+	getBindValueName() : string;
 	setBindValueName(name:string) : Filter;
+
 	setConstraint(value:any|any[]) : Filter;
 	evaluate(record:Record) : Promise<boolean>;
 }

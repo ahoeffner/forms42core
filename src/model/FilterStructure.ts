@@ -41,6 +41,12 @@ export class FilterStructure
 		return(this.entries$.length);
 	}
 
+	public getName(filter:Filter) : string
+	{
+		let cstr:Constraint = this.filteridx$.get(filter);
+		return(cstr.name);
+	}
+
 	public clone() : FilterStructure
 	{
 		let clone = new FilterStructure();
@@ -93,8 +99,10 @@ export class FilterStructure
 		if (filter == this)
 			return;
 
-		if (name != null)
-			this.delete(name);
+		if (!(filter instanceof FilterStructure) && name == null)
+			name = filter.getBindValueName();
+
+		this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{
@@ -112,8 +120,10 @@ export class FilterStructure
 		if (filter == this)
 			return;
 
-		if (name != null)
-			this.delete(name);
+		if (!(filter instanceof FilterStructure) && name == null)
+			name = filter.getBindValueName();
+
+		this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{

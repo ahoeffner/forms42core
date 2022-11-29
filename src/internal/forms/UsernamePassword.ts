@@ -81,14 +81,10 @@ export class UsernamePassword extends Form
 	`
     <div name="popup-body">
 		<div name="login">
-			<p>
-					<label for="username">Username</label>:
-					<input from="login" tabindex="0" name="username" size="11"/>
-			</p>
-			<p>
-					<label for="password">Password</label>:
-					<input type="password" tabindex="1" from="login" name="password" size="11"/>
-			</p>
+			<label for="username">Username</label>:
+			<input from="login" tabindex="0" name="username" size="11"/>
+			<label for="password">Password</label>:
+			<input type="password" tabindex="1" from="login" name="password" size="11"/>
 		</div>
 		<div name="lowerright">
 			<div name="buttonarea">

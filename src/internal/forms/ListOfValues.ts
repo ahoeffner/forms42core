@@ -275,7 +275,7 @@ export class ListOfValues extends Form
 	`
 	<div name="popup-body">
 		<div name="lov" class="CSS">
-			<label><input name="search" from="filter"></label>
+			<div><input name="search" from="filter"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly derived>

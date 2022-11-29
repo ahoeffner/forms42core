@@ -60,4 +60,9 @@ export class DatabaseConnection
 	{
 		return(this.conn$.rollback());
 	}
+
+	public async sleep(ms:number) : Promise<void>
+	{
+		await this.conn$.sleep(ms);
+	}
 }

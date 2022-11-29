@@ -19,6 +19,8 @@ import { BasicProperties } from "./fields/BasicProperties.js";
 
 export class FieldFeatureFactory
 {
+	private static lists:number = 0;
+
 	public static initialize(props:BasicProperties, inst:FieldInstance, deflt:boolean, type:Status) : void
 	{
 		let exist:BasicProperties = inst.properties;
@@ -282,7 +284,7 @@ export class FieldFeatureFactory
 
 			if (list == null)
 			{
-				list = (new Date()).getTime()+"";
+				list = "list"+(FieldFeatureFactory.lists++);
 				props.setAttribute("list",list);
 				tag.setAttribute("list",list);
 				inst.defaultProperties.setAttribute("values",list);

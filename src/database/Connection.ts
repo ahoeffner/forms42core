@@ -110,11 +110,10 @@ export class Connection extends BaseConnection
 			return(false);
 		}
 
-		await FormEvents.raise(FormEvent.AppEvent(EventType.Connect));
-
 		this.trx$ = new Object();
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
+		await FormEvents.raise(FormEvent.AppEvent(EventType.Connect));
 
 		this.keepalive();
 		return(true);
@@ -625,7 +624,7 @@ export class Connection extends BaseConnection
 		return(binds);
 	}
 
-	private sleep(ms:number) : Promise<void>
+	public sleep(ms:number) : Promise<void>
 	{
 		return(new Promise(resolve => setTimeout(resolve,ms)));
 	}

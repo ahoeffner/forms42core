@@ -372,9 +372,6 @@ export class QueryTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		if (this.cursor$)
-			this.cursor$.eof = !response.more;
-
 		let dates:boolean[] = [];
 		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 

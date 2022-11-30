@@ -19,14 +19,15 @@ import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class SQLStatement
 {
+	private pos:number = 0;
 	private sql$:string = null;
-	private eof$:boolean = true;
-	private record$:any[] = null;
 	private response$:any = null;
 	private types:string[] = null;
 	private cursor$:Cursor = null;
 	private patch$:boolean = false;
 	private message$:string = null;
+	private arrayfecth$:number = 1;
+	private records$:any[][] = null;
 	private conn$:Connection = null;
 	private columns$:string[] = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
@@ -54,6 +55,16 @@ export class SQLStatement
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public get arrayfetch() : number
+	{
+		return(this.arrayfecth$);
+	}
+
+	public set arrayfetch(size:number)
+	{
+		this.arrayfecth$ = size;
 	}
 
 	public error() : string
@@ -92,7 +103,7 @@ export class SQLStatement
 			case "insert" : this.response$ = await this.conn$.insert(sql); break;
 			case "update" : this.response$ = await this.conn$.update(sql); break;
 			case "delete" : this.response$ = await this.conn$.delete(sql); break;
-			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,1,true); break;
+			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,this.arrayfecth$,true); break;
 
 			default: this.response$ = await this.conn$.execute(this.patch$,sql);
 		}
@@ -109,7 +120,7 @@ export class SQLStatement
 		{
 			this.types = this.response$.types;
 			this.columns$ = this.response$.columns;
-			this.record$ = this.parse(this.response$);
+			this.records$ = this.parse(this.response$);
 		}
 
 		return(success);
@@ -117,21 +128,16 @@ export class SQLStatement
 
 	public async fetch() : Promise<any[]>
 	{
-		let record:any[] = null;
-
 		if (!this.cursor$)
 			return(null);
 
-		if (this.record$ != null)
-		{
-			record = this.record$;
-			this.record$ = null;
-			return(record);
-		}
+		if (this.records$.length > this.pos)
+			return(this.records$[this.pos++]);
 
-		if (this.eof$)
+		if (this.cursor$.eof)
 			return(null);
 
+		this.pos = 0;
 		this.response$ = await this.conn$.fetch(this.cursor$);
 
 		if (!this.response$.success)
@@ -140,20 +146,19 @@ export class SQLStatement
 			return(null);
 		}
 
-		record = this.parse(this.response$);
-		return(record);
+		this.records$ = this.parse(this.response$);
+		return(this.fetch());
 	}
 
 	public async close() : Promise<boolean>
 	{
 		let response:any = null;
 
-		if (this.cursor$ != null && !this.eof$)
+		if (this.cursor$ != null && !this.cursor$.eof)
 			response = await this.conn$.close(this.cursor$);
 
-		this.eof$ = true;
-		this.record$ = null;
 		this.cursor$ = null;
+		this.records$ = null;
 
 		if (response)
 			return(response.success);
@@ -162,30 +167,31 @@ export class SQLStatement
 
 	}
 
-	private parse(response:any) : any[]
+	private parse(response:any) : any[][]
 	{
-		this.eof$ = !response.more;
-
 		if (!response.success)
 		{
-			this.eof$ = true;
-			return(null);
+			this.cursor$ = null;
+			return([]);
 		}
 
 		if (response.rows.length == 0)
-			return(null);
+			return([]);
 
-		let row:any[] = response.rows[0];
+		let rows:any[][] = response.rows;
 		let columns:string[] = response.columns;
 
 		let datetypes:string[] = ["date","datetime","timestamp"];
 
-		for (let i = 0; i < columns.length; i++)
+		for (let r = 0; r < rows.length; r++)
 		{
-			if (datetypes.includes(this.types[i].toLowerCase()))
-				row[i] = new Date(row[i]);
+			for (let c = 0; c < columns.length; c++)
+			{
+				if (datetypes.includes(this.types[c].toLowerCase()))
+					rows[r][c] = new Date(rows[r][c]);
+			}
 		}
 
-		return(row);
+		return(rows);
 	}
 }

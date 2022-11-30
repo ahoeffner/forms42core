@@ -674,9 +674,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		if (cursor)
-			cursor.eof = !response.more;
-
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;
 

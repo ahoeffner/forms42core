@@ -255,6 +255,9 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		if (cursor)
+			cursor.eof = !response.more;
+			
 		return(response);
 	}
 
@@ -294,7 +297,9 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+		cursor.eof = !response.more;
 		cursor.pos += response.rows.length;
+
 		return(response);
 	}
 

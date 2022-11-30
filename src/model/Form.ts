@@ -124,7 +124,10 @@ export class Form
 		dirty = [...requery];
 
 		for (let i = 0; i < dirty.length; i++)
-			await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+		{
+			if (dirty[i].isClean())	await dirty[i].clear();
+			else await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+		}
 
 		return(true);
 	}

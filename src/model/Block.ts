@@ -40,6 +40,7 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 	private record$:number = -1;
+	private clean$:boolean = true;
 	private view$:ViewBlock = null;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
@@ -139,6 +140,8 @@ export class Block
 
 	public async clear() : Promise<boolean>
 	{
+		this.clean$ = true;
+
 		if (!await this.wrapper.clear())
 			return(false);
 
@@ -402,6 +405,11 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
+	public setDirty() : void
+	{
+		this.wrapper.dirty = true;
+	}
+
 	public locked(record?:Record) : boolean
 	{
 		if (this.querymode) return(true);
@@ -514,6 +522,11 @@ export class Block
 		return(true);
 	}
 
+	public isClean() : boolean
+	{
+		return(this.clean$);
+	}
+
 	public isDirty() : boolean
 	{
 		return(this.wrapper?.dirty);
@@ -572,6 +585,8 @@ export class Block
 
 	public async enterQuery() : Promise<boolean>
 	{
+		this.clean$ = true;
+
 		if (!await this.wrapper.clear())
 			return(false);
 
@@ -590,6 +605,7 @@ export class Block
 
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
+		this.clean$ = false;
 		let runid:object = null;
 
 		if (!this.setMasterDependencies())
@@ -600,10 +616,7 @@ export class Block
 
 		// Abort query if obsolete
 		if (qryid != this.form.QueryManager.getQueryID())
-		{
-			//console.log("Stale query for '"+this.name+"' aborted");
 			return(true);
-		}
 
 		let waits:number = 0;
 		// Wait for stale query to finish displaying rows

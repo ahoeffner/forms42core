@@ -140,6 +140,9 @@ export class Connection extends BaseConnection
 
 	public async commit() : Promise<boolean>
 	{
+		if (this.modified$ == null)
+			return(true);
+
 		this.tmowarn$ = false;
 		this.trx$ = new Object();
 		this.touched$ = new Date();
@@ -170,6 +173,9 @@ export class Connection extends BaseConnection
 
 	public async rollback() : Promise<boolean>
 	{
+		if (this.modified$ == null)
+			return(true);
+
 		this.tmowarn$ = false;
 		this.trx$ = new Object();
 		this.touched$ = new Date();

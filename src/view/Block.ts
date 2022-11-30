@@ -496,7 +496,12 @@ export class Block
 	public async onEdit(inst:FieldInstance) : Promise<boolean>
 	{
 		this.curinst$ = inst;
-		if (!await this.lock(inst)) return(false);
+
+		if (!await this.lock(inst))
+			return(false);
+
+		this.model.setDirty();
+		
 		await this.setEventTransaction(EventType.OnEdit);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnEdit,inst);
 		this.endEventTransaction(EventType.OnEdit,success);

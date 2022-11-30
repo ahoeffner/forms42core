@@ -296,6 +296,7 @@ export class DataSourceWrapper
 	public create(pos:number, before?:boolean) : Record
 	{
 		this.hwm$++;
+		this.dirty = true;
 
 		if (pos > this.cache$.length)
 			pos = this.cache$.length - 1;

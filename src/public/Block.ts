@@ -244,6 +244,11 @@ export class Block
 		this.getRecord()?.setValue(field,value);
 	}
 
+	public getCurrentField() : string
+	{
+		return(FormBacking.getViewBlock(this).current.name);
+	}
+
 	/**
 	 * setAndValidate field value as if changed by a user.
 	 * @param field

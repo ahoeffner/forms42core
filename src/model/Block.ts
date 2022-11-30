@@ -574,8 +574,9 @@ export class Block
 
 	public setFilter(field:string, filter?:Filter|FilterStructure) : void
 	{
-		if (this.view.fieldinfo.get(field)?.query)
-			this.qbe.setFilter(field,filter);
+		let qryfld:boolean = this.view.fieldinfo.get(field)?.query;
+		if (qryfld == null) qryfld = this.source$?.columns.includes(field);
+		if (qryfld)	this.qbe.setFilter(field,filter);
 	}
 
 	public cancel() : void

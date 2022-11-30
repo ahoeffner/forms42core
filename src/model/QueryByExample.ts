@@ -117,8 +117,19 @@ export class QueryByExample
 
 		if (type == null)
 		{
-			FlightRecorder.add("filter: could not find "+column);
-			return(null);
+			type = DataType.string;
+
+			if (value instanceof Date)
+			{
+				type = DataType.date;
+			}
+			else if (typeof value === "number")
+			{
+				type = DataType.decimal;
+
+				if (Number.isInteger(value))
+					type = DataType.integer;
+			}
 		}
 
 		if (type == DataType.date || type == DataType.datetime)

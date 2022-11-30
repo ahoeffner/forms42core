@@ -124,6 +124,11 @@ export class FormsModule
 		return(false);
 	}
 
+	public getCurrentForm() : Form
+	{
+		return(FormBacking.getCurrentForm());
+	}
+
 	public async sendkey(key:KeyMap|string) : Promise<boolean>
 	{
 		if (typeof key === "string") key = KeyMap.from(key);
@@ -153,7 +158,7 @@ export class FormsModule
 		Alert.warning(msg,title);
 	}
 
-	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
+	public async showform(form:Class<Form|InternalForm>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		if (typeof form === "string")
 		{

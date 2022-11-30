@@ -71,6 +71,11 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this)?.focus();
 	}
 
+	public getCurrentBlock() : Block
+	{
+		return(this.getBlock(FormBacking.getViewForm(this).block.name));
+	}
+
 	public async reQuery(block:string) : Promise<boolean>
 	{
 		block = block?.toLowerCase();

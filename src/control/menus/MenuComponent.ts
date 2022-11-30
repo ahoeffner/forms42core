@@ -81,6 +81,8 @@ export class MenuComponent implements EventListenerObject
 	public hide() : void
 	{
 		this.target$.innerHTML = "";
+		this.open$.clear();
+		this.show();
 	}
 
 	public toggle(path:string) : void

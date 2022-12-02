@@ -66,6 +66,11 @@ export class Form implements CanvasComponent
 		this.focus();
 	}
 
+	public clear() : Promise<boolean>
+	{
+		return(FormBacking.getViewForm(this)?.clear());
+	}
+
 	public focus() : void
 	{
 		FormBacking.getViewForm(this)?.focus();

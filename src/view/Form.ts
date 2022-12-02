@@ -83,6 +83,17 @@ export class Form implements EventListenerObject
 		return(this.curinst$);
 	}
 
+	public async clear() : Promise<boolean>
+	{
+		if (!await this.model.flush())
+			return(false);
+
+		this.blocks$.forEach((block) =>
+		{block.clear(true,true,true)})
+
+		return(true);
+	}
+
 	public getBlock(name:string) : Block
 	{
 		return(this.blocks$.get(name));

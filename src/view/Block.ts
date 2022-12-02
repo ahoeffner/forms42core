@@ -501,7 +501,7 @@ export class Block
 			return(false);
 
 		this.model.setDirty();
-		
+
 		await this.setEventTransaction(EventType.OnEdit);
 		let success:boolean = await	this.fireFieldEvent(EventType.OnEdit,inst);
 		this.endEventTransaction(EventType.OnEdit,success);
@@ -1019,6 +1019,7 @@ export class Block
 			let ddiff:boolean = false;
 			let query:boolean = false;
 			let derived:boolean = null;
+			let advquery:boolean = true;
 
 			this.getAllFields(name).forEach((fld) =>
 			{
@@ -1033,11 +1034,17 @@ export class Block
 					if (inst.properties.derived != derived)
 						ddiff = true;
 
+					if (advquery == true)
+						advquery = inst.properties.advquery;
+
 					if (inst.properties.derived)
 						derived = true;
 
 					if (!inst.qbeProperties.readonly)
 						query = true;
+
+					if (!inst.qbeProperties.advquery)
+						advquery = true;
 
 					if (inst.datatype != type)
 					{
@@ -1087,7 +1094,7 @@ export class Block
 				})
 			});
 
-			if (tdiff || ddiff)
+			if (tdiff || ddiff || !advquery)
 			{
 				this.getAllFields(name).forEach((fld) =>
 				{
@@ -1103,6 +1110,11 @@ export class Block
 						if (ddiff)
 						{
 							inst.defaultProperties.derived = derived;
+						}
+
+						if (!advquery)
+						{
+							inst.qbeProperties.advquery = advquery;
 						}
 					});
 				});

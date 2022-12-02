@@ -585,6 +585,10 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.queryeditor)
 			{
 				if (!qmode) return(false);
+
+				if (!inst.qbeProperties.advquery)
+					return(true);
+
 				let params:Map<string,any> = new Map<string,any>();
 
 				params.set("form",this.parent);

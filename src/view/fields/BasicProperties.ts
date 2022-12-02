@@ -35,6 +35,7 @@ export class BasicProperties
 
 	protected hidden$:boolean = false;
 	protected enabled$:boolean = false;
+	protected advquery$:boolean = true;
 	protected derived$:boolean = false;
 	protected readonly$:boolean = false;
 	protected required$:boolean = false;
@@ -43,7 +44,7 @@ export class BasicProperties
 	protected values$:Map<string,string> = new Map<string,string>();
 
 	protected handled$:string[] = ["id","name",Properties.BindAttr,"row","invalid"];
-	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","value","class","style","mapper"];
+	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","advquery","value","class","style","mapper"];
 
 	public get tag() : string
 	{
@@ -113,6 +114,16 @@ export class BasicProperties
 		this.derived$ = flag;
 	}
 
+	public get advquery() : boolean
+	{
+		return(this.advquery$);
+	}
+
+	public set advquery(flag:boolean)
+	{
+		this.advquery$ = flag;
+	}
+
 	public setRequired(flag:boolean) : BasicProperties
 	{
 		this.required = flag;
@@ -122,6 +133,12 @@ export class BasicProperties
 	public setDerived(flag:boolean) : BasicProperties
 	{
 		this.derived = flag;
+		return(this);
+	}
+
+	public setAdvancedQuery(flag:boolean) : BasicProperties
+	{
+		this.advquery = flag;
 		return(this);
 	}
 
@@ -354,6 +371,7 @@ export class BasicProperties
 				case "hidden": this.hidden = flag; break;
 				case "enabled": this.enabled = flag; break;
 				case "derived": this.derived = flag; break;
+				case "advquery": this.advquery = flag; break;
 				case "readonly": this.readonly = flag; break;
 				case "required": this.required = flag; break;
 
@@ -387,6 +405,7 @@ export class BasicProperties
 			case "hidden": this.hidden = false; break;
 			case "enabled": this.enabled = false; break;
 			case "derived": this.derived = false; break;
+			case "advquery": this.advquery = true; break;
 			case "readonly": this.readonly = false; break;
 			case "required": this.required = false; break;
 

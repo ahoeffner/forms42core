@@ -21,6 +21,7 @@ export class UsernamePassword extends Form
     public title:string = null;
     public username:string = null;
     public password:string = null;
+	 public accepted:boolean = false;
 
 	constructor()
 	{
@@ -29,7 +30,7 @@ export class UsernamePassword extends Form
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
 
-		this.addEventListener(this.setUsrPwd,
+		this.addEventListener(this.accept,
 		[
 			{type: EventType.Mouse,field:"ok", mouse:MouseMap.click},
 			{type: EventType.Key, key:KeyMap.enter}
@@ -44,22 +45,17 @@ export class UsernamePassword extends Form
 
 	public async cancel(): Promise<boolean>
 	{
+		this.username = null;
+		this.password = null;
 		return(this.close());
 	}
 
-	public accepted() : boolean
+	private async accept():Promise<boolean>
 	{
-		console.log(this.username,this.password)
-		return(false);
-	}
-
-	private async setUsrPwd():Promise<boolean>
-	{
+		this.accepted = true;
 		this.username = this.getValue("login","username");
 		this.password = this.getValue("login","password");
-
-		this.accepted();
-		return(true);
+		return(this.close());
 	}
 
 	private async initialize() : Promise<boolean>
@@ -88,8 +84,8 @@ export class UsernamePassword extends Form
 		</div>
 		<div name="lowerright">
 			<div name="buttonarea">
-					<button  name="close" tabindex="2">Cancel</button>
-					<button name="ok" tabindex="3">Ok</button>
+					<button from="login" name="close" tabindex="2">Cancel</button>
+					<button from="login" name="ok" tabindex="3">Ok</button>
 			</div>
 		</div>
 	</div>

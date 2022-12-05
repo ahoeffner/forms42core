@@ -17,10 +17,10 @@ import { Form } from "../../public/Form.js";
 
 export interface FormEvent
 {
-	form:Form;
 	key:KeyMap;
 	field:string;
 	block:string;
 	type:EventType;
 	mouse:MouseMap;
+	form:Form|unknown;
 }

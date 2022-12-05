@@ -19,7 +19,6 @@ import { DateConstraint } from './DateConstraint.js';
 import { KeyMap } from '../control/events/KeyMap.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Framework } from '../application/Framework.js';
-import { CallbackFunction } from './CallbackFunction.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { FormBacking } from '../application/FormBacking.js';
@@ -266,11 +265,6 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
-	public callback(_form:Form) : CallbackFunction
-	{
-		return;
-	}
-
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
 		let back:FormBacking = FormBacking.getBacking(this);
@@ -326,7 +320,6 @@ export class Form implements CanvasComponent
 				parent.canvas.unblock();
 
 				parent.focus();
-				parent.callback(this);
 
 				if (FormBacking.getBacking(parent))
 					FormBacking.getBacking(parent).hasModalChild = false;

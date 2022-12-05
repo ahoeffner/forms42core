@@ -207,4 +207,9 @@ export class FormsModule
 	{
 		FormEvents.addListener(null,this,method,filter);
 	}
+
+	public addFormEventListener(form:Form|InternalForm, method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
+	{
+		FormEvents.addListener(form,this,method,filter);
+	}
 }

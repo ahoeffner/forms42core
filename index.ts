@@ -17,7 +17,6 @@ export { DataSource } from './src/model/interfaces/DataSource.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
 export { Alert } from './src/internal/forms/Alert.js';
-export { BuiltIns } from './src/internal/BuiltIns.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';

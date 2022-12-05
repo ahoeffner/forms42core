@@ -14,6 +14,7 @@ import { Class } from '../types/Class.js';
 import { Block } from '../public/Block.js';
 import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
+import { Form as ViewForm } from '../view/Form.js';
 import { KeyMap } from '../control/events/KeyMap.js';
 import { Framework } from '../application/Framework.js';
 import { ListOfValues } from '../public/ListOfValues.js';
@@ -305,7 +306,12 @@ export class Form implements CanvasComponent
 
 	public async close() : Promise<boolean>
 	{
-		if (!await FormBacking.getViewForm(this).validate())
+		let vform:ViewForm = FormBacking.getViewForm(this);
+
+		if (vform == null)
+			return(true);
+
+		if (!await vform.validate())
 			return(false);
 
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);

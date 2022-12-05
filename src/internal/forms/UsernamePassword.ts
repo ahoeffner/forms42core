@@ -32,13 +32,13 @@ export class UsernamePassword extends Form
 
 		this.addEventListener(this.accept,
 		[
-			{type: EventType.Mouse,field:"ok", mouse:MouseMap.click},
-			{type: EventType.Key, key:KeyMap.enter}
+			{type: EventType.Key, key:KeyMap.enter},
+			{type: EventType.Mouse,field:"ok", mouse:MouseMap.click}
 		]);
 
 		this.addEventListener(this.cancel,
 		[
-			{type:EventType.Key, field:"close", key: KeyMap.enter},
+			{type:EventType.Key, key: KeyMap.escape},
 			{type:EventType.Mouse, field:"close", mouse:MouseMap.click}
 		]);
    }

@@ -57,6 +57,11 @@ export class Internals
 		margin-right: 8px;
 	`;
 
+	public static PopupStyleLogin:string =
+	`
+		display:grid;
+	`;
+
 	public static PopupStyleButtonArea =
 	`
 		gap:3px;
@@ -100,8 +105,11 @@ export class Internals
 		border-top: 4px solid #3498db;
 	`;
 
+
+
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
+		let login:HTMLElement = view.querySelector('div[name="login"]');
 		let loading:HTMLElement = view.querySelector('div[name="loading"]');
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
@@ -112,15 +120,16 @@ export class Internals
 		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
+		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
+		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
+		
 		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
-
 		if (close && Internals.PopupCloseButton) close.style.cssText = Internals.PopupCloseButton;
 		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;
-
-		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
-		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
-
+		
+		
+		if (login && Internals.PopupStyleLogin) login.style.cssText = Internals.PopupStyleLogin;
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
 		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;
 

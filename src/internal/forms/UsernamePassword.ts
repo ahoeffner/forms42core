@@ -12,7 +12,6 @@
 
 import { Form } from "../Form.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
-import { MouseMap } from "../../control/events/MouseMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 
@@ -32,14 +31,7 @@ export class UsernamePassword extends Form
 
 		this.addEventListener(this.accept,
 		[
-			{type: EventType.Key, key:KeyMap.enter},
-			{type: EventType.Mouse,field:"ok", mouse:MouseMap.click}
-		]);
-
-		this.addEventListener(this.cancel,
-		[
-			{type:EventType.Key, key: KeyMap.escape},
-			{type:EventType.Mouse, field:"close", mouse:MouseMap.click}
+			{type: EventType.Key, key:KeyMap.enter}
 		]);
    }
 
@@ -84,8 +76,8 @@ export class UsernamePassword extends Form
 		</div>
 		<div name="lowerright">
 			<div name="buttonarea">
-					<button from="login" name="close" tabindex="2">Cancel</button>
-					<button from="login" name="ok" tabindex="3">Ok</button>
+					<button name="cancel" onclick="this.cancel()" tabindex="2">Cancel</button>
+					<button name="ok"     onclick="this.accept()" tabindex="3">Ok</button>
 			</div>
 		</div>
 	</div>

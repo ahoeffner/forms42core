@@ -493,7 +493,10 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.delete)
 				inst = this.curinst$;
 
-			if (key == KeyMap.requery)
+			if (key == KeyMap.refresh)
+				inst = this.curinst$;
+
+			if (key == KeyMap.lastquery)
 				inst = this.curinst$;
 
 			if (key == KeyMap.enterquery)
@@ -555,7 +558,7 @@ export class Form implements EventListenerObject
 				return(success);
 			}
 
-			if (key == KeyMap.requery)
+			if (key == KeyMap.refresh)
 			{
 				if (qmode)
 					return(false);
@@ -567,8 +570,15 @@ export class Form implements EventListenerObject
 				return(true);
 			}
 
+			if (key == KeyMap.lastquery)
+			{
+				if (qmode) mblock.showLastQuery();
+				return(true);
+			}
+
 			if (key == KeyMap.enterquery)
 			{
+				if (qmode) return(true);
 				success = await this.model.enterQuery(inst.field.block.model);
 				if (success) block.findFirstEditable(block.model.qberec)?.focus();
 				return(success);

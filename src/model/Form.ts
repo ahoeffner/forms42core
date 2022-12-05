@@ -312,12 +312,6 @@ export class Form
 
 		await this.flush();
 
-		if (block.querymode)
-		{
-			block.showLastQuery();
-			return(true);
-		}
-
 		if (!this.blkcord$.allowQueryMode(block))
 			return(false);
 

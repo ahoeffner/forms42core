@@ -19,7 +19,7 @@ export class KeyMap
 	public static copy:KeyMap = new KeyMap({key: 'c', ctrl: true});
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
-	public static requery:KeyMap = new KeyMap({key: 'u', ctrl: true});
+	public static refresh:KeyMap = new KeyMap({key: 'u', ctrl: true});
 
 	public static dump:KeyMap = new KeyMap({key: KeyCodes.f12, shift: true});
 	public static now:KeyMap = new KeyMap({key: ' ', ctrl: true}, "(space) now", "Todays date");
@@ -31,6 +31,7 @@ export class KeyMap
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7},"enter query","start query by example mode");
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8},"execute query","execute query");
+	public static lastquery:KeyMap = new KeyMap({key: KeyCodes.f7, shift: true},"last query","recall last query");
 	public static queryeditor:KeyMap = new KeyMap({key: KeyCodes.f7, ctrl: true},"query editor","enter advanced query criterias");
 
 	public static space:KeyMap = new KeyMap({key: ' '});

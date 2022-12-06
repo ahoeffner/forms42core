@@ -132,8 +132,8 @@ export class BrowserEvent
 	{
 		if (this.event.type == "wheel") return(true);
 		if (this.event.type == "contextmenu") return(true);
-		if (this.event.type.includes("click")) return(true);
-		if (this.event.type.startsWith("mouse")) return(true);
+		if (this.event.type?.includes("click")) return(true);
+		if (this.event.type?.startsWith("mouse")) return(true);
 		return(false);
 	}
 
@@ -146,7 +146,7 @@ export class BrowserEvent
 
 	public get isKeyEvent() : boolean
 	{
-		return(this.event.type.startsWith("key") && this.event.key != null);
+		return(this.event.type?.startsWith("key") && this.event.key != null);
 	}
 
 	public get isPrintableKey() : boolean
@@ -159,7 +159,7 @@ export class BrowserEvent
 	public get onFuncKey() : boolean
 	{
 		if (this.event.type != "keyup") return(false);
-		return(this.funckey != null && this.event.key.startsWith("F") && this.event.key.length > 1);
+		return(this.funckey != null && this.event.key?.startsWith("F") && this.event.key.length > 1);
 	}
 
 	public get onScrollUp() : boolean
@@ -372,7 +372,7 @@ export class BrowserEvent
 				if (this.key == "ArrowUp" && this.repeat$) {this.ignore = false; this.custom = true; this.prevent = true}
 				if (this.key == "ArrowDown" && this.repeat$) {this.ignore = false; this.custom = true; this.prevent = true}
 
-				if (this.key.startsWith("F") && this.event.key.length > 1)
+				if (this.key?.startsWith("F") && this.event.key?.length > 1)
 				{
 					this.prevent = true;
 					this.funckey = this.key;

@@ -106,8 +106,8 @@ export class Like implements Filter
 		{
 			this.parsed = true;
 
-			if (this.constraint$.endsWith("%")) this.rtrunc = true;
-			if (this.constraint$.startsWith("%")) this.ltrunc = true;
+			if (this.constraint$?.endsWith("%")) this.rtrunc = true;
+			if (this.constraint$?.startsWith("%")) this.ltrunc = true;
 
 			if (this.ltrunc) this.constraint$ = this.constraint$.substring(1);
 			if (this.rtrunc) this.constraint$ = this.constraint$.substring(0,this.constraint$.length-1);

@@ -76,7 +76,7 @@ export class ApplicationHandler implements EventListenerObject
 
 		if (bubble)
 		{
-			if (this.event.type.startsWith("key"))
+			if (this.event.type?.startsWith("key"))
 			{
 				let key:KeyMap = KeyMapping.parseBrowserEvent(this.event);
 				let frmevent:FormEvent = FormEvent.KeyEvent(null,null,key);

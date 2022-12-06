@@ -808,7 +808,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 			return(true);
 
-		if (this.event.type.startsWith("mouse") || this.event.type == "wheel")
+		if (this.event.type?.startsWith("mouse") || this.event.type == "wheel")
 			return(true);
 
 		let ignore:boolean = this.event.ignore;

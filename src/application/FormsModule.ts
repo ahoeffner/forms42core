@@ -208,13 +208,13 @@ export class FormsModule
 		return(Loading.show(message));
 	}
 
-	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
+	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
-		FormEvents.addListener(null,this,method,filter);
+		return(FormEvents.addListener(null,this,method,filter));
 	}
 
-	public addFormEventListener(form:Form|InternalForm, method:TriggerFunction, filter?:EventFilter|EventFilter[]) : void
+	public addFormEventListener(form:Form|InternalForm, method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
-		FormEvents.addListener(form,this,method,filter);
+		return(FormEvents.addListener(form,this,method,filter));
 	}
 }

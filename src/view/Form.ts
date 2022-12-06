@@ -216,7 +216,15 @@ export class Form implements EventListenerObject
 		{
 			// When modal call, allow leaving former form in any state
 
-			if (!FormBacking.getBacking(this.parent).wasCalled)
+			let backing:FormBacking = FormBacking.getBacking(this.parent);
+
+			if (backing == null)
+			{
+				Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current?.name+"'","Enter Form");
+				return(false);
+			}
+
+			if (!backing.wasCalled)
 			{
 				preform = this;
 

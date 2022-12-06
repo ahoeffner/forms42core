@@ -978,13 +978,13 @@ export class Block
 		}
 
 		if (!this.intblk.qbeallowed)
-			this.view.disableQuery();
+			this.view?.disableQuery();
 
 		if (!this.intblk.insertallowed)
-			this.view.disableInsert();
+			this.view?.disableInsert();
 
 		if (!this.intblk.updateallowed)
-			this.view.disableUpdate();
+			this.view?.disableUpdate();
 
 		this.addColumns();
 	}

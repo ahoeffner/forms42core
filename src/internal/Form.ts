@@ -325,7 +325,6 @@ export class Form implements CanvasComponent
 			if (parent != null)
 			{
 				parent.canvas.unblock();
-
 				parent.focus();
 
 				if (FormBacking.getBacking(parent))

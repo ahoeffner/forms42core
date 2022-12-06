@@ -39,7 +39,8 @@ export class UsernamePassword extends Form
 	{
 		this.username = null;
 		this.password = null;
-		return(this.close());
+		await this.close();
+		return(false);
 	}
 
 	private async accept():Promise<boolean>
@@ -47,7 +48,8 @@ export class UsernamePassword extends Form
 		this.accepted = true;
 		this.username = this.getValue("login","username");
 		this.password = this.getValue("login","password");
-		return(this.close());
+		await this.close();
+		return(false);
 	}
 
 	private async initialize() : Promise<boolean>

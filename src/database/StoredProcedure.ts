@@ -13,6 +13,7 @@
 import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
 import { Connection } from "./Connection.js";
+import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Parameter, ParameterType } from "./Parameter.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
@@ -33,6 +34,13 @@ export class StoredProcedure
 
 	public constructor(connection:DatabaseConnection)
 	{
+
+		if (connection == null)
+		{
+			Alert.fatal("Cannot create stored procedure without connection",this.constructor.name);
+			return;
+		}
+
 		this.conn$ = connection["conn$"];
 	}
 

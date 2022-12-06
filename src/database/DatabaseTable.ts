@@ -65,6 +65,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 	{
 		super();
 
+		if (connection == null)
+		{
+			Alert.fatal("Cannot create datasource without connection",this.constructor.name);
+			return;
+		}
+
 		this.table$ = table;
 		this.pubconn$ = connection;
 		this.conn$ = connection["conn$"];

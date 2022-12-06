@@ -15,6 +15,7 @@ import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
 import { BindValue } from "./BindValue.js";
 import { Connection } from "./Connection.js";
+import { Alert } from "../application/Alert.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 export class SQLStatement
@@ -34,6 +35,13 @@ export class SQLStatement
 
 	public constructor(connection:DatabaseConnection)
 	{
+
+		if (connection == null)
+		{
+			Alert.fatal("Cannot create sql-statement without connection",this.constructor.name);
+			return;
+		}
+
 		this.conn$ = connection["conn$"];
 	}
 

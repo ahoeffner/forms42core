@@ -52,6 +52,13 @@ export class QueryTable extends SQLSource implements DataSource
 	public constructor(connection:DatabaseConnection, sql?:string)
 	{
 		super();
+
+		if (connection == null)
+		{
+			Alert.fatal("Cannot create datasource without connection",this.constructor.name);
+			return;
+		}
+
 		this.sql$ = sql;
 		this.pubconn$ = connection;
 		this.conn$ = connection["conn$"];

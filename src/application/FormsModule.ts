@@ -158,6 +158,11 @@ export class FormsModule
 		Alert.warning(msg,title);
 	}
 
+	public getRunningForms() : Form[]
+	{
+		return(FormBacking.getRunningForms());
+	}
+
 	public async showform(form:Class<Form|InternalForm>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		if (typeof form === "string")

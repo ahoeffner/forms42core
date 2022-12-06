@@ -46,6 +46,13 @@ export class FormBacking
 		return(FormBacking.form);
 	}
 
+	public static getRunningForms() : Form[]
+	{
+		let forms:Form[] = [];
+		forms.push(...FormBacking.vforms.keys());
+		return(forms);
+	}
+
 	public static getCurrentViewForm() : ViewForm
 	{
 		return(FormBacking.vforms.get(FormBacking.form));

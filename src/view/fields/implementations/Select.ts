@@ -60,6 +60,7 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public clear() : void
 	{
+		this.value$ = null;
 		this.element.value = "";
 		this.element.options.selectedIndex = 0;
 	}

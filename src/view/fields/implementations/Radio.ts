@@ -60,6 +60,7 @@ export class Radio implements FieldImplementation, EventListenerObject
 
 	public clear() : void
 	{
+		this.value$ = null;
 		this.element.checked = false;
 	}
 

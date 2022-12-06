@@ -63,6 +63,8 @@ export class Display implements FieldImplementation, EventListenerObject
 			if (this.value$ instanceof HTMLElement) this.element.firstChild?.remove;
 			else this.element.textContent = "";
 		}
+
+		this.value$ = null;
 	}
 
 	public getValue() : any

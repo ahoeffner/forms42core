@@ -74,7 +74,7 @@ export class MenuComponent implements EventListenerObject
 
 		this.target$.innerHTML = this.showEntry(start,path);
 
-		let entries:NodeList = this.target$.querySelectorAll("a");
+		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
 		entries.forEach((link) => {link.addEventListener("click",this);});
 	}
 
@@ -137,11 +137,9 @@ export class MenuComponent implements EventListenerObject
 
 		for (let i = 0; i < entries.length; i++)
 		{
-			if (entries[i].disabled != null && entries[i].disabled)
-				continue;
-
 			let cmd:string = "";
 			let classes:string = this.menucls$;
+			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
 			if (entries[i].command)
 			{
@@ -155,14 +153,14 @@ export class MenuComponent implements EventListenerObject
 			{
 				classes += " "+this.options$.classes.open;
 				page += "<div class='"+classes+"'>";
-				page += "  <a path='"+npath+"' "+cmd+">"+entries[i].display+"</a>";
+				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
 				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
 			else
 			{
 				page += "<div class='"+classes+"'>"
-				page += "  <a path='"+npath+"' "+cmd+">"+entries[i].display+"</a>"
+				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
 				page += "</div>";
 			}
 		}

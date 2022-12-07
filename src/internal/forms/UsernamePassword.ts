@@ -69,18 +69,17 @@ export class UsernamePassword extends Form
 	public static page: string =
 	Internals.header +
 	`
-    <div name="popup-body">
+   <div name="popup-body">
+		<div name="loginimage"></div>
 		<div name="login">
 			<label for="username">Username</label>
-			<input from="login" tabindex="0" name="username" size="11"/>
+			<input from="login" tabindex="0" name="username" size="20"/>
 			<label for="password">Password</label>
-			<input type="password" tabindex="1" from="login" name="password" size="11"/>
+			<input type="password" tabindex="1" from="login" name="password" size="20"/>
 		</div>
-		<div name="lowerright">
-			<div name="buttonarea">
-					<button name="cancel" onclick="this.cancel()" tabindex="2">Cancel</button>
-					<button name="ok"     onclick="this.accept()" tabindex="3">Ok</button>
-			</div>
+		<div name="loginbutton">
+			<button name="cancel" onclick="this.cancel()" tabindex="2">Cancel</button>
+			<button name="ok"     onclick="this.accept()" tabindex="3">Ok</button>
 		</div>
 	</div>
    ` + Internals.footer

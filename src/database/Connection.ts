@@ -130,6 +130,7 @@ export class Connection extends BaseConnection
 
 		if (response.success)
 		{
+			this.conn$ = null;
 			this.touched$ = null;
 			this.modified$ = null;
 		}
@@ -257,7 +258,7 @@ export class Connection extends BaseConnection
 
 		if (cursor)
 			cursor.eof = !response.more;
-			
+
 		return(response);
 	}
 
@@ -575,6 +576,9 @@ export class Connection extends BaseConnection
 	private async keepalive() : Promise<void>
 	{
 		await this.sleep(this.keepalive$);
+
+		if (!this.connected())
+			return;
 
 		let response:any = await this.post(this.conn$+"/ping",{keepalive: true});
 

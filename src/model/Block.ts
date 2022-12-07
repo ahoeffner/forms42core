@@ -971,6 +971,9 @@ export class Block
 		this.intblk = this.form.parent.getBlock(this.name);
 		this.view$ = FormBacking.getViewForm(this.form$.parent).getBlock(this.name);
 
+		if (this.view$ == null)
+			this.view$ = FormBacking.getViewBlock(this,true);
+
 		if (this.intblk == null)
 		{
 			this.intblk = new InterfaceBlock(this.intfrm,this.name);
@@ -978,13 +981,13 @@ export class Block
 		}
 
 		if (!this.intblk.qbeallowed)
-			this.view?.disableQuery();
+			this.view.disableQuery();
 
 		if (!this.intblk.insertallowed)
-			this.view?.disableInsert();
+			this.view.disableInsert();
 
 		if (!this.intblk.updateallowed)
-			this.view?.disableUpdate();
+			this.view.disableUpdate();
 
 		this.addColumns();
 	}

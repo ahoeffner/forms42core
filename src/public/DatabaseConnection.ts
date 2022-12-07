@@ -46,6 +46,11 @@ export class DatabaseConnection
 		return(this.conn$.connect(username,password));
 	}
 
+	public async disconnect() : Promise<boolean>
+	{
+		return(this.conn$.disconnect());
+	}
+
 	public connected() : boolean
 	{
 		return(this.conn$.connected());

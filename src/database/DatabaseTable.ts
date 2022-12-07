@@ -67,7 +67,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (connection == null)
 		{
-			Alert.fatal("Cannot create datasource without connection",this.constructor.name);
+			Alert.fatal("Cannot create datasource when connection is null",this.constructor.name);
 			return;
 		}
 

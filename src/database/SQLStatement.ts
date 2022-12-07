@@ -38,7 +38,7 @@ export class SQLStatement
 
 		if (connection == null)
 		{
-			Alert.fatal("Cannot create sql-statement without connection",this.constructor.name);
+			Alert.fatal("Cannot create sql-statement when connection is null",this.constructor.name);
 			return;
 		}
 

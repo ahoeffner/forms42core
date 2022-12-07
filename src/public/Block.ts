@@ -127,6 +127,11 @@ export class Block
 		FormBacking.getModelBlock(this).refresh(offset);
 	}
 
+	public getFieldNames() : string[]
+	{
+		return(FormBacking.getViewBlock(this).getFieldNames());
+	}
+
 	public showDatePicker(field:string) : void
 	{
 		field = field?.toLowerCase();

@@ -37,7 +37,7 @@ export class StoredProcedure
 
 		if (connection == null)
 		{
-			Alert.fatal("Cannot create stored procedure without connection",this.constructor.name);
+			Alert.fatal("Cannot create stored procedure when connection is null",this.constructor.name);
 			return;
 		}
 

@@ -208,6 +208,11 @@ export class FormsModule
 		return(Loading.show(message));
 	}
 
+	public removeEventListener(id:object) : void
+	{
+		FormEvents.removeListener(id);
+	}
+
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
 		return(FormEvents.addListener(null,this,method,filter));

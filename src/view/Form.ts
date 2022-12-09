@@ -653,7 +653,15 @@ export class Form implements EventListenerObject
 				if (inst.field.row.status == Status.na)
 					return(false);
 
-				if (!mblock.ctrlblk && mblock.deleteallowed)
+				let ok:boolean = mblock.deleteallowed;
+
+				if (inst.field.row.status == Status.new)
+					ok = true;
+
+				if (inst.field.row.status == Status.insert)
+					ok = true;
+
+				if (!mblock.ctrlblk && ok)
 					mblock.delete();
 
 				return(true);

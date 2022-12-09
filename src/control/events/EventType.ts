@@ -25,7 +25,7 @@ export enum EventType
 
 	PreRollback,
 	PostRollback,
-	
+
 	OnTransaction,
 
 	Connect,
@@ -43,6 +43,7 @@ export enum EventType
 
 	PreRecord,
 	PostRecord,
+	OnNewRecord,
 
 	PreField,
 	PostField,

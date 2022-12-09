@@ -971,6 +971,12 @@ export class Block
 		this.rows$.forEach((row) => {rows.push(row)});
 		this.form.getIndicators(this.name).forEach((ind) => this.getRow(ind.row)?.setIndicator(ind));
 
+		if (rows.length == 0)
+			rows.push(new Row(this,0));
+
+		if (this.model == null)
+			this.model$ = FormBacking.getModelBlock(this,true);
+
 		/*
 		 * If only 1 row, set rownum to 0;
 		 * Otherwise sort all rows and re-number then from 0 - rows

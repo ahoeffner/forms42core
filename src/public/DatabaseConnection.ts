@@ -11,6 +11,7 @@
  */
 
 import { Connection as RestConnection } from "../database/Connection.js";
+import { ConnectionScope } from "../database/ConnectionScope.js";
 
 export class DatabaseConnection
 {
@@ -39,6 +40,16 @@ export class DatabaseConnection
 	public constructor(url?:string|URL)
 	{
 		this.conn$ = new RestConnection(url);
+	}
+
+	public get scope() : ConnectionScope
+	{
+		return(this.conn$.scope);
+	}
+
+	public set scope(scope:ConnectionScope)
+	{
+		this.conn$.scope = scope;
 	}
 
 	public async connect(username?:string, password?:string) : Promise<boolean>

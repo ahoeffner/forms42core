@@ -56,14 +56,14 @@ export class Connection extends BaseConnection
 		return(this.scope$);
 	}
 
-	public set scope(state:ConnectionScope)
+	public set scope(scope:ConnectionScope)
 	{
 		if (this.connected())
 		{
 			Alert.warning("Connection scope cannot be changed after connect","Database Connection");
 			return;
 		}
-		this.scope$ = state;
+		this.scope$ = scope;
 	}
 
 	public connected() : boolean

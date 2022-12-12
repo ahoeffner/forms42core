@@ -620,7 +620,10 @@ export class Block
 		let runid:object = null;
 
 		if (!this.setMasterDependencies())
+		{
+			this.form.clearBlock(this);
 			return(false);
+		}
 
 		if (qryid == null)
 			qryid = this.form.QueryManager.startNewChain();
@@ -853,10 +856,7 @@ export class Block
 			let master:Block = this.getMasterBlock(link);
 
 			if (master.empty)
-			{
-				Alert.fatal("cannot perform query as master block '"+master.name+"' is empty","Master Detail Query");
 				return(false);
-			}
 
 			for (let i = 0; i < link.master.fields.length; i++)
 			{

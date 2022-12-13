@@ -39,6 +39,7 @@ export class Between implements Filter
 	public clone(): Between
 	{
 		let clone:Between = Reflect.construct(this.constructor,[this.column$]);
+		clone.incl = this.incl;
 		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}

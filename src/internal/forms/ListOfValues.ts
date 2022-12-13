@@ -95,7 +95,7 @@ export class ListOfValues extends Form
 			{
 				case Case.upper: 		flt = flt?.toLocaleUpperCase(); 	break;
 				case Case.lower: 		flt = flt?.toLocaleLowerCase(); 	break;
-				case Case.initcap: 	flt = this.initcap(flt); 				break;
+				case Case.initcap: 	flt = this.initcap(flt); 			break;
 			}
 
 			if (this.props.filterPrefix)

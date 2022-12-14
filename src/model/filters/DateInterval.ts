@@ -15,7 +15,7 @@ import { Between } from "./Between.js";
 
 export class DateInterval extends Between
 {
-	public Day(date?:Date)
+	public Day(date?:Date) : DateInterval
 	{
 		if (date == null)
 			date = new Date();
@@ -27,9 +27,10 @@ export class DateInterval extends Between
 		to.setHours(23,59,59,999);
 
 		super.constraint = [fr,to];
+		return(this);
 	}
 
-	public Week(date?:Date, start?:number)
+	public Week(date?:Date, start?:number) : DateInterval
 	{
 		if (start == null) start = 0;
 		if (date == null) date = new Date();
@@ -47,9 +48,10 @@ export class DateInterval extends Between
 		to.setHours(23,59,59,999);
 
 		super.constraint = [fr,to];
+		return(this);
 	}
 
-	public Month(date?:Date)
+	public Month(date?:Date) : DateInterval
 	{
 		if (date == null)
 			date = new Date();
@@ -66,9 +68,10 @@ export class DateInterval extends Between
 		to.setHours(23,59,59,999);
 
 		super.constraint = [fr,to];
+		return(this);
 	}
 
-	public Year(date?:Date)
+	public Year(date?:Date) : DateInterval
 	{
 		if (date == null)
 			date = new Date();
@@ -82,5 +85,6 @@ export class DateInterval extends Between
 		to.setHours(23,59,59,999);
 
 		super.constraint = [fr,to];
+		return(this);
 	}
 }

@@ -91,7 +91,7 @@ export class SQLRestBuilder
 		return(parsed);
 	}
 
-	public static finish(sql:string, filter:FilterStructure, order:string) : SQLRest
+	public static finish(sql:string, filter:FilterStructure, bindings:BindValue[], order:string) : SQLRest
 	{
 		let parsed:SQLRest = new SQLRest();
 
@@ -104,6 +104,8 @@ export class SQLRestBuilder
 			parsed.stmt += " order by "+order;
 
 		parsed.bindvalues = filter?.getBindValues();
+		if (bindings) parsed.bindvalues.push(...bindings);
+		
 		return(parsed);
 	}
 

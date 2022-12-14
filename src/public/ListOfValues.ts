@@ -41,7 +41,7 @@ export interface ListOfValues
 	filterInitialValueFrom?:string;
 	filterPreProcesser?:LOVFilterPreProcessor;
 
+	sourcefields:string|string[];
+	targetfields:string|string[];
 	displayfields:string|string[];
-	sourcefields?:string|string[];
-	targetfields?:string|string[];
 }

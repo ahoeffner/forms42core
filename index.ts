@@ -51,6 +51,7 @@ export { Contains } from './src/model/filters/Contains.js';
 export { LessThan } from './src/model/filters/LessThan.js';
 export { NullFilter } from './src/model/filters/NullFilter.js';
 export { GreaterThan } from './src/model/filters/GreaterThan.js';
+export { DateInterval } from './src/model/filters/DateInterval.js';
 
 export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";

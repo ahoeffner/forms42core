@@ -42,6 +42,7 @@ export class QueryTable extends SQLSource implements DataSource
 	private fetched$:Record[] = [];
 
 	private conn$:Connection = null;
+	private bindings$:BindValue[] = null;
 	private nosql$:FilterStructure = null;
 	private limit$:FilterStructure = null;
 	private pubconn$:DatabaseConnection = null;
@@ -147,6 +148,11 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this);
 	}
 
+	public addBindValue(bindvalue:BindValue) : void
+	{
+		this.bindings$.push(bindvalue);
+	}
+
 	public async lock(_record:Record) : Promise<boolean>
 	{
 		Alert.fatal("Cannot lock records on datasource based on a query","Datasource");
@@ -240,7 +246,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.bindings$,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);

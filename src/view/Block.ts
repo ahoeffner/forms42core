@@ -1153,7 +1153,10 @@ export class Block
 		let instances:FieldInstance[] = this.getFieldInstances(true);
 
 		for (let i = 0; i < instances.length; i++)
-			instances[i].updateProperties.readonly = true;
+		{
+			if (!this.fieldinfo.get(instances[i].name)?.derived)
+				instances[i].updateProperties.readonly = true;
+		}
 	}
 
 	public distribute(field:Field, value:any, dirty:boolean) : void

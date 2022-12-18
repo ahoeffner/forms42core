@@ -18,11 +18,14 @@ import { ListOfValues } from './ListOfValues.js';
 import { DateConstraint } from './DateConstraint.js';
 import { KeyMap } from '../control/events/KeyMap.js';
 import { FieldProperties } from './FieldProperties.js';
+import { TriggerFunction } from './TriggerFunction.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
+import { FormEvents } from '../control/events/FormEvents.js';
 import { FilterStructure } from '../model/FilterStructure.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
@@ -459,5 +462,15 @@ export class Block
 	public async executeQuery() : Promise<boolean>
 	{
 		return(FormBacking.getModelForm(this.form).executeQuery(this.name,false));
+	}
+
+	public removeEventListener(handle:object) : void
+	{
+		FormEvents.removeListener(handle);
+	}
+
+	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
+	{
+		return(FormEvents.addListener(this.form,this,method,filter));
 	}
 }

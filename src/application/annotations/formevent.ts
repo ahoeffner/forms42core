@@ -27,8 +27,6 @@ export const formevent = (filter:EventFilter|EventFilter[]) =>
 		}
 		else if (lsnr instanceof Block)
 		{
-			if (!filter) filter = {} as EventFilter;
-			(filter as EventFilter).block = lsnr.name;
 			FormMetaData.setBlockEvent(lsnr,method,filter);
 		}
 		else

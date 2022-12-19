@@ -26,6 +26,7 @@ import { FormBacking } from '../application/FormBacking.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
 import { BlockCoordinator } from './relations/BlockCoordinator.js';
+import { EventFilter } from '../control/events/EventFilter.js';
 
 
 export class Form
@@ -259,9 +260,16 @@ export class Form
 
 		this.blocks$.forEach((block) =>
 		{
-			FormMetaData.getBlockEvents(block.pubblk).forEach((filter,method) =>
+			FormMetaData.getBlockEvents(block.pubblk).forEach((event) =>
 			{
-				console.log("Got a blockevent")
+				if (!event.filter) event.filter = {} as EventFilter;
+				if (!Array.isArray(event.filter)) event.filter = [event.filter];
+
+				for (let i = 0; i < event.filter.length; i++)
+					(event.filter[i] as EventFilter).block = this.name;
+
+				let handle:object = FormEvents.addListener(this.parent,block.pubblk,event.method,event.filter);
+				FormBacking.getBacking(this.parent).listeners.push(handle);
 			})
 		})
 

@@ -493,14 +493,14 @@ export class FormEvents
 		let listeners:EventListener[];
 
 		if (type == null) listeners = map.get(-1);
-		else			  listeners = map.get(type);
+		else			  		listeners = map.get(type);
 
 		if (listeners == null)
 		{
 			listeners = [];
 
 			if (type == null) map.set(-1,listeners);
-			else			  map.set(type,listeners);
+			else			  		map.set(type,listeners);
 		}
 
 		listeners.push(lsnr);

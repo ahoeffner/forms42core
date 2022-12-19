@@ -57,9 +57,6 @@ export class FormMetaData
 	public static getBlockEvents(block:Block) : BlockEvent[]
 	{
 		let events:BlockEvent[] = FormMetaData.blockevents$.get(block.constructor);
-		console.log("get ")
-		console.log(block.constructor)
-		console.log(events)
 		if (events == null) events = [];
 		return(events);
 	}

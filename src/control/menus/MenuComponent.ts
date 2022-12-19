@@ -10,10 +10,10 @@
  * accompanied this code).
  */
 
-import { EventListenerClass } from '../events/EventListenerClass.js';
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
+import { EventListenerClass } from '../events/EventListenerClass.js';
 
 
 export class MenuComponent extends EventListenerClass implements EventListenerObject
@@ -29,7 +29,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
 		super();
-		
+
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;
@@ -64,18 +64,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$ = target;
 	}
 
-	public show() : void
+	public async show() : Promise<void>
 	{
 		let path:string = null;
-		let start:MenuEntry[] = [this.menu$.getRoot()];
+		let start:MenuEntry[] = [await this.menu$.getRoot()];
 
 		if (this.options$.skiproot)
 		{
 			path = "/"+start[0].id;
-			start = this.menu$.getEntries(path);
+			start = await this.menu$.getEntries(path);
 		}
 
-		this.target$.innerHTML = this.showEntry(start,path);
+		this.target$.innerHTML = await this.showEntry(start,path);
 
 		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
 		entries.forEach((link) => {link.addEventListener("click",this);});
@@ -117,8 +117,48 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.show();
 	}
 
-	private showEntry(entries:MenuEntry[], path?:string, page?:string) : string
+	public async findEntry(path:string) : Promise<MenuEntry>
 	{
+		if (path == null) path = "/";
+		if (path.length > 1) path += "/";
+
+		let parts:string[] = this.split(path);
+
+		let entries:MenuEntry[] = [await this.menu$.getRoot()];
+		if (!entries) return(null);
+
+		return(this.findrecusv(entries,parts,0,"/"));
+	}
+
+	private async findrecusv(entries:MenuEntry[], parts:string[], elem:number, path:string) : Promise<MenuEntry>
+	{
+		for (let i = 0; i < entries.length; i++)
+		{
+			if (entries[i].id == parts[elem])
+			{
+				elem++;
+
+				if (elem == parts.length)
+					return(entries[i]);
+
+				let npath:string = path+entries[i].id+"/";
+				entries = await this.menu$.getEntries(path+entries[i].id);
+
+				if (!entries)
+					return(null);
+
+				return(this.findrecusv(entries,parts,elem,npath))
+			}
+		}
+
+		return(null);
+	}
+
+	private async showEntry(entries:MenuEntry[], path?:string, page?:string) : Promise<string>
+	{
+		if (entries == null)
+			return(page);
+
 		if (page == null) page = "";
 		if (path == null) path = "/";
 		if (path.length > 1) path += "/";
@@ -157,7 +197,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				classes += " "+this.options$.classes.open;
 				page += "<div class='"+classes+"'>";
 				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
-				page = this.showEntry(this.menu$.getEntries(npath),npath,page);
+				page = await this.showEntry(await this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
 			else

@@ -25,12 +25,12 @@ export abstract class StaticMenu implements Menu
 		this.index("/"+this.root.id,entries);
 	}
 
-	public getRoot() : MenuEntry
+	public async getRoot() : Promise<MenuEntry>
 	{
 		return(this.root);
 	}
 
-	public getEntries(path:string) : MenuEntry[]
+	public async getEntries(path:string) : Promise<MenuEntry[]>
 	{
 		let entry:StaticMenuEntry = this.menu.get(path);
 		if (entry != null) return(entry.entries);

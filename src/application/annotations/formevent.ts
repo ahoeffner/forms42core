@@ -14,14 +14,29 @@ import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
 import { FormMetaData } from '../FormMetaData.js';
 import { EventFilter } from '../../control/events/EventFilter.js';
+import { Block } from '../../public/Block.js';
 
 
 export const formevent = (filter:EventFilter|EventFilter[]) =>
 {
-	function define(form:Form, method:string)
+	function define(lsnr:any, method:string)
 	{
-		FormMetaData.get(form,true).eventhandlers.set(method,filter);
-		Logger.log(Type.metadata,"Register eventhandler "+method+" on form: "+form.name+", filter: "+filter);
+		if (lsnr instanceof Form)
+		{
+			FormMetaData.get(lsnr,true).formevents.set(method,filter);
+		}
+		else if (lsnr instanceof Block)
+		{
+			if (!filter) filter = {} as EventFilter;
+			(filter as EventFilter).block = lsnr.name;
+			FormMetaData.setBlockEvent(lsnr,method,filter);
+		}
+		else
+		{
+			console.log("some class")
+		}
+
+		Logger.log(Type.metadata,"Register eventhandler "+method+" on form: "+lsnr.name+", filter: "+filter);
 	}
 
 	return(define);

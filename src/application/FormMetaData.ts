@@ -11,6 +11,7 @@
  */
 
 import { Form } from "../public/Form.js";
+import { Block } from "../public/Block.js";
 import { FormBacking } from "./FormBacking.js";
 import { Class, isClass } from '../types/Class.js';
 import { DataSource } from '../model/interfaces/DataSource.js';
@@ -21,6 +22,9 @@ export class FormMetaData
 {
 	private static metadata:Map<string,FormMetaData> =
 		new Map<string,FormMetaData>();
+
+	private static blockevents$:Map<Function,BlockEvent[]> =
+		new Map<Function,BlockEvent[]>();
 
 	public static cleanup(form:Form) : void
 	{
@@ -35,6 +39,29 @@ export class FormMetaData
 			FormBacking.getModelForm(form).getBlocks().forEach((blk) =>
 				{blk.reset(meta.blocksources$.get(blk.name) != null);})
 		}
+	}
+
+	public static setBlockEvent(block:Block, method:string, filter:EventFilter|EventFilter[]) : void
+	{
+		let events:BlockEvent[] = FormMetaData.blockevents$.get(block.constructor);
+
+		if (events == null)
+		{
+			events = [];
+			FormMetaData.blockevents$.set(block.constructor,events);
+		}
+
+		events.push(new BlockEvent(method,filter));
+	}
+
+	public static getBlockEvents(block:Block) : BlockEvent[]
+	{
+		let events:BlockEvent[] = FormMetaData.blockevents$.get(block.constructor);
+		console.log("get ")
+		console.log(block.constructor)
+		console.log(events)
+		if (events == null) events = [];
+		return(events);
 	}
 
 	public static get(form:Class<Form>|Form, create?:boolean) : FormMetaData
@@ -58,7 +85,7 @@ export class FormMetaData
 	public blockattrs:Map<string,string> =
 		new Map<string,string>();
 
-	public eventhandlers:Map<string,EventFilter|EventFilter[]> =
+	public formevents:Map<string,EventFilter|EventFilter[]> =
 		new Map<string,EventFilter|EventFilter[]>();
 
 	private blocksources$:Map<string,Class<DataSource>|DataSource> =
@@ -96,4 +123,9 @@ export class FormMetaData
 
 		return(source as DataSource);
 	}
+}
+
+export class BlockEvent
+{
+	constructor(public method:string, public filter:EventFilter|EventFilter[]) {}
 }

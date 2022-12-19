@@ -70,6 +70,7 @@ export { EventType } from './src/control/events/EventType.js';
 export { FormEvent } from './src/control/events/FormEvent.js';
 export { EventFilter } from './src/control/events/EventFilter.js';
 export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
+export { EventListenerClass as EventListener } from './src/control/events/EventListenerClass.js';
 
 export { Class } from './src/types/Class.js';
 export { Column } from './src/application/Column.js';

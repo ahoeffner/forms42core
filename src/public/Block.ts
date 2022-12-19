@@ -471,6 +471,8 @@ export class Block
 
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
+		if (!filter) filter = {} as EventFilter;
+		(filter as EventFilter).block = this.name;
 		return(FormEvents.addListener(this.form,this,method,filter));
 	}
 }

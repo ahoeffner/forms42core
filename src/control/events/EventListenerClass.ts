@@ -10,9 +10,9 @@
  * accompanied this code).
  */
 
-import { FormEvents } from "./FormEvents";
-import { EventFilter } from "./EventFilter";
-import { TriggerFunction } from "../../public/TriggerFunction";
+import { FormEvents } from "./FormEvents.js";
+import { EventFilter } from "./EventFilter.js";
+import { TriggerFunction } from "../../public/TriggerFunction.js";
 
 export class EventListenerClass
 {

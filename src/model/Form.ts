@@ -236,7 +236,7 @@ export class Form
 	{
 		let meta:FormMetaData = FormMetaData.get(this.parent);
 
-		meta?.eventhandlers.forEach((filter,method) =>
+		meta?.formevents.forEach((filter,method) =>
 		{
 			let handle:object = FormEvents.addListener(this.parent,this.parent,method,filter);
 			FormBacking.getBacking(this.parent).listeners.push(handle);
@@ -256,6 +256,14 @@ export class Form
 
 		FormBacking.getBacking(this.parent).links.
 		forEach((link) => this.BlockCoordinator.link(link))
+
+		this.blocks$.forEach((block) =>
+		{
+			FormMetaData.getBlockEvents(block.pubblk).forEach((filter,method) =>
+			{
+				console.log("Got a blockevent")
+			})
+		})
 
 		this.blocks$.forEach((block) =>
 		{block.addColumns(this.BlockCoordinator.getLinkedColumns(block))});

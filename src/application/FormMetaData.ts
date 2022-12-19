@@ -23,6 +23,9 @@ export class FormMetaData
 	private static metadata:Map<string,FormMetaData> =
 		new Map<string,FormMetaData>();
 
+	private static lsnrevents$:Map<Function,BlockEvent[]> =
+		new Map<Function,BlockEvent[]>();
+
 	private static blockevents$:Map<Function,BlockEvent[]> =
 		new Map<Function,BlockEvent[]>();
 
@@ -57,6 +60,26 @@ export class FormMetaData
 	public static getBlockEvents(block:Block) : BlockEvent[]
 	{
 		let events:BlockEvent[] = FormMetaData.blockevents$.get(block.constructor);
+		if (events == null) events = [];
+		return(events);
+	}
+
+	public static setListenerEvent(lsnr:any, method:string, filter:EventFilter|EventFilter[]) : void
+	{
+		let events:BlockEvent[] = FormMetaData.lsnrevents$.get(lsnr.constructor);
+
+		if (events == null)
+		{
+			events = [];
+			FormMetaData.lsnrevents$.set(lsnr.constructor,events);
+		}
+
+		events.push(new BlockEvent(method,filter));
+	}
+
+	public static getListenerEvents(lsnr:any) : BlockEvent[]
+	{
+		let events:BlockEvent[] = FormMetaData.lsnrevents$.get(lsnr.constructor);
 		if (events == null) events = [];
 		return(events);
 	}

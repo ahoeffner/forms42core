@@ -10,11 +10,13 @@
  * accompanied this code).
  */
 
+import { Alert } from '../Alert.js';
 import { Logger, Type } from '../Logger.js';
 import { Form } from '../../public/Form.js';
+import { Block } from '../../public/Block.js';
 import { FormMetaData } from '../FormMetaData.js';
 import { EventFilter } from '../../control/events/EventFilter.js';
-import { Block } from '../../public/Block.js';
+import { EventListenerClass } from '../../control/events/EventListenerClass.js';
 
 
 export const formevent = (filter:EventFilter|EventFilter[]) =>
@@ -29,12 +31,17 @@ export const formevent = (filter:EventFilter|EventFilter[]) =>
 		{
 			FormMetaData.setBlockEvent(lsnr,method,filter);
 		}
+		else if (lsnr instanceof EventListenerClass)
+		{
+			FormMetaData.setListenerEvent(lsnr,method,filter);
+		}
 		else
 		{
-			console.log("some class")
+			Alert.fatal("Use of @formevent on non compatable class '"+lsnr.constructor.name+"'","FormEvents");
+			return(null);
 		}
 
-		Logger.log(Type.metadata,"Register eventhandler "+method+" on form: "+lsnr.name+", filter: "+filter);
+		Logger.log(Type.metadata,"Register eventhandler "+method+" on form: "+lsnr.constructor.name+", filter: "+filter);
 	}
 
 	return(define);

@@ -12,10 +12,17 @@
 
 import { FormEvents } from "./FormEvents.js";
 import { EventFilter } from "./EventFilter.js";
+import { FormMetaData } from "../../application/FormMetaData.js";
 import { TriggerFunction } from "../../public/TriggerFunction.js";
 
 export class EventListenerClass
 {
+	protected constructor()
+	{
+		FormMetaData.getListenerEvents(this).forEach((event) =>
+		{this.addEventListener(this[event.method],event.filter);});
+	}
+
 	public removeEventListener(handle:object) : void
 	{
 		FormEvents.removeListener(handle);

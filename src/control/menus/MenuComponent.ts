@@ -10,12 +10,13 @@
  * accompanied this code).
  */
 
+import { EventListenerClass } from '../events/EventListenerClass.js';
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
 
 
-export class MenuComponent implements EventListenerObject
+export class MenuComponent extends EventListenerClass implements EventListenerObject
 {
 	private menu$:Menu = null;
 	private levcls$:string = null;
@@ -27,6 +28,8 @@ export class MenuComponent implements EventListenerObject
 
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
+		super();
+		
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;

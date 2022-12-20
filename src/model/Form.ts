@@ -266,7 +266,7 @@ export class Form
 				if (!Array.isArray(event.filter)) event.filter = [event.filter];
 
 				for (let i = 0; i < event.filter.length; i++)
-					(event.filter[i] as EventFilter).block = this.name;
+					(event.filter[i] as EventFilter).block = block.name;
 
 				let handle:object = FormEvents.addListener(this.parent,block.pubblk,event.method,event.filter);
 				FormBacking.getBacking(this.parent).listeners.push(handle);

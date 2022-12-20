@@ -184,6 +184,7 @@ export class FormsModule
 
 		let canvas:Canvas = new canvasimpl();
 		let instance:Form = await factory.createForm(form,parameters);
+		await FormEvents.raise(FormEvent.FormEvent(EventType.onNewForm,instance));
 
 		instance.canvas = canvas;
 		canvas.setComponent(instance);

@@ -627,7 +627,12 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!mblock.ctrlblk && mblock.insertallowed)
+				let ok:boolean = mblock.insertallowed;
+
+				mblock.getMasterBlocks().forEach((blk) =>
+				{if (blk.empty) ok = false;})
+
+				if (!mblock.ctrlblk && ok)
 					mblock.insert(false);
 
 				return(true);
@@ -640,7 +645,12 @@ export class Form implements EventListenerObject
 				if (!await inst.field.validate(inst))
 					return(false);
 
-				if (!mblock.ctrlblk && mblock.insertallowed)
+				let ok:boolean = mblock.insertallowed;
+
+				mblock.getMasterBlocks().forEach((blk) =>
+				{if (blk.empty) ok = false;})
+
+				if (!mblock.ctrlblk && ok)
 					mblock.insert(true);
 
 				return(true);

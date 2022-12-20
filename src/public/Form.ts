@@ -332,6 +332,7 @@ export class Form implements CanvasComponent
 			}
 
 			FormBacking.removeBacking(this);
+			await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
 		}
 
 		return(success);

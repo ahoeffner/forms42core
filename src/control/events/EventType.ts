@@ -31,9 +31,12 @@ export enum EventType
 	Connect,
 	Disconnect,
 
+	onNewForm,
 	OnCloseForm,
+
 	PostViewInit,
 	PostFormFocus,
+	PostCloseForm,
 
 	PreForm,
 	PostForm,

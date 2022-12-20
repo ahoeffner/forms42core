@@ -35,14 +35,6 @@ export class UsernamePassword extends Form
 		]);
    }
 
-	public async cancel(): Promise<boolean>
-	{
-		this.username = null;
-		this.password = null;
-		await this.close();
-		return(false);
-	}
-
 	private async accept():Promise<boolean>
 	{
 		this.accepted = true;
@@ -73,13 +65,12 @@ export class UsernamePassword extends Form
 		<div name="loginimage"></div>
 		<div name="login">
 			<label for="username">Username</label>
-			<input from="login" tabindex="0" name="username" size="20"/>
+			<input from="login" tabindex="0" name="username" />
 			<label for="password">Password</label>
-			<input type="password" tabindex="1" from="login" name="password" size="20"/>
+			<input type="password" tabindex="1" from="login" name="password"/>
 		</div>
 		<div name="loginbutton">
-			<button name="cancel" onclick="this.cancel()" tabindex="2">Cancel</button>
-			<button name="ok"     onclick="this.accept()" tabindex="3">Ok</button>
+			<button name="ok" onclick="this.accept()" tabindex="3">Login</button>
 		</div>
 	</div>
    ` + Internals.footer

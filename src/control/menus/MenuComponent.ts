@@ -25,6 +25,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
+	private elements$:Set<HTMLElement> = new Set<HTMLElement>();
 
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
@@ -34,6 +35,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$ = target;
 		this.options$ = options;
 		if (options == null) this.options$ = {};
+
+		document.addEventListener("mousedown",this);
 
 		if (this.options$.classes == null) this.options$.classes = {};
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
@@ -64,6 +67,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$ = target;
 	}
 
+	public hasOpenBranches() : boolean
+	{
+		return(this.open$.size > 0);
+	}
+
 	public async show() : Promise<void>
 	{
 		let path:string = null;
@@ -79,6 +87,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
 		entries.forEach((link) => {link.addEventListener("click",this);});
+
+		this.elements$.clear();
+		this.index(this.target$);
 	}
 
 	public hide() : void
@@ -86,6 +97,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$.innerHTML = "";
 		this.open$.clear();
 		this.show();
+	}
+
+	public clear() : void
+	{
+		this.hide();
 	}
 
 	public toggle(path:string) : void
@@ -214,6 +230,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async handleEvent(link:Event)
 	{
+		if (!this.belongs(link.target as HTMLElement))
+		{
+			this.hide();
+			return;
+		}
+
 		let elem:HTMLElement = link.target as HTMLElement;
 
 		let path:string = elem.getAttribute("path");
@@ -231,6 +253,20 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (command == null) this.toggle(path);
 			else if (await this.menu$.execute(command)) this.hide();
 		}
+	}
+
+	private belongs(elem:HTMLElement) : boolean
+	{
+		return(this.elements$.has(elem));
+	}
+
+	private index(elem:HTMLElement) : void
+	{
+		elem.childNodes.forEach((node) =>
+		{
+			this.index(node as HTMLElement);
+			this.elements$.add(node as HTMLElement);
+		})
 	}
 
 	private split(path:string) : string[]

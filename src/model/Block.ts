@@ -427,7 +427,7 @@ export class Block
 	public locked(record?:Record) : boolean
 	{
 		if (this.querymode) return(true);
-		if (record == null)	record = this.getRecord(0);
+		if (record == null) record = this.getRecord(0);
 		return(this.wrapper.locked(record));
 	}
 
@@ -1032,7 +1032,7 @@ export class Block
 		return(false);
 	}
 
-	private async fire(type:EventType, field?:string) : Promise<boolean>
+	public async fire(type:EventType, field?:string) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.BlockEvent(type,this.pubfrm$,this.name,field);
 		return(FormEvents.raise(frmevent));

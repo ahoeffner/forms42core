@@ -16,6 +16,7 @@ import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { DataSource } from "./interfaces/DataSource.js";
+import { EventType } from "../control/events/EventType.js";
 
 export class DataSourceWrapper
 {
@@ -254,8 +255,17 @@ export class DataSourceWrapper
 			}
 			else
 			{
-				if (!await this.source.lock(record))
-					return(false);
+				if (this.source.rowlocking)
+				{
+					await this.block.setEventTransaction(EventType.OnLockRecord,record);
+					let success:boolean = await this.block.fire(EventType.OnLockRecord);
+					this.block.endEventTransaction(EventType.OnLockRecord,success);
+
+					if (!succces || !await this.source.lock(record))
+						return(false);
+
+					record.locked = true;
+				}
 			}
 
 			succces = await this.delete(record);

@@ -14,6 +14,7 @@ import { KeyMap } from "./KeyMap.js";
 import { MouseMap } from "./MouseMap.js";
 import { EventType } from "./EventType.js";
 import { Form } from "../../public/Form.js";
+import { Form as InternalForm } from "../../internal/Form.js";
 
 export interface FormEvent
 {
@@ -22,5 +23,5 @@ export interface FormEvent
 	block:string;
 	type:EventType;
 	mouse:MouseMap;
-	form:Form|unknown;
+	form:Form|InternalForm;
 }

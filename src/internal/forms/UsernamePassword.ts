@@ -35,6 +35,14 @@ export class UsernamePassword extends Form
 		]);
    }
 
+   public async cancel(): Promise<boolean>
+	{
+		this.username = null;
+		this.password = null;
+		await this.close();
+		return(false);
+	}
+
 	private async accept():Promise<boolean>
 	{
 		this.accepted = true;
@@ -70,7 +78,8 @@ export class UsernamePassword extends Form
 			<input type="password" tabindex="1" from="login" name="password"/>
 		</div>
 		<div name="loginbutton">
-			<button name="ok" onclick="this.accept()" tabindex="3">Login</button>
+			<button name="login" onclick="this.accept()" tabindex="2">Login</button>
+			<button name="cancel" onclick="this.cancel()" tabindex="3">Cancel</button>
 		</div>
 	</div>
    ` + Internals.footer

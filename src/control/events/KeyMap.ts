@@ -28,6 +28,7 @@ export class KeyMap
 	public static rollback:KeyMap = new KeyMap({key: KeyCodes.f12},"rollback","rollback all transactions");
 
 	public static clearblock:KeyMap = new KeyMap({key: KeyCodes.f4},"clear block","clear block");
+	public static clearform:KeyMap = new KeyMap({key: KeyCodes.f4, shift: true},"clear block","clear block");
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7},"enter query","start query by example mode");
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8},"execute query","execute query");

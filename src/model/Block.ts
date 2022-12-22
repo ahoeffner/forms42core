@@ -533,6 +533,10 @@ export class Block
 			this.view.refresh(this.getRecord());
 			this.view.findFirstEditable(this.getRecord())?.focus();
 		}
+		else
+		{
+			this.view.refresh(this.getRecord());
+		}
 
 		return(true);
 	}

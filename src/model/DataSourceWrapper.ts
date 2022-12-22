@@ -239,7 +239,7 @@ export class DataSourceWrapper
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
-		let succces:boolean = true;
+		let success:boolean = true;
 
 		if (record == null)
 			return(true);
@@ -258,49 +258,49 @@ export class DataSourceWrapper
 				if (this.source.rowlocking)
 				{
 					await this.block.setEventTransaction(EventType.OnLockRecord,record);
-					let success:boolean = await this.block.fire(EventType.OnLockRecord);
+					success = await this.block.fire(EventType.OnLockRecord);
 					this.block.endEventTransaction(EventType.OnLockRecord,success);
 
-					if (!succces || !await this.source.lock(record))
+					if (!success || !await this.source.lock(record))
 						return(false);
 
 					record.locked = true;
 				}
 			}
 
-			succces = await this.delete(record);
-			if (succces) record.state = RecordState.Deleted;
+			success = await this.delete(record);
+			if (success) record.state = RecordState.Deleted;
 		}
 		else if (record.dirty)
 		{
 			if (record.state == RecordState.New)
 			{
 				this.dirty = true;
-				succces = await this.insert(record);
-				if (succces) record.state = RecordState.Inserted;
+				success = await this.insert(record);
+				if (success) record.state = RecordState.Inserted;
 			}
 
 			if (record.state == RecordState.Query)
 			{
 				this.dirty = true;
-				succces = await this.update(record);
-				if (succces) record.state = RecordState.Updated;
+				success = await this.update(record);
+				if (success) record.state = RecordState.Updated;
 			}
 
 			if (record.state == RecordState.Inserted)
 			{
 				this.dirty = true;
-				succces = await this.update(record);
+				success = await this.update(record);
 			}
 
 			if (record.state == RecordState.Updated)
 			{
 				this.dirty = true;
-				succces = await this.update(record);
+				success = await this.update(record);
 			}
 		}
 
-		return(succces);
+		return(success);
 	}
 
 	public create(pos:number, before?:boolean) : Record

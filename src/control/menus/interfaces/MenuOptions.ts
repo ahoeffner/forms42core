@@ -22,6 +22,7 @@ export interface MenuOptions
 		common?:string;
 		menuitem?:string;
 		linkitem?:string;
+		hinttext?:string;
 		container?:string;
 	}
 }

@@ -22,6 +22,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private levcls$:string = null;
 	private menucls$:string = null;
 	private linkcls$:string = null;
+	private hintcls$:string = null;
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
@@ -45,11 +46,13 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.options$.classes.open == null) this.options$.classes.open = "menu-open";
 		if (this.options$.classes.menuitem == null) this.options$.classes.menuitem = "menu-item";
 		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
+		if (this.options$.classes.hinttext == null) this.options$.classes.hinttext = "hint-text";
 		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
 
 		this.levcls$ = (this.options$.classes.common + " " + this.options$.classes.container).trim();
 		this.menucls$ = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
 		this.linkcls$ = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
+		this.hintcls$ = (this.options$.classes.common + " " + this.options$.classes.hinttext).trim();
 	}
 
 	public get options() : MenuOptions
@@ -207,12 +210,16 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			}
 
 			let npath:string = path+entries[i].id;
+			if (entries[i].disabled) classes = (classes + " disabled").trim();
 
 			if (this.open$.has(npath))
 			{
 				classes += " "+this.options$.classes.open;
+
 				page += "<div class='"+classes+"'>";
 				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
+				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
+
 				page = await this.showEntry(await this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
@@ -220,6 +227,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			{
 				page += "<div class='"+classes+"'>"
 				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
+				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
 				page += "</div>";
 			}
 		}

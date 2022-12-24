@@ -894,6 +894,73 @@ export class Form implements EventListenerObject
 		}
 	}
 
+	public rehash() : void
+	{
+		let ordered:Instance[] = [];
+		let form:HTMLElement = this.parent.getView();
+		let index:Map<HTMLElement,Instance> = new Map<HTMLElement,Instance>();
+
+		// Create index
+		this.getBlocks().forEach((blk) =>
+		{
+			blk.getFieldInstances(true).forEach((inst) =>
+			{index.set(inst.element,{block: inst.block, row: inst.row, inst: inst})})
+		});
+
+		this.reindex(form,index,ordered);
+
+		ordered = ordered.sort((a,b) =>
+		{
+			if (a.block != b.block)
+			{
+				if (a.block > b.block) return(1);
+				return(-1);
+			}
+
+			if (a.row != b.row)
+				return(a.row - b.row);
+
+			return(0);
+		});
+
+		let row:number = null;
+		let block:string = null;
+		let fields:FieldInstance[] = [];
+
+		for (let i = 0; i < ordered.length; i++)
+		{
+			if (ordered[i].block != block)
+			{
+				fields = [];
+				row = ordered[i].row;
+				block = ordered[i].block;
+			}
+
+			if (ordered[i].row != row)
+			{
+				fields = [];
+				row = ordered[i].row;
+			}
+
+			fields.push(ordered[i].inst);
+		}
+	}
+
+	private reindex(element:HTMLElement, index:Map<HTMLElement,Instance>, ordered:Instance[]) : void
+	{
+		let inst:Instance = null;
+		let elem:HTMLElement = null;
+
+		for (let i = 0; i < element.childNodes.length; i++)
+		{
+			elem = element.childNodes.item(i) as HTMLElement;
+
+			inst = index.get(elem);
+			if (inst) ordered.push(inst);
+			else this.reindex(elem,index,ordered);
+		}
+	}
+
 	private setURL() : void
 	{
 		let location:Location = window.location;
@@ -944,4 +1011,11 @@ export class Form implements EventListenerObject
 		element.addEventListener("dblclick",this);
 		element.addEventListener("contextmenu",this);
 	}
+}
+
+class Instance
+{
+	row:number;
+	block:string;
+	inst:FieldInstance;
 }

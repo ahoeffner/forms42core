@@ -266,6 +266,11 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
+	public indexFieldOrder() : void
+	{
+		FormBacking.getViewForm(this).rehash();
+	}
+
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
 		let back:FormBacking = FormBacking.getBacking(this);

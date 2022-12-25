@@ -130,7 +130,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		else
 		{
 			if (!open) this.open$.add(path);
-			else	   this.open$.delete(path);
+			else	     this.open$.delete(path);
 		}
 
 		this.show();
@@ -238,6 +238,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async handleEvent(link:Event)
 	{
+		if (link.type != "click")
+			return;
+
 		if (!this.belongs(link.target as HTMLElement))
 		{
 			this.hide();

@@ -28,6 +28,7 @@ export class Connection extends BaseConnection
 	private conn$:string = null;
 	private touched$:Date = null;
 	private modified$:Date = null;
+	private secret$:string = null;
 	private keepalive$:number = 20;
 	private tmowarn$:boolean = false;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
@@ -66,6 +67,11 @@ export class Connection extends BaseConnection
 		this.scope$ = scope;
 	}
 
+	public set preAuthenticated(secret:string)
+	{
+		this.secret$ = secret;
+	}
+
 	public connected() : boolean
 	{
 		return(this.conn$ != null);
@@ -81,6 +87,12 @@ export class Connection extends BaseConnection
 
 		let scope:string = null;
 
+		let method:string = "database";
+		if (this.secret$) method = "token";
+
+		let secret:string = this.password;
+		if (this.secret$) secret = this.secret$;
+
 		switch(this.scope)
 		{
 			case ConnectionScope.stateless: scope = "none"; break;
@@ -93,10 +105,12 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			"scope": scope,
-			"auth.method": "database",
-			"username": this.username,
-			"auth.secret": this.password
+			"auth.method": method,
+			"auth.secret": secret
 		};
+
+		if (username)
+			payload.username = username;
 
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.get().showLoading("Connecting");

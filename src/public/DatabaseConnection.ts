@@ -52,6 +52,11 @@ export class DatabaseConnection
 		this.conn$.scope = scope;
 	}
 
+	public set preAuthenticated(secret:string)
+	{
+		this.conn$.preAuthenticated = secret;
+	}
+
 	public async connect(username?:string, password?:string) : Promise<boolean>
 	{
 		return(this.conn$.connect(username,password));

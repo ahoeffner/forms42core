@@ -894,20 +894,32 @@ export class Form implements EventListenerObject
 		}
 	}
 
-	public rehash() : void
+	public rehash(block?:string) : void
 	{
 		let ordered:Instance[] = [];
 		let form:HTMLElement = this.parent.getView();
 		let index:Map<HTMLElement,Instance> = new Map<HTMLElement,Instance>();
 
-		// Create index
-		this.getBlocks().forEach((blk) =>
+		if (block)
 		{
-			blk.getFieldInstances(true).forEach((inst) =>
-			{index.set(inst.element,{block: inst.block, row: inst.row, inst: inst})})
-		});
+			// Register HTMLElements for given block
+			this.getBlock(block)?.getFieldInstances(true).forEach((inst) =>
+			{
+				{index.set(inst.element,{block: inst.block, row: inst.row, inst: inst})}
+			})
+		}
+		else
+		{
+		// Register all HTMLElements
+		this.getBlocks().forEach((blk) =>
+			{
+				blk.getFieldInstances(true).forEach((inst) =>
+				{index.set(inst.element,{block: inst.block, row: inst.row, inst: inst})})
+			});
+		}
 
-		this.reindex(form,index,ordered);
+		// Get all elements in new order
+		this.getElements(form,index,ordered);
 
 		ordered = ordered.sort((a,b) =>
 		{
@@ -923,8 +935,9 @@ export class Form implements EventListenerObject
 			return(0);
 		});
 
+		block = null;
+
 		let row:number = null;
-		let block:string = null;
 		let fields:FieldInstance[] = null;
 		let blockmap:Map<number,FieldInstance[]> = null;
 
@@ -954,19 +967,12 @@ export class Form implements EventListenerObject
 
 		formmap.forEach((blkmap,blk) =>
 		{
-			console.log("block: "+blk);
 			blkmap.forEach((instances,row) =>
-			{
-				console.log("  "+row);
-				instances.forEach((inst) =>
-				{
-					console.log("    "+inst.name);
-				})
-			})
+			{this.getBlock(blk)?.getRow(row)?.setInstances(instances);})
 		})
 	}
 
-	private reindex(element:HTMLElement, index:Map<HTMLElement,Instance>, ordered:Instance[]) : void
+	private getElements(element:HTMLElement, index:Map<HTMLElement,Instance>, ordered:Instance[]) : void
 	{
 		let inst:Instance = null;
 		let elem:HTMLElement = null;
@@ -977,7 +983,7 @@ export class Form implements EventListenerObject
 
 			inst = index.get(elem);
 			if (inst) ordered.push(inst);
-			else this.reindex(elem,index,ordered);
+			else this.getElements(elem,index,ordered);
 		}
 	}
 

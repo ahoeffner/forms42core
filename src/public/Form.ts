@@ -266,7 +266,7 @@ export class Form implements CanvasComponent
 		return(cform);
 	}
 
-	public indexFieldOrder() : void
+	public reIndexFieldOrder() : void
 	{
 		FormBacking.getViewForm(this).rehash();
 	}

@@ -224,6 +224,11 @@ export class Row
 		this.instances.push(instance);
 	}
 
+	public setInstances(instances:FieldInstance[]) : void
+	{
+		this.instances = instances;
+	}
+
 	public focusable() : boolean
 	{
 		for (let i = 0; i < this.instances.length; i++)

@@ -302,6 +302,11 @@ export class Block
 		return(intrec == null ? null : new Record(intrec));
 	}
 
+	public reIndexFieldOrder() : void
+	{
+		FormBacking.getViewForm(this.form).rehash(this.name);
+	}
+
 	public getQBEProperties(field:string) : FieldProperties
 	{
 		field = field?.toLowerCase();

@@ -34,7 +34,6 @@ export class StoredProcedure
 
 	public constructor(connection:DatabaseConnection)
 	{
-
 		if (connection == null)
 		{
 			Alert.fatal("Cannot create stored procedure when connection is null",this.constructor.name);

@@ -10,8 +10,8 @@
  * accompanied this code).
  */
 
-import { Connection as RestConnection } from "../database/Connection.js";
 import { ConnectionScope } from "../database/ConnectionScope.js";
+import { Connection as RestConnection } from "../database/Connection.js";
 
 export class DatabaseConnection
 {

@@ -925,25 +925,45 @@ export class Form implements EventListenerObject
 
 		let row:number = null;
 		let block:string = null;
-		let fields:FieldInstance[] = [];
+		let fields:FieldInstance[] = null;
+		let blockmap:Map<number,FieldInstance[]> = null;
+
+		let formmap:Map<string,Map<number,FieldInstance[]>> =
+			new Map<string,Map<number,FieldInstance[]>>();
 
 		for (let i = 0; i < ordered.length; i++)
 		{
 			if (ordered[i].block != block)
 			{
-				fields = [];
-				row = ordered[i].row;
+				row = null;
 				block = ordered[i].block;
+				blockmap = new Map<number,FieldInstance[]>();
+
+				formmap.set(block,blockmap);
 			}
 
 			if (ordered[i].row != row)
 			{
 				fields = [];
 				row = ordered[i].row;
+				blockmap.set(row,fields);
 			}
 
 			fields.push(ordered[i].inst);
 		}
+
+		formmap.forEach((blkmap,blk) =>
+		{
+			console.log("block: "+blk);
+			blkmap.forEach((instances,row) =>
+			{
+				console.log("  "+row);
+				instances.forEach((inst) =>
+				{
+					console.log("    "+inst.name);
+				})
+			})
+		})
 	}
 
 	private reindex(element:HTMLElement, index:Map<HTMLElement,Instance>, ordered:Instance[]) : void

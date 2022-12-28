@@ -362,11 +362,13 @@ export class QueryEditor extends Form
 		`
 			<div name="popup-body">
 				<div name="query">
+				
 					<div name="type">
 						<label for="options">Type :</label>
 						<select name="options" from="options"></select>
 						<span style="display: block; width: 1em"></span>
 					</div>
+
 					<div name="single-value">
 						<tabel>
 							<tr>
@@ -395,6 +397,7 @@ export class QueryEditor extends Form
 							</tr>
 						</table>
 					</div>
+
 					<div name="multi-value">
 						<table style="margin-left: auto; margin-right: auto;">
 							<tr>
@@ -415,6 +418,7 @@ export class QueryEditor extends Form
 						</table>
 					</div>
 				</div>
+
 				<div name="lowerright">
 					<div name="buttonarea">
 						<button onClick="this.done()">Ok</button>

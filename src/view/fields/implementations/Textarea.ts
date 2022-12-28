@@ -189,7 +189,13 @@ export class Textarea implements FieldImplementation, EventListenerObject
         element.addEventListener("mousemove",this);
 
         element.addEventListener("drop",this);
-        element.addEventListener("dragover",this);
+
+		  element.addEventListener("drag",this);
+		  element.addEventListener("dragend",this);
+		  element.addEventListener("dragover",this);
+		  element.addEventListener("dragstart",this);
+		  element.addEventListener("dragenter",this);
+		  element.addEventListener("dragleave",this);
 
         element.addEventListener("click",this);
         element.addEventListener("dblclick",this);

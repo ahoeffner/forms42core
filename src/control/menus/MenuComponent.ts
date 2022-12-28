@@ -238,14 +238,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async handleEvent(link:Event)
 	{
-		if (link.type != "click")
-			return;
-
 		if (!this.belongs(link.target as HTMLElement))
 		{
 			this.hide();
 			return;
 		}
+
+		if (link.type != "click")
+			return;
 
 		let elem:HTMLElement = link.target as HTMLElement;
 

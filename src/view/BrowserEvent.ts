@@ -87,6 +87,7 @@ export class BrowserEvent
 
 		if (this.type == "mouseout") bubble = true;
 		if (this.type == "mouseover") bubble = true;
+		if (this.type.includes("drag")) bubble = true;
 
 		if (!bubble)
 			event.stopPropagation();
@@ -132,14 +133,18 @@ export class BrowserEvent
 	{
 		if (this.event.type == "wheel") return(true);
 		if (this.event.type == "contextmenu") return(true);
+
+		if (this.event.type.includes("drag")) return(true);
 		if (this.event.type?.includes("click")) return(true);
 		if (this.event.type?.startsWith("mouse")) return(true);
+
 		return(false);
 	}
 
 	public get bubbleMouseEvent() : boolean
 	{
 		if (this.type == "contextmenu") return(true);
+		if (this.type.includes("drag")) return(true);
 		if (this.type.includes("click")) return(true);
 		return(false);
 	}

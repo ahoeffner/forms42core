@@ -14,18 +14,23 @@ import { BrowserEvent } from "../../view/BrowserEvent.js";
 
 export enum MouseMap
 {
+	drop,
 	click,
 	dblclick,
-	contextmenu
+	contextmenu,
+
+	drag,
+	dragend,
+	dragover,
+	dragstart,
+	dragenter,
+	dragleave
 }
 
 export class MouseMapParser
 {
 	public static parseBrowserEvent(event:BrowserEvent) : MouseMap
 	{
-		if (event.type == "click") return(MouseMap.click);
-		else if (event.type == "dblclick") return(MouseMap.dblclick);
-		else if (event.type == "contextmenu") return(MouseMap.contextmenu);
-		return(null);
+		return(MouseMap[event.type]);
 	}
 }

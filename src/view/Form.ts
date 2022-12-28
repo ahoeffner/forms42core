@@ -473,25 +473,11 @@ export class Form implements EventListenerObject
 		let block:Block = inst?.field.block;
 		let mblock:ModelBlock = inst?.field.block.model;
 
-		if (key == KeyMap.clearform)
-			return(this.clear());
-
 		if (key == KeyMap.dump)
 		{
 			FlightRecorder.dump();
 			return(true);
 		}
-
-		if (key == KeyMap.enter)
-		{
-			if (mblock && mblock.querymode) key = KeyMap.executequery;
-			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
-		}
-
-		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
-
-		if (!await FormEvents.raise(frmevent))
-			return(false);
 
 		if (inst == null)
 		{
@@ -522,6 +508,20 @@ export class Form implements EventListenerObject
 			block = inst?.field.block;
 			mblock =	inst?.field.block.model;
 		}
+
+		if (key == KeyMap.enter)
+		{
+			if (mblock && mblock.querymode) key = KeyMap.executequery;
+			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
+		}
+
+		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
+
+		if (!await FormEvents.raise(frmevent))
+			return(false);
+
+		if (key == KeyMap.clearform)
+			return(this.clear());
 
 		if (inst != null)
 		{

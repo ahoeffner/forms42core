@@ -22,11 +22,22 @@ export class Framework
 {
 	private component:any = null;
 	private root:HTMLElement = null;
+	private static event$:any = null;
 	private static taglib:Map<string,Tag> = null;
 	private static attrlib:Map<string,Tag> = null;
 
 	public eventhandler:EventHandler = null;
 	public events:Map<Element,string[][]> = new Map<Element,string[][]>();
+
+	public static getEvent() : any
+	{
+		return(Framework.event$);
+	}
+
+	public static setEvent(event:any) : void
+	{
+		Framework.event$ = event;
+	}
 
 	private static loadTaglib() : Map<string,Tag>
 	{
@@ -471,7 +482,11 @@ class EventHandler implements EventListenerObject
 			}
 		}
 
-		if (method != null) method.invoke(this.component);
+		if (method != null)
+		{
+			Framework.setEvent(event);
+			method.invoke(this.component);
+		}
 		else
 		{
 			let msg:string = "@Framework: Cannot find "+event.type+" on this or parent any elements";

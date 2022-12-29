@@ -10,184 +10,121 @@
  * accompanied this code).
  */
 
+import { Form } from "./Form.js";
 import { Block } from "./Block.js";
-import { FieldInstance } from "./fields/FieldInstance.js";
+import { FieldInstance } from "./fields/FieldInstance";
 
 export class FieldDrag implements EventListenerObject
 {
-	private drag$:HTMLDivElement = null;
-	private elements$:HTMLElement[] = null;
-	private mouse$:{x:number, y:number} = null;
-	private position$:{x:number, y:number} = null;
-	private positions$:{x:number, y:number}[] = null;
+	private cursor:string = null;
+	private target:HTMLElement = null;
+	private instance:FieldInstance = null;
 
-	constructor(private inst:FieldInstance)
+	constructor(private form:Form, private header:HTMLElement)
 	{
-		this.create();
+		this.cursor = header.style.cursor;
+		this.instance = this.findInstance(header);
+
+		if (this.instance != null)
+		{
+			this.header.style.cursor = "auto";
+			document.addEventListener("drag",this);
+			document.addEventListener("dragend",this);
+			document.addEventListener("dragover",this);
+			document.addEventListener("dragleave",this);
+		}
 	}
 
-	public drag(event:MouseEvent) : void
-	{
-		event.preventDefault();
-
-		if (this.inst.element instanceof HTMLInputElement)
-			this.inst.element.setSelectionRange(0,0);
-
-		this.mouse$ = {x: event.clientX, y: event.clientY};
-	}
 
 	public handleEvent(event:MouseEvent): void
 	{
-		if (event.type == "mouseup")
+		if (event.type == "dragend")
 		{
-			this.drag$.remove();
-			document.removeEventListener("mouseup",this);
-			document.removeEventListener("mousemove",this);
+			this.header.style.cursor = this.cursor;
+
+			document.removeEventListener("drag",this);
+			document.removeEventListener("dragend",this);
+			document.removeEventListener("dragover",this);
+			document.removeEventListener("dragleave",this);
+
+			this.move();
 		}
 
-		if (event.type == "mousemove")
+		if (event.type == "dragleave")
 		{
-			let deltaX:number = event.clientX - this.mouse$.x;
-			let deltaY:number = event.clientY - this.mouse$.y;
-
-			this.position$.x += deltaX;
-			this.position$.y += deltaY;
-
-			this.mouse$.x = event.clientX;
-			this.mouse$.y = event.clientY;
-
-			this.drag$.style.top = this.position$.y + "px";
-			this.drag$.style.left = this.position$.x + "px";
+			this.header.style.cursor = "auto";
 		}
-	}
 
-	private create() : void
-	{
-		let rect = this.findBox();
-		this.drag$ = document.createElement("div");
-
-		this.drag$.tabIndex = 0;
-		this.drag$.style.cursor = "move";
-		this.drag$.style.width = rect.w+"px";
-		this.drag$.style.height = rect.h+"px";
-		this.drag$.style.zIndex = "2147483647";
-
-		document.body.appendChild(this.drag$);
-
-		this.drag$.style.top = rect.y + "px";
-		this.drag$.style.left = rect.x + "px";
-		this.drag$.style.position = "absolute";
-		this.drag$.setAttribute("name","swap-fields");
-
-		this.addClones();
-		this.position$ = {x: rect.x, y: rect.y};
-
-		this.drag$.focus();
-		
-		document.addEventListener("mouseup",this);
-		document.addEventListener("mousemove",this);
-	}
-
-	private findBox() : {x:number, y:number, w:number, h:number}
-	{
-		this.positions$ = [];
-		this.findElements();
-
-		let box:{x1:number, y1:number, x2:number, y2:number} =
-			{x1:Number.MAX_VALUE, y1:Number.MAX_VALUE, x2:0, y2:0};
-
-		this.elements$.forEach((elem) =>
+		if (event.type == "dragover")
 		{
-			let rect = this.getRectangle(elem);
-			this.positions$.push({x: rect.x, y: rect.y});
+			this.target = null;
 
-			if (rect.x < box.x1) box.x1 = rect.x;
-			if (rect.y < box.y1) box.y1 = rect.y;
-
-			if (rect.x + rect.w > box.x2) box.x2 = rect.x + rect.w;
-			if (rect.y + rect.h > box.y2) box.y2 = rect.y + rect.h;
-		})
-
-		return({x: box.x1, y: box.y1, w: box.x2-box.x1+20, h: box.y2-box.y1+20});
-	}
-
-	private findElements() : void
-	{
-		this.elements$ = [];
-		let rows:number = 0;
-		let block:Block = this.inst.field.block;
-
-		if (this.inst.row >= 0)
-			rows = this.inst.field.block.rows;
-
-		if (rows == 0)
-		{
-			this.elements$.push(this.inst.element);
-		}
-		else
-		{
-			block.getFieldInstances(true).forEach((inst) =>
+			if (event.target instanceof HTMLElement)
 			{
-				if (inst.name == this.inst.name && inst.row >= 0)
-					{this.elements$.push(inst.element)}
-			})
-		}
-
-		let label:HTMLLabelElement = null;
-
-		for (let i = 0; i < this.elements$.length; i++)
-		{
-			label = this.findLabel(this.elements$[i]);
-			if (label != null)
-			{
-				this.elements$.unshift(label);
-				break;
+				if (this.check(event.target))
+				{
+					this.target = event.target;
+					this.header.style.cursor = "move";
+				}
 			}
 		}
 	}
 
-	private addClones() : void
+	private move() : void
 	{
-		let drag:{x:number, y:number} = this.getRectangle(this.drag$);
+		let target:FieldInstance = this.findInstance(this.target);
 
-		for (let i = 0; i < this.positions$.length; i++)
+		if (target && target != this.instance)
 		{
-			let elem:HTMLElement = this.elements$[i];
-			let rect:{x:number, y:number} = this.positions$[i];
+			let h1:HTMLElement = this.header.cloneNode(true) as HTMLElement;
+			let h2:HTMLElement = this.target.cloneNode(true) as HTMLElement;
 
-			let posX:number = rect.x-drag.x;
-			let posY:number = rect.y-drag.y;
-
-			let clone:HTMLElement = elem.cloneNode(true) as HTMLElement;
-			this.drag$.appendChild(clone);
-
-			clone.style.top = posY+"px";
-			clone.style.left = posX+"px";
-			clone.style.position = "absolute";
+			this.target.replaceWith(h1);
+			this.header.replaceWith(h2);
 		}
 	}
 
-	private findLabel(element:HTMLElement) : HTMLLabelElement
+	private check(header:HTMLElement) : boolean
 	{
-		if (element.id == null) return(null);
-		return(document.querySelector("label[for="+element.id+"]"));
+		let id:string = header.getAttribute("for");
+		if (id == null) return(false);
+
+		let elem:HTMLElement = document.querySelector("#"+id);
+		if (elem == null) return(false);
+
+		let block:Block = this.instance.field.block;
+		let instances:FieldInstance[] = block.getFieldInstances(true);
+
+		for (let i = 0; i < instances.length; i++)
+		{
+			if (instances[i].element == elem)
+				return(true);
+		}
+
+		return(false);
 	}
 
-	private getRectangle(element:HTMLElement) : {x:number, y:number, w:number, h:number}
+	private findInstance(header:HTMLElement) : FieldInstance
 	{
-		let body:HTMLElement = document.body;
-		let delem:HTMLElement = document.documentElement;
-		let box:DOMRect = element.getBoundingClientRect();
+		let id:string = header.getAttribute("for");
+		if (id == null) return(null);
 
-		let scrollTop:number = window.pageYOffset || delem.scrollTop || body.scrollTop;
-	   let scrollLeft:number = window.pageXOffset || delem.scrollLeft || body.scrollLeft;
+		let elem:HTMLElement = document.querySelector("#"+id);
+		if (elem == null) return(null);
 
-		let clientTop:number = delem.clientTop || body.clientTop || 0;
-		let clientLeft:number = delem.clientLeft || body.clientLeft || 0;
+		let blocks:Block[] = this.form.getBlocks();
 
-		let top:number  = box.top +  scrollTop - clientTop;
-		let left:number = box.left + scrollLeft - clientLeft;
+		for (let b = 0; b < blocks.length; b++)
+		{
+			let instances:FieldInstance[] = blocks[b].getFieldInstances(true);
 
-		return({x:Math.round(left), y: Math.round(top), w: element.offsetWidth, h: element.offsetHeight});
+			for (let i = 0; i < instances.length; i++)
+			{
+				if (instances[i].element == elem)
+					return(instances[i])
+			}
+		}
+
+		return(null);
 	}
 }

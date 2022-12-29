@@ -76,6 +76,11 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this)?.focus();
 	}
 
+	public getEvent() : any
+	{
+		return(Framework.getEvent());
+	}
+
 	public getCurrentBlock() : Block
 	{
 		return(this.getBlock(FormBacking.getViewForm(this).block.name));
@@ -269,6 +274,11 @@ export class Form implements CanvasComponent
 	public reIndexFieldOrder() : void
 	{
 		FormBacking.getViewForm(this).rehash();
+	}
+
+	public startFieldDragging(label:HTMLElement) : void
+	{
+		FormBacking.getViewForm(this).swapfields(label);
 	}
 
 	public async setView(page:string|HTMLElement) : Promise<void>

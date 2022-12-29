@@ -12,6 +12,7 @@
 
 import { Status } from './Row.js';
 import { Block } from './Block.js';
+import { FieldDrag } from './FieldDrag.js';
 import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
@@ -35,7 +36,6 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
-import { FieldDrag } from './FieldDrag.js';
 
 export class Form implements EventListenerObject
 {
@@ -168,6 +168,11 @@ export class Form implements EventListenerObject
 			this.blocks$.values().next().value.focus();
 			return;
 		}
+	}
+
+	public swapfields(header:HTMLElement) : void
+	{
+		let fd:FieldDrag = new FieldDrag(this,header);
 	}
 
 	public async validate() : Promise<boolean>
@@ -725,17 +730,13 @@ export class Form implements EventListenerObject
 
 	public async mousehandler(mevent:MouseMap, event:Event, inst?:FieldInstance) : Promise<boolean>
 	{
+		if (mevent == null)
+			return(true);
+
 		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
 
 		if (!await FormEvents.raise(frmevent))
 			return(false);
-
-		if (mevent == MouseMap.dragstart && inst)
-		{
-			let dragger:FieldDrag = new FieldDrag(inst);
-			dragger.drag(event as MouseEvent);
-			return(true);
-		}
 
 		if (!await ApplicationHandler.instance.mousehandler(mevent))
 			return(false);

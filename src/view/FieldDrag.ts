@@ -28,6 +28,8 @@ export class FieldDrag implements EventListenerObject
 
 	public drag(event:MouseEvent) : void
 	{
+		event.preventDefault();
+
 		if (this.inst.element instanceof HTMLInputElement)
 			this.inst.element.setSelectionRange(0,0);
 
@@ -65,9 +67,9 @@ export class FieldDrag implements EventListenerObject
 		this.drag$ = document.createElement("div");
 
 		this.drag$.tabIndex = 0;
+		this.drag$.style.cursor = "move";
 		this.drag$.style.width = rect.w+"px";
 		this.drag$.style.height = rect.h+"px";
-		this.drag$.style.border = "1px dotted";
 		this.drag$.style.zIndex = "2147483647";
 
 		document.body.appendChild(this.drag$);
@@ -81,6 +83,7 @@ export class FieldDrag implements EventListenerObject
 		this.position$ = {x: rect.x, y: rect.y};
 
 		this.drag$.focus();
+		
 		document.addEventListener("mouseup",this);
 		document.addEventListener("mousemove",this);
 	}

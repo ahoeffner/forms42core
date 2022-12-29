@@ -732,7 +732,6 @@ export class Form implements EventListenerObject
 
 		if (mevent == MouseMap.dragstart && inst)
 		{
-			event.preventDefault();
 			let dragger:FieldDrag = new FieldDrag(inst);
 			dragger.drag(event as MouseEvent);
 			return(true);

@@ -64,21 +64,23 @@ export class FieldDrag implements EventListenerObject
 		let rect = this.findBox();
 		this.drag$ = document.createElement("div");
 
+		this.drag$.tabIndex = 0;
 		this.drag$.style.width = rect.w+"px";
 		this.drag$.style.height = rect.h+"px";
 		this.drag$.style.border = "1px dotted";
-		this.drag$.style.background = "yellow";
 		this.drag$.style.zIndex = "2147483647";
 
 		document.body.appendChild(this.drag$);
 
-		this.drag$.style.position = "absolute";
 		this.drag$.style.top = rect.y + "px";
 		this.drag$.style.left = rect.x + "px";
+		this.drag$.style.position = "absolute";
+		this.drag$.setAttribute("name","swap-fields");
 
 		this.addClones();
 		this.position$ = {x: rect.x, y: rect.y};
 
+		this.drag$.focus();
 		document.addEventListener("mouseup",this);
 		document.addEventListener("mousemove",this);
 	}

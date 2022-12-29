@@ -35,6 +35,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { MouseMap, MouseMapParser } from '../control/events/MouseMap.js';
 import { FilterIndicator } from '../application/tags/FilterIndicator.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
+import { FieldDrag } from './FieldDrag.js';
 
 export class Form implements EventListenerObject
 {
@@ -722,12 +723,20 @@ export class Form implements EventListenerObject
 		return(true);
 	}
 
-	public async mousehandler(mevent:MouseMap, inst?:FieldInstance) : Promise<boolean>
+	public async mousehandler(mevent:MouseMap, event:Event, inst?:FieldInstance) : Promise<boolean>
 	{
 		let frmevent:FormEvent = FormEvent.MouseEvent(this.parent,mevent,inst);
 
 		if (!await FormEvents.raise(frmevent))
 			return(false);
+
+		if (mevent == MouseMap.dragstart && inst)
+		{
+			event.preventDefault();
+			let dragger:FieldDrag = new FieldDrag(inst);
+			dragger.drag(event as MouseEvent);
+			return(true);
+		}
 
 		if (!await ApplicationHandler.instance.mousehandler(mevent))
 			return(false);
@@ -848,7 +857,7 @@ export class Form implements EventListenerObject
 	}
 
 	private event:BrowserEvent = BrowserEvent.get();
-	public async handleEvent(event:any) : Promise<void>
+	public async handleEvent(event:Event) : Promise<void>
 	{
       let bubble:boolean = false;
 		this.event.setEvent(event);
@@ -889,7 +898,7 @@ export class Form implements EventListenerObject
 			else
 			{
 				let mevent:MouseMap = MouseMapParser.parseBrowserEvent(this.event);
-				await this.mousehandler(mevent);
+				await this.mousehandler(mevent,event);
 			}
 		}
 	}

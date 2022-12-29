@@ -328,7 +328,7 @@ export class Field
 		if (brwevent.isMouseEvent)
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-			success = await this.block.form.mousehandler(mevent,inst);
+			success = await this.block.form.mousehandler(mevent,brwevent.event,inst);
 
 			if (!success)
 				FlightRecorder.add("@field: mouseevent "+inst+" failed");

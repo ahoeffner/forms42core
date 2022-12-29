@@ -103,7 +103,7 @@ export class FieldDrag implements EventListenerObject
 			if (rect.y + rect.h > box.y2) box.y2 = rect.y + rect.h;
 		})
 
-		return({x: box.x1, y: box.y1, w: box.x2-box.x1, h: box.y2-box.y1});
+		return({x: box.x1, y: box.y1, w: box.x2-box.x1+20, h: box.y2-box.y1+20});
 	}
 
 	private findElements() : void
@@ -153,8 +153,11 @@ export class FieldDrag implements EventListenerObject
 			let posX:number = rect.x-drag.x;
 			let posY:number = rect.y-drag.y;
 
-			let clone:HTMLElement = elem.cloneNode(false) as HTMLElement;
+			let clone:HTMLElement = elem.cloneNode(true) as HTMLElement;
 			this.drag$.appendChild(clone);
+
+			if (posX > 0)
+			console.log(clone)
 
 			clone.style.top = posY+"px";
 			clone.style.left = posX+"px";

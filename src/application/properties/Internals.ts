@@ -158,12 +158,12 @@ export class Internals
 
 		if (width)
 		{
-			view.style.width = width + "px";
+			view.style.maxWidth = width + "px";
 		}
 
 		if (height)
 		{
-			view.style.width = height + "px";
+			view.style.height = height + "px";
 		}
 
 		let top:number = view.parentElement.offsetTop;

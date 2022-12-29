@@ -276,8 +276,9 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this).rehash();
 	}
 
-	public startFieldDragging(label:HTMLElement) : void
+	public startFieldDragging() : void
 	{
+		let label:HTMLElement = Framework.getEvent().target;
 		FormBacking.getViewForm(this).swapfields(label);
 	}
 

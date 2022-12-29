@@ -10,6 +10,7 @@
  * accompanied this code).
  */
 
+import { Framework } from "../application/Framework.js";
 import { Properties, ScrollDirection } from "../application/Properties.js";
 
 export class BrowserEvent
@@ -84,6 +85,8 @@ export class BrowserEvent
 		this.event$ = event;
 		this.type$ = event.type;
 		let bubble:boolean = false;
+
+		Framework.setEvent(event);
 
 		if (this.type == "mouseout") bubble = true;
 		if (this.type == "mouseover") bubble = true;

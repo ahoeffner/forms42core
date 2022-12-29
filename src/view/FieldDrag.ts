@@ -69,7 +69,7 @@ export class FieldDrag implements EventListenerObject
 
 		if (event.type == "dragleave")
 		{
-			this.header.style.cursor = "auto";
+			this.header.style.cursor = "move";
 		}
 
 		if (event.type == "dragover")
@@ -81,7 +81,7 @@ export class FieldDrag implements EventListenerObject
 				if (this.check(event.target))
 				{
 					this.target = event.target;
-					this.header.style.cursor = "move";
+					this.header.style.cursor = "pointer";
 				}
 			}
 		}

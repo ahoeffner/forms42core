@@ -76,11 +76,14 @@ export class FieldDrag implements EventListenerObject
 
 		if (target && target != this.instance)
 		{
-			let h1:HTMLElement = this.header.cloneNode(true) as HTMLElement;
-			let h2:HTMLElement = this.target.cloneNode(true) as HTMLElement;
+			let h1:HTMLElement = document.createElement("p");
+			let h2:HTMLElement = document.createElement("p");
 
 			this.target.replaceWith(h1);
 			this.header.replaceWith(h2);
+
+			h1.replaceWith(this.header);
+			h2.replaceWith(this.target);
 		}
 	}
 

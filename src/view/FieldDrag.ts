@@ -156,9 +156,6 @@ export class FieldDrag implements EventListenerObject
 			let clone:HTMLElement = elem.cloneNode(true) as HTMLElement;
 			this.drag$.appendChild(clone);
 
-			if (posX > 0)
-			console.log(clone)
-
 			clone.style.top = posY+"px";
 			clone.style.left = posX+"px";
 			clone.style.position = "absolute";

@@ -201,9 +201,17 @@ export class QueryEditor extends Form
 					return(false);
 				}
 
-				if (event.key == KeyMap.nextfield && this.values.getValue("value") != null)
+				if (event.key == KeyMap.nextfield)
 				{
-					this.values.nextrecord();
+					if (this.values.getValue("value"))
+					{
+						this.values.nextrecord();
+					}
+					else
+					{
+						this.options.goField("options");
+					}
+
 					return(false);
 				}
 			}
@@ -257,6 +265,7 @@ export class QueryEditor extends Form
 		this.hideAll();
 
 		this.showMulti();
+		this.type = "..";
 		this.options.setValue("options","..");
 
 		return(true);
@@ -377,7 +386,7 @@ export class QueryEditor extends Form
 						</table>
 					</div>
 
-					<span style="display: block; height: 1em"></span>
+					<span style="display: block; height: 8px"></span>
 
 					<div name="single-value">
 						<tabel>

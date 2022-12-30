@@ -163,7 +163,7 @@ export class Internals
 
 		if (height)
 		{
-			view.style.height = height + "px";
+			view.style.maxHeight = height + "px";
 		}
 
 		let top:number = view.parentElement.offsetTop;

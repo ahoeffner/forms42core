@@ -255,6 +255,10 @@ export class QueryEditor extends Form
 		}
 
 		this.hideAll();
+
+		this.showMulti();
+		this.options.setValue("options","..");
+
 		return(true);
 	}
 
@@ -362,12 +366,18 @@ export class QueryEditor extends Form
 		`
 			<div name="popup-body">
 				<div name="query">
-				
+
 					<div name="type">
-						<label for="options">Type :</label>
-						<select name="options" from="options"></select>
-						<span style="display: block; width: 1em"></span>
+						<table name="type" style="width:100%">
+							<tr>
+								<td style="text-align: center">
+									<select name="options" from="options"></select>
+								</td>
+							</tr>
+						</table>
 					</div>
+
+					<span style="display: block; height: 1em"></span>
 
 					<div name="single-value">
 						<tabel>

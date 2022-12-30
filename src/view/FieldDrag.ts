@@ -44,6 +44,9 @@ export class FieldDrag implements EventListenerObject
 		}
 	}
 
+	public start() : void
+	{
+	}
 
 	public handleEvent(event:MouseEvent): void
 	{
@@ -93,14 +96,25 @@ export class FieldDrag implements EventListenerObject
 
 		if (target && target != this.instance)
 		{
-			let h1:HTMLElement = document.createElement("p");
-			let h2:HTMLElement = document.createElement("p");
+			let block:Block = target.field.block;
 
-			this.target.replaceWith(h1);
-			this.header.replaceWith(h2);
+			let instances1:FieldInstance[] = this.getinstances(this.header);
+			let instances2:FieldInstance[] = this.getinstances(this.target);
 
-			h1.replaceWith(this.header);
-			h2.replaceWith(this.target);
+			if (instances1.length == instances2.length)
+			{
+				let h1:HTMLElement = document.createElement("p");
+				let h2:HTMLElement = document.createElement("p");
+
+				this.target.replaceWith(h1);
+				this.header.replaceWith(h2);
+
+				h1.replaceWith(this.header);
+				h2.replaceWith(this.target);
+
+				for (let i = 0; i < instances1.length; i++)
+					block.swapInstances(instances1[i],instances2[i]);
+			}
 		}
 	}
 
@@ -160,6 +174,30 @@ export class FieldDrag implements EventListenerObject
 
 		return(null);
 	}
+
+	private getinstances(header:HTMLElement) : FieldInstance[]
+	{
+		let instances:FieldInstance[] = [];
+		let inst:FieldInstance = this.findInstance(header);
+
+		let name:string = inst.name;
+		let block:Block = inst.field.block;
+
+		if (inst.row < 0)
+		{
+			instances.push(inst);
+		}
+		else
+		{
+			block.getFieldInstances(true).forEach((inst) =>
+			{
+				if (inst.name == name && inst.row >= 0)
+					{instances.push(inst)}
+			})
+		}
+
+		return(instances);
+	}
 }
 
 
@@ -218,7 +256,7 @@ class Column
 		this.clone.style.position = "absolute";
 		this.clone.style.top = this.area.y + "px";
 		this.clone.style.left = this.area.x + "px";
-		this.clone.setAttribute("name","swap-fields");
+		this.clone.setAttribute("name","drag-fields");
 
 		this.addClones();
 	}

@@ -757,6 +757,20 @@ export class Block
 		}
 	}
 
+	public swapInstances(inst1:FieldInstance, inst2:FieldInstance) : void
+	{
+		let swp1:HTMLElement = document.createElement("p");
+		let swp2:HTMLElement = document.createElement("p");
+
+		inst1.element.replaceWith(swp1);
+		inst2.element.replaceWith(swp2);
+
+		swp1.replaceWith(inst2.element);
+		swp2.replaceWith(inst1.element);
+
+		this.getRow(inst1.row).swapInstances(inst1,inst2);
+	}
+
 	public openrow()
 	{
 		let row:Row = this.getRow(this.row);

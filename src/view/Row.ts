@@ -379,6 +379,23 @@ export class Row
 		this.fields.get(field)?.distribute(null,value,dirty);
 	}
 
+	public swapInstances(inst1:FieldInstance, inst2:FieldInstance) : void
+	{
+		let instances:FieldInstance[] = [];
+
+		for (let i = 0; i < this.instances.length; i++)
+		{
+			switch(this.instances[i])
+			{
+				case inst1: instances.push(inst2); break;
+				case inst2: instances.push(inst1); break;
+				default: instances.push(this.instances[i]);
+			}
+		}
+
+		this.instances = instances;
+	}
+
 	public getFieldInstances() : FieldInstance[]
 	{
 		let instances:FieldInstance[] = [];

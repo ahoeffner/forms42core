@@ -170,9 +170,10 @@ export class Form implements EventListenerObject
 		}
 	}
 
-	public swapfields(header:HTMLElement) : void
+	public dragfields(header:HTMLElement) : void
 	{
 		let fd:FieldDrag = new FieldDrag(this,header);
+		fd.start();
 	}
 
 	public async validate() : Promise<boolean>

@@ -86,7 +86,7 @@ export class FieldProperties extends BasicProperties
 	public set row(row:number)
 	{
 		if (row < 0) this.row$ = -1;
-		else		 this.row$ = row;
+		else		    this.row$ = row;
 	}
 
 	public get inst() : FieldInstance

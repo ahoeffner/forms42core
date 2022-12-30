@@ -280,7 +280,7 @@ export class Form implements CanvasComponent
 	public startFieldDragging() : void
 	{
 		let label:HTMLElement = Framework.getEvent().target;
-		FormBacking.getViewForm(this).swapfields(label);
+		FormBacking.getViewForm(this).dragfields(label);
 	}
 
 	public async setView(page:string|HTMLElement) : Promise<void>

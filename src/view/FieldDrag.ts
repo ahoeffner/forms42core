@@ -83,6 +83,7 @@ export class FieldDrag implements EventListenerObject
 			{
 				if (this.check(event.target))
 				{
+					event.preventDefault();
 					this.target = event.target;
 					this.header.style.cursor = "pointer";
 				}

@@ -159,6 +159,7 @@ export class Internals
 		if (width)
 		{
 			view.style.maxWidth = width + "px";
+			view.style.minWidth = (width / 1.5 ) + "px"; 
 		}
 
 		if (height)

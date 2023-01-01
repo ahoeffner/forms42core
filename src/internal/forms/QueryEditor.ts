@@ -373,78 +373,72 @@ export class QueryEditor extends Form
 	public static page:string =
 		Internals.header +
 		`
-			<div name="popup-body">
-				<div name="query">
-
-					<div name="type">
-						<table name="type" style="width:100%">
-							<tr>
-								<td style="text-align: center">
-									<select name="options" from="options"></select>
-								</td>
-							</tr>
-						</table>
-					</div>
-
-					<span style="display: block; height: 8px"></span>
-
-					<div name="single-value">
-						<tabel>
-							<tr>
-								<td>
-									<input name="value" from="options" class="single-value">
-								</td>
-								<td>
-									Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="single-value">
-								</td>
-							</tr>
-						</table>
-					</div>
-
-					<div name="range-values">
-						<tabel>
-							<tr>
-								<td>
-									<input name="value1" from="options" class="range-values">
-								</td>
-								<td>
-									<input name="value2" from="options" class="range-values">
-								</td>
-								<td>
-									Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="range-values">
-								</td>
-							</tr>
-						</table>
-					</div>
-
-					<div name="multi-value">
-						<table style="margin-left: auto; margin-right: auto;">
-							<tr>
-								<td>
-									<input name="value" from="values" row="0" class="multi-value">
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="value" from="values" row="1" class="multi-value">
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<input name="value" from="values" row="2" class="multi-value">
-								</td>
-							</tr>
-						</table>
-					</div>
+		<div name="popup-body">
+			<div name="query">
+				<div name="type">
+					<table name="type" style="width:100%">
+						<tr>
+							<td style="text-align: center">
+								<select name="options" from="options"></select>
+							</td>
+						</tr>
+					</table>
 				</div>
-
-				<div name="lowerright">
-					<div name="buttonarea">
-						<button onClick="this.done()">Ok</button>
-						<button onClick="this.close()">Close</button>
-					</div>
+				<span style="display: block; height: 8px"></span>
+				<div name="single-value">
+					<tabel>
+						<tr>
+							<td>
+								<input name="value" from="options" class="single-value">
+							</td>
+							<td>
+								Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="single-value">
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div name="range-values">
+					<tabel>
+						<tr>
+							<td>
+								<input name="value1" from="options" class="range-values">
+							</td>
+							<td>
+								<input name="value2" from="options" class="range-values">
+							</td>
+							<td>
+								Incl : <input type="checkbox" name="include" from="options" boolean value="true" class="range-values">
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div name="multi-value">
+					<table style="margin-left: auto; margin-right: auto;">
+						<tr>
+							<td>
+								<input name="value" from="values" row="0" class="multi-value">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input name="value" from="values" row="1" class="multi-value">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input name="value" from="values" row="2" class="multi-value">
+							</td>
+						</tr>
+					</table>
 				</div>
 			</div>
+		</div>
+		<div name="lowerright">
+			<div name="buttonarea">
+				<button onClick="this.done()">Ok</button>
+				<button onClick="this.close()">Close</button>
+			</div>
+		</div>
 		`
 	+ Internals.footer;
 }

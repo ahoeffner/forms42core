@@ -41,6 +41,7 @@ export class Form implements CanvasComponent
 	public moveable:boolean = true;
 	public navigable:boolean = true;
 	public resizable:boolean = true;
+	public initiated:Date = new Date();
 	public parameters:Map<any,any> = new Map<any,any>();
 	public blocks:Map<string,Block> = new Map<string,Block>();
 

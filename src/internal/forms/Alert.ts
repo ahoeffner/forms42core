@@ -62,8 +62,9 @@ export class Alert extends Form
 
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
-	
+
 		// Block everything else
+		view.style.zIndex = "2147483647";
 		let block:HTMLElement = view.querySelector('div[id="block"]');
 
 		block.style.top = "0";
@@ -89,7 +90,7 @@ export class Alert extends Form
 				</div>
 			</div>
 		</div>
-	
+
 		`
 	+ 	Internals.footer;
 }

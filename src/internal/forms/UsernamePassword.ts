@@ -77,10 +77,13 @@ export class UsernamePassword extends Form
 			<label for="password">Password</label>
 			<input type="password" tabindex="1" from="login" name="password"/>
 		</div>
-		<div name="loginbutton">
+	</div>
+	<div name="lowerright">
+		<div name="buttonarea">
 			<button name="login" onclick="this.accept()" tabindex="2">Login</button>
 			<button name="cancel" onclick="this.cancel()" tabindex="3">Cancel</button>
 		</div>
 	</div>
+	
    ` + Internals.footer
 }

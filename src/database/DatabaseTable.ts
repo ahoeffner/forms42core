@@ -702,14 +702,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 				if (rows[r][c] && dates[c])
 				{
 					if (typeof rows[r][c] === "number")
-						rows[r][c] = new Date().setTime(+rows[r][c]);
+						rows[r][c] = new Date(+rows[r][c]);
 				}
 
 				record.setValue(this.columns[c],rows[r][c]);
 			}
 
 			let response:any = {succes: true, rows: [rows[r]]};
-			record.response = new DatabaseResponse(response, this.columns);
+			record.response = new DatabaseResponse(response,this.columns);
 
 			fetched.push(record);
 		}

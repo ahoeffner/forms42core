@@ -152,7 +152,7 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 		if (this.bindings$ == null)
 			this.bindings$ = [];
-			
+
 		this.bindings$.push(bindvalue);
 	}
 
@@ -407,7 +407,7 @@ export class QueryTable extends SQLSource implements DataSource
 				if (rows[r][c] && dates[c])
 				{
 					if (typeof rows[r][c] === "number")
-						rows[r][c] = new Date().setTime(+rows[r][c]);
+						rows[r][c] = new Date(+rows[r][c]);
 				}
 
 				record.setValue(this.columns[c],rows[r][c]);

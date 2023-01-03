@@ -119,6 +119,9 @@ export class Block
 		let inst:FieldInstance = null;
 		let ifield:Field = this.getCurrentRow().getField(field);
 
+		if (ifield == null)
+			ifield = this.getRow(-1)?.getField(field);
+
 		if (ifield != null)
 		{
 			let instances:FieldInstance[] = ifield?.getInstancesByClass(clazz);

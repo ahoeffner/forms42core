@@ -15,6 +15,11 @@ import { Between } from "./Between.js";
 
 export class DateInterval extends Between
 {
+	public constructor(column:string)
+	{
+		super(column,true);
+	}
+
 	public Day(date?:Date) : DateInterval
 	{
 		if (date == null)

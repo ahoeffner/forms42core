@@ -235,9 +235,6 @@ export class QueryEditor extends Form
 		this.setOptions();
 		Internals.stylePopupWindow(view);
 
-		this.values.datasource = new MemoryTable("value",this.values.rows);
-		await this.values.executeQuery();
-
 		let value:any = this.parameters.get("value");
 		let fprops:FieldProperties = this.parameters.get("properties");
 
@@ -267,8 +264,6 @@ export class QueryEditor extends Form
 		this.showMulti();
 		this.type = "..";
 		this.options.setValue("options","..");
-
-		console.log("lov "+this.values.isControlBlock())
 
 		return(true);
 	}

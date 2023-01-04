@@ -107,7 +107,9 @@ export class Block
 		else
 		{
 			let state:RecordState = this.model.getRecord().state;
-			this.getCurrentRow()?.getFirstInstance(this.convert(state))?.focus(events);
+			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
+			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
+			inst?.focus();
 		}
 	}
 

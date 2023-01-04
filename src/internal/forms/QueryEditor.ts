@@ -268,6 +268,8 @@ export class QueryEditor extends Form
 		this.type = "..";
 		this.options.setValue("options","..");
 
+		console.log("lov "+this.values.isControlBlock())
+
 		return(true);
 	}
 

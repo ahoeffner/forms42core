@@ -195,6 +195,9 @@ export class DataSourceWrapper
 	{
 		this.dirty = true;
 
+		if (record.block.ctrlblk)
+			return(true);
+
 		if (this.locked(record))
 			return(true);
 
@@ -205,6 +208,13 @@ export class DataSourceWrapper
 
 		if (success) record.locked = true;
 		else 			 record.failed = true;
+
+		if (record.locked)
+		{
+			await this.block.setEventTransaction(EventType.OnRecordLocked,record);
+			success = await this.block.fire(EventType.OnRecordLocked);
+			this.block.endEventTransaction(EventType.OnRecordLocked,success);
+		}
 
 		return(success);
 	}
@@ -255,7 +265,7 @@ export class DataSourceWrapper
 			}
 			else
 			{
-				if (this.source.rowlocking)
+				if (this.source.rowlocking && !record.block.ctrlblk)
 				{
 					await this.block.setEventTransaction(EventType.OnLockRecord,record);
 					success = await this.block.fire(EventType.OnLockRecord);
@@ -265,6 +275,10 @@ export class DataSourceWrapper
 						return(false);
 
 					record.locked = true;
+
+					await this.block.setEventTransaction(EventType.OnRecordLocked,record);
+					success = await this.block.fire(EventType.OnRecordLocked);
+					this.block.endEventTransaction(EventType.OnRecordLocked,success);
 				}
 			}
 

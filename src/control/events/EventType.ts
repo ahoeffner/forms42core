@@ -69,5 +69,6 @@ export enum EventType
 	PostDelete,
 
 	OnLockRecord,
+	OnRecordLocked,
 	WhenValidateRecord
 }

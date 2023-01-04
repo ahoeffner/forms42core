@@ -183,6 +183,11 @@ export class Block
 		Alert.warning(msg,title);
 	}
 
+	public isControlBlock() : boolean
+	{
+		return(FormBacking.getModelBlock(this).ctrlblk);
+	}
+
 	public setListOfValues(lov:ListOfValues, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))

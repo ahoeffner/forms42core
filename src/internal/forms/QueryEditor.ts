@@ -250,6 +250,10 @@ export class QueryEditor extends Form
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
 		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+
+		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insert, block: "values"});
+		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insertAbove, block: "values"});
+
 		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options", field: "options"});
 
 		if (value != null)
@@ -265,6 +269,12 @@ export class QueryEditor extends Form
 		this.type = "..";
 		this.options.setValue("options","..");
 
+		return(true);
+	}
+
+	private async insert(event:FormEvent) : Promise<boolean>
+	{
+		await this.values.insert(event.key == KeyMap.insertAbove);
 		return(true);
 	}
 
@@ -325,6 +335,7 @@ export class QueryEditor extends Form
 		this.fltprops.setHidden(false);
 		this.fltprops.setClass("multi-value");
 
+		this.values.setInsertProperties(this.fltprops,"value","multi-value");
 		this.values.setDefaultProperties(this.fltprops,"value","multi-value");
 
 		this.fltprops.setHidden(true);

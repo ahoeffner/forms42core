@@ -139,7 +139,10 @@ export class Framework
 
 	private parseDoc(doc:Element) : void
 	{
-		if (doc == null) return;
+		if (doc == null)
+			return;
+
+		this.addEvents(doc);
 
 		let nodes:Node[] = [];
 		doc.childNodes.forEach((node) => {nodes.push(node)});

@@ -223,8 +223,8 @@ export class FieldFeatureFactory
 	{
 		let tag:HTMLElement = inst.element;
 
-		tag.removeAttribute("query");
-		tag.removeAttribute("insert");
+		if (props.getAttribute(Properties.RecordModeAttr) != null)
+			return;
 
 		if (inst.field.row.status == Status.update)
 		{

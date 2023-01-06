@@ -16,10 +16,10 @@ import { Record } from "../../public/Record.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { Filters } from "../../model/filters/Filters.js";
 import { Filter } from "../../model/interfaces/Filter.js";
+import { Properties } from "../../application/Properties.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
-import { MemoryTable } from "../../model/datasources/MemoryTable.js";
 import { Internals } from "../../application/properties/Internals.js";
 
 export class QueryEditor extends Form
@@ -45,6 +45,13 @@ export class QueryEditor extends Form
 			{type: EventType.Key, key: KeyMap.nextblock},
 			{type: EventType.Key, key: KeyMap.prevblock}
 		]);
+	}
+
+	private async forceclose() : Promise<boolean>
+	{
+		let valid:boolean = await this.validate();
+		if (!valid && this.type == "..") await this.values.delete();
+		return(this.close());
 	}
 
 	private async done() : Promise<boolean>
@@ -120,7 +127,7 @@ export class QueryEditor extends Form
 		if (filter != null)
 			form.getBlock(block).filter.and(filter,field);
 
-		return(this.close());
+		return(this.forceclose());
 	}
 
 	private setOptions() : void
@@ -244,12 +251,13 @@ export class QueryEditor extends Form
 		this.fltprops
 			.setClasses(fprops.getClasses())
 			.setAttributes(fprops.getAttributes())
+			.setAttribute(Properties.RecordModeAttr,"update")
 			.setHidden(true);
 
 		this.inclprops.setHidden(true).removeClass("single-value");
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.forceclose,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insert, block: "values"});
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insertAbove, block: "values"});

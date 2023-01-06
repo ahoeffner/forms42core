@@ -258,15 +258,6 @@ export class Block
 		return(this.form.datamodel.getWrapper(this));
 	}
 
-	public async onNewRecord(record:Record) : Promise<boolean>
-	{
-		if (this.ctrlblk) return(true);
-		if (!await this.setEventTransaction(EventType.OnNewRecord,record)) return(false);
-		let success:boolean = await this.fire(EventType.OnNewRecord);
-		this.endEventTransaction(EventType.OnNewRecord,success);
-		return(success);
-	}
-
 	public async preInsert(record:Record) : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
@@ -470,7 +461,6 @@ export class Block
 			return(false);
 
 		let record:Record = this.wrapper.create(this.record,before);
-		await this.onNewRecord(record);
 
 		if (record != null)
 		{
@@ -488,6 +478,9 @@ export class Block
 
 			if (success)
 			{
+				let offset:number = before ? 0 : 1;
+				await this.view.form.onNewRecord(this.view,offset);
+
 				let details:Block[] = this.getAllDetailBlocks(true);
 
 				for (let i = 0; i < details.length; i++)

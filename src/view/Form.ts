@@ -393,6 +393,14 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
+	public async onNewRecord(block:Block, offset:number) : Promise<boolean>
+	{
+		if (!await this.setEventTransaction(EventType.OnNewRecord,block,offset)) return(false);
+		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
+		block.model.endEventTransaction(EventType.OnNewRecord,success);
+		return(success);
+	}
+
 	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
 	{
 		if (!await this.setEventTransaction(EventType.PreField,inst.field.block,offset)) return(false);

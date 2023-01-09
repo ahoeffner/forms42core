@@ -15,7 +15,7 @@ import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
-import { DataSource } from "./interfaces/DataSource.js";
+import { DataSource, LockMode } from "./interfaces/DataSource.js";
 import { EventType } from "../control/events/EventType.js";
 
 export class DataSourceWrapper
@@ -118,6 +118,15 @@ export class DataSourceWrapper
 					this.linkToMasters(record);
 			});
 
+			if (this.source.rowlocking == LockMode.Optimistic)
+			{
+				for (let i = 0; i < this.cache$.length; i++)
+				{
+					if (!await this.lock(this.cache$[i],true))
+						this.cache$[i].failed = true;
+				}
+			}
+
 			let succces:boolean = true;
 			let records:Record[] = await this.source.flush();
 
@@ -197,7 +206,7 @@ export class DataSourceWrapper
 		return(record.locked);
 	}
 
-	public async lock(record:Record) : Promise<boolean>
+	public async lock(record:Record, force:boolean) : Promise<boolean>
 	{
 		this.dirty = true;
 
@@ -207,10 +216,20 @@ export class DataSourceWrapper
 		if (this.locked(record))
 			return(true);
 
-		if (!this.source.rowlocking)
+		if (this.source.rowlocking == LockMode.None)
 			return(true);
 
-		let success:boolean = await this.source.lock(record);
+		if (!force && this.source.rowlocking == LockMode.Optimistic)
+			return(true);
+
+		await this.block.setEventTransaction(EventType.OnLockRecord,record);
+		let success:boolean = await this.block.fire(EventType.OnLockRecord);
+		this.block.endEventTransaction(EventType.OnLockRecord,success);
+
+		if (!success)
+			return(false);
+
+		success = await this.source.lock(record);
 
 		if (success) record.locked = true;
 		else 			 record.failed = true;
@@ -271,21 +290,8 @@ export class DataSourceWrapper
 			}
 			else
 			{
-				if (!record.locked && this.source.rowlocking && !record.block.ctrlblk)
-				{
-					await this.block.setEventTransaction(EventType.OnLockRecord,record);
-					success = await this.block.fire(EventType.OnLockRecord);
-					this.block.endEventTransaction(EventType.OnLockRecord,success);
-
-					if (!success || !await this.source.lock(record))
-						return(false);
-
-					record.locked = true;
-
-					await this.block.setEventTransaction(EventType.OnRecordLocked,record);
-					success = await this.block.fire(EventType.OnRecordLocked);
-					this.block.endEventTransaction(EventType.OnRecordLocked,success);
-				}
+				if (!await this.lock(record,true))
+					return(false);
 			}
 
 			success = await this.delete(record);

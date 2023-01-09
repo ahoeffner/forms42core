@@ -65,7 +65,7 @@ export class Record
 	 */
 	public async lock() : Promise<boolean>
 	{
-		return(this.rec$.wrapper?.lock(this.rec$));
+		return(this.rec$.wrapper?.lock(this.rec$,true));
 	}
 
 	/**

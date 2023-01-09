@@ -426,7 +426,7 @@ export class Block
 	{
 		if (this.querymode) return(true);
 		if (record == null) record = this.getRecord(0);
-		return(this.wrapper.lock(record));
+		return(this.wrapper.lock(record,false));
 	}
 
 	public async refresh(recno?:number) : Promise<void>

@@ -23,18 +23,18 @@ import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
-import { DataSource } from "../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
+import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 
 export class DatabaseTable extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
-	public rowlocking: boolean = true;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
+	public rowlocking:LockMode = LockMode.Pessimistic;
 
 	private dirty$:Record[] = [];
 	private described$:boolean = false;

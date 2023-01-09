@@ -372,24 +372,15 @@ export class Block
 		this.model.endEventTransaction(event,apply);
 	}
 
-	public async lock(inst?:FieldInstance) : Promise<boolean>
+	public async lock() : Promise<boolean>
 	{
-		if (this.model.locked()) return(true);
+		let success:boolean = await this.model.lock();
 
-		await this.setEventTransaction(EventType.OnLockRecord);
-		let success:boolean = await this.fireBlockEvent(EventType.OnLockRecord,inst);
-		this.endEventTransaction(EventType.OnLockRecord,success);
-
-		if (success)
+		if (!success)
 		{
-			success = await this.model.lock();
-
-			if (!success)
-			{
-				await this.model.refresh();
-				this.display(this.row,this.model.getRecord());
-				return(false);
-			}
+			await this.model.refresh();
+			this.display(this.row,this.model.getRecord());
+			return(false);
 		}
 
 		return(success);
@@ -502,7 +493,7 @@ export class Block
 	{
 		this.curinst$ = inst;
 
-		if (!await this.lock(inst))
+		if (!await this.lock())
 			return(false);
 
 		this.model.setDirty();

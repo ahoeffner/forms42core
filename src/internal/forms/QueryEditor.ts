@@ -56,6 +56,8 @@ export class QueryEditor extends Form
 	{
 		let value:any;
 		let incl:boolean;
+
+		await this.validate();
 		let filter:Filter = null;
 
 		let form:Form = this.parameters.get("form");

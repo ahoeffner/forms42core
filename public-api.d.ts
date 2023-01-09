@@ -12,8 +12,8 @@ export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { ConnectionScope } from './src/database/ConnectionScope.js';
 export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 
-export { DataSource } from './src/model/interfaces/DataSource.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
+export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';

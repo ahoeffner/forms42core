@@ -23,14 +23,15 @@ import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
-import { DataSource } from "../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
+import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 
 export class QueryTable extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
+	rowlocking:LockMode = LockMode.None;
 
 	private described$:boolean = false;
 
@@ -103,11 +104,6 @@ export class QueryTable extends SQLSource implements DataSource
 	public get columns() : string[]
 	{
 		return(this.columns$);
-	}
-
-	public get rowlocking() : boolean
-	{
-		return(false);
 	}
 
 	public get insertallowed() : boolean

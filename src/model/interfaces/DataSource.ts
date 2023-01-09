@@ -14,6 +14,13 @@ import { Filter } from './Filter.js';
 import { Record } from '../Record.js';
 import { FilterStructure } from '../FilterStructure.js';
 
+export enum LockMode
+{
+	None,
+	Optimistic,
+	Pessimistic
+}
+
 export interface DataSource
 {
 	name:string;
@@ -21,7 +28,7 @@ export interface DataSource
 	columns:string[];
 	arrayfecth:number;
 
-	rowlocking:boolean;
+	rowlocking:LockMode;
 	queryallowed:boolean;
 	insertallowed:boolean;
 	updateallowed:boolean;

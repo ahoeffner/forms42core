@@ -61,11 +61,20 @@ export class Record
 	}
 
 	/**
-	 * Make sure the datasource marks current record locked.
+	 * Execute datasource default lock method.
 	 */
 	public async lock() : Promise<boolean>
 	{
 		return(this.rec$.wrapper?.lock(this.rec$));
+	}
+
+	/**
+	 * Mark the record as locked.
+	 */
+	public markAsLocked(flag?:boolean) : void
+	{
+		if (flag == null) flag = true;
+		this.rec$.locked = flag;
 	}
 
 	/**

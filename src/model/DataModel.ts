@@ -22,9 +22,9 @@ export class DataModel
 	private sources$:Map<ModelBlock,DataSourceWrapper> =
 		new Map<ModelBlock,DataSourceWrapper>();
 
-	public clear(block:ModelBlock) : void
+	public clear(block:ModelBlock, flush:boolean) : void
 	{
-		this.getWrapper(block)?.clear();
+		this.getWrapper(block)?.clear(flush);
 	}
 
 	public getWrapper(block:ModelBlock) : DataSourceWrapper

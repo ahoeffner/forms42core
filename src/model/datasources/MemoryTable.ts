@@ -69,6 +69,11 @@ export class MemoryTable implements DataSource
 		});
 	}
 
+	public clear() : void
+	{
+		this.dirty$ = [];
+	}
+
 	public get rowlocking() : boolean
 	{
 		return(false);
@@ -208,19 +213,19 @@ export class MemoryTable implements DataSource
 			{
 				processed.push(rec);
 				this.records$.push(rec);
-				rec.response = "inserted";
+				rec.response = {status: "inserted"};
 			}
 
 			if (rec.state == RecordState.Updated)
 			{
 				processed.push(rec);
-				rec.response = "updated";
+				rec.response = {status: "updated"};
 			}
 
 			if (rec.state == RecordState.Deleted)
 			{
 				processed.push(rec);
-				rec.response = "deleted";
+				rec.response = {status: "deleted"};
 
 				let recno:number = this.indexOf(this.records$,rec.id);
 

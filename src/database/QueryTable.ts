@@ -71,6 +71,12 @@ export class QueryTable extends SQLSource implements DataSource
 		this.described$ = false;
 	}
 
+	public clear() : void
+	{
+		if (this.cursor$)
+			this.conn$.close(this.cursor$);
+	}
+
 	public clone() : QueryTable
 	{
 		let clone:QueryTable = new QueryTable(this.pubconn$,this.sql$);

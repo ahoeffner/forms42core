@@ -143,11 +143,11 @@ export class Block
 		return(this.pubblk$.deleteallowed);
 	}
 
-	public async clear() : Promise<boolean>
+	public async clear(flush:boolean) : Promise<boolean>
 	{
 		this.clean$ = true;
 
-		if (!await this.wrapper.clear())
+		if (!await this.wrapper.clear(flush))
 			return(false);
 
 		this.form.clearBlock(this);
@@ -188,7 +188,7 @@ export class Block
 	{
 		if (this.source$ != null)
 		{
-			this.form$.datamodel.clear(this);
+			this.form$.datamodel.clear(this,true);
 			this.form$.datamodel.setWrapper(this);
 			this.view.clear(true,true,true);
 		}
@@ -252,7 +252,7 @@ export class Block
 		return(new MemoryTable(columns,data));
 	}
 
-	private get wrapper() : DataSourceWrapper
+	public get wrapper() : DataSourceWrapper
 	{
 		if (this.querymode) return(this.qbe.wrapper);
 		return(this.form.datamodel.getWrapper(this));
@@ -486,7 +486,7 @@ export class Block
 				for (let i = 0; i < details.length; i++)
 				{
 					if (details[i]!= this)
-						await details[i].clear();
+						await details[i].clear(true);
 				}
 
 				this.view.findFirstEditable(record)?.focus();
@@ -600,7 +600,7 @@ export class Block
 	{
 		this.clean$ = true;
 
-		if (!await this.wrapper.clear())
+		if (!await this.wrapper.clear(true))
 			return(false);
 
 		this.record$ = 0;

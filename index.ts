@@ -4,6 +4,7 @@ export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { Key } from './src/model/relations/Key.js';
+export { Alert } from './src/application/Alert.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
@@ -16,9 +17,9 @@ export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 export { DataSource } from './src/model/interfaces/DataSource.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 
-export { Alert } from './src/internal/forms/Alert.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
+export { Alert as AlertForm } from './src/internal/forms/Alert.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';
 export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 

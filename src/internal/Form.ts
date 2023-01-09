@@ -68,9 +68,10 @@ export class Form implements CanvasComponent
 		this.focus();
 	}
 
-	public clear() : Promise<boolean>
+	public async clear(force?:boolean) : Promise<boolean>
 	{
-		return(FormBacking.getViewForm(this)?.clear());
+		if (force) FormBacking.getModelForm(this)?.clear()
+		return(FormBacking.getViewForm(this)?.clear(!force));
 	}
 
 	public focus() : void
@@ -321,14 +322,14 @@ export class Form implements CanvasComponent
 		await FormBacking.getModelForm(this,true).finalize();
 	}
 
-	public async close() : Promise<boolean>
+	public async close(force?:boolean) : Promise<boolean>
 	{
 		let vform:ViewForm = FormBacking.getViewForm(this);
 
 		if (vform == null)
 			return(true);
 
-		if (!await vform.validate())
+		if (!await this.clear(force))
 			return(false);
 
 		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);

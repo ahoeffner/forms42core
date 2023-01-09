@@ -72,14 +72,20 @@ export class DataSourceWrapper
 		}
 	}
 
-	public async clear() : Promise<boolean>
+	public async clear(flush:boolean) : Promise<boolean>
 	{
 		this.hwm$ = 0;
 		this.cache$ = [];
 		this.columns$ = [];
 
+		if (!flush)
+		{
+			this.source.clear();
+			return(true);
+		}
+
 		if (!await this.source.closeCursor())
-			return(false);
+			console.log("Unable to close cursor");
 
 		return(this.flush());
 	}
@@ -265,7 +271,7 @@ export class DataSourceWrapper
 			}
 			else
 			{
-				if (this.source.rowlocking && !record.block.ctrlblk)
+				if (!record.locked && this.source.rowlocking && !record.block.ctrlblk)
 				{
 					await this.block.setEventTransaction(EventType.OnLockRecord,record);
 					success = await this.block.fire(EventType.OnLockRecord);

@@ -27,6 +27,7 @@ export interface DataSource
 	updateallowed:boolean;
 	deleteallowed:boolean;
 
+	clear() : void;
 	clone() : DataSource;
 	undo() : Promise<Record[]>;
 	fetch() : Promise<Record[]>;

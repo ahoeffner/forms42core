@@ -31,22 +31,24 @@ export class Alert extends Form
 		super(Alert.page);
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
+		this.addEventListener(this.setFocus,{type:EventType.Mouse, mouse: MouseMap.click});
 
-		this.addEventListener(this.close,
+		this.addEventListener(this.done,
 		[
 			{type: EventType.Key, key: KeyMap.enter},
 			{type: EventType.Key, key: KeyMap.escape},
 			{type: EventType.Key, key: KeyMap.space},
 		]);
-
-		this.addEventListener(this.closeAlert,
-			{type:EventType.Mouse, mouse: MouseMap.click}
-		);
 	}
 
-	private async closeAlert(): Promise<boolean>
+	private async done() : Promise<boolean>
 	{
-		setTimeout(() => {this.closeButton.focus()},5);
+		return(this.close());
+	}
+
+	private async setFocus(): Promise<boolean>
+	{
+		this.closeButton.focus();
 		return(true);
 	}
 
@@ -62,7 +64,6 @@ export class Alert extends Form
 
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
-
 		// Block everything else
 		view.style.zIndex = "2147483647";
 		let block:HTMLElement = view.querySelector('div[id="block"]');
@@ -72,9 +73,14 @@ export class Alert extends Form
 		block.style.position = "fixed";
 		block.style.width = document.body.offsetWidth+"px";
 		block.style.height = document.body.offsetHeight+"px";
+
+		if (fatal) block.classList.add("type","fatal");
+		if (warning) block.classList.add("type","warning");
+
 		this.setValue("alert","msg",msg);
-		setTimeout(() => {this.closeButton.focus()},5);
-		return(true);
+
+		this.setFocus();
+		return(false);
 	}
 
 	public static page:string =

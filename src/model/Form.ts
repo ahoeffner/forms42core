@@ -25,8 +25,8 @@ import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
-import { BlockCoordinator } from './relations/BlockCoordinator.js';
 import { EventFilter } from '../control/events/EventFilter.js';
+import { BlockCoordinator } from './relations/BlockCoordinator.js';
 
 
 export class Form
@@ -126,11 +126,22 @@ export class Form
 
 		for (let i = 0; i < dirty.length; i++)
 		{
-			if (dirty[i].isClean())	await dirty[i].clear();
+			if (dirty[i].isClean())	await dirty[i].clear(true);
 			else await dirty[i].executeQuery(dirty[i].startNewQueryChain());
 		}
 
 		return(true);
+	}
+
+	public clear() : void
+	{
+		let blocks:Block[] = Array.from(this.blocks$.values());
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			blocks[i].setClean();
+			blocks[i].wrapper.clear(false);
+		}
 	}
 
 	public async flush() : Promise<boolean>

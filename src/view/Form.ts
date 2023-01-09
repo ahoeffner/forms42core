@@ -84,9 +84,9 @@ export class Form implements EventListenerObject
 		return(this.curinst$);
 	}
 
-	public async clear() : Promise<boolean>
+	public async clear(flush:boolean) : Promise<boolean>
 	{
-		if (!await this.model.flush())
+		if (flush && !await this.model.flush())
 			return(false);
 
 		this.blocks$.forEach((block) =>
@@ -536,14 +536,14 @@ export class Form implements EventListenerObject
 			return(false);
 
 		if (key == KeyMap.clearform)
-			return(this.clear());
+			return(this.clear(false));
 
 		if (inst != null)
 		{
 			let qmode:boolean = mblock?.querymode;
 
 			if (key == KeyMap.clearblock)
-				return(inst.field.block.model.clear());
+				return(inst.field.block.model.clear(true));
 
 			if (KeyMapping.isRowNav(key))
 			{

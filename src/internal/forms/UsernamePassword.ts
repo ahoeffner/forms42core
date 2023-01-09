@@ -27,7 +27,7 @@ export class UsernamePassword extends Form
 		super(UsernamePassword.page);
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.cancel,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.accept,
 		[
@@ -84,6 +84,6 @@ export class UsernamePassword extends Form
 			<button name="cancel" onclick="this.cancel()" tabindex="3">Cancel</button>
 		</div>
 	</div>
-	
+
    ` + Internals.footer
 }

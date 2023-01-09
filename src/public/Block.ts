@@ -104,9 +104,9 @@ export class Block
 		FormBacking.getModelBlock(this).flush();
 	}
 
-	public async clear() : Promise<boolean>
+	public async clear(force?:boolean) : Promise<boolean>
 	{
-		return(FormBacking.getModelBlock(this).clear());
+		return(FormBacking.getModelBlock(this).clear(!force));
 	}
 
 	public insertMode() : boolean

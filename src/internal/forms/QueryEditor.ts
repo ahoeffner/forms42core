@@ -47,19 +47,15 @@ export class QueryEditor extends Form
 		]);
 	}
 
-	private async forceclose() : Promise<boolean>
+	private async skip() : Promise<boolean>
 	{
-		let valid:boolean = await this.validate();
-		if (!valid && this.type == "..") await this.values.delete();
-		return(this.close());
+		return(this.close(true));
 	}
 
 	private async done() : Promise<boolean>
 	{
 		let value:any;
 		let incl:boolean;
-
-		await this.validate();
 		let filter:Filter = null;
 
 		let form:Form = this.parameters.get("form");
@@ -127,7 +123,7 @@ export class QueryEditor extends Form
 		if (filter != null)
 			form.getBlock(block).filter.and(filter,field);
 
-		return(this.forceclose());
+		return(this.skip());
 	}
 
 	private setOptions() : void
@@ -257,7 +253,7 @@ export class QueryEditor extends Form
 		this.inclprops.setHidden(true).removeClass("single-value");
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
-		this.addEventListener(this.forceclose,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.skip,{type: EventType.Key, key: KeyMap.escape});
 
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insert, block: "values"});
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insertAbove, block: "values"});

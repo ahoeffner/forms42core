@@ -93,6 +93,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (this.name == null) this.name = table;
 	}
 
+	public clear() : void
+	{
+		this.dirty$ = [];
+
+		if (this.cursor$)
+			this.conn$.close(this.cursor$);
+	}
+
 	public clone() : DatabaseTable
 	{
 		let clone:DatabaseTable = new DatabaseTable(this.pubconn$,this.table$);

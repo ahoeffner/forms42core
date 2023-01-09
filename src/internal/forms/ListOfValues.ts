@@ -45,6 +45,11 @@ export class ListOfValues extends Form
 		return(!this.cancelled);
 	}
 
+	private async skip() : Promise<boolean>
+	{
+		return(this.close());
+	}
+
 	private async done() : Promise<boolean>
 	{
 		this.cancelled = false;
@@ -124,8 +129,8 @@ export class ListOfValues extends Form
 	{
 		if (event.key == KeyMap.nextfield || event.key == KeyMap.prevfield)
 		{
-			if (event.block == "results") 	this.goBlock("filter");
-			else 							this.goBlock("results");
+			if (event.block == "results") this.goBlock("filter");
+			else 									this.goBlock("results");
 
 			return(false);
 		}
@@ -154,8 +159,11 @@ export class ListOfValues extends Form
 
 		for (let i = 0; i < this.columns.length; i++)
 		{
-			if (i > 0) display += " ";
-			display += this.results.getValue(this.columns[i]);
+			if (this.columns[i])
+			{
+				if (i > 0) display += " ";
+				display += this.results.getValue(this.columns[i]);
+			}
 		}
 
 		this.results.setValue("display",display);
@@ -263,7 +271,7 @@ export class ListOfValues extends Form
 		]);
 
 		this.addEventListener(this.done,{type: EventType.Key, key: KeyMap.enter});
-		this.addEventListener(this.close,{type: EventType.Key, key: KeyMap.escape});
+		this.addEventListener(this.skip,{type: EventType.Key, key: KeyMap.escape});
 		this.addEventListener(this.done,{type: EventType.Mouse, mouse: MouseMap.dblclick});
 
 		this.addEventListener(this.onFetch,{type: EventType.OnFetch, block: "results"});

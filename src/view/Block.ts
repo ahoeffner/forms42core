@@ -493,14 +493,18 @@ export class Block
 	{
 		this.curinst$ = inst;
 
-		if (!await this.lock())
-			return(false);
+		if (!this.fieldinfo.get(inst.name)?.derived)
+		{
+			if (!await this.lock())
+				return(false);
+		}
 
 		this.model.setDirty();
 
 		await this.setEventTransaction(EventType.OnEdit);
-		let success:boolean = await	this.fireFieldEvent(EventType.OnEdit,inst);
+		let success:boolean = await this.fireFieldEvent(EventType.OnEdit,inst);
 		this.endEventTransaction(EventType.OnEdit,success);
+
 		return(success);
 	}
 

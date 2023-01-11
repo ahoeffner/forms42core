@@ -329,30 +329,29 @@ export class Form implements CanvasComponent
 		if (vform == null)
 			return(true);
 
+		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
+
+		if (!await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this)))
+			return(false);
+
 		if (!await this.clear(force))
 			return(false);
 
-		await FormBacking.getModelForm(this).wait4EventTransaction(EventType.OnCloseForm,null);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.OnCloseForm,this));
+		this.canvas.close();
+		let parent:Form = FormBacking.getBacking(this).parent;
 
-		if (success)
+		if (parent != null)
 		{
-			this.canvas.close();
-			let parent:Form = FormBacking.getBacking(this).parent;
+			parent.canvas.unblock();
 
-			if (parent != null)
-			{
-				parent.canvas.unblock();
+			parent.focus();
 
-				parent.focus();
-
-				if (FormBacking.getBacking(parent))
-					FormBacking.getBacking(parent).hasModalChild = false;
-			}
-
-			FormBacking.removeBacking(this);
-			await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
+			if (FormBacking.getBacking(parent))
+				FormBacking.getBacking(parent).hasModalChild = false;
 		}
+
+		FormBacking.removeBacking(this);
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
 
 		return(success);
 	}

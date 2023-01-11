@@ -133,6 +133,26 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this);
 	}
 
+	public removeColumns(columns:string|string[]) : QueryTable
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		let cols:string[] = [];
+
+		for (let i = 0; i < columns.length; i++)
+			columns[i] = columns[i]?.toLowerCase();
+
+		for (let i = 0; i < this.columns$.length; i++)
+		{
+			if (!columns.includes(this.columns$[i]))
+				cols.push(this.columns$[i]);
+		}
+
+		this.columns$ = cols;
+		return(this);
+	}
+
 	public addFilter(filter:Filter | FilterStructure) : QueryTable
 	{
 		if (this.limit$ == null)

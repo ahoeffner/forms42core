@@ -159,10 +159,12 @@ export class ListOfValues extends Form
 
 		for (let i = 0; i < this.columns.length; i++)
 		{
-			if (this.columns[i])
+			let value:any = this.results.getValue(this.columns[i]);
+
+			if (value != null)
 			{
 				if (i > 0) display += " ";
-				display += this.results.getValue(this.columns[i]);
+				display += value;
 			}
 		}
 

@@ -48,5 +48,6 @@ export interface DataSource
 	query(filters?:FilterStructure) : Promise<boolean>;
 
 	addColumns(columns:string|string[]) : DataSource;
+	removeColumns(columns:string|string[]) : DataSource;
 	addFilter(filter:Filter|FilterStructure) : DataSource;
 }

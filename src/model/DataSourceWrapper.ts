@@ -24,8 +24,8 @@ import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
-import { DataSource, LockMode } from "./interfaces/DataSource.js";
 import { EventType } from "../control/events/EventType.js";
+import { DataSource, LockMode } from "./interfaces/DataSource.js";
 
 export class DataSourceWrapper
 {
@@ -131,8 +131,13 @@ export class DataSourceWrapper
 			{
 				for (let i = 0; i < this.cache$.length; i++)
 				{
-					if (!await this.lock(this.cache$[i],true))
-						this.cache$[i].failed = true;
+					if (this.cache$[i].state == RecordState.Updated || this.cache$[i].state == RecordState.Deleted)
+					{
+						this.cache$[i].failed = false;
+						
+						if (!await this.lock(this.cache$[i],true))
+							this.cache$[i].failed = true;
+					}
 				}
 			}
 
@@ -299,7 +304,7 @@ export class DataSourceWrapper
 			}
 			else
 			{
-				if (!await this.lock(record,true))
+				if (!await this.lock(record,false))
 					return(false);
 			}
 

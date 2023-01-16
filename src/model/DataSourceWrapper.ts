@@ -263,26 +263,20 @@ export class DataSourceWrapper
 		if (record.state == RecordState.Deleted)
 			return;
 
-		await this.source.refresh(record);
+		if (record.state == RecordState.New || record.state == RecordState.Inserted)
+		{
+			record.clear();
+			record.state = RecordState.New;
+			return;
+		}
 
+		await this.source.refresh(record);
 		record.setClean(false);
 
-		switch(record.state)
+		if (record.state == RecordState.Updated)
 		{
-			case RecordState.New : break;
-
-			case RecordState.Inserted :
-			{
-				record.state = RecordState.New;
-				await this.block.preInsert(record);
-				break;
-			}
-
-			default:
-			{
-				record.state = RecordState.Query;
-				await this.block.onFetch(record);
-			}
+			record.state = RecordState.Query;
+			await this.block.onFetch(record);
 		}
 	}
 

@@ -134,7 +134,7 @@ export class DataSourceWrapper
 					if (this.cache$[i].state == RecordState.Updated || this.cache$[i].state == RecordState.Deleted)
 					{
 						this.cache$[i].failed = false;
-						
+
 						if (!await this.lock(this.cache$[i],true))
 							this.cache$[i].failed = true;
 					}
@@ -313,30 +313,20 @@ export class DataSourceWrapper
 		}
 		else if (record.dirty)
 		{
-			if (record.state == RecordState.New)
-			{
-				this.dirty = true;
-				success = await this.insert(record);
-				if (success) record.state = RecordState.Inserted;
-			}
+			success = true;
+			this.dirty = true;
 
-			if (record.state == RecordState.Query)
+			switch(record.state)
 			{
-				this.dirty = true;
-				success = await this.update(record);
-				if (success) record.state = RecordState.Updated;
-			}
+				case RecordState.New :
+					success = await this.insert(record);
+					if (success) record.state = RecordState.Inserted;
+					break;
 
-			if (record.state == RecordState.Inserted)
-			{
-				this.dirty = true;
-				success = await this.update(record);
-			}
-
-			if (record.state == RecordState.Updated)
-			{
-				this.dirty = true;
-				success = await this.update(record);
+				case RecordState.Query :
+					success = await this.update(record);
+					if (success) record.state = RecordState.Updated;
+					break;
 			}
 		}
 

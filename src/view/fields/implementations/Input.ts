@@ -528,7 +528,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			{
 				let num:string = this.getElementValue();
-				if (num.trim().length > 0) this.setElementValue((+num)+"");
+
+				if (isNaN(+num)) this.setElementValue(null);
+				else if (num.trim().length > 0) this.setElementValue((+num)+"");
 			}
 
 			if (this.pattern == null)
@@ -541,7 +543,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.pattern.setValue(this.getElementValue());
 
 				if (this.pattern.isNull()) this.setElementValue(null);
-				else					   this.setElementValue(this.pattern.getValue());
+				else					   		this.setElementValue(this.pattern.getValue());
 
 				if (this.pattern.getValue() != this.initial)
 					bubble = true;

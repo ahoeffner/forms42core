@@ -274,10 +274,9 @@ export class DataSourceWrapper
 		record.setClean(false);
 
 		if (record.state == RecordState.Updated)
-		{
 			record.state = RecordState.Query;
-			await this.block.onFetch(record);
-		}
+
+		await this.block.onFetch(record);
 	}
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>

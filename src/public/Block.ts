@@ -133,10 +133,10 @@ export class Block
 		return(FormBacking.getModelBlock(this).empty);
 	}
 
-	public refresh(offset?:number) : void
+	public async refresh(offset?:number) : Promise<void>
 	{
 		if (offset == null) offset = 0;
-		FormBacking.getModelBlock(this).refresh(offset);
+		await FormBacking.getModelBlock(this).refresh(offset);
 	}
 
 	public getFieldNames() : string[]

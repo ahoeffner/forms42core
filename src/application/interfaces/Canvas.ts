@@ -42,6 +42,8 @@ export interface Canvas
 
 	remove() : void;
 	restore() : void;
+	activate() : void;
+
 	replace(page:HTMLElement) : void;
 	attach(parent:HTMLElement) : void;
 

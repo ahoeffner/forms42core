@@ -358,6 +358,8 @@ export class Form implements EventListenerObject
 
 		if (preform)
 		{
+			this.parent.canvas.activate();
+
 			// Successfully navigated from preform to this form
 			if (!this.model.wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
 			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);

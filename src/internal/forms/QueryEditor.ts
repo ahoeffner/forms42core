@@ -112,7 +112,7 @@ export class QueryEditor extends Form
 				if (values.length > 0)
 				{
 					form.setValue(block,field,values[0]);
-					filter = Filters.In(field);
+					filter = Filters.AnyOf(field);
 					filter.constraint = values;
 				}
 				break;

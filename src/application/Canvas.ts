@@ -91,7 +91,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		if (this.parent == null) return;
 		this.parent.appendChild(this.canvas);
 		this.parent = null;
-		this.focus();
+		this.activate();
 	}
 
 	public attach(parent:HTMLElement) : void
@@ -139,7 +139,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.content.tabIndex = -1;
 		this.content.style.width = "100%";
 		this.content.style.height = "100%";
-		this.content.addEventListener("focus",() => this.focus());
+		this.content.addEventListener("focus",() => this.activate());
 	}
 
 	public setComponent(component:CanvasComponent) : void
@@ -185,7 +185,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.zindex = Canvas.newLayer;
 		this.content.style.width = "100%";
 		this.content.style.height = "100%";
-		this.content.addEventListener("focus",() => this.focus());
+		this.content.addEventListener("focus",() => this.activate());
 
 		this.moveable = component.moveable;
 		this.resizable = component.resizable;
@@ -360,7 +360,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 
 	private static layers$:number = 0;
 
-	private focus() : void
+	public activate() : void
 	{
 		this.zindex = Canvas.newLayer;
 		this.content.blur();

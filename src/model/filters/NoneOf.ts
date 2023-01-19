@@ -24,7 +24,7 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class AnyOff implements Filter
+export class NoneOf implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -42,9 +42,9 @@ export class AnyOff implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): AnyOff
+	public clone(): NoneOf
 	{
-		let clone:AnyOff = Reflect.construct(this.constructor,[this.column$]);
+		let clone:NoneOf = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
@@ -54,13 +54,13 @@ export class AnyOff implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : AnyOff
+	public setBindValueName(name:string) : NoneOf
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any|any[]) : AnyOff
+	public setConstraint(values:any|any[]) : NoneOf
 	{
 		this.constraint = values;
 		return(this);
@@ -126,20 +126,10 @@ export class AnyOff implements Filter
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 
-		let match:boolean = false;
 		let table:any[] = this.constraint$;
 		value = record.getValue(this.column$);
 
-		for (let c = 0; c < table.length; c++)
-		{
-			if (value == table[c])
-			{
-				match = true;
-				break;
-			}
-		}
-
-		return(match);
+		return(!table.includes(value));
 	}
 
 	public asSQL() : string
@@ -147,7 +137,7 @@ export class AnyOff implements Filter
 		if (!this.constraint$ && !this.bindvalues$)
 			return("1 == 2");
 
-		let whcl:string = this.column$ + " in (";
+		let whcl:string = this.column$ + " not in (";
 
 		if (this.constraint$.length > 5)
 		{
@@ -178,7 +168,7 @@ export class AnyOff implements Filter
 		if (this.constraint$ == null)
 			return("1 = 2");
 
-		let whcl:string = this.column$ + " in (";
+		let whcl:string = this.column$ + " not in (";
 
 		for (let i = 0; i < this.constraint$.length; i++)
 		{

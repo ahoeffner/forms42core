@@ -24,7 +24,7 @@ import { Filter } from "../interfaces/Filter.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class NotIn implements Filter
+export class AnyOf implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -42,9 +42,9 @@ export class NotIn implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): NotIn
+	public clone(): AnyOf
 	{
-		let clone:NotIn = Reflect.construct(this.constructor,[this.column$]);
+		let clone:AnyOf = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
 		return(clone.setConstraint(this.constraint$));
 	}
@@ -54,13 +54,13 @@ export class NotIn implements Filter
 		return(this.bindval$);
 	}
 
-	public setBindValueName(name:string) : NotIn
+	public setBindValueName(name:string) : AnyOf
 	{
 		this.bindval$ = name;
 		return(this);
 	}
 
-	public setConstraint(values:any|any[]) : NotIn
+	public setConstraint(values:any|any[]) : AnyOf
 	{
 		this.constraint = values;
 		return(this);
@@ -126,10 +126,20 @@ export class NotIn implements Filter
 		if (this.constraint$ == null) return(false);
 		if (this.constraint$.length == 0) return(false);
 
+		let match:boolean = false;
 		let table:any[] = this.constraint$;
 		value = record.getValue(this.column$);
 
-		return(!table.includes(value));
+		for (let c = 0; c < table.length; c++)
+		{
+			if (value == table[c])
+			{
+				match = true;
+				break;
+			}
+		}
+
+		return(match);
 	}
 
 	public asSQL() : string
@@ -137,7 +147,7 @@ export class NotIn implements Filter
 		if (!this.constraint$ && !this.bindvalues$)
 			return("1 == 2");
 
-		let whcl:string = this.column$ + " not in (";
+		let whcl:string = this.column$ + " in (";
 
 		if (this.constraint$.length > 5)
 		{
@@ -168,7 +178,7 @@ export class NotIn implements Filter
 		if (this.constraint$ == null)
 			return("1 = 2");
 
-		let whcl:string = this.column$ + " not in (";
+		let whcl:string = this.column$ + " in (";
 
 		for (let i = 0; i < this.constraint$.length; i++)
 		{

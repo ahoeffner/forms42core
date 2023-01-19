@@ -88,6 +88,7 @@ export class FieldInstance implements FieldEventHandler
 		let flag:boolean = query.toLowerCase() == "true";
 		this.qbeproperties$ = FieldFeatureFactory.clone(this.properties$);
 
+		this.qbeproperties$.enabled = flag;
 		this.qbeproperties$.required = false;
 		this.qbeproperties$.readonly = !flag;
 

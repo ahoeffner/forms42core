@@ -46,6 +46,10 @@ export class ListOfValues extends Form
 	constructor()
 	{
 		super("");
+
+		this.moveable = true;
+		this.resizable = true;
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 	}
 

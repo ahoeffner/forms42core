@@ -39,6 +39,9 @@ export class Alert extends Form
 	{
 		super(Alert.page);
 
+		this.moveable = true;
+		this.resizable = true;
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 		this.addEventListener(this.setFocus,{type:EventType.Mouse, mouse: MouseMap.click});
 

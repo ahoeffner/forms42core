@@ -80,7 +80,7 @@ export class FormsModule
 
 		path = path.toLowerCase();
 		Components.classmap.set(path,clazz);
-		Components.classurl.set(clazz.name,path);
+		Components.classurl.set(clazz.name.toLowerCase(),path);
 	}
 
 	public static getFormPath(clazz:Class<any>|string) : string

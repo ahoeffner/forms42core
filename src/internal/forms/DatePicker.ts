@@ -50,6 +50,10 @@ export class DatePicker extends Form
 	constructor()
 	{
 		super(DatePicker.page);
+
+		this.moveable = true;
+		this.resizable = true;
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
 		this.addEventListener(this.setDate,

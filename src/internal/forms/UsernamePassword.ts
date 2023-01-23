@@ -35,6 +35,9 @@ export class UsernamePassword extends Form
 	{
 		super(UsernamePassword.page);
 
+		this.moveable = true;
+		this.resizable = true;
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 		this.addEventListener(this.cancel,{type: EventType.Key, key: KeyMap.escape});
 

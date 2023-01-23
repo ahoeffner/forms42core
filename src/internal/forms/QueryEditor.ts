@@ -45,6 +45,9 @@ export class QueryEditor extends Form
 	{
 		super(QueryEditor.page);
 
+		this.moveable = true;
+		this.resizable = true;
+
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
 		this.addEventListener(this.navigate,

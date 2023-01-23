@@ -57,7 +57,7 @@ export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
 			}
 
 			Components.classmap.set(path,clazz);
-			Components.classurl.set(clazz.name,path);
+			Components.classurl.set(clazz.name.toLowerCase(),path);
 
 			Logger.log(Type.classloader,"Loading class: "+clazz.name+" into position: "+path);
 		});

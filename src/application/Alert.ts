@@ -25,51 +25,24 @@ import { FormBacking } from './FormBacking.js';
 import { Classes } from '../internal/Classes.js';
 import { FlightRecorder } from './FlightRecorder.js';
 
-export enum Type
-{
-	Log,
-	Popup,
-	PopAndLog
-}
-
 export class Alert
 {
-	public static async fatal(msg:string, title:string, type?:Type)
+	public static async fatal(msg:string, title:string)
 	{
-		if (type == null)
-			type = Type.PopAndLog;
-
 		FlightRecorder.add("alert.fatal: "+title+" - "+msg);
 
-		if (type == Type.Popup || type == Type.PopAndLog)
-			Alert.callform(msg,title,false,true);
-
-		if (type == Type.PopAndLog)
-			console.log(title+": "+msg+" "+(new Error()).stack);
+		Alert.callform(msg,title,false,true);
+		console.log(title+": "+msg+" "+(new Error()).stack);
 	}
 
-	public static async warning(msg:string, title:string, type?:Type)
+	public static async warning(msg:string, title:string)
 	{
-		if (type == null)
-			type = Type.Popup;
-
-		if (type == Type.Popup || type == Type.PopAndLog)
-			Alert.callform(msg,title,true,false);
-
-		if (type == Type.PopAndLog)
-			console.log(title+": "+msg+" "+(new Error()).stack);
+		Alert.callform(msg,title,true,false);
 	}
 
-	public static async message(msg:string, title:string, type?:Type)
+	public static async message(msg:string, title:string)
 	{
-		if (type == null)
-			type = Type.Popup;
-
-		if (type == Type.Popup || type == Type.PopAndLog)
-			Alert.callform(msg,title,false,false);
-
-		if (type == Type.PopAndLog)
-			console.log(title+": "+msg+" "+(new Error()).stack);
+		Alert.callform(msg,title,false,false);
 	}
 
 	public static async callform(msg:string, title:string, warning:boolean, fatal:boolean) : Promise<void>

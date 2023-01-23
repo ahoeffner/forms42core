@@ -70,6 +70,11 @@ export class FormsModule
 		this.root$ = root;
 	}
 
+	public getEvent() : any
+	{
+		return(Framework.getEvent());
+	}
+
 	public mapComponent(clazz:Class<any>, path?:string) : void
 	{
 		if (clazz == null)

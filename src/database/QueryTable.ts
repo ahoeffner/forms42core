@@ -83,7 +83,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 	public clear() : void
 	{
-		if (this.cursor$)
+		if (this.cursor$ && !this.cursor$.eof)
 			this.conn$.close(this.cursor$);
 	}
 

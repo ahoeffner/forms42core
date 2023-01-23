@@ -106,7 +106,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 	{
 		this.dirty$ = [];
 
-		if (this.cursor$)
+		if (this.cursor$ && !this.cursor$.eof)
 			this.conn$.close(this.cursor$);
 	}
 

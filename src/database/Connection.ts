@@ -623,8 +623,9 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Alert.warning(response.message,"Database Connection");
 			this.conn$ = null;
+			Alert.warning(response.message,"Database Connection");
+			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			return(response);
 		}
 

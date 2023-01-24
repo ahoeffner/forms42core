@@ -329,6 +329,9 @@ export class Form
 		if (block.ctrlblk)
 			return(false);
 
+		if (block.querymode)
+			return(true);
+
 		if (!block.queryallowed)
 			return(false);
 

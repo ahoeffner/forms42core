@@ -120,7 +120,7 @@ export class Block
 
 			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
 			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
-			
+
 			if (!inst) console.log("No available fields in "+this.name+" in state "+RecordState[state])
 			inst?.focus();
 		}

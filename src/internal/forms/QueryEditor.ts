@@ -412,7 +412,7 @@ export class QueryEditor extends Form
 				</div>
 				<span style="display: block; height: 8px"></span>
 				<div name="single-value">
-					<tabel>
+					<table>
 						<tr>
 							<td>
 								<input name="value" from="options" class="single-value">
@@ -424,7 +424,7 @@ export class QueryEditor extends Form
 					</table>
 				</div>
 				<div name="range-values">
-					<tabel>
+					<table>
 						<tr>
 							<td>
 								<input name="value1" from="options" class="range-values">

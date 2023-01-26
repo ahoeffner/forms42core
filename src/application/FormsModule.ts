@@ -204,6 +204,8 @@ export class FormsModule
 		canvas.setComponent(instance);
 		container.appendChild(canvas.getView());
 
+		FormBacking.setCurrentForm(instance);
+
 		let mform:ModelForm = FormBacking.getModelForm(instance);
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 

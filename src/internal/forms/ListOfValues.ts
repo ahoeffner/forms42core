@@ -20,6 +20,7 @@
 */
 
 import { Form } from "../Form.js";
+import { Classes } from "../Classes.js";
 import { Case } from "../../public/Case.js";
 import { Block } from "../../public/Block.js";
 import { Alert } from "../../application/Alert.js";
@@ -187,6 +188,8 @@ export class ListOfValues extends Form
 
 	private async initialize() : Promise<boolean>
 	{
+		this.canvas.zindex = Classes.zindex;
+
 		this.form = this.parameters.get("form");
 		this.block = this.parameters.get("block");
 		this.props = this.parameters.get("properties");

@@ -20,6 +20,7 @@
 */
 
 import { Form } from "../Form.js";
+import { Classes } from "../Classes.js";
 import { Block } from "../../public/Block.js";
 import { Record } from "../../public/Record.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
@@ -244,6 +245,7 @@ export class QueryEditor extends Form
 
 	private async initialize() : Promise<boolean>
 	{
+		this.canvas.zindex = Classes.zindex;
 		let view:HTMLElement = this.getView();
 
 		this.values = this.getBlock("values");

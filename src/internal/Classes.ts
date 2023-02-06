@@ -29,10 +29,16 @@ import { ListOfValues } from './forms/ListOfValues.js';
 
 export class Classes
 {
+	private static zindex$:number = 1073741823;
 	public static AlertClass:Class<Form> = Alert;
 	public static DatePickerClass:Class<Form> = DatePicker;
 	public static QueryEditorClass:Class<Form> = QueryEditor;
 	public static ListOfValuesClass:Class<Form> = ListOfValues;
+
+	public static get zindex() : number
+	{
+		return(++Classes.zindex$);
+	}
 
 	public static isInternal(clazz:Class<Form>) : boolean
 	{

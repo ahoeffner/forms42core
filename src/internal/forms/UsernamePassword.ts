@@ -20,6 +20,7 @@
 */
 
 import { Form } from "../Form.js";
+import { Classes } from "../Classes.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
@@ -66,6 +67,7 @@ export class UsernamePassword extends Form
 
 	private async initialize() : Promise<boolean>
 	{
+		this.canvas.zindex = Classes.zindex;
 		let view:HTMLElement = this.getView();
 
 		this.setValue("login","username",this.username);
@@ -85,7 +87,7 @@ export class UsernamePassword extends Form
 		<div name="loginimage"></div>
 		<div name="login">
 			<label for="username">Username</label>
-			<input from="login" tabindex="0" name="username" />
+			<input from="login" tabindex="0" name="username"/>
 			<label for="password">Password</label>
 			<input type="password" tabindex="1" from="login" name="password"/>
 		</div>

@@ -53,6 +53,9 @@ export class Loading
 
 	private display() : void
 	{
+		if (this.threads == 0)
+			return;
+			
 		if (!this.displayed)
 			this.element = document.activeElement as HTMLElement;
 
@@ -97,7 +100,7 @@ export class Loading
 			Internals.stylePopupWindow(this.view);
 
 			this.view = this.view.childNodes.item(1) as HTMLDivElement;
-			this.view.style.zIndex = Number.MAX_SAFE_INTEGER+"";
+			this.view.style.zIndex = "2147483647";
 		}
 	}
 
@@ -131,7 +134,7 @@ export class Loading
 
 	public static page:string =
 	`
-		<div tabindex="-1" style="position:absolute; top:0; left:0; width: 100%; height: 100%">
+		<div tabindex="-1" style="position:absolute; top:0; left:0; width: 100%; height: 100%; z-index: 2147483647">
 			<div name="loading"></div>
 		</div>
 	`

@@ -44,8 +44,8 @@ export { CustomFilter } from './src/model/filters/CustomFilter.js';
 
 export { Like } from './src/model/filters/Like.js';
 export { ILike } from './src/model/filters/ILike.js';
+export { AnyOf } from './src/model/filters/AnyOf.js';
 export { Equals } from './src/model/filters/Equals.js';
-export { AnyOf as AnyOff } from './src/model/filters/AnyOf.js';
 export { Between } from './src/model/filters/Between.js';
 export { Contains } from './src/model/filters/Contains.js';
 export { LessThan } from './src/model/filters/LessThan.js';

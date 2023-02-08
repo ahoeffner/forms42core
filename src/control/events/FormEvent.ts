@@ -28,6 +28,7 @@ import { Form as InternalForm } from "../../internal/Form.js";
 export interface FormEvent
 {
 	key:KeyMap;
+	jsevent:any;
 	field:string;
 	block:string;
 	type:EventType;

@@ -89,11 +89,6 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this)?.focus();
 	}
 
-	public getEvent() : any
-	{
-		return(Framework.getEvent());
-	}
-
 	public getCurrentBlock() : Block
 	{
 		return(this.getBlock(FormBacking.getViewForm(this).block.name));

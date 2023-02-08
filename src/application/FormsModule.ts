@@ -70,7 +70,7 @@ export class FormsModule
 		this.root$ = root;
 	}
 
-	public getEvent() : any
+	public getJSEvent() : any
 	{
 		return(Framework.getEvent());
 	}

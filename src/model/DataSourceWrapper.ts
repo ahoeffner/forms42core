@@ -133,8 +133,6 @@ export class DataSourceWrapper
 				{
 					if (this.cache$[i].state == RecordState.Updated || this.cache$[i].state == RecordState.Deleted)
 					{
-						this.cache$[i].failed = false;
-
 						if (!await this.lock(this.cache$[i],true))
 							this.cache$[i].failed = true;
 					}
@@ -281,6 +279,7 @@ export class DataSourceWrapper
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
+		record.failed = false;
 		let success:boolean = true;
 
 		if (record == null)

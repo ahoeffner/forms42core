@@ -27,6 +27,7 @@ import { EventFilter } from "./EventFilter.js";
 import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
 import { FormEvent as Interface } from "./FormEvent.js";
+import { Framework } from "../../application/Framework.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { ApplicationHandler } from "./ApplicationHandler.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
@@ -93,6 +94,11 @@ export class FormEvent implements Interface
 	public get block() : string
 	{
 		return(this.block$);
+	}
+
+	public get jsevent() : any
+	{
+		return(Framework.getEvent());
 	}
 
 	public get key() : KeyMap

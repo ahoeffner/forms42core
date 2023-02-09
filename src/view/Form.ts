@@ -236,7 +236,7 @@ export class Form implements EventListenerObject
 
 			if (backing == null)
 			{
-				Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current?.name+"'","Enter Form");
+				Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current()?.name+"'","Enter Form");
 				return(false);
 			}
 

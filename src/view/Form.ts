@@ -228,11 +228,12 @@ export class Form implements EventListenerObject
 			Go to form
 		 **********************************************************************/
 
-		if (this != Form.current())
+		// Check if 'I' have been closed
+		let backing:FormBacking = FormBacking.getBacking(this.parent);
+
+		if (backing && Form.current() && this != Form.current())
 		{
 			// When modal call, allow leaving former form in any state
-
-			let backing:FormBacking = FormBacking.getBacking(this.parent);
 
 			if (backing == null)
 			{

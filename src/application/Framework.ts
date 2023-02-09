@@ -487,7 +487,7 @@ class EventHandler implements EventListenerObject
 
 		if (method == null)
 		{
-			while (method == null && elem.parentElement != document.body.parentElement)
+			while (elem != null && method == null && elem.parentElement != document.body.parentElement)
 			{
 					elem = elem.parentElement;
 					method = this.getEvent(elem,event.type);
@@ -499,7 +499,7 @@ class EventHandler implements EventListenerObject
 			Framework.setEvent(event);
 			method.invoke(this.component);
 		}
-		else
+		else if (elem != null)
 		{
 			let msg:string = "@Framework: Cannot find "+event.type+" on this or parent any elements";
 			Alert.fatal(msg,"Invoke Method");

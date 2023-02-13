@@ -253,14 +253,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		this.event$.setEvent(event);
 
-		if (event.type != "click")
-		{
-			//if (this.event$.isKeyEvent)
-				console.log(event.type+" "+this.belongs(event.target as HTMLElement));
-
-			return;
-		}
-
 		if (!this.belongs(event.target as HTMLElement))
 		{
 			this.hide();
@@ -320,17 +312,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private prepare(element:HTMLElement) : void
 	{
 		element.tabIndex = ++this.tabidx$;
-
-		element.addEventListener("keyup",this);
-		element.addEventListener("keydown",this);
-		element.addEventListener("keypress",this);
-
 		element.addEventListener("click",this);
-		element.addEventListener("wheel",this);
-		element.addEventListener("mouseup",this);
-		element.addEventListener("mouseout",this);
-		element.addEventListener("mousedown",this);
-		element.addEventListener("mouseover",this);
-		element.addEventListener("mousemove",this);
 	}
 }

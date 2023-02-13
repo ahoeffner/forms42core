@@ -22,12 +22,14 @@
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
+import { BrowserEvent } from '../../view/BrowserEvent.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 
 
 export class MenuComponent extends EventListenerClass implements EventListenerObject
 {
 	private menu$:Menu = null;
+	private tabidx$:number = 1;
 	private levcls$:string = null;
 	private menucls$:string = null;
 	private linkcls$:string = null;
@@ -35,6 +37,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
+	private event$:BrowserEvent = BrowserEvent.get();
 	private elements$:Set<HTMLElement> = new Set<HTMLElement>();
 
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
@@ -86,6 +89,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async show() : Promise<void>
 	{
+		this.tabidx$ = 0;
 		let path:string = null;
 		let start:MenuEntry[] = [await this.menu$.getRoot()];
 
@@ -98,7 +102,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$.innerHTML = await this.showEntry(start,path);
 
 		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
-		entries.forEach((link) => {link.addEventListener("click",this);});
+		entries.forEach((link) => {this.prepare(link as HTMLAnchorElement);});
 
 		this.elements$.clear();
 		this.index(this.target$);
@@ -245,18 +249,28 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		return(page);
 	}
 
-	public async handleEvent(link:Event)
+	public async handleEvent(event:Event)
 	{
-		if (!this.belongs(link.target as HTMLElement))
+		this.event$.setEvent(event);
+
+		if (event.type != "click")
+		{
+			//if (this.event$.isKeyEvent)
+				console.log(event.type+" "+this.belongs(event.target as HTMLElement));
+
+			return;
+		}
+
+		if (!this.belongs(event.target as HTMLElement))
 		{
 			this.hide();
 			return;
 		}
 
-		if (link.type != "click")
+		if (event.type != "click")
 			return;
 
-		let elem:HTMLElement = link.target as HTMLElement;
+		let elem:HTMLElement = event.target as HTMLElement;
 
 		let path:string = elem.getAttribute("path");
 		let command:string = elem.getAttribute("command");
@@ -301,5 +315,22 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		});
 
 		return(parts);
+	}
+
+	private prepare(element:HTMLElement) : void
+	{
+		element.tabIndex = ++this.tabidx$;
+
+		element.addEventListener("keyup",this);
+		element.addEventListener("keydown",this);
+		element.addEventListener("keypress",this);
+
+		element.addEventListener("click",this);
+		element.addEventListener("wheel",this);
+		element.addEventListener("mouseup",this);
+		element.addEventListener("mouseout",this);
+		element.addEventListener("mousedown",this);
+		element.addEventListener("mouseover",this);
+		element.addEventListener("mousemove",this);
 	}
 }

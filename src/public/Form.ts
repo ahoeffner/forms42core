@@ -141,11 +141,11 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this).showDatePicker(block,field);
 	}
 
-	public showListOfValues(block:string, field:string) : void
+	public showListOfValues(block:string, field:string, force?:boolean) : void
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
-		FormBacking.getViewForm(this).showListOfValues(block,field);
+		FormBacking.getViewForm(this).showListOfValues(block,field,force);
 	}
 
 	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>

@@ -150,10 +150,10 @@ export class Block
 		FormBacking.getViewForm(this.form).showDatePicker(this.name,field);
 	}
 
-	public showListOfValues(field:string) : void
+	public showListOfValues(field:string, force?:boolean) : void
 	{
 		field = field?.toLowerCase();
-		FormBacking.getViewForm(this.form).showListOfValues(this.name,field);
+		FormBacking.getViewForm(this.form).showListOfValues(this.name,field,force);
 	}
 
 	public async sendkey(key:KeyMap, field?:string, clazz?:string) : Promise<boolean>

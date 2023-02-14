@@ -790,7 +790,7 @@ export class Form implements EventListenerObject
 		return(false);
 	}
 
-	public async showListOfValues(block:string, field:string) : Promise<boolean>
+	public async showListOfValues(block:string, field:string, force?:boolean) : Promise<boolean>
 	{
 		let params:Map<string,any> = new Map<string,any>();
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
@@ -798,9 +798,12 @@ export class Form implements EventListenerObject
 
 		if (lov != null)
 		{
-			// Only 1 LOV can be running
-			if (FormBacking.getChildForms(this.parent,Classes.ListOfValuesClass).length > 0)
-				return(false);
+			if (!force)
+			{
+				// Only 1 LOV can be running
+				if (FormBacking.getChildForms(this.parent,Classes.ListOfValuesClass).length > 0)
+					return(false);
+			}
 
 			params.set("field",field);
 			params.set("block",block);

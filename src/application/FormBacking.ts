@@ -21,19 +21,19 @@
 
 import { Alert } from './Alert.js';
 import { Form } from '../public/Form.js';
+import { Class } from '../types/Class.js';
+import { Block } from '../public/Block.js';
+import { Key } from '../model/relations/Key.js';
+import { FormMetaData } from './FormMetaData.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Form as ModelForm } from '../model/Form.js';
-
-import { Key } from '../model/relations/Key.js';
-import { Relation } from '../model/relations/Relation.js';
-
-import { Block } from '../public/Block.js';
-import { FormMetaData } from './FormMetaData.js';
 import { Block as ViewBlock } from '../view/Block.js';
 import { Connection } from '../database/Connection.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
+import { Relation } from '../model/relations/Relation.js';
 import { EventType } from '../control/events/EventType.js';
+import { Form as InternalForm } from '../internal/Form.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { DateConstraint } from '../public/DateConstraint.js';
 
@@ -55,11 +55,27 @@ export class FormBacking
 		return(FormBacking.form);
 	}
 
-	public static getRunningForms() : Form[]
+	public static getRunningForms(clazz?:Class<Form|InternalForm>) : Form[]
 	{
 		let forms:Form[] = [];
 		forms.push(...FormBacking.vforms.keys());
 		return(forms);
+	}
+
+	public static getChildForms(form:Form, clazz?:Class<Form|InternalForm>) : Form[]
+	{
+		let children:Form[] = [];
+
+		FormBacking.bdata.forEach((bd,frm) =>
+		{
+			if (bd.parent == form)
+			{
+				if (!clazz || frm.constructor.name == clazz.name)
+					children.push(frm);
+			}
+		})
+
+		return(children);
 	}
 
 	public static getCurrentViewForm() : ViewForm

@@ -22,7 +22,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
-import { Record, RecordState } from '../model/Record.js';
+import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
@@ -798,11 +798,16 @@ export class Form implements EventListenerObject
 
 		if (lov != null)
 		{
+			// Only 1 LOV can be running
+			if (FormBacking.getChildForms(this.parent,Classes.ListOfValuesClass).length > 0)
+				return(false);
+
 			params.set("field",field);
 			params.set("block",block);
 			params.set("properties",lov);
 			params.set("form",this.parent);
 			this.parent.callform(Classes.ListOfValuesClass,params);
+
 			return(true);
 		}
 

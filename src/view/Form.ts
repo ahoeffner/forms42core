@@ -22,7 +22,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
-import { Record } from '../model/Record.js';
+import { Record, RecordState } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
@@ -593,6 +593,14 @@ export class Form implements EventListenerObject
 					return(true);
 
 				success = await block.validateRow();
+
+				if (success && inst.field.row.status == Status.insert)
+				{
+					console.log("Insert 1 "+RecordState[mblock.getRecord().state]);
+					mblock.flush();
+					console.log("Insert 2 "+RecordState[mblock.getRecord().state]);
+				}
+
 				return(success);
 			}
 

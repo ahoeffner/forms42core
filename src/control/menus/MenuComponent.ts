@@ -22,7 +22,7 @@
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
-import { BrowserEvent } from '../../view/BrowserEvent.js';
+//import { BrowserEvent } from '../../view/BrowserEvent.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 
 
@@ -37,7 +37,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
-	private event$:BrowserEvent = BrowserEvent.get();
+	//private event$:BrowserEvent = BrowserEvent.get();
 	private elements$:Set<HTMLElement> = new Set<HTMLElement>();
 
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
@@ -251,7 +251,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async handleEvent(event:Event)
 	{
-		this.event$.setEvent(event);
+		//this.event$.setEvent(event);
 
 		if (!this.belongs(event.target as HTMLElement))
 		{

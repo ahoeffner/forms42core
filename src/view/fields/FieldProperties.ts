@@ -198,7 +198,7 @@ export class FieldProperties extends BasicProperties
 		return(this);
 	}
 
-    public setValidValues(values: string[] | Set<string> | Map<string,string>) : FieldProperties
+    public setValidValues(values: string[] | Set<any> | Map<any,any>) : FieldProperties
 	{
 		this.validValues = values;
 		return(this);

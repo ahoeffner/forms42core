@@ -50,7 +50,7 @@ export class BasicProperties
 	protected required$:boolean = false;
 
 	protected value$:string = null;
-	protected values$:Map<string,string> = new Map<string,string>();
+	protected values$:Map<any,any> = new Map<any,any>();
 
 	protected handled$:string[] = ["id","name",Properties.BindAttr,"row","invalid"];
 	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","advquery","value","class","style","mapper"];
@@ -451,28 +451,28 @@ export class BasicProperties
 	}
 
 
-	 public get validValues() : Map<string,string>
+	 public get validValues() : Map<any,any>
 	{
 		return(this.values$);
 	 }
 
-	 public set validValues(values: string[] | Set<string> | Map<string,string>)
+	 public set validValues(values: string[] | Set<any> | Map<any,any>)
 	{
 		if (Array.isArray(values) || values instanceof Set)
 		{
-			this.values$ = new Map<string,string>();
+			this.values$ = new Map<any,any>();
 			values.forEach((value:string) => {this.values$.set(value,value)});
 		}
 		else this.values$ = values;
 	 }
 
-	 public setValidValues(values: string[] | Set<string> | Map<string,string>) : BasicProperties
+	 public setValidValues(values: string[] | Set<any> | Map<any,any>) : BasicProperties
 	{
 		this.validValues = values;
 		return(this);
 	}
 
-	 public getValidValues() : Map<string,string>
+	 public getValidValues() : Map<any,any>
 	{
 		return(this.values$);
 	 }
@@ -500,7 +500,7 @@ export class BasicProperties
 
 		if (this.mapper$ != null && !("getIntermediateValue" in this.mapper$))
 		{
-			Alert.fatal("'"+this.mapper$.constructor.name+"' is not a DataMapper","DataMapper");
+			Alert.fatal("'"+(this.mapper$ as any).constructor.name+"' is not a DataMapper","DataMapper");
 			this.mapper$ = null;
 		}
 

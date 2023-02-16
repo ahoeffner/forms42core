@@ -235,6 +235,13 @@ export class ListOfValues extends Form
 
 		await this.setView(page);
 		let view:HTMLElement = this.getView();
+
+		if (this.props.width)
+		{
+			view.querySelectorAll("input[name='display']").forEach((elem) =>
+			{(elem as HTMLInputElement).style.width = this.props.width});
+		}
+
 		Internals.stylePopupWindow(view,this.props.title);
 
 		this.goField("filter","search");

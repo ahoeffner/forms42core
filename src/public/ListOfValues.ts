@@ -33,6 +33,7 @@ export interface LOVFilterPreProcessor
 export interface ListOfValues
 {
 	rows?:number;
+	width?:string;
 	title?:string;
 	cssclass?:string;
 

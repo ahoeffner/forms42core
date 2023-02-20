@@ -121,7 +121,18 @@ export class Block
 			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
 			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
 
-			if (!inst) console.log("No available fields in "+this.name+" in state "+RecordState[state])
+			if (!inst) 
+			{
+				let cf:number = this.getRow(-1)?.getFieldInstances()?.length;
+				let rf:number = this.getCurrentRow()?.getFieldInstances()?.length;
+
+				if (cf == null) cf = 0;
+				if (rf == null) rf = 0;
+
+				if (cf + rf > 0)
+					console.log("No available fields in "+this.name+" in state "+RecordState[state]);
+			}
+
 			inst?.focus();
 		}
 	}
@@ -145,7 +156,16 @@ export class Block
 		}
 
 		if (!inst)
-			console.log("No available fields in "+this.name+" in state "+RecordState[state])
+		{
+			let cf:number = this.getRow(-1)?.getFieldInstances()?.length;
+			let rf:number = this.getCurrentRow()?.getFieldInstances()?.length;
+
+			if (cf == null) cf = 0;
+			if (rf == null) rf = 0;
+
+			if (cf + rf > 0)
+				console.log("No available fields in "+this.name+" in state "+RecordState[state])
+		}
 
 		inst?.focus();
 	}

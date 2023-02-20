@@ -44,7 +44,7 @@ export class Alert extends Form
 		this.resizable = true;
 
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
-		this.addEventListener(this.setFocus,{type:EventType.Mouse, mouse: MouseMap.click});
+		this.addEventListener(this.focus,{type:EventType.Mouse, mouse: MouseMap.click});
 
 		this.addEventListener(this.done,
 		[
@@ -57,12 +57,6 @@ export class Alert extends Form
 	private async done() : Promise<boolean>
 	{
 		return(this.close());
-	}
-
-	private async setFocus(): Promise<boolean>
-	{
-		this.closeButton.focus();
-		return(true);
 	}
 
 	private async initialize() : Promise<boolean>
@@ -92,8 +86,14 @@ export class Alert extends Form
 		this.canvas.zindex = 2147483647;
 		this.setValue("alert","msg",msg);
 
-		this.setFocus();
+		this.focus();
 		return(false);
+	}
+
+	public override async focus(): Promise<boolean>
+	{
+		this.closeButton.focus();
+		return(true);
 	}
 
 	public static page:string =

@@ -56,6 +56,7 @@ export interface DataSource
 	refresh(record:Record) : Promise<boolean>;
 	query(filters?:FilterStructure) : Promise<boolean>;
 
+	getFilters() : FilterStructure;
 	addColumns(columns:string|string[]) : DataSource;
 	removeColumns(columns:string|string[]) : DataSource;
 	addFilter(filter:Filter|FilterStructure) : DataSource;

@@ -162,6 +162,11 @@ export class QueryTable extends SQLSource implements DataSource
 		return(this);
 	}
 
+	public getFilters() : FilterStructure
+	{
+		return(this.limit$);
+	}
+
 	public addFilter(filter:Filter | FilterStructure) : QueryTable
 	{
 		if (this.limit$ == null)

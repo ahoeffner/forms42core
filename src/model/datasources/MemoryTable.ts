@@ -174,6 +174,11 @@ export class MemoryTable implements DataSource
 		return(this);
 	}
 
+	public getFilters() : FilterStructure
+	{
+		return(this.limit$);
+	}
+
 	public addFilter(filter:Filter | FilterStructure) : MemoryTable
 	{
 		if (this.limit$ == null)

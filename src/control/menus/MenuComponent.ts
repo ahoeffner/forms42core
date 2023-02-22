@@ -214,7 +214,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			let classes:string = this.menucls$;
 			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
-			console.log(entries[i].id)
+			//console.log(entries[i].id);
 
 			if (entries[i].command)
 			{
@@ -253,12 +253,15 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		if (!(event.target instanceof HTMLElement))
 		{
+			console.log("Not element")
 			this.hide();
 			return;
 		}
 
-		if (this.belongs(event.target))
+		if (event.type == "click" && this.belongs(event.target))
 		{
+			console.log("Doesn't belong")
+			console.log(event.target)
 			this.hide();
 			return;
 		}
@@ -266,6 +269,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (event.type != "click")
 			return;
 
+		console.log(event.type)
 		let elem:HTMLElement = event.target;
 
 		let path:string = elem.getAttribute("path");

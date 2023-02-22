@@ -113,7 +113,14 @@ export class SQLRestBuilder
 			parsed.stmt += " order by "+order;
 
 		parsed.bindvalues = filter?.getBindValues();
-		if (bindings) parsed.bindvalues.push(...bindings);
+
+		if (bindings) 
+		{
+			if (!parsed.bindvalues) 
+				parsed.bindvalues = [];
+				
+			parsed.bindvalues.push(...bindings);
+		}
 		
 		return(parsed);
 	}

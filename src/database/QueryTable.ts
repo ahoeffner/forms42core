@@ -374,10 +374,11 @@ export class QueryTable extends SQLSource implements DataSource
 
 	private async describe() : Promise<boolean>
 	{
-		let sql:SQLRest = new SQLRest();
 		if (this.described$) return(true);
+		
+		let stmt:string = this.sql$ + " and 1 = 2";
+		let sql:SQLRest = SQLRestBuilder.finish(stmt,null,this.bindings$,null);
 
-		sql.stmt += this.sql$ + " and 1 = 2";
 		let response:any = await this.conn$.select(sql,null,1,true);
 
 		if (!response.success)

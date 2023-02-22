@@ -214,6 +214,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			let classes:string = this.menucls$;
 			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
+			console.log(entries[i].id)
+
 			if (entries[i].command)
 			{
 				classes = this.linkcls$;

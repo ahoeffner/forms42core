@@ -22,7 +22,6 @@
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
 import { MenuOptions } from './interfaces/MenuOptions.js';
-//import { BrowserEvent } from '../../view/BrowserEvent.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 
 
@@ -37,7 +36,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
-	//private event$:BrowserEvent = BrowserEvent.get();
 	private elements$:Set<HTMLElement> = new Set<HTMLElement>();
 
 	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
@@ -251,9 +249,13 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async handleEvent(event:Event)
 	{
-		//this.event$.setEvent(event);
+		if (!(event.target instanceof HTMLElement))
+		{
+			this.hide();
+			return;
+		}
 
-		if (!this.belongs(event.target as HTMLElement))
+		if (this.belongs(event.target))
 		{
 			this.hide();
 			return;
@@ -262,7 +264,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (event.type != "click")
 			return;
 
-		let elem:HTMLElement = event.target as HTMLElement;
+		let elem:HTMLElement = event.target;
 
 		let path:string = elem.getAttribute("path");
 		let command:string = elem.getAttribute("command");
@@ -313,5 +315,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		element.tabIndex = ++this.tabidx$;
 		element.addEventListener("click",this);
+		element.addEventListener("keyup",this);
+		element.addEventListener("focus",this);
+		element.addEventListener("mouseover",this);
 	}
 }

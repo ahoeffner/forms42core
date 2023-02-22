@@ -284,33 +284,34 @@ export class BrowserEvent
 				}
 			}
 
-				if (this.key == "Backspace") this.ignore = false;
-				if (this.event.key == "PageUp") this.ignore = false;
-				if (this.event.key == "PageDown") this.ignore = false;
+			if (this.key == "Backspace") this.ignore = false;
+			if (this.event.key == "PageUp") this.ignore = false;
+			if (this.event.key == "PageDown") this.ignore = false;
 
-				if (this.event.key == "ArrowLeft") this.ignore = false;
-				if (this.event.key == "ArrowRight") this.ignore = false;
+			if (this.event.key == "ArrowLeft") this.ignore = false;
+			if (this.event.key == "ArrowRight") this.ignore = false;
 
-				if (this.event.key == "Tab") {this.custom = true; this.ignore = false;}
+			if (this.event.key == "Tab") {this.custom = true; this.ignore = false;}
 
-				if (this.event.key == "PageUp") {this.custom = true; this.ignore = false;}
-				if (this.event.key == "PageDown") {this.custom = true; this.ignore = false;}
+			if (this.event.key == "PageUp") {this.custom = true; this.ignore = false;}
+			if (this.event.key == "PageDown") {this.custom = true; this.ignore = false;}
 
-				if (this.event.key == "ArrowUp") {this.custom = true; this.ignore = false;}
-				if (this.event.key == "ArrowDown") {this.custom = true; this.ignore = false;}
+			if (this.event.key == "ArrowUp") {this.custom = true; this.ignore = false;}
+			if (this.event.key == "ArrowDown") {this.custom = true; this.ignore = false;}
 
-				if (this.event.key == "Alt") {this.ignore = true; this.alt = false;}
-				if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}
-				if (this.event.key == "Shift") {this.ignore = true; this.shift = false;}
-				if (this.event.key == "Control") {this.ignore = true; this.ctrl = false;}
+			if (this.event.key == "Alt") {this.ignore = true; this.alt = false;}
+			if (this.event.key == "Meta") {this.ignore = true; this.meta = false;}
+			if (this.event.key == "Shift") {this.ignore = true; this.shift = false;}
+			if (this.event.key == "Control") {this.ignore = true; this.ctrl = false;}
 
-				if (this.event.key == "Enter") {this.custom = true; this.accept = true; this.ignore = false;}
-				if (this.event.key == "Escape") {this.custom = true; this.cancel = true; this.ignore = false;}
+			if (this.event.key == "Enter") {this.custom = true; this.accept = true; this.ignore = false;}
+			if (this.event.key == "Escape") {this.custom = true; this.cancel = true; this.ignore = false;}
 
-				if (this.ctrlkey != null) this.ignore = false;
+			if (this.ctrlkey != null) this.ignore = false;
 
-				if (this.key != null && this.key.startsWith("F") && this.event.key.length > 1)
+			if (this.key != null && this.key.startsWith("F") && this.event.key.length > 1)
 				this.ignore = false;
+				
 			break;
 
 			case "keypress":

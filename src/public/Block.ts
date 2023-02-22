@@ -206,6 +206,15 @@ export class Block
 			FormBacking.getBacking(this.form).setListOfValues(this.name,field[i],lov);
 	}
 
+	public removeListOfValues(lov:ListOfValues, field:string|string[]) : void
+	{
+		if (!Array.isArray(field))
+			field = [field];
+
+		for (let i = 0; i < field.length; i++)
+			FormBacking.getBacking(this.form).removeListOfValues(this.name,field[i]);
+	}
+
 	public setDateConstraint(constraint:DateConstraint, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))

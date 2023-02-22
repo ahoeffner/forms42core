@@ -322,6 +322,13 @@ export class FormBacking
 		return(this.lovs$.get(block)?.get(field));
 	}
 
+	public removeListOfValues(block:string, field:string) : void
+	{
+		block = block?.toLowerCase();
+		field = field?.toLowerCase();
+		this.lovs$.get(block)?.delete(field);
+	}
+
 	public setListOfValues(block:string, field:string, lov:ListOfValues) : void
 	{
 		block = block?.toLowerCase();

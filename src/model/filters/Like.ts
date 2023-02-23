@@ -64,6 +64,7 @@ export class Like implements Filter
 
 	public setConstraint(value:any) : Like
 	{
+		this.parsed = false;
 		this.constraint = value;
 		return(this);
 	}

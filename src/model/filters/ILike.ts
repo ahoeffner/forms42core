@@ -65,6 +65,7 @@ export class ILike implements Filter
 
 	public setConstraint(value:any) : ILike
 	{
+		this.parsed = false;
 		this.constraint = value;
 		return(this);
 	}

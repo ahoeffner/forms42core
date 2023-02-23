@@ -83,6 +83,7 @@ export class Like implements Filter
 
 	public set constraint(value:string)
 	{
+		this.parsed = false;
 		this.bindvalues$ = null;
 		this.constraint$ = value;
 	}

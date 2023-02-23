@@ -206,7 +206,7 @@ export class Block
 			FormBacking.getBacking(this.form).setListOfValues(this.name,field[i],lov);
 	}
 
-	public removeListOfValues(lov:ListOfValues, field:string|string[]) : void
+	public removeListOfValues(field:string|string[]) : void
 	{
 		if (!Array.isArray(field))
 			field = [field];

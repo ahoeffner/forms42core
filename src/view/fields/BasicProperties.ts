@@ -36,6 +36,7 @@ export interface Style
 
 export class BasicProperties
 {
+	protected row$:number;
 	protected tag$:string = null;
 	protected styles$:Style[] = [];
 	protected classes$:string[] = [];
@@ -62,7 +63,8 @@ export class BasicProperties
 
 	public get row() : number
 	{
-		return(this.row);
+		if (this.row$ < 0) return(null);
+		else 					 return(this.row$);
 	}
 
 	public set tag(tag:string)

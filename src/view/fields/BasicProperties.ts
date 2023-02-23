@@ -60,6 +60,11 @@ export class BasicProperties
 		return(this.tag$);
 	}
 
+	public get row() : number
+	{
+		return(this.row);
+	}
+
 	public set tag(tag:string)
 	{
 		this.tag$ = tag?.toLowerCase();

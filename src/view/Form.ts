@@ -22,7 +22,6 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
-import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
@@ -31,6 +30,7 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
+import { Record, RecordState } from '../model/Record.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -363,9 +363,11 @@ export class Form implements EventListenerObject
 
 			// Successfully navigated from preform to this form
 			if (!this.model.wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
-			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
-			return(success);
+			await this.fireFormEvent(EventType.PostFormFocus,this.parent);
 		}
+
+		if (inst.field.block.model.getRecord().state == RecordState.New)
+			await this.onNewRecord(inst.field.block,0);
 
 		return(true);
 	}

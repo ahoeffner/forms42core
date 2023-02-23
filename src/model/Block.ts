@@ -488,7 +488,6 @@ export class Block
 			if (success)
 			{
 				let offset:number = before ? 0 : 1;
-				await this.view.form.onNewRecord(this.view,offset);
 
 				let details:Block[] = this.getAllDetailBlocks(true);
 

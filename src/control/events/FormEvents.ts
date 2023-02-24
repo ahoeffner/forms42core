@@ -486,23 +486,23 @@ export class FormEvents
 
 	private static match(event:FormEvent, lsnr:EventListener) : boolean
 	{
-		let force:boolean = false;
+		let global:boolean = false;
 
 		switch(event.type)
 		{
-			case EventType.Connect : force = true; break;
-			case EventType.Disconnect : force = true; break;
+			case EventType.Connect : global = true; break;
+			case EventType.Disconnect : global = true; break;
 
-			case EventType.PreCommit : force = true; break;
-			case EventType.PostCommit : force = true; break;
+			case EventType.PreCommit : global = true; break;
+			case EventType.PostCommit : global = true; break;
 
-			case EventType.PreRollback : force = true; break;
-			case EventType.PostRollback : force = true; break;
+			case EventType.PreRollback : global = true; break;
+			case EventType.PostRollback : global = true; break;
 
-			case EventType.OnTransaction : force = true; break;
+			case EventType.OnTransaction : global = true; break;
 		}
 
-		if (lsnr.form != null && lsnr.form != event.form)
+		if (lsnr.form != null && (lsnr.form != event.form && !global))
 			return(false);
 
 		Logger.log(Type.eventlisteners," match: "+EventType[event.type]+" "+lsnr.clazz.constructor.name);

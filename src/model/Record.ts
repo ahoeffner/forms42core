@@ -29,7 +29,7 @@ export enum RecordState
 	Deleted,
 	Updated,
 	Inserted,
-	UnModified,
+	Consistent,
 	QueryFilter
 }
 
@@ -46,7 +46,7 @@ export class Record
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
-	private status$:RecordState = RecordState.UnModified;
+	private status$:RecordState = RecordState.Consistent;
 
 	constructor(source:DataSource, data?:any[])
 	{

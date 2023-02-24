@@ -89,10 +89,15 @@ export class Block
 		return(this.model$);
 	}
 
+	public get visited() : boolean
+	{
+		return(this.curinst$ != null);
+	}
+
 	public get current() : FieldInstance
 	{
 		if (this.curinst$ == null)
-			this.curinst$ = this.getCurrentRow().getFirstInstance(Status.na);
+			return(this.getCurrentRow().getFirstInstance(Status.na));
 
 		return(this.curinst$);
 	}
@@ -121,7 +126,7 @@ export class Block
 			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
 			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
 
-			if (!inst) 
+			if (!inst)
 			{
 				let cf:number = this.getRow(-1)?.getFieldInstances()?.length;
 				let rf:number = this.getCurrentRow()?.getFieldInstances()?.length;
@@ -1234,7 +1239,7 @@ export class Block
 		{
 			case null							: return(Status.na);
 			case RecordState.New 			: return(Status.new);
-			case RecordState.UnModified 			: return(Status.update);
+			case RecordState.Consistent 			: return(Status.update);
 			case RecordState.Updated 		: return(Status.update);
 			case RecordState.Deleted 		: return(Status.delete);
 			case RecordState.Inserted 		: return(Status.insert);

@@ -607,6 +607,7 @@ export class Block
 	public async enterQuery() : Promise<boolean>
 	{
 		this.clean$ = true;
+		this.view.current = null;
 
 		if (!await this.wrapper.clear(true))
 			return(false);
@@ -628,6 +629,7 @@ export class Block
 	{
 		this.clean$ = false;
 		let runid:object = null;
+		this.view.current = null;
 
 		if (!this.setMasterDependencies())
 		{
@@ -723,7 +725,7 @@ export class Block
 			this.qbe.showLastQuery();
 			this.view.clear(true,true);
 			this.view.display(0,this.qberec);
-			this.view$.setCurrentRow(0,false);	
+			this.view$.setCurrentRow(0,false);
 		}
 	}
 

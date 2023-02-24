@@ -342,11 +342,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 					break;
 
 				case RecordState.Updated:
-					this.dirty$[i].state = RecordState.UnModified;
+					this.dirty$[i].state = RecordState.Consistent;
 					break;
 
 				case RecordState.Deleted:
-					this.dirty$[i].state = RecordState.UnModified;
+					this.dirty$[i].state = RecordState.Consistent;
 					break;
 			}
 		}

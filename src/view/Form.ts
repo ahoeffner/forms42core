@@ -221,6 +221,7 @@ export class Form implements EventListenerObject
 	{
 		let preform:Form = null;
 		let nxtblock:Block = inst.field.block;
+		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 		let preblock:Block = this.curinst$?.field.block;
 
@@ -353,7 +354,7 @@ export class Form implements EventListenerObject
 		}
 
 		this.curinst$ = inst;
-		inst.field.block.current = inst;
+		nxtblock.current = inst;
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
@@ -367,16 +368,15 @@ export class Form implements EventListenerObject
 		}
 
 		let onrec:boolean = true;
-		let rec:Record = inst.field.block.model.getRecord();
+		let rec:Record = nxtblock.model.getRecord();
 
 		if (rec == null) onrec = false;
 		if (onrec && rec.state == RecordState.Deleted) onrec = false;
 		if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
-		if (onrec && (nxtblock == preblock && recoffset == 0)) onrec = false;
+		if (onrec && visited && (nxtblock == preblock && recoffset == 0)) onrec = false;
 
 		if (onrec)
-		{			
-			console.log("onRecord")
+		{
 			if (rec.state == RecordState.New)
 				await this.onNewRecord(inst.field.block);
 

@@ -1011,14 +1011,18 @@ export class Block
 		return(inst);
 	}
 
-	public getQueryableInstance(inst:FieldInstance) : FieldInstance
+	public getQBEInstance(inst:FieldInstance) : FieldInstance
 	{
-		if (inst.row != 0)
+		if (inst.row != 0 && inst.row >= 0)
 		{
-
+			let idx:number = this.getRow(inst.row).getFieldIndex(inst);
+			inst = this.getRow(0).getFieldByIndex(idx);
 		}
 
-		return(null);
+		if (!inst?.focusable(Status.qbe))
+			return(null);
+
+		return(inst);
 	}
 
 	public finalize() : void

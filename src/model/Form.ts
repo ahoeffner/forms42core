@@ -36,6 +36,7 @@ import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { BlockCoordinator } from './relations/BlockCoordinator.js';
+import { FieldInstance } from '../view/fields/FieldInstance.js';
 
 
 export class Form
@@ -361,8 +362,11 @@ export class Form
 
 		await this.enterQueryMode(block);
 
-		console.log(this.view.instance+" ")
-		block.view.findFirstEditable(block.qberec)?.focus();
+		let inst:FieldInstance = this.view.instance;
+		inst = block.view.getQBEInstance(inst);
+
+		if (inst) inst.focus();
+		else block.view.findFirstEditable(block.qberec)?.focus();
 
 		return(true);
 	}

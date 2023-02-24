@@ -183,6 +183,25 @@ export class FormBacking
 		return(blk);
 	}
 
+	public static hasTransactions(connection?:Connection) : boolean
+	{
+		if (connection) return(connection.hasTransactions());
+
+		let transactions:boolean = false;
+		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].hasTransactions())
+			{
+				transactions = true;
+				break;
+			}
+		}
+
+		return(transactions);
+	}
+
 	public static async commit() : Promise<boolean>
 	{
 		let failed:boolean = false;

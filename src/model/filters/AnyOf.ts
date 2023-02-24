@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -28,6 +29,7 @@ export class AnyOf implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
+	private datatype$:string = null;
 	private constraint$:any[] = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -42,11 +44,24 @@ export class AnyOf implements Filter
 		this.constraint$ = null;
 	}
 
-	public clone(): AnyOf
+	public clone() : AnyOf
 	{
 		let clone:AnyOf = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : AnyOf
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -104,7 +119,7 @@ export class AnyOf implements Filter
 				return([]);
 
 			for (let i = 0; i < this.constraint$.length; i++)
-				this.bindvalues$.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i]));
+				this.bindvalues$.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i], this.datatype$));
 
 			this.bindvalues$.forEach((b) => b.column = this.column$);
 		}

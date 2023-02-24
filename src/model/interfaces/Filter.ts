@@ -20,6 +20,7 @@
 */
 
 import { Record } from "../Record.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 export interface Filter
@@ -28,7 +29,7 @@ export interface Filter
 	asSQL() : string;
 	clone() : Filter;
 
-	constraint?:any|any[];
+	constraint:any|any[];
 
 	getBindValue() : BindValue;
 	getBindValues() : BindValue[];
@@ -36,6 +37,10 @@ export interface Filter
 	getBindValueName() : string;
 	setBindValueName(name:string) : Filter;
 
+	getDataType() : string;
+	setDataType(type:DataType) : Filter;
+	
 	setConstraint(value:any|any[]) : Filter;
+
 	evaluate(record:Record) : Promise<boolean>;
 }

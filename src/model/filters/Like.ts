@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 export class Like implements Filter
@@ -30,6 +31,7 @@ export class Like implements Filter
 	private ltrunc:boolean = false;
 	private rtrunc:boolean = false;
 	private parsed:boolean = false;
+	private datatype$:string = null;
 	private constraint$:string = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -48,7 +50,20 @@ export class Like implements Filter
 	{
 		let clone:Like = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : Like
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -98,7 +113,7 @@ export class Like implements Filter
 	{
 		if (this.bindvalues$ == null)
 		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
 			this.bindvalues$[0].column = this.column$;
 		}
 

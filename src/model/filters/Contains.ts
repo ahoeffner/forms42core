@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -28,6 +29,7 @@ export class Contains implements Filter
 {
 	private columns$:string[] = [];
 	private bindval$:string = null;
+	private datatype$:string = null;
 	private constraint$:string[] = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -69,7 +71,20 @@ export class Contains implements Filter
 	{
 		let clone:Contains = Reflect.construct(this.constructor,this.columns$);
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : Contains
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -134,7 +149,7 @@ export class Contains implements Filter
 				}
 			}
 
-			this.bindvalues$ = [new BindValue(this.bindval$,str)];
+			this.bindvalues$ = [new BindValue(this.bindval$,str,this.datatype$)];
 		}
 
 		return(this.bindvalues$);

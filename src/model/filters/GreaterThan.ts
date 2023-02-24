@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -30,6 +31,7 @@ export class GreaterThan implements Filter
 	private column$:string = null;
 	private bindval$:string = null;
 	private constraint$:any = null;
+	private datatype$:string = null;
 	private bindvalues$:BindValue[] = null;
 
 	public constructor(column:string, incl?:boolean)
@@ -49,7 +51,20 @@ export class GreaterThan implements Filter
 		let clone:GreaterThan = Reflect.construct(this.constructor,[this.column$]);
 		clone.incl = this.incl;
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : GreaterThan
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -89,7 +104,7 @@ export class GreaterThan implements Filter
 	{
 		if (this.bindvalues$ == null)
 		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
 			this.bindvalues$[0].column = this.column$;
 		}
 

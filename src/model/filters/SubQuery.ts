@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -28,6 +29,7 @@ export class SubQuery implements Filter
 {
 	private bindval$:string = null;
 	private subquery$:string = null;
+	private datatype$:string = null;
 	private columns$:string[] = null;
 	private constraint$:any[][] = null;
 	private bindvalues$:BindValue[] = [];
@@ -81,9 +83,22 @@ export class SubQuery implements Filter
 		let clone:SubQuery = new SubQuery(this.columns$);
 
 		clone.subquery$ = this.subquery$;
+		clone.datatype$ = this.datatype$;
 		clone.bindvalues$ = this.bindvalues$;
 
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : SubQuery
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public clear() : void

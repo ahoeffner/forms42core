@@ -374,7 +374,7 @@ export class QueryTable extends SQLSource implements DataSource
 	private async describe() : Promise<boolean>
 	{
 		if (this.described$) return(true);
-		
+
 		let stmt:string = this.sql$ + " and 1 = 2";
 		let sql:SQLRest = SQLRestBuilder.finish(stmt,null,this.bindings$,null);
 
@@ -409,7 +409,7 @@ export class QueryTable extends SQLSource implements DataSource
 		{
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
-			if (t != null) b.type = DataType[t];
+			if (b.type == null && t != null) b.type = DataType[t];
 		})
 	}
 

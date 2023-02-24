@@ -486,6 +486,22 @@ export class FormEvents
 
 	private static match(event:FormEvent, lsnr:EventListener) : boolean
 	{
+		let force:boolean = false;
+
+		switch(event.type)
+		{
+			case EventType.Connect : force = true; break;
+			case EventType.Disconnect : force = true; break;
+
+			case EventType.PreCommit : force = true; break;
+			case EventType.PostCommit : force = true; break;
+
+			case EventType.PreRollback : force = true; break;
+			case EventType.PostRollback : force = true; break;
+
+			case EventType.OnTransaction : force = true; break;
+		}
+
 		if (lsnr.form != null && lsnr.form != event.form)
 			return(false);
 

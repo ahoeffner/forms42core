@@ -109,10 +109,7 @@ export class SQLStatement
 		sql.bindvalues = [...this.bindvalues$.values()];
 
 		if (type == "select")
-		{
 			this.cursor$ = new Cursor();
-			this.cursor$.name = "sql"+(new Date().getTime());
-		}
 
 		switch(type?.toLowerCase())
 		{

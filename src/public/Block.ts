@@ -280,6 +280,11 @@ export class Block
 		return(FormBacking.getViewBlock(this).current.name);
 	}
 
+	public showLastQuery() : void
+	{
+		FormBacking.getModelBlock(this).showLastQuery();
+	}
+
 	/**
 	 * setAndValidate field value as if changed by a user.
 	 * @param field

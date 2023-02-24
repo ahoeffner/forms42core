@@ -113,10 +113,10 @@ export class ApplicationHandler implements EventListenerObject
 		}
 
 		if (key == KeyMap.commit)
-			return(FormBacking.save());
+			return(FormBacking.commit());
 
 		if (key == KeyMap.rollback)
-			return(FormBacking.undo());
+			return(FormBacking.rollback());
 
 		return(true);
 	}

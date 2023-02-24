@@ -366,8 +366,22 @@ export class Form implements EventListenerObject
 			await this.fireFormEvent(EventType.PostFormFocus,this.parent);
 		}
 
-		if (inst.field.block.model.getRecord().state == RecordState.New)
-			await this.onNewRecord(inst.field.block,0);
+		let onrec:boolean = true;
+		let rec:Record = inst.field.block.model.getRecord();
+
+		if (rec == null) onrec = false;
+		if (onrec && rec.state == RecordState.Deleted) onrec = false;
+		if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
+		if (onrec && (nxtblock == preblock && recoffset == 0)) onrec = false;
+
+		if (onrec)
+		{			
+			console.log("onRecord")
+			if (rec.state == RecordState.New)
+				await this.onNewRecord(inst.field.block);
+
+			await this.onRecord(inst.field.block);
+		}
 
 		return(true);
 	}
@@ -407,11 +421,17 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async onNewRecord(block:Block, offset:number) : Promise<boolean>
+	public async onRecord(block:Block) : Promise<boolean>
 	{
-		if (!await this.setEventTransaction(EventType.OnNewRecord,block,offset)) return(false);
-		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
-		block.model.endEventTransaction(EventType.OnNewRecord,success);
+		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
+		let success:boolean = await this.fireFormEvent(EventType.OnRecord,block.form.parent);
+		return(success);
+	}
+
+	public async onNewRecord(block:Block) : Promise<boolean>
+	{
+		if (!await this.model.wait4EventTransaction(EventType.OnNewRecord,null)) return(false);
+		let success:boolean = await this.fireFormEvent(EventType.OnNewRecord,block.form.parent);
 		return(success);
 	}
 
@@ -620,7 +640,6 @@ export class Form implements EventListenerObject
 			{
 				if (qmode) return(true);
 				success = await this.model.enterQuery(inst.field.block.model);
-				if (success) block.findFirstEditable(block.model.qberec)?.focus();
 				return(success);
 			}
 

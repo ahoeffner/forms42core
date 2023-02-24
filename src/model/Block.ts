@@ -718,10 +718,13 @@ export class Block
 
 	public showLastQuery() : void
 	{
-		this.qbe.showLastQuery();
-		this.view.clear(true,true);
-		this.view.display(0,this.qberec);
-		this.view$.setCurrentRow(0,false);
+		if (this.querymode)
+		{
+			this.qbe.showLastQuery();
+			this.view.clear(true,true);
+			this.view.display(0,this.qberec);
+			this.view$.setCurrentRow(0,false);	
+		}
 	}
 
 	public scroll(records:number, offset:number) : number

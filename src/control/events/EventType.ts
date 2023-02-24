@@ -55,6 +55,8 @@ export enum EventType
 
 	PreRecord,
 	PostRecord,
+
+	OnRecord,
 	OnNewRecord,
 
 	PreField,
@@ -62,7 +64,6 @@ export enum EventType
 
 	OnEdit,
 	WhenValidateField,
-	PostValidateField,
 
 	OnFetch,
 	PreQuery,

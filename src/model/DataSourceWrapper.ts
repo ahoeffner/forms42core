@@ -155,7 +155,7 @@ export class DataSourceWrapper
 
 					if (succces)
 					{
-						records[i].state = RecordState.Query;
+						records[i].state = RecordState.UnModified;
 						this.block.view.setStatus(records[i]);
 						records[i].setClean(false);
 					}
@@ -169,7 +169,7 @@ export class DataSourceWrapper
 
 					if (succces)
 					{
-						records[i].state = RecordState.Query;
+						records[i].state = RecordState.UnModified;
 						this.block.view.setStatus(records[i]);
 						records[i].setClean(false);
 					}
@@ -272,7 +272,7 @@ export class DataSourceWrapper
 		record.setClean(false);
 
 		if (record.state == RecordState.Updated)
-			record.state = RecordState.Query;
+			record.state = RecordState.UnModified;
 
 		await this.block.onFetch(record);
 	}
@@ -315,7 +315,7 @@ export class DataSourceWrapper
 					if (success) record.state = RecordState.Inserted;
 					break;
 
-				case RecordState.Query :
+				case RecordState.UnModified :
 					success = await this.update(record);
 					if (success) record.state = RecordState.Updated;
 					break;
@@ -422,7 +422,7 @@ export class DataSourceWrapper
 				this.eof$ = true;
 
 			this.cache$.push(...recs);
-			recs.forEach((rec) => rec.state = RecordState.Query);
+			recs.forEach((rec) => rec.state = RecordState.UnModified);
 		}
 
 		let record:Record = this.cache$[this.hwm$];

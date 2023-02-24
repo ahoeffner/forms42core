@@ -360,6 +360,10 @@ export class Form
 		this.clearDetailDepencies(block);
 
 		await this.enterQueryMode(block);
+
+		console.log(this.view.instance+" ")
+		block.view.findFirstEditable(block.qberec)?.focus();
+
 		return(true);
 	}
 

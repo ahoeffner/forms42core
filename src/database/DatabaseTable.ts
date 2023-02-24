@@ -342,11 +342,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 					break;
 
 				case RecordState.Updated:
-					this.dirty$[i].state = RecordState.Query;
+					this.dirty$[i].state = RecordState.UnModified;
 					break;
 
 				case RecordState.Deleted:
-					this.dirty$[i].state = RecordState.Query;
+					this.dirty$[i].state = RecordState.UnModified;
 					break;
 			}
 		}
@@ -645,7 +645,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			this.conn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor();
-		this.cursor$.name = "select"+(new Date().getTime());
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>

@@ -34,8 +34,8 @@ import { ListOfValues } from '../public/ListOfValues.js';
 import { Relation } from '../model/relations/Relation.js';
 import { EventType } from '../control/events/EventType.js';
 import { Form as InternalForm } from '../internal/Form.js';
-import { FormEvents } from '../control/events/FormEvents.js';
 import { DateConstraint } from '../public/DateConstraint.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class FormBacking
 {
@@ -183,7 +183,7 @@ export class FormBacking
 		return(blk);
 	}
 
-	public static async save() : Promise<boolean>
+	public static async commit() : Promise<boolean>
 	{
 		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
@@ -194,7 +194,23 @@ export class FormBacking
 				return(false);
 		}
 
+		let transactions:boolean = false;
 		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].hasTransactions())
+			{
+				transactions = true;
+				break;
+			}
+		}
+
+		if (!transactions)
+			return;
+
+		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreCommit)))
+			return(false);
 
 		for (let i = 0; i < dbconns.length; i++)
 		{
@@ -214,15 +230,37 @@ export class FormBacking
 		if (!failed) Alert.message("Transactions successfully saved","Transactions");
 		else 			 Alert.warning("Failed to push transactions to backend","Transactions");
 
+		if (!failed)
+		{
+			if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PostCommit)))
+				return(false);
+		}
+
 		return(failed);
 	}
 
-	public static async undo() : Promise<boolean>
+	public static async rollback() : Promise<boolean>
 	{
 		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
 
+		let transactions:boolean = false;
 		let dbconns:Connection[] = Connection.getAllConnections();
+
+		for (let i = 0; i < dbconns.length; i++)
+		{
+			if (dbconns[i].hasTransactions())
+			{
+				transactions = true;
+				break;
+			}
+		}
+
+		if (!transactions)
+			return;
+
+		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
+			return(false);
 
 		for (let i = 0; i < dbconns.length; i++)
 		{
@@ -250,6 +288,12 @@ export class FormBacking
 
 		if (failed) Alert.warning("Failed to roll back transactions","Transactions");
 		else 			Alert.message("Transactions successfully rolled back","Transactions");
+
+		if (!failed)
+		{
+			if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PostRollback)))
+				return(false);
+		}
 
 		return(failed);
 	}

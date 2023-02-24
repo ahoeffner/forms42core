@@ -152,14 +152,14 @@ export class FormsModule
 		return(ApplicationHandler.instance.keyhandler(key));
 	}
 
-	public async save() : Promise<boolean>
+	public async commit() : Promise<boolean>
 	{
-		return(FormBacking.save());
+		return(FormBacking.commit());
 	}
 
-	public async undo() : Promise<boolean>
+	public async rollback() : Promise<boolean>
 	{
-		return(FormBacking.undo());
+		return(FormBacking.rollback());
 	}
 
 	public message(msg:string, title?:string) : void

@@ -351,7 +351,6 @@ export class QueryTable extends SQLSource implements DataSource
 			this.conn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor();
-		this.cursor$.name = "select"+(new Date().getTime());
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>

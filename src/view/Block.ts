@@ -445,12 +445,6 @@ export class Block
 		return(success);
 	}
 
-	public async postValidateField(inst:FieldInstance) : Promise<boolean>
-	{
-		if (!await this.wait4EventTransaction(EventType.PostValidateField)) return(false);
-		return(await this.fireFieldEvent(EventType.PostValidateField,inst));
-	}
-
 	public async validateRow() : Promise<boolean>
 	{
 		if (!this.getCurrentRow().exist) return(true);
@@ -1017,6 +1011,16 @@ export class Block
 		return(inst);
 	}
 
+	public getQueryableInstance(inst:FieldInstance) : FieldInstance
+	{
+		if (inst.row != 0)
+		{
+
+		}
+
+		return(null);
+	}
+
 	public finalize() : void
 	{
 		let rows:Row[] = [];
@@ -1226,7 +1230,7 @@ export class Block
 		{
 			case null							: return(Status.na);
 			case RecordState.New 			: return(Status.new);
-			case RecordState.Query 			: return(Status.update);
+			case RecordState.UnModified 			: return(Status.update);
 			case RecordState.Updated 		: return(Status.update);
 			case RecordState.Deleted 		: return(Status.delete);
 			case RecordState.Inserted 		: return(Status.insert);

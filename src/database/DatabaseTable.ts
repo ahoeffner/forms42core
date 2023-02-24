@@ -701,7 +701,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
-			console.log(b.type)
 			if (b.type == null && t != null) b.type = DataType[t];
 		})
 	}

@@ -615,6 +615,8 @@ export class Form implements EventListenerObject
 					return(true);
 
 				success = await block.validateRow();
+				if (success) success = await block.model.flush();
+				
 				return(success);
 			}
 

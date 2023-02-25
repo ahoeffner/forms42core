@@ -40,9 +40,9 @@ import { QueryManager } from "./relations/QueryManager.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { DatabaseTable } from "../database/DatabaseTable.js";
+import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { off } from "process";
 
 
 export class Block
@@ -516,11 +516,13 @@ export class Block
 			return(false);
 
 		let empty:boolean = false;
+		let inst:FieldInstance = null;
 		let offset:number = this.view.rows - this.view.row - 1;
 		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{
+			inst = this.view.current;
 			await this.prefetch(1,offset-1);
 			empty = this.wrapper.getRecords() <= this.record;
 
@@ -528,18 +530,14 @@ export class Block
 			{
 				this.move(-1);
 				this.view.move(-1);
+				if (inst?.row >= 0) inst.blur();
 			}
 
 			this.scroll(0,this.view.row);
-
 			this.view.refresh(this.getRecord());
 
-			if (empty)
-			{
-				//let idx:number = this.getCurrentRow().getFieldIndex(inst);
-				//next = this.getRow(available-1).getFieldByIndex(idx);
-			}
-			//this.view.findFirstEditable(this.getRecord())?.focus();
+			if (!empty) this.view.current = inst;
+			else this.view.getPreviousInstance(inst)?.focus();
 		}
 		else
 		{

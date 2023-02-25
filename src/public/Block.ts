@@ -100,12 +100,7 @@ export class Block
 
 	public get fields() : string[]
 	{
-		let fields:Set<string> = new Set<string>();
-
-		FormBacking.getViewBlock(this).getAllFields().
-			forEach((fld) => fields.add(fld.name))
-
-		return(Array.from(fields));
+		return(FormBacking.getViewBlock(this).getFieldNames());
 	}
 
 	public flush() : void
@@ -139,9 +134,9 @@ export class Block
 		await FormBacking.getModelBlock(this).refresh(offset);
 	}
 
-	public getFieldNames() : string[]
+	public hasField(name:string) : boolean
 	{
-		return(FormBacking.getViewBlock(this).getFieldNames());
+		return(this.fields.includes(name?.toLowerCase()));
 	}
 
 	public showDatePicker(field:string) : void

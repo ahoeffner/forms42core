@@ -1032,7 +1032,7 @@ export class Block
 
 	public getPreviousInstance(inst:FieldInstance) : FieldInstance
 	{
-		if (inst.row > 0)
+		if (inst?.row > 0)
 		{
 			let idx:number = this.getRow(inst.row).getFieldIndex(inst);
 			inst = this.getRow(inst.row-1).getFieldByIndex(idx);

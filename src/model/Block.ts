@@ -533,7 +533,13 @@ export class Block
 			this.scroll(0,this.view.row);
 
 			this.view.refresh(this.getRecord());
-			this.view.findFirstEditable(this.getRecord())?.focus();
+
+			if (empty)
+			{
+				//let idx:number = this.getCurrentRow().getFieldIndex(inst);
+				//next = this.getRow(available-1).getFieldByIndex(idx);
+			}
+			//this.view.findFirstEditable(this.getRecord())?.focus();
 		}
 		else
 		{

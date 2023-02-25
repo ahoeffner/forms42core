@@ -82,3 +82,38 @@ export enum EventType
 	OnRecordLocked,
 	WhenValidateRecord
 }
+
+export class EventGroup
+{
+	private types:EventType[];
+
+	public static FormEvents:EventGroup = new EventGroup
+	([
+		EventType.PreForm,
+		EventType.PostForm,
+		EventType.PostViewInit,
+		EventType.PostFormFocus,
+		EventType.PostCloseForm,
+	]);
+
+	public static ApplEvents:EventGroup = new EventGroup
+	([
+		EventType.Connect,
+		EventType.Disconnect,
+		EventType.PreCommit,
+		EventType.PostCommit,
+		EventType.PreRollback,
+		EventType.PostRollback,
+		EventType.OnTransaction,
+	]);
+
+	constructor(types:EventType[])
+	{
+		this.types = types;
+	}
+
+	public has(type:EventType) : boolean
+	{
+		return(this.types.includes(type));
+	}
+}

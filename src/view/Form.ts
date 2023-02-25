@@ -424,14 +424,14 @@ export class Form implements EventListenerObject
 	public async onRecord(block:Block) : Promise<boolean>
 	{
 		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
-		let success:boolean = await this.fireFormEvent(EventType.OnRecord,block.form.parent);
+		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
 		return(success);
 	}
 
 	public async onNewRecord(block:Block) : Promise<boolean>
 	{
 		if (!await this.model.wait4EventTransaction(EventType.OnNewRecord,null)) return(false);
-		let success:boolean = await this.fireFormEvent(EventType.OnNewRecord,block.form.parent);
+		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
 		return(success);
 	}
 
@@ -616,7 +616,7 @@ export class Form implements EventListenerObject
 
 				success = await block.validateRow();
 				if (success) success = await block.model.flush();
-				
+
 				return(success);
 			}
 

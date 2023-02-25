@@ -65,6 +65,11 @@ export class DataSourceWrapper
 		this.columns$ = columns;
 	}
 
+	public getRecords() : number
+	{
+		return(this.cache$.length);
+	}
+
 	public get dirty() : boolean
 	{
 		return(this.modified$);
@@ -442,6 +447,12 @@ export class DataSourceWrapper
 	public async prefetch(record:number,records:number) : Promise<number>
 	{
 		let possible:number = 0;
+
+		if (record >= this.hwm$ && records >= 0)
+		{
+			records += record - this.hwm$ + 1;
+			record = this.hwm$ - 1;
+		}
 
 		if (records < 0)
 		{

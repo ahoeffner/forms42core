@@ -42,6 +42,7 @@ import { Block as InterfaceBlock } from '../public/Block.js';
 import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { off } from "process";
 
 
 export class Block
@@ -514,22 +515,22 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreDelete))
 			return(false);
 
-		let offset:number = this.view.rows - this.view.row;
+		let empty:boolean = false;
+		let offset:number = this.view.rows - this.view.row - 1;
 		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{
-			this.move(-1);
-			await this.prefetch(0,offset);
+			await this.prefetch(1,offset-1);
+			empty = this.wrapper.getRecords() <= this.record;
+
+			if (empty)
+			{
+				this.move(-1);
+				this.view.move(-1);
+			}
 
 			this.scroll(0,this.view.row);
-
-			if (!this.view.getCurrentRow().exist)
-			{
-				await this.view.prevrecord();
-				this.view.findFirstEditable(this.getRecord())?.focus();
-				return(true);
-			}
 
 			this.view.refresh(this.getRecord());
 			this.view.findFirstEditable(this.getRecord())?.focus();

@@ -35,8 +35,8 @@ import { FormBacking } from '../application/FormBacking.js';
 import { FormEvents } from '../control/events/FormEvents.js';
 import { FormMetaData } from '../application/FormMetaData.js';
 import { EventFilter } from '../control/events/EventFilter.js';
-import { BlockCoordinator } from './relations/BlockCoordinator.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
+import { BlockCoordinator } from './relations/BlockCoordinator.js';
 
 
 export class Form

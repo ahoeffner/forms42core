@@ -275,6 +275,11 @@ export class Block
 		return(FormBacking.getViewBlock(this).current.name);
 	}
 
+	public hasPendingChanges() : boolean
+	{
+		return(FormBacking.getModelBlock(this).getDirtyCount() > 0);
+	}
+
 	public showLastQuery() : void
 	{
 		FormBacking.getModelBlock(this).showLastQuery();

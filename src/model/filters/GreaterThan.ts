@@ -105,6 +105,7 @@ export class GreaterThan implements Filter
 		if (this.bindvalues$ == null)
 		{
 			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
+			if (this.datatype$) this.bindvalues$[0].forceDataType = true;
 			this.bindvalues$[0].column = this.column$;
 		}
 

@@ -54,8 +54,8 @@ export class Block
 	{
 		this.form$ = form;
 		this.name$ = name?.toLowerCase();
-		form.blocks.set(this.name$,this);
 		FormBacking.getModelBlock(this,true);
+		FormBacking.getBacking(form).blocks.set(this.name$,this);
 	}
 
 	public get form() : Form

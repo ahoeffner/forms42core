@@ -150,6 +150,7 @@ export class Contains implements Filter
 			}
 
 			this.bindvalues$ = [new BindValue(this.bindval$,str,this.datatype$)];
+			if (this.datatype$) this.bindvalues$[0].forceDataType = true;
 		}
 
 		return(this.bindvalues$);

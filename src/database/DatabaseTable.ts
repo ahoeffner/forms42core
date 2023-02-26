@@ -34,6 +34,7 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { Console } from "console";
 
 export class DatabaseTable extends SQLSource implements DataSource
 {
@@ -701,7 +702,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
-			if (b.type == null && t != null) b.type = DataType[t];
+			if (!b.forceDataType && t != null) b.type = DataType[t];
 		})
 	}
 

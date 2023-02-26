@@ -116,6 +116,12 @@ export class Between implements Filter
 			b1.column = this.column$;
 			b2.column = this.column$;
 
+			if (this.datatype$)
+			{
+				b1.forceDataType = true;
+				b2.forceDataType = true;
+			}
+
 			this.bindvalues$ = [b1,b2];
 		}
 

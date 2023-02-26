@@ -325,6 +325,9 @@ export class FormBacking
 	private autoblocks$:Block[] = [];
 	private haschild$:boolean = false;
 
+	private blocks$:Map<string,Block> =
+		new Map<string,Block>();
+
 	private lovs$:Map<string,Map<string,ListOfValues>> =
 		new Map<string,Map<string,ListOfValues>>();
 
@@ -351,6 +354,11 @@ export class FormBacking
 	public set parent(form:Form)
 	{
 		this.parent$ = form;
+	}
+
+	public get blocks() : Map<string,Block>
+	{
+		return(this.blocks$);
 	}
 
 	public get wasCalled() : boolean
@@ -451,8 +459,8 @@ export class FormBacking
 		this.autoblocks$.forEach((block) =>
 		{
 			this.lovs$.delete(block.name);
+			this.blocks.delete(block.name);
 			this.datectr$.delete(block.name);
-			block.form.blocks.delete(block.name);
 		})
 	}
 

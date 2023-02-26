@@ -121,7 +121,7 @@ export class NoneOf implements Filter
 			for (let i = 0; i < this.constraint$.length; i++)
 				this.bindvalues$.push(new BindValue(this.bindval$+"_"+i,this.constraint$[i],this.datatype$));
 
-			this.bindvalues$.forEach((b) => b.column = this.column$);
+			this.bindvalues$.forEach((b) => {b.column = this.column$; if (this.datatype$) b.forceDataType = true});
 		}
 
 		return(this.bindvalues$);

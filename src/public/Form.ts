@@ -52,7 +52,6 @@ export class Form implements CanvasComponent
 	public resizable:boolean = false;
 	public initiated:Date = new Date();
 	public parameters:Map<any,any> = new Map<any,any>();
-	public blocks:Map<string,Block> = new Map<string,Block>();
 
 	constructor(page?:string|HTMLElement)
 	{
@@ -63,6 +62,11 @@ export class Form implements CanvasComponent
 	public get name() : string
 	{
 		return(this.constructor.name.toLowerCase());
+	}
+
+	public get blocks() : Block[]
+	{
+		return(Array.from(FormBacking.getBacking(this).blocks.values()))
 	}
 
 	public hide() : void
@@ -216,7 +220,7 @@ export class Form implements CanvasComponent
 
 	public getBlock(block:string) : Block
 	{
-		return(this.blocks.get(block?.toLowerCase()));
+		return(FormBacking.getBacking(this).blocks.get(block?.toLowerCase()));
 	}
 
 	public setDataSource(block:string,source:DataSource) : void

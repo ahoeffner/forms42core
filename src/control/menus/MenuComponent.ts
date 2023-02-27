@@ -49,7 +49,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.options$ = options;
 		if (options == null) this.options$ = {};
 
-		document.addEventListener("mousedown",this);
+		document.addEventListener("mouseup",this);
 
 		if (this.options$.classes == null) this.options$.classes = {};
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
@@ -278,7 +278,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			return;
 		}
 
-		if (event.type == "mousedown" && !this.belongs(event.target))
+		if (event.type == "mouseup" && !this.belongs(event.target))
 		{
 			this.hide();
 			return;

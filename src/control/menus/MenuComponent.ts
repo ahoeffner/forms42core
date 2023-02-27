@@ -103,6 +103,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			start = await this.menu$.getEntries(path);
 		}
 
+		if (!this.active$) this.active$ = start[0].id;
 		this.target$.innerHTML = await this.showEntry(null,start,path);
 
 		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
@@ -280,6 +281,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (event.type == "focus")
 			this.active$ = event.target.id;
 
+		if (event.type == "keyup")
+		{
+			console.log((event as KeyboardEvent).key)
+		}
+
 		if (event.type != "click")
 			return;
 
@@ -299,7 +305,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		{
 			if (command == null) await this.toggle(path);
 			else if (await this.menu$.execute(command)) await this.hide();
-			
+
 			this.focus();
 		}
 	}

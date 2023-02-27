@@ -28,11 +28,11 @@ import { BasicProperties } from "./BasicProperties.js";
 
 export class FieldProperties extends BasicProperties
 {
-	private row$:number = -1;
-	private id$:string = null;
-	private name$:string = null;
-	private block$:string = null;
-	private inst$:FieldInstance = null;
+	protected row$:number = -1;
+	protected id$:string = null;
+	protected name$:string = null;
+	protected block$:string = null;
+	protected inst$:FieldInstance = null;
 
 	public get id() : string
 	{

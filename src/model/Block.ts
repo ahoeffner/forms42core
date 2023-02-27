@@ -40,6 +40,7 @@ import { QueryManager } from "./relations/QueryManager.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
 import { DatabaseTable } from "../database/DatabaseTable.js";
+import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 
@@ -488,7 +489,6 @@ export class Block
 			if (success)
 			{
 				let offset:number = before ? 0 : 1;
-				await this.view.form.onNewRecord(this.view,offset);
 
 				let details:Block[] = this.getAllDetailBlocks(true);
 
@@ -515,25 +515,29 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreDelete))
 			return(false);
 
-		let offset:number = this.view.rows - this.view.row;
+		let empty:boolean = false;
+		let inst:FieldInstance = null;
+		let offset:number = this.view.rows - this.view.row - 1;
 		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{
-			this.move(-1);
-			await this.prefetch(0,offset);
+			inst = this.view.current;
+			await this.prefetch(1,offset-1);
+			empty = this.wrapper.getRecords() <= this.record;
 
-			this.scroll(0,this.view.row);
-
-			if (!this.view.getCurrentRow().exist)
+			if (empty)
 			{
-				await this.view.prevrecord();
-				this.view.findFirstEditable(this.getRecord())?.focus();
-				return(true);
+				this.move(-1);
+				this.view.move(-1);
+				if (inst?.row >= 0) inst.blur();
 			}
 
+			this.scroll(0,this.view.row);
 			this.view.refresh(this.getRecord());
-			this.view.findFirstEditable(this.getRecord())?.focus();
+
+			if (!empty) this.view.current = inst;
+			else this.view.getPreviousInstance(inst)?.focus();
 		}
 		else
 		{
@@ -608,6 +612,7 @@ export class Block
 	public async enterQuery() : Promise<boolean>
 	{
 		this.clean$ = true;
+		this.view.current = null;
 
 		if (!await this.wrapper.clear(true))
 			return(false);
@@ -629,6 +634,7 @@ export class Block
 	{
 		this.clean$ = false;
 		let runid:object = null;
+		this.view.current = null;
 
 		if (!this.setMasterDependencies())
 		{
@@ -719,10 +725,13 @@ export class Block
 
 	public showLastQuery() : void
 	{
-		this.qbe.showLastQuery();
-		this.view.clear(true,true);
-		this.view.display(0,this.qberec);
-		this.view$.setCurrentRow(0,false);
+		if (this.querymode)
+		{
+			this.qbe.showLastQuery();
+			this.view.clear(true,true);
+			this.view.display(0,this.qberec);
+			this.view$.setCurrentRow(0,false);
+		}
 	}
 
 	public scroll(records:number, offset:number) : number

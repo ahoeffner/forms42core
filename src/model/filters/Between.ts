@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -30,6 +31,7 @@ export class Between implements Filter
 
 	private column$:string = null;
 	private bindval$:string = null;
+	private datatype$:string = null;
 	private constraint$:any[] = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -50,7 +52,20 @@ export class Between implements Filter
 		let clone:Between = Reflect.construct(this.constructor,[this.column$]);
 		clone.incl = this.incl;
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : Between
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -95,11 +110,17 @@ export class Between implements Filter
 	{
 		if (this.bindvalues$ == null && this.constraint$ != null)
 		{
-			let b1:BindValue = new BindValue(this.bindval$+"0",this.constraint$[0]);
-			let b2:BindValue = new BindValue(this.bindval$+"1",this.constraint$[1]);
+			let b1:BindValue = new BindValue(this.bindval$+"0",this.constraint$[0],this.datatype$);
+			let b2:BindValue = new BindValue(this.bindval$+"1",this.constraint$[1],this.datatype$);
 
 			b1.column = this.column$;
 			b2.column = this.column$;
+
+			if (this.datatype$)
+			{
+				b1.forceDataType = true;
+				b2.forceDataType = true;
+			}
 
 			this.bindvalues$ = [b1,b2];
 		}

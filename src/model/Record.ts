@@ -26,10 +26,10 @@ import { DataSourceWrapper } from "./DataSourceWrapper.js";
 export enum RecordState
 {
 	New,
-	Query,
 	Deleted,
 	Updated,
 	Inserted,
+	Consistent,
 	QueryFilter
 }
 
@@ -46,7 +46,7 @@ export class Record
 	private source$:DataSource = null;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
-	private status$:RecordState = RecordState.Query;
+	private status$:RecordState = RecordState.Consistent;
 
 	constructor(source:DataSource, data?:any[])
 	{

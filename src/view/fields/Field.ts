@@ -399,7 +399,6 @@ export class Field
 			this.value$ = value;
 			this.validated = true;
 
-			await this.block.postValidateField(inst);
 			return(true);
 		}
 	}

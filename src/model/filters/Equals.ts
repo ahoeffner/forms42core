@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -28,6 +29,7 @@ export class Equals implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
+	private datatype$:string = null;
 	private constraint$:any = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -46,7 +48,20 @@ export class Equals implements Filter
 	{
 		let clone:Equals = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : Equals
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -86,7 +101,8 @@ export class Equals implements Filter
 	{
 		if (this.bindvalues$ == null)
 		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
+			if (this.datatype$) this.bindvalues$[0].forceDataType = true;
 			this.bindvalues$[0].column = this.column$;
 		}
 

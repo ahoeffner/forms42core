@@ -37,6 +37,7 @@ import { TriggerFunction } from '../public/TriggerFunction.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
+import { DatabaseConnection } from '../public/DatabaseConnection.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 
@@ -152,14 +153,20 @@ export class FormsModule
 		return(ApplicationHandler.instance.keyhandler(key));
 	}
 
-	public async save() : Promise<boolean>
+	public hasTransactions(connection?:DatabaseConnection) : boolean
 	{
-		return(FormBacking.save());
+		return(FormBacking.hasTransactions(connection["conn$"]));
 	}
 
-	public async undo() : Promise<boolean>
+
+	public async commit() : Promise<boolean>
 	{
-		return(FormBacking.undo());
+		return(FormBacking.commit());
+	}
+
+	public async rollback() : Promise<boolean>
+	{
+		return(FormBacking.rollback());
 	}
 
 	public message(msg:string, title?:string) : void

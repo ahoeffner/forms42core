@@ -274,7 +274,7 @@ export class QueryEditor extends Form
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insert, block: "values"});
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insertAbove, block: "values"});
 
-		this.addEventListener(this.setType,{type: EventType.PostValidateField, block: "options", field: "options"});
+		this.addEventListener(this.setType,{type: EventType.WhenValidateField, block: "options", field: "options"});
 
 		if (value != null)
 		{

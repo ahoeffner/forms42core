@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -31,6 +32,7 @@ export class ILike implements Filter
 	private ltrunc:boolean = false;
 	private rtrunc:boolean = false;
 	private parsed:boolean = false;
+	private datatype$:string = null;
 	private constraint$:string = null;
 	private bindvalues$:BindValue[] = null;
 
@@ -49,7 +51,20 @@ export class ILike implements Filter
 	{
 		let clone:ILike = Reflect.construct(this.constructor,[this.column$]);
 		clone.bindval$ = this.bindval$;
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : ILike
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string
@@ -65,6 +80,7 @@ export class ILike implements Filter
 
 	public setConstraint(value:any) : ILike
 	{
+		this.parsed = false;
 		this.constraint = value;
 		return(this);
 	}
@@ -84,6 +100,7 @@ export class ILike implements Filter
 
 	public set constraint(value:string)
 	{
+		this.parsed = false;
 		this.bindvalues$ = null;
 		this.constraint$ = value;
 	}
@@ -97,7 +114,8 @@ export class ILike implements Filter
 	{
 		if (this.bindvalues$ == null)
 		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$)];
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
+			if (this.datatype$) this.bindvalues$[0].forceDataType = true;
 			this.bindvalues$[0].column = this.column$;
 		}
 

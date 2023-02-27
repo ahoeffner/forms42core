@@ -7,7 +7,7 @@
   "types": "public-api.d.ts",
   "scripts": {
     "lint": "eslint . --ext .ts",
-	 "tsc": "tsc",
+    "tsc": "tsc",
     "build": "cp version.ts index.ts && cat public-api.d.ts >> index.ts && tsc && cp public-api.d.ts package.json dist && cp -R mods dist"
   },
   "keywords": [
@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/ahoeffner/forms42core#readme",
   "devDependencies": {
+    "@types/json-schema": "^7.0.11",
     "@types/node": "^18.14.0",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",

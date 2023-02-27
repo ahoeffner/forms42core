@@ -22,7 +22,6 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
-import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { BrowserEvent } from './BrowserEvent.js';
@@ -31,6 +30,7 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
+import { Record, RecordState } from '../model/Record.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -221,6 +221,7 @@ export class Form implements EventListenerObject
 	{
 		let preform:Form = null;
 		let nxtblock:Block = inst.field.block;
+		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 		let preblock:Block = this.curinst$?.field.block;
 
@@ -353,7 +354,7 @@ export class Form implements EventListenerObject
 		}
 
 		this.curinst$ = inst;
-		inst.field.block.current = inst;
+		nxtblock.current = inst;
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
@@ -363,8 +364,23 @@ export class Form implements EventListenerObject
 
 			// Successfully navigated from preform to this form
 			if (!this.model.wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
-			let success:boolean = await this.fireFormEvent(EventType.PostFormFocus,this.parent);
-			return(success);
+			await this.fireFormEvent(EventType.PostFormFocus,this.parent);
+		}
+
+		let onrec:boolean = true;
+		let rec:Record = nxtblock.model.getRecord();
+
+		if (rec == null) onrec = false;
+		if (onrec && rec.state == RecordState.Deleted) onrec = false;
+		if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
+		if (onrec && visited && (nxtblock == preblock && recoffset == 0)) onrec = false;
+
+		if (onrec)
+		{
+			if (rec.state == RecordState.New)
+				await this.onNewRecord(inst.field.block);
+
+			await this.onRecord(inst.field.block);
 		}
 
 		return(true);
@@ -405,11 +421,17 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async onNewRecord(block:Block, offset:number) : Promise<boolean>
+	public async onRecord(block:Block) : Promise<boolean>
 	{
-		if (!await this.setEventTransaction(EventType.OnNewRecord,block,offset)) return(false);
+		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
+		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
+		return(success);
+	}
+
+	public async onNewRecord(block:Block) : Promise<boolean>
+	{
+		if (!await this.model.wait4EventTransaction(EventType.OnNewRecord,null)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
-		block.model.endEventTransaction(EventType.OnNewRecord,success);
 		return(success);
 	}
 
@@ -593,6 +615,8 @@ export class Form implements EventListenerObject
 					return(true);
 
 				success = await block.validateRow();
+				if (success) success = await block.model.flush();
+
 				return(success);
 			}
 
@@ -618,7 +642,6 @@ export class Form implements EventListenerObject
 			{
 				if (qmode) return(true);
 				success = await this.model.enterQuery(inst.field.block.model);
-				if (success) block.findFirstEditable(block.model.qberec)?.focus();
 				return(success);
 			}
 

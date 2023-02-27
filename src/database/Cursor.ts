@@ -30,4 +30,11 @@ export class Cursor
 	stmt:string = null;
 	eof:boolean = false;
 	bindvalues:BindValue[] = null;
+
+	private static id:number = 0;
+	
+	constructor(name?:string)
+	{
+		this.name = (name ? name : "") + (Cursor.id++); 
+	}
 }

@@ -28,6 +28,7 @@ export class BindValue
 	private type$:string = null;
 	private out$:boolean = false;
 	private column$:string = null;
+	private force$:boolean = false;
 
 	public constructor(name:string, value:any, type?:DataType|string)
 	{
@@ -84,6 +85,16 @@ export class BindValue
 			type = DataType[type];
 
 		this.type$ = type;
+	}
+
+	public get forceDataType() : boolean
+	{
+		return(this.force$);
+	}
+
+	public set forceDataType(flag:boolean)
+	{
+		this.force$ = flag;
 	}
 
 	public get value() : any

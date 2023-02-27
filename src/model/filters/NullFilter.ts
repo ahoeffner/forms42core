@@ -21,6 +21,7 @@
 
 import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
+import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
@@ -28,6 +29,7 @@ export class NullFilter implements Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
+	private datatype$:string = null;
 	private constraint$:string = null;
 
 	public constructor(column:string)
@@ -43,7 +45,20 @@ export class NullFilter implements Filter
 	public clone() : NullFilter
 	{
 		let clone:NullFilter = Reflect.construct(this.constructor,[this.column$]);
+		clone.datatype$ = this.datatype$;
 		return(clone.setConstraint(this.constraint$));
+	}
+
+	public getDataType() : string
+	{
+		return(this.datatype$);
+	}
+
+	public setDataType(type:DataType|string) : NullFilter
+	{
+		if (typeof type === "string") this.datatype$ = type;
+		else this.datatype$ = DataType[type];
+		return(this);
 	}
 
 	public getBindValueName() : string

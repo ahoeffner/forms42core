@@ -337,22 +337,18 @@ export class FieldInstance implements FieldEventHandler
 
 		if (focus != inst)
 		{
-			setTimeout(() =>
+			let event:BrowserEvent = BrowserEvent.get();
+
+			if (!events)
+				this.ignore = "focus";
+
+			inst.focus();
+
+			if (events)
 			{
-				let event:BrowserEvent = BrowserEvent.get();
-
-				if (!events)
-					this.ignore = "focus";
-
-				inst.focus();
-
-				if (events)
-				{
-					event.setFocusEvent();
-					this.field.handleEvent(this,event);
-				}
-
-			},10);
+				event.setFocusEvent();
+				this.field.handleEvent(this,event);
+			}
 		}
 	}
 

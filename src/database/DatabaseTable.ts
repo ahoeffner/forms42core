@@ -34,6 +34,7 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { Console } from "console";
 
 export class DatabaseTable extends SQLSource implements DataSource
 {
@@ -342,11 +343,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 					break;
 
 				case RecordState.Updated:
-					this.dirty$[i].state = RecordState.Query;
+					this.dirty$[i].state = RecordState.Consistent;
 					break;
 
 				case RecordState.Deleted:
-					this.dirty$[i].state = RecordState.Query;
+					this.dirty$[i].state = RecordState.Consistent;
 					break;
 			}
 		}
@@ -645,7 +646,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			this.conn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor();
-		this.cursor$.name = "select"+(new Date().getTime());
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>
@@ -702,7 +702,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			let col:string = b.column?.toLowerCase();
 			let t:DataType = this.datatypes$.get(col);
-			if (t != null) b.type = DataType[t];
+			if (!b.forceDataType && t != null) b.type = DataType[t];
 		})
 	}
 

@@ -30,8 +30,8 @@ import { FieldProperties } from "./FieldProperties.js";
 import { Properties } from "../../application/Properties.js";
 import { FieldFeatureFactory } from "../FieldFeatureFactory.js";
 import { FieldEventHandler } from "./interfaces/FieldEventHandler.js";
-import { BrowserEvent, BrowserEvent as Event} from "../BrowserEvent.js";
 import { FieldImplementation, FieldState } from "./interfaces/FieldImplementation.js";
+import { BrowserEvent, BrowserEvent as Event} from "../../control/events/BrowserEvent.js";
 
 
 export class FieldInstance implements FieldEventHandler

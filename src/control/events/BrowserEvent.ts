@@ -19,8 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Framework } from "../application/Framework.js";
-import { Properties, ScrollDirection } from "../application/Properties.js";
+import { Framework } from "../../application/Framework.js";
+import { Properties, ScrollDirection } from "../../application/Properties.js";
 
 export class BrowserEvent
 {
@@ -311,7 +311,7 @@ export class BrowserEvent
 
 			if (this.key != null && this.key.startsWith("F") && this.event.key.length > 1)
 				this.ignore = false;
-				
+
 			break;
 
 			case "keypress":

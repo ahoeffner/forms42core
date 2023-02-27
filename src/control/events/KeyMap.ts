@@ -21,7 +21,7 @@
 
 import { KeyCodes } from "./KeyCodes.js";
 import { Class } from "../../types/Class.js";
-import { BrowserEvent } from "../../view/BrowserEvent.js";
+import { BrowserEvent } from "./BrowserEvent.js";
 
 export class KeyMap
 {

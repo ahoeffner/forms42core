@@ -29,6 +29,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 {
 	private menu$:Menu = null;
 	private tabidx$:number = 1;
+	private active$:string = null;
 	private levcls$:string = null;
 	private menucls$:string = null;
 	private linkcls$:string = null;
@@ -80,6 +81,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$ = target;
 	}
 
+	public focus() : void
+	{
+		(document.querySelector("#"+this.active$) as HTMLElement)?.focus();
+	}
+
 	public hasOpenBranches() : boolean
 	{
 		return(this.open$.size > 0);
@@ -97,7 +103,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			start = await this.menu$.getEntries(path);
 		}
 
-		this.target$.innerHTML = await this.showEntry(start,path);
+		this.target$.innerHTML = await this.showEntry(null,start,path);
 
 		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
 		entries.forEach((link) => {this.prepare(link as HTMLAnchorElement);});
@@ -106,12 +112,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.index(this.target$);
 	}
 
-	public hide() : void
+	public async hide() : Promise<void>
 	{
 		if (this.open$.size == 0) return;
 		this.target$.innerHTML = "";
 		this.open$.clear();
-		this.show();
+		await this.show();
 	}
 
 	public clear() : void
@@ -119,7 +125,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.hide();
 	}
 
-	public toggle(path:string) : void
+	public async toggle(path:string) : Promise<void>
 	{
 		let open:boolean = this.open$.has(path);
 
@@ -145,7 +151,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			else	     this.open$.delete(path);
 		}
 
-		this.show();
+		await this.show();
 	}
 
 	public async findEntry(path:string) : Promise<MenuEntry>
@@ -185,7 +191,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		return(null);
 	}
 
-	private async showEntry(entries:MenuEntry[], path?:string, page?:string) : Promise<string>
+	private async showEntry(parent:MenuEntry, entries:MenuEntry[], path?:string, page?:string) : Promise<string>
 	{
 		if (entries == null)
 			return(page);
@@ -215,7 +221,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			let classes:string = this.menucls$;
 			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
-			console.log(entries[i].id);
+			let entry:Entry = new Entry();
+
+			entry.parent = parent;
+			entry.curr = entries[i];
+			if (i > 0) entry.prev = entries[i-1];
+			if (i < entries.length-1) entry.next = entries[i+1];
+
+			//console.log(entry);
 
 			if (entries[i].command)
 			{
@@ -231,16 +244,16 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				classes += " "+this.options$.classes.open;
 
 				page += "<div class='"+classes+"'>";
-				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
+				page += "  <a id='"+entries[i].id+"' path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
 				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
 
-				page = await this.showEntry(await this.menu$.getEntries(npath),npath,page);
+				page = await this.showEntry(entries[i],await this.menu$.getEntries(npath),npath,page);
 				page += "</div>";
 			}
 			else
 			{
 				page += "<div class='"+classes+"'>"
-				page += "  <a path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
+				page += "  <a id='"+entries[i].id+"' path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
 				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
 				page += "</div>";
 			}
@@ -264,6 +277,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			return;
 		}
 
+		if (event.type == "focus")
+			this.active$ = event.target.id;
+
 		if (event.type != "click")
 			return;
 
@@ -281,8 +297,10 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (path != null || command != null)
 		{
-			if (command == null) this.toggle(path);
-			else if (await this.menu$.execute(command)) this.hide();
+			if (command == null) await this.toggle(path);
+			else if (await this.menu$.execute(command)) await this.hide();
+			
+			this.focus();
 		}
 	}
 
@@ -322,4 +340,13 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		element.addEventListener("focus",this);
 		element.addEventListener("mouseover",this);
 	}
+}
+
+
+class Entry
+{
+	next:MenuEntry;
+	prev:MenuEntry;
+	curr:MenuEntry;
+	parent:MenuEntry;
 }

@@ -20,9 +20,9 @@
 */
 
 import { KeyMap, KeyMapping } from './KeyMap.js';
+import { BrowserEvent } from './BrowserEvent.js';
 import { FormEvent, FormEvents } from './FormEvents.js';
 import { MouseMap, MouseMapParser } from './MouseMap.js';
-import { BrowserEvent } from '../../view/BrowserEvent.js';
 import { FormBacking } from '../../application/FormBacking.js';
 import { FlightRecorder } from '../../application/FlightRecorder.js';
 

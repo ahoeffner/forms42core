@@ -19,7 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { BrowserEvent } from "../../view/BrowserEvent.js";
+import { BrowserEvent } from "./BrowserEvent.js";
 
 export enum MouseMap
 {

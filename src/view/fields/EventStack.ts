@@ -20,9 +20,9 @@
 */
 
 import { Field } from "./Field.js";
-import { BrowserEvent } from "../BrowserEvent.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Alert } from "../../application/Alert.js";
+import { BrowserEvent } from "../../control/events/BrowserEvent.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
 
 interface event

@@ -21,10 +21,10 @@
 
 import { DataType } from "../DataType.js";
 import { DataMapper, Tier } from "../DataMapper.js";
-import { BrowserEvent } from "../../BrowserEvent.js";
 import { dates } from "../../../model/dates/dates.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
+import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 

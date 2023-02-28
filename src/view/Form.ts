@@ -165,6 +165,14 @@ export class Form implements EventListenerObject
 		fltindicators.push(ind);
 	}
 
+	public blur(ignore?:boolean) : void
+	{
+		if (ignore && this.curinst$)
+			this.curinst$.ignore = "blur";
+			
+		this.curinst$?.blur();
+	}
+
 	public focus() : void
 	{
 		if (this.curinst$)
@@ -358,16 +366,9 @@ export class Form implements EventListenerObject
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
-		if (preform)
-		{
-			this.parent.canvas.activate();
-
-			// Successfully navigated from preform to this form
-			if (!this.model.wait4EventTransaction(EventType.PostFormFocus,null)) return(false);
-			await this.fireFormEvent(EventType.PostFormFocus,this.parent);
-		}
 
 		let onrec:boolean = true;
+		if (preform) this.parent.canvas.activate();
 		let rec:Record = nxtblock.model.getRecord();
 
 		if (rec == null) onrec = false;

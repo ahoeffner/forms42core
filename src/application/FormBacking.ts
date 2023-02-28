@@ -226,7 +226,7 @@ export class FormBacking
 		}
 
 		if (!transactions)
-			return;
+			return(true);
 
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreCommit)))
 			return(false);
@@ -255,7 +255,7 @@ export class FormBacking
 				return(false);
 		}
 
-		return(failed);
+		return(!failed);
 	}
 
 	public static async rollback() : Promise<boolean>
@@ -276,7 +276,7 @@ export class FormBacking
 		}
 
 		if (!transactions)
-			return;
+			return(true);
 
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
 			return(false);
@@ -314,7 +314,7 @@ export class FormBacking
 				return(false);
 		}
 
-		return(failed);
+		return(!failed);
 	}
 
 

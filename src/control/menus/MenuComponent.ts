@@ -84,7 +84,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public focus() : void
 	{
-		this.entries$.get(this.active$)?.element.focus();
+		this.entries$.get(this.active$)?.element?.focus();
 	}
 
 	public hasOpenBranches() : boolean

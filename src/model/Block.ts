@@ -489,8 +489,6 @@ export class Block
 
 			if (success)
 			{
-				let offset:number = before ? 0 : 1;
-
 				let details:Block[] = this.getAllDetailBlocks(true);
 
 				for (let i = 0; i < details.length; i++)

@@ -470,6 +470,7 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
+		this.form.view.blur(true);
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)

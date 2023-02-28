@@ -109,7 +109,7 @@ export class Row
 		this.getFields().forEach((fld) =>
 		{
 			fld.getInstances().forEach((inst) =>
-			{inst.properties.row = -1;})
+			{inst.properties.row = 0;})
 		});
 	}
 

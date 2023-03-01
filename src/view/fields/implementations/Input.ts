@@ -69,7 +69,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public set datatype(type:DataType)
 	{
-		this.datatype = type;
+		this.datatype$ = type;
 	}
 
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement

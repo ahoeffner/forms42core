@@ -41,6 +41,7 @@ export class Record
 	private response$:any = null;
 	private failed$:boolean = false;
 	private locked$:boolean = false;
+	private flushed$:boolean = false;
 	private prepared$:boolean = false;
 	private flushing$:boolean = false;
 	private source$:DataSource = null;
@@ -141,6 +142,16 @@ export class Record
 	public set prepared(flag:boolean)
 	{
 		this.prepared$ = flag;
+	}
+
+	public get flushed() : boolean
+	{
+		return(this.flushed$);
+	}
+
+	public set flushed(flag:boolean)
+	{
+		this.flushed$ = flag;
 	}
 
 	public get flushing() : boolean

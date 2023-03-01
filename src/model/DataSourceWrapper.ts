@@ -284,11 +284,13 @@ export class DataSourceWrapper
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
-		record.failed = false;
 		let success:boolean = true;
 
 		if (record == null)
 			return(true);
+
+		record.failed = false;
+		record.flushed = false;
 
 		if (deleted)
 		{

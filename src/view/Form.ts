@@ -240,11 +240,27 @@ export class Form implements EventListenerObject
 
 	public async onCanvasFocus() : Promise<boolean>
 	{
-		if (Form.current() && Form.current() != this)
+		let preform:Form = Form.current();
+
+		if (preform && preform != this)
 		{
+			if (!await preform.validate())
+			{
+				FlightRecorder.debug("Form '"+preform.name+"' not validated");
+				preform.focus();
+				return(false);
+			}
+
+			if (!await this.leaveForm(preform))
+			{
+				preform.focus();
+				return(false);
+			}
+
 			this.canvas.activate();
 			FormBacking.setCurrentForm(null);
 		}
+
 		return(true);
 	}
 

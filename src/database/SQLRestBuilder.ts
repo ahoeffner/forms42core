@@ -114,14 +114,14 @@ export class SQLRestBuilder
 
 		parsed.bindvalues = filter?.getBindValues();
 
-		if (bindings) 
+		if (bindings)
 		{
-			if (!parsed.bindvalues) 
+			if (!parsed.bindvalues)
 				parsed.bindvalues = [];
-				
+
 			parsed.bindvalues.push(...bindings);
 		}
-		
+
 		return(parsed);
 	}
 
@@ -151,6 +151,7 @@ export class SQLRestBuilder
 
 		stmt += filters.asSQL();
 		stmt += " for update nowait";
+		console.log(stmt)
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

@@ -34,7 +34,6 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Console } from "console";
 
 export class DatabaseTable extends SQLSource implements DataSource
 {
@@ -389,6 +388,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.insert(sql);
+				if (response.success) rec.flushed = true;
 
 				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
@@ -403,6 +403,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				this.setTypes(sql.bindvalues);
 				response = await this.conn$.update(sql);
+				if (response.success) rec.flushed = true;
 
 				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
@@ -417,6 +418,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 					this.setTypes(sql.bindvalues);
 					response = await this.conn$.delete(sql);
+					if (response.success) rec.flushed = true;
 
 					this.castResponse(response);
 					rec.response = new DatabaseResponse(response,this.delreturncolumns$);

@@ -86,7 +86,6 @@ export class FieldFeatureFactory
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void
 	{
 		props.tag = exist.tag;
-		props["row$"] = exist.row;
 		props.value = exist.value;
 		props.mapper = exist.mapper;
 		props.hidden = exist.hidden;

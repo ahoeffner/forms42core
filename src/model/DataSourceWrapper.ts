@@ -290,7 +290,6 @@ export class DataSourceWrapper
 			return(true);
 
 		record.failed = false;
-		record.flushed = false;
 
 		if (deleted)
 		{

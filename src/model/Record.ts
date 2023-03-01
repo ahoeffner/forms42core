@@ -39,9 +39,9 @@ export class Record
 	private values$:any[] = [];
 	private initial$:any[] = [];
 	private response$:any = null;
+	private bound$:boolean = false;
 	private failed$:boolean = false;
 	private locked$:boolean = false;
-	private flushed$:boolean = false;
 	private prepared$:boolean = false;
 	private flushing$:boolean = false;
 	private source$:DataSource = null;
@@ -144,14 +144,14 @@ export class Record
 		this.prepared$ = flag;
 	}
 
-	public get flushed() : boolean
+	public get bound() : boolean
 	{
-		return(this.flushed$);
+		return(this.bound$);
 	}
 
-	public set flushed(flag:boolean)
+	public set bound(flag:boolean)
 	{
-		this.flushed$ = flag;
+		this.bound$ = flag;
 	}
 
 	public get flushing() : boolean

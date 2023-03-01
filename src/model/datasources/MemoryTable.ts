@@ -75,7 +75,9 @@ export class MemoryTable implements DataSource
 
 		records.forEach((rec) =>
 		{
-			this.records$.push(new Record(this,rec));
+			let record:Record = new Record(this,rec);
+			this.records$.push(record);
+			record.bound = true;
 		});
 	}
 
@@ -87,8 +89,13 @@ export class MemoryTable implements DataSource
 	public setData(data:any[][]) : void
 	{
 		this.records$ = [];
-		data.forEach((row) =>
-		{this.records$.push(new Record(this,row));})
+		
+		data.forEach((rec) =>
+		{
+			let record:Record = new Record(this,rec);
+			this.records$.push(record);
+			record.bound = true;
+		})
 	}
 
 	public clone(columns?:string|string[]) : MemoryTable
@@ -241,6 +248,7 @@ export class MemoryTable implements DataSource
 		{
 			if (rec.state == RecordState.Inserted)
 			{
+				rec.bound = true;
 				processed.push(rec);
 				this.records$.push(rec);
 				rec.response = {status: "inserted"};
@@ -254,6 +262,7 @@ export class MemoryTable implements DataSource
 
 			if (rec.state == RecordState.Deleted)
 			{
+				rec.bound = false;
 				processed.push(rec);
 				rec.response = {status: "deleted"};
 

@@ -207,12 +207,12 @@ export class FormsModule
 		let instance:Form = await factory.createForm(form,parameters);
 		await FormEvents.raise(FormEvent.FormEvent(EventType.onNewForm,instance));
 
-		instance.canvas = canvas;
 		canvas.setComponent(instance);
 		container.appendChild(canvas.getView());
 
 		FormBacking.setCurrentForm(instance);
 
+		FormBacking.getViewForm(instance).canvas = canvas;
 		let mform:ModelForm = FormBacking.getModelForm(instance);
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 

@@ -48,7 +48,6 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form implements CanvasComponent
 {
-	public canvas:Canvas = null;
 	public moveable:boolean = false;
 	public navigable:boolean = false;
 	public resizable:boolean = false;
@@ -64,6 +63,11 @@ export class Form implements CanvasComponent
 	public get name() : string
 	{
 		return(this.constructor.name.toLowerCase());
+	}
+
+	public get canvas() : Canvas
+	{
+		return(FormBacking.getViewForm(this)?.canvas);
 	}
 
 	public get blocks() : Block[]
@@ -296,6 +300,7 @@ export class Form implements CanvasComponent
 
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
+		let canvas:Canvas = this.canvas;
 		let back:FormBacking = FormBacking.getBacking(this);
 
 		if (page == null)
@@ -306,7 +311,7 @@ export class Form implements CanvasComponent
 				return;
 		}
 
-		if (this.canvas != null)
+		if (canvas != null)
 		{
 			if (!this.validate())
 			{
@@ -324,8 +329,11 @@ export class Form implements CanvasComponent
 		Framework.parse(this,page);
 		back.page = page;
 
-		if (this.canvas != null)
-			this.canvas.replace(page);
+		if (canvas != null)
+		{
+			canvas.replace(page);
+			FormBacking.getViewForm(this,true).canvas = canvas;
+		}
 
 		await FormBacking.getViewForm(this,true).finalize();
 		await FormBacking.getModelForm(this,true).finalize();

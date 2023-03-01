@@ -276,7 +276,15 @@ export class FormBacking
 		}
 
 		if (!transactions)
+		{
+			for (let i = 0; i < forms.length; i++)
+			{
+				if (!await forms[i].undo())
+					return(false);
+			}
+
 			return(true);
+		}
 
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
 			return(false);

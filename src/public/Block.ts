@@ -270,6 +270,16 @@ export class Block
 		this.getRecord()?.setValue(field,value);
 	}
 
+	public isValid(field:string) : boolean
+	{
+		return(FormBacking.getViewBlock(this).isValid(field));
+	}
+
+	public setValid(field:string, flag:boolean) : void
+	{
+		FormBacking.getViewBlock(this).setValid(field,flag);
+	}
+
 	public getCurrentField() : string
 	{
 		return(FormBacking.getViewBlock(this).current.name);

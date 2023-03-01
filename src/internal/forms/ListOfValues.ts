@@ -97,7 +97,7 @@ export class ListOfValues extends Form
 
 	private query() : void
 	{
-		let flt:string = this.getValue("filter","search");
+		let flt:string = this.getValue("filter","criteria");
 		if (flt == null) flt = "";
 
 		if (this.props.filterPreProcesser != null)
@@ -244,7 +244,7 @@ export class ListOfValues extends Form
 
 		Internals.stylePopupWindow(view,this.props.title);
 
-		this.goField("filter","search");
+		this.goField("filter","criteria");
 		this.results = this.getBlock("results");
 
 		this.addListeners();

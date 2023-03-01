@@ -157,6 +157,12 @@ export class Field
 		this.instances$.forEach((inst) => {inst.clear()});
 	}
 
+	public setInstanceValidity(flag:boolean) : void
+	{
+		this.valid = flag;
+		this.instances$.forEach((inst) => {inst.valid = flag});
+	}
+
 	public addInstance(instance:FieldInstance) : void
 	{
 		this.instances$.push(instance);

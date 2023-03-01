@@ -142,6 +142,20 @@ export class Block
 		}
 	}
 
+	public isValid(field:string) : boolean
+	{
+		let valid:boolean = true;
+		field = field?.toLowerCase();
+		this.getCurrentFields(field).forEach((fld) => {if (!fld.valid) valid = false});
+		return(valid);
+	}
+
+	public setValid(field:string, flag:boolean) : void
+	{
+		field = field?.toLowerCase();
+		this.getCurrentFields(field).forEach((fld) => fld.setInstanceValidity(flag));
+	}
+
 	public goField(field:string, clazz?:string) : void
 	{
 		field = field?.toLowerCase();
@@ -169,7 +183,7 @@ export class Block
 			if (rf == null) rf = 0;
 
 			if (cf + rf > 0)
-				console.log("No available fields in "+this.name+" in state "+RecordState[state])
+				console.log("No available fields named '"+field+"' in block '"+this.name+"' in state "+RecordState[state])
 		}
 
 		inst?.focus();

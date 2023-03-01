@@ -36,6 +36,7 @@ import { EventType } from '../control/events/EventType.js';
 import { FormBacking } from '../application/FormBacking.js';
 import { FormsModule } from '../application/FormsModule.js';
 import { DateConstraint } from '../public/DateConstraint.js';
+import { Canvas } from '../application/interfaces/Canvas.js';
 import { FieldProperties } from '../public/FieldProperties.js';
 import { BrowserEvent } from '../control/events/BrowserEvent.js';
 import { KeyMap, KeyMapping } from '../control/events/KeyMap.js';
@@ -53,6 +54,7 @@ export class Form implements EventListenerObject
 		return(FormBacking.getCurrentViewForm());
 	}
 
+	private canvas$:Canvas = null;
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
@@ -76,6 +78,17 @@ export class Form implements EventListenerObject
 	public get parent() : InterfaceForm
 	{
 		return(this.parent$);
+	}
+
+	public get canvas() : Canvas
+	{
+		return(this.canvas$);
+	}
+
+	public set canvas(canvas:Canvas)
+	{
+		this.canvas$ = canvas;
+		this.canvas.getContent()?.addEventListener("focus",this);
 	}
 
 	public get model() : ModelForm
@@ -169,7 +182,7 @@ export class Form implements EventListenerObject
 	{
 		if (ignore && this.curinst$)
 			this.curinst$.ignore = "blur";
-			
+
 		this.curinst$?.blur();
 	}
 
@@ -222,6 +235,16 @@ export class Form implements EventListenerObject
 			return(false);
 		}
 
+		return(true);
+	}
+
+	public async onCanvasFocus() : Promise<boolean>
+	{
+		if (Form.current() && Form.current() != this)
+		{
+			this.canvas.activate();
+			FormBacking.setCurrentForm(null);
+		}
 		return(true);
 	}
 
@@ -914,6 +937,10 @@ export class Form implements EventListenerObject
 	{
       let bubble:boolean = false;
 		this.event.setEvent(event);
+
+		if (this.event.type == "focus")
+			await this.onCanvasFocus();
+
 
 		if (this.event.type == "wait")
 			await this.event.wait();

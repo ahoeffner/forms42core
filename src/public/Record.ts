@@ -44,6 +44,16 @@ export class Record
 		return(this.rec$.state);
 	}
 
+	public get flushed() : boolean
+	{
+		return(this.rec$.flushed);
+	}
+
+	public get synchronized() : boolean
+	{
+		return(this.rec$.synched);
+	}
+
 	public get response() : any
 	{
 		return(this.rec$.response);

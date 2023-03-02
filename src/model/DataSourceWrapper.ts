@@ -82,7 +82,10 @@ export class DataSourceWrapper
 		if (!this.dirty)
 		{
 			for (let i = 0; i < this.cache$.length; i++)
+			{
 				this.cache$[i].setClean(true);
+				this.cache$[i].synched = true;
+			}
 		}
 	}
 
@@ -115,6 +118,19 @@ export class DataSourceWrapper
 		}
 
 		return(dirty);
+	}
+
+	public getPendingCount() : number
+	{
+		let pending:number = 0;
+
+		for (let i = 0; i < this.cache$.length; i++)
+		{
+			if (!this.cache$[i].synched)
+				pending++;
+		}
+
+		return(pending);
 	}
 
 	public async undo() : Promise<Record[]>
@@ -440,8 +456,12 @@ export class DataSourceWrapper
 		if (!record.prepared)
 		{
 			record.setClean(true);
+
 			record.wrapper = this;
+			record.synched = true;
+
 			await this.block.onFetch(record);
+
 			record.prepared = true;
 		}
 

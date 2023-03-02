@@ -41,6 +41,7 @@ export class Record
 	private response$:any = null;
 	private failed$:boolean = false;
 	private locked$:boolean = false;
+	private synched$:boolean = false;
 	private flushed$:boolean = false;
 	private prepared$:boolean = false;
 	private flushing$:boolean = false;
@@ -142,6 +143,16 @@ export class Record
 	public set prepared(flag:boolean)
 	{
 		this.prepared$ = flag;
+	}
+
+	public get synched() : boolean
+	{
+		return(this.synched$);
+	}
+
+	public set synched(flag:boolean)
+	{
+		this.synched$ = flag;
 	}
 
 	public get flushed() : boolean

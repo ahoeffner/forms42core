@@ -270,6 +270,11 @@ export class Block
 		this.getRecord()?.setValue(field,value);
 	}
 
+	public isDirty() : boolean
+	{
+		return(FormBacking.getModelBlock(this).getPendingCount() > 0);
+	}
+
 	public isValid(field:string) : boolean
 	{
 		return(FormBacking.getViewBlock(this).isValid(field));
@@ -287,7 +292,7 @@ export class Block
 
 	public hasPendingChanges() : boolean
 	{
-		return(FormBacking.getModelBlock(this).getDirtyCount() > 0);
+		return(FormBacking.getModelBlock(this).getPendingCount() > 0);
 	}
 
 	public showLastQuery() : void

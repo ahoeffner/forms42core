@@ -561,6 +561,11 @@ export class Block
 		return(this.wrapper.getDirtyCount());
 	}
 
+	public getPendingCount() : number
+	{
+		return(this.wrapper.getPendingCount());
+	}
+
 	public setClean() : void
 	{
 		this.wrapper.dirty = false;

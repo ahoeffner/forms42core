@@ -225,11 +225,11 @@ export class FormBacking
 			}
 		}
 
-		if (!transactions)
-			return(true);
-
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreCommit)))
 			return(false);
+
+		if (!transactions)
+			return(true);
 
 		for (let i = 0; i < dbconns.length; i++)
 		{
@@ -275,6 +275,9 @@ export class FormBacking
 			}
 		}
 
+		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
+			return(false);
+
 		if (!transactions)
 		{
 			for (let i = 0; i < forms.length; i++)
@@ -285,9 +288,6 @@ export class FormBacking
 
 			return(true);
 		}
-
-		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
-			return(false);
 
 		for (let i = 0; i < dbconns.length; i++)
 		{

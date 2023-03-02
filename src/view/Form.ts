@@ -245,17 +245,10 @@ export class Form implements EventListenerObject
 		if (preform && preform != this)
 		{
 			if (!await preform.validate())
-			{
-				FlightRecorder.debug("Form '"+preform.name+"' not validated");
-				preform.focus();
 				return(false);
-			}
 
 			if (!await this.leaveForm(preform))
-			{
-				preform.focus();
 				return(false);
-			}
 
 			this.canvas.activate();
 			FormBacking.setCurrentForm(null);
@@ -267,10 +260,12 @@ export class Form implements EventListenerObject
 	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
 		let preform:Form = null;
+		let preinst:FieldInstance = this.curinst$;
+		let preblock:Block = this.curinst$?.field.block;
+
 		let nxtblock:Block = inst.field.block;
 		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
-		let preblock:Block = this.curinst$?.field.block;
 
 		/**********************************************************************
 			Go to form
@@ -394,10 +389,13 @@ export class Form implements EventListenerObject
 
 		// Prefield
 
-		if (!await this.enterField(inst,recoffset))
+		if (inst != preinst)
 		{
-			this.focus();
-			return(false);
+			if (!await this.enterField(inst,recoffset))
+			{
+				this.focus();
+				return(false);
+			}
 		}
 
 		this.curinst$ = inst;

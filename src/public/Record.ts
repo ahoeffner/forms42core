@@ -154,8 +154,45 @@ export class Record
 		}
 	}
 
+	public setStyle(field:string, style:string, value:any) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.setStyle(style,value),field);
+	}
+
+	public removeStyle(field:string, style:string) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.removeStyle(style),field);
+	}
+
+	public setClass(field:string, clazz:string) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.setClass(clazz),field);
+	}
+
+	public removeClass(field:string, clazz:string) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.removeClass(clazz),field);
+	}
+
+	public setAttribute(field:string, attr:string, value?:any) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.setAttribute(attr,value),field);
+	}
+
+	public removeAttribute(field:string, attr:string) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.removeAttribute(attr),field);
+	}
+
 	public getProperties(field?:string, clazz?:string) : FieldProperties
 	{
+		field = field?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
 		return(new FieldProperties(blk.view.getRecordProperties(this.rec$,field,clazz)));
 	}

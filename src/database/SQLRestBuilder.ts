@@ -151,7 +151,6 @@ export class SQLRestBuilder
 
 		stmt += filters.asSQL();
 		stmt += " for update nowait";
-		console.log(stmt)
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

@@ -152,6 +152,8 @@ export class DataSourceWrapper
 				if (!records[i].dirty || records[i].failed)
 					continue;
 
+				records[i].flushed = true;
+
 				if (records[i].state == RecordState.Inserted)
 				{
 					records[i].flushing = true;
@@ -290,6 +292,7 @@ export class DataSourceWrapper
 			return(true);
 
 		record.failed = false;
+		record.flushed = false;
 
 		if (deleted)
 		{
@@ -299,6 +302,7 @@ export class DataSourceWrapper
 			if (record.state == RecordState.New || record.state == RecordState.Inserted)
 			{
 				record.locked = true;
+				record.flushed = true;
 			}
 			else
 			{
@@ -428,7 +432,7 @@ export class DataSourceWrapper
 				this.eof$ = true;
 
 			this.cache$.push(...recs);
-			recs.forEach((rec) => rec.state = RecordState.Consistent);
+			recs.forEach((rec) => {rec.state = RecordState.Consistent; rec.flushed = true});
 		}
 
 		let record:Record = this.cache$[this.hwm$];

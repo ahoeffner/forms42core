@@ -390,7 +390,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 				response = await this.conn$.insert(sql);
 
 				this.castResponse(response);
-				if (response.success) rec.bound = true;
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
@@ -410,19 +409,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (rec.state == RecordState.Deleted)
 			{
-				console.log("bound: "+rec.bound)
-				if (await this.lock(rec))
-				{
-					processed.push(rec);
-					sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
+				processed.push(rec);
+				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 
-					this.setTypes(sql.bindvalues);
-					response = await this.conn$.delete(sql);
+				this.setTypes(sql.bindvalues);
+				response = await this.conn$.delete(sql);
 
-					this.castResponse(response);
-					if (response.success) rec.bound = false;
-					rec.response = new DatabaseResponse(response,this.delreturncolumns$);
-				}
+				this.castResponse(response);
+				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		}
 
@@ -747,7 +741,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 				record.setValue(this.columns[c],rows[r][c]);
 			}
 
-			record.bound = true;
 			let response:any = {succes: true, rows: [rows[r]]};
 			record.response = new DatabaseResponse(response,this.columns);
 

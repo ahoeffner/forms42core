@@ -77,7 +77,6 @@ export class MemoryTable implements DataSource
 		{
 			let record:Record = new Record(this,rec);
 			this.records$.push(record);
-			record.bound = true;
 		});
 	}
 
@@ -89,12 +88,11 @@ export class MemoryTable implements DataSource
 	public setData(data:any[][]) : void
 	{
 		this.records$ = [];
-		
+
 		data.forEach((rec) =>
 		{
 			let record:Record = new Record(this,rec);
 			this.records$.push(record);
-			record.bound = true;
 		})
 	}
 
@@ -248,7 +246,6 @@ export class MemoryTable implements DataSource
 		{
 			if (rec.state == RecordState.Inserted)
 			{
-				rec.bound = true;
 				processed.push(rec);
 				this.records$.push(rec);
 				rec.response = {status: "inserted"};
@@ -262,7 +259,6 @@ export class MemoryTable implements DataSource
 
 			if (rec.state == RecordState.Deleted)
 			{
-				rec.bound = false;
 				processed.push(rec);
 				rec.response = {status: "deleted"};
 

@@ -26,8 +26,10 @@ import { DataSourceWrapper } from "./DataSourceWrapper.js";
 export enum RecordState
 {
 	New,
-	Deleted,
+	Insert,
+	Modified,
 	Updated,
+	Deleted,
 	Inserted,
 	Consistent,
 	QueryFilter

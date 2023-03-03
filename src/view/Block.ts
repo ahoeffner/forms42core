@@ -121,7 +121,7 @@ export class Block
 		else
 		{
 			let state:RecordState = this.model.getRecord()?.state;
-			if (state == null) state = RecordState.Updated;
+			if (state == null) state = RecordState.Modified;
 
 			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
 			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
@@ -1264,9 +1264,9 @@ export class Block
 			case null							: return(Status.na);
 			case RecordState.New 			: return(Status.new);
 			case RecordState.Consistent 			: return(Status.update);
-			case RecordState.Updated 		: return(Status.update);
+			case RecordState.Modified 		: return(Status.update);
 			case RecordState.Deleted 		: return(Status.delete);
-			case RecordState.Inserted 		: return(Status.insert);
+			case RecordState.Insert 		: return(Status.insert);
 			case RecordState.QueryFilter 	: return(Status.qbe);
 		}
 	}

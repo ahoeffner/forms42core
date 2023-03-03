@@ -219,13 +219,13 @@ export class MemoryTable implements DataSource
 			{
 				case RecordState.New:
 
-				case RecordState.Inserted:
+				case RecordState.Insert:
 
 					this.delete(this.dirty$[i]);
 					this.dirty$[i].state = RecordState.Deleted;
 					break;
 
-				case RecordState.Updated:
+				case RecordState.Modified:
 					this.dirty$[i].state = RecordState.Consistent;
 					break;
 
@@ -244,14 +244,14 @@ export class MemoryTable implements DataSource
 
 		this.dirty$.forEach((rec) =>
 		{
-			if (rec.state == RecordState.Inserted)
+			if (rec.state == RecordState.Insert)
 			{
 				processed.push(rec);
 				this.records$.push(rec);
 				rec.response = {status: "inserted"};
 			}
 
-			if (rec.state == RecordState.Updated)
+			if (rec.state == RecordState.Modified)
 			{
 				processed.push(rec);
 				rec.response = {status: "updated"};

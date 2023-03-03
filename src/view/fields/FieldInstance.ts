@@ -331,7 +331,7 @@ export class FieldInstance implements FieldEventHandler
 
 	public focus(events?:boolean) : void
 	{
-		if (events == null) events = true;
+		if (events == null) events = false;
 		let focus:Element = document.activeElement;
 		let inst:HTMLElement = this.impl.getElement();
 

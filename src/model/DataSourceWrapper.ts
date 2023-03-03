@@ -144,7 +144,7 @@ export class DataSourceWrapper
 		{
 			this.cache$.forEach((record) =>
 			{
-				if (record.state == RecordState.Inserted)
+				if (record.state == RecordState.Insert)
 					this.linkToMasters(record);
 			});
 
@@ -152,7 +152,7 @@ export class DataSourceWrapper
 			{
 				for (let i = 0; i < this.cache$.length; i++)
 				{
-					if (this.cache$[i].state == RecordState.Updated || this.cache$[i].state == RecordState.Deleted)
+					if (this.cache$[i].state == RecordState.Modified || this.cache$[i].state == RecordState.Deleted)
 					{
 						if (!await this.lock(this.cache$[i],true))
 							this.cache$[i].failed = true;
@@ -170,7 +170,7 @@ export class DataSourceWrapper
 
 				records[i].flushed = true;
 
-				if (records[i].state == RecordState.Inserted)
+				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
 					succces = await this.block.postInsert(records[i]);
@@ -184,7 +184,7 @@ export class DataSourceWrapper
 					}
 				}
 
-				if (records[i].state == RecordState.Updated)
+				if (records[i].state == RecordState.Modified)
 				{
 					records[i].flushing = true;
 					succces = await this.block.postUpdate(records[i]);
@@ -235,7 +235,7 @@ export class DataSourceWrapper
 		if (!this.source.rowlocking)
 			return(true);
 
-		if (record.state == RecordState.New || record.state == RecordState.Inserted)
+		if (record.state == RecordState.New || record.state == RecordState.Insert)
 			return(true);
 
 		return(record.locked);
@@ -284,7 +284,7 @@ export class DataSourceWrapper
 		if (record.state == RecordState.Deleted)
 			return;
 
-		if (record.state == RecordState.New || record.state == RecordState.Inserted)
+		if (record.state == RecordState.New || record.state == RecordState.Insert)
 		{
 			record.clear();
 			record.state = RecordState.New;
@@ -294,7 +294,7 @@ export class DataSourceWrapper
 		await this.source.refresh(record);
 		record.setClean(false);
 
-		if (record.state == RecordState.Updated)
+		if (record.state == RecordState.Modified)
 			record.state = RecordState.Consistent;
 
 		await this.block.onFetch(record);
@@ -315,7 +315,7 @@ export class DataSourceWrapper
 			record.setDirty();
 			this.dirty = true;
 
-			if (record.state == RecordState.New || record.state == RecordState.Inserted)
+			if (record.state == RecordState.New || record.state == RecordState.Insert)
 			{
 				record.locked = true;
 				record.flushed = true;
@@ -338,12 +338,12 @@ export class DataSourceWrapper
 			{
 				case RecordState.New :
 					success = await this.insert(record);
-					if (success) record.state = RecordState.Inserted;
+					if (success) record.state = RecordState.Insert;
 					break;
 
 				case RecordState.Consistent :
 					success = await this.update(record);
-					if (success) record.state = RecordState.Updated;
+					if (success) record.state = RecordState.Modified;
 					break;
 			}
 		}

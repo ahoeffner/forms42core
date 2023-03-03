@@ -267,6 +267,12 @@ export class Form implements EventListenerObject
 		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 
+		if (inst == preinst)
+		{
+			console.log("What the fuck")
+			return(true);
+		}
+
 		/**********************************************************************
 			Go to form
 		 **********************************************************************/
@@ -389,13 +395,10 @@ export class Form implements EventListenerObject
 
 		// Prefield
 
-		if (inst != preinst)
+		if (!await this.enterField(inst,recoffset))
 		{
-			if (!await this.enterField(inst,recoffset))
-			{
-				this.focus();
-				return(false);
-			}
+			this.focus();
+			return(false);
 		}
 
 		this.curinst$ = inst;

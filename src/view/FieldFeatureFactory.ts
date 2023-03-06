@@ -20,6 +20,7 @@
 */
 
 import { Status } from "./Row.js";
+import { RecordState } from "../model/Record.js";
 import { Properties } from "../application/Properties.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { FieldProperties } from "./fields/FieldProperties.js";
@@ -231,6 +232,8 @@ export class FieldFeatureFactory
 	public static setMode(inst:FieldInstance, props:FieldProperties) : void
 	{
 		let tag:HTMLElement = inst.element;
+		let state:RecordState = inst.field.block.getRecord(inst.row)?.state;
+
 
 		if (props.getAttribute(Properties.RecordModeAttr) != null)
 			return;

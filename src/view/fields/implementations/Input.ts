@@ -155,7 +155,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		let value:string = this.getElementValue();
+		let value:string = this.getElementValue().trim();
 
 		if (this.datamapper != null)
 		{

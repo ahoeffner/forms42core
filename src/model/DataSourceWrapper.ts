@@ -82,10 +82,7 @@ export class DataSourceWrapper
 		if (!this.dirty)
 		{
 			for (let i = 0; i < this.cache$.length; i++)
-			{
 				this.cache$[i].setClean(true);
-				this.cache$[i].synched = true;
-			}
 		}
 	}
 
@@ -98,13 +95,23 @@ export class DataSourceWrapper
 		if (!flush)
 		{
 			this.source.clear();
+			this.block.view.setStatus();
 			return(true);
 		}
 
-		if (!await this.source.closeCursor())
-			console.log("Unable to close cursor");
-
+		await this.source.closeCursor();
 		return(this.flush());
+	}
+
+	public setSynchronized() : void
+	{
+		this.cache$.forEach((rec) =>
+		{
+			rec.setClean(true);
+			rec.state = RecordState.Consistent;
+		})
+
+		this.block.view.setStatus();
 	}
 
 	public getDirtyCount() : number
@@ -144,15 +151,18 @@ export class DataSourceWrapper
 		{
 			this.cache$.forEach((record) =>
 			{
-				if (record.state == RecordState.Insert)
+				if (!record.synched)
 					this.linkToMasters(record);
+
+				if (record.state == RecordState.New)
+					record.state = RecordState.Insert;
 			});
 
 			if (this.source.rowlocking == LockMode.Optimistic)
 			{
 				for (let i = 0; i < this.cache$.length; i++)
 				{
-					if (this.cache$[i].state == RecordState.Modified || this.cache$[i].state == RecordState.Deleted)
+					if (this.cache$[i].state != RecordState.Insert)
 					{
 						if (!await this.lock(this.cache$[i],true))
 							this.cache$[i].failed = true;
@@ -168,8 +178,6 @@ export class DataSourceWrapper
 				if (!records[i].dirty || records[i].failed)
 					continue;
 
-				records[i].flushed = true;
-
 				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
@@ -178,13 +186,25 @@ export class DataSourceWrapper
 
 					if (succces)
 					{
-						records[i].state = RecordState.Consistent;
+						records[i].state = RecordState.Inserted;
 						this.block.view.setStatus(records[i]);
 						records[i].setClean(false);
 					}
 				}
 
-				if (records[i].state == RecordState.Modified)
+				else
+
+				if (records[i].state == RecordState.Inserted)
+				{
+					records[i].flushing = true;
+					succces = await this.block.postUpdate(records[i]);
+					records[i].flushing = false;
+					if (succces) records[i].setClean(false);
+				}
+
+				else
+
+				if (records[i].state == RecordState.Update)
 				{
 					records[i].flushing = true;
 					succces = await this.block.postUpdate(records[i]);
@@ -192,18 +212,25 @@ export class DataSourceWrapper
 
 					if (succces)
 					{
-						records[i].state = RecordState.Consistent;
+						records[i].state = RecordState.Updated;
 						this.block.view.setStatus(records[i]);
 						records[i].setClean(false);
 					}
 				}
 
-				if (records[i].state == RecordState.Deleted)
+				else
+
 				{
 					records[i].flushing = true;
 					succces = await this.block.postDelete(records[i]);
 					records[i].flushing = false;
-					records[i].setClean(false);
+
+					if (succces)
+					{
+						records[i].state = RecordState.Deleted;
+						this.block.view.setStatus(records[i]);
+						records[i].setClean(false);
+					}
 				}
 			}
 
@@ -281,6 +308,9 @@ export class DataSourceWrapper
 
 	public async refresh(record:Record) : Promise<void>
 	{
+		if (record.state == RecordState.Delete)
+			return;
+
 		if (record.state == RecordState.Deleted)
 			return;
 
@@ -288,46 +318,42 @@ export class DataSourceWrapper
 		{
 			record.clear();
 			record.state = RecordState.New;
+			this.block.view.setStatus(record);
 			return;
 		}
 
 		await this.source.refresh(record);
 		record.setClean(false);
 
-		if (record.state == RecordState.Modified)
+		if (record.state == RecordState.Update)
 			record.state = RecordState.Consistent;
 
 		await this.block.onFetch(record);
+		this.block.view.setStatus(record);
 	}
 
 	public async modified(record:Record, deleted:boolean) : Promise<boolean>
 	{
 		let success:boolean = true;
-
-		if (record == null)
-			return(true);
+		if (record == null) return(true);
 
 		record.failed = false;
-		record.flushed = false;
 
 		if (deleted)
 		{
 			record.setDirty();
 			this.dirty = true;
 
-			if (record.state == RecordState.New || record.state == RecordState.Insert)
-			{
-				record.locked = true;
-				record.flushed = true;
-			}
-			else
-			{
-				if (!await this.lock(record,false))
-					return(false);
-			}
+			if (!await this.lock(record,false))
+				return(false);
 
 			success = await this.delete(record);
-			if (success) record.state = RecordState.Deleted;
+
+			if (success)
+			{
+				record.state = RecordState.Delete;
+				this.block.view.setStatus(record);
+			}
 		}
 		else if (record.dirty)
 		{
@@ -338,13 +364,31 @@ export class DataSourceWrapper
 			{
 				case RecordState.New :
 					success = await this.insert(record);
-					if (success) record.state = RecordState.Insert;
-					break;
 
+					if (success)
+					{
+						record.state = RecordState.Insert;
+						this.block.view.setStatus(record);
+					}
+				break;
+
+				case RecordState.Insert :
+				case RecordState.Inserted :
+					success = await this.update(record);
+				break;
+
+
+				case RecordState.Update :
+				case RecordState.Updated :
 				case RecordState.Consistent :
 					success = await this.update(record);
-					if (success) record.state = RecordState.Modified;
-					break;
+
+					if (success)
+					{
+						record.state = RecordState.Update;
+						this.block.view.setStatus(record);
+					}
+				break;
 			}
 		}
 
@@ -408,7 +452,6 @@ export class DataSourceWrapper
 		this.hwm$--;
 		this.cache$.splice(pos,1);
 
-		record.state = RecordState.Deleted;
 		return(true);
 	}
 
@@ -448,7 +491,6 @@ export class DataSourceWrapper
 				this.eof$ = true;
 
 			this.cache$.push(...recs);
-			recs.forEach((rec) => {rec.state = RecordState.Consistent; rec.flushed = true});
 		}
 
 		let record:Record = this.cache$[this.hwm$];
@@ -456,12 +498,9 @@ export class DataSourceWrapper
 		if (!record.prepared)
 		{
 			record.setClean(true);
-
 			record.wrapper = this;
-			record.synched = true;
 
 			await this.block.onFetch(record);
-
 			record.prepared = true;
 		}
 
@@ -573,5 +612,10 @@ export class DataSourceWrapper
 					record.setValue(col,masters[i].getValue(mst));
 			}
 		}
+	}
+
+	public dump() : void
+	{
+		this.cache$.forEach((rec) => console.log(rec.toString()));
 	}
 }

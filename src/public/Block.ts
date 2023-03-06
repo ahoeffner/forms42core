@@ -518,4 +518,9 @@ export class Block
 		(filter as EventFilter).block = this.name;
 		return(FormEvents.addListener(this.form,this,method,filter));
 	}
+
+	public dump() : void
+	{
+		FormBacking.getModelBlock(this).wrapper.dump();
+	}
 }

@@ -344,6 +344,7 @@ export class Connection extends BaseConnection
 			if (!response.success)
 			{
 				console.error(response);
+				console.error(new Error().stack);
 				Alert.warning(response.message,"Database Connection");
 				return(response);
 			}
@@ -380,6 +381,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
+			console.error(new Error().stack);
 			return(response);
 		}
 
@@ -447,6 +449,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
+			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -484,6 +487,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
+			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -521,6 +525,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
+			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -672,7 +677,11 @@ export class Connection extends BaseConnection
 			let value:any = b.value;
 			if (value instanceof Date) value = value.getTime();
 			if (b.outtype) binds.push({name: b.name, type: b.type});
-			else binds.push({name: b.name, value: value, type: b.type});
+			else
+			{
+				if (!value) binds.push({name: b.name, type: b.type});
+				else binds.push({name: b.name, value: value, type: b.type});
+			}
 		})
 
 		return(binds);

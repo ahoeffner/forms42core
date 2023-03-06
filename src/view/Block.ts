@@ -107,21 +107,21 @@ export class Block
 		this.curinst$ = inst;
 	}
 
-	public blur() : void
+	public blur(ignore?:boolean) : void
 	{
-		this.current?.blur();
+		this.current?.blur(ignore);
 	}
 
-	public focus(events?:boolean) : void
+	public focus(ignore?:boolean) : void
 	{
 		if (this.current)
 		{
-			this.current.focus(events);
+			this.current.focus(ignore);
 		}
 		else
 		{
 			let state:RecordState = this.model.getRecord()?.state;
-			if (state == null) state = RecordState.Modified;
+			if (state == null) state = RecordState.Update;
 
 			let inst:FieldInstance = this.getCurrentRow()?.getFirstInstance(this.convert(state));
 			if (inst == null) inst = this.getRow(-1)?.getFirstInstance(this.convert(state));
@@ -654,7 +654,7 @@ export class Block
 	{
 		let row:number = inst.row;
 		if (row < 0) row = this.row;
-		return(row-this.row$);
+		return(row-this.row);
 	}
 
 	public move(delta:number) : number
@@ -729,8 +729,25 @@ export class Block
 		return(this.displayed$.get(record?.id));
 	}
 
-	public setStatus(record:Record) : void
+	public getRecord(row:number) : Record
 	{
+		if (row < 0) row = this.row;
+		return(this.model.getRecord(row-this.row));
+	}
+
+	public setStatus(record?:Record) : void
+	{
+		if (record == null)
+		{
+			let offset:number = -this.row;
+
+			for (let i = 0; i < this.rows; i++)
+			{
+				let rec:Record = this.model.getRecord(i + offset);
+				if (rec) this.setStatus(rec);
+			}
+		}
+
 		let row:Row = this.displayed(record);
 
 		if (row == null)
@@ -1263,10 +1280,11 @@ export class Block
 		{
 			case null							: return(Status.na);
 			case RecordState.New 			: return(Status.new);
-			case RecordState.Consistent 			: return(Status.update);
-			case RecordState.Modified 		: return(Status.update);
-			case RecordState.Deleted 		: return(Status.delete);
 			case RecordState.Insert 		: return(Status.insert);
+			case RecordState.Delete 		: return(Status.delete);
+			case RecordState.Inserted 		: return(Status.update);
+			case RecordState.Update 		: return(Status.update);
+			case RecordState.Consistent 	: return(Status.update);
 			case RecordState.QueryFilter 	: return(Status.qbe);
 		}
 	}

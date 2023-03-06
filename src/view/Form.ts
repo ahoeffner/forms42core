@@ -54,6 +54,11 @@ export class Form implements EventListenerObject
 		return(FormBacking.getCurrentViewForm());
 	}
 
+	public static previous() : Form
+	{
+		return(FormBacking.getPreviousViewForm());
+	}
+
 	private canvas$:Canvas = null;
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
@@ -101,9 +106,14 @@ export class Form implements EventListenerObject
 		return(this.curinst$?.field.block);
 	}
 
-	public get instance() : FieldInstance
+	public get current() : FieldInstance
 	{
 		return(this.curinst$);
+	}
+
+	public set current(inst: FieldInstance)
+	{
+		this.curinst$ = inst;
 	}
 
 	public async clear(flush:boolean) : Promise<boolean>
@@ -180,10 +190,7 @@ export class Form implements EventListenerObject
 
 	public blur(ignore?:boolean) : void
 	{
-		if (ignore && this.curinst$)
-			this.curinst$.ignore = "blur";
-
-		this.curinst$?.blur();
+		this.curinst$?.blur(ignore);
 	}
 
 	public focus() : void
@@ -259,7 +266,7 @@ export class Form implements EventListenerObject
 
 	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
-		let preform:Form = null;
+		let preform:Form = Form.current();
 		let preinst:FieldInstance = this.curinst$;
 		let preblock:Block = this.curinst$?.field.block;
 
@@ -267,11 +274,8 @@ export class Form implements EventListenerObject
 		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 
-		if (inst == preinst)
-		{
-			console.log("What the fuck")
+		if (preform == this && inst == this.curinst$)
 			return(true);
-		}
 
 		/**********************************************************************
 			Go to form
@@ -280,7 +284,7 @@ export class Form implements EventListenerObject
 		// Check if 'I' have been closed
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
 
-		if (backing && Form.current() && this != Form.current())
+		if (backing && preform && this != preform)
 		{
 			// When modal call, allow leaving former form in any state
 
@@ -395,10 +399,17 @@ export class Form implements EventListenerObject
 
 		// Prefield
 
-		if (!await this.enterField(inst,recoffset))
+		if (inst != preinst)
 		{
-			this.focus();
-			return(false);
+			if (!await this.enterField(inst,recoffset))
+			{
+				inst.blur(true);
+
+				if (preform != this) preform.focus();
+				else if (this.curinst$) this.curinst$.focus(true);
+
+				return(false);
+			}
 		}
 
 		this.curinst$ = inst;
@@ -412,14 +423,17 @@ export class Form implements EventListenerObject
 		let rec:Record = nxtblock.model.getRecord();
 
 		if (rec == null) onrec = false;
-		if (onrec && rec.state == RecordState.Deleted) onrec = false;
+		if (onrec && rec.state == RecordState.Delete) onrec = false;
 		if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
 		if (onrec && visited && (nxtblock == preblock && recoffset == 0)) onrec = false;
 
 		if (onrec)
 		{
-			if (rec.state == RecordState.New)
+			if (rec.state == RecordState.New && !rec.initiated)
+			{
+				rec.initiated = true;
 				await this.onNewRecord(inst.field.block);
+			}
 
 			await this.onRecord(inst.field.block);
 		}
@@ -688,9 +702,9 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.executequery)
 			{
-				inst.ignore = "blur"; inst.blur();
+				inst.blur(true);
 				success = await this.model.executeQuery(inst.field.block.model);
-				this.model.getQueryMaster()?.view.focus(false);
+				this.model.getQueryMaster()?.view.focus(true);
 				return(success);
 			}
 
@@ -834,6 +848,9 @@ export class Form implements EventListenerObject
 		let blk:Block = this.getBlock(block);
 		let type:DataType = blk.fieldinfo.get(field)?.type;
 
+		if (!this.model.getBlock(block)?.getRecord())
+			return(false);
+
 		if (type == DataType.date || type == DataType.datetime)
 		{
 			let value:Date = blk.model.getValue(field);
@@ -859,6 +876,9 @@ export class Form implements EventListenerObject
 		let params:Map<string,any> = new Map<string,any>();
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
 		let lov:ListOfValues = backing.getListOfValues(block,field);
+
+		if (!this.model.getBlock(block)?.getRecord())
+			return(false);
 
 		if (lov != null)
 		{

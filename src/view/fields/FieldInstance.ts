@@ -324,14 +324,24 @@ export class FieldInstance implements FieldEventHandler
 		this.impl.setIntermediateValue(value);
 	}
 
-	public blur() : void
+	public blur(ignore?:boolean) : void
 	{
-		this.impl.getElement().blur();
+		if (ignore == null) ignore = false;
+		let focus:Element = document.activeElement;
+		let inst:HTMLElement = this.impl.getElement();
+
+		if (focus == inst)
+		{
+			if (ignore)
+				this.ignore = "blur";
+
+			inst.blur();
+		}
 	}
 
-	public focus(events?:boolean) : void
+	public focus(ignore?:boolean) : void
 	{
-		if (events == null) events = false;
+		if (ignore == null) ignore = false;
 		let focus:Element = document.activeElement;
 		let inst:HTMLElement = this.impl.getElement();
 
@@ -339,12 +349,12 @@ export class FieldInstance implements FieldEventHandler
 		{
 			let event:BrowserEvent = BrowserEvent.get();
 
-			if (!events)
+			if (ignore)
 				this.ignore = "focus";
 
 			inst.focus();
 
-			if (events)
+			if (!ignore)
 			{
 				event.setFocusEvent();
 				this.field.handleEvent(this,event);

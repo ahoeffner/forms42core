@@ -320,8 +320,8 @@ export class Field
 			return;
 		}
 
-		if (brwevent.onScrollUp) {key = KeyMap.nextrecord; inst = this.block.form.instance;}
-		if (brwevent.onScrollDown) {key = KeyMap.prevrecord; inst = this.block.form.instance;}
+		if (brwevent.onScrollUp) {key = KeyMap.nextrecord; inst = this.block.form.current;}
+		if (brwevent.onScrollDown) {key = KeyMap.prevrecord; inst = this.block.form.current;}
 
 		if (brwevent.type?.startsWith("key") || key != null)
 		{

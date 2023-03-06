@@ -172,6 +172,19 @@ export class BasicProperties
 		return(this.styles$);
 	}
 
+	public getStyle(style:string) : string
+	{
+		style = style?.toLowerCase();
+
+		for (let i = 0; i < this.styles$.length; i++)
+		{
+			if (this.styles$[i].style == style)
+				return(this.styles$[i].value);
+		}
+
+		return(null);
+	}
+
 	public getStyles() : Style[]
 	{
 		return(this.styles$);
@@ -353,6 +366,11 @@ export class BasicProperties
 	{
 		this.attribs$ = attrs;
 		return(this);
+	}
+
+	public hasAttribute(attr:string) : boolean
+	{
+		return(this.attribs$.has(attr?.toLowerCase()));
 	}
 
 	public getAttribute(attr:string) : string

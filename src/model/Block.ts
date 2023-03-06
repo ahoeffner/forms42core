@@ -20,7 +20,7 @@
 */
 
 import { Form } from "./Form.js";
-import { Record } from "./Record.js";
+import { Record, RecordState } from "./Record.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
@@ -359,13 +359,8 @@ export class Block
 
 		if (success)
 		{
-			success = await this.wrapper.modified(record,false);
-
-			if (success)
-			{
-				if (this.querymode) this.setFilter(field);
-				else success = await this.form.queryFieldDetails(this.name,field);
-			}
+			if (this.querymode) this.setFilter(field);
+			else success = await this.form.queryFieldDetails(this.name,field);
 		}
 
 		return(success);
@@ -470,7 +465,6 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		this.form.view.blur(true);
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)
@@ -480,6 +474,9 @@ export class Block
 				before = true;
 				this.view.openrow();
 			}
+
+			this.form.view.blur(true);
+			this.form.view.current = null;
 
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
@@ -566,7 +563,7 @@ export class Block
 		return(this.wrapper.getPendingCount());
 	}
 
-	public setClean() : void
+	public cleanout() : void
 	{
 		this.wrapper.dirty = false;
 	}
@@ -583,6 +580,7 @@ export class Block
 
 		for (let i = 0; i < undo.length; i++)
 			this.view.refresh(undo[i]);
+
 
 		return(true);
 	}
@@ -882,6 +880,9 @@ export class Block
 			if (master.empty)
 				return(false);
 
+			if (master.getRecord().state == RecordState.Delete)
+				return(false);
+
 			for (let i = 0; i < link.master.fields.length; i++)
 			{
 				let mfld:string = link.master.fields[i];
@@ -892,6 +893,12 @@ export class Block
 				if (value != null)
 				{
 					let flt:Filter = Filters.Equals(dfld);
+					flt.constraint = master.getValue(mfld);
+					this.getMasterBlockFilter(master,true).and(flt,dfld);
+				}
+				else
+				{
+					let flt:Filter = Filters.Null(dfld);
 					flt.constraint = master.getValue(mfld);
 					this.getMasterBlockFilter(master,true).and(flt,dfld);
 				}

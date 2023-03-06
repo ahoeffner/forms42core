@@ -313,7 +313,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (lv != cv)
 			{
-				console.log(lv+" != "+cv);
+				console.log(this.columns[i]+" -> '"+lv+"' != '"+cv+"'");
 				Alert.warning("Record has been changed by another user","Lock Record");
 				return(false);
 			}
@@ -330,25 +330,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			this.dirty$[i].refresh();
 			undo.push(this.dirty$[i]);
-
-			switch(this.dirty$[i].state)
-			{
-				case RecordState.New:
-
-				case RecordState.Insert:
-
-					this.delete(this.dirty$[i]);
-					this.dirty$[i].state = RecordState.Deleted;
-					break;
-
-				case RecordState.Modified:
-					this.dirty$[i].state = RecordState.Consistent;
-					break;
-
-				case RecordState.Deleted:
-					this.dirty$[i].state = RecordState.Consistent;
-					break;
-			}
 		}
 
 		return(undo);
@@ -393,7 +374,22 @@ export class DatabaseTable extends SQLSource implements DataSource
 				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
 			}
 
-			if (rec.state == RecordState.Modified)
+			else
+
+			if (rec.state == RecordState.Delete)
+			{
+				processed.push(rec);
+				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
+
+				this.setTypes(sql.bindvalues);
+				response = await this.conn$.delete(sql);
+
+				this.castResponse(response);
+				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
+			}
+
+			else
+
 			{
 				processed.push(rec);
 
@@ -405,18 +401,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
-			}
-
-			if (rec.state == RecordState.Deleted)
-			{
-				processed.push(rec);
-				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.delete(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
 			}
 		}
 
@@ -439,7 +423,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (fetched.length == 0)
 		{
-			record.state = RecordState.Deleted;
+			record.state = RecordState.Delete;
 			Alert.warning("Record has been deleted by another user","Database");
 			return(false);
 		}
@@ -450,6 +434,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			record.setValue(this.columns[i],nv)
 		}
 
+		record.state = RecordState.Consistent;
 		return(true);
 	}
 

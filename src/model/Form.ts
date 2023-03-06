@@ -99,9 +99,13 @@ export class Form
 		return(dirty);
 	}
 
-	public setClean() : void
+	public synchronize() : void
 	{
-		this.blocks$.forEach((block) => {block.setClean()});
+		this.blocks$.forEach((block) =>
+		{
+			block.cleanout();
+			block.wrapper.setSynchronized();
+		});
 	}
 
 	public async undo() : Promise<boolean>
@@ -149,7 +153,7 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			blocks[i].setClean();
+			blocks[i].cleanout();
 			blocks[i].wrapper.clear(false);
 		}
 	}
@@ -362,7 +366,7 @@ export class Form
 
 		await this.enterQueryMode(block);
 
-		let inst:FieldInstance = this.view.instance;
+		let inst:FieldInstance = this.view.current;
 		inst = block.view.getQBEInstance(inst);
 
 		if (inst) inst.focus();

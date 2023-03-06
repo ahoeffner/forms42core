@@ -44,11 +44,6 @@ export class Record
 		return(this.rec$.state);
 	}
 
-	public get flushed() : boolean
-	{
-		return(this.rec$.flushed);
-	}
-
 	public get synchronized() : boolean
 	{
 		return(this.rec$.synched);
@@ -154,6 +149,11 @@ export class Record
 		}
 	}
 
+	public getStyle(field:string, style:string) : string
+	{
+		return(this.getProperties(field).getStyle(style));
+	}
+
 	public setStyle(field:string, style:string, value:any) : void
 	{
 		let props:FieldProperties = this.getProperties(field);
@@ -166,6 +166,11 @@ export class Record
 		if (props) this.setProperties(props.removeStyle(style),field);
 	}
 
+	public hasClass(field:string, clazz:string) : boolean
+	{
+		return(this.getProperties(field).hasClass(clazz));
+	}
+
 	public setClass(field:string, clazz:string) : void
 	{
 		let props:FieldProperties = this.getProperties(field);
@@ -176,6 +181,16 @@ export class Record
 	{
 		let props:FieldProperties = this.getProperties(field);
 		if (props) this.setProperties(props.removeClass(clazz),field);
+	}
+
+	public hasAttribute(field:string, attr:string) : boolean
+	{
+		return(this.getProperties(field).hasAttribute(attr));
+	}
+
+	public getAttribute(field:string, attr:string) : string
+	{
+		return(this.getProperties(field).getAttribute(attr));
 	}
 
 	public setAttribute(field:string, attr:string, value?:any) : void
@@ -211,5 +226,10 @@ export class Record
 		clazz = clazz?.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
 		blk.view.setRecordProperties(this.rec$,field,clazz,null);
+	}
+
+	public toString() : string
+	{
+		return(this.rec$.toString());
 	}
 }

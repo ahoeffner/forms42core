@@ -68,7 +68,7 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		let value = this.element.value;
+		let value = this.element.value.trim();
 
 		if (this.datamapper != null)
 		{

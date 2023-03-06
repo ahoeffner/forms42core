@@ -47,6 +47,7 @@ export class QueryTable extends SQLSource implements DataSource
 	private sql$:string = null;
 	private order$:string = null;
 	private cursor$:Cursor = null;
+	private where$:boolean = false;
 
 	private columns$:string[] = [];
 	private fetched$:Record[] = [];
@@ -130,6 +131,10 @@ export class QueryTable extends SQLSource implements DataSource
 		return(false);
 	}
 
+	public startWithWhere(flag:boolean) : void
+	{
+		this.where$ = flag;
+	}
 
 	public setDataType(column:string,type:DataType) : QueryTable
 	{
@@ -285,7 +290,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,filter,this.bindings$,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,this.where$,filter,this.bindings$,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response);
@@ -376,7 +381,7 @@ export class QueryTable extends SQLSource implements DataSource
 		if (this.described$) return(true);
 
 		let stmt:string = this.sql$ + " and 1 = 2";
-		let sql:SQLRest = SQLRestBuilder.finish(stmt,null,this.bindings$,null);
+		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.where$,null,this.bindings$,null);
 
 		let response:any = await this.conn$.select(sql,null,1,true);
 

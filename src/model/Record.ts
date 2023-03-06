@@ -27,10 +27,14 @@ export enum RecordState
 {
 	New,
 	Insert,
-	Modified,
-	Updated,
-	Deleted,
 	Inserted,
+
+	Delete,
+	Deleted,
+
+	Update,
+	Updated,
+
 	Consistent,
 	QueryFilter
 }
@@ -43,11 +47,10 @@ export class Record
 	private response$:any = null;
 	private failed$:boolean = false;
 	private locked$:boolean = false;
-	private synched$:boolean = false;
-	private flushed$:boolean = false;
-	private prepared$:boolean = false;
 	private flushing$:boolean = false;
 	private source$:DataSource = null;
+	private prepared$:boolean = false;
+	private initiated$:boolean = false;
 	private wrapper$:DataSourceWrapper = null;
 	private dirty$:Set<string> = new Set<string>();
 	private status$:RecordState = RecordState.Consistent;
@@ -72,6 +75,28 @@ export class Record
 	public get block() : Block
 	{
 		return(this.wrapper$?.block);
+	}
+
+	public get initiated() : boolean
+	{
+		return(this.initiated$);
+	}
+
+	public set initiated(flag:boolean)
+	{
+		this.initiated$ = flag;
+	}
+
+	public get inserted() : boolean
+	{
+		switch(this.state)
+		{
+			case RecordState.New :
+			case RecordState.Insert :
+			case RecordState.Inserted :
+				return(true);
+		}
+		return(false);
 	}
 
 	public clear() : void
@@ -149,22 +174,7 @@ export class Record
 
 	public get synched() : boolean
 	{
-		return(this.synched$);
-	}
-
-	public set synched(flag:boolean)
-	{
-		this.synched$ = flag;
-	}
-
-	public get flushed() : boolean
-	{
-		return(this.flushed$);
-	}
-
-	public set flushed(flag:boolean)
-	{
-		this.flushed$ = flag;
+		return(this.state == RecordState.Consistent);
 	}
 
 	public get flushing() : boolean
@@ -335,7 +345,7 @@ export class Record
 		for (let i = 0; i < cols; i++)
 			str += ", "+this.column(i)+"="+this.getValue(this.column(i));
 
-		return(str.substring(2));
+		return(RecordState[this.state]+" "+str.substring(2));
 	}
 
 	private initialize(column:string,value:any) : void

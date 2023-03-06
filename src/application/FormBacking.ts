@@ -39,6 +39,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class FormBacking
 {
+	private static prev:Form = null;
 	private static form:Form = null;
 
 	private static vforms:Map<Form,ViewForm> =
@@ -53,6 +54,11 @@ export class FormBacking
 	public static getCurrentForm() : Form
 	{
 		return(FormBacking.form);
+	}
+
+	public static getPreviousForm() : Form
+	{
+		return(FormBacking.prev);
 	}
 
 	public static getRunningForms(clazz?:Class<Form|InternalForm>) : Form[]
@@ -83,26 +89,38 @@ export class FormBacking
 		return(FormBacking.vforms.get(FormBacking.form));
 	}
 
+	public static getPreviousViewForm() : ViewForm
+	{
+		return(FormBacking.vforms.get(FormBacking.prev));
+	}
+
 	public static getCurrentModelForm() : ModelForm
 	{
 		return(FormBacking.mforms.get(FormBacking.form));
 	}
 
+	public static getPreviousModelForm() : ModelForm
+	{
+		return(FormBacking.mforms.get(FormBacking.prev));
+	}
+
 	public static setCurrentForm(form:Form|ViewForm|ModelForm) : void
 	{
+		let curr:Form = FormBacking.form;
+
 		if (form instanceof ViewForm)
-		{
-			FormBacking.form = form.parent;
-			return;
-		}
+			form = form.parent;
+
+		else
 
 		if (form instanceof ModelForm)
-		{
-			FormBacking.form = form.parent;
-			return;
-		}
+			form = form.parent;
 
-		FormBacking.form = form;
+		if (curr != form)
+		{
+			FormBacking.form = form;
+			if (form) FormBacking.prev = curr;
+		}
 	}
 
 	public static getBacking(form:Form) : FormBacking
@@ -211,6 +229,9 @@ export class FormBacking
 		{
 			if (!await forms[i].view.validate())
 				return(false);
+
+			if (!await forms[i].flush())
+				return(false);
 		}
 
 		let transactions:boolean = false;
@@ -243,7 +264,7 @@ export class FormBacking
 		if (!failed)
 		{
 			for (let i = 0; i < forms.length; i++)
-				forms[i].setClean();
+				forms[i].synchronize();
 		}
 
 		if (!failed) Alert.message("Transactions successfully saved","Transactions");
@@ -278,6 +299,15 @@ export class FormBacking
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
 			return(false);
 
+		for (let i = 0; i < forms.length; i++)
+		{
+			if (forms[i].getDirtyCount() > 0)
+			{
+				forms[i].view.blur();
+				forms[i].view.current = null;
+			}
+		}
+
 		if (!transactions)
 		{
 			for (let i = 0; i < forms.length; i++)
@@ -305,12 +335,6 @@ export class FormBacking
 		{
 			if (!await forms[i].undo())
 				return(false);
-		}
-
-		if (!failed)
-		{
-			for (let i = 0; i < forms.length; i++)
-				forms[i].setClean();
 		}
 
 		if (failed) Alert.warning("Failed to roll back transactions","Transactions");
@@ -372,6 +396,11 @@ export class FormBacking
 	public get wasCalled() : boolean
 	{
 		return(this.parent$ != null);
+	}
+
+	public get parentForm() : Form
+	{
+		return(this.parent$);
 	}
 
 	public get hasModalChild() : boolean

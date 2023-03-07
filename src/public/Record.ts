@@ -44,6 +44,21 @@ export class Record
 		return(this.rec$.state);
 	}
 
+	public get inserted() : boolean
+	{
+		return(this.rec$.inserted);
+	}
+
+	public get updated() : boolean
+	{
+		return(this.rec$.updated);
+	}
+
+	public get deleted() : boolean
+	{
+		return(this.rec$.deleted);
+	}
+
 	public get synchronized() : boolean
 	{
 		return(this.rec$.synched);

@@ -87,6 +87,28 @@ export class Record
 		this.initiated$ = flag;
 	}
 
+	public get deleted() : boolean
+	{
+		switch(this.state)
+		{
+			case RecordState.Delete :
+			case RecordState.Deleted:
+				return(true);
+		}
+		return(false);
+	}
+
+	public get updated() : boolean
+	{
+		switch(this.state)
+		{
+			case RecordState.Update :
+			case RecordState.Updated :
+				return(true);
+		}
+		return(false);
+	}
+
 	public get inserted() : boolean
 	{
 		switch(this.state)

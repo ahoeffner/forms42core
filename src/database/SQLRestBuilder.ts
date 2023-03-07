@@ -108,7 +108,7 @@ export class SQLRestBuilder
 		parsed.stmt = sql;
 
 		if (filter && !filter.empty)
-			parsed.stmt += where + filter.asSQL();
+			parsed.stmt += first + filter.asSQL();
 
 		if (order)
 			parsed.stmt += " order by "+order;

@@ -120,7 +120,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.open$.size == 0) return;
 		this.target$.innerHTML = "";
 		this.open$.clear();
-		await this.show();
 	}
 
 	public clear() : void

@@ -252,13 +252,19 @@ export class Form implements EventListenerObject
 		if (preform && preform != this)
 		{
 			if (!await preform.validate())
+			{
+				FormBacking.setCurrentForm(null);
 				return(false);
+			}
 
 			if (!await this.leaveForm(preform))
+			{
+				FormBacking.setCurrentForm(null);
 				return(false);
+			}
 
 			this.canvas.activate();
-			FormBacking.setCurrentForm(null);
+			FormBacking.setCurrentForm(this);
 		}
 
 		return(true);
@@ -284,15 +290,15 @@ export class Form implements EventListenerObject
 		// Check if 'I' have been closed
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
 
-		if (backing && preform && this != preform)
+		if (backing == null)
+		{
+			Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current()?.name+"'","Enter Form");
+			return(false);
+		}
+
+		if (preform && this != preform)
 		{
 			// When modal call, allow leaving former form in any state
-
-			if (backing == null)
-			{
-				Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current()?.name+"'","Enter Form");
-				return(false);
-			}
 
 			if (!backing.wasCalled)
 			{
@@ -300,20 +306,24 @@ export class Form implements EventListenerObject
 
 				if (Form.current() != null)
 				{
+					inst.blur(true);
 					preform = Form.current();
 
 					if (!await preform.validate())
 					{
-						FlightRecorder.debug("Form '"+preform.name+"' not validated");
+						FormBacking.setCurrentForm(null);
 						preform.focus();
 						return(false);
 					}
 
 					if (!await this.leaveForm(preform))
 					{
+						FormBacking.setCurrentForm(null);
 						preform.focus();
 						return(false);
 					}
+
+					inst.focus(true);
 				}
 			}
 

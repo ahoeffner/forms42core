@@ -28,13 +28,13 @@ export class KeyMap
 	public static copy:KeyMap = new KeyMap({key: 'c', ctrl: true});
 	public static undo:KeyMap = new KeyMap({key: 'z', ctrl: true});
 	public static paste:KeyMap = new KeyMap({key: 'v', ctrl: true});
-	public static refresh:KeyMap = new KeyMap({key: 'u', ctrl: true});
 
 	public static dump:KeyMap = new KeyMap({key: KeyCodes.f12, shift: true});
 	public static now:KeyMap = new KeyMap({key: ' ', ctrl: true}, "(space) now", "Todays date");
 
 	public static commit:KeyMap = new KeyMap({key: KeyCodes.f10},"commit","commit all transactions");
 	public static rollback:KeyMap = new KeyMap({key: KeyCodes.f12},"rollback","rollback all transactions");
+	public static refresh:KeyMap = new KeyMap({key: 'u', ctrl: true}, "refresh","Refresh value from backend");
 
 	public static clearblock:KeyMap = new KeyMap({key: KeyCodes.f4},"clear block","clear block");
 	public static clearform:KeyMap = new KeyMap({key: KeyCodes.f4, shift: true},"clear block","clear block");

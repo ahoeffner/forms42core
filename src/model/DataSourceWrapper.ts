@@ -86,6 +86,12 @@ export class DataSourceWrapper
 		}
 	}
 
+	public get transactional() : boolean
+	{
+		if (this.source?.transactional) return(true);
+		return(false);
+	}
+
 	public async clear(flush:boolean) : Promise<boolean>
 	{
 		this.hwm$ = 0;
@@ -161,11 +167,8 @@ export class DataSourceWrapper
 			{
 				for (let i = 0; i < this.cache$.length; i++)
 				{
-					if (this.cache$[i].state != RecordState.Insert)
-					{
-						if (!await this.lock(this.cache$[i],true))
-							this.cache$[i].failed = true;
-					}
+					if (!await this.lock(this.cache$[i],true))
+						this.cache$[i].failed = true;
 				}
 			}
 

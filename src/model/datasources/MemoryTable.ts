@@ -85,6 +85,11 @@ export class MemoryTable implements DataSource
 		this.dirty$ = [];
 	}
 
+	public get transactional() : boolean
+	{
+		return(false);
+	}
+
 	public setData(data:any[][]) : void
 	{
 		this.records$ = [];

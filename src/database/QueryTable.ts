@@ -82,6 +82,11 @@ export class QueryTable extends SQLSource implements DataSource
 		this.described$ = false;
 	}
 
+	public get transactional() : boolean
+	{
+		return(false);
+	}
+
 	public clear() : void
 	{
 		if (this.cursor$ && !this.cursor$.eof)

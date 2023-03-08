@@ -89,6 +89,11 @@ export class Connection
 		this.base$ = url;
 	}
 
+	public get transactional() : boolean
+	{
+		return(false);
+	}
+
 	public async get(url?:string|URL, raw?:boolean) : Promise<any>
 	{
 		this.method$ = "GET";

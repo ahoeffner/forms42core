@@ -102,6 +102,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (this.name == null) this.name = table;
 	}
 
+	public get transactional() : boolean
+	{
+		return(this.conn$.transactional);
+	}
+
 	public clear() : void
 	{
 		this.dirty$ = [];

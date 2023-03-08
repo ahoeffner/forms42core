@@ -61,6 +61,11 @@ export class DatabaseConnection
 		this.conn$.scope = scope;
 	}
 
+	public get transactional() : boolean
+	{
+		return(this.conn$.transactional);
+	}
+
 	public set preAuthenticated(secret:string)
 	{
 		this.conn$.preAuthenticated = secret;

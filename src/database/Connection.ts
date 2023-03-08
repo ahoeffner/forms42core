@@ -76,6 +76,11 @@ export class Connection extends BaseConnection
 		this.scope$ = scope;
 	}
 
+	public get transactional() : boolean
+	{
+		return(this.scope != ConnectionScope.stateless);
+	}
+
 	public set preAuthenticated(secret:string)
 	{
 		this.secret$ = secret;

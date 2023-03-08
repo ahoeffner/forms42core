@@ -94,7 +94,7 @@ export class Form
 		let blocks:Block[] = Array.from(this.blocks$.values());
 
 		for (let i = 0; i < blocks.length; i++)
-			dirty +=  blocks[i].getDirtyCount();
+			dirty += blocks[i].getDirtyCount();
 
 		return(dirty);
 	}

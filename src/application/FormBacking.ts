@@ -224,6 +224,7 @@ export class FormBacking
 	{
 		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
+		let dbconns:Connection[] = Connection.getAllConnections();
 
 		for (let i = 0; i < forms.length; i++)
 		{
@@ -234,23 +235,8 @@ export class FormBacking
 				return(false);
 		}
 
-		let transactions:boolean = false;
-		let dbconns:Connection[] = Connection.getAllConnections();
-
-		for (let i = 0; i < dbconns.length; i++)
-		{
-			if (dbconns[i].hasTransactions())
-			{
-				transactions = true;
-				break;
-			}
-		}
-
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreCommit)))
 			return(false);
-
-		if (!transactions)
-			return(true);
 
 		for (let i = 0; i < dbconns.length; i++)
 		{
@@ -283,18 +269,7 @@ export class FormBacking
 	{
 		let failed:boolean = false;
 		let forms:ModelForm[] = [...FormBacking.mforms.values()];
-
-		let transactions:boolean = false;
 		let dbconns:Connection[] = Connection.getAllConnections();
-
-		for (let i = 0; i < dbconns.length; i++)
-		{
-			if (dbconns[i].hasTransactions())
-			{
-				transactions = true;
-				break;
-			}
-		}
 
 		if (!await FormEvents.raise(FormEvent.AppEvent(EventType.PreRollback)))
 			return(false);
@@ -306,17 +281,6 @@ export class FormBacking
 				forms[i].view.blur();
 				forms[i].view.current = null;
 			}
-		}
-
-		if (!transactions)
-		{
-			for (let i = 0; i < forms.length; i++)
-			{
-				if (!await forms[i].undo())
-					return(false);
-			}
-
-			return(true);
 		}
 
 		for (let i = 0; i < dbconns.length; i++)

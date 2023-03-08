@@ -550,7 +550,7 @@ export class Block
 				return(false);
 		}
 
-		this.model.setDirty();
+		this.model.dirty = true;
 
 		await this.setEventTransaction(EventType.OnEdit);
 		let success:boolean = await this.fireFieldEvent(EventType.OnEdit,inst);

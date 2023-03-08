@@ -276,9 +276,9 @@ export class FormBacking
 
 		for (let i = 0; i < forms.length; i++)
 		{
-			if (forms[i].getDirtyCount() > 0)
+			if (forms[i].dirty)
 			{
-				forms[i].view.blur();
+				forms[i].view.blur(true);
 				forms[i].view.current = null;
 			}
 		}
@@ -299,6 +299,8 @@ export class FormBacking
 		{
 			if (!await forms[i].undo())
 				return(false);
+
+			forms[i].dirty = false;
 		}
 
 		if (failed) Alert.warning("Failed to roll back transactions","Transactions");

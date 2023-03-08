@@ -20,12 +20,12 @@
 */
 
 import { Form } from "./Form.js";
-import { Record, RecordState } from "./Record.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRest } from "../database/SQLRest.js";
 import { SubQuery } from "./filters/SubQuery.js";
+import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
 import { SQLSource } from "../database/SQLSource.js";
 import { QueryByExample } from "./QueryByExample.js";
@@ -50,7 +50,6 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 	private record$:number = -1;
-	private clean$:boolean = true;
 	private view$:ViewBlock = null;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
@@ -153,10 +152,18 @@ export class Block
 		return(this.pubblk$.deleteallowed);
 	}
 
+	public set dirty(flag:boolean)
+	{
+		this.wrapper.dirty = flag;
+	}
+
+	public get dirty() : boolean
+	{
+		return(this.wrapper?.dirty);
+	}
+
 	public async clear(flush:boolean) : Promise<boolean>
 	{
-		this.clean$ = true;
-
 		if (!await this.wrapper.clear(flush))
 			return(false);
 
@@ -415,11 +422,6 @@ export class Block
 		return(this.wrapper.setValue(this.record,field,value));
 	}
 
-	public setDirty() : void
-	{
-		this.wrapper.dirty = true;
-	}
-
 	public locked(record?:Record) : boolean
 	{
 		if (this.querymode) return(true);
@@ -543,16 +545,6 @@ export class Block
 		return(true);
 	}
 
-	public isClean() : boolean
-	{
-		return(this.clean$);
-	}
-
-	public isDirty() : boolean
-	{
-		return(this.wrapper?.dirty);
-	}
-
 	public getDirtyCount() : number
 	{
 		return(this.wrapper.getDirtyCount());
@@ -561,11 +553,6 @@ export class Block
 	public getPendingCount() : number
 	{
 		return(this.wrapper.getPendingCount());
-	}
-
-	public cleanout() : void
-	{
-		this.wrapper.dirty = false;
 	}
 
 	public async undo() : Promise<boolean>
@@ -580,7 +567,6 @@ export class Block
 
 		for (let i = 0; i < undo.length; i++)
 			this.view.refresh(undo[i]);
-
 
 		return(true);
 	}
@@ -613,7 +599,6 @@ export class Block
 
 	public async enterQuery() : Promise<boolean>
 	{
-		this.clean$ = true;
 		this.view.current = null;
 
 		if (!await this.wrapper.clear(true))
@@ -634,7 +619,6 @@ export class Block
 
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
-		this.clean$ = false;
 		let runid:object = null;
 		this.view.current = null;
 

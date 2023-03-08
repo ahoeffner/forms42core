@@ -105,11 +105,10 @@ export class DataSourceWrapper
 
 	public setSynchronized() : void
 	{
+		this.dirty = false;
+
 		this.cache$.forEach((rec) =>
-		{
-			rec.setClean(true);
-			rec.state = RecordState.Consistent;
-		})
+		{rec.state = RecordState.Consistent;})
 
 		this.block.view.setStatus();
 	}

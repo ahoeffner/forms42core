@@ -17,6 +17,7 @@ export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 
+export { KeyMapPage} from './src/internal/forms/KeyMapPage.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Alert as AlertForm } from './src/internal/forms/Alert.js';
@@ -44,6 +45,7 @@ export { Filter } from './src/model/interfaces/Filter.js';
 export { FilterStructure } from './src/model/FilterStructure.js';
 export { CustomFilter } from './src/model/filters/CustomFilter.js';
 
+ 
 export { Like } from './src/model/filters/Like.js';
 export { ILike } from './src/model/filters/ILike.js';
 export { AnyOf } from './src/model/filters/AnyOf.js';

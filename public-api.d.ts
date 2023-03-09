@@ -15,6 +15,7 @@ export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 
+export { KeyMapPage} from './src/internal/forms/KeyMapPage.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
 export { QueryEditor } from './src/internal/forms/QueryEditor.js';
 export { Alert as AlertForm } from './src/internal/forms/Alert.js';

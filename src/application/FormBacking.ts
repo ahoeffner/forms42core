@@ -288,10 +288,7 @@ export class FormBacking
 			if (dbconns[i].connected())
 			{
 				if (!await dbconns[i].rollback())
-				{
-					Alert.fatal("Failed to rollback transactions","Database");
 					failed = true;
-				}
 			}
 		}
 

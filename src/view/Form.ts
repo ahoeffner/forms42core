@@ -427,7 +427,6 @@ export class Form implements EventListenerObject
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
-
 		let onrec:boolean = true;
 		if (preform) this.parent.canvas.activate();
 		let rec:Record = nxtblock.model.getRecord();

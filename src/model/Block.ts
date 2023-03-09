@@ -51,6 +51,7 @@ export class Block
 	private name$:string = null;
 	private record$:number = -1;
 	private view$:ViewBlock = null;
+	private queried$:boolean = false;
 	private ctrlblk$:boolean = false;
 	private source$:DataSource = null;
 	private pubfrm$:InterfaceForm = null;
@@ -101,6 +102,16 @@ export class Block
 	public get ctrlblk() : boolean
 	{
 		return(this.ctrlblk$);
+	}
+
+	public get queried() : boolean
+	{
+		return(this.queried$);
+	}
+
+	public set queried(flag:boolean)
+	{
+		this.queried$ = flag;
 	}
 
 	public get qberec() : Record
@@ -164,6 +175,8 @@ export class Block
 
 	public async clear(flush:boolean) : Promise<boolean>
 	{
+		this.queried = false;
+
 		if (!await this.wrapper.clear(flush))
 			return(false);
 
@@ -599,6 +612,7 @@ export class Block
 
 	public async enterQuery() : Promise<boolean>
 	{
+		this.queried$ = false;
 		this.view.current = null;
 
 		if (!await this.wrapper.clear(true))
@@ -619,6 +633,7 @@ export class Block
 
 	public async executeQuery(qryid?:object) : Promise<boolean>
 	{
+		this.queried = true;
 		let runid:object = null;
 		this.view.current = null;
 

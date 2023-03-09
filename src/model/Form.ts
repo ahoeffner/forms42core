@@ -163,7 +163,10 @@ export class Form
 		for (let i = 0; i < dirty.length; i++)
 		{
 			if (!dirty[i].ctrlblk)
-				await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+			{
+				if (!dirty[i].queried) dirty[i].clear(false);
+				else await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+			}
 		}
 
 		return(true);
@@ -399,6 +402,8 @@ export class Form
 
 	public clearBlock(block:Block) : void
 	{
+		block.queried = false;
+
 		block.view.clear(true,true,true);
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,true);
 

@@ -1012,8 +1012,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (empty)
 			{
 				input = input.substring(0,part.pos) +
-						today.substring(part.pos,part.pos+part.length) +
-						input.substring(part.pos+part.length);
+					today.substring(part.pos,part.pos+part.length) +
+					input.substring(part.pos+part.length);
 
 			}
 		})
@@ -1032,7 +1032,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		switch(token.type)
 		{
 			case DatePart.Day 		: maxval = 31; break;
-			case DatePart.Month 	: maxval = 12; break;
+			case DatePart.Month 		: maxval = 12; break;
 			case DatePart.Hour 		: maxval = 23; break;
 			case DatePart.Minute 	: maxval = 59; break;
 			case DatePart.Second 	: maxval = 59; break;

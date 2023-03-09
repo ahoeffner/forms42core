@@ -371,7 +371,6 @@ export class DynamicCall
 		this.path = signature.substring(0,pos1).split(".");
 		let arglist:string = signature.substring(pos1+1,pos2).trim();
 
-		let n:number = 0;
 		let arg:string = "";
 		let quote:string = null;
 		this.method = this.path.pop();
@@ -385,7 +384,6 @@ export class DynamicCall
 				if (arg.length > 0)
 				{
 					this.args.push(arg);
-					n++;
 					arg = "";
 				}
 
@@ -396,7 +394,6 @@ export class DynamicCall
 			{
 				if (quote != null && c == quote)
 				{
-					n++;
 					quote = null;
 					continue;
 				}
@@ -413,7 +410,7 @@ export class DynamicCall
 			arg += c;
 		}
 
-		if (this.args.length < n)
+		if (arg.trim().length > 0)
 			this.args.push(arg);
 	}
 

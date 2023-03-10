@@ -234,7 +234,6 @@ export class FieldFeatureFactory
 		let tag:HTMLElement = inst.element;
 		let state:RecordState = inst.field.block.getRecord(inst.row)?.state;
 
-
 		if (props.getAttribute(Properties.RecordModeAttr) != null)
 			return;
 
@@ -242,6 +241,8 @@ export class FieldFeatureFactory
 		{
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"update");
+			else
+				tag.setAttribute(Properties.RecordModeAttr,"");
 		}
 
 		if (inst.field.row.status == Status.delete)
@@ -253,12 +254,16 @@ export class FieldFeatureFactory
 		{
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"query");
+			else
+				tag.setAttribute(Properties.RecordModeAttr,"");
 		}
 
 		if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
 		{
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"insert");
+			else
+				tag.setAttribute(Properties.RecordModeAttr,"");
 		}
 	}
 

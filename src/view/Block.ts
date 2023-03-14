@@ -735,7 +735,7 @@ export class Block
 		return(this.model.getRecord(row-this.row));
 	}
 
-	public setStatus(record?:Record) : void
+	public setAttributes(record?:Record) : void
 	{
 		if (record == null)
 		{
@@ -744,7 +744,7 @@ export class Block
 			for (let i = 0; i < this.rows; i++)
 			{
 				let rec:Record = this.model.getRecord(i + offset);
-				if (rec) this.setStatus(rec);
+				if (rec) this.setAttributes(rec);
 			}
 		}
 
@@ -753,10 +753,19 @@ export class Block
 		if (row == null)
 			return;
 
+		this.applyRecordProperties(record,true);
 		row.setState(this.convert(record.state));
 
 		if (row.rownum == this.row)
-			this.getRow(-1)?.setState(this.convert(record.state));
+		{
+			row = this.getRow(-1);
+
+			if (row)
+			{
+				this.applyRecordProperties(record,false);
+				row?.setState(this.convert(record.state));
+			}
+		}
 	}
 
 	public display(rownum:number, record:Record) : void

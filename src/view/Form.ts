@@ -253,13 +253,13 @@ export class Form implements EventListenerObject
 		{
 			if (!await preform.validate())
 			{
-				FormBacking.setCurrentForm(null);
+				preform.focus();
 				return(false);
 			}
 
 			if (!await this.leaveForm(preform))
 			{
-				FormBacking.setCurrentForm(null);
+				preform.focus();
 				return(false);
 			}
 
@@ -300,7 +300,12 @@ export class Form implements EventListenerObject
 		{
 			// When modal call, allow leaving former form in any state
 
-			if (!backing.wasCalled)
+			let modal:boolean = false;
+
+			if (backing.wasCalled && preform.parent == backing.parent)
+				modal = true;
+
+			if (!modal)
 			{
 				preform = this;
 

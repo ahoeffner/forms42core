@@ -314,14 +314,7 @@ export class Form implements EventListenerObject
 					inst.blur(true);
 					preform = Form.current();
 
-					if (!await preform.validate())
-					{
-						FormBacking.setCurrentForm(null);
-						preform.focus();
-						return(false);
-					}
-
-					if (!await this.leaveForm(preform))
+					if (!await this.checkLeave(preform))
 					{
 						FormBacking.setCurrentForm(null);
 						preform.focus();
@@ -451,6 +444,17 @@ export class Form implements EventListenerObject
 
 			await this.onRecord(inst.field.block);
 		}
+
+		return(true);
+	}
+
+	public async checkLeave(curr:Form) : Promise<boolean>
+	{
+		if (!await curr.validate())
+			return(false);
+
+		if (!await this.leaveForm(curr))
+			return(false);
 
 		return(true);
 	}

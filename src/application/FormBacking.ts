@@ -65,6 +65,16 @@ export class FormBacking
 			if (form == null) throw "@Application: No components mapped to path '"+path+"'";
 		}
 
+		let curr:Form = FormBacking.getCurrentForm();
+		let currw:ViewForm = FormBacking.getViewForm(curr);
+
+		// check if ok to leave curr
+		if (curr && parent != curr)
+		{
+			if (!await currw.checkLeave(currw))
+				return(null);
+		}
+
 		if (container == null)
 			container = FormsModule.get().getRootElement();
 
@@ -86,7 +96,7 @@ export class FormBacking
 
 		if (parent)
 		{
-			parent.canvas.block();
+			parent.canvas?.block();
 			FormBacking.getBacking(instance).parent = parent;
 			FormBacking.getBacking(parent).hasModalChild = true;
 		}

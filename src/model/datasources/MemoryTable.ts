@@ -352,6 +352,9 @@ export class MemoryTable implements DataSource
 
 		while(this.pos$ < this.records$.length)
 		{
+			if (!this.records$[this.pos$])
+				continue;
+
 			if (this.filter.empty)
 				return([this.records$[this.pos$++]]);
 

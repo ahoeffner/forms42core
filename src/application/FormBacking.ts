@@ -101,6 +101,7 @@ export class FormBacking
 			FormBacking.getBacking(parent).hasModalChild = true;
 		}
 
+		FormBacking.setCurrentForm(instance);
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 
 		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))

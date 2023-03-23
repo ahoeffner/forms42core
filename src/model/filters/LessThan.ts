@@ -46,6 +46,16 @@ export class LessThan implements Filter
 		this.constraint$ = null;
 	}
 
+	public get includes() : boolean
+	{
+		return(this.incl);
+	}
+
+	public set includes(flag:boolean)
+	{
+		this.incl = flag;
+	}
+
 	public get column() : string
 	{
 		return(this.column$);

@@ -403,15 +403,19 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			{
 				processed.push(rec);
+				rec.response = null;
 
 				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.update(sql);
+				if (sql != null)
+				{
+					this.setTypes(sql.bindvalues);
+					response = await this.conn$.update(sql);
 
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
+					this.castResponse(response);
+					rec.response = new DatabaseResponse(response,this.updreturncolumns$);
+				}
 			}
 		}
 

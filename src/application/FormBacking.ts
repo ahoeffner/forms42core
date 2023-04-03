@@ -98,7 +98,9 @@ export class FormBacking
 		{
 			parent.canvas?.block();
 			FormBacking.getBacking(instance).parent = parent;
-			FormBacking.getBacking(parent).hasModalChild = true;
+			let backing:FormBacking = FormBacking.getBacking(parent);
+			if (backing) backing.hasModalChild = true;
+			else console.log(parent.name+" has no backing")
 		}
 
 		FormBacking.setCurrentForm(instance);

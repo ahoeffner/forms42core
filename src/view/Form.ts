@@ -287,14 +287,10 @@ export class Form implements EventListenerObject
 			Go to form
 		 **********************************************************************/
 
-		// Check if 'I' have been closed
 		let backing:FormBacking = FormBacking.getBacking(this.parent);
 
-		if (backing == null)
-		{
-			Alert.fatal("Cannot find backing bean for '"+this.name+"'. Current form '"+Form.current()?.name+"'","Enter Form");
-			return(false);
-		}
+		// Check if 'I' have been closed
+		if (backing == null) return(false);
 
 		if (preform && this != preform)
 		{

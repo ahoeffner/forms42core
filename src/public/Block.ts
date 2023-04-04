@@ -39,6 +39,15 @@ import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { FieldFeatureFactory } from '../view/FieldFeatureFactory.js';
 import { Record as ModelRecord, RecordState } from '../model/Record.js';
 
+/**
+ * Intersection between datasource and html elements
+ *
+ * All generic code for a block should be put here, ie
+ * 	Lookups
+ * 	Triggers
+ * 	List of values
+ * 	etc
+ */
 export class Block
 {
 	private form$:Form = null;
@@ -68,6 +77,7 @@ export class Block
 		return(this.name$);
 	}
 
+	/** The dynamic query filters applied to this block */
 	public get filter() : FilterStructure
 	{
 		return(FormBacking.getModelBlock(this).QueryFilter);
@@ -93,6 +103,7 @@ export class Block
 		return(FormBacking.getModelBlock(this).record);
 	}
 
+	/** The state of the current record */
 	public get state() : RecordState
 	{
 		return(this.getRecord()?.state);
@@ -108,6 +119,7 @@ export class Block
 		FormBacking.getModelBlock(this).flush();
 	}
 
+	/** Clear the block. If force, no validation will take place */
 	public async clear(force?:boolean) : Promise<boolean>
 	{
 		return(FormBacking.getModelBlock(this).clear(!force));
@@ -134,12 +146,14 @@ export class Block
 		return(this.fields.includes(name?.toLowerCase()));
 	}
 
+	/** Show the datepicker for the specified field */
 	public showDatePicker(field:string) : void
 	{
 		field = field?.toLowerCase();
 		FormBacking.getViewForm(this.form).showDatePicker(this.name,field);
 	}
 
+	/** Show the list of values for the specified field */
 	public showListOfValues(field:string, force?:boolean) : void
 	{
 		field = field?.toLowerCase();
@@ -151,6 +165,7 @@ export class Block
 		return(this.form.sendkey(key,this.name,field,clazz));
 	}
 
+	/** Perform the query details operation */
 	public querydetails(field?:string) : void
 	{
 		if (!field) FormBacking.getModelBlock(this).queryDetails(true);
@@ -172,11 +187,13 @@ export class Block
 		FormBacking.getViewBlock(this).goField(field,clazz);
 	}
 
+	/** Show a message (similar to js alert) */
 	public message(msg:string, title?:string) : void
 	{
 		Alert.message(msg,title);
 	}
 
+	/** Show a warning (similar to js alert) */
 	public warning(msg:string, title?:string) : void
 	{
 		Alert.warning(msg,title);
@@ -205,6 +222,7 @@ export class Block
 			FormBacking.getBacking(this.form).removeListOfValues(this.name,field[i]);
 	}
 
+	/** Specify a constraint on possible valid dates */
 	public setDateConstraint(constraint:DateConstraint, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))
@@ -265,11 +283,6 @@ export class Block
 		this.getRecord()?.setValue(field,value);
 	}
 
-	public isDirty() : boolean
-	{
-		return(FormBacking.getModelBlock(this).getPendingCount() > 0);
-	}
-
 	public isValid(field:string) : boolean
 	{
 		return(FormBacking.getViewBlock(this).isValid(field));
@@ -285,11 +298,13 @@ export class Block
 		return(FormBacking.getViewBlock(this).current.name);
 	}
 
+	/** Is block synchronized with backend */
 	public hasPendingChanges() : boolean
 	{
 		return(FormBacking.getModelBlock(this).getPendingCount() > 0);
 	}
 
+	/** Show the last query for this block */
 	public showLastQuery() : void
 	{
 		FormBacking.getModelBlock(this).showLastQuery();
@@ -304,11 +319,13 @@ export class Block
 		return(this.getRecord().setAndValidate(field,value));
 	}
 
+	/** Lock current record */
 	public async lock() : Promise<void>
 	{
 		this.getRecord().lock();
 	}
 
+	/** Mark the current record as dirty */
 	public setDirty(field?:string) : void
 	{
 		this.getRecord().setDirty(field);
@@ -340,6 +357,7 @@ export class Block
 		return(intrec == null ? null : new Record(intrec));
 	}
 
+	/** Rehash the fields. Typically after dynamic insert/delete of HTML elements */
 	public reIndexFieldOrder() : void
 	{
 		FormBacking.getViewForm(this.form).rehash(this.name);

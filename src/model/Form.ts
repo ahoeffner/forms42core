@@ -392,6 +392,8 @@ export class Form
 		await this.enterQueryMode(block);
 
 		let inst:FieldInstance = this.view.current;
+
+		inst?.blur(true);
 		inst = block.view.getQBEInstance(inst);
 
 		if (inst) inst.focus();

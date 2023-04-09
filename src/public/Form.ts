@@ -355,6 +355,7 @@ export class Form implements CanvasComponent
 				FormBacking.getBacking(parent).hasModalChild = false;
 		}
 
+		vform.setURL(true);
 		FormBacking.removeBacking(this);
 		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
 

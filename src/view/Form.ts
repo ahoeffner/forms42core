@@ -263,6 +263,7 @@ export class Form implements EventListenerObject
 				return(false);
 			}
 
+			this.setURL();
 			this.canvas.activate();
 			FormBacking.setCurrentForm(this);
 		}
@@ -441,6 +442,7 @@ export class Form implements EventListenerObject
 			await this.onRecord(inst.field.block);
 		}
 
+		this.setURL();
 		return(true);
 	}
 
@@ -1127,18 +1129,27 @@ export class Form implements EventListenerObject
 		}
 	}
 
-	private setURL() : void
+	public setURL(close?:boolean) : void
 	{
 		let location:Location = window.location;
 		let params:URLSearchParams = new URLSearchParams(location.search);
 		let path:string = location.protocol + '//' + location.host + location.pathname;
+
+		if (!(this.parent instanceof InterfaceForm))
+			close = true;
+
+		if (close)
+		{
+			window.history.replaceState('','',path);
+			return;
+		}
 
 		let map:string = FormsModule.getFormPath(this.parent.name);
 
 		if (map != null && this.parent.navigable)
 		{
 			params.set("form",map)
-			window.history.replaceState('', '',path+"?"+params);
+			window.history.replaceState('','',path+"?"+params);
 		}
 	}
 

@@ -38,8 +38,8 @@ import { Relation } from '../model/relations/Relation.js';
 import { EventType } from '../control/events/EventType.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { DateConstraint } from '../public/DateConstraint.js';
-import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
+import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class FormBacking
 {
@@ -100,7 +100,6 @@ export class FormBacking
 			FormBacking.getBacking(instance).parent = parent;
 			let backing:FormBacking = FormBacking.getBacking(parent);
 			if (backing) backing.hasModalChild = true;
-			else console.log(parent.name+" has no backing")
 		}
 
 		FormBacking.setCurrentForm(instance);

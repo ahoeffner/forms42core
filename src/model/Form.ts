@@ -448,8 +448,11 @@ export class Form
 		}
 	}
 
-	public cancelQueryMode(block:Block) : void
+	public cancelQueryMode(block:Block|string) : void
 	{
+		if (typeof block === "string")
+			block = this.getBlock(block);
+
 		block.view.cancel();
 
 		let blocks:Block[] = this.blkcord$.getDetailBlocks(block,false);

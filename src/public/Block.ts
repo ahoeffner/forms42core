@@ -515,6 +515,11 @@ export class Block
 		return(FormBacking.getModelForm(this.form).executeQuery(this.name,true));
 	}
 
+	public cancelQueryMode() : void
+	{
+		FormBacking.getModelForm(this.form).cancelQueryMode(this.name);
+	}
+
 	public async enterQueryMode() : Promise<boolean>
 	{
 		return(FormBacking.getModelForm(this.form).enterQuery(this.name));

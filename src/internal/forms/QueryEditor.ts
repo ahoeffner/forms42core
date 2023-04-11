@@ -193,6 +193,7 @@ export class QueryEditor extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
+		console.log(event.key.toString());
 		if (this.type == "..")
 		{
 			if (event.block == "options")

@@ -197,38 +197,36 @@ export class QueryEditor extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if (event.key == KeyMap.pageup && event.block == this.options.name)
-			return(false);
-
-		if (event.key == KeyMap.pagedown && event.block == this.options.name)
-			return(false);
-
-		if (event.key == KeyMap.prevrecord && event.block == this.options.name)
-			return(false);
-
-		if (event.key == KeyMap.nextrecord && event.block == this.options.name)
-			return(false);
-
-		if (this.type == "..")
+		if (event.block == this.options.name)
 		{
-			if (event.block == this.options.name)
+			let next:boolean = false;
+
+			if (event.key == KeyMap.pagedown) next = true;
+			if (event.key == KeyMap.nextrecord) next = true;
+
+			if (next)
 			{
 				this.values.goField("value");
 				return(false);
 			}
-			else
+		}
+
+		else
+
+		{
+			let prev:boolean = false;
+
+			if (event.key == KeyMap.pageup) prev = true;
+			if (event.key == KeyMap.prevrecord && this.values.record == 0) prev = true;
+
+			if (prev)
 			{
-				let goopt:boolean = false;
+				this.options.goField("options");
+				return(false);
+			}
 
-				if (event.key == KeyMap.prevfield && this.values.record == 0) goopt = true;
-				if (event.key == KeyMap.nextblock || event.key == KeyMap.prevblock) goopt = true;
-
-				if (goopt)
-				{
-					this.options.goField("options");
-					return(false);
-				}
-
+			if (this.type == "..")
+			{
 				if (event.key == KeyMap.prevfield)
 				{
 					this.values.prevrecord();
@@ -249,11 +247,6 @@ export class QueryEditor extends Form
 					return(false);
 				}
 			}
-		}
-		else
-		{
-			if (event.key == KeyMap.nextblock || event.key == KeyMap.prevblock)
-				return(false);
 		}
 
 		return(true);

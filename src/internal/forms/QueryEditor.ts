@@ -53,10 +53,14 @@ export class QueryEditor extends Form
 
 		this.addEventListener(this.navigate,
 		[
+			{type: EventType.Key, key: KeyMap.pageup},
+			{type: EventType.Key, key: KeyMap.pagedown},
 			{type: EventType.Key, key: KeyMap.nextfield},
 			{type: EventType.Key, key: KeyMap.prevfield},
 			{type: EventType.Key, key: KeyMap.nextblock},
-			{type: EventType.Key, key: KeyMap.prevblock}
+			{type: EventType.Key, key: KeyMap.prevblock},
+			{type: EventType.Key, key: KeyMap.prevrecord},
+			{type: EventType.Key, key: KeyMap.nextrecord},
 		]);
 	}
 
@@ -193,10 +197,21 @@ export class QueryEditor extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		console.log(event.key.toString());
+		if (event.key == KeyMap.pageup && event.block == this.options.name)
+			return(false);
+
+		if (event.key == KeyMap.pagedown && event.block == this.options.name)
+			return(false);
+
+		if (event.key == KeyMap.prevrecord && event.block == this.options.name)
+			return(false);
+
+		if (event.key == KeyMap.nextrecord && event.block == this.options.name)
+			return(false);
+
 		if (this.type == "..")
 		{
-			if (event.block == "options")
+			if (event.block == this.options.name)
 			{
 				this.values.goField("value");
 				return(false);

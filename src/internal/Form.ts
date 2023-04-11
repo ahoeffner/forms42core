@@ -345,16 +345,14 @@ export class Form implements CanvasComponent
 			return(false);
 
 		this.canvas.close();
-		let parent:Form = FormBacking.getBacking(this).parent;
+
+		let backing:FormBacking = FormBacking.getBacking(this);
+		let parent:Form = backing.parent;
 
 		if (parent != null)
 		{
-			parent.canvas.unblock();
-
-			parent.focus();
-
-			if (FormBacking.getBacking(parent))
-				FormBacking.getBacking(parent).hasModalChild = false;
+			parent.canvas?.unblock(); parent.focus();
+			if (backing) backing.hasModalChild = false;
 		}
 
 		vform.setURL(true);

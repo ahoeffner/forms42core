@@ -217,7 +217,12 @@ export class QueryEditor extends Form
 			let prev:boolean = false;
 
 			if (event.key == KeyMap.pageup) prev = true;
-			if (event.key == KeyMap.prevrecord && this.values.record == 0) prev = true;
+
+			if (event.key == KeyMap.prevrecord)
+			{
+				if (this.type != ".." || this.values.record == 0)
+					prev = true;
+			}
 
 			if (prev)
 			{

@@ -753,8 +753,8 @@ export class Block
 		if (row == null)
 			return;
 
-		this.applyRecordProperties(record,true);
 		row.setState(this.convert(record.state));
+		this.applyRecordProperties(record,true);
 
 		if (row.rownum == this.row)
 		{
@@ -762,8 +762,8 @@ export class Block
 
 			if (row)
 			{
+				row.setState(this.convert(record.state));
 				this.applyRecordProperties(record,false);
-				row?.setState(this.convert(record.state));
 			}
 		}
 	}

@@ -720,7 +720,7 @@ export class Form implements EventListenerObject
 			{
 				inst.blur(true);
 				success = await this.model.executeQuery(inst.field.block.model);
-				this.model.getQueryMaster()?.view.focus(true);
+				inst.focus(true);
 				return(success);
 			}
 

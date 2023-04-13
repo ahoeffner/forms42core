@@ -438,7 +438,12 @@ export class Input implements FieldImplementation, EventListenerObject
 			bubble = true;
 			this.initial = this.getIntermediateValue();
 
-			if (this.pattern != null) this.initial = this.pattern.getValue();
+			if (this.pattern != null)
+			{
+				this.initial = this.pattern.getValue();
+				this.setElementValue(this.initial);
+				this.setPosition(0);
+			}
 
 			if (this.placeholder != null)
 				this.element.removeAttribute("placeholder");

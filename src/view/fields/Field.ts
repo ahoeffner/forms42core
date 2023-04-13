@@ -258,6 +258,9 @@ export class Field
 			this.instance$ = inst;
 			this.value$ = inst.getValue();
 
+			if (inst.field.block.empty() && !inst.field.block.model.querymode)
+				inst.implementation.clear();
+
 			if (inst.ignore != "focus")
 				success = await this.block.form.enter(inst);
 

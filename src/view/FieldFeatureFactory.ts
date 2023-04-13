@@ -355,7 +355,12 @@ export class FieldFeatureFactory
 	public static setReadOnly(tag:HTMLElement, flag:boolean) : void
 	{
 		if (tag instanceof HTMLInputElement)
+		{
 			tag.readOnly = flag;
+
+			if (tag.type == "checkbox" || tag.type == "radio")
+				tag.disabled = flag;
+		}
 
 		if (tag instanceof HTMLSelectElement)
 			tag.disabled = flag;
@@ -363,7 +368,16 @@ export class FieldFeatureFactory
 
 	public static setEnabled(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
-		if (tag instanceof HTMLInputElement) tag.disabled = !flag;
+		if (tag instanceof HTMLInputElement)
+		{
+			if (tag.type == "checkbox" || tag.type == "radio")
+			{
+				if (!props.readonly)
+					tag.disabled = !flag
+			}
+			else tag.disabled = !flag;
+		}
+
 		if (tag instanceof HTMLSelectElement && !props.readonly) tag.disabled = !flag;
 	}
 

@@ -197,59 +197,62 @@ export class QueryEditor extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if (event.block == this.options.name)
+		if (this.type == "..")
 		{
-			let next:boolean = false;
-
-			if (event.key == KeyMap.pagedown) next = true;
-			if (event.key == KeyMap.nextrecord) next = true;
-
-			if (next)
+			if (event.block == this.options.name)
 			{
-				this.values.goField("value");
-				return(false);
-			}
-		}
-
-		else
-
-		{
-			let prev:boolean = false;
-
-			if (event.key == KeyMap.pageup) prev = true;
-
-			if (event.key == KeyMap.prevrecord)
-			{
-				if (this.type != ".." || this.values.record == 0)
-					prev = true;
-			}
-
-			if (prev)
-			{
-				this.options.goField("options");
-				return(false);
-			}
-
-			if (this.type == "..")
-			{
-				if (event.key == KeyMap.prevfield)
+				if (event.key == KeyMap.nextfield)
 				{
-					this.values.prevrecord();
+					this.values.goField("value");
 					return(false);
 				}
 
+				if (event.key == KeyMap.nextrecord)
+				{
+					this.values.goField("value");
+					return(false);
+				}
+			}
+			else
+			{
 				if (event.key == KeyMap.nextfield)
 				{
-					if (this.values.getValue("value"))
+					await this.validate();
+
+					if (this.values.getValue("value") != null)
 					{
 						this.values.nextrecord();
+						return(false);
+					}
+				}
+
+				if (event.key == KeyMap.prevfield)
+				{
+					if (this.values.record > 0)
+					{
+						this.values.prevrecord();
+						return(false);
 					}
 					else
 					{
 						this.options.goField("options");
+						return(false);
 					}
+				}
 
-					return(false);
+				if (event.key == KeyMap.prevrecord)
+				{
+					if (this.values.record == 0)
+					{
+						this.options.goField("options");
+						return(false);
+					}
+				}
+
+				if (event.key == KeyMap.nextrecord)
+				{
+					if (this.values.getValue("value") == null)
+						return(false);
 				}
 			}
 		}

@@ -21,6 +21,9 @@
 
 import { FlightRecorder } from "../application/FlightRecorder.js";
 
+/**
+ * HTTP connection to backend
+ */
 export class Connection
 {
 	private base$:URL = null;
@@ -30,6 +33,7 @@ export class Connection
 	private method$:string = null;
 	private success$:boolean = true;
 
+	/** Create connection. If no url specified, the Origin of the page is used */
 	public constructor(url?:string|URL)
 	{
 		if (url == null)

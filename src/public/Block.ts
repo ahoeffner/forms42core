@@ -153,7 +153,7 @@ export class Block
 		FormBacking.getViewForm(this.form).showDatePicker(this.name,field);
 	}
 
-	/** Show the list of values for the specified field */
+	/** Show the LOV associated with the field. Normally only 1 LOV can be active, force overrules this rule */
 	public showListOfValues(field:string, force?:boolean) : void
 	{
 		field = field?.toLowerCase();

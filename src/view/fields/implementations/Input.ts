@@ -215,7 +215,10 @@ export class Input implements FieldImplementation, EventListenerObject
 				value = new Date(+value);
 
 			if (value instanceof Date)
-				value = dates.format(value);
+			{
+				try {value = dates.format(value);}
+				catch (error) {value = null;}
+			}
 		}
 
 		if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)

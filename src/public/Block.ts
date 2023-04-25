@@ -26,6 +26,7 @@ import { Alert } from '../application/Alert.js';
 import { ListOfValues } from './ListOfValues.js';
 import { DateConstraint } from './DateConstraint.js';
 import { KeyMap } from '../control/events/KeyMap.js';
+import { Block as ViewBlock } from '../view/Block.js';
 import { FieldProperties } from './FieldProperties.js';
 import { TriggerFunction } from './TriggerFunction.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -52,11 +53,11 @@ export class Block
 {
 	private form$:Form = null;
 	private name$:string = null;
+	private updateallowed$:boolean = true;
 
 	public qbeallowed:boolean = true;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
-	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 
 	constructor(form:Form, name:string)
@@ -75,6 +76,23 @@ export class Block
 	public get name() : string
 	{
 		return(this.name$);
+	}
+
+	public get updateallowed() : boolean
+	{
+		return(this.updateallowed$);
+	}
+
+	public set updateallowed(flag:boolean)
+	{
+		this.updateallowed$ = flag;
+		let blk:ViewBlock = FormBacking.getViewBlock(this);
+
+		if (blk)
+		{
+			if (flag) blk.enableUpdate();
+			else		 blk.disableUpdate();
+		}
 	}
 
 	/** The dynamic query filters applied to this block */

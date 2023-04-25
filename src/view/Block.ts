@@ -47,6 +47,7 @@ export class Block
 	private form$:Form = null;
 	private name$:string = null;
 	private model$:ModelBlock = null;
+	private finalized$:boolean = false;
 	private fieldnames$:string[] = null;
 	private curinst$:FieldInstance = null;
 	private rows$:Map<number,Row> = new Map<number,Row>();
@@ -1244,6 +1245,7 @@ export class Block
 			this.fieldinfo$.set(name,new FieldInfo(type,query,derived))
 		});
 
+		this.finalized$ = true;
 		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);
 	}
 
@@ -1270,7 +1272,32 @@ export class Block
 		for (let i = 0; i < instances.length; i++)
 		{
 			if (!this.fieldinfo.get(instances[i].name)?.derived)
+			{
+				let update:boolean = this.finalized$;
+				if (this.model.querymode) update = false;
+				if (this.getRow(instances[i].row).status != Status.update) update = false;
+
 				instances[i].updateProperties.readonly = true;
+				if (update) instances[i].applyProperties(instances[i].updateProperties);
+			}
+		}
+	}
+
+	public enableUpdate() : void
+	{
+		let instances:FieldInstance[] = this.getFieldInstances(true);
+
+		for (let i = 0; i < instances.length; i++)
+		{
+			if (!this.fieldinfo.get(instances[i].name)?.derived)
+			{
+				let update:boolean = this.finalized$;
+				if (this.model.querymode) update = false;
+				if (this.getRow(instances[i].row).status != Status.update) update = false;
+
+				instances[i].updateProperties.readonly = false;
+				if (update) instances[i].applyProperties(instances[i].updateProperties);
+			}
 		}
 	}
 

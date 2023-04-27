@@ -237,12 +237,15 @@ export class FieldFeatureFactory
 		if (props.getAttribute(Properties.RecordModeAttr) != null)
 			return;
 
+		if (inst.field.row.status == Status.na)
+			tag.setAttribute(Properties.RecordModeAttr,"na");
+
 		if (inst.field.row.status == Status.update)
 		{
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"update");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"");
+				tag.setAttribute(Properties.RecordModeAttr,"not-updateable");
 		}
 
 		if (inst.field.row.status == Status.delete)
@@ -255,7 +258,7 @@ export class FieldFeatureFactory
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"query");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"");
+				tag.setAttribute(Properties.RecordModeAttr,"non-queryable");
 		}
 
 		if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
@@ -263,7 +266,7 @@ export class FieldFeatureFactory
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"insert");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"");
+				tag.setAttribute(Properties.RecordModeAttr,"not-insertable");
 		}
 	}
 

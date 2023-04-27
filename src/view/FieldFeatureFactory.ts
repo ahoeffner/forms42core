@@ -243,7 +243,7 @@ export class FieldFeatureFactory
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"update");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"NotUpdateable");
+				tag.setAttribute(Properties.RecordModeAttr,"readonly");
 		}
 
 		if (inst.field.row.status == Status.delete)
@@ -256,7 +256,7 @@ export class FieldFeatureFactory
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"query");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"NotQueryable");
+				tag.setAttribute(Properties.RecordModeAttr,"readonly");
 		}
 
 		if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
@@ -264,7 +264,7 @@ export class FieldFeatureFactory
 			if (props.enabled && !props.readonly)
 				tag.setAttribute(Properties.RecordModeAttr,"insert");
 			else
-				tag.setAttribute(Properties.RecordModeAttr,"NotInsertable");
+				tag.setAttribute(Properties.RecordModeAttr,"readonly");
 		}
 	}
 

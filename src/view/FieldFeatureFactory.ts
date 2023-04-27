@@ -238,34 +238,17 @@ export class FieldFeatureFactory
 		if (inst.field.row.status == Status.na)
 			tag.setAttribute(Properties.RecordModeAttr,"na");
 
+		if (inst.field.row.status == Status.qbe)
+			tag.setAttribute(Properties.RecordModeAttr,"query");
+
 		if (inst.field.row.status == Status.update)
-		{
-			if (props.enabled && !props.readonly)
-				tag.setAttribute(Properties.RecordModeAttr,"update");
-			else
-				tag.setAttribute(Properties.RecordModeAttr,"readonly");
-		}
+			tag.setAttribute(Properties.RecordModeAttr,"update");
 
 		if (inst.field.row.status == Status.delete)
-		{
 			tag.setAttribute(Properties.RecordModeAttr,"deleted");
-		}
-
-		if (inst.field.row.status == Status.qbe)
-		{
-			if (props.enabled && !props.readonly)
-				tag.setAttribute(Properties.RecordModeAttr,"query");
-			else
-				tag.setAttribute(Properties.RecordModeAttr,"readonly");
-		}
 
 		if (inst.field.row.status == Status.new || inst.field.row.status == Status.insert)
-		{
-			if (props.enabled && !props.readonly)
-				tag.setAttribute(Properties.RecordModeAttr,"insert");
-			else
-				tag.setAttribute(Properties.RecordModeAttr,"readonly");
-		}
+			tag.setAttribute(Properties.RecordModeAttr,"insert");
 	}
 
 	public static applyType(inst:FieldInstance) : void

@@ -64,23 +64,25 @@ export class FieldFeatureFactory
 		return(clone);
 	}
 
-	public static replace(props:BasicProperties, inst$:FieldInstance, status:Status) : void
+	public static replace(props:BasicProperties, inst:FieldInstance, status:Status) : void
 	{
 		let fprops:FieldProperties = null;
 
 		switch(status)
 		{
-			case Status.qbe : fprops = FieldFeatureFactory.clone(inst$.qbeProperties); break;
-			case Status.new : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
-			case Status.insert : fprops = FieldFeatureFactory.clone(inst$.insertProperties); break;
-			case Status.update : fprops = FieldFeatureFactory.clone(inst$.updateProperties); break;
-			default: fprops = FieldFeatureFactory.clone(inst$.properties);
+			case Status.qbe : fprops = FieldFeatureFactory.clone(inst.qbeProperties); break;
+			case Status.new : fprops = FieldFeatureFactory.clone(inst.insertProperties); break;
+			case Status.insert : fprops = FieldFeatureFactory.clone(inst.insertProperties); break;
+			case Status.update : fprops = FieldFeatureFactory.clone(inst.updateProperties); break;
+			default: fprops = FieldFeatureFactory.clone(inst.properties);
 		}
 
 		FieldFeatureFactory.copyBasic(props,fprops);
 
-		if (status == null) inst$.applyProperties(fprops);
-		else		   		  inst$.setDefaultProperties(fprops,status);
+		if (status == null) inst.applyProperties(fprops);
+		else		   		  inst.setDefaultProperties(fprops,status);
+
+		this.setMode(inst,fprops);
 	}
 
 	public static copyBasic(exist:BasicProperties, props:BasicProperties) : void

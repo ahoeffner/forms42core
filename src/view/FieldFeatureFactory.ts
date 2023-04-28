@@ -234,6 +234,12 @@ export class FieldFeatureFactory
 	{
 		let tag:HTMLElement = inst.element;
 
+		if (props == null)
+		{
+			tag.setAttribute(Properties.RecordModeAttr,"na");
+			return;
+		}
+
 		if (props.getAttribute(Properties.RecordModeAttr) != null)
 			return;
 

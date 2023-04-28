@@ -66,6 +66,8 @@ export class FieldInstance implements FieldEventHandler
 		this.qbeproperties$ = this.properties;
 
 		this.element$ = this.impl.getElement();
+		FieldFeatureFactory.setMode(this,null);
+
 		this.field$.addInstance(this);
 	}
 

@@ -1320,6 +1320,7 @@ export class Block
 			case RecordState.Delete 		: return(Status.delete);
 			case RecordState.Inserted 		: return(Status.update);
 			case RecordState.Update 		: return(Status.update);
+			case RecordState.Updated 		: return(Status.update);
 			case RecordState.Consistent 	: return(Status.update);
 			case RecordState.QueryFilter 	: return(Status.qbe);
 		}

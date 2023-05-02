@@ -355,7 +355,10 @@ export class FormBacking
 		for (let i = 0; i < forms.length; i++)
 		{
 			if (!await forms[i].undo())
+			{
+				Alert.warning("Failed to undo transactions for form '"+forms[i].name+"'","Transactions");
 				return(false);
+			}
 
 			forms[i].dirty = false;
 		}

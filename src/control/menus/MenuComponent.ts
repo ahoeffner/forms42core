@@ -251,9 +251,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		page += "</menu>";
-
-		console.log(page);
-
 		return(page);
 	}
 

@@ -28,12 +28,9 @@ import { EventListenerClass } from '../events/EventListenerClass.js';
 export class MenuComponent extends EventListenerClass implements EventListenerObject
 {
 	private menu$:Menu = null;
+	private name$:string = null;
 	private tabidx$:number = 1;
 	private active$:number = null;
-	private levcls$:string = null;
-	private menucls$:string = null;
-	private linkcls$:string = null;
-	private hintcls$:string = null;
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
@@ -47,6 +44,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;
+		this.name$ = this.constructor.name;
 		if (options == null) this.options$ = {};
 
 		document.addEventListener("mouseup",this);
@@ -60,11 +58,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
 		if (this.options$.classes.hinttext == null) this.options$.classes.hinttext = "hint-text";
 		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
-
-		this.levcls$ = (this.options$.classes.common + " " + this.options$.classes.container).trim();
-		this.menucls$ = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
-		this.linkcls$ = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
-		this.hintcls$ = (this.options$.classes.common + " " + this.options$.classes.hinttext).trim();
 	}
 
 	public get options() : MenuOptions
@@ -216,12 +209,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		if (empty) return(page);
-		page += "<div class='"+this.levcls$+"'>";
+		page += "<menu class='"+this.name$+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{
 			let cmd:string = "";
-			let classes:string = this.menucls$;
 			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
 			this.tabidx$++;
@@ -237,36 +229,33 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (!this.active$) this.active$ = this.tabidx$;
 
 			if (entries[i].command)
-			{
-				classes = this.linkcls$;
 				cmd = "command='"+entries[i].command+"'";
-			}
 
 			let npath:string = path+entries[i].id;
 			let tabidx:string = "tabindex="+this.tabidx$;
-			if (entries[i].disabled) classes = (classes + " disabled").trim();
 
 			if (this.open$.has(npath))
 			{
-				classes += " "+this.options$.classes.open;
-
-				page += "<div class='"+classes+"'>";
+				page += "<li>";
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
-				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
+				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
 
 				page = await this.showEntry(entries[i],await this.menu$.getEntries(npath),npath,page);
-				page += "</div>";
+				page += "</li>";
 			}
 			else
 			{
-				page += "<div class='"+classes+"'>"
+				page += "<li>"
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
-				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
-				page += "</div>";
+				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
+				page += "</li>";
 			}
 		}
 
-		page += "</div>";
+		page += "</menu>";
+
+		console.log(page);
+
 		return(page);
 	}
 

@@ -203,13 +203,13 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		if (empty) return(page);
-		page += "<menu class='"+this.name$+"'>";
+		page += "<menu name='"+this.name$+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{
 			let cmd:string = "";
 			let type:string = "menu";
-			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
+			let disabled:string = entries[i].disabled ? 'disabled' : '';
 
 			this.tabidx$++;
 			let entry:Entry = new Entry();

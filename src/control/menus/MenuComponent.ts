@@ -21,7 +21,7 @@
 
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
-import { MenuOptions } from './interfaces/MenuOptions.js';
+import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 
 
@@ -49,15 +49,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		document.addEventListener("mouseup",this);
 
-		if (this.options$.classes == null) this.options$.classes = {};
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
-		if (this.options$.classes.common == null) this.options$.classes.common = "";
-		if (this.options$.classes.open == null) this.options$.classes.open = "menu-open";
-		if (this.options$.classes.menuitem == null) this.options$.classes.menuitem = "menu-item";
-		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
-		if (this.options$.classes.hinttext == null) this.options$.classes.hinttext = "hint-text";
-		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
+		if (this.options$.navigation == null) this.options$.navigation = Navigation.top;
 	}
 
 	public get options() : MenuOptions

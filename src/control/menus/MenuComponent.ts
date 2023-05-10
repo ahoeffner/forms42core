@@ -37,14 +37,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private entries$:Map<number,Entry> = new Map<number,Entry>();
 	private elements$:Map<HTMLElement,Entry> = new Map<HTMLElement,Entry>();
 
-	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
+	constructor(name:string, menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
 		super();
 
+		this.name$ = name;
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;
-		this.name$ = this.constructor.name;
 		if (options == null) this.options$ = {};
 
 		document.addEventListener("mouseup",this);

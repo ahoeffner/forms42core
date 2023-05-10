@@ -1013,6 +1013,10 @@ export class Input implements FieldImplementation, EventListenerObject
 				let fld:string = input.substring(part.pos,part.pos+part.length);
 
 				fld = fld.trim();
+
+				if (part.type == DatePart.Year && fld.length == 2)
+					fld = today.substring(part.pos,part.pos+2) + fld;
+
 				while(fld.length < part.length) fld = "0"+fld;
 				input = input.substring(0,part.pos) + fld + input.substring(part.pos+part.length);
 			}
@@ -1020,8 +1024,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (empty)
 			{
 				input = input.substring(0,part.pos) +
-					today.substring(part.pos,part.pos+part.length) +
-					input.substring(part.pos+part.length);
+				today.substring(part.pos,part.pos+part.length) +
+				input.substring(part.pos+part.length);
 
 			}
 		})

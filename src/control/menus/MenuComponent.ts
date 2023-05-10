@@ -208,6 +208,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		for (let i = 0; i < entries.length; i++)
 		{
 			let cmd:string = "";
+			let type:string = "menu";
 			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
 
 			this.tabidx$++;
@@ -223,14 +224,17 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (!this.active$) this.active$ = this.tabidx$;
 
 			if (entries[i].command)
+			{
+				type = "link";
 				cmd = "command='"+entries[i].command+"'";
+			}
 
 			let npath:string = path+entries[i].id;
 			let tabidx:string = "tabindex="+this.tabidx$;
 
 			if (this.open$.has(npath))
 			{
-				page += "<li>";
+				page += "<li type='"+type+"'>";
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
 				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
 
@@ -239,7 +243,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			}
 			else
 			{
-				page += "<li>"
+				page += "<li type='"+type+"'>";
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
 				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
 				page += "</li>";

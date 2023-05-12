@@ -21,8 +21,8 @@
 
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
-import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
+import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 
 
 export class MenuComponent extends EventListenerClass implements EventListenerObject
@@ -35,6 +35,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
 	private entries$:Map<number,Entry> = new Map<number,Entry>();
+	private menuentries$:Map<MenuEntry,Entry> = new Map<MenuEntry,Entry>();
 	private elements$:Map<HTMLElement,Entry> = new Map<HTMLElement,Entry>();
 
 	constructor(name:string, menu:Menu, target?:HTMLElement, options?:MenuOptions)
@@ -82,6 +83,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	public async show() : Promise<void>
 	{
 		this.tabidx$ = 0;
+		this.active$ = null;
 		this.entries$.clear();
 
 		let path:string = null;
@@ -95,11 +97,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		this.target$.innerHTML = await this.showEntry(null,start,path);
 
-		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
+		let entries:NodeList = this.target$.querySelectorAll("a:not([disabled])");
 		entries.forEach((link) => {this.prepare(link as HTMLAnchorElement);});
 
 		this.elements$.clear();
 		this.index(this.target$);
+
+		if (this.active$ == null)
+			this.active$ = 1;
 	}
 
 	public async hide() : Promise<void>
@@ -117,6 +122,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async toggle(path:string) : Promise<void>
 	{
+		let active:number = this.active$;
 		let open:boolean = this.open$.has(path);
 
 		if (this.options$.singlepath)
@@ -142,6 +148,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		await this.show();
+
+		this.active$ = active;
+		this.focus();
 	}
 
 	public async findEntry(path:string) : Promise<MenuEntry>
@@ -221,7 +230,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (i < entries.length-1) entry.next = entries[i+1];
 
 			this.entries$.set(this.tabidx$,entry);
-			if (!this.active$) this.active$ = this.tabidx$;
+
+			if (!this.active$ && !entries[i].disabled)
+				this.active$ = this.tabidx$;
 
 			if (entries[i].command)
 			{
@@ -262,6 +273,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			return;
 		}
 
+		let elem:HTMLElement = event.target;
+
 		if (event.type == "mouseup" && !this.belongs(event.target))
 		{
 			this.hide();
@@ -273,13 +286,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (event.type == "keyup")
 		{
-			//console.log((event as KeyboardEvent).key)
+			if (await this.navigate(elem,(event as KeyboardEvent).key))
+				return;
 		}
 
 		if (event.type != "click")
 			return;
-
-		let elem:HTMLElement = event.target;
 
 		let path:string = elem.getAttribute("path");
 		let command:string = elem.getAttribute("command");
@@ -291,13 +303,148 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			command = elem.getAttribute("command");
 		}
 
+		this.pick(elem);
+	}
+
+
+	private async pick(elem:HTMLElement) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+		let command:string = elem.getAttribute("command");
+
 		if (path != null || command != null)
 		{
-			if (command == null) await this.toggle(path);
-			else if (await this.menu$.execute(command)) await this.hide();
+			this.active$ = elem.tabIndex;
 
-			this.focus();
+			if (command == null)
+			{
+				await this.toggle(path);
+			}
+			else
+			{
+				if (await this.menu$.execute(command))
+				{
+					await this.hide();
+					this.active$ = null;
+				}
+			}
+
+			return(true);
 		}
+
+		return(false);
+	}
+
+	private async navigate(elem:HTMLElement, key:string) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+
+		switch(key)
+		{
+			case "ArrowUp" :
+				elem = this.findPrev(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+				break;
+
+			case "ArrowDown" :
+				elem = this.findNext(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+				break;
+
+			case "ArrowLeft" :
+				console.log("left");
+				break;
+
+			case "ArrowRight" :
+
+				if (!this.open$.has(path))
+					await this.toggle(path);
+
+				elem = this.findFirstChild(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+
+				break;
+
+			case "Escape" :
+				console.log("close");
+				break;
+
+
+			case " " :
+			case "Enter" :
+				console.log("pick");
+				this.pick(elem);
+				break;
+		}
+
+		return(true);
+	}
+
+	private findPrev(elem:HTMLElement) : HTMLElement
+	{
+		let prev:HTMLElement = null;
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.element == elem)
+			{
+				if (!prev) prev = this.menuentries$.get(parent)?.element;
+				return(prev);
+			}
+
+			if (entry.parent == parent)
+				prev = entry.element;
+		}
+
+		return(null);
+	}
+
+	private findNext(elem:HTMLElement) : HTMLElement
+	{
+		let start:boolean = false;
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.element == elem) start = true;
+
+			if (start && entry.parent == parent && entry.element != elem)
+				return(entry.element);
+		}
+
+		let path:string = elem.getAttribute("path");
+		if (this.open$.has(path)) return(this.findFirstChild(elem));
+
+		return(null);
+	}
+
+	private findFirstChild(elem:HTMLElement) : HTMLElement
+	{
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.curr;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.parent == parent)
+				return(entry.element);
+		}
+
+		return(null);
 	}
 
 	private belongs(elem:HTMLElement) : boolean
@@ -310,7 +457,10 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		elem.childNodes.forEach((node) =>
 		{
 			this.index(node as HTMLElement);
-			this.elements$.set(node as HTMLElement, this.entries$.get(elem.tabIndex));
+			let entry:Entry = this.entries$.get(elem.tabIndex);
+
+			this.elements$.set(node as HTMLElement,entry);
+			if (entry) this.menuentries$.set(entry.curr,entry);
 		})
 	}
 

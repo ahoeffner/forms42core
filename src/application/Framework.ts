@@ -240,6 +240,9 @@ export class Framework
 		let prefix:string = Properties.AttributePrefix;
 		let name:string = element?.nodeName.toLowerCase();
 
+		if (!element.getAttributeNames)
+			return(null);
+
 		if (Properties.ParseTags)
 		{
 			tag = Framework.taglib.get(name);

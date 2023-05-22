@@ -308,8 +308,8 @@ export class Form implements EventListenerObject
 
 				if (Form.current() != null)
 				{
-					inst.blur(true);
 					preform = Form.current();
+					preform.curinst$.blur(true);
 
 					if (!await this.checkLeave(preform))
 					{
@@ -459,7 +459,7 @@ export class Form implements EventListenerObject
 
 	public async leave(inst:FieldInstance) : Promise<boolean>
 	{
-		if (!await this.LeaveField(inst))
+		if (!await this.leaveField(inst))
 		{
 			Form.current().focus();
 			return(false);
@@ -536,7 +536,7 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async LeaveField(inst:FieldInstance) : Promise<boolean>
+	public async leaveField(inst:FieldInstance) : Promise<boolean>
 	{
 		if (!await inst.field.block.model.wait4EventTransaction(EventType.PostField)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);

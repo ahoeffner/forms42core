@@ -933,7 +933,7 @@ export class Block
 				next.ignore = "focus";
 			}
 
-			if (!await this.form.LeaveField(inst))
+			if (!await this.form.leaveField(inst))
 				return(next);
 
 			if (!await this.form.leaveRecord(this))
@@ -964,7 +964,7 @@ export class Block
 			if (this.getRow(this.row+scroll).status == Status.na)
 				return(inst);
 
-			if (!await this.form.LeaveField(inst))
+			if (!await this.form.leaveField(inst))
 				return(next);
 
 			if (!await this.form.leaveRecord(this))

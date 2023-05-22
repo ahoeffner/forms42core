@@ -52,6 +52,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
  * generic code for blocks should be put at the block level to ensure reuse.
  *
  */
+
 export class Form implements CanvasComponent
 {
 	public moveable:boolean = false;
@@ -391,9 +392,13 @@ export class Form implements CanvasComponent
 			if (backing) backing.hasModalChild = false;
 		}
 
+		if (!await FormEvents.raise(FormEvent.FormEvent(EventType.PostForm,this)))
+			return(false);
+
+		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
+
 		vform.setURL(true);
 		FormBacking.removeBacking(this);
-		let success:boolean = await FormEvents.raise(FormEvent.FormEvent(EventType.PostCloseForm,this));
 
 		return(success);
 	}

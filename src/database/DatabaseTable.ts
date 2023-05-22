@@ -70,7 +70,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 	private datatypes$:Map<string,DataType> =
 		new Map<string,DataType>();
 
-	public constructor(connection:DatabaseConnection, table?:string, columns?:string|string[])
+	public constructor(connection:DatabaseConnection, table:string, columns?:string|string[])
 	{
 		super();
 

@@ -21,29 +21,28 @@
 
 import { Menu } from './interfaces/Menu.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
-import { MenuOptions } from './interfaces/MenuOptions.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
+import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 
 
 export class MenuComponent extends EventListenerClass implements EventListenerObject
 {
 	private menu$:Menu = null;
+	private name$:string = null;
 	private tabidx$:number = 1;
 	private active$:number = null;
-	private levcls$:string = null;
-	private menucls$:string = null;
-	private linkcls$:string = null;
-	private hintcls$:string = null;
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
 	private entries$:Map<number,Entry> = new Map<number,Entry>();
+	private menuentries$:Map<MenuEntry,Entry> = new Map<MenuEntry,Entry>();
 	private elements$:Map<HTMLElement,Entry> = new Map<HTMLElement,Entry>();
 
-	constructor(menu:Menu, target?:HTMLElement, options?:MenuOptions)
+	constructor(name:string, menu:Menu, target?:HTMLElement, options?:MenuOptions)
 	{
 		super();
 
+		this.name$ = name;
 		this.menu$ = menu;
 		this.target$ = target;
 		this.options$ = options;
@@ -51,20 +50,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		document.addEventListener("mouseup",this);
 
-		if (this.options$.classes == null) this.options$.classes = {};
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
-		if (this.options$.classes.common == null) this.options$.classes.common = "";
-		if (this.options$.classes.open == null) this.options$.classes.open = "menu-open";
-		if (this.options$.classes.menuitem == null) this.options$.classes.menuitem = "menu-item";
-		if (this.options$.classes.linkitem == null) this.options$.classes.linkitem = "link-item";
-		if (this.options$.classes.hinttext == null) this.options$.classes.hinttext = "hint-text";
-		if (this.options$.classes.container == null) this.options$.classes.container = "menu-items";
-
-		this.levcls$ = (this.options$.classes.common + " " + this.options$.classes.container).trim();
-		this.menucls$ = (this.options$.classes.common + " " + this.options$.classes.menuitem).trim();
-		this.linkcls$ = (this.options$.classes.common + " " + this.options$.classes.linkitem).trim();
-		this.hintcls$ = (this.options$.classes.common + " " + this.options$.classes.hinttext).trim();
+		if (this.options$.navigation == null) this.options$.navigation = Navigation.top;
 	}
 
 	public get options() : MenuOptions
@@ -95,6 +83,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	public async show() : Promise<void>
 	{
 		this.tabidx$ = 0;
+		this.active$ = null;
 		this.entries$.clear();
 
 		let path:string = null;
@@ -108,11 +97,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		this.target$.innerHTML = await this.showEntry(null,start,path);
 
-		let entries:NodeList = this.target$.querySelectorAll("a:not(.disabled)");
+		let entries:NodeList = this.target$.querySelectorAll("a:not([disabled])");
 		entries.forEach((link) => {this.prepare(link as HTMLAnchorElement);});
 
 		this.elements$.clear();
 		this.index(this.target$);
+
+		if (this.active$ == null)
+			this.active$ = 1;
 	}
 
 	public async hide() : Promise<void>
@@ -130,6 +122,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async toggle(path:string) : Promise<void>
 	{
+		let active:number = this.active$;
 		let open:boolean = this.open$.has(path);
 
 		if (this.options$.singlepath)
@@ -155,6 +148,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		await this.show();
+
+		this.active$ = active;
+		this.focus();
 	}
 
 	public async findEntry(path:string) : Promise<MenuEntry>
@@ -216,13 +212,13 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		if (empty) return(page);
-		page += "<div class='"+this.levcls$+"'>";
+		page += "<menu name='"+this.name$+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{
 			let cmd:string = "";
-			let classes:string = this.menucls$;
-			let disabled:string = entries[i].disabled ? ' class="disabled" ' : '';
+			let type:string = "menu";
+			let disabled:string = entries[i].disabled ? 'disabled' : '';
 
 			this.tabidx$++;
 			let entry:Entry = new Entry();
@@ -234,39 +230,38 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (i < entries.length-1) entry.next = entries[i+1];
 
 			this.entries$.set(this.tabidx$,entry);
-			if (!this.active$) this.active$ = this.tabidx$;
+
+			if (!this.active$ && !entries[i].disabled)
+				this.active$ = this.tabidx$;
 
 			if (entries[i].command)
 			{
-				classes = this.linkcls$;
+				type = "link";
 				cmd = "command='"+entries[i].command+"'";
 			}
 
 			let npath:string = path+entries[i].id;
 			let tabidx:string = "tabindex="+this.tabidx$;
-			if (entries[i].disabled) classes = (classes + " disabled").trim();
 
 			if (this.open$.has(npath))
 			{
-				classes += " "+this.options$.classes.open;
-
-				page += "<div class='"+classes+"'>";
+				page += "<li type='"+type+"'>";
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
-				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
+				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
 
 				page = await this.showEntry(entries[i],await this.menu$.getEntries(npath),npath,page);
-				page += "</div>";
+				page += "</li>";
 			}
 			else
 			{
-				page += "<div class='"+classes+"'>"
+				page += "<li type='"+type+"'>";
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>"
-				if (entries[i].hinttext) page += "  <div class='"+this.hintcls$+"'>"+entries[i].hinttext+"</div>";
-				page += "</div>";
+				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
+				page += "</li>";
 			}
 		}
 
-		page += "</div>";
+		page += "</menu>";
 		return(page);
 	}
 
@@ -277,6 +272,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			this.hide();
 			return;
 		}
+
+		let elem:HTMLElement = event.target;
 
 		if (event.type == "mouseup" && !this.belongs(event.target))
 		{
@@ -289,13 +286,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (event.type == "keyup")
 		{
-			//console.log((event as KeyboardEvent).key)
+			if (await this.navigate(elem,(event as KeyboardEvent).key))
+				return;
 		}
 
 		if (event.type != "click")
 			return;
-
-		let elem:HTMLElement = event.target;
 
 		let path:string = elem.getAttribute("path");
 		let command:string = elem.getAttribute("command");
@@ -307,13 +303,148 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			command = elem.getAttribute("command");
 		}
 
+		this.pick(elem);
+	}
+
+
+	private async pick(elem:HTMLElement) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+		let command:string = elem.getAttribute("command");
+
 		if (path != null || command != null)
 		{
-			if (command == null) await this.toggle(path);
-			else if (await this.menu$.execute(command)) await this.hide();
+			this.active$ = elem.tabIndex;
 
-			this.focus();
+			if (command == null)
+			{
+				await this.toggle(path);
+			}
+			else
+			{
+				if (await this.menu$.execute(command))
+				{
+					await this.hide();
+					this.active$ = null;
+				}
+			}
+
+			return(true);
 		}
+
+		return(false);
+	}
+
+	private async navigate(elem:HTMLElement, key:string) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+
+		switch(key)
+		{
+			case "ArrowUp" :
+				elem = this.findPrev(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+				break;
+
+			case "ArrowDown" :
+				elem = this.findNext(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+				break;
+
+			case "ArrowLeft" :
+				console.log("left");
+				break;
+
+			case "ArrowRight" :
+
+				if (!this.open$.has(path))
+					await this.toggle(path);
+
+				elem = this.findFirstChild(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+
+				break;
+
+			case "Escape" :
+				console.log("close");
+				break;
+
+
+			case " " :
+			case "Enter" :
+				console.log("pick");
+				this.pick(elem);
+				break;
+		}
+
+		return(true);
+	}
+
+	private findPrev(elem:HTMLElement) : HTMLElement
+	{
+		let prev:HTMLElement = null;
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.element == elem)
+			{
+				if (!prev) prev = this.menuentries$.get(parent)?.element;
+				return(prev);
+			}
+
+			if (entry.parent == parent)
+				prev = entry.element;
+		}
+
+		return(null);
+	}
+
+	private findNext(elem:HTMLElement) : HTMLElement
+	{
+		let start:boolean = false;
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.element == elem) start = true;
+
+			if (start && entry.parent == parent && entry.element != elem)
+				return(entry.element);
+		}
+
+		let path:string = elem.getAttribute("path");
+		if (this.open$.has(path)) return(this.findFirstChild(elem));
+
+		return(null);
+	}
+
+	private findFirstChild(elem:HTMLElement) : HTMLElement
+	{
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.curr;
+
+		for (let [key, entry] of this.entries$)
+		{
+			if (entry.parent == parent)
+				return(entry.element);
+		}
+
+		return(null);
 	}
 
 	private belongs(elem:HTMLElement) : boolean
@@ -326,7 +457,10 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		elem.childNodes.forEach((node) =>
 		{
 			this.index(node as HTMLElement);
-			this.elements$.set(node as HTMLElement, this.entries$.get(elem.tabIndex));
+			let entry:Entry = this.entries$.get(elem.tabIndex);
+
+			this.elements$.set(node as HTMLElement,entry);
+			if (entry) this.menuentries$.set(entry.curr,entry);
 		})
 	}
 

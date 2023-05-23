@@ -309,7 +309,7 @@ export class Form implements EventListenerObject
 				if (Form.current() != null)
 				{
 					preform = Form.current();
-					preform.curinst$.blur(true);
+					preform.curinst$?.blur(true);
 
 					if (!await this.checkLeave(preform))
 					{

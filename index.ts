@@ -1,4 +1,4 @@
-const version = "3.16.1";
+const version = "3.16.2";
 console.log("Library Version "+version);
 export { Form } from './src/public/Form.js';
 export { Block } from './src/public/Block.js';

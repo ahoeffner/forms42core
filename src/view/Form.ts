@@ -550,6 +550,7 @@ export class Form implements EventListenerObject
 
 		if (this.curinst$)
 		{
+			this.curinst$.blur(true);
 			if (!field) field = this.curinst$.field.name;
 			if (!block) block = this.curinst$.field.block.name;
 		}

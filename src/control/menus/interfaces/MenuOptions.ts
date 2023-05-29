@@ -21,8 +21,8 @@
 
 export enum Navigation
 {
-	top,
-	left
+	vertical,
+	horizontal
 }
 
 export interface MenuOptions

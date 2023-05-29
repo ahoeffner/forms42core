@@ -52,7 +52,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
-		if (this.options$.navigation == null) this.options$.navigation = Navigation.top;
 	}
 
 	public get options() : MenuOptions
@@ -72,7 +71,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public focus() : void
 	{
-		this.entries$.get(this.active$)?.element?.focus();
+		this.entries$.get(this.active$)?.element.focus();
 	}
 
 	public hasOpenBranches() : boolean
@@ -96,15 +95,47 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		this.target$.innerHTML = await this.showEntry(null,start,path);
+		let entries:NodeList = this.target$.querySelectorAll("a");
 
-		let entries:NodeList = this.target$.querySelectorAll("a:not([disabled])");
-		entries.forEach((link) => {this.prepare(link as HTMLAnchorElement);});
+		entries.forEach((link) =>
+		{
+			let href:HTMLAnchorElement = link as HTMLAnchorElement;
+			this.entries$.get(href.tabIndex).element = href;
+
+			if (href.getAttribute("disabled") == null)
+				this.prepare(href);
+		});
 
 		this.elements$.clear();
 		this.index(this.target$);
 
 		if (this.active$ == null)
 			this.active$ = 1;
+
+		if (this.options$.navigation == null && this.entries$.size > 1)
+		{
+			let x:number = null;
+			let y:number = null;
+			let skewX:number = 0;
+			let skewY:number = 0;
+
+			this.entries$.forEach((entry) =>
+			{
+				let rect:DOMRect = entry.element.getBoundingClientRect();
+
+				if (x == null) x = rect.x;
+				if (y == null) y = rect.y;
+
+				let dx:number = Math.abs(rect.x-x);
+				let dy:number = Math.abs(rect.y-y);
+
+				if (dx > skewX) skewX = dx;
+				if (dy > skewY) skewY = dy;
+			});
+
+			this.options$.navigation = Navigation.horizontal;
+			if (skewY > skewX) this.options$.navigation = Navigation.vertical;
+		}
 	}
 
 	public async hide() : Promise<void>
@@ -339,6 +370,26 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		let path:string = elem.getAttribute("path");
 
+		if (!this.options$.navigation)
+		{
+			if (key == "ArrowUp") key = "";
+			if (key == "ArrowLeft") key = "";
+			if (key == "ArrowDown") key = " ";
+			if (key == "ArrowRight") key = " ";
+		}
+
+		if (this.options$.navigation == Navigation.horizontal)
+		{
+			switch(key)
+			{
+				case "ArrowUp" : key = "ArrowLeft"; break;
+				case "ArrowDown" : key = "ArrowRight"; break;
+
+				case "ArrowLeft" : key = "ArrowUp"; break;
+				case "ArrowRight" : key = "ArrowDown"; break;
+			}
+		}
+
 		switch(key)
 		{
 			case "ArrowUp" :
@@ -362,32 +413,23 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				break;
 
 			case "ArrowLeft" :
-				console.log("left");
+				if (this.open$.has(path))
+					await this.toggle(path);
 				break;
 
 			case "ArrowRight" :
-
 				if (!this.open$.has(path))
 					await this.toggle(path);
-
-				elem = this.findFirstChild(elem);
-
-				if (elem)
-				{
-					elem.focus();
-					this.active$ = elem.tabIndex;
-				}
-
 				break;
 
 			case "Escape" :
-				console.log("close");
+				if (this.open$.has(path))
+					await this.toggle(path);
 				break;
 
 
 			case " " :
 			case "Enter" :
-				console.log("pick");
 				this.pick(elem);
 				break;
 		}
@@ -420,6 +462,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		let start:boolean = false;
 		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
 
+		let path:string = elem.getAttribute("path");
+		if (this.open$.has(path)) return(this.findFirstChild(elem));
+
 		for (let [key, entry] of this.entries$)
 		{
 			if (entry.element == elem) start = true;
@@ -427,9 +472,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (start && entry.parent == parent && entry.element != elem)
 				return(entry.element);
 		}
-
-		let path:string = elem.getAttribute("path");
-		if (this.open$.has(path)) return(this.findFirstChild(elem));
 
 		return(null);
 	}
@@ -484,7 +526,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		element.addEventListener("keyup",this);
 		element.addEventListener("focus",this);
 		element.addEventListener("mouseover",this);
-		this.entries$.get(element.tabIndex).element = element;
 	}
 }
 

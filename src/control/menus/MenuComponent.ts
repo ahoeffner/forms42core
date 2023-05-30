@@ -370,7 +370,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		let path:string = elem.getAttribute("path");
 
-		if (!this.options$.navigation)
+		if (this.options$.navigation == null)
 		{
 			if (key == "ArrowUp") key = "";
 			if (key == "ArrowLeft") key = "";
@@ -404,6 +404,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 			case "ArrowDown" :
 				elem = this.findNext(elem);
+				console.log(elem)
 
 				if (elem)
 				{

@@ -184,14 +184,14 @@ export class Form implements CanvasComponent
 		FormBacking.getBacking(this).setLink(master,detail,orphanQueries);
 	}
 
-	public goBlock(block:string) : void
+	public async goBlock(block:string) : Promise<boolean>
 	{
-		this.getBlock(block)?.focus();
+		return(this.getBlock(block)?.focus());
 	}
 
-	public goField(block:string, field:string, clazz?:string) : void
+	public async goField(block:string, field:string, clazz?:string) : Promise<boolean>
 	{
-		this.getBlock(block)?.goField(field,clazz);
+		return(this.getBlock(block)?.goField(field,clazz));
 	}
 
 	/** Pop up a message (like javascript alert) */

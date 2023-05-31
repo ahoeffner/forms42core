@@ -127,9 +127,9 @@ export class Block
 	}
 
 	/** Set focus on this block */
-	public focus() : void
+	public async focus() : Promise<boolean>
 	{
-		FormBacking.getViewBlock(this).focus();
+		return(FormBacking.getViewBlock(this).focus());
 	}
 
 	/** Current record number in block */
@@ -227,9 +227,9 @@ export class Block
 	}
 
 	/** Navigate to field @param clazz: narrow in field*/
-	public goField(field:string, clazz?:string) : void
+	public async goField(field:string, clazz?:string) : Promise<boolean>
 	{
-		FormBacking.getViewBlock(this).goField(field,clazz);
+		return(FormBacking.getViewBlock(this).goField(field,clazz));
 	}
 
 	/** Show a message (similar to js alert) */

@@ -115,8 +115,6 @@ export class Block
 
 	public async focus(ignore?:boolean) : Promise<boolean>
 	{
-		console.log(this.form.block.name);
-
 		if (this.current)
 		{
 			this.current.focus(ignore);
@@ -144,7 +142,21 @@ export class Block
 				return(false);
 			}
 
-			inst?.focus();
+			if (this.current)
+			{
+				if (!await this.current.field.validate(this.current))
+					return(false);
+
+				if (!await this.form.leave(this.current))
+					return(false);
+
+				this.current.blur(true);
+			}
+
+			if (!await this.form.enter(inst))
+				return(false);
+
+			inst?.focus(true);
 			return(true);
 		}
 	}
@@ -206,7 +218,10 @@ export class Block
 			this.current.blur(true);
 		}
 
-		inst?.focus();
+		if (!await this.form.enter(inst))
+			return(false);
+
+		inst.focus();
 		return(true);
 	}
 

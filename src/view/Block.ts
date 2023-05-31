@@ -113,11 +113,14 @@ export class Block
 		this.current?.blur(ignore);
 	}
 
-	public focus(ignore?:boolean) : void
+	public async focus(ignore?:boolean) : Promise<boolean>
 	{
+		console.log(this.form.block.name);
+
 		if (this.current)
 		{
 			this.current.focus(ignore);
+			return(true);
 		}
 		else
 		{
@@ -137,9 +140,12 @@ export class Block
 
 				if (cf + rf > 0)
 					console.log("No available fields in "+this.name+" in state "+RecordState[state]);
+
+				return(false);
 			}
 
 			inst?.focus();
+			return(true);
 		}
 	}
 
@@ -157,7 +163,7 @@ export class Block
 		this.getCurrentFields(field).forEach((fld) => fld.setInstanceValidity(flag));
 	}
 
-	public goField(field:string, clazz?:string) : void
+	public async goField(field:string, clazz?:string) : Promise<boolean>
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();
@@ -184,10 +190,24 @@ export class Block
 			if (rf == null) rf = 0;
 
 			if (cf + rf > 0)
-				console.log("No available fields named '"+field+"' in block '"+this.name+"' in state "+RecordState[state])
+				console.log("No available fields named '"+field+"' in block '"+this.name+"' in state "+RecordState[state]);
+
+			return(false);
+		}
+
+		if (this.current)
+		{
+			if (!await this.curinst$.field.validate(this.current))
+				return(false);
+
+			if (!await this.form.leave(this.current))
+				return(false);
+
+			this.current.blur(true);
 		}
 
 		inst?.focus();
+		return(true);
 	}
 
 	public empty(rownum?:number) : boolean

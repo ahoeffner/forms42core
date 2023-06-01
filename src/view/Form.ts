@@ -478,7 +478,7 @@ export class Form implements EventListenerObject
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
-		if (!await this.setEventTransaction(EventType.PreForm,block,offset)) return(false);
+		if (!await this.setEventTransaction(EventType.PreBlock,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
 		block.model.endEventTransaction(EventType.PreBlock,success);
 		return(success);

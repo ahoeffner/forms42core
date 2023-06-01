@@ -333,13 +333,8 @@ export class FieldInstance implements FieldEventHandler
 		let focus:Element = document.activeElement;
 		let inst:HTMLElement = this.impl.getElement();
 
-		if (focus == inst)
-		{
-			if (ignore)
-				this.ignore = "blur";
-
-			inst.blur();
-		}
+		if (ignore) this.ignore = "blur";
+		if (focus == inst) inst.blur();
 	}
 
 	public focus(ignore?:boolean) : void

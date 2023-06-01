@@ -263,7 +263,7 @@ export class Form
 
 		if (running)
 		{
-			let source:string = this.name+(block ? "."+block.name : "")
+			let source:string = this.name+(block ? "."+block.name+"."+block.view.current : "");
 			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
 			return(false);
 		}

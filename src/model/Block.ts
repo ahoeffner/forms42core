@@ -496,9 +496,6 @@ export class Block
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
 
-			if (before)	this.view.refresh(record);
-			else success = await this.view.nextrecord();
-
 			if (success)
 			{
 				let details:Block[] = this.getAllDetailBlocks(true);

@@ -209,7 +209,7 @@ export class Block
 
 		if (this.current)
 		{
-			if (!await this.curinst$.field.validate(this.current))
+			if (!await this.current.field.validate(this.current))
 				return(false);
 
 			if (!await this.form.leave(this.current))

@@ -565,10 +565,7 @@ export class Form implements EventListenerObject
 			if (field == this.curinst$.field.name && block == this.curinst$.field.block.name)
 			{
 				if (!clazz || (clazz && !this.curinst$.properties.hasClass(clazz)))
-				{
-					this.curinst$.focus();
 					return(this.keyhandler(key,this.curinst$));
-				}
 			}
 		}
 

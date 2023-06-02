@@ -379,7 +379,7 @@ export class Form implements EventListenerObject
 			Enter this forms current block and record
 		 **********************************************************************/
 
-		if (nxtblock != preblock)
+		if (preblock != null && nxtblock != preblock)
 		{
 			if (!await this.enterBlock(nxtblock,recoffset))
 			{
@@ -720,6 +720,8 @@ export class Form implements EventListenerObject
 				inst.blur(true);
 				success = await this.model.executeQuery(inst.field.block.model);
 				inst.focus(true);
+
+				inst.ignore = "blur";
 				return(success);
 			}
 

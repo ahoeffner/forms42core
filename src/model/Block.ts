@@ -496,6 +496,9 @@ export class Block
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
 
+			if (before)	await this.view.refresh(record);
+			else success = await this.view.nextrecord();
+
 			if (success)
 			{
 				let details:Block[] = this.getAllDetailBlocks(true);
@@ -542,14 +545,16 @@ export class Block
 			}
 
 			this.scroll(0,this.view.row);
-			this.view.refresh(this.getRecord());
+			await this.view.refresh(this.getRecord());
 
 			if (!empty) this.view.current = inst;
 			else this.view.getPreviousInstance(inst)?.focus();
+
+			this.view.getRow(this.view.row).validated = true;
 		}
 		else
 		{
-			this.view.refresh(this.getRecord());
+			await this.view.refresh(this.getRecord());
 		}
 
 		return(true);

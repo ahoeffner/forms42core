@@ -854,7 +854,7 @@ export class Block
 		}
 	}
 
-	public refresh(record:Record) : void
+	public async refresh(record:Record) : Promise<boolean>
 	{
 		let row:Row = this.displayed(record);
 
@@ -864,9 +864,14 @@ export class Block
 		if (row.rownum == this.row)
 		{
 			this.displaycurrent();
-			this.model.queryDetails(true);
+
+			if (!await this.model.queryDetails(true))
+				return(false);
+
 			this.setIndicators(null,this.row);
 		}
+
+		return(true);
 	}
 
 	public swapInstances(inst1:FieldInstance, inst2:FieldInstance) : void

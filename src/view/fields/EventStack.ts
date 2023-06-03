@@ -67,6 +67,11 @@ export class EventStack
 	// Javascript might not be multi-threaded, but browsers doesn't wait for events to be handled
 	// This code requires events to passed one at a time, which cannot be guaranteed !!!!
 
+	public static async send(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
+	{
+		EventStack.stack(inst.field,inst,brwevent);
+	}
+
 	public static async stack(field:Field, inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		WatchDog.start();

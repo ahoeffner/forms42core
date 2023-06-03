@@ -48,6 +48,11 @@ export class FormsModule
 		return(FormsModule.instance);
 	}
 
+	public static sleep(ms:number) : Promise<boolean>
+	{
+		return(new Promise(resolve => setTimeout(resolve,ms)));
+	}
+
 	constructor()
 	{
 		dates.validate();

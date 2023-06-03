@@ -21,6 +21,7 @@
 
 import { Framework } from "../../application/Framework.js";
 import { Properties, ScrollDirection } from "../../application/Properties.js";
+import { KeyMap } from "./KeyMap";
 
 export class BrowserEvent
 {
@@ -89,6 +90,22 @@ export class BrowserEvent
 		this.event$ = {type: "focus"};
 	}
 
+	public setKeyEvent(key:KeyMap) : void
+	{
+		this.reset();
+
+		let event:any =
+		{
+			type: "keydown",
+			key: key.key,
+			alt: key.alt,
+			ctrl: key.ctrl,
+			shift: key.shift,
+		};
+
+		this.setEvent(event);
+	}
+
 	public setEvent(event:any) : void
 	{
 		this.event$ = event;
@@ -101,7 +118,7 @@ export class BrowserEvent
 		if (this.type == "mouseover") bubble = true;
 		if (this.type.includes("drag")) bubble = true;
 
-		if (!bubble)
+		if (!bubble && event["stopPropagation"])
 			event.stopPropagation();
 
 		if (!this.isKeyEvent) this.reset();

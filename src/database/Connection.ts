@@ -623,7 +623,7 @@ export class Connection extends BaseConnection
 
 	private async keepalive() : Promise<void>
 	{
-		await this.sleep(this.keepalive$);
+		await FormsModule.sleep(this.keepalive$);
 
 		if (!this.connected())
 			return;
@@ -690,11 +690,6 @@ export class Connection extends BaseConnection
 		})
 
 		return(binds);
-	}
-
-	public sleep(ms:number) : Promise<void>
-	{
-		return(new Promise(resolve => setTimeout(resolve,ms)));
 	}
 }
 

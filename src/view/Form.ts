@@ -25,6 +25,7 @@ import { FieldDrag } from './FieldDrag.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { Classes } from '../internal/Classes.js';
+import { EventStack } from './fields/EventStack.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -543,10 +544,13 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
+	public sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : boolean
 	{
 		block = block?.toLowerCase();
 		field = field?.toLowerCase();
+
+		let brwevent:BrowserEvent = BrowserEvent.get().clone();
+		brwevent.setKeyEvent(key);
 
 		if (this.curinst$)
 		{
@@ -562,10 +566,14 @@ export class Form implements EventListenerObject
 
 		if (this.curinst$)
 		{
+			// If field matches current field instance, then use that
 			if (field == this.curinst$.field.name && block == this.curinst$.field.block.name)
 			{
 				if (!clazz || (clazz && !this.curinst$.properties.hasClass(clazz)))
-					return(this.keyhandler(key,this.curinst$));
+				{
+					EventStack.send(this.curinst$,brwevent);
+					return(true);
+				}
 			}
 		}
 
@@ -578,7 +586,8 @@ export class Form implements EventListenerObject
 			return(false);
 		}
 
-		return(this.keyhandler(key,match[0]));
+		EventStack.send(match[0],brwevent);
+		return(true);
 	}
 
 	public async keyhandler(key:KeyMap, inst?:FieldInstance) : Promise<boolean>

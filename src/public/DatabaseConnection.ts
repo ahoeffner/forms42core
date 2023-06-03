@@ -112,10 +112,4 @@ export class DatabaseConnection
 	{
 		return(this.conn$.rollback());
 	}
-
-	/** Utility for waiting some milliseconds */
-	public async sleep(ms:number) : Promise<void>
-	{
-		await this.conn$.sleep(ms);
-	}
 }

@@ -98,9 +98,10 @@ export class BrowserEvent
 		{
 			type: "keydown",
 			key: key.key,
-			alt: key.alt,
-			ctrl: key.ctrl,
-			shift: key.shift,
+			altKey: key.alt,
+			ctrlKey: key.ctrl,
+			metaKey: key.meta,
+			shiftKey: key.shift
 		};
 
 		this.setEvent(event);

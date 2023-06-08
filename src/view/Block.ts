@@ -859,6 +859,8 @@ export class Block
 		let row:Row = this.displayed(record);
 
 		if (row == null) return;
+
+		row.validated = true;
 		this.display(row.rownum,record);
 
 		if (row.rownum == this.row)

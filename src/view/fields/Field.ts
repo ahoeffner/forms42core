@@ -22,12 +22,12 @@
 import { Row } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
-import { EventStack } from "./EventStack.js";
 import { Input } from "./implementations/Input.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { Form as Interface } from "../../public/Form.js";
 import { Block as ModelBlock } from "../../model/Block.js";
 import { FormBacking } from "../../application/FormBacking.js";
+import { EventStack } from "../../control/events/EventStack.js";
 import { BrowserEvent} from "../../control/events/BrowserEvent.js";
 import { KeyMap, KeyMapping } from "../../control/events/KeyMap.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";

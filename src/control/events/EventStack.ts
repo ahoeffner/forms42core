@@ -19,17 +19,30 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Field } from "./Field.js";
-import { FieldInstance } from "./FieldInstance.js";
+import { BrowserEvent } from "./BrowserEvent.js";
+import { Field } from "../../view/fields/Field.js";
 import { Alert } from "../../application/Alert.js";
-import { BrowserEvent } from "../../control/events/BrowserEvent.js";
+import { DynamicCall } from "../../application/Framework.js";
+import { FieldInstance } from "../../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
 
 interface event
 {
+	fev?:fieldevent,
+	ext?:externalevent;
+}
+
+interface fieldevent
+{
 	field:Field,
 	inst:FieldInstance,
 	brwevent:BrowserEvent
+}
+
+interface externalevent
+{
+	event:any,
+	func:DynamicCall
 }
 
 class WatchDog
@@ -72,10 +85,17 @@ export class EventStack
 		EventStack.stack(inst.field,inst,brwevent);
 	}
 
+	public static async queue(func:DynamicCall, event:any) : Promise<void>
+	{
+		WatchDog.start();
+		EventStack.stack$.unshift({ext: {func:func, event:event}});
+		await EventStack.handle();
+	}
+
 	public static async stack(field:Field, inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		WatchDog.start();
-		EventStack.stack$.unshift({field: field, inst:inst, brwevent: brwevent.clone()});
+		EventStack.stack$.unshift({fev: {field: field, inst:inst, brwevent: brwevent.clone()}});
 		await EventStack.handle();
 	}
 
@@ -95,7 +115,8 @@ export class EventStack
 
 		try
 		{
-			await cmd.field.performEvent(cmd.inst,cmd.brwevent);
+			if (cmd.ext) await cmd.ext.func.invoke(cmd.ext.event);
+			else await cmd.fev.field.performEvent(cmd.fev.inst,cmd.fev.brwevent);
 
 			EventStack.running = false;
 			setTimeout(() => {EventStack.handle();},0);
@@ -104,7 +125,7 @@ export class EventStack
 		{
 			EventStack.stack$ = [];
 			EventStack.running = false;
-			Alert.fatal(error.stack+" Performing "+cmd.brwevent.type+" on "+cmd.inst.name,"Fatal Error");
+			Alert.fatal(error.stack+" Performing "+JSON.stringify(cmd),"Fatal Error");
 		}
 	}
 }

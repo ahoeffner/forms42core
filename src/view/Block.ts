@@ -857,7 +857,6 @@ export class Block
 	public async refresh(record:Record) : Promise<boolean>
 	{
 		let row:Row = this.displayed(record);
-
 		if (row == null) return;
 
 		row.validated = true;

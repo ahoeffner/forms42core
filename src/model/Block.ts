@@ -393,6 +393,9 @@ export class Block
 		if (record == null)
 			return(true);
 
+		if (this.view.displayed(record)?.validated)
+			return(true);
+
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateRecord);
 		this.endEventTransaction(EventType.WhenValidateRecord,success);
@@ -570,7 +573,7 @@ export class Block
 		return(this.wrapper.getPendingCount());
 	}
 
-	public async undo() : Promise<boolean>
+	public async undo(requery:boolean) : Promise<boolean>
 	{
 		if (this.ctrlblk)
 			return(true);
@@ -580,9 +583,13 @@ export class Block
 
 		let undo:Record[] = await this.wrapper?.undo();
 
-		for (let i = 0; i < undo.length; i++)
-			this.view.refresh(undo[i]);
+		if (requery)
+		{
+			for (let i = 0; i < undo.length; i++)
+				this.view.refresh(undo[i]);
+		}
 
+		this.view.validated = true;
 		return(true);
 	}
 

@@ -138,7 +138,7 @@ export class Form
 			{
 				dirty.push(blocks[i]);
 
-				if (!await blocks[i].undo())
+				if (!await blocks[i].undo(false))
 					return(false);
 			}
 		}
@@ -164,7 +164,7 @@ export class Form
 		{
 			if (!dirty[i].ctrlblk)
 			{
-				if (!dirty[i].queried) dirty[i].clear(false);
+				if (!dirty[i].queried) await dirty[i].clear(false);
 				else await dirty[i].executeQuery(dirty[i].startNewQueryChain());
 			}
 		}

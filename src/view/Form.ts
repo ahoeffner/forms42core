@@ -194,17 +194,22 @@ export class Form implements EventListenerObject
 		this.curinst$?.blur(ignore);
 	}
 
-	public focus() : void
+	public async focus() : Promise<boolean>
 	{
-		if (this.curinst$)
+		let elem:HTMLElement = null;
+
+		if (this.curinst$) elem = this.curinst$.element;
+		else if (this.blocks$.size > 0) elem = this.blocks$.values().next().value.current.element;
+
+		if (!elem) return(false);
+
+		elem.focus();
+		await FormsModule.sleep(100);
+
+		while(document.activeElement != elem)
 		{
-			this.curinst$?.focus();
-			return;
-		}
-		else if (this.blocks$.size > 0)
-		{
-			this.blocks$.values().next().value.focus();
-			return;
+			elem.focus();
+			await FormsModule.sleep(100);
 		}
 	}
 

@@ -106,7 +106,7 @@ export class FormBacking
 		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 
 		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
-			setTimeout(() => {instance.focus()},10);
+			instance.focus();
 
 		return(instance);
 	}

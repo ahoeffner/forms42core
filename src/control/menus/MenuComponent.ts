@@ -374,8 +374,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		{
 			if (key == "ArrowUp") key = "";
 			if (key == "ArrowLeft") key = "";
-			if (key == "ArrowDown") key = " ";
-			if (key == "ArrowRight") key = " ";
+			if (key == "ArrowDown") key = "ArrowRight";
 		}
 
 		if (this.options$.navigation == Navigation.horizontal)
@@ -400,17 +399,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 					elem.focus();
 					this.active$ = elem.tabIndex;
 				}
+				
 				break;
 
 			case "ArrowDown" :
 				elem = this.findNext(elem);
-				console.log(elem)
 
 				if (elem)
 				{
 					elem.focus();
 					this.active$ = elem.tabIndex;
 				}
+
 				break;
 
 			case "ArrowLeft" :
@@ -421,6 +421,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			case "ArrowRight" :
 				if (!this.open$.has(path))
 					await this.toggle(path);
+
+				if (this.entries$.get(elem.tabIndex)?.children > 0)
+				{
+					elem = this.findNext(elem);
+
+					if (elem)
+					{
+						elem.focus();
+						this.active$ = elem.tabIndex;
+					}
+				}
+
 				break;
 
 			case "Escape" :
@@ -464,7 +476,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
 
 		let path:string = elem.getAttribute("path");
-		if (this.open$.has(path)) return(this.findFirstChild(elem));
+
+		if (this.open$.has(path))
+		{
+			let next:HTMLElement = this.findFirstChild(elem);
+			if (next) return(next);
+		}
 
 		for (let [key, entry] of this.entries$)
 		{
@@ -503,7 +520,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			let entry:Entry = this.entries$.get(elem.tabIndex);
 
 			this.elements$.set(node as HTMLElement,entry);
-			if (entry) this.menuentries$.set(entry.curr,entry);
+
+			if (entry)
+			{
+				this.menuentries$.set(entry.curr,entry);
+				entry.children = entry.element.parentElement.querySelectorAll("li")?.length;
+			}
 		})
 	}
 
@@ -537,6 +559,7 @@ class Entry
 	next:MenuEntry;
 	prev:MenuEntry;
 	curr:MenuEntry;
+	children:number;
 	parent:MenuEntry;
 	element:HTMLElement;
 

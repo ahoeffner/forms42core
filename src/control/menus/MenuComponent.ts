@@ -368,24 +368,46 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private async navigate(elem:HTMLElement, key:string) : Promise<boolean>
 	{
-		let path:string = elem.getAttribute("path");
-
+		// Probaby everything closed
 		if (this.options$.navigation == null)
 		{
 			if (key == "ArrowUp") key = "";
 			if (key == "ArrowLeft") key = "";
 			if (key == "ArrowDown") key = "ArrowRight";
+			return(this.navigateV(elem,key));
 		}
 
-		if (this.options$.navigation == Navigation.horizontal)
+		else if (this.options$.navigation == Navigation.vertical)
+			return(this.navigateV(elem,key));
+
+		else if (this.options$.navigation == Navigation.horizontal)
+			return(this.navigateH(elem,key));
+
+		return(false);
+	}
+
+	private async navigateV(elem:HTMLElement, key:string) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+		let command:boolean = elem.getAttribute("command") != null;
+
+		if (command)
 		{
 			switch(key)
 			{
-				case "ArrowUp" : key = "ArrowLeft"; break;
-				case "ArrowDown" : key = "ArrowRight"; break;
-
 				case "ArrowLeft" : key = "ArrowUp"; break;
 				case "ArrowRight" : key = "ArrowDown"; break;
+			}
+		}
+		else
+		{
+			if (!this.open$.has(path))
+			{
+				switch(key)
+				{
+					case "ArrowLeft" : key = "ArrowUp"; break;
+					case "ArrowDown" : key = "ArrowRight"; break;
+				}
 			}
 		}
 
@@ -399,7 +421,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 					elem.focus();
 					this.active$ = elem.tabIndex;
 				}
-				
+
 				break;
 
 			case "ArrowDown" :
@@ -414,8 +436,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				break;
 
 			case "ArrowLeft" :
-				if (this.open$.has(path))
-					await this.toggle(path);
+				await this.toggle(path);
 				break;
 
 			case "ArrowRight" :
@@ -436,8 +457,77 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				break;
 
 			case "Escape" :
-				if (this.open$.has(path))
+				if (!command)
+				{
+					if (this.open$.has(path))
+						await this.toggle(path);
+				}
+				break;
+
+
+			case " " :
+			case "Enter" :
+				this.pick(elem);
+				break;
+		}
+
+		return(true);
+	}
+
+	private async navigateH(elem:HTMLElement, key:string) : Promise<boolean>
+	{
+		let path:string = elem.getAttribute("path");
+		let command:boolean = elem.getAttribute("command") != null;
+
+		console.log(key+" "+command)
+
+		if (command)
+		{
+			switch(key)
+			{
+				//case "ArrowLeft" : key = "ArrowUp"; break;
+				//case "ArrowRight" : key = "ArrowDown"; break;
+			}
+		}
+		else
+		{
+			if (!this.open$.has(path))
+			{
+				switch(key)
+				{
+					//case "ArrowLeft" : key = "ArrowUp"; break;
+					//case "ArrowDown" : key = "ArrowRight"; break;
+				}
+			}
+		}
+
+		console.log(key)
+
+		switch(key)
+		{
+			case "ArrowDown" :
+				if (!this.open$.has(path))
 					await this.toggle(path);
+
+				if (this.entries$.get(elem.tabIndex)?.children > 0)
+				{
+					elem = this.findNext(elem);
+
+					if (elem)
+					{
+						elem.focus();
+						this.active$ = elem.tabIndex;
+					}
+				}
+
+				break;
+
+			case "Escape" :
+				if (!command)
+				{
+					if (this.open$.has(path))
+						await this.toggle(path);
+				}
 				break;
 
 

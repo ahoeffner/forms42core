@@ -64,6 +64,7 @@ export class Form implements EventListenerObject
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
+	private lastinst$:FieldInstance = null;
 	private blocks$:Map<string,Block> = new Map<string,Block>();
 	private indicators:Map<string,RowIndicator[]> = new Map<string,RowIndicator[]>();
 	private fltindicators:Map<string,FilterIndicator[]> = new Map<string,FilterIndicator[]>();
@@ -202,15 +203,7 @@ export class Form implements EventListenerObject
 		else if (this.blocks$.size > 0) elem = this.blocks$.values().next().value.current.element;
 
 		if (!elem) return(false);
-
 		elem.focus();
-		await FormsModule.sleep(100);
-
-		while(document.activeElement != elem)
-		{
-			elem.focus();
-			await FormsModule.sleep(100);
-		}
 	}
 
 	public dragfields(header:HTMLElement) : void
@@ -423,8 +416,6 @@ export class Form implements EventListenerObject
 			}
 		}
 
-		this.curinst$ = inst;
-		nxtblock.current = inst;
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
@@ -514,6 +505,12 @@ export class Form implements EventListenerObject
 
 	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
 	{
+		if (inst == this.curinst$)
+			return(true);
+
+		this.curinst$ = inst;
+		this.lastinst$ = null;
+
 		if (!await this.setEventTransaction(EventType.PreField,inst.field.block,offset)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);
 		inst.field.block.model.endEventTransaction(EventType.PreField,success);
@@ -544,6 +541,10 @@ export class Form implements EventListenerObject
 
 	public async leaveField(inst:FieldInstance) : Promise<boolean>
 	{
+		if (inst == this.lastinst$)
+			return(true);
+
+		this.lastinst$ = inst;
 		if (!await inst.field.block.model.wait4EventTransaction(EventType.PostField)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		return(success);

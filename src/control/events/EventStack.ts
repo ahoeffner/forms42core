@@ -23,6 +23,7 @@ import { BrowserEvent } from "./BrowserEvent.js";
 import { Field } from "../../view/fields/Field.js";
 import { Alert } from "../../application/Alert.js";
 import { DynamicCall } from "../../application/Framework.js";
+import { FormsModule } from "../../application/FormsModule.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../../application/FlightRecorder.js";
 
@@ -127,5 +128,11 @@ export class EventStack
 			EventStack.running = false;
 			Alert.fatal(error.stack+" Performing "+JSON.stringify(cmd),"Fatal Error");
 		}
+	}
+
+	public static async wait() : Promise<void>
+	{
+		while(EventStack.stack$.length > 0)
+			await FormsModule.sleep(1);
 	}
 }

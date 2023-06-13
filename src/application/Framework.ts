@@ -426,6 +426,7 @@ export class DynamicCall
 	public async invoke(event:any) : Promise<void>
 	{
 		Framework.setEvent(event);
+		let comp:any = this.component;
 
 		for(let i = 0; i < this.path.length; i++)
 		{
@@ -438,16 +439,16 @@ export class DynamicCall
 				return;
 			}
 
-			this.component = this.component[this.path[i]];
+			comp = this.component[this.path[i]];
 		}
 
 		try
 		{
 			switch(this.args.length)
 			{
-				case 0: await this.component[this.method](); break;
-				case 1: await this.component[this.method](this.args[0]); break;
-				default: await this.component[this.method](...this.args); break;
+				case 0: await comp[this.method](); break;
+				case 1: await comp[this.method](this.args[0]); break;
+				default: await comp[this.method](...this.args); break;
 			}
 		}
 		catch (error)
@@ -455,6 +456,11 @@ export class DynamicCall
 			let msg:string = "@Framework: Failed to invoke method: '"+this.method+"' on component: "+this.component.constructor.name;
 			Alert.fatal(msg+" "+error,"Invoke Method");
 		}
+	}
+
+	public toString() : string
+	{
+		return(this.component.constructor.name+" "+this.method);
 	}
 }
 
@@ -517,5 +523,5 @@ class EventHandler implements EventListenerObject
 
 class Implementation
 {
-	constructor(public element, public tag:Tag, public name:string, public attr:string) {}
+	constructor(public element:any, public tag:Tag, public name:string, public attr:string) {}
 }

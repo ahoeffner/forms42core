@@ -509,15 +509,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				if (!this.open$.has(path))
 					await this.toggle(path);
 
-				if (this.entries$.get(elem.tabIndex)?.children > 0)
-				{
-					elem = this.findNext(elem);
+				elem = this.findNext(elem);
 
-					if (elem)
-					{
-						elem.focus();
-						this.active$ = elem.tabIndex;
-					}
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
 				}
 
 				break;

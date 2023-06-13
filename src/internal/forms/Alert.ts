@@ -110,8 +110,8 @@ export class Alert extends Form
 		`
 		<div name="popup-body">
 			<div name="msg" from="alert"></div>
-
 		</div>
+		
 		<div name="lowerright">
 			<div name="buttonarea">
 				<button name="close" onClick="this.close()">Ok</button>

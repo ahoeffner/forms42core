@@ -84,7 +84,7 @@ export class QueryEditor extends Form
 		switch(this.type)
 		{
 			case "x" :
-				filter = Filters.Null(field);
+				filter = Filters.IsNull(field);
 				break;
 
 			case "<" :
@@ -94,7 +94,7 @@ export class QueryEditor extends Form
 				if (value != null)
 				{
 					form.setValue(block,field,value);
-					filter = Filters.LT(field,incl);
+					filter = Filters.LessThan(field,incl);
 					filter.constraint = value;
 				}
 				break;
@@ -106,7 +106,7 @@ export class QueryEditor extends Form
 				if (value != null)
 				{
 					form.setValue(block,field,value);
-					filter = Filters.GT(field,incl);
+					filter = Filters.GreaterThan(field,incl);
 					filter.constraint = value;
 				}
 				break;

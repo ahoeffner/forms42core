@@ -906,7 +906,7 @@ export class Block
 				}
 				else
 				{
-					let flt:Filter = Filters.Null(dfld);
+					let flt:Filter = Filters.IsNull(dfld);
 					flt.constraint = master.getValue(mfld);
 					this.getMasterBlockFilter(master,true).and(flt,dfld);
 				}

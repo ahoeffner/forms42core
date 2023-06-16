@@ -227,6 +227,12 @@ export class Block
 	}
 
 	/** Navigate to field @param clazz: narrow in field*/
+	public async goRow(field:string, clazz?:string) : Promise<boolean>
+	{
+		return(FormBacking.getViewBlock(this).goField(field,clazz));
+	}
+
+	/** Navigate to field @param clazz: narrow in field*/
 	public async goField(field:string, clazz?:string) : Promise<boolean>
 	{
 		return(FormBacking.getViewBlock(this).goField(field,clazz));

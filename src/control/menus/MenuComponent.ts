@@ -94,7 +94,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			start = await this.menu$.getEntries(path);
 		}
 
-		this.target$.innerHTML = await this.showEntry(null,start,path);
+		this.target$.innerHTML = await this.showEntry(null,start,0,path);
 		let entries:NodeList = this.target$.querySelectorAll("a");
 
 		entries.forEach((link) =>
@@ -219,7 +219,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		return(null);
 	}
 
-	private async showEntry(parent:MenuEntry, entries:MenuEntry[], path?:string, page?:string) : Promise<string>
+	private async showEntry(parent:MenuEntry, entries:MenuEntry[], level:number, path?:string, page?:string) : Promise<string>
 	{
 		if (entries == null)
 			return(page);
@@ -241,7 +241,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		if (empty) return(page);
-		page += "<menu name='"+this.name$+"'>";
+
+		let menu:string = this.name$;
+		if (parent) menu = parent.id;
+
+		page += "<menu name='"+menu+"' class='"+this.name$+"@level-"+level+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{
@@ -278,7 +282,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				page += "  <a "+tabidx+" path='"+npath+"' "+cmd+disabled+">"+entries[i].display+"</a>";
 				if (entries[i].hinttext) page += "  <div>"+entries[i].hinttext+"</div>";
 
-				page = await this.showEntry(entries[i],await this.menu$.getEntries(npath),npath,page);
+				page = await this.showEntry(entries[i],await this.menu$.getEntries(npath),level + 1,npath,page);
 				page += "</li>";
 			}
 			else

@@ -595,6 +595,11 @@ export class Block
 		return(success);
 	}
 
+	public async goRow(row:number) : Promise<boolean>
+	{
+		return(true);
+	}
+
 	public async prevrecord() : Promise<boolean>
 	{
 		return(this.navigateBlock(KeyMap.prevrecord,this.current));

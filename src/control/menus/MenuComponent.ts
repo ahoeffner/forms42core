@@ -245,7 +245,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		let menu:string = this.name$;
 		if (parent) menu = parent.id;
 
-		page += "<menu name='"+menu+"' class='"+this.name$+"@level-"+level+"'>";
+		page += "<menu name='"+menu+"' class='"+this.name$+" level-"+level+"'>";
 
 		for (let i = 0; i < entries.length; i++)
 		{

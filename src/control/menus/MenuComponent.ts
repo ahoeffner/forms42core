@@ -101,9 +101,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		{
 			let href:HTMLAnchorElement = link as HTMLAnchorElement;
 			this.entries$.get(href.tabIndex).element = href;
-
-			if (href.getAttribute("disabled") == null)
-				this.prepare(href);
+			this.prepare(href);
 		});
 
 		this.elements$.clear();
@@ -343,6 +341,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		let path:string = elem.getAttribute("path");
 		let command:string = elem.getAttribute("command");
 
+		if (elem.getAttribute("disabled") != null)
+			return(true);
+
 		if (path != null || command != null)
 		{
 			this.active$ = elem.tabIndex;
@@ -370,12 +371,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		// Probaby everything closed
 		if (this.options$.navigation == null)
-		{
-			if (key == "ArrowUp") key = "";
-			if (key == "ArrowLeft") key = "";
-			if (key == "ArrowDown") key = "ArrowRight";
 			return(this.navigateV(elem,key));
-		}
 
 		else if (this.options$.navigation == Navigation.vertical)
 			return(this.navigateV(elem,key));
@@ -390,26 +386,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		let path:string = elem.getAttribute("path");
 		let command:boolean = elem.getAttribute("command") != null;
-
-		if (command)
-		{
-			switch(key)
-			{
-				case "ArrowLeft" : key = "ArrowUp"; break;
-				case "ArrowRight" : key = "ArrowDown"; break;
-			}
-		}
-		else
-		{
-			if (!this.open$.has(path))
-			{
-				switch(key)
-				{
-					case "ArrowLeft" : key = "ArrowUp"; break;
-					case "ArrowDown" : key = "ArrowRight"; break;
-				}
-			}
-		}
+		let disabled:boolean = elem.getAttribute("disabled") != null;
 
 		switch(key)
 		{
@@ -436,15 +413,15 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				break;
 
 			case "ArrowLeft" :
-				await this.toggle(path);
+				if (!command && !disabled && this.open$.has(path))
+					await this.toggle(path);
 				break;
 
 			case "ArrowRight" :
-				if (!this.open$.has(path))
+				if (!command && !disabled && !this.open$.has(path))
+				{
 					await this.toggle(path);
 
-				if (this.entries$.get(elem.tabIndex)?.children > 0)
-				{
 					elem = this.findNext(elem);
 
 					if (elem)
@@ -459,7 +436,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			case "Escape" :
 				if (!command)
 				{
-					if (this.open$.has(path))
+					if (!command && !disabled && this.open$.has(path))
 						await this.toggle(path);
 				}
 				break;
@@ -478,35 +455,30 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		let path:string = elem.getAttribute("path");
 		let command:boolean = elem.getAttribute("command") != null;
-
-		console.log(key+" "+command)
-
-		if (command)
-		{
-			switch(key)
-			{
-				//case "ArrowLeft" : key = "ArrowUp"; break;
-				//case "ArrowRight" : key = "ArrowDown"; break;
-			}
-		}
-		else
-		{
-			if (!this.open$.has(path))
-			{
-				switch(key)
-				{
-					//case "ArrowLeft" : key = "ArrowUp"; break;
-					//case "ArrowDown" : key = "ArrowRight"; break;
-				}
-			}
-		}
-
-		console.log(key)
+		let disabled:boolean = elem.getAttribute("disabled") != null;
 
 		switch(key)
 		{
+			case "ArrowUp" :
+				if (!command && !disabled && this.open$.has(path))
+				{
+					await this.toggle(path);
+				}
+				else if (command)
+				{
+					elem = this.findPrev(elem);
+
+					if (elem)
+					{
+						elem.focus();
+						this.active$ = elem.tabIndex;
+					}
+				}
+
+				break;
+
 			case "ArrowDown" :
-				if (!this.open$.has(path))
+				if (!command && !disabled && !this.open$.has(path))
 					await this.toggle(path);
 
 				elem = this.findNext(elem);
@@ -519,8 +491,30 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				break;
 
+			case "ArrowLeft" :
+				elem = this.findPrev(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+
+				break;
+
+			case "ArrowRight" :
+				elem = this.findNext(elem);
+
+				if (elem)
+				{
+					elem.focus();
+					this.active$ = elem.tabIndex;
+				}
+
+				break;
+
 			case "Escape" :
-				if (!command)
+				if (!command && !disabled)
 				{
 					if (this.open$.has(path))
 						await this.toggle(path);
@@ -539,30 +533,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private findPrev(elem:HTMLElement) : HTMLElement
 	{
-		let prev:HTMLElement = null;
 		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+		let previous:MenuEntry = this.entries$.get(elem.tabIndex)?.prev;
+		let prev:HTMLElement = this.menuentries$.get(previous)?.element;
 
-		for (let [key, entry] of this.entries$)
-		{
-			if (entry.element == elem)
-			{
-				if (!prev) prev = this.menuentries$.get(parent)?.element;
-				return(prev);
-			}
-
-			if (entry.parent == parent)
-				prev = entry.element;
-		}
-
-		return(null);
+		if (prev) return(prev);
+		return(this.menuentries$.get(parent)?.element);
 	}
 
 	private findNext(elem:HTMLElement) : HTMLElement
 	{
-		let start:boolean = false;
-		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
-
 		let path:string = elem.getAttribute("path");
+		let next:MenuEntry = this.entries$.get(elem.tabIndex)?.next;
 
 		if (this.open$.has(path))
 		{
@@ -570,15 +552,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			if (next) return(next);
 		}
 
-		for (let [key, entry] of this.entries$)
-		{
-			if (entry.element == elem) start = true;
-
-			if (start && entry.parent == parent && entry.element != elem)
-				return(entry.element);
-		}
-
-		return(null);
+		return(this.menuentries$.get(next)?.element);
 	}
 
 	private findFirstChild(elem:HTMLElement) : HTMLElement

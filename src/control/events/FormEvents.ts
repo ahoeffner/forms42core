@@ -40,9 +40,11 @@ export class KeyEventSource
 
 export class FormEvent implements Interface
 {
-	public static AppEvent(type:EventType) : FormEvent
+	public static AppEvent(type:EventType, source?:any) : FormEvent
 	{
-		return(new FormEvent(type,null));
+		let event:FormEvent = new FormEvent(type,null);
+		if (source) event.source$ = source;
+		return(event);
 	}
 
 	public static FormEvent(type:EventType, form:Form) : FormEvent
@@ -70,6 +72,8 @@ export class FormEvent implements Interface
 		return(new FormEvent(EventType.Mouse,form,inst,inst != null ? inst.block : block,null,event));
 	}
 
+	private source$:any = null;
+
 	private constructor
 		(
 			private type$:EventType,
@@ -79,6 +83,10 @@ export class FormEvent implements Interface
 	{
 		if (inst instanceof ViewFieldInstance)
 			this.block$ = inst.block;
+
+		if (inst) this.source$ = this.field;
+		else if (block$) this.source$ = this.block;
+		else if (form$) this.source$ = this.form;
 	}
 
 	public get type() : EventType
@@ -115,6 +123,11 @@ export class FormEvent implements Interface
 			return(this.inst?.name);
 
 		return(null);
+	}
+
+	public get source() : any
+	{
+		return(this.source);
 	}
 
 	public get mouse() : MouseMap

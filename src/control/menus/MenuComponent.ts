@@ -20,7 +20,9 @@
 */
 
 import { Menu } from './interfaces/Menu.js';
+import { EventType } from '../events/EventType.js';
 import { MenuEntry } from './interfaces/MenuEntry.js';
+import { FormEvent, FormEvents } from '../events/FormEvents.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 
@@ -54,6 +56,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
 	}
 
+	public get name() : string
+	{
+		return(this.name$);
+	}
+
 	public get options() : MenuOptions
 	{
 		return(this.options$);
@@ -80,6 +87,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	}
 
 	public async show() : Promise<void>
+	{
+		if (await this.fireShow())
+			this.showMenu();
+	}
+
+	private async showMenu() : Promise<void>
 	{
 		this.tabidx$ = 0;
 		this.active$ = null;
@@ -136,17 +149,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 	}
 
-	public async hide() : Promise<void>
+	public async close() : Promise<void>
+	{
+		if (await this.fireClose())
+			this.closeMenu();
+	}
+
+	private async closeMenu() : Promise<void>
 	{
 		if (this.open$.size == 0) return;
 		this.target$.innerHTML = "";
 		this.open$.clear();
-		this.show();
-	}
-
-	public clear() : void
-	{
-		this.hide();
+		await this.showMenu();
 	}
 
 	public async toggle(path:string) : Promise<void>
@@ -176,7 +190,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			else	     this.open$.delete(path);
 		}
 
-		await this.show();
+		await this.showMenu();
 
 		this.active$ = active;
 		this.focus();
@@ -302,7 +316,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		if (!(event.target instanceof HTMLElement))
 		{
-			this.hide();
+			if (await this.fireClose())
+				await this.closeMenu();
 			return;
 		}
 
@@ -310,7 +325,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (event.type == "mouseup" && !this.belongs(event.target))
 		{
-			this.hide();
+			this.closeMenu();
 			return;
 		}
 
@@ -360,7 +375,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			{
 				if (await this.menu$.execute(command))
 				{
-					await this.hide();
+					await this.closeMenu();
 					this.active$ = null;
 				}
 			}
@@ -583,6 +598,18 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 
 		return(null);
+	}
+
+	private async fireShow() : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuShow,this);
+		return(FormEvents.raise(frmevent));
+	}
+
+	private async fireClose() : Promise<boolean>
+	{
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuClose,this);
+		return(FormEvents.raise(frmevent));
 	}
 
 	private belongs(elem:HTMLElement) : boolean

@@ -40,6 +40,9 @@ export enum EventType
 	Connect,
 	Disconnect,
 
+	WhenMenuShow,
+	WhenMenuClose,
+
 	onNewForm,
 	OnCloseForm,
 

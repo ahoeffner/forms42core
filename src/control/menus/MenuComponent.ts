@@ -460,6 +460,19 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		let path:string = elem.getAttribute("path");
 		let command:boolean = elem.getAttribute("command") != null;
 		let disabled:boolean = elem.getAttribute("disabled") != null;
+		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.parent;
+
+		if (parent)
+		{
+			switch(key)
+			{
+				case "ArrowUp" : key = "ArrowLeft"; break;
+				case "ArrowDown" : key = "ArrowRight"; break;
+
+				case "ArrowLeft" : key = "ArrowUp"; break;
+				case "ArrowRight" : key = "ArrowDown"; break;
+			}
+		}
 
 		switch(key)
 		{
@@ -468,7 +481,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 				{
 					await this.toggle(path);
 				}
-				else if (command)
+				else if (command || parent)
 				{
 					elem = this.findPrev(elem);
 

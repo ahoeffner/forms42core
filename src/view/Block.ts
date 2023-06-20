@@ -481,6 +481,9 @@ export class Block
 
 	public async validateField(inst:FieldInstance, value?:any) : Promise<boolean>
 	{
+		if (this.model.getValue(inst.name) == inst.getValue())
+			return(true);
+
 		await this.setEventTransaction(EventType.WhenValidateField);
 		let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 		this.endEventTransaction(EventType.WhenValidateField,success);

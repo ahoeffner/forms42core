@@ -80,7 +80,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public focus() : void
 	{
-		this.entries$.get(this.active$)?.element.focus();
+		this.setFocus(this.entries$.get(this.active$)?.element);
 	}
 
 	public hasOpenBranches() : boolean
@@ -407,6 +407,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private async navigate(elem:HTMLElement, key:string) : Promise<boolean>
 	{
+		elem = this.getElement(elem);
+		if (elem == null) return(null);
+
 		// Probaby everything closed
 		if (this.options$.navigation == null)
 			return(this.navigateV(elem,key));
@@ -433,7 +436,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				if (elem)
 				{
-					elem.focus();
+					this.setFocus(elem);
 					this.active$ = elem.tabIndex;
 				}
 
@@ -444,7 +447,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				if (elem)
 				{
-					elem.focus();
+					this.setFocus(elem);
 					this.active$ = elem.tabIndex;
 				}
 
@@ -464,7 +467,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 					if (elem)
 					{
-						elem.focus();
+						this.setFocus(elem);
 						this.active$ = elem.tabIndex;
 					}
 				}
@@ -521,7 +524,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 					if (elem)
 					{
-						elem.focus();
+						this.setFocus(elem);
 						this.active$ = elem.tabIndex;
 					}
 				}
@@ -536,7 +539,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				if (elem)
 				{
-					elem.focus();
+					this.setFocus(elem);
 					this.active$ = elem.tabIndex;
 				}
 
@@ -547,7 +550,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				if (elem)
 				{
-					elem.focus();
+					this.setFocus(elem);
 					this.active$ = elem.tabIndex;
 				}
 
@@ -558,7 +561,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 				if (elem)
 				{
-					elem.focus();
+					this.setFocus(elem);
 					this.active$ = elem.tabIndex;
 				}
 
@@ -642,6 +645,27 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private belongs(elem:HTMLElement) : boolean
 	{
 		return(this.elements$.has(elem));
+	}
+
+	private setFocus(elem:HTMLElement) : void
+	{
+		this.getElement(elem).focus();
+	}
+
+	private getElement(elem:HTMLElement) : HTMLAnchorElement
+	{
+		if (elem instanceof HTMLAnchorElement)
+			return(elem);
+
+		for (let i = 0; i < elem.children.length; i++)
+		{
+			let achor:Element = elem.children.item(i);
+
+			if (achor instanceof HTMLAnchorElement)
+				return(achor);
+		}
+
+		return(null);
 	}
 
 	private index(elem:HTMLElement) : void

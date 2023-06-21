@@ -182,21 +182,21 @@ export class QueryEditor extends Form
 		{
 			this.hideAll();
 			this.showRange();
-			this.options.goField("value1");
+			setTimeout(() => {this.options.goField("value1")},1);
 		}
 
 		if (this.type == "..")
 		{
 			this.hideAll();
 			this.showMulti();
-			this.values.goField("value");
+			setTimeout(() => {this.values.goField("value")},1);
 		}
 
 		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
 			this.showSingle();
-			this.options.goField("value");
+			setTimeout(() => {this.options.goField("value")},1);
 		}
 
 		return(true);

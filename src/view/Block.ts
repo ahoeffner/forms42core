@@ -115,6 +115,17 @@ export class Block
 
 	public async focus(ignore?:boolean) : Promise<boolean>
 	{
+		if (this.form.block != this)
+		{
+			if (!await this.form.current.field.validate(this.form.current))
+				return(false);
+
+			if (!await this.form.leave(this.form.current))
+				return(false);
+
+			this.form.current.blur(true);
+		}
+
 		if (this.curinst$)
 		{
 			this.curinst$.focus(ignore);
@@ -140,17 +151,6 @@ export class Block
 					console.log("No available fields in "+this.name+" in state "+RecordState[state]);
 
 				return(false);
-			}
-
-			if (this.curinst$)
-			{
-				if (!await this.curinst$.field.validate(this.current))
-					return(false);
-
-				if (!await this.form.leave(this.curinst$))
-					return(false);
-
-				this.curinst$.blur(true);
 			}
 
 			if (!await this.form.enter(inst))
@@ -206,6 +206,19 @@ export class Block
 
 			return(false);
 		}
+
+		if (this.form.block != this)
+		{
+			if (!await this.form.current.field.validate(this.form.current))
+				return(false);
+
+			if (!await this.form.leave(this.form.current))
+				return(false);
+
+			this.form.current.blur(true);
+		}
+
+		else
 
 		if (this.curinst$)
 		{

@@ -49,6 +49,7 @@ export class QueryEditor extends Form
 		this.moveable = true;
 		this.resizable = true;
 
+		this.addEventListener(this.test);
 		this.addEventListener(this.initialize,{type: EventType.PostViewInit});
 
 		this.addEventListener(this.navigate,
@@ -62,6 +63,12 @@ export class QueryEditor extends Form
 			{type: EventType.Key, key: KeyMap.prevrecord},
 			{type: EventType.Key, key: KeyMap.nextrecord},
 		]);
+	}
+
+	private async test(event:FormEvent) : Promise<boolean>
+	{
+		console.log(EventType[event.type])
+		return(true);
 	}
 
 	private async skip() : Promise<boolean>

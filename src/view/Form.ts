@@ -200,7 +200,7 @@ export class Form implements EventListenerObject
 		let elem:HTMLElement = null;
 
 		if (this.curinst$) elem = this.curinst$.element;
-		else if (this.blocks$.size > 0) elem = this.blocks$.values().next().value.current.element;
+		else if (this.blocks$.size > 0) elem = this.blocks$.values().next().value.current?.element;
 
 		if (!elem) return(false);
 		elem.focus();

@@ -207,15 +207,15 @@ export class Block
 			return(false);
 		}
 
-		if (this.current)
+		if (this.curinst$)
 		{
-			if (!await this.current.field.validate(this.current))
+			if (!await this.curinst$.field.validate(this.curinst$))
 				return(false);
 
-			if (!await this.form.leave(this.current))
+			if (!await this.form.leave(this.curinst$))
 				return(false);
 
-			this.current.blur(true);
+			this.curinst$.blur(true);
 		}
 
 		if (!await this.form.enter(inst))

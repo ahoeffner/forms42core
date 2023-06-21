@@ -21,12 +21,15 @@
 
 import { KeyMap } from "./KeyMap.js";
 import { MouseMap } from "./MouseMap.js";
+import { MenuEvent } from "./MenuEvent.js";
 import { Form } from "../../public/Form.js";
+import { CustomEvent } from "./CustomEvent.js";
 import { EventFilter } from "./EventFilter.js";
 import { Alert } from "../../application/Alert.js";
 import { EventListener } from "./EventListener.js";
 import { EventGroup, EventType } from "./EventType.js";
 import { FormEvent as Interface } from "./FormEvent.js";
+import { MenuComponent } from "../menus/MenuComponent.js";
 import { Framework } from "../../application/Framework.js";
 import { Logger, Type } from "../../application/Logger.js";
 import { ApplicationHandler } from "./ApplicationHandler.js";
@@ -38,7 +41,7 @@ export class KeyEventSource
 	constructor(public key:KeyMap, public field:string, public block:string, public record:number, public form:Form) {}
 }
 
-export class FormEvent implements Interface
+export class FormEvent implements Interface, MenuEvent, CustomEvent
 {
 	public static AppEvent(type:EventType, source?:any) : FormEvent
 	{
@@ -125,9 +128,14 @@ export class FormEvent implements Interface
 		return(null);
 	}
 
+	public get menu() : MenuComponent
+	{
+		return(this.source$ as MenuComponent);
+	}
+
 	public get source() : any
 	{
-		return(this.source);
+		return(this.source$);
 	}
 
 	public get mouse() : MouseMap

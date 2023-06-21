@@ -51,8 +51,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.options$ = options;
 		if (options == null) this.options$ = {};
 
-		document.addEventListener("focus",this);
-		document.addEventListener("mouseup",this);
+		document.addEventListener("focus",this,true);
+		document.addEventListener("mouseup",this,true);
 
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
@@ -88,10 +88,10 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		return(this.open$.size > 0);
 	}
 
-	public async show() : Promise<void>
+	public async show() : Promise<boolean>
 	{
-		if (await this.fireFocus())
-			this.showMenu();
+		await this.showMenu();
+		return(true);
 	}
 
 	private async showMenu() : Promise<void>
@@ -151,10 +151,11 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 	}
 
-	public async hide() : Promise<void>
+	public async hide() : Promise<boolean>
 	{
 		this.target$.innerHTML = "";
 		this.open$.clear();
+		return(true);
 	}
 
 	public async close() : Promise<void>
@@ -395,10 +396,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			else
 			{
 				if (await this.menu$.execute(command))
-				{
 					await this.closeMenu();
-					this.active$ = null;
-				}
 			}
 
 			return(true);
@@ -626,7 +624,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (!this.focused)
 			return(true);
 
-		console.log("blur")
 		this.focused = !this.focused;
 		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuBlur,this);
 		return(FormEvents.raise(frmevent));
@@ -637,7 +634,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.focused)
 			return(true);
 
-		console.log("focus")
 		this.focused = !this.focused;
 		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuFocus,this);
 		return(FormEvents.raise(frmevent));

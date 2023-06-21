@@ -33,6 +33,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private name$:string = null;
 	private tabidx$:number = 1;
 	private active$:number = null;
+	private focused:boolean = false;
 	private target$:HTMLElement = null;
 	private options$:MenuOptions = null;
 	private open$:Set<string> = new Set<string>();
@@ -50,6 +51,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.options$ = options;
 		if (options == null) this.options$ = {};
 
+		document.addEventListener("focus",this);
 		document.addEventListener("mouseup",this);
 
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
@@ -88,7 +90,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async show() : Promise<void>
 	{
-		if (await this.fireShow())
+		if (await this.fireFocus())
 			this.showMenu();
 	}
 
@@ -149,10 +151,15 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		}
 	}
 
+	public async hide() : Promise<void>
+	{
+		this.target$.innerHTML = "";
+		this.open$.clear();
+	}
+
 	public async close() : Promise<void>
 	{
-		if (await this.fireClose())
-			this.closeMenu();
+		this.closeMenu();
 	}
 
 	private async closeMenu() : Promise<void>
@@ -316,8 +323,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		if (!(event.target instanceof HTMLElement))
 		{
-			if (await this.fireClose())
-				await this.closeMenu();
+			await this.fireBlur();
+			await this.closeMenu();
 			return;
 		}
 
@@ -325,17 +332,31 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (event.type == "mouseup" && !this.belongs(event.target))
 		{
-			this.closeMenu();
+			await this.fireBlur();
+			await this.closeMenu();
 			return;
 		}
 
 		if (event.type == "focus")
+		{
+			if (!this.belongs(event.target))
+			{
+				await this.fireBlur();
+				await this.closeMenu();
+				return;
+			}
+
+			this.fireFocus();
 			this.active$ = event.target.tabIndex;
+		}
 
 		if (event.type == "keyup")
 		{
-			if (await this.navigate(elem,(event as KeyboardEvent).key))
+			if (this.belongs(event.target))
+			{
+				if (await this.navigate(elem,(event as KeyboardEvent).key))
 				return;
+			}
 		}
 
 		if (event.type != "click")
@@ -600,15 +621,25 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		return(null);
 	}
 
-	private async fireShow() : Promise<boolean>
+	private async fireBlur() : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuShow,this);
+		if (!this.focused)
+			return(true);
+
+		console.log("blur")
+		this.focused = !this.focused;
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuBlur,this);
 		return(FormEvents.raise(frmevent));
 	}
 
-	private async fireClose() : Promise<boolean>
+	private async fireFocus() : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuClose,this);
+		if (this.focused)
+			return(true);
+
+		console.log("focus")
+		this.focused = !this.focused;
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuFocus,this);
 		return(FormEvents.raise(frmevent));
 	}
 

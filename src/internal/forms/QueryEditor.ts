@@ -175,21 +175,21 @@ export class QueryEditor extends Form
 		{
 			this.hideAll();
 			this.showRange();
-			setTimeout(() => {this.options.goField("value1")},1);
+			this.options.goField("value1");
 		}
 
 		if (this.type == "..")
 		{
 			this.hideAll();
 			this.showMulti();
-			setTimeout(() => {this.values.goField("value")},1);
+			this.values.goField("value");
 		}
 
 		if (this.type == "<" || this.type == ">")
 		{
 			this.hideAll();
 			this.showSingle();
-			setTimeout(() => {this.options.goField("value")},1);
+			this.options.goField("value");
 		}
 
 		return(true);
@@ -291,7 +291,7 @@ export class QueryEditor extends Form
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insert, block: "values"});
 		this.addEventListener(this.insert,{type: EventType.Key, key: KeyMap.insertAbove, block: "values"});
 
-		this.addEventListener(this.setType,{type: EventType.WhenValidateField, block: "options", field: "options"});
+		this.addEventListener(this.setType,{type: EventType.PostChange, block: "options", field: "options"});
 
 		if (value != null)
 		{

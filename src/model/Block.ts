@@ -383,6 +383,9 @@ export class Block
 			else success = await this.form.queryFieldDetails(this.name,field);
 		}
 
+		if (success)
+			success = await this.fire(EventType.PostChange,field);
+
 		return(success);
 	}
 

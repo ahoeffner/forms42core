@@ -63,6 +63,7 @@ export enum EventType
 
 	PreField,
 	PostField,
+	PostChange,
 
 	OnEdit,
 	WhenValidateField,

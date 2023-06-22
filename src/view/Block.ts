@@ -513,6 +513,9 @@ export class Block
 			}
 		}
 
+		if (success)
+			success = await this.fireFieldEvent(EventType.PostChange,inst);
+
 		return(success);
 	}
 

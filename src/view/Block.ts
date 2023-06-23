@@ -115,7 +115,7 @@ export class Block
 
 	public async focus(ignore?:boolean) : Promise<boolean>
 	{
-		if (this.form.block != this)
+		if (this.form.block != this && this.form.current)
 		{
 			if (!await this.form.current.field.validate(this.form.current))
 				return(false);
@@ -207,7 +207,7 @@ export class Block
 			return(false);
 		}
 
-		if (this.form.block != this)
+		if (this.form.block != this && this.form.current)
 		{
 			if (!await this.form.current.field.validate(this.form.current))
 				return(false);

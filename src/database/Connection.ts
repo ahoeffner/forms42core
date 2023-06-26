@@ -640,7 +640,17 @@ export class Connection extends BaseConnection
 			return;
 		}
 
+		let conn:string = this.conn$;
 		let response:any = await this.post(this.conn$+"/ping",{keepalive: true});
+
+		if (this.conn$ != conn)
+		{
+			this.touched$ = null;
+			this.modified$ = null;
+			this.tmowarn$ = false;
+			this.keepalive();
+			return;
+		}
 
 		if (!response.success)
 		{

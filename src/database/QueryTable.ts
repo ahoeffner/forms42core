@@ -93,6 +93,8 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 		if (this.cursor$ && !this.cursor$.eof)
 			this.conn$.close(this.cursor$);
+
+		this.cursor$ = null;
 	}
 
 	public clone() : QueryTable

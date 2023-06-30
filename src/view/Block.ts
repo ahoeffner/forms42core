@@ -616,7 +616,46 @@ export class Block
 
 	public async goRow(row:number) : Promise<boolean>
 	{
-		return(true);
+		if (row > this.rows)
+			return(false);
+
+		if (this.getRow(row).status == Status.na)
+			return(false);
+
+		if (this.form.block != this && this.form.current)
+		{
+			if (!await this.form.validate())
+				return(false);
+
+			if (!await this.form.leave(this.form.current))
+				return(false);
+
+			this.form.current.blur(true);
+		}
+
+		else
+
+		if (this.curinst$)
+		{
+			if (!await this.getCurrentRow().validate())
+				return(false);
+
+			if (!await this.form.leave(this.curinst$))
+				return(false);
+
+			this.curinst$.blur(true);
+		}
+
+		let idx:number = this.getCurrentRow().getFieldIndex(this.current);
+		let inst:FieldInstance = this.getRow(row)?.getFieldByIndex(idx);
+
+		if (inst)
+		{
+			inst.focus();
+			return(true);
+		}
+
+		return(false);
 	}
 
 	public async prevrecord() : Promise<boolean>

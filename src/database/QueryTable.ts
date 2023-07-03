@@ -259,7 +259,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		if (!this.conn$.connected())
 		{
-			Alert.warning("Not connected","Database Connection");
+			Alert.fatal("Not connected","Database Connection");
 			return(false);
 		}
 

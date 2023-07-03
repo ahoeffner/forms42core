@@ -524,9 +524,6 @@ export class Form
 		{
 			blocks[i].view.clear(true,true,true);
 
-			if (!await blocks[i].preQuery())
-				return(false);
-
 			if (!await blocks[i].setDetailDependencies())
 				return(false);
 

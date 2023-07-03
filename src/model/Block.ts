@@ -649,6 +649,9 @@ export class Block
 		let runid:object = null;
 		this.view.current = null;
 
+		if (!await this.preQuery())
+			return(false);
+
 		if (!this.setMasterDependencies())
 		{
 			this.form.clearBlock(this);

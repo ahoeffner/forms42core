@@ -43,6 +43,7 @@ export class Form
 {
 	private block$:Block = null;
 	private viewfrm$:ViewForm = null;
+	private finalized$:boolean = false;
 	private parent$:InterfaceForm = null;
 	private datamodel$:DataModel = new DataModel();
 	private qrymgr$:QueryManager = new QueryManager();
@@ -97,6 +98,11 @@ export class Form
 		}
 
 		return(false);
+	}
+
+	public get finalized() : boolean
+	{
+		return(this.finalized$);
 	}
 
 	public get QueryManager() : QueryManager
@@ -327,6 +333,7 @@ export class Form
 		{block.addColumns(this.BlockCoordinator.getLinkedColumns(block))});
 
 		await this.initControlBlocks();
+		this.finalized$ = true;
 	}
 
 	public getQueryMaster() : Block

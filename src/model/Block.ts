@@ -995,7 +995,7 @@ export class Block
 		if (this.view.empty())
 			return(true);
 
-		if (this.ctrlblk && !this.form.finalized)
+		if (!this.form.finalized)
 			return(true);
 
 		let qryid:object = this.getQueryID();

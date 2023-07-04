@@ -475,7 +475,6 @@ export class Form
 	{
 		let blk:Block = this.getBlock(block);
 		let newid:object = this.QueryManager.startNewChain();
-
 		let blocks:Block[] = this.blkcord$.getDetailBlocksForField(blk,field);
 
 		for (let i = 0; i < blocks.length; i++)

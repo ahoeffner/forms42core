@@ -171,7 +171,7 @@ export class Form
 			if (!dirty[i].ctrlblk)
 			{
 				if (!dirty[i].queried) await dirty[i].clear(false);
-				else await dirty[i].executeQuery(dirty[i].startNewQueryChain());
+				else 						  await this.executeQuery(dirty[i],true);
 			}
 		}
 
@@ -476,8 +476,26 @@ export class Form
 		let blk:Block = this.getBlock(block);
 		let newid:object = this.QueryManager.startNewChain();
 
-		this.blkcord$.getDetailBlocksForField(blk,field).
-		forEach((detail) => {detail.executeQuery(newid)})
+		let blocks:Block[] = this.blkcord$.getDetailBlocksForField(blk,field);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			blocks[i].view.clear(true,true,true);
+
+			if (!await blocks[i].preQuery())
+				return(false);
+
+			if (!await blocks[i].setDetailDependencies())
+				return(false);
+
+			blocks[i].executeQuery(newid);
+
+			let filters:boolean = false;
+			if (!blocks[i].QueryFilter.empty) filters = true;
+			if (!blocks[i].DetailFilter.empty) filters = true;
+
+			this.view.setFilterIndicator(blocks[i],filters);
+		}
 
 		return(true)
 	}
@@ -523,6 +541,9 @@ export class Form
 		for (let i = 0; i < blocks.length; i++)
 		{
 			blocks[i].view.clear(true,true,true);
+
+			if (!await blocks[i].preQuery())
+				return(false);
 
 			if (!await blocks[i].setDetailDependencies())
 				return(false);

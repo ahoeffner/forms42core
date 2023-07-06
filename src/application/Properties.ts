@@ -28,7 +28,6 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
 import { Tag } from './tags/Tag.js';
-import { Root } from './tags/Root.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
 import { RowIndicator } from './tags/RowIndicator.js';
@@ -58,7 +57,6 @@ export class Properties
 	public static BindAttr:string = "from";
 	public static RecordModeAttr:string = "mode";
 
-	public static RootTag:string = "forms";
 	public static IncludeTag:string = "include";
 	public static ForeachTag:string = "foreach";
 
@@ -88,7 +86,6 @@ export class Properties
 	new Map<string,Class<Tag>>
 	(
 			[
-				[Properties.RootTag,Root],
 				[Properties.IncludeTag,Include]
 			]
 	);

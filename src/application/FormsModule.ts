@@ -109,11 +109,7 @@ export class FormsModule
 	public parse(doc?:Element) : void
 	{
 		if (doc == null) doc = document.body;
-		let frmwrk:Framework = Framework.parse(this,doc);
-
-		let root:HTMLElement = frmwrk.getRoot();
-		if (this.root$ == null) this.root$ = root;
-		if (this.root$ == null) this.root$ = document.body;
+		Framework.parse(this,doc);
 	}
 
 	public updateKeyMap(map:Class<KeyMap>) : void

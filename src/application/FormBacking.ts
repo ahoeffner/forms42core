@@ -47,6 +47,9 @@ export class FormBacking
 	private static prev:Form = null;
 	private static form:Form = null;
 
+	private static nonav:Set<string> =
+		new Set<string>();
+
 	private static vforms:Map<Form,ViewForm> =
 		new Map<Form,ViewForm>();
 
@@ -204,6 +207,19 @@ export class FormBacking
 		FormBacking.cleanup(form);
 		FormBacking.bdata.delete(form);
 		if (form == FormBacking.form) FormBacking.form = null;
+	}
+
+	public static setURLNavigable(name:string, nav:boolean) : void
+	{
+		name = name?.toLowerCase();
+		if (!nav) 	this.nonav.add(name);
+		else 			this.nonav.delete(name);
+	}
+
+	public static getURLNavigable(name:string) : boolean
+	{
+		name = name?.toLowerCase();
+		return(!this.nonav.has(name));
 	}
 
 	public static cleanup(form:Form) : void

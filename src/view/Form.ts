@@ -468,7 +468,7 @@ export class Form implements EventListenerObject
 		if (!await this.setEventTransaction(EventType.PreForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		this.model.endEventTransaction(EventType.PreForm,null,success);
-		if (success && form.parent.navigable) this.setURL();
+		if (success && FormsModule.get().showurl) this.setURL();
 		return(success);
 	}
 
@@ -1158,7 +1158,7 @@ export class Form implements EventListenerObject
 
 		let map:string = FormsModule.getFormPath(this.parent.name);
 
-		if (map != null && this.parent.navigable)
+		if (map != null && FormsModule.get().showurl)
 		{
 			params.set("form",map)
 			window.history.replaceState('','',path+"?"+params);

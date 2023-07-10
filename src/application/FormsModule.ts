@@ -40,6 +40,7 @@ import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 export class FormsModule
 {
 	private root$:HTMLElement;
+	private showurl$:boolean = true;
 	private static instance:FormsModule;
 
 	public static get() : FormsModule
@@ -62,14 +63,30 @@ export class FormsModule
 		FormsModule.instance = this;
 	}
 
+	public get showurl() : boolean
+	{
+		return(this.showurl$);
+	}
+
+	public set showurl(flag:boolean)
+	{
+		this.showurl$ = flag;
+	}
+
 	public getRootElement() : HTMLElement
 	{
+		if (!this.root$) return(document.body);
 		return(this.root$);
 	}
 
 	public setRootElement(root:HTMLElement) : void
 	{
 		this.root$ = root;
+	}
+
+	public setURLNavigable(name:string, nav:boolean) : void
+	{
+		FormBacking.setURLNavigable(name,nav);
 	}
 
 	public getJSEvent() : any
@@ -127,12 +144,16 @@ export class FormsModule
 			let form:string = params.get("form");
 			let clazz:Class<any> = this.getComponent(form);
 
+			if (!FormBacking.getURLNavigable(form))
+				return(false);
+
 			if (clazz != null && clazz.prototype instanceof Form)
 			{
 				this.showform(clazz);
 				return(true);
 			}
 		}
+
 		return(false);
 	}
 

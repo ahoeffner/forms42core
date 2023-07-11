@@ -171,7 +171,7 @@ export class Form
 			if (!dirty[i].ctrlblk)
 			{
 				if (!dirty[i].queried) await dirty[i].clear(false);
-				else 						  await this.executeQuery(dirty[i],true);
+				else 						  await this.executeQuery(dirty[i],true,false);
 			}
 		}
 
@@ -478,7 +478,7 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			this.executeQuery(blocks[i],true);
+			this.executeQuery(blocks[i],true,false);
 
 			let filters:boolean = false;
 			if (!blocks[i].QueryFilter.empty) filters = true;
@@ -490,7 +490,7 @@ export class Form
 		return(true)
 	}
 
-	public async executeQuery(block:Block|string, keep?:boolean) : Promise<boolean>
+	public async executeQuery(block:Block|string, keep:boolean, flush:boolean) : Promise<boolean>
 	{
 		if (typeof block === "string")
 			block = this.getBlock(block);
@@ -510,7 +510,8 @@ export class Form
 				return(false);
 		}
 
-		await this.flush();
+		if (flush)
+			await this.flush();
 
 		if (block.querymode)
 		{

@@ -729,7 +729,7 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.executequery)
 			{
 				inst.blur(true);
-				success = await this.model.executeQuery(inst.field.block.model);
+				success = await this.model.executeQuery(inst.field.block.model,false,true);
 				inst.focus(true);
 
 				inst.ignore = "blur";

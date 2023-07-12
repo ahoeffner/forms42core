@@ -28,10 +28,12 @@ import { EventFilter } from '../../control/events/EventFilter.js';
 import { EventListenerClass } from '../../control/events/EventListenerClass.js';
 
 
-export const formevent = (filter:EventFilter|EventFilter[]) =>
+export const formevent = (filter?:EventFilter|EventFilter[]) =>
 {
 	function define(lsnr:any, method:string)
 	{
+		if (!filter) filter = {};
+		
 		if (lsnr instanceof Form)
 		{
 			FormMetaData.get(lsnr,true).formevents.set(method,filter);

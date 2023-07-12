@@ -21,6 +21,7 @@
 
 /**
 	Form triggers fire in context of a form and block.
+	Triggers fires first at field level, then block and form level.
 
 	Two or more form triggers cannot run simultaneously in that context.
 	E.G. you cannot delete a row while navigating in the same block.

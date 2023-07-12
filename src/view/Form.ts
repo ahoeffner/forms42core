@@ -722,18 +722,25 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.enterquery)
 			{
 				if (qmode) return(true);
+
+				if (!inst.field.block.model.queryallowed)
+					return(false);
+
 				success = await this.model.enterQuery(inst.field.block.model);
 				return(success);
 			}
 
 			if (key == KeyMap.executequery)
 			{
-				inst.blur(true);
-				success = await this.model.executeQuery(inst.field.block.model,false,true);
-				inst.focus(true);
+				if (inst.field.block.model.queryallowed)
+				{
+					inst.blur(true);
 
-				inst.ignore = "blur";
-				return(success);
+					success = await this.model.executeQuery(inst.field.block.model,false,true);
+					inst.focus(true);
+
+					return(success);
+				}
 			}
 
 			if (key == KeyMap.queryeditor)

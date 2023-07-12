@@ -369,9 +369,6 @@ export class Form
 		if (block.querymode)
 			return(true);
 
-		if (!block.queryallowed)
-			return(false);
-
 		this.QueryManager.stopAllQueries();
 
 		while(this.QueryManager.hasRunning())
@@ -499,9 +496,6 @@ export class Form
 			return(false);
 
 		if (block.ctrlblk)
-			return(false);
-
-		if (!block.queryallowed)
 			return(false);
 
 		if (!block.view.validated)

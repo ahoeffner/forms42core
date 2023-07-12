@@ -628,7 +628,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			return(true);
 
 		this.focused = !this.focused;
-		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuBlur,this);
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuBlur,this);
 		return(FormEvents.raise(frmevent));
 	}
 
@@ -638,7 +638,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			return(true);
 
 		this.focused = !this.focused;
-		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuFocus,this);
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuFocus,this);
 		return(FormEvents.raise(frmevent));
 	}
 

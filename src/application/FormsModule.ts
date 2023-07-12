@@ -219,7 +219,7 @@ export class FormsModule
 
 	public async raiseCustomEvent(source:any) : Promise<boolean>
 	{
-		let frmevent:FormEvent = FormEvent.AppEvent(EventType.OnMenuBlur,source);
+		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuBlur,source);
 		return(FormEvents.raise(frmevent));
 	}
 

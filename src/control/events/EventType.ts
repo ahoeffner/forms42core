@@ -19,9 +19,25 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/*
-	OBS !!
-	Pre- On- and When- cannot start new transaction in same block
+/**
+	Form triggers fire in context of a form and block.
+
+	Two or more form triggers cannot run simultaneously in that context.
+	E.G. you cannot delete a row while navigating in the same block.
+
+	A few select triggers are considered safe for further action.
+
+	Triggers that fire before anything else happens in the form I.E. onNewForm and PostViewInit.
+	And PostChange, that fires after everything else when modifying a field.
+
+
+	In general if a trigger returns false, execution stops. On top of this
+
+	On-triggers prevents the event to happen.
+	When-triggers marks the row/field invalid.
+
+
+	Non form triggers like PreCommit is not restricted, but should be used with great care.
 */
 
 export enum EventType
@@ -29,19 +45,22 @@ export enum EventType
 	Key,
 	Mouse,
 
+	WhenMenuBlur,
+	WhenMenuFocus,
+
+	Connect,
+	Disconnect,
+
 	PreCommit,
 	PostCommit,
 
 	PreRollback,
 	PostRollback,
 
+	OnLockRecord,
+	OnRecordLocked,
+
 	OnTransaction,
-
-	Connect,
-	Disconnect,
-
-	OnMenuBlur,
-	OnMenuFocus,
 
 	onNewForm,
 	OnCloseForm,
@@ -81,8 +100,6 @@ export enum EventType
 	PreDelete,
 	PostDelete,
 
-	OnLockRecord,
-	OnRecordLocked,
 	WhenValidateRecord
 }
 

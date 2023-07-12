@@ -93,7 +93,9 @@ export class FormBacking
 
 		let canvas:Canvas = new canvasimpl();
 		let instance:Form = await factory.createForm(form,parameters);
-		await FormEvents.raise(FormEvent.FormEvent(EventType.onNewForm,instance));
+
+		if (!await FormEvents.raise(FormEvent.FormEvent(EventType.onNewForm,instance)))
+			return(null);
 
 		canvas.setComponent(instance);
 		container.appendChild(canvas.getView());
@@ -110,7 +112,6 @@ export class FormBacking
 		}
 
 		FormBacking.setCurrentForm(instance);
-		await mform.wait4EventTransaction(EventType.PostViewInit,null);
 
 		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
 			instance.focus();

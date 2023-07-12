@@ -317,7 +317,12 @@ export class Field
 			this.block.distribute(this,value,this.dirty);
 
 			if (!await this.block.onEdit(inst))
-				inst.setValue(before);
+			{
+				value = before;
+				inst.setValue(value);
+				this.distribute(inst,value,this.dirty);
+				this.block.distribute(this,value,this.dirty);
+			}
 
 			return;
 		}

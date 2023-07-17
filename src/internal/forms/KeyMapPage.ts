@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Class } from "../../types/Class.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 
 
@@ -26,12 +27,12 @@ export class KeyMapPage
 {
 	private static ul:HTMLElement = null;
 
-	public static show() : HTMLElement
+	public static show(map?:Class<any>) : HTMLElement
 	{
 		this.ul = document.createElement("ul");
 		this.ul.classList.add("InformationKeyMap");
 
-		KeyMap.list().forEach(([name,desc]) =>
+		KeyMap.list(map).forEach(([name,desc]) =>
 		{
 			let li:HTMLElement = document.createElement("li");
 			li.innerHTML = "<label class='name'>" + name + "</label><label class='desc'>" + desc + "</label>";

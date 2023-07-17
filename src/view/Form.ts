@@ -645,6 +645,12 @@ export class Form implements EventListenerObject
 			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
+		if (key.key == "enter" && key.shift)
+		{
+			if (inst?.field.row.status == Status.insert)
+				key = KeyMap.insert;
+		}
+
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
 
 		if (!await FormEvents.raise(frmevent))

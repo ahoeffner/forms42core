@@ -627,6 +627,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (!this.focused)
 			return(true);
 
+		this.removeFocus();
 		this.focused = !this.focused;
 		let frmevent:FormEvent = FormEvent.AppEvent(EventType.WhenMenuBlur,this);
 		return(FormEvents.raise(frmevent));
@@ -649,7 +650,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private setFocus(elem:HTMLElement) : void
 	{
+		this.removeFocus();
 		this.getElement(elem).focus();
+		elem.parentElement.classList.add("focus");
+	}
+
+	private removeFocus() : void
+	{
+		this.entries$.get(this.active$)?.element.parentElement.classList.remove("focus");
 	}
 
 	private getElement(elem:HTMLElement) : HTMLAnchorElement

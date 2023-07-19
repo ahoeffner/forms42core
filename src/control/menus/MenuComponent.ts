@@ -41,7 +41,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private menuentries$:Map<MenuEntry,Entry> = new Map<MenuEntry,Entry>();
 	private elements$:Map<HTMLElement,Entry> = new Map<HTMLElement,Entry>();
 
-	constructor(name:string, menu:Menu, target?:HTMLElement, options?:MenuOptions)
+	constructor(name:string, menu:Menu, options?:MenuOptions, target?:HTMLElement)
 	{
 		super();
 
@@ -54,6 +54,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		document.addEventListener("focus",this,true);
 		document.addEventListener("mouseup",this,true);
 
+		if (this.options$.openroot == null) this.options$.openroot = false;
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
 		if (this.options$.singlepath == null) this.options$.singlepath = true;
 	}
@@ -66,6 +67,15 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	public get options() : MenuOptions
 	{
 		return(this.options$);
+	}
+
+	public set options(options:MenuOptions)
+	{
+		this.options$ = options;
+		if (this.options$ == null) this.options$ = {};
+		if (this.options$.openroot == null) this.options$.openroot = false;
+		if (this.options$.skiproot == null) this.options$.skiproot = false;
+		if (this.options$.singlepath == null) this.options$.singlepath = true;
 	}
 
 	public get target() : HTMLElement
@@ -107,6 +117,10 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		{
 			path = "/"+start[0].id;
 			start = await this.menu$.getEntries(path);
+		}
+		else if (this.options$.openroot)
+		{
+			this.open$.add("/"+start[0].id);
 		}
 
 		this.target$.innerHTML = await this.showEntry(null,start,0,path);

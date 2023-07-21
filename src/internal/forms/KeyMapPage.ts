@@ -23,6 +23,10 @@ import { Class } from "../../types/Class.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 
 
+/**
+ * Very simple html page that displays keymappings
+ * Mostly acts as an example
+ */
 export class KeyMapPage
 {
 	private static ul:HTMLElement = null;
@@ -39,9 +43,8 @@ export class KeyMapPage
 			this.ul.appendChild(li);
 		});
 
-		return this.ul;
+		return(this.ul);
 	}
-
 
 	public static hide()
 	{

@@ -36,7 +36,7 @@ import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 
 /**
- * Datasource based on a table/iew using OpenRestDB
+ * Datasource based on a table/view using OpenRestDB
  */
 export class DatabaseTable extends SQLSource implements DataSource
 {
@@ -155,6 +155,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.order$ = order;
 	}
 
+	/** The columns used by this datasource */
 	public get columns() : string[]
 	{
 		return(this.columns$);

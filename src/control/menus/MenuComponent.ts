@@ -632,7 +632,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		let parent:MenuEntry = this.entries$.get(elem.tabIndex)?.curr;
 
-		for (let [key, entry] of this.entries$)
+		for (let [_key, entry] of this.entries$)
 		{
 			if (entry.parent == parent)
 				return(entry.element);

@@ -45,6 +45,7 @@ export enum EventType
 {
 	Key,
 	Mouse,
+	Custom,
 
 	WhenMenuBlur,
 	WhenMenuFocus,

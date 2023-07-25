@@ -26,6 +26,10 @@ import { FormsModule } from '../FormsModule.js';
 import { FormBacking } from '../FormBacking.js';
 
 
+/**
+ * The basic class for components
+ * like Forms
+ */
 export interface Component
 {
 	path:string;
@@ -38,6 +42,15 @@ function isComponent(object: any) : object is Component
 	return('path' in object && 'class' in object);
 }
 
+/**
+ *
+ * @param components : A list of components and their mapping
+ *
+ * HTML is pure text and often FutureForms needs to know how to translate
+ * a given path/name into a class. This is done by injecting the class and
+ * a path/name into the FutureForms engine.
+ *
+ */
 export const FormsPathMapping = (components:(Class<any> | Component)[]) =>
 {
 	function define(_comp_:Class<FormsModule>)

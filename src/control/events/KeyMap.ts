@@ -23,6 +23,11 @@ import { KeyCodes } from "./KeyCodes.js";
 import { Class } from "../../types/Class.js";
 import { BrowserEvent } from "./BrowserEvent.js";
 
+
+/**
+ * Map over key events
+ * Can be overridden by application
+ */
 export class KeyMap
 {
 	public static copy:KeyMap = new KeyMap({key: 'c', ctrl: true});
@@ -220,6 +225,9 @@ export class KeyMap
 	}
 }
 
+/**
+ * Data describing a key event
+ */
 export interface KeyDefinition
 {
 	key:string;

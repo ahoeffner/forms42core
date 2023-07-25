@@ -27,6 +27,11 @@ import { EventListenerClass } from '../events/EventListenerClass.js';
 import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
 
 
+/**
+ * The MenuComponent does all the work, it only needs
+ * a Menu implementation and a target element to which
+ * the html should be appended to
+ */
 export class MenuComponent extends EventListenerClass implements EventListenerObject
 {
 	private menu$:Menu = null;

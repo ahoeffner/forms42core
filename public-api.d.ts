@@ -5,9 +5,9 @@ export { Key } from './src/model/relations/Key.js';
 export { Alert } from './src/application/Alert.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
-export { FieldProperties } from './src/public/FieldProperties.js';
 export { QueryTable } from './src/database/QueryTable.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { FieldProperties } from './src/public/FieldProperties.js';
 export { ConnectionScope } from './src/database/ConnectionScope.js';
 export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 

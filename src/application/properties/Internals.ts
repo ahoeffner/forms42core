@@ -19,6 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+/**
+ * Some styling of the popup windows is necessary but made public through this class.
+ * It is also possible for expert users to replace all popup classes completely if needed.
+ */
 export class Internals
 {
 	public static header:string =

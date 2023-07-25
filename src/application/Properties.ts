@@ -47,6 +47,11 @@ export interface ClassNames
 	FilterIndicator:string;
 }
 
+/**
+ * These are global properties used in different parts of the code.
+ * If, for some reason, the tags, style classes etc conflicts with other usage,
+ * anything can be changed.
+ */
 export class Properties
 {
 	public static baseurl:string = "/";

@@ -30,7 +30,7 @@ export class Internals
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
 				<span name="title"></span>
-				<div name="close-button" onclick="this.close(true)">x</div>
+				<div name="close-button" onclick="this.close(true)">&#215;</div>
 			</div>
 		</div>
 	`;
@@ -99,12 +99,11 @@ export class Internals
 		right: 0px;
 		width: 20px;
 		height: 20px;
-		display: grid;
+		display: flex;
+		font-size:20px;
 		cursor: default;
-		text-align:right;
-		font-weight: bold;
-		text-align:center;
 		position: absolute;
+		justify-content: center;
 	`;
 
 	public static LoaderStyle:string =
@@ -173,7 +172,7 @@ export class Internals
 		if (width)
 		{
 			view.style.width = width + "px";
-			view.style.minWidth = (width / 1.5 ) + "px";
+			view.style.minWidth = (width / 6 * 5) + "px";
 		}
 
 		if (height)

@@ -77,8 +77,8 @@ export { EventListenerClass as EventListener } from './src/control/events/EventL
 
 export { Class } from './src/types/Class.js';
 export { FormsModule } from './src/application/FormsModule.js';
+export { HTMLFragment } from './src/application/HTMLFragment.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';
-export { HTMLFragment as Include } from './src/application/HTMLFragment.js';
 export { ComponentFactory } from './src/application/interfaces/ComponentFactory.js';
 export { Component, FormsPathMapping } from './src/application/annotations/FormsPathMapping.js';
 

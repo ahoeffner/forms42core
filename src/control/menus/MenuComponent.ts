@@ -670,6 +670,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	private setFocus(elem:HTMLElement) : void
 	{
 		this.removeFocus();
+
+		if (!elem) return;
 		this.getElement(elem).focus();
 		elem.parentElement.classList.add("focus");
 	}
@@ -681,6 +683,9 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private getElement(elem:HTMLElement) : HTMLAnchorElement
 	{
+		if (!elem)
+			return(null);
+			
 		if (elem instanceof HTMLAnchorElement)
 			return(elem);
 

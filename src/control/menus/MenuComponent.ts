@@ -193,7 +193,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async toggle(path:string) : Promise<void>
 	{
-		let active:number = this.active$;
 		let open:boolean = this.open$.has(path);
 
 		if (this.options$.singlepath)
@@ -220,7 +219,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		await this.showMenu();
 
-		this.active$ = active;
+		this.active$ = this.paths$.get(path).tabIndex;
 		this.focus();
 	}
 

@@ -96,6 +96,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public focus() : void
 	{
+		console.log(this.entries$.get(this.active$)?.element)
+		console.log(this.belongs(this.entries$.get(this.active$)?.element))
 		this.setFocus(this.entries$.get(this.active$)?.element);
 	}
 
@@ -114,7 +116,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 	{
 		this.tabidx$ = 0;
 		this.active$ = null;
+
+		this.open$.clear();
+		this.paths$.clear();
 		this.entries$.clear();
+		this.elements$.clear();
+		this.menuentries$.clear();
 
 		let path:string = null;
 		let start:MenuEntry[] = [await this.menu$.getRoot()];
@@ -173,8 +180,15 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async hide() : Promise<boolean>
 	{
+		this.active$ = null;
 		this.target$.innerHTML = "";
+
 		this.open$.clear();
+		this.paths$.clear();
+		this.entries$.clear();
+		this.elements$.clear();
+		this.menuentries$.clear();
+
 		return(true);
 	}
 
@@ -697,7 +711,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.removeFocus();
 
 		if (!elem) return;
-		this.getElement(elem).focus();
+		this.getElement(elem)?.focus();
 		elem.parentElement.classList.add("focus");
 	}
 

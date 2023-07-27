@@ -95,7 +95,7 @@ export class Form implements CanvasComponent
 	/** Clears the form. If force, no validation will take place and changes will be ignored */
 	public async clear(force?:boolean) : Promise<boolean>
 	{
-		if (force) FormBacking.getModelForm(this)?.clear()
+		if (force) FormBacking.getModelForm(this)?.clear();
 		return(FormBacking.getViewForm(this)?.clear(!force));
 	}
 

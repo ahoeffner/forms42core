@@ -124,7 +124,19 @@ export class Form implements EventListenerObject
 			return(false);
 
 		this.blocks$.forEach((block) =>
-		{block.clear(true,true,true)})
+		{
+			if (!block.model.ctrlblk)
+			{
+				block.clear(true,true,true);
+			}
+			else
+			{
+				block.model.clear(false);
+
+				for (let i = 0; i < block.rows; i++)
+					block.getRow(i).clear();
+			}
+		})
 
 		return(true);
 	}

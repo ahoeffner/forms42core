@@ -177,6 +177,14 @@ export class Block
 	{
 		this.queried = false;
 
+		if (this.ctrlblk)
+		{
+			for (let i = 0; i < this.wrapper.getRecords(); i++)
+				this.wrapper.getRecord(i).clear();
+
+			return(true);
+		}
+
 		if (!await this.wrapper.clear(flush))
 			return(false);
 

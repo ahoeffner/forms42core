@@ -25,6 +25,7 @@ import { MenuEntry } from './interfaces/MenuEntry.js';
 import { FormEvent, FormEvents } from '../events/FormEvents.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
+import { FormsModule } from '../../application/FormsModule.js';
 
 
 /**
@@ -96,8 +97,6 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public focus() : void
 	{
-		console.log(this.entries$.get(this.active$)?.element)
-		console.log(this.belongs(this.entries$.get(this.active$)?.element))
 		this.setFocus(this.entries$.get(this.active$)?.element);
 	}
 
@@ -108,16 +107,27 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async show() : Promise<boolean>
 	{
+		if (this.building)
+		{
+			setTimeout(() => {this.show()},10);
+			return;
+		}
+
 		await this.showMenu();
 		return(true);
 	}
 
+	// Actually multi-threaded
+	private building:boolean = false;
 	private async showMenu() : Promise<void>
 	{
+		if (this.building)
+			return;
+
 		this.tabidx$ = 0;
 		this.active$ = null;
+		this.building = true;
 
-		this.open$.clear();
 		this.paths$.clear();
 		this.entries$.clear();
 		this.elements$.clear();
@@ -139,14 +149,14 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		this.target$.innerHTML = await this.showEntry(null,start,0,path);
 		let entries:NodeList = this.target$.querySelectorAll("a");
 
-		entries.forEach((link) =>
+		for (let i = 0; i < entries.length; i++)
 		{
-			let href:HTMLAnchorElement = link as HTMLAnchorElement;
-			this.entries$.get(href.tabIndex).element = href;
+			let href:HTMLAnchorElement = entries.item(i) as HTMLAnchorElement;
+			let entry:Entry = this.entries$.get(href.tabIndex);
+			entry.element = href;
 			this.prepare(href);
-		});
+		}
 
-		this.elements$.clear();
 		this.index(this.target$);
 
 		if (this.active$ == null)
@@ -176,6 +186,8 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			this.options$.navigation = Navigation.horizontal;
 			if (skewY > skewX) this.options$.navigation = Navigation.vertical;
 		}
+
+		this.building = false;
 	}
 
 	public async hide() : Promise<boolean>
@@ -194,12 +206,19 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async close() : Promise<void>
 	{
-		this.closeMenu();
+		await this.closeMenu();
 	}
 
 	private async closeMenu() : Promise<void>
 	{
 		if (this.open$.size == 0) return;
+
+		if (this.building)
+		{
+			setTimeout(() => {this.closeMenu()},10);
+			return;
+		}
+
 		this.target$.innerHTML = "";
 		this.open$.clear();
 		await this.showMenu();
@@ -207,6 +226,12 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	public async toggle(path:string) : Promise<void>
 	{
+		if (this.building)
+		{
+			setTimeout(() => {this.toggle(path)},10);
+			return;
+		}
+
 		let open:boolean = this.open$.has(path);
 
 		if (this.options$.singlepath)
@@ -414,7 +439,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 			command = elem.getAttribute("command");
 		}
 
-		this.pick(elem);
+		await this.pick(elem);
 	}
 
 
@@ -530,7 +555,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 			case " " :
 			case "Enter" :
-				this.pick(elem);
+				await this.pick(elem);
 				break;
 		}
 
@@ -629,7 +654,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 			case " " :
 			case "Enter" :
-				this.pick(elem);
+				await this.pick(elem);
 				break;
 		}
 

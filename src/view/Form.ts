@@ -595,7 +595,7 @@ export class Form implements EventListenerObject
 		}
 
 		let blk:Block = this.getBlock(block.toLowerCase());
-		let match:FieldInstance[] = blk?.getFieldsByClass(field,clazz);
+		let match:FieldInstance[] = blk?.getInstancesByClass(field,clazz);
 
 		if (!match || match.length == 0)
 		{

@@ -381,6 +381,9 @@ export class Block
 		if (record == null)
 			return(true);
 
+		if (!await this.view.validateDate(field,record.getValue(field)))
+			return(false);
+
 		if (!await this.setEventTransaction(EventType.WhenValidateField,record)) return(false);
 		let success:boolean = await this.fire(EventType.WhenValidateField,field);
 		this.endEventTransaction(EventType.WhenValidateField,success);

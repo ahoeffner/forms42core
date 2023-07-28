@@ -287,7 +287,7 @@ export class Framework
 
 		if (replace == null)
 		{
-			if (impl.element.parent != null)
+			if (impl.element.parentElement != null)
 				impl.element.remove();
 
 			return([]);
@@ -302,6 +302,9 @@ export class Framework
 
 		if (!Array.isArray(replace))
 			replace = [replace];
+
+		if (impl.tag.passthrough)
+			return(replace);
 
 		let nested:Map<number,HTMLElement[]> =
 			new Map<number,HTMLElement[]>();
@@ -319,7 +322,7 @@ export class Framework
 		return(nodes);
 }
 
-	private apply(doc:Element, impl:Implementation) : void
+	private apply(doc:Element, impl:Implementation) : number
 	{
 		let replace:HTMLElement[] = this.getReplacement(impl);
 
@@ -330,9 +333,14 @@ export class Framework
 
 			impl.element.remove();
 
-			for(let r=0; r < replace.length; r++)
-				this.parseDoc(replace[r]);
+			if (!impl.tag.passthrough)
+			{
+				for(let r=0; r < replace.length; r++)
+					this.parseDoc(replace[r]);
+			}
 		}
+
+		return(replace.length);
 	}
 
 	private applyEvents() : void

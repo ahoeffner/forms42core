@@ -19,7 +19,6 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Alert } from './Alert.js';
 import { Framework } from './Framework.js';
 import { CanvasComponent } from './CanvasComponent.js';
 import { Canvas as CanvasProperties } from './properties/Canvas.js';
@@ -144,7 +143,7 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 	public setComponent(component:CanvasComponent) : void
 	{
 		this.component = component;
-		let page = component.getView();
+		let page:HTMLElement|string = component.getView();
 
 		let layout:string = CanvasProperties.page;
 		let template:HTMLTemplateElement = document.createElement("template");
@@ -163,17 +162,14 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 		this.canvas.style.cssText = CanvasProperties.CanvasStyle;
 		this.container.style.cssText = CanvasProperties.ContentStyle;
 
+		if (page == null)
+			page = "";
+
 		if (typeof page === 'string')
 		{
 			let root:HTMLDivElement = document.createElement("div");
 			root.innerHTML = page;
 			page = Framework.prepare(root);
-		}
-
-		if (page == null)
-		{
-			Alert.fatal("Component '"+component.constructor.name+"' has no html view","Form")
-			return;
 		}
 
 		this.container.appendChild(page);

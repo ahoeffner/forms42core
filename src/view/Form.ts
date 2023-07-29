@@ -1168,6 +1168,9 @@ export class Form implements EventListenerObject
 
 	public setURL(close?:boolean) : void
 	{
+		if (!FormsModule.get().showurl)
+			return;
+
 		let location:Location = window.location;
 		let params:URLSearchParams = new URLSearchParams(location.search);
 		let path:string = location.protocol + '//' + location.host + location.pathname;
@@ -1182,8 +1185,9 @@ export class Form implements EventListenerObject
 		}
 
 		let map:string = FormsModule.getFormPath(this.parent.name);
+		let nav:boolean = FormBacking.getURLNavigable(map);
 
-		if (map != null && FormsModule.get().showurl)
+		if (map != null && nav)
 		{
 			params.set("form",map)
 			window.history.replaceState('','',path+"?"+params);

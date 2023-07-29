@@ -303,7 +303,7 @@ export class Framework
 		if (!Array.isArray(replace))
 			replace = [replace];
 
-		if (impl.tag.passthrough)
+		if (!impl.recursive)
 			return(replace);
 
 		let nested:Map<number,HTMLElement[]> =
@@ -333,7 +333,7 @@ export class Framework
 
 			impl.element.remove();
 
-			if (!impl.tag.passthrough)
+			if (impl.recursive)
 			{
 				for(let r=0; r < replace.length; r++)
 					this.parseDoc(replace[r]);
@@ -529,4 +529,11 @@ class EventHandler implements EventListenerObject
 class Implementation
 {
 	constructor(public element:any, public tag:Tag, public name:string, public attr:string) {}
+	get recursive() : boolean
+	{
+		if (this.tag.recursive == null)
+			return(true);
+
+		return(this.tag.recursive);
+	}
 }

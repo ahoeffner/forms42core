@@ -26,7 +26,7 @@ import { FormBacking } from "../FormBacking.js";
 
 export class ImplAttribute implements Tag
 {
-	passthrough:boolean = true;
+	recursive:boolean = false;
 
 	private static id:number = 0;
 	private static MAX:number = 10;

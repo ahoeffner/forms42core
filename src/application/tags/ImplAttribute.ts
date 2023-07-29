@@ -63,6 +63,6 @@ export class ImplAttribute implements Tag
 		}
 
 		let instance:Form = await FormBacking.createForm(impl,tag);
-		phldr.replaceWith(instance.canvas.getContent());
+		phldr.replaceWith(instance.canvas.getView());
 	}
 }

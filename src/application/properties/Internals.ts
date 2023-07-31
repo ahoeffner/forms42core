@@ -30,7 +30,6 @@ export class Internals
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
 				<span name="title"></span>
-
 			</div>
 		</div>
 	`;

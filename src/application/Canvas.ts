@@ -172,6 +172,9 @@ export class Canvas implements CanvasDefinition, EventListenerObject
 			page = Framework.prepare(root);
 		}
 
+		if (page.parentElement)
+			page.replaceWith(this.canvas);
+
 		this.container.appendChild(page);
 		this.content = this.container.firstChild as HTMLElement;
 		this.canvas.addEventListener("mousedown",(event) => {this.dragstart(event)});

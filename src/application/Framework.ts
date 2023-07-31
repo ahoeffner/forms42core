@@ -31,7 +31,6 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 export class Framework
 {
 	private component:any = null;
-	private root:HTMLElement = null;
 	private static event$:any = null;
 	private static taglib:Map<string,Tag> = null;
 	private static attrlib:Map<string,Tag> = null;
@@ -140,11 +139,6 @@ export class Framework
 
 		this.parseDoc(doc);
 		this.applyEvents();
-	}
-
-	public getRoot() : HTMLElement
-	{
-		return(this.root);
 	}
 
 	private parseDoc(doc:Element) : void

@@ -30,7 +30,7 @@ export class Internals
 		<div name="popup" class="canvas-handle">
 			<div name="popup-header" class="canvas-handle">
 				<span name="title"></span>
-				<div name="close-button" onclick="this.close(true)">&#215;</div>
+
 			</div>
 		</div>
 	`;
@@ -46,7 +46,6 @@ export class Internals
 		height: 20px;
 		text-align: center;
 		position: relative;
-		border-bottom: 1px solid black;
 	`;
 
 	public static PopupStyle =

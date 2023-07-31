@@ -186,6 +186,9 @@ export class Internals
 		left += (view.parentElement.offsetWidth - view.offsetWidth)/1.50;
 		top += (view.parentElement.offsetHeight - view.offsetHeight)/4.00;
 
+		if (top < 0) top = 50;
+		if (left < 0) left = 50;
+
 		view.style.top = top+"px";
 		view.style.left = left+"px";
 	}

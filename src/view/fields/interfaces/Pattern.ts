@@ -30,31 +30,34 @@ export enum Validity
 
 export interface Pattern
 {
-    size() : number;
-    isNull() : boolean;
+	size() : number;
+	isNull() : boolean;
 
-    getPattern() : string;
-    setPattern(pattern:string) : void;
+	getPattern() : string;
+	setPattern(pattern:string) : void;
 
-    getValue() : string;
-    setValue(value:any) : boolean;
+	getValue() : string;
+	setValue(value:any) : boolean;
+
+	ensure(pos:number) : boolean;
+	isFixed(pos:number) : boolean
 
 	isValid(pos:number, c:string) : boolean
-    validity(pos:number, c:string) : Validity
+	validity(pos:number, c:string) : Validity
 
-    prev(printable:boolean,from?:number) : number;
-    next(printable:boolean,from?:number) : number;
+	prev(printable:boolean,from?:number) : number;
+	next(printable:boolean,from?:number) : number;
 
-    getPosition() : number;
-    getFields() : Section[];
-    getField(n:number) : Section;
-    input(pos:number) : boolean;
-    findField(pos?:number) : Section;
-    findPosition(pos:number) : number;
-    setPosition(pos:number) : boolean;
-    getFieldArea(pos:number) : number[];
-    delete(fr:number,to:number) : string;
-    setCharacter(pos:number, c:string) : boolean;
+	getPosition() : number;
+	getFields() : Section[];
+	getField(n:number) : Section;
+	input(pos:number) : boolean;
+	findField(pos?:number) : Section;
+	findPosition(pos:number) : number;
+	setPosition(pos:number) : boolean;
+	getFieldArea(pos:number) : number[];
+	delete(fr:number,to:number) : string;
+	setCharacter(pos:number, c:string) : boolean;
 }
 
 export interface Section

@@ -757,6 +757,119 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.element.readOnly)
 			return(true);
 
+		this.event.preventDefault();
+
+		let pos:number = this.getPosition();
+		let length:number = this.pattern.getValue().length;
+
+		if (this.event.type == "focus")
+		{
+			if (this.pattern.isNull()) pos = 0;
+
+			this.pattern.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.pattern.getValue());
+
+			setTimeout(() => {this.setPosition(pos)},0);
+			return(true);
+		}
+
+		if (this.event.type == "blur")
+		{
+			this.pattern.setValue(this.getIntermediateValue());
+			if (this.pattern.isNull()) this.clear();
+				return(true);
+		}
+
+		if (this.event.type == "change")
+			return(true);
+
+		if (this.event.undo || this.event.paste)
+		{
+			this.element.value = "";
+
+			setTimeout(() =>
+			{
+				this.pattern.setValue(this.getIntermediateValue());
+				this.setValue(this.pattern.getValue());
+				this.setPosition(this.pattern.next(true,pos));
+			},10);
+
+			return(true);
+		}
+
+		if (this.event.key == "Backspace")
+		{
+			if (this.event.type == "keyup")
+			{
+				this.pattern.setValue(this.getIntermediateValue());
+				this.element.value = this.pattern.getValue();
+				this.setPosition(pos);
+			}
+
+			return(true);
+		}
+
+		if (this.event.type == "keydown" && this.event.isPrintableKey)
+		{
+			if (pos >= length)
+			{
+				this.event.preventDefault(true);
+				return(false);
+			}
+
+			if (this.pattern.ensure(pos))
+			{
+				this.element.value = this.pattern.getValue();
+				this.setPosition(pos);
+			}
+		}
+
+		if (this.event.type == "keypress" && this.event.isPrintableKey)
+		{
+			if (this.pattern.isFixed(pos))
+			{
+				pos = this.pattern.next(true,pos);
+				this.setPosition(pos);
+			}
+
+			return(false);
+		}
+
+		if (this.event.type == "keyup" && this.event.isPrintableKey)
+		{
+			if (this.pattern.isFixed(pos))
+				pos = this.pattern.next(true,pos);
+
+			this.pattern.setValue(this.getIntermediateValue());
+			this.element.value = this.pattern.getValue();
+			this.setPosition(pos);
+
+			return(true);
+		}
+
+		if (this.datetokens != null)
+		{
+			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.now)
+			{
+				this.pattern.setValue(this.getCurrentDate());
+				this.setElementValue(this.pattern.getValue());
+
+				this.setPosition(0);
+				return(true);
+			}
+		}
+
+		return(true);
+	}
+
+	private xfixedold() : boolean
+	{
+		if (this.type == "range")
+			return(true);
+
+		if (this.element.readOnly)
+			return(true);
+
 		let prevent:boolean = this.event.prevent;
 
 		if (this.event.prevent)
@@ -1125,10 +1238,8 @@ export class Input implements FieldImplementation, EventListenerObject
 	private setPosition(pos:number) : void
 	{
 		if (pos < 0) pos = 0;
-		let sel:number[] = [pos,pos];
-
-		if (pos == 0) sel[1] = 1;
-			this.element.setSelectionRange(sel[0],sel[1]);
+		this.element.selectionStart = pos;
+		this.element.selectionEnd = pos;
 	}
 
 	private setSelection(sel:number[]) : void

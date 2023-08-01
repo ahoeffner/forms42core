@@ -53,165 +53,243 @@ import { Pattern as PatternType, Section, Validity } from "./interfaces/Pattern.
 
 export class Pattern implements PatternType
 {
-    private pos:number = 0;
-    private plen:number = 0;
-    private fldno:number = 0;
-    private value:string = "";
-    private fields:Field[] = [];
-    private pattern$:string = null;
-    private placeholder$:string = null;
-    private predefined:string = "*#dcaAw";
-    private tokens:Map<number,Token> = new Map<number,Token>();
+	private pos:number = 0;
+	private plen:number = 0;
+	private fldno:number = 0;
+	private value:string = "";
+	private fields:Field[] = [];
+	private pattern$:string = null;
+	private placeholder$:string = null;
+	private predefined:string = "*#dcaAw";
+	private tokens:Map<number,Token> = new Map<number,Token>();
 
-    constructor(pattern:string)
-    {
-        if (pattern != null)
-            this.setPattern(pattern);
-    }
+	constructor(pattern:string)
+	{
+		if (pattern != null)
+			this.setPattern(pattern);
+	}
 
-    public size() : number
-    {
-        return(this.plen);
-    }
+	public size() : number
+	{
+		return(this.plen);
+	}
 
-    public isNull(): boolean
-    {
-        for (let i = 0; i < this.fields.length; i++)
-        {
-            if (!this.fields[i].isNull())
-                return(false);
-        }
+	public isNull(): boolean
+	{
+		for (let i = 0; i < this.fields.length; i++)
+		{
+			if (!this.fields[i].isNull())
+					return(false);
+		}
 
-        return(true);
-    }
+		return(true);
+	}
 
-    public getValue() : string
-    {
-        return(this.value);
-    }
+	public ensure(pos:number) : boolean
+	{
+		let last:Field = this.fields[this.fields.length-1];
+		let area:number[] = [last.pos(),last.pos()+last.size()];
 
-    public getPosition(): number
-    {
-        return(this.pos);
-    }
+		if (pos < area[0] || pos > area[1])
+			return(false);
 
-    public getPattern(): string
-    {
-        return(this.pattern$);
-    }
+		this.value = this.value.substring(0,area[1]-1) + ' ' + this.value.substring(area[1]);
+		return(true);
+	}
 
-    public getPlaceholder(): string
-    {
-        return(this.placeholder$);
-    }
+	public isFixed(pos:number) : boolean
+	{
+		let token:Token = this.tokens.get(pos);
+		return(token == null || token.type == 'f')
+	}
 
-    public setPattern(pattern:string) : void
-    {
-        let pos:number = 0;
-        let placeholder:string = "";
+	public getValue() : string
+	{
+		return(this.value);
+	}
 
-        for (let i = 0; i < pattern.length; i++)
-        {
-            let c:string = pattern.charAt(i);
-            let esc:boolean = this.escaped(pattern,i);
+	public getPosition(): number
+	{
+		return(this.pos);
+	}
 
-            if (esc)
-            {
-                let b=i;
-                c = pattern.charAt(++i);
-            }
+	public getPattern(): string
+	{
+		return(this.pattern$);
+	}
 
-            if (c == '{' && !esc)
-            {
-                let fr:number = i+1;
-                while(i < pattern.length && pattern.charAt(++i) != '}');
+	public getPlaceholder(): string
+	{
+		return(this.placeholder$);
+	}
 
-                if (i == pattern.length)
-                    throw "Syntax error in path, non matched {}";
+	public setPattern(pattern:string) : void
+	{
+		let pos:number = 0;
+		let placeholder:string = "";
 
-                let def:Token[] = this.parseFieldDefinition(pattern.substring(fr,i));
-                this.fields.push(new Field(this,this.fields.length,pos,pos+def.length));
-                def.forEach((token) => {this.tokens.set(pos++,token); placeholder += ' '});
-            }
-            else
-            {
-                placeholder += pattern.charAt(i);
-                this.tokens.set(pos++,new Token('f'));
-            }
-        }
+		for (let i = 0; i < pattern.length; i++)
+		{
+			let c:string = pattern.charAt(i);
+			let esc:boolean = this.escaped(pattern,i);
 
-        if (this.fields.length == 0)
-            throw "No input fields defined";
+			if (esc)
+			{
+					let b=i;
+					c = pattern.charAt(++i);
+			}
 
-        this.value = placeholder;
-        this.pattern$ = pattern;
-        this.placeholder$ = placeholder;
-        this.plen = placeholder.length;
-        this.fields.forEach((fld) => {fld.init()});
-    }
+			if (c == '{' && !esc)
+			{
+					let fr:number = i+1;
+					while(i < pattern.length && pattern.charAt(++i) != '}');
 
-    public getField(n:number) : Field
-    {
-        if (n < this.fields.length)
-            return(this.fields[n]);
-        return(null);
-    }
+					if (i == pattern.length)
+						throw "Syntax error in path, non matched {}";
+
+					let def:Token[] = this.parseFieldDefinition(pattern.substring(fr,i));
+					this.fields.push(new Field(this,this.fields.length,pos,pos+def.length));
+					def.forEach((token) => {this.tokens.set(pos++,token); placeholder += ' '});
+			}
+			else
+			{
+					placeholder += pattern.charAt(i);
+					this.tokens.set(pos++,new Token('f'));
+			}
+		}
+
+		if (this.fields.length == 0)
+			throw "No input fields defined";
+
+		this.value = placeholder;
+		this.pattern$ = pattern;
+		this.placeholder$ = placeholder;
+		this.plen = placeholder.length;
+
+		this.fields.forEach((fld) =>
+		{
+			let stop:string = "";
+
+			for (let i = fld.pos() + fld.size(); i < this.tokens.size; i++)
+			{
+				if (this.tokens.get(i).type == 'f') stop += placeholder.charAt(i);
+				else break;
+			}
+
+			fld.init(stop);
+		});
+	}
+
+	public getField(n:number) : Field
+	{
+		if (n < this.fields.length)
+			return(this.fields[n]);
+		return(null);
+	}
 
 	public getFields() : Section[]
 	{
 		return(this.fields);
 	}
 
-    public findField(pos:number) : Field
-    {
-        if (pos == null) pos = this.pos;
+	public findField(pos:number) : Field
+	{
+		if (pos == null) pos = this.pos;
 
-        for (let i = 0; i < this.fields.length; i++)
-        {
-            let field:Field = this.fields[i];
-            if (pos >= field.pos$ && pos <= field.last)
-                return(field);
-        }
-        return(null);
-    }
+		for (let i = 0; i < this.fields.length; i++)
+		{
+			let field:Field = this.fields[i];
+			if (pos >= field.pos$ && pos <= field.last)
+					return(field);
+		}
+		return(null);
+	}
 
-    public input(pos:number) : boolean
-    {
-        if (pos < 0 || pos > this.placeholder$.length-1)
-            return(false);
+	public input(pos:number) : boolean
+	{
+		if (pos < 0 || pos > this.placeholder$.length-1)
+			return(false);
 
-        let token:Token = this.tokens.get(pos);
-        return(token.type != 'f');
-    }
+		let token:Token = this.tokens.get(pos);
+		return(token.type != 'f');
+	}
 
-    public setValue(value:string) : boolean
-    {
+	public setValue(value:string) : boolean
+	{
 		let valid:boolean = true;
 		this.value = this.placeholder$;
 
 		if (value == null)
-            return(true);
+			return(true);
 
-        let pos:number = 0;
+		let pos:number = 0;
 		value = value.trim();
 
-        for(let i = 0; i < this.plen && pos < value.length; i++)
-        {
-            let c = value.charAt(pos);
-            let p = this.placeholder$.charAt(i);
-            let token:Token = this.tokens.get(i);
+		let start:number = 0;
+		let delimiters:string[] = [];
+		while(start < this.tokens.size && this.tokens.get(start).type == 'f') start++;
 
-            if (token.type == 'f')
-            {
-                if (c == p)
+		this.fields.forEach((fld) =>
+		{
+			if (fld.end().length > 0)
+				delimiters.push(fld.end());
+		})
+
+		let idx:number = 0;
+		let formatted:boolean = true;
+
+		if (start > 0 && !value.startsWith(this.placeholder$.substring(0,start)))
+			formatted = false;
+
+		for (let i = 0; i < delimiters.length; i++)
+		{
+			idx = value.indexOf(delimiters[i],idx);
+			if (idx < 0) formatted = false;
+			idx += delimiters[i].length;
+		}
+
+		if (formatted)
+		{
+			let fr:number = start;
+			let to:number = start;
+			let nval:string = value.substring(0,start);
+
+			for (let i = 0; i < delimiters.length; i++)
+			{
+				to = value.indexOf(delimiters[i],fr);
+
+				let part:string = value.substring(fr,to);
+
+				while(part.length < this.fields[i].size())
+					part += " ";
+
+				if (part.length > this.fields[i].size())
+					part = part.substring(0,this.fields[i].size());
+
+				nval += part + delimiters[i];
+				fr = to + delimiters[i].length;
+			}
+
+			value = nval+value.substring(fr);
+		}
+
+		for(let i = 0; i < this.plen && pos < value.length; i++)
+		{
+			 let c = value.charAt(pos);
+			 let p = this.placeholder$.charAt(i);
+			 let token:Token = this.tokens.get(i);
+
+			if (token.type == 'f')
+			{
+				if (c == p)
 					pos++;
-            }
-            else
-            {
+			}
+			else
+			{
 				if (c == ' ' || this.setCharacter(i,c)) pos++;
 				else valid = false;
-            }
-        }
+			}
+		}
 
 		this.fields.forEach((fld) => {fld.init()});
 
@@ -219,78 +297,78 @@ export class Pattern implements PatternType
 			valid = false;
 
 		return(valid);
-    }
+	}
 
-    public setPosition(pos:number) : boolean
-    {
-        if (pos < 0 || pos >= this.plen)
-            return(false);
+	public setPosition(pos:number) : boolean
+	{
+		if (pos < 0 || pos >= this.plen)
+			return(false);
 
-        if (this.tokens.get(pos).type != 'f')
-        {
-            this.pos = pos;
-            this.onfield();
-            return(true);
-        }
+		if (this.tokens.get(pos).type != 'f')
+		{
+			this.pos = pos;
+			this.onfield();
+			return(true);
+		}
 
-        return(false);
-    }
+		return(false);
+	}
 
-    public findPosition(pos:number) : number
-    {
+	public findPosition(pos:number) : number
+	{
 		if (pos >= this.placeholder$.length)
 			return(this.placeholder$.length-1);
 
-        if (this.tokens.get(pos).type == 'f')
-        {
-            let fr:number = pos;
-            let to:number = pos;
+		if (this.tokens.get(pos).type == 'f')
+		{
+			let fr:number = pos;
+			let to:number = pos;
 
-            let dist1:number = 0;
-            let dist2:number = 0;
+			let dist1:number = 0;
+			let dist2:number = 0;
 
-            while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
-            while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
+			while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
+			while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
 
-            if (fr == 0 && this.tokens.get(fr).type == 'f')
-                fr = to;
+			if (fr == 0 && this.tokens.get(fr).type == 'f')
+					fr = to;
 
-            if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
-                to = fr;
+			if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
+					to = fr;
 
-            dist1 = pos - fr;
-            dist2 = to - pos;
+			dist1 = pos - fr;
+			dist2 = to - pos;
 
 			pos = fr;
 
-            if (dist2 < dist1)
-                pos = to;
-        }
+			if (dist2 < dist1)
+				pos = to;
+		}
 
 		return(pos);
-    }
+	}
 
-    public setCharacter(pos:number, c:string) : boolean
-    {
-        if (!this.setPosition(pos))
-            return(false);
+	public setCharacter(pos:number, c:string) : boolean
+	{
+		if (!this.setPosition(pos))
+			return(false);
 
-        let valid:Validity = this.validity(pos,c);
+		let valid:Validity = this.validity(pos,c);
 
-        switch(valid)
-        {
-            case Validity.na : return(false);
-            case Validity.false : return(false);
-            case Validity.asupper : c = c.toLocaleUpperCase(); break;
-            case Validity.aslower : c = c.toLocaleLowerCase(); break;
-        }
+		switch(valid)
+		{
+			case Validity.na : return(false);
+			case Validity.false : return(false);
+			case Validity.asupper : c = c.toLocaleUpperCase(); break;
+			case Validity.aslower : c = c.toLocaleLowerCase(); break;
+		}
 
-        let a:string = this.value.substring(this.pos+1);
-        let b:string = this.value.substring(0,this.pos);
+		let a:string = this.value.substring(this.pos+1);
+		let b:string = this.value.substring(0,this.pos);
 
-        this.value = b + c + a;
-        return(true);
-    }
+		this.value = b + c + a;
+		return(true);
+	}
 
 	public isValid(pos: number, c: string) : boolean
 	{
@@ -302,428 +380,434 @@ export class Pattern implements PatternType
 		return(true);
 	}
 
-    public validity(pos:number, c:string) : Validity
-    {
-        let lc = c.toLocaleLowerCase();
-        let uc = c.toLocaleUpperCase();
+	public validity(pos:number, c:string) : Validity
+	{
+		let lc = c.toLocaleLowerCase();
+		let uc = c.toLocaleUpperCase();
 
-        let valid:Validity = Validity.false;
-        let token:Token = this.tokens.get(pos);
+		let valid:Validity = Validity.false;
+		let token:Token = this.tokens.get(pos);
 
-        if (token == null)
-            return(Validity.na);
+		if (token == null)
+			return(Validity.na);
 
-        switch(token.case)
-        {
-            case 'u':
-                if (token.validate(uc))
-                {
-                    if (c == uc) valid = Validity.true;
-                    else         valid = Validity.asupper;
-                }
-            break;
+		switch(token.case)
+		{
+			case 'u':
+					if (token.validate(uc))
+					{
+						if (c == uc) valid = Validity.true;
+						else         valid = Validity.asupper;
+					}
+			break;
 
-            case 'l':
-                if (token.validate(lc))
-                {
-                    if (c == lc) valid = Validity.true;
-                    else         valid = Validity.asupper;
-                }
-            break;
+			case 'l':
+					if (token.validate(lc))
+					{
+						if (c == lc) valid = Validity.true;
+						else         valid = Validity.asupper;
+					}
+			break;
 
-            case '?':
-                if (lc == uc)
-                {
-                    if (token.validate(c))
-                        valid = Validity.true;
-                }
-                else
-                {
-                    if (token.validate(c))
-                    {
-                        valid = Validity.true;
-                    }
-                    else if (c != lc && token.validate(lc))
-                    {
-                        valid = Validity.aslower;
-                    }
-                    else if (c != uc && token.validate(uc))
-                    {
-                        valid = Validity.asupper;
-                    }
-                }
-            break;
-        }
+			case '?':
+					if (lc == uc)
+					{
+						if (token.validate(c))
+							valid = Validity.true;
+					}
+					else
+					{
+						if (token.validate(c))
+						{
+							valid = Validity.true;
+						}
+						else if (c != lc && token.validate(lc))
+						{
+							valid = Validity.aslower;
+						}
+						else if (c != uc && token.validate(uc))
+						{
+							valid = Validity.asupper;
+						}
+					}
+			break;
+		}
 
-        return(valid);
-    }
+		return(valid);
+	}
 
-    public delete(fr:number, to:number) : string
-    {
-        if (fr == to)
-        {
-            fr--;
-            if (fr < 0) return(this.value);
+	public delete(fr:number, to:number) : string
+	{
+		if (fr == to)
+		{
+			fr--;
+			if (fr < 0) return(this.value);
 
-            if (!this.setPosition(fr))
-                return(this.value);
-        }
+			if (!this.setPosition(fr))
+					return(this.value);
+		}
 
-        let p:string = "";
-        let a:string = this.value.substring(to);
-        let b:string = this.value.substring(0,fr);
+		let p:string = "";
+		let a:string = this.value.substring(to);
+		let b:string = this.value.substring(0,fr);
 
-        for(let i = fr; i < to; i++)
-            p += this.placeholder$.charAt(i);
+		for(let i = fr; i < to; i++)
+			p += this.placeholder$.charAt(i);
 
-        this.value = b + p + a;
+		this.value = b + p + a;
 
-        this.setPosition(fr);
+		this.setPosition(fr);
 
-        if (to - fr > 1)
-        {
-            let curr:Field = this.findField(fr);
-            if (curr != null) this.fldno = curr.fn;
-        }
+		if (to - fr > 1)
+		{
+			let curr:Field = this.findField(fr);
+			if (curr != null) this.fldno = curr.fn;
+		}
 
-        return(this.value);
-    }
+		return(this.value);
+	}
 
-    public getFieldArea(pos:number) : number[]
-    {
-        if (pos < 0) pos = 0;
-        if (pos >= this.plen) pos = this.plen - 1;
+	public getFieldArea(pos:number) : number[]
+	{
+		if (pos < 0) pos = 0;
+		if (pos >= this.plen) pos = this.plen - 1;
 
-        let fr:number = pos;
-        let to:number = pos;
-        let token:Token = this.tokens.get(pos);
+		let fr:number = pos;
+		let to:number = pos;
+		let token:Token = this.tokens.get(pos);
 
-        if (token.type == 'f')
-        {
-            let dist1:number = 0;
-            let dist2:number = 0;
+		if (token.type == 'f')
+		{
+			let dist1:number = 0;
+			let dist2:number = 0;
 
-            while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
-            while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
+			while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
+			while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
 
-            if (fr == 0 && this.tokens.get(fr).type == 'f')
-                fr = to;
+			if (fr == 0 && this.tokens.get(fr).type == 'f')
+				fr = to;
 
-            if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
-                to = fr;
+			if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
+				to = fr;
 
-            dist1 = pos - fr;
-            dist2 = to - pos;
+			dist1 = pos - fr;
+			dist2 = to - pos;
 
-            if (dist2 < dist1)
-                fr = to;
+			if (dist2 < dist1)
+				fr = to;
 
-            to = fr;
-        }
+			to = fr;
+		}
 
-        while(fr > 0 && this.tokens.get(fr).type != 'f') fr--;
-        while(to < this.placeholder$.length-1 && this.tokens.get(to).type != 'f') to++;
+		while(fr > 0 && this.tokens.get(fr).type != 'f') fr--;
+		while(to < this.placeholder$.length-1 && this.tokens.get(to).type != 'f') to++;
 
-        if (this.tokens.get(fr).type == 'f') fr++;
-        if (this.tokens.get(to).type == 'f') to--;
+		if (this.tokens.get(fr).type == 'f') fr++;
+		if (this.tokens.get(to).type == 'f') to--;
 
-        return([fr,to]);
-    }
+		return([fr,to]);
+	}
 
-    public prev(printable:boolean,from?:number) : number
-    {
-        if (from != null)
-            this.pos = from;
+	public prev(printable:boolean,from?:number) : number
+	{
+		if (from != null)
+			this.pos = from;
 
-        let pos = this.pos - 1;
+		let pos = this.pos - 1;
 
-        if (!printable && pos >= 0)
-        {
-            this.pos = pos;
-            this.onfield();
-            return(this.pos);
-        }
+		if (!printable && pos >= 0)
+		{
+			this.pos = pos;
+			this.onfield();
+			return(this.pos);
+		}
 
-        while(pos >= 0)
-        {
-            if (this.input(pos))
-            {
-                this.pos = pos;
-                this.onfield();
-                break;
-            }
+		while(pos >= 0)
+		{
+			if (this.input(pos))
+			{
+					this.pos = pos;
+					this.onfield();
+					break;
+			}
 
-            pos--;
-        }
+			pos--;
+		}
 
-        return(this.pos);
-    }
+		return(this.pos);
+	}
 
-    public next(printable:boolean,from?:number) : number
-    {
-        if (from != null)
-            this.pos = from;
+	public next(printable:boolean,from?:number) : number
+	{
+		if (from != null)
+			this.pos = from;
 
-        let pos = this.pos + 1;
+		let pos = this.pos + 1;
 
-        if (!printable && pos < this.plen)
-        {
-            this.pos = pos;
-            this.onfield();
-            return(this.pos);
-        }
+		if (!printable && pos < this.plen)
+		{
+			this.pos = pos;
+			this.onfield();
+			return(this.pos);
+		}
 
-        while(pos < this.plen)
-        {
-            if (this.input(pos))
-            {
-                this.pos = pos;
-                this.onfield();
-                break;
-            }
+		while(pos < this.plen)
+		{
+			if (this.input(pos))
+			{
+					this.pos = pos;
+					this.onfield();
+					break;
+			}
 
-            pos++;
-        }
+			pos++;
+		}
 
-        return(this.pos);
-    }
+		return(this.pos);
+	}
 
-    private onfield() : void
-    {
-        let curr:Field = this.findField(this.pos);
+	private onfield() : void
+	{
+		let curr:Field = this.findField(this.pos);
 
-        if (curr.fn != this.fldno)
-            this.fldno = curr.fn;
-    }
+		if (curr.fn != this.fldno)
+			this.fldno = curr.fn;
+	}
 
-    private getstring(fr:number,to:number) : string
-    {
-        return(this.value.substring(fr,to));
-    }
+	private getstring(fr:number,to:number) : string
+	{
+		return(this.value.substring(fr,to));
+	}
 
-    private setstring(pos:number,value:string) : void
-    {
-        this.value = this.replace(this.value,pos,value);
-    }
+	private setstring(pos:number,value:string) : void
+	{
+		this.value = this.replace(this.value,pos,value);
+	}
 
-    public replace(str:string,pos:number,val:string) : string
-    {
-        return(str.substring(0,pos) + val + str.substring(pos+val.length));
-    }
+	public replace(str:string,pos:number,val:string) : string
+	{
+		return(str.substring(0,pos) + val + str.substring(pos+val.length));
+	}
 
-    private parseFieldDefinition(field:string) : Token[]
-    {
-        let tokens:Token[] = [];
+	private parseFieldDefinition(field:string) : Token[]
+	{
+		let tokens:Token[] = [];
 
-        for (let i = 0; i < field.length; i++)
-        {
-            let repeat:string = "1";
-            let c:string = field.charAt(i);
+		for (let i = 0; i < field.length; i++)
+		{
+			let repeat:string = "1";
+			let c:string = field.charAt(i);
 
-            if (c >= '0' && c <= '9')
-            {
-                repeat = "";
-                while(c >= '0' && c <= '9' && i < field.length)
-                {
-                    repeat += c;
-                    c = field.charAt(++i);
-                }
+			if (c >= '0' && c <= '9')
+			{
+				repeat = "";
+				while(c >= '0' && c <= '9' && i < field.length)
+				{
+					repeat += c;
+					c = field.charAt(++i);
+				}
 
-                if (i == field.length)
-                    throw "Syntax error in expression, '"+this.predefined+"' or '[]' expected";
-            }
-            if (this.predefined.includes(c))
-            {
-                for(let f = 0; f < +repeat; f++)
-                    tokens.push(new Token(c));
-            }
-            else
-            {
-                let expr:string = "";
+				if (i == field.length)
+					throw "Syntax error in expression, '"+this.predefined+"' or '[]' expected";
+			}
+			if (this.predefined.includes(c))
+			{
+				for(let f = 0; f < +repeat; f++)
+					tokens.push(new Token(c));
+			}
+			else
+			{
+				let expr:string = "";
 
-                if (c != '[')
-                    throw "Syntax error in expression, '"+this.predefined+"' or '[]' expected";
+				if (c != '[')
+					throw "Syntax error in expression, '"+this.predefined+"' or '[]' expected";
 
-                c = field.charAt(++i);
-                let esc:boolean = false;
+				c = field.charAt(++i);
+				let esc:boolean = false;
 
-                while((c != ']' || esc) && i < field.length)
-                {
-                    expr += c;
-                    c = field.charAt(i+1);
-                    esc = this.escaped(field,i++);
-                }
+				while((c != ']' || esc) && i < field.length)
+				{
+					expr += c;
+					c = field.charAt(i+1);
+					esc = this.escaped(field,i++);
+				}
 
-                if (c != ']')
-                    throw "Syntax error in path, non matched []";
+				if (c != ']')
+					throw "Syntax error in path, non matched []";
 
-                for(let f = 0; f < +repeat; f++)
-                    tokens.push(new Token('x').setRegx("["+expr+"]"));
-            }
-        }
+				for(let f = 0; f < +repeat; f++)
+					tokens.push(new Token('x').setRegx("["+expr+"]"));
+			}
+		}
 
-        return(tokens);
-    }
+		return(tokens);
+	}
 
-    private escaped(str:string,pos:number) : boolean
-    {
-        if (pos == str.length+1)
-            return(false);
+	private escaped(str:string,pos:number) : boolean
+	{
+		if (pos == str.length+1)
+			return(false);
 
-        let e:string = str.charAt(pos);
-        let c:string = str.charAt(pos+1);
+		let e:string = str.charAt(pos);
+		let c:string = str.charAt(pos+1);
 
-        return(e == '\\' && c != '\\');
-    }
+		return(e == '\\' && c != '\\');
+	}
 }
 
 
 class Field implements Section
 {
-    fn:number = 0;
-    pos$:number = 0;
-    last$:number = 0;
-    size$:number = 0;
-    value$:string = null;
+	fn:number = 0;
+	pos$:number = 0;
+	last$:number = 0;
+	size$:number = 0;
+	end$:string = null;
+	value$:string = null;
 
-    constructor(private pattern:Pattern, fn:number, fr:number, to:number)
-    {
-        this.fn = fn;
-        this.pos$ = fr;
-        this.last$ = to - 1;
-        this.size$ = to - fr;
-    }
+	constructor(private pattern:Pattern, fn:number, fr:number, to:number)
+	{
+		this.fn = fn;
+		this.pos$ = fr;
+		this.last$ = to - 1;
+		this.size$ = to - fr;
+	}
 
-    public pos() : number
-    {
-        return(this.pos$);
-    }
+	public pos() : number
+	{
+		return(this.pos$);
+	}
 
-    public get last() : number
-    {
-        return(this.last$);
-    }
+	public end() : string
+	{
+		return(this.end$);
+	}
 
-    public size(): number
-    {
-        return(this.size$);
-    }
+	public get last() : number
+	{
+		return(this.last$);
+	}
+
+	public size(): number
+	{
+		return(this.size$);
+	}
 
 	public field() : number
 	{
 		return(this.fn);
 	}
 
-    public isNull() : boolean
-    {
-        let empty:boolean = true;
-        let value:string = this.pattern.getValue();
-        let pattern:string = this.pattern.getPlaceholder();
+	public isNull() : boolean
+	{
+		let empty:boolean = true;
+		let value:string = this.pattern.getValue();
+		let pattern:string = this.pattern.getPlaceholder();
 
-        for (let i = 0; i < pattern.length; i++)
-        {
-            let c:string = value.charAt(i);
-            let p:string = pattern.charAt(i);
-            if (c != p) {empty = false; break;}
-        }
+		for (let i = 0; i < pattern.length; i++)
+		{
+			let c:string = value.charAt(i);
+			let p:string = pattern.charAt(i);
+			if (c != p) {empty = false; break;}
+		}
 
-        return(empty);
-    }
+		return(empty);
+	}
 
-    public getValue() : string
-    {
-        return(this.pattern["getstring"](this.pos$,this.last+1));
-    }
+	public getValue() : string
+	{
+		return(this.pattern["getstring"](this.pos$,this.last+1));
+	}
 
-    public setValue(value:string) : void
-    {
-        if (value == null) value = "";
+	public setValue(value:string) : void
+	{
+		if (value == null) value = "";
 
-        while(value.length < this.size$)
-            value += "";
+		while(value.length < this.size$)
+			value += "";
 
-        if (value.length > this.size$)
-            value = value.substring(0,this.size$);
+		if (value.length > this.size$)
+			value = value.substring(0,this.size$);
 
-        this.pattern["setstring"](this.pos$,value);
-    }
+		this.pattern["setstring"](this.pos$,value);
+	}
 
-
-    public init() : void
-    {
-        this.value$ = this.getValue();
-    }
+	public init(end?:string) : void
+	{
+		if (end != null) this.end$ = end;
+		this.value$ = this.getValue();
+	}
 }
 
 
 class Token
 {
-    type$:string = 'f';
-    case$:string = '?';
-    expr$:string = null;
-    regex:RegExp = null;
+	type$:string = 'f';
+	case$:string = '?';
+	expr$:string = null;
+	regex:RegExp = null;
 
-    constructor(type:string)
-    {
-        this.setType(type);
-    }
+	constructor(type:string)
+	{
+		this.setType(type);
+	}
 
-    public get type() : string
-    {
-        return(this.type$)
-    }
+	public get type() : string
+	{
+		return(this.type$)
+	}
 
-    public get case() : string
-    {
-        return(this.case$)
-    }
+	public get case() : string
+	{
+		return(this.case$)
+	}
 
-    public setType(type:string) : Token
-    {
-        this.type$ = type;
+	public setType(type:string) : Token
+	{
+		this.type$ = type;
 
-        switch(type)
-        {
-            case "c": this.setCase('l'); break;
-            case "C": this.setCase('u'); break;
-            case "#": this.setRegx("[0-9]"); break;
-            case "d": this.setRegx("[0-9.-]"); break;
-            case "a": this.setRegx("[a-z]").setCase('l'); break;
-            case "A": this.setRegx("[A-Z]").setCase('u'); break;
-            case "w": this.setRegx("[a-zA-Z_0-9]").setCase('l'); break;
-            case "W": this.setRegx("[a-zA-Z_0-9]").setCase('u'); break;
-        }
+		switch(type)
+		{
+			case "c": this.setCase('l'); break;
+			case "C": this.setCase('u'); break;
+			case "#": this.setRegx("[0-9]"); break;
+			case "d": this.setRegx("[0-9.-]"); break;
+			case "a": this.setRegx("[a-z]").setCase('l'); break;
+			case "A": this.setRegx("[A-Z]").setCase('u'); break;
+			case "w": this.setRegx("[a-zA-Z_0-9]").setCase('l'); break;
+			case "W": this.setRegx("[a-zA-Z_0-9]").setCase('u'); break;
+		}
 
-        return(this);
-    }
+		return(this);
+	}
 
-    public setCase(type:string) : Token
-    {
-        this.case$ = type;
-        return(this);
-    }
+	public setCase(type:string) : Token
+	{
+		this.case$ = type;
+		return(this);
+	}
 
-    public setRegx(expr:string) : Token
-    {
-        this.expr$ = expr;
-        this.regex = new RegExp(expr);
-        return(this);
-    }
+	public setRegx(expr:string) : Token
+	{
+		this.expr$ = expr;
+		this.regex = new RegExp(expr);
+		return(this);
+	}
 
-    public validate(c:string) : boolean
-    {
-        switch(this.type$.toLowerCase())
-        {
-            case "*": return(true);
-            case "f": return(false);
-            case "c": return(c.toLocaleLowerCase() != c.toLocaleUpperCase());
-        }
+	public validate(c:string) : boolean
+	{
+		switch(this.type$.toLowerCase())
+		{
+			case "*": return(true);
+			case "f": return(false);
+			case "c": return(c.toLocaleLowerCase() != c.toLocaleUpperCase());
+		}
 
-        return(this.regex.test(c));
-    }
+		return(this.regex.test(c));
+	}
 
-    public toString() : string
-    {
-        return(this.type$+"["+this.case$+"]");
-    }
+	public toString() : string
+	{
+		return(this.type$+"["+this.case$+"]");
+	}
 }

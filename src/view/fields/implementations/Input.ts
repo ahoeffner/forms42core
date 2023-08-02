@@ -127,6 +127,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		// finish date with defaults from today
 		if (DataType[this.datatype$].startsWith("date") && this.pattern && value == null)
 		{
+			console.log("bonus")
 			let date:Date = dates.parse(this.getElementValue());
 
 			if (date == null && !this.pattern.isNull())
@@ -594,6 +595,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.accept || this.event.cancel)
 			bubble = true;
 
+		if (this.event.type == "change")
+			console.log(this.event.type+" "+this.getValue())
+
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
 	}
@@ -786,14 +790,15 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.undo || this.event.paste)
 		{
 			this.element.value = "";
+			return(false);
+		}
 
-			setTimeout(() =>
-			{
-				this.pattern.setValue(this.getIntermediateValue());
-				this.setValue(this.pattern.getValue());
-				this.setPosition(this.pattern.next(true,pos));
-			},10);
-
+		if (this.event.undoing || this.event.pasting)
+		{
+			console.log("pasting")
+			this.pattern.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.pattern.getValue());
+			this.setPosition(this.pattern.next(true,pos));
 			return(true);
 		}
 

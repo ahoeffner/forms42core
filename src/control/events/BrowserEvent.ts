@@ -157,7 +157,35 @@ export class BrowserEvent
 
 		this.ctrlkey = null;
 		this.funckey = null;
-	 }
+	}
+
+	public get undoing() : boolean
+	{
+		let mod:Boolean = false;
+
+		if (this.type != "keyup")
+			return(false);
+
+		if (BrowserEvent.ctrmod == "ctrl" && this.ctrl) mod = true;
+		if (BrowserEvent.ctrmod == "meta" && this.meta) mod = true;
+
+		if (mod && this.key == 'z') return(true);
+		return(false);
+	}
+
+	public get pasting() : boolean
+	{
+		let mod:Boolean = false;
+
+		if (this.type != "keyup")
+			return(false);
+
+		if (BrowserEvent.ctrmod == "ctrl" && this.ctrl) mod = true;
+		if (BrowserEvent.ctrmod == "meta" && this.meta) mod = true;
+
+		if (mod && this.key == 'v') return(true);
+		return(false);
+	}
 
 	public get isMouseEvent() : boolean
 	{

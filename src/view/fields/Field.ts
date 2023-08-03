@@ -378,9 +378,6 @@ export class Field
 	{
 		let value:any = inst.getValue();
 
-		if (inst.implementation instanceof Input)
-			value = inst.implementation.bonusstuff(value);
-
 		if (value instanceof Date && this.value$ instanceof Date)
 		{
 			if (value.getTime() != this.value$.getTime())

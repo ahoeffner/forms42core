@@ -127,7 +127,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		// finish date with defaults from today
 		if (DataType[this.datatype$].startsWith("date") && this.pattern && value == null)
 		{
-			console.log("bonus")
 			let date:Date = dates.parse(this.getElementValue());
 
 			if (date == null && !this.pattern.isNull())
@@ -148,7 +147,8 @@ export class Input implements FieldImplementation, EventListenerObject
 				}
 			}
 
-			return(date);
+			value = date;
+			this.initial = this.getIntermediateValue();
 		}
 
 		return(value);
@@ -484,13 +484,15 @@ export class Input implements FieldImplementation, EventListenerObject
 					this.pattern.setValue(this.getElementValue());
 
 					if (this.pattern.isNull()) this.setElementValue(null);
-					else					   this.setElementValue(this.pattern.getValue());
+					else					   		this.setElementValue(this.pattern.getValue());
 				}
 
 				this.initial = this.getIntermediateValue();
 				if (this.pattern != null) this.initial = this.pattern.getValue();
 
+				this.bonusstuff(this.getValue());
 				this.eventhandler.handleEvent(this.event);
+
 				this.event.type = "blur";
 			}
 
@@ -560,6 +562,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			this.initial = this.getIntermediateValue();
 			if (this.pattern != null) this.initial = this.pattern.getValue();
+
+			this.bonusstuff(this.getValue());
 		}
 
 		if (this.event.bubbleMouseEvent)
@@ -594,9 +598,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.accept || this.event.cancel)
 			bubble = true;
-
-		if (this.event.type == "change")
-			console.log(this.event.type+" "+this.getValue())
 
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
@@ -787,18 +788,20 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 			return(true);
 
+
 		if (this.event.undo || this.event.paste)
 		{
-			this.element.value = "";
-			return(false);
-		}
+			if (this.event.type == "keydown")
+			{
+				this.element.value = "";
+			}
+			else
+			{
+				this.pattern.setValue(this.getIntermediateValue());
+				this.setIntermediateValue(this.pattern.getValue());
+				this.setPosition(0);
+			}
 
-		if (this.event.undoing || this.event.pasting)
-		{
-			console.log("pasting")
-			this.pattern.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.pattern.getValue());
-			this.setPosition(this.pattern.next(true,pos));
 			return(true);
 		}
 
@@ -862,252 +865,6 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.setPosition(0);
 				return(true);
 			}
-		}
-
-		return(true);
-	}
-
-	private xfixedold() : boolean
-	{
-		if (this.type == "range")
-			return(true);
-
-		if (this.element.readOnly)
-			return(true);
-
-		let prevent:boolean = this.event.prevent;
-
-		if (this.event.prevent)
-			prevent = true;
-
-		if (this.event.type == "drop")
-			prevent = true;
-
-		if (this.event.type == "keypress")
-			prevent = true;
-
-		if (this.event.key == "ArrowLeft" && this.event.shift)
-			prevent = true;
-
-		if (!this.event.modifier)
-		{
-			switch(this.event.key)
-			{
-					case "Backspace":
-					case "ArrowLeft":
-					case "ArrowRight": prevent = true;
-			}
-		}
-
-		this.event.preventDefault(prevent);
-		let pos:number = this.getPosition();
-
-		// Get ready to markup
-		if (this.event.mousedown && this.event.mouseinit)
-			this.clearSelection();
-
-		// Mark current pos for replace
-		if (this.event.type == "click" && !this.event.mousemark)
-		{
-			let npos:number = this.pattern.findPosition(pos);
-			this.setSelection([npos,npos]);
-
-			setTimeout(() =>
-			{
-				// Sometimes setSelection can fail
-				let sel:number[] = this.getSelection();
-				if (sel[0] == sel[1]) this.setSelection([npos,npos]);
-			},0);
-
-			return(true);
-		}
-
-		if (this.event.type == "focus")
-		{
-			pos = this.pattern.findPosition(0);
-
-			this.pattern.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.pattern.getValue());
-
-			this.setPosition(pos);
-			this.pattern.setPosition(pos);
-
-			return(true);
-		}
-
-		if (this.event.type == "blur")
-		{
-			this.pattern.setValue(this.getIntermediateValue());
-			if (this.pattern.isNull()) this.clear();
-				return(true);
-		}
-
-		if (this.event.type == "change")
-			return(true);
-
-		if (this.event.type?.startsWith("mouse") || this.event.type == "wheel")
-			return(true);
-
-		let ignore:boolean = this.event.ignore;
-		if (this.event.printable) ignore = false;
-
-		if (this.event.repeat)
-		{
-			switch(this.event.key)
-			{
-					case "Backspace":
-					case "ArrowLeft":
-					case "ArrowRight": ignore = false;
-			}
-		}
-
-		if (ignore) return(true);
-
-		if (this.event.key == "Backspace" && !this.event.modifier)
-		{
-			let sel:number[] = this.getSelection();
-
-			if (sel[0] == sel[1] && !this.pattern.input(sel[0]))
-			{
-					pos = this.pattern.prev(true);
-					this.setSelection([pos,pos]);
-			}
-			else
-			{
-				pos = sel[0];
-
-				if (sel[0] > 0 && sel[0] == sel[1])
-				{
-					pos--;
-
-					// Move past fixed pattern before deleting
-					if (!this.pattern.setPosition(pos) && sel[0] > 0)
-					{
-						let pre:number = pos;
-
-						pos = this.pattern.prev(true);
-						let off:number = pre - pos;
-
-						if (off > 0)
-						{
-								sel[0] = sel[0] - off;
-								sel[1] = sel[1] - off;
-						}
-					}
-				}
-
-				pos = sel[0];
-				this.setElementValue(this.pattern.delete(sel[0],sel[1]));
-
-				if (sel[1] == sel[0] + 1)
-					pos = this.pattern.prev(true);
-
-				if (!this.pattern.setPosition(pos))
-					pos = this.pattern.prev(true,pos);
-
-				if (!this.pattern.setPosition(pos))
-					pos = this.pattern.next(true,pos);
-
-				this.setSelection([pos,pos]);
-			}
-
-			return(true);
-		}
-
-		if (this.event.undo || this.event.paste)
-		{
-			setTimeout(() =>
-			{
-				this.pattern.setValue(this.getIntermediateValue());
-				this.setValue(this.pattern.getValue());
-				this.setPosition(this.pattern.next(true,pos));
-			},0);
-			return(true);
-		}
-
-		if (this.datetokens != null)
-		{
-			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.now)
-			{
-				this.pattern.setValue(this.getCurrentDate());
-				this.setElementValue(this.pattern.getValue());
-
-				this.setPosition(0);
-				this.pattern.setPosition(0);
-
-				return(true);
-			}
-		}
-
-		if (this.event.printable)
-		{
-			let sel:number[] = this.getSelection();
-
-			if (sel[0] != sel[1])
-			{
-				pos = sel[0];
-
-				if (!this.pattern.isValid(pos,this.event.key))
-					return(true);
-
-				this.pattern.delete(sel[0],sel[1]);
-				this.setElementValue(this.pattern.getValue());
-				pos = this.pattern.findPosition(sel[0]);
-				this.setSelection([pos,pos]);
-			}
-
-			if (this.pattern.setCharacter(pos,this.event.key))
-			{
-				if (this.datetokens != null)
-					this.validateDateField(pos);
-
-				pos = this.pattern.next(true,pos);
-						this.setElementValue(this.pattern.getValue());
-						this.setSelection([pos,pos]);
-			}
-
-			return(true);
-		}
-
-		if (this.event.key == "ArrowLeft")
-		{
-			let sel:number[] = this.getSelection();
-
-			if (!this.event.modifier)
-			{
-				pos = this.pattern.prev(true);
-				this.setSelection([pos,pos]);
-			}
-			else if (this.event.shift)
-			{
-				if (pos > 0)
-				{
-					pos--;
-					this.setSelection([pos,sel[1]-1]);
-				}
-			}
-
-			return(false);
-		}
-
-		if (this.event.key == "ArrowRight")
-		{
-			let sel:number[] = this.getSelection();
-
-			if (!this.event.modifier)
-			{
-				pos = this.pattern.next(true);
-				this.setSelection([pos,pos]);
-			}
-			else if (this.event.shift)
-			{
-				pos = sel[1];
-
-				if (pos < this.pattern.size())
-					this.setSelection([sel[0],pos]);
-			}
-
-			return(false);
 		}
 
 		return(true);
@@ -1230,13 +987,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private getPosition() : number
 	{
 		let pos:number = this.element.selectionStart;
-
-		if (pos < 0)
-		{
-			pos = 0;
-			this.setSelection([pos,pos]);
-		}
-
+		if (pos < 0) pos = 0;
 		return(pos);
 	}
 
@@ -1245,20 +996,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (pos < 0) pos = 0;
 		this.element.selectionStart = pos;
 		this.element.selectionEnd = pos;
-	}
-
-	private setSelection(sel:number[]) : void
-	{
-		if (sel[0] < 0) sel[0] = 0;
-		if (sel[1] < sel[0]) sel[1] = sel[0];
-
-		this.element.selectionStart = sel[0];
-		this.element.selectionEnd = sel[1]+1;
-	}
-
-	private clearSelection() : void
-	{
-		this.element.setSelectionRange(0,0);
 	}
 
 	private getSelection() : number[]

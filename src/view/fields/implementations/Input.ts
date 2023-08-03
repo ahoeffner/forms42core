@@ -769,11 +769,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "focus")
 		{
-			if (this.pattern.isNull()) pos = 0;
-
 			this.pattern.setValue(this.getIntermediateValue());
 			this.setIntermediateValue(this.pattern.getValue());
 
+			if (this.pattern.isNull()) pos = 0;
 			setTimeout(() => {this.setPosition(pos)},0);
 			return(true);
 		}
@@ -788,8 +787,20 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "change")
 			return(true);
 
+		if (this.event.type == "drop")
+		{
+			this.event.preventDefault(true);
+			return(true);
+		}
 
-		if (this.event.undo || this.event.paste)
+		if (this.event.undo)
+		{
+			this.setIntermediateValue(this.initial);
+			this.setPosition(pos);
+			return(true);
+		}
+
+		if (this.event.paste)
 		{
 			if (this.event.type == "keydown")
 			{

@@ -831,6 +831,12 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "keydown" && this.event.isPrintableKey)
 		{
+			if (this.pattern.isFixed(pos))
+			{
+				this.event.preventDefault(true);
+				return(false);
+			}
+
 			if (pos >= length)
 			{
 				this.event.preventDefault(true);

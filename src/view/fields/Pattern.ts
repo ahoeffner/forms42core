@@ -222,18 +222,22 @@ export class Pattern implements PatternType
 		if (value == null)
 			return(true);
 
-		let pos:number = 0;
-
-		let start:number = 0;
+		let prefix:number = 0;
+		let postfix:number = 0;
 		let delimiters:string[] = [];
 
 		this.fields.forEach((fld) => {delimiters.push(fld.end())})
-		while(start < this.tokens.size && this.tokens.get(start).type == 'f') start++;
+
+		while(prefix < this.tokens.size && this.tokens.get(prefix).type == 'f') prefix++;
+		while(postfix < this.tokens.size && this.tokens.get(this.tokens.size - postfix - 1).type == 'f') postfix++;
 
 		let idx:number = 0;
 		let formatted:boolean = true;
 
-		if (start > 0 && !value.startsWith(this.placeholder$.substring(0,start)))
+		if (prefix > 0 && !value.startsWith(this.placeholder$.substring(0,prefix)))
+			formatted = false;
+
+		if (postfix > 0 && !value.endsWith(this.placeholder$.substring(this.placeholder$.length-postfix)))
 			formatted = false;
 
 		for (let i = 0; i < delimiters.length; i++)
@@ -246,29 +250,45 @@ export class Pattern implements PatternType
 
 		if (formatted)
 		{
-			let fr:number = start;
-			let to:number = start;
-			let nval:string = value.substring(0,start);
+			let fr:number = prefix;
+			let to:number = prefix;
+			let nval:string = value.substring(0,prefix);
+			console.log("format '"+value+"'")
 
 			// trim all fields to the correct length
-			for (let i = 0; i < delimiters.length - 1; i++)
+			for (let i = 0; i < delimiters.length; i++)
 			{
+				let size:number = this.fields[i].size();
+
 				if (delimiters[i].length == 0) to = fr + 1;
 				else to = value.indexOf(delimiters[i],fr);
 
-				let part:string = value.substring(fr,to);
+				let part:string = value.substring(fr,fr+size);
+				console.log("'"+part+"' size: "+size)
 
-				while(part.length < this.fields[i].size())
+				while(part.length < size)
 					part += " ";
 
-				if (part.length > this.fields[i].size())
-					part = part.substring(0,this.fields[i].size());
+				if (part.length > size)
+				{
+					part = part.trim();
+
+					while(part.length < size)
+						part += " ";
+
+					while(part.length > size && !this.isValid(nval.length+1,part.charAt(0)))
+						part = part.substring(1);
+
+					if (part.length > size)
+						part = part.substring(0,this.fields[i].size());
+				}
 
 				nval += part + delimiters[i];
 				fr = to + delimiters[i].length;
 			}
 
-			nval = nval+value.substring(fr);
+			nval = nval+value.substring(value.length-postfix);
+			console.log("'"+nval+"'")
 
 			// validate each character
 			for(let i = 0; i < this.plen && i < nval.length; i++)
@@ -289,6 +309,7 @@ export class Pattern implements PatternType
 			return(valid);
 		}
 
+		let pos:number = 0;
 		value = value.trim();
 
 		for(let i = 0; i < this.plen && pos < value.length; i++)

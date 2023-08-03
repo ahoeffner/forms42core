@@ -223,17 +223,12 @@ export class Pattern implements PatternType
 			return(true);
 
 		let pos:number = 0;
-		value = value.trim();
 
 		let start:number = 0;
 		let delimiters:string[] = [];
-		while(start < this.tokens.size && this.tokens.get(start).type == 'f') start++;
 
-		this.fields.forEach((fld) =>
-		{
-			if (fld.end().length > 0)
-				delimiters.push(fld.end());
-		})
+		this.fields.forEach((fld) => {delimiters.push(fld.end())})
+		while(start < this.tokens.size && this.tokens.get(start).type == 'f') start++;
 
 		let idx:number = 0;
 		let formatted:boolean = true;
@@ -243,7 +238,8 @@ export class Pattern implements PatternType
 
 		for (let i = 0; i < delimiters.length; i++)
 		{
-			idx = value.indexOf(delimiters[i],idx);
+			if (delimiters[i].length == 0) idx = 1;
+			else idx = value.indexOf(delimiters[i],idx);
 			if (idx < 0) formatted = false;
 			idx += delimiters[i].length;
 		}
@@ -254,9 +250,11 @@ export class Pattern implements PatternType
 			let to:number = start;
 			let nval:string = value.substring(0,start);
 
-			for (let i = 0; i < delimiters.length; i++)
+			// trim all fields to the correct length
+			for (let i = 0; i < delimiters.length - 1; i++)
 			{
-				to = value.indexOf(delimiters[i],fr);
+				if (delimiters[i].length == 0) to = fr + 1;
+				else to = value.indexOf(delimiters[i],fr);
 
 				let part:string = value.substring(fr,to);
 
@@ -270,8 +268,28 @@ export class Pattern implements PatternType
 				fr = to + delimiters[i].length;
 			}
 
-			value = nval+value.substring(fr);
+			nval = nval+value.substring(fr);
+
+			// validate each character
+			for(let i = 0; i < this.plen && i < nval.length; i++)
+			{
+				let c = nval.charAt(i);
+				let token:Token = this.tokens.get(i);
+
+				if (token.type != 'f')
+				{
+					if (c != ' ' && !this.setCharacter(i,c))
+					{
+						this.setBlank(i);
+						valid = false;
+					}
+				}
+			}
+
+			return(valid);
 		}
+
+		value = value.trim();
 
 		for(let i = 0; i < this.plen && pos < value.length; i++)
 		{
@@ -346,6 +364,18 @@ export class Pattern implements PatternType
 		}
 
 		return(pos);
+	}
+
+	public setBlank(pos:number) : boolean
+	{
+		if (!this.setPosition(pos))
+			return(false);
+
+		let a:string = this.value.substring(this.pos+1);
+		let b:string = this.value.substring(0,this.pos);
+
+		this.value = b + ' ' + a;
+		return(true);
 	}
 
 	public setCharacter(pos:number, c:string) : boolean

@@ -822,7 +822,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.event.type == "keyup")
 			{
 				this.pattern.setValue(this.getIntermediateValue());
-				this.element.value = this.pattern.getValue();
+				this.setIntermediateValue(this.pattern.getValue());
 				this.setPosition(pos);
 			}
 
@@ -860,8 +860,10 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.pattern.isFixed(pos))
 				pos = this.pattern.next(true,pos);
 
-			this.pattern.setValue(this.getIntermediateValue());
-			this.element.value = this.pattern.getValue();
+			let ok:boolean = this.pattern.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.pattern.getValue());
+
+			if (!ok) pos = this.pattern.prev(true,pos);
 			this.setPosition(pos);
 
 			return(true);

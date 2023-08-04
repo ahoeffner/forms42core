@@ -90,13 +90,10 @@ export class Pattern implements PatternType
 		let last:Field = this.fields[this.fields.length-1];
 		let area:number[] = [last.pos(),last.pos()+last.size()];
 
-		if (pos < area[0] || pos > area[1])
+		if (pos < area[0])
 			return(false);
 
-		console.log(pos+" "+area);
-		console.log("'"+this.value+"' "+this.value.charAt(pos))
-		this.value = this.value.substring(0,area[1]-1) + ' ' + this.value.substring(area[1]);
-		console.log("'"+this.value+"'")
+		this.value = this.value.substring(0,area[1]-1) + ' ' + this.value.substring(area[1]+1);
 		return(true);
 	}
 
@@ -260,7 +257,7 @@ export class Pattern implements PatternType
 			if (value.length > this.plen)
 			{
 				// Often browser inserted a character
-				for(let i = 0; i < this.plen && value.length <= this.plen; i++)
+				for(let i = 0; i < this.plen && value.length > this.plen; i++)
 				{
 					let c = value.charAt(i);
 

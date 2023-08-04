@@ -843,11 +843,16 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(false);
 			}
 
-			console.log("2")
 			if (this.pattern.isFixed(pos))
 			{
 				pos = this.pattern.next(true,pos);
 				this.setPosition(pos);
+				return(false);
+			}
+
+			if (!this.pattern.isValid(pos,this.event.key))
+			{
+				this.event.preventDefault(true);
 				return(false);
 			}
 

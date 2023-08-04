@@ -93,7 +93,10 @@ export class Pattern implements PatternType
 		if (pos < area[0] || pos > area[1])
 			return(false);
 
+		console.log(pos+" "+area);
+		console.log("'"+this.value+"' "+this.value.charAt(pos))
 		this.value = this.value.substring(0,area[1]-1) + ' ' + this.value.substring(area[1]);
+		console.log("'"+this.value+"'")
 		return(true);
 	}
 
@@ -253,7 +256,21 @@ export class Pattern implements PatternType
 			let fr:number = prefix;
 			let to:number = prefix;
 			let nval:string = value.substring(0,prefix);
-			console.log("format '"+value+"'")
+
+			if (value.length > this.plen)
+			{
+				// Often browser inserted a character
+				for(let i = 0; i < this.plen && value.length <= this.plen; i++)
+				{
+					let c = value.charAt(i);
+
+					if (!this.isValid(i,c))
+					{
+						i--;
+						value = value.substring(0,i+1) + value.substring(i+2);
+					}
+				}
+			}
 
 			// trim all fields to the correct length
 			for (let i = 0; i < delimiters.length; i++)
@@ -264,7 +281,6 @@ export class Pattern implements PatternType
 				else to = value.indexOf(delimiters[i],fr);
 
 				let part:string = value.substring(fr,fr+size);
-				console.log("'"+part+"' size: "+size)
 
 				while(part.length < size)
 					part += " ";
@@ -288,7 +304,6 @@ export class Pattern implements PatternType
 			}
 
 			nval = nval+value.substring(value.length-postfix);
-			console.log("'"+nval+"'")
 
 			// validate each character
 			for(let i = 0; i < this.plen && i < nval.length; i++)
@@ -423,6 +438,9 @@ export class Pattern implements PatternType
 
 	public isValid(pos: number, c: string) : boolean
 	{
+		if (c == this.placeholder$.charAt(pos))
+			return(true);
+
 		let valid:Validity = this.validity(pos,c);
 
 		if (valid == Validity.false || valid == Validity.na)

@@ -833,7 +833,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			if (this.pattern.isFixed(pos))
 			{
-				this.event.preventDefault(true);
+				pos = this.pattern.next(true,pos);
+				this.setPosition(pos);
 				return(false);
 			}
 
@@ -845,7 +846,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (this.pattern.ensure(pos))
 			{
-				this.element.value = this.pattern.getValue();
+				this.setIntermediateValue(this.pattern.getValue());
 				this.setPosition(pos);
 			}
 		}

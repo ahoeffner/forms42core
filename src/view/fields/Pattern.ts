@@ -93,9 +93,7 @@ export class Pattern implements PatternType
 		if (pos < area[0] || pos > area[1])
 			return(false);
 
-		console.log("X 1 '"+value+"'")
-		this.value = value.substring(0,area[1]-1) + value.substring(area[1]+1);
-		console.log("X 2 '"+this.value+"'")
+		this.value = value.substring(0,pos) + value.substring(pos+1);
 		return(true);
 	}
 

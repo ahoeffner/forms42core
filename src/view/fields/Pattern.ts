@@ -85,15 +85,17 @@ export class Pattern implements PatternType
 		return(true);
 	}
 
-	public ensure(pos:number) : boolean
+	public ensure(value:string, pos:number) : boolean
 	{
 		let last:Field = this.fields[this.fields.length-1];
 		let area:number[] = [last.pos(),last.pos()+last.size()];
 
-		if (pos < area[0])
+		if (pos < area[0] || pos > area[1])
 			return(false);
 
-		this.value = this.value.substring(0,area[1]-1) + ' ' + this.value.substring(area[1]+1);
+		console.log("X 1 '"+value+"'")
+		this.value = value.substring(0,area[1]-1) + value.substring(area[1]+1);
+		console.log("X 2 '"+this.value+"'")
 		return(true);
 	}
 

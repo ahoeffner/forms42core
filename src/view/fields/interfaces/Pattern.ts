@@ -39,11 +39,11 @@ export interface Pattern
 	getValue() : string;
 	setValue(value:any) : boolean;
 
-	ensure(pos:number) : boolean;
 	isFixed(pos:number) : boolean
 
 	isValid(pos:number, c:string) : boolean
 	validity(pos:number, c:string) : Validity
+	ensure(value:string, pos:number) : boolean;
 
 	prev(printable:boolean,from?:number) : number;
 	next(printable:boolean,from?:number) : number;

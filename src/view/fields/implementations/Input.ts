@@ -856,7 +856,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(false);
 			}
 
-			if (this.pattern.ensure(pos))
+			if (this.pattern.ensure(this.element.value,pos))
 			{
 				this.setIntermediateValue(this.pattern.getValue());
 				this.setPosition(pos);

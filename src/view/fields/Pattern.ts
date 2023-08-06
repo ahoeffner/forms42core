@@ -99,12 +99,16 @@ export class Pattern implements PatternType
 
 		f = ' ' + f;
 
-		if (f.length > area[1] - area[0] + 1)
+		/*
+		if (area[1] - area[0] == 1)
 		{
 			console.log("t 1 '"+f+"'")
 			f = f.substring(0,area[1] - area[0]);
 			console.log("t 2 '"+f+"'")
 		}
+		*/
+
+		console.log(area)
 
 		console.log("b '"+b+"'")
 		console.log("f '"+f+"'")

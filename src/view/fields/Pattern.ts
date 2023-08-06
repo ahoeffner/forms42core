@@ -93,15 +93,15 @@ export class Pattern implements PatternType
 		let area:number[] = this.getFieldArea(pos);
 
 		let b:string = this.value.substring(0,pos);
-		let m:string = this.value.substring(pos,area[1]);
-		let a:string = this.value.substring(area[1]);
+		let f:string = this.value.substring(pos,area[1]);
+		let a:string = this.value.substring(area[1]+1);
 
-		m = ' ' + m;
+		f = ' ' + f;
 
-		if (m.length >= area[1] - area[0])
-			m = m.substring(0,area[1] - area[0]);
+		if (f.length > area[1] - area[0] + 1)
+			f = f.substring(0,area[1] - area[0]);
 
-		this.value = b+m+a;
+		this.value = b+f+a;
 		return(this.setCharacter(pos,c));
 	}
 

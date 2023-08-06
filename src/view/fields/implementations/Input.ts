@@ -826,65 +826,61 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.setPosition(pos);
 			}
 
+			if (this.event.type == "keydown")
+			{
+				let area:number[] = this.getSelection();
+
+				if (area[1] - area[0] == 0 && this.pattern.isFixed(pos-1))
+				{
+					this.setPosition(this.pattern.prev(true,pos-1)+1);
+					this.event.preventDefault(true);
+					return(false);
+				}
+			}
+
 			return(true);
-		}
-
-		if (this.event.type == "keydown" && this.event.isPrintableKey)
-		{
-			if (this.event.repeat)
-			{
-				this.event.preventDefault(true);
-				return(false);
-			}
-
-			if (pos >= length)
-			{
-				this.event.preventDefault(true);
-				return(false);
-			}
-
-			if (this.pattern.isFixed(pos))
-			{
-				pos = this.pattern.next(true,pos);
-				this.setPosition(pos);
-				return(false);
-			}
-
-			if (!this.pattern.isValid(pos,this.event.key))
-			{
-				this.event.preventDefault(true);
-				return(false);
-			}
-
-			if (this.pattern.ensure(this.element.value,pos))
-			{
-				this.setIntermediateValue(this.pattern.getValue());
-				this.setPosition(pos);
-			}
 		}
 
 		if (this.event.type == "keypress" && this.event.isPrintableKey)
 		{
+			if (pos >= this.pattern.size())
+				pos = this.pattern.prev(true,pos);
+
 			if (this.pattern.isFixed(pos))
 			{
 				pos = this.pattern.next(true,pos);
 				this.setPosition(pos);
 			}
+
+			let area:number[] = this.getSelection();
+
+			if (area[1] - area[0] > 1)
+				this.pattern.delete(area[0],area[1]);
+
+			if (!this.pattern.insCharacter(pos,this.event.key))
+			{
+				this.setIntermediateValue(this.pattern.getValue());
+				this.event.preventDefault(true);
+				this.setPosition(pos);
+				return(false);
+			}
+
+			this.setIntermediateValue(this.pattern.getValue());
+
+			let npos:number = this.pattern.next(true,pos);
+			if (npos <= pos) npos++;
+
+			this.setPosition(npos);
+			this.event.preventDefault(true);
 
 			return(false);
 		}
 
 		if (this.event.type == "keyup" && this.event.isPrintableKey)
 		{
-			if (this.pattern.isFixed(pos))
-				pos = this.pattern.next(true,pos);
-
-			let ok:boolean = this.pattern.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.pattern.getValue());
-
-			if (!ok) pos = this.pattern.prev(true,pos);
+			this.pattern.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.pattern.getValue())
 			this.setPosition(pos);
-
 			return(true);
 		}
 

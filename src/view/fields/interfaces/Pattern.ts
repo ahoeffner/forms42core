@@ -43,7 +43,6 @@ export interface Pattern
 
 	isValid(pos:number, c:string) : boolean
 	validity(pos:number, c:string) : Validity
-	ensure(value:string, pos:number) : boolean;
 
 	prev(printable:boolean,from?:number) : number;
 	next(printable:boolean,from?:number) : number;
@@ -57,6 +56,8 @@ export interface Pattern
 	setPosition(pos:number) : boolean;
 	getFieldArea(pos:number) : number[];
 	delete(fr:number,to:number) : string;
+
+	insCharacter(pos:number, c:string) : boolean;
 	setCharacter(pos:number, c:string) : boolean;
 }
 

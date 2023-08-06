@@ -85,16 +85,24 @@ export class Pattern implements PatternType
 		return(true);
 	}
 
-	public ensure(value:string, pos:number) : boolean
+	public insCharacter(pos:number, c:string) : boolean
 	{
-		let last:Field = this.fields[this.fields.length-1];
-		let area:number[] = [last.pos(),last.pos()+last.size()];
-
-		if (pos < area[0] || pos > area[1])
+		if (!this.isValid(pos,c))
 			return(false);
 
-		this.value = value.substring(0,pos) + value.substring(pos+1);
-		return(true);
+		let area:number[] = this.getFieldArea(pos);
+
+		let b:string = this.value.substring(0,pos);
+		let m:string = this.value.substring(pos,area[1]);
+		let a:string = this.value.substring(area[1]);
+
+		m = ' ' + m;
+
+		if (m.length >= area[1] - area[0])
+			m = m.substring(0,area[1] - area[0]);
+
+		this.value = b+m+a;
+		return(this.setCharacter(pos,c));
 	}
 
 	public isFixed(pos:number) : boolean
@@ -521,6 +529,20 @@ export class Pattern implements PatternType
 			p += this.placeholder$.charAt(i);
 
 		this.value = b + p + a;
+
+		let area:number[] = this.getFieldArea(to);
+		let shft:string = this.value.substring(to,area[1]+1);
+
+		if (fr > area[0])
+			shft = this.value.substring(area[0],fr) + shft;
+
+		while(shft.length <= area[1] - area[0])
+			shft += ' ';
+
+		a = this.value.substring(area[1]);
+		b = this.value.substring(0,area[0]);
+
+		this.value = b + shft + a;
 
 		this.setPosition(fr);
 

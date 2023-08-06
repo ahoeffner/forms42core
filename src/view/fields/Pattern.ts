@@ -91,6 +91,7 @@ export class Pattern implements PatternType
 			return(false);
 
 		let area:number[] = this.getFieldArea(pos);
+		let off:number = area[1] - area[0] > 1 ? 0 : 1;
 
 		let b:string = this.value.substring(0,pos);
 		let f:string = this.value.substring(pos,area[1]);
@@ -99,9 +100,19 @@ export class Pattern implements PatternType
 		f = ' ' + f;
 
 		if (f.length > area[1] - area[0] + 1)
+		{
+			console.log("t 1 '"+f+"'")
 			f = f.substring(0,area[1] - area[0]);
+			console.log("t 2 '"+f+"'")
+		}
+
+		console.log("b '"+b+"'")
+		console.log("f '"+f+"'")
+		console.log("a '"+a+"'")
 
 		this.value = b+f+a;
+		console.log("v '"+this.value+"'")
+
 		return(this.setCharacter(pos,c));
 	}
 

@@ -90,32 +90,33 @@ export class Pattern implements PatternType
 		if (!this.isValid(pos,c))
 			return(false);
 
-		let area:number[] = this.getFieldArea(pos);
-		let off:number = area[1] - area[0] > 1 ? 0 : 1;
+		let field:Field = this.findField(pos);
+
+		if (field == null)
+			return(false);
+
+		let p1:number = field.pos();
+		let p2:number = p1 + field.size() - 1;
+
+		let area:number[] = [p1,p2];
 
 		let b:string = this.value.substring(0,pos);
 		let f:string = this.value.substring(pos,area[1]);
 		let a:string = this.value.substring(area[1]+1);
 
 		f = ' ' + f;
+		let p:string = ' ';
 
-		/*
-		if (area[1] - area[0] == 1)
+		while(p.length < f.length)
+			p += this.placeholder$.charAt(b.length+p.length);
+
+		this.value = b+p+a;
+
+		for (let i = 1; i < f.length; i++)
 		{
-			console.log("t 1 '"+f+"'")
-			f = f.substring(0,area[1] - area[0]);
-			console.log("t 2 '"+f+"'")
+			if (f.charAt(i) != ' ')
+				this.setCharacter(b.length+i,f.charAt(i))
 		}
-		*/
-
-		console.log(area)
-
-		console.log("b '"+b+"'")
-		console.log("f '"+f+"'")
-		console.log("a '"+a+"'")
-
-		this.value = b+f+a;
-		console.log("v '"+this.value+"'")
 
 		return(this.setCharacter(pos,c));
 	}
@@ -225,6 +226,7 @@ export class Pattern implements PatternType
 			if (pos >= field.pos$ && pos <= field.last)
 					return(field);
 		}
+
 		return(null);
 	}
 
@@ -527,15 +529,6 @@ export class Pattern implements PatternType
 
 	public delete(fr:number, to:number) : string
 	{
-		if (fr == to)
-		{
-			fr--;
-			if (fr < 0) return(this.value);
-
-			if (!this.setPosition(fr))
-					return(this.value);
-		}
-
 		let p:string = "";
 		let a:string = this.value.substring(to);
 		let b:string = this.value.substring(0,fr);
@@ -543,21 +536,40 @@ export class Pattern implements PatternType
 		for(let i = fr; i < to; i++)
 			p += this.placeholder$.charAt(i);
 
+		// Set area to pattern
 		this.value = b + p + a;
 
-		let area:number[] = this.getFieldArea(to);
+		// Shift rest of last field left
+		let field:Field = this.findField(to);
+		if (field == null) return(this.value);
+
+		let p1:number = field.pos();
+		let p2:number = p1 + field.size() - 1;
+
+		let area:number[] = [p1,p2];
 		let shft:string = this.value.substring(to,area[1]+1);
 
-		if (fr > area[0])
-			shft = this.value.substring(area[0],fr) + shft;
+		// Keep from fr if only partial delete in field
+		if (fr > area[0]) shft = this.value.substring(area[0],fr) + shft;
 
+		// Pad content to match field size
 		while(shft.length <= area[1] - area[0])
 			shft += ' ';
 
 		a = this.value.substring(area[1]);
 		b = this.value.substring(0,area[0]);
 
-		this.value = b + shft + a;
+		for(let i = 0, p = ""; i < shft.length; i++)
+			p += this.placeholder$.charAt(b.length+i);
+
+		// Set field to default
+		this.value = b + p + a;
+
+		for (let i = 0; i < shft.length; i++)
+		{
+			if (shft.charAt(i) != ' ')
+				this.setCharacter(b.length+i,shft.charAt(i));
+		}
 
 		this.setPosition(fr);
 
@@ -839,6 +851,11 @@ class Field implements Section
 	{
 		if (end != null) this.end$ = end;
 		this.value$ = this.getValue();
+	}
+
+	public toString() : string
+	{
+		return("#"+this.fn+" pos: "+this.pos$+" size: "+this.size$+" "+this.end$);
 	}
 }
 

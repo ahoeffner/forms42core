@@ -20,7 +20,7 @@
 */
 
 /*
- * Pattern consists of fixed text and fields enclosed by {}.
+ * Pattern consists of fixed text and field definitions enclosed by {}.
  * Fields consists of a list of single character regular expressions.
  * Each expression can be repeated using a preceding multiplier.
  * For shorthand, a number of predefined classes can be used.

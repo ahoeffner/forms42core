@@ -549,26 +549,18 @@ export class Pattern implements PatternType
 		let area:number[] = [p1,p2];
 		let shft:string = this.value.substring(to,area[1]+1);
 
-		// Keep from fr if only partial delete in field
-		if (fr > area[0]) shft = this.value.substring(area[0],fr) + shft;
+		p = "";
 
-		// Pad content to match field size
-		while(shft.length <= area[1] - area[0])
-			shft += ' ';
+		if (fr < area[0])
+			fr = area[0];
 
-		a = this.value.substring(area[1]);
-		b = this.value.substring(0,area[0]);
+		b = this.value.substring(0,fr);
+		a = this.value.substring(area[1]+1);
 
-		for(let i = 0, p = ""; i < shft.length; i++)
-			p += this.placeholder$.charAt(b.length+i);
+		for (let i = fr; i <= area[1]; i++)
+			p += this.placeholder$.charAt(i);
 
-		// Set field to default
 		this.value = b + p + a;
-
-		console.log("b '"+b+"'")
-		console.log("p '"+p+"'")
-		console.log("a '"+a+"'")
-		console.log("v '"+this.value+"'")
 
 		for (let i = 0; i < shft.length; i++)
 		{

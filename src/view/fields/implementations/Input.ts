@@ -275,8 +275,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.pattern != null && value.length > 0)
 		{
+			console.log("v1 '"+value+"'")
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
+			console.log("v2 '"+value+"'")
 		}
 
 		this.before = value;
@@ -826,9 +828,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(false);
 
 			let area:number[] = this.getSelection();
-
 			if (area[0] == area[1]) area[0]--;
-			console.log(this.event.type+" "+pos+" "+area)
 
 			this.pattern.delete(area[0],area[1]);
 			this.setIntermediateValue(this.pattern.getValue());

@@ -817,24 +817,32 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(true);
 		}
 
-		if (this.event.key == "Backspace")
+		if (this.event.key == "Backspace" && !this.event.modifier)
 		{
+			let area:number[] = this.getSelection();
+			console.log(this.event.type+" "+pos+" "+area)
+
 			if (this.event.type == "keyup")
 			{
-				this.pattern.setValue(this.getIntermediateValue());
+				this.event.preventDefault(true);
+				if (area[0] == area[1]) area[1]++;
+
+				this.pattern.delete(area[0],area[1]);
 				this.setIntermediateValue(this.pattern.getValue());
+
+				if (this.pattern.isFixed(pos))
+					pos = this.pattern.prev(true,pos);
+
 				this.setPosition(pos);
 			}
 
-			if (this.event.type == "keydown")
+			if (this.event.type == "keydown" && area[0] == area[1])
 			{
-				let area:number[] = this.getSelection();
-
-				if (area[1] - area[0] == 0 && this.pattern.isFixed(pos-1))
+				if (pos > 0 && this.pattern.isFixed(pos-1))
 				{
-					this.setPosition(this.pattern.prev(true,pos-1)+1);
-					this.event.preventDefault(true);
-					return(false);
+					console.log("move")
+					pos = this.pattern.prev(true,pos-1)+1;
+					this.setPosition(pos);
 				}
 			}
 

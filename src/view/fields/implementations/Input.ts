@@ -763,9 +763,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(true);
 
 		this.event.preventDefault();
-
 		let pos:number = this.getPosition();
-		let length:number = this.pattern.getValue().length;
 
 		if (this.event.type == "focus")
 		{
@@ -782,11 +780,14 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			this.pattern.setValue(this.getIntermediateValue());
 			if (this.pattern.isNull()) this.clear();
-				return(true);
+			return(true);
 		}
 
 		if (this.event.type == "change")
+		{
+			console.log("change");
 			return(true);
+		}
 
 		if (this.event.type == "drop")
 		{
@@ -813,16 +814,15 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.setIntermediateValue(this.pattern.getValue());
 				this.setPosition(0);
 			}
-
 			return(true);
 		}
 
 		if (this.event.key == "Backspace" && !this.event.modifier)
 		{
-			pos--;
+			if (pos > 0) pos--;
 			this.event.preventDefault(true);
 
-			if (this.event.type == "keyup" || pos < 0)
+			if (this.event.type == "keyup")
 				return(false);
 
 			let area:number[] = this.getSelection();
@@ -871,14 +871,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.preventDefault(true);
 
 			return(false);
-		}
-
-		if (this.event.type == "keyup" && this.event.isPrintableKey)
-		{
-			this.pattern.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.pattern.getValue())
-			this.setPosition(pos);
-			return(true);
 		}
 
 		if (this.datetokens != null)

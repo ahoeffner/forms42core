@@ -299,20 +299,20 @@ export class Pattern implements PatternType
 			{
 				let size:number = this.fields[i].size();
 
-				if (delimiters[i].length == 0) to = fr + 1;
+				if (delimiters[i].length == 0) to = fr + size;
 				else to = value.indexOf(delimiters[i],fr);
 
-				let part:string = value.substring(fr,fr+size);
+				let part:string = value.substring(fr,to);
 
 				while(part.length < size)
-					part += " ";
+					part += this.placeholder$.charAt(nval.length+part.length);
 
 				if (part.length > size)
 				{
 					part = part.trim();
 
 					while(part.length < size)
-						part += " ";
+						part += this.placeholder$.charAt(nval.length+part.length);
 
 					while(part.length > size && !this.isValid(nval.length+1,part.charAt(0)))
 						part = part.substring(1);

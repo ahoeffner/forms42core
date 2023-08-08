@@ -275,10 +275,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.pattern != null && value.length > 0)
 		{
-			console.log("v1 '"+value+"'")
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
-			console.log("v2 '"+value+"'")
 		}
 
 		this.before = value;

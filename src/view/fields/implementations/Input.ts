@@ -819,33 +819,24 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.key == "Backspace" && !this.event.modifier)
 		{
+			pos--;
+			this.event.preventDefault(true);
+
+			if (this.event.type == "keyup" || pos < 0)
+				return(false);
+
 			let area:number[] = this.getSelection();
+
+			if (area[0] == area[1]) area[0]--;
 			console.log(this.event.type+" "+pos+" "+area)
 
-			if (this.event.type == "keyup")
-			{
-				this.event.preventDefault(true);
-				if (area[0] == area[1]) area[1]++;
+			this.pattern.delete(area[0],area[1]);
+			this.setIntermediateValue(this.pattern.getValue());
 
-				this.pattern.delete(area[0],area[1]);
-				this.setIntermediateValue(this.pattern.getValue());
+			if (this.pattern.isFixed(pos))
+				pos = this.pattern.prev(true,pos) + 1;
 
-				if (this.pattern.isFixed(pos))
-					pos = this.pattern.prev(true,pos);
-
-				this.setPosition(pos);
-			}
-
-			if (this.event.type == "keydown" && area[0] == area[1])
-			{
-				if (pos > 0 && this.pattern.isFixed(pos-1))
-				{
-					console.log("move")
-					pos = this.pattern.prev(true,pos-1)+1;
-					this.setPosition(pos);
-				}
-			}
-
+			this.setPosition(pos);
 			return(true);
 		}
 

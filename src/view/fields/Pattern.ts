@@ -565,6 +565,11 @@ export class Pattern implements PatternType
 		// Set field to default
 		this.value = b + p + a;
 
+		console.log("b '"+b+"'")
+		console.log("p '"+p+"'")
+		console.log("a '"+a+"'")
+		console.log("v '"+this.value+"'")
+
 		for (let i = 0; i < shft.length; i++)
 		{
 			if (shft.charAt(i) != ' ')

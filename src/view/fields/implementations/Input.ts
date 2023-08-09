@@ -118,7 +118,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public clear() : void
 	{
-		this.before = "";
 		this.setElementValue(null);
 	}
 
@@ -148,7 +147,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 
 			value = date;
-			this.initial = this.getIntermediateValue();
 		}
 
 		return(value);
@@ -239,8 +237,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			value = "";
 
 		value += "";
-		this.before = value;
-		this.initial = value;
 		this.setElementValue(value);
 
 		if (this.pattern != null)
@@ -278,9 +274,6 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.pattern.setValue(value);
 			value = this.pattern.getValue();
 		}
-
-		this.before = value;
-		this.initial = value;
 
 		this.setElementValue(value);
 	}
@@ -440,17 +433,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "focus")
 		{
 			bubble = true;
+			this.before = this.getElementValue();
 			this.initial = this.getIntermediateValue();
-
-			if (this.pattern != null)
-			{
-				this.initial = this.pattern.getValue();
-				this.setElementValue(this.initial);
-				this.setPosition(0);
-			}
-
-			if (this.placeholder != null)
-				this.element.removeAttribute("placeholder");
+			if (this.placeholder != null) this.element.removeAttribute("placeholder");
 		}
 
 		if (this.pattern != null)
@@ -462,42 +447,24 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "blur")
 		{
 			bubble = true;
-			let change:boolean = false;
 
-			if (this.pattern == null)
-			{
-				if (this.getIntermediateValue() != this.initial)
-					change = true;
-			}
-			else
-			{
-				if (this.pattern.getValue() != this.initial)
-					change = true;
-			}
+			let change:boolean = false;
+			let value:string = this.getIntermediateValue();
+
+			if (value != this.initial)
+				change = true;
+
+			this.initial = value;
 
 			if (change)
 			{
 				this.event.type = "change";
-
-				if (this.pattern != null)
-				{
-					this.pattern.setValue(this.getElementValue());
-
-					if (this.pattern.isNull()) this.setElementValue(null);
-					else					   		this.setElementValue(this.pattern.getValue());
-				}
-
-				this.initial = this.getIntermediateValue();
-				if (this.pattern != null) this.initial = this.pattern.getValue();
 
 				this.bonusstuff(this.getValue());
 				this.eventhandler.handleEvent(this.event);
 
 				this.event.type = "blur";
 			}
-
-			this.initial = this.getIntermediateValue();
-			if (this.pattern != null) this.initial = this.pattern.getValue();
 
 			if (this.placeholder != null)
 			this.element.removeAttribute("placeholder");
@@ -534,8 +501,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (event.type == "change")
 		{
-			bubble = false;
-
 			if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			{
 				let num:string = this.getElementValue();
@@ -544,25 +509,13 @@ export class Input implements FieldImplementation, EventListenerObject
 				else if (num.trim().length > 0) this.setElementValue((+num)+"");
 			}
 
-			if (this.pattern == null)
-			{
-				if (this.getIntermediateValue() != this.initial)
-					bubble = true;
-			}
-			else
-			{
-				this.pattern.setValue(this.getElementValue());
+			bubble = false;
+			let value:string = this.getIntermediateValue();
 
-				if (this.pattern.isNull()) this.setElementValue(null);
-				else					   		this.setElementValue(this.pattern.getValue());
+			if (value != this.initial)
+				bubble = true;
 
-				if (this.pattern.getValue() != this.initial)
-					bubble = true;
-			}
-
-			this.initial = this.getIntermediateValue();
-			if (this.pattern != null) this.initial = this.pattern.getValue();
-
+			this.initial = value;
 			this.bonusstuff(this.getValue());
 		}
 
@@ -767,25 +720,19 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "focus")
 		{
-			this.pattern.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.pattern.getValue());
-
 			if (this.pattern.isNull())
+			{
+				this.setIntermediateValue(this.pattern.getValue());
 				setTimeout(() => {this.setPosition(0)},0);
+			}
 
 			return(true);
 		}
 
-		if (this.event.type == "blur")
+		// Change should not fire because of preventDefault etc
+		if (this.event.type == "blur" || this.event.type == "change")
 		{
-			this.pattern.setValue(this.getIntermediateValue());
 			if (this.pattern.isNull()) this.clear();
-			return(true);
-		}
-
-		if (this.event.type == "change")
-		{
-			console.log("change");
 			return(true);
 		}
 

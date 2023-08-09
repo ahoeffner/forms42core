@@ -777,6 +777,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				return(false);
 			}
 
+			this.validateDateField(pos);
 			this.setIntermediateValue(this.formatter.getValue());
 
 			let npos:number = this.formatter.next(true,pos);

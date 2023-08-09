@@ -620,19 +620,12 @@ export class Formatter implements FormatterType
 		return([fr,to]);
 	}
 
-	public prev(printable:boolean,from?:number) : number
+	public prev(from?:number) : number
 	{
 		if (from != null)
 			this.pos = from;
 
 		let pos = this.pos - 1;
-
-		if (!printable && pos >= 0)
-		{
-			this.pos = pos;
-			this.onfield();
-			return(this.pos);
-		}
 
 		while(pos >= 0)
 		{
@@ -649,19 +642,12 @@ export class Formatter implements FormatterType
 		return(this.pos);
 	}
 
-	public next(printable:boolean,from?:number) : number
+	public next(from?:number) : number
 	{
 		if (from != null)
 			this.pos = from;
 
 		let pos = this.pos + 1;
-
-		if (!printable && pos < this.plen)
-		{
-			this.pos = pos;
-			this.onfield();
-			return(this.pos);
-		}
 
 		while(pos < this.plen)
 		{

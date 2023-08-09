@@ -35,6 +35,7 @@ export interface Formatter
 
 	getFormat() : string;
 	setFormat(pattern:string) : void;
+	getPlaceholder() : string;
 
 	getValue() : string;
 	setValue(value:any) : boolean;
@@ -44,8 +45,8 @@ export interface Formatter
 	isValid(pos:number, c:string) : boolean
 	validity(pos:number, c:string) : Validity
 
-	prev(printable:boolean,from?:number) : number;
-	next(printable:boolean,from?:number) : number;
+	prev(from?:number) : number;
+	next(from?:number) : number;
 
 	getPosition() : number;
 	getFields() : Section[];

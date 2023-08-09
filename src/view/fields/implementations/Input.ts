@@ -20,11 +20,12 @@
 */
 
 import { DataType } from "../DataType.js";
-import { Formatter } from "../Formatter.js";
 import { DataMapper, Tier } from "../DataMapper.js";
 import { Section } from "../interfaces/Formatter.js";
 import { Alert } from "../../../application/Alert.js";
+import { Formatter } from "../interfaces/Formatter.js";
 import { FieldProperties } from "../FieldProperties.js";
+import { Formatter as DefaultFormatter } from "../Formatter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
@@ -364,7 +365,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 
 			if (attr == "format")
-				this.formatter = new Formatter(value);
+				this.formatter = new DefaultFormatter(value);
 
 			if (attr == "placeholder")
 				this.placeholder = value;
@@ -373,8 +374,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (datepattern.length > 0)
 		{
 			this.element.type = "text";
-			this.formatter = new Formatter(datepattern);
 			this.placeholder = this.placeholder.toLowerCase();
+			this.formatter = new DefaultFormatter(datepattern);
 		}
 		else if (this.formatter != null)
 		{
@@ -747,7 +748,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.setIntermediateValue(this.formatter.getValue());
 
 			if (this.formatter.isFixed(pos))
-				pos = this.formatter.prev(true,pos) + 1;
+				pos = this.formatter.prev(pos) + 1;
 
 			this.setPosition(pos);
 			return(true);
@@ -756,11 +757,11 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "keypress" && this.event.isPrintableKey)
 		{
 			if (pos >= this.formatter.size())
-				pos = this.formatter.prev(true,pos);
+				pos = this.formatter.prev(pos);
 
 			if (this.formatter.isFixed(pos))
 			{
-				pos = this.formatter.next(true,pos);
+				pos = this.formatter.next(pos);
 				this.setPosition(pos);
 			}
 
@@ -780,7 +781,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.validateDateField(pos);
 			this.setIntermediateValue(this.formatter.getValue());
 
-			let npos:number = this.formatter.next(true,pos);
+			let npos:number = this.formatter.next(pos);
 			if (npos <= pos) npos++;
 
 			this.setPosition(npos);

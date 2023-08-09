@@ -19,10 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Pattern } from "../Pattern.js";
 import { DataType } from "../DataType.js";
-import { Section } from "../interfaces/Pattern.js";
+import { Formatter } from "../Formatter.js";
 import { DataMapper, Tier } from "../DataMapper.js";
+import { Section } from "../interfaces/Formatter.js";
 import { Alert } from "../../../application/Alert.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
@@ -50,9 +50,9 @@ export class Input implements FieldImplementation, EventListenerObject
 	private dec:boolean = false;
 	private maxlen:number = null;
 	private cse:Case = Case.mixed;
-	private pattern:Pattern = null;
 	private state:FieldState = null;
 	private placeholder:string = null;
+	private formatter:Formatter = null;
 	private datamapper:DataMapper = null;
 	private datetokens:FormatToken[] = null;
 	private properties:FieldProperties = null;
@@ -121,37 +121,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.setElementValue(null);
 	}
 
-	public bonusstuff(value:any) : any
-	{
-		// finish date with defaults from today
-		if (DataType[this.datatype$].startsWith("date") && this.pattern && value == null)
-		{
-			let date:Date = dates.parse(this.getElementValue());
-
-			if (date == null && !this.pattern.isNull())
-			{
-				let fine:string = this.finishDate();
-
-				date = dates.parse(fine);
-
-				if (date != null)
-				{
-					this.pattern.setValue(fine);
-					this.setElementValue(this.pattern.getValue());
-				}
-				else
-				{
-					if (dates.parse(this.getElementValue()) == null)
-						this.setElementValue(null);
-				}
-			}
-
-			value = date;
-		}
-
-		return(value);
-	}
-
 	public getValue() : any
 	{
 		let value:string = this.getElementValue().trim();
@@ -178,8 +147,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
 			return(+value);
 
-		if (this.pattern != null)
-			return(this.pattern.getValue().trim());
+		if (this.formatter != null)
+			return(this.formatter.getValue());
 
 		if (this.properties.validValues.size > 0)
 		{
@@ -226,11 +195,11 @@ export class Input implements FieldImplementation, EventListenerObject
 				value = null;
 		}
 
-		if (this.pattern != null)
+		if (this.formatter != null)
 		{
-			this.pattern.setValue(value);
-			if (this.pattern.isNull()) value = "";
-			else value = this.pattern.getValue();
+			this.formatter.setValue(value);
+			if (this.formatter.isNull()) value = null;
+			else value = this.formatter.getValue();
 		}
 
 		if (value == null)
@@ -239,8 +208,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		value += "";
 		this.setElementValue(value);
 
-		if (this.pattern != null)
-			this.setPosition(this.pattern.findPosition(0));
+		if (this.formatter != null)
+			this.setPosition(this.formatter.findPosition(0));
 
 		return(true);
 	}
@@ -251,7 +220,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(this.datamapper.getIntermediateValue(Tier.Backend));
 
 		let value:string = this.getElementValue();
-		if (this.pattern == null) value = value.trim();
+		if (this.formatter == null) value = value.trim();
 
 		return(value);
 	}
@@ -269,10 +238,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		value = value.trim();
 
-		if (this.pattern != null && value.length > 0)
+		if (this.formatter != null && value.length > 0)
 		{
-			this.pattern.setValue(value);
-			value = this.pattern.getValue();
+			this.formatter.setValue(value);
+			value = this.formatter.getValue();
 		}
 
 		this.setElementValue(value);
@@ -287,7 +256,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		this.int = false;
 		this.dec = false;
-		this.pattern = null;
+		this.formatter = null;
 		this.cse = Case.mixed;
 		this.placeholder = null;
 		this.datatype$ = DataType.string;
@@ -395,7 +364,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 
 			if (attr == "format")
-				this.pattern = new Pattern(value);
+				this.formatter = new Formatter(value);
 
 			if (attr == "placeholder")
 				this.placeholder = value;
@@ -404,15 +373,15 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (datepattern.length > 0)
 		{
 			this.element.type = "text";
-			this.pattern = new Pattern(datepattern);
+			this.formatter = new Formatter(datepattern);
 			this.placeholder = this.placeholder.toLowerCase();
 		}
-		else if (this.pattern != null)
+		else if (this.formatter != null)
 		{
 			this.element.type = "text";
 
 			if (this.element.getAttribute("size") == null)
-				this.element.setAttribute("size",""+this.pattern.getPlaceholder().length);
+				this.element.setAttribute("size",""+this.formatter.getPlaceholder().length);
 		}
 
 		this.element.removeAttribute("placeholder");
@@ -438,7 +407,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.placeholder != null) this.element.removeAttribute("placeholder");
 		}
 
-		if (this.pattern != null)
+		if (this.formatter != null)
 		{
 			if (!this.xfixed())
 					return;
@@ -534,23 +503,20 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.onFuncKey)
 			bubble = true;
 
-		if (!this.event.isMouseEvent)
-		{
-			let after:string = this.getElementValue();
-
-			if (this.before != after)
-			{
-				bubble = true;
-				this.before = after;
-				this.event.modified = true;
-
-				if (this.datamapper != null)
-					this.datamapper.setIntermediateValue(Tier.Frontend,after);
-			}
-		}
-
 		if (this.event.accept || this.event.cancel)
 			bubble = true;
+
+		let after:string = this.getElementValue();
+
+		if (this.before != after)
+		{
+			bubble = true;
+			this.before = after;
+			this.event.modified = true;
+
+			if (this.datamapper != null)
+				this.datamapper.setIntermediateValue(Tier.Frontend,after);
+		}
 
 		if (bubble)
 			await this.eventhandler.handleEvent(this.event);
@@ -720,9 +686,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "focus")
 		{
-			if (this.pattern.isNull())
+			if (this.formatter.isNull())
 			{
-				this.setIntermediateValue(this.pattern.getValue());
+				this.setIntermediateValue(this.formatter.getValue());
 				setTimeout(() => {this.setPosition(0)},0);
 			}
 
@@ -732,7 +698,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		// Change should not fire because of preventDefault etc
 		if (this.event.type == "blur" || this.event.type == "change")
 		{
-			if (this.pattern.isNull()) this.clear();
+			this.formatter.setValue(this.getIntermediateValue());
+			this.setIntermediateValue(this.formatter.getValue());
+			if (this.formatter.isNull()) this.clear();
 			return(true);
 		}
 
@@ -757,8 +725,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 			else
 			{
-				this.pattern.setValue(this.getIntermediateValue());
-				this.setIntermediateValue(this.pattern.getValue());
+				this.formatter.setValue(this.getIntermediateValue());
+				this.setIntermediateValue(this.formatter.getValue());
 				this.setPosition(0);
 			}
 			return(true);
@@ -775,11 +743,11 @@ export class Input implements FieldImplementation, EventListenerObject
 			let area:number[] = this.getSelection();
 			if (area[0] == area[1]) area[0]--;
 
-			this.pattern.delete(area[0],area[1]);
-			this.setIntermediateValue(this.pattern.getValue());
+			this.formatter.delete(area[0],area[1]);
+			this.setIntermediateValue(this.formatter.getValue());
 
-			if (this.pattern.isFixed(pos))
-				pos = this.pattern.prev(true,pos) + 1;
+			if (this.formatter.isFixed(pos))
+				pos = this.formatter.prev(true,pos) + 1;
 
 			this.setPosition(pos);
 			return(true);
@@ -787,31 +755,31 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "keypress" && this.event.isPrintableKey)
 		{
-			if (pos >= this.pattern.size())
-				pos = this.pattern.prev(true,pos);
+			if (pos >= this.formatter.size())
+				pos = this.formatter.prev(true,pos);
 
-			if (this.pattern.isFixed(pos))
+			if (this.formatter.isFixed(pos))
 			{
-				pos = this.pattern.next(true,pos);
+				pos = this.formatter.next(true,pos);
 				this.setPosition(pos);
 			}
 
 			let area:number[] = this.getSelection();
 
 			if (area[1] - area[0] > 1)
-				this.pattern.delete(area[0],area[1]);
+				this.formatter.delete(area[0],area[1]);
 
-			if (!this.pattern.insCharacter(pos,this.event.key))
+			if (!this.formatter.insCharacter(pos,this.event.key))
 			{
-				this.setIntermediateValue(this.pattern.getValue());
+				this.setIntermediateValue(this.formatter.getValue());
 				this.event.preventDefault(true);
 				this.setPosition(pos);
 				return(false);
 			}
 
-			this.setIntermediateValue(this.pattern.getValue());
+			this.setIntermediateValue(this.formatter.getValue());
 
-			let npos:number = this.pattern.next(true,pos);
+			let npos:number = this.formatter.next(true,pos);
 			if (npos <= pos) npos++;
 
 			this.setPosition(npos);
@@ -824,8 +792,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.now)
 			{
-				this.pattern.setValue(this.getCurrentDate());
-				this.setElementValue(this.pattern.getValue());
+				this.formatter.setValue(this.getCurrentDate());
+				this.setElementValue(this.formatter.getValue());
 
 				this.setPosition(0);
 				return(true);
@@ -833,6 +801,37 @@ export class Input implements FieldImplementation, EventListenerObject
 		}
 
 		return(true);
+	}
+
+	private bonusstuff(value:any) : any
+	{
+		// finish date with defaults from today
+		if (DataType[this.datatype$].startsWith("date") && this.formatter && value == null)
+		{
+			let date:Date = dates.parse(this.getElementValue());
+
+			if (date == null && !this.formatter.isNull())
+			{
+				let fine:string = this.finishDate();
+
+				date = dates.parse(fine);
+
+				if (date != null)
+				{
+					this.formatter.setValue(fine);
+					this.setElementValue(this.formatter.getValue());
+				}
+				else
+				{
+					if (dates.parse(this.getElementValue()) == null)
+						this.setElementValue(null);
+				}
+			}
+
+			value = date;
+		}
+
+		return(value);
 	}
 
 	private finishDate() : string
@@ -875,7 +874,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private validateDateField(pos:number) : void
 	{
-		let section:Section = this.pattern.findField(pos);
+		let section:Section = this.formatter.findField(pos);
 		let token:FormatToken = this.datetokens[section.field()];
 
 		let maxval:number = 0;
@@ -895,7 +894,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 
 		let finished:boolean = true;
-		this.pattern.getFields().forEach((section) =>
+		this.formatter.getFields().forEach((section) =>
 		{
 			value = section.getValue();
 
@@ -930,16 +929,16 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (dayentry >= 0)
 			{
 				let tries:number = 3;
-				value = this.pattern.getValue();
+				value = this.formatter.getValue();
 
-				while(dates.parse(this.pattern.getValue()) == null && --tries >= 0)
+				while(dates.parse(this.formatter.getValue()) == null && --tries >= 0)
 				{
-					let day:number = +this.pattern.getField(dayentry).getValue();
-					this.pattern.getField(dayentry).setValue(""+(day-1));
+					let day:number = +this.formatter.getField(dayentry).getValue();
+					this.formatter.getField(dayentry).setValue(""+(day-1));
 				}
 
 				if (tries < 3)
-					Alert.message("Date '"+value+"' is invalid, changed to "+this.pattern.getValue(),"Date Validation");
+					Alert.message("Date '"+value+"' is invalid, changed to "+this.formatter.getValue(),"Date Validation");
 			}
 		}
 	}

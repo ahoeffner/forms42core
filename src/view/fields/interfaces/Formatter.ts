@@ -28,13 +28,13 @@ export enum Validity
     aslower
 }
 
-export interface Pattern
+export interface Formatter
 {
 	size() : number;
 	isNull() : boolean;
 
-	getPattern() : string;
-	setPattern(pattern:string) : void;
+	getFormat() : string;
+	setFormat(pattern:string) : void;
 
 	getValue() : string;
 	setValue(value:any) : boolean;

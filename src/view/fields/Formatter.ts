@@ -48,10 +48,10 @@
  *  C  : any uppercase character
  */
 
-import { Pattern as PatternType, Section, Validity } from "./interfaces/Pattern.js";
+import { Formatter as FormatterType, Section, Validity } from "./interfaces/Formatter.js";
 
 
-export class Pattern implements PatternType
+export class Formatter implements FormatterType
 {
 	private pos:number = 0;
 	private plen:number = 0;
@@ -66,7 +66,7 @@ export class Pattern implements PatternType
 	constructor(pattern:string)
 	{
 		if (pattern != null)
-			this.setPattern(pattern);
+			this.setFormat(pattern);
 	}
 
 	public size() : number
@@ -137,7 +137,7 @@ export class Pattern implements PatternType
 		return(this.pos);
 	}
 
-	public getPattern(): string
+	public getFormat(): string
 	{
 		return(this.pattern$);
 	}
@@ -147,7 +147,7 @@ export class Pattern implements PatternType
 		return(this.placeholder$);
 	}
 
-	public setPattern(pattern:string) : void
+	public setFormat(pattern:string) : void
 	{
 		let pos:number = 0;
 		let placeholder:string = "";
@@ -777,7 +777,7 @@ class Field implements Section
 	end$:string = null;
 	value$:string = null;
 
-	constructor(private pattern:Pattern, fn:number, fr:number, to:number)
+	constructor(private pattern:Formatter, fn:number, fr:number, to:number)
 	{
 		this.fn = fn;
 		this.pos$ = fr;

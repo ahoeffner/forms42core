@@ -104,8 +104,8 @@ export class Formatter implements FormatterType
 		let f:string = this.value.substring(pos,area[1]);
 		let a:string = this.value.substring(area[1]+1);
 
-		f = ' ' + f;
-		let p:string = ' ';
+		let p:string = "";
+		f = this.placeholder$.charAt(b.length) + f;
 
 		while(p.length < f.length)
 			p += this.placeholder$.charAt(b.length+p.length);

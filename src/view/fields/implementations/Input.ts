@@ -876,6 +876,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private validateDateField(pos:number) : void
 	{
+		if (!DataType[this.datatype$].startsWith("date"))
+			return;
+
 		let section:Section = this.formatter.findField(pos);
 		let token:FormatToken = this.datetokens[section.field()];
 

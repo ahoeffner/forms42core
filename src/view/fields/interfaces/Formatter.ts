@@ -35,33 +35,28 @@ export interface Formatter
 	size() : number;
 	isNull() : boolean;
 
-	//getFormat() : string;
-	//setFormat(pattern:string) : void;
-
-	finish() : string;
-
 	format:string;
 	datatype:DataType;
+	placeholder:string;
 
-	getPlaceholder() : string;
-
+	finish() : string;
 	getValue() : string;
 	setValue(value:any) : boolean;
 
 	isFixed(pos:number) : boolean
-
 	isValid(pos:number, c:string) : boolean
-	validity(pos:number, c:string) : Validity
 
-	prev(from?:number) : number;
-	next(from?:number) : number;
+	prev(from:number) : number;
+	next(from:number) : number;
 
+	/*
 	getFields() : Section[];
 	getField(n:number) : Section;
 	input(pos:number) : boolean;
 	findField(pos?:number) : Section;
 	findPosition(pos:number) : number;
 	getFieldArea(pos:number) : number[];
+	*/
 	delete(fr:number,to:number) : string;
 
 	insCharacter(pos:number, c:string) : boolean;

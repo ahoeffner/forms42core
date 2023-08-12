@@ -186,7 +186,7 @@ export class Formatter implements FormatterType
 		return(this.pattern$);
 	}
 
-	public getPlaceholder(): string
+	public get placeholder() : string
 	{
 		return(this.placeholder$);
 	}
@@ -249,18 +249,6 @@ export class Formatter implements FormatterType
 
 			fld.init(stop);
 		});
-	}
-
-	public getField(n:number) : Field
-	{
-		if (n < this.fields.length)
-			return(this.fields[n]);
-		return(null);
-	}
-
-	public getFields() : Section[]
-	{
-		return(this.fields);
 	}
 
 	public findField(pos:number) : Field
@@ -659,7 +647,7 @@ export class Formatter implements FormatterType
 		return(from);
 	}
 
-	public next(from?:number) : number
+	public next(from:number) : number
 	{
 		let pos = from + 1;
 
@@ -749,7 +737,7 @@ export class Formatter implements FormatterType
 
 
 		let finished:boolean = true;
-		this.getFields().forEach((section) =>
+		this.fields.forEach((section) =>
 		{
 			value = section.getValue();
 
@@ -788,8 +776,8 @@ export class Formatter implements FormatterType
 
 				while(dates.parse(value) == null && --tries >= 0)
 				{
-					let day:number = +this.getField(dayentry).getValue();
-					this.getField(dayentry).setValue(""+(day-1));
+					let day:number = +this.fields[dayentry].getValue();
+					this.fields[dayentry].setValue(""+(day-1));
 				}
 
 				if (tries < 3)
@@ -911,7 +899,7 @@ class Field implements Section
 	{
 		let empty:boolean = true;
 		let value:string = this.pattern.getValue();
-		let pattern:string = this.pattern.getPlaceholder();
+		let pattern:string = this.pattern.placeholder;
 
 		for (let i = 0; i < pattern.length; i++)
 		{

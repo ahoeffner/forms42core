@@ -319,7 +319,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.formatter != null)
 		{
 			this.element.type = "text";
-			this.placeholder = this.formatter.getPlaceholder();
+			this.placeholder = this.formatter.placeholder;
 
 			if (this.element.getAttribute("size") == null)
 				this.element.setAttribute("size",""+this.formatter.size());

@@ -209,9 +209,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		value += "";
 		this.setElementValue(value);
 
-		if (this.formatter != null)
-			this.setPosition(this.formatter.findPosition(0));
-
 		return(true);
 	}
 
@@ -806,7 +803,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (impl)
 		{
-			impl.setFormat(format);
+			impl.format = format;
 			impl.datatype = this.datatype;
 		}
 

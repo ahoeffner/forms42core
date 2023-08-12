@@ -116,7 +116,7 @@ export class Formatter implements FormatterType
 				})
 			}
 
-			this.setFormat(datepattern);
+			this.format = datepattern;
 		}
 	}
 
@@ -181,7 +181,7 @@ export class Formatter implements FormatterType
 		return(this.value);
 	}
 
-	public getFormat(): string
+	public get format(): string
 	{
 		return(this.pattern$);
 	}
@@ -191,7 +191,7 @@ export class Formatter implements FormatterType
 		return(this.placeholder$);
 	}
 
-	public setFormat(pattern:string) : void
+	public set format(pattern:string)
 	{
 		if (!pattern)
 			return;

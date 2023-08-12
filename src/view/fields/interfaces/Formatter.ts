@@ -35,11 +35,12 @@ export interface Formatter
 	size() : number;
 	isNull() : boolean;
 
-	getFormat() : string;
-	setFormat(pattern:string) : void;
+	//getFormat() : string;
+	//setFormat(pattern:string) : void;
 
 	finish() : string;
 
+	format:string;
 	datatype:DataType;
 
 	getPlaceholder() : string;

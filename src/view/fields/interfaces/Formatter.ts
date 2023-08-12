@@ -42,13 +42,12 @@ export interface Formatter
 	getValue() : string;
 	setValue(value:any) : boolean;
 
-	isFixed(pos:number) : boolean
-
 	prev(from:number) : number;
 	next(from:number) : number;
 
 	delete(fr:number,to:number) : string;
 
+	modifiable(pos:number) : boolean
 	insCharacter(pos:number, c:string) : boolean;
 	setCharacter(pos:number, c:string) : boolean;
 

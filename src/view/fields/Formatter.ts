@@ -201,10 +201,10 @@ export class Formatter implements FormatterType
 		return(true);
 	}
 
-	public isFixed(pos:number) : boolean
+	public modifiable(pos:number) : boolean
 	{
 		let token:Token = this.tokens.get(pos);
-		return(token == null || token.type == 'f')
+		return(token != null && token.type != 'f')
 	}
 
 	public getValue() : string
@@ -644,20 +644,23 @@ export class Formatter implements FormatterType
 		let token:FormatToken = this.datetokens[section.field()];
 
 		let maxval:number = 0;
+		let minval:number = 0;
 		let value:string = section.getValue();
 
 		switch(token.type)
 		{
-			case DatePart.Day 		: maxval = 31; break;
-			case DatePart.Month 		: maxval = 12; break;
 			case DatePart.Hour 		: maxval = 23; break;
 			case DatePart.Minute 	: maxval = 59; break;
 			case DatePart.Second 	: maxval = 59; break;
+			case DatePart.Day 		: minval = 1; maxval = 31; break;
+			case DatePart.Month 		: minval = 1; maxval = 12; break;
 		}
 
 		if (maxval > 0 && +value > maxval)
 			section.setValue(""+maxval);
 
+		if (minval > 0 && +value < minval)
+			section.setValue("0"+minval);
 
 		let finished:boolean = true;
 		this.fields.forEach((section) =>
@@ -844,7 +847,7 @@ class Field implements Section
 		if (value == null) value = "";
 
 		while(value.length < this.size$)
-			value += "";
+			value += " ";
 
 		if (value.length > this.size$)
 			value = value.substring(0,this.size$);

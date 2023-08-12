@@ -689,7 +689,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.formatter.delete(area[0],area[1]);
 			this.setIntermediateValue(this.formatter.getValue());
 
-			if (this.formatter.isFixed(pos))
+			if (!this.formatter.modifiable(pos))
 				pos = this.formatter.prev(pos) + 1;
 
 			this.setPosition(pos);
@@ -701,7 +701,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (pos >= this.formatter.size())
 				pos = this.formatter.prev(pos);
 
-			if (this.formatter.isFixed(pos))
+			if (!this.formatter.modifiable(pos))
 			{
 				pos = this.formatter.next(pos);
 				this.setPosition(pos);

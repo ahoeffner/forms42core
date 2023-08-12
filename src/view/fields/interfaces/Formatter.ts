@@ -38,6 +38,8 @@ export interface Formatter
 	getFormat() : string;
 	setFormat(pattern:string) : void;
 
+	finish() : string;
+
 	datatype:DataType;
 
 	getPlaceholder() : string;

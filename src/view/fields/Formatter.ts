@@ -635,6 +635,14 @@ export class Formatter implements FormatterType
 		return(this.value);
 	}
 
+	public finish() : string
+	{
+		if (DataType[this.datatype].startsWith("date"))
+			this.value = this.finishDate();
+
+		return(this.value);
+	}
+
 	public getFieldArea(pos:number) : number[]
 	{
 		if (pos < 0) pos = 0;
@@ -741,6 +749,43 @@ export class Formatter implements FormatterType
 	private replace(str:string,pos:number,val:string) : string
 	{
 		return(str.substring(0,pos) + val + str.substring(pos+val.length));
+	}
+
+	private finishDate() : string
+	{
+		let empty:boolean = false;
+		let input:string = this.getValue();
+		let today:string = dates.format(new Date());
+
+		this.datetokens.forEach((part) =>
+		{
+			empty = true;
+
+			for (let i = part.pos; i < part.pos + part.length; i++)
+				if (input.charAt(i) != ' ') empty = false;
+
+			if (!empty)
+			{
+				let fld:string = input.substring(part.pos,part.pos+part.length);
+
+				fld = fld.trim();
+
+				if (part.type == DatePart.Year && fld.length == 2)
+					fld = today.substring(part.pos,part.pos+2) + fld;
+
+				while(fld.length < part.length) fld = "0"+fld;
+				input = input.substring(0,part.pos) + fld + input.substring(part.pos+part.length);
+			}
+
+			if (empty)
+			{
+				input = input.substring(0,part.pos) +
+				today.substring(part.pos,part.pos+part.length) +
+				input.substring(part.pos+part.length);
+			}
+		})
+
+		return(input);
 	}
 
 	private validateDateField(pos:number) : void

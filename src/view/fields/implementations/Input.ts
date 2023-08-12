@@ -21,8 +21,7 @@
 
 import { DataType } from "../DataType.js";
 import { DataMapper, Tier } from "../DataMapper.js";
-import { Section } from "../interfaces/Formatter.js";
-import { Alert } from "../../../application/Alert.js";
+import { dates } from "../../../model/dates/dates.js";
 import { Formatter } from "../interfaces/Formatter.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { Properties } from "../../../application/Properties.js";
@@ -32,7 +31,6 @@ import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
-import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 import { ComponentFactory } from "../../../application/interfaces/ComponentFactory.js";
 
@@ -58,7 +56,6 @@ export class Input implements FieldImplementation, EventListenerObject
 	private placeholder:string = null;
 	private formatter:Formatter = null;
 	private datamapper:DataMapper = null;
-	private datetokens:FormatToken[] = null;
 	private properties:FieldProperties = null;
 	private eventhandler:FieldEventHandler = null;
 
@@ -281,7 +278,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (attr == "date")
 				this.datatype$ = DataType.date;
 
-			if (attr == "datetimr")
+			if (attr == "datetime")
 				this.datatype$ = DataType.datetime;
 
 			if (attr == "upper")
@@ -376,7 +373,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			{
 				this.event.type = "change";
 
-				this.bonusstuff(this.getValue());
+				if (this.formatter)
+					this.setIntermediateValue(this.formatter.finish());
+
 				this.eventhandler.handleEvent(this.event);
 
 				this.event.type = "blur";
@@ -431,8 +430,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (value != this.initial)
 				bubble = true;
 
-			this.initial = value;
-			this.bonusstuff(this.getValue());
+			if (this.formatter)
+				this.setIntermediateValue(this.formatter.finish());
 		}
 
 		if (this.event.bubbleMouseEvent)
@@ -748,75 +747,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		}
 
 		return(true);
-	}
-
-	private bonusstuff(value:any) : any
-	{
-		// finish date with defaults from today
-		if (DataType[this.datatype$].startsWith("date") && this.formatter && value == null)
-		{
-			let date:Date = dates.parse(this.getElementValue());
-
-			if (date == null && !this.formatter.isNull())
-			{
-				let fine:string = this.finishDate();
-
-				date = dates.parse(fine);
-
-				if (date != null)
-				{
-					this.formatter.setValue(fine);
-					this.setElementValue(this.formatter.getValue());
-				}
-				else
-				{
-					if (dates.parse(this.getElementValue()) == null)
-						this.setElementValue(null);
-				}
-			}
-
-			value = date;
-		}
-
-		return(value);
-	}
-
-	private finishDate() : string
-	{
-		let empty:boolean = false;
-		let input:string = this.getElementValue();
-		let today:string = dates.format(new Date());
-
-		this.datetokens.forEach((part) =>
-		{
-			empty = true;
-
-			for (let i = part.pos; i < part.pos + part.length; i++)
-				if (input.charAt(i) != ' ') empty = false;
-
-			if (!empty)
-			{
-				let fld:string = input.substring(part.pos,part.pos+part.length);
-
-				fld = fld.trim();
-
-				if (part.type == DatePart.Year && fld.length == 2)
-					fld = today.substring(part.pos,part.pos+2) + fld;
-
-				while(fld.length < part.length) fld = "0"+fld;
-				input = input.substring(0,part.pos) + fld + input.substring(part.pos+part.length);
-			}
-
-			if (empty)
-			{
-				input = input.substring(0,part.pos) +
-				today.substring(part.pos,part.pos+part.length) +
-				input.substring(part.pos+part.length);
-
-			}
-		})
-
-		return(input);
 	}
 
 	private getCurrentDate() : string

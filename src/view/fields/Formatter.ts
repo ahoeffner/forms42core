@@ -120,75 +120,14 @@ export class Formatter implements FormatterType
 		}
 	}
 
-	public isNull(): boolean
+	public get placeholder() : string
 	{
-		for (let i = 0; i < this.fields.length; i++)
-		{
-			if (!this.fields[i].isNull())
-					return(false);
-		}
-
-		return(true);
-	}
-
-	public insCharacter(pos:number, c:string) : boolean
-	{
-		if (!this.isValid(pos,c))
-			return(false);
-
-		let field:Field = this.findField(pos);
-
-		if (field == null)
-			return(false);
-
-		let p1:number = field.pos();
-		let p2:number = p1 + field.size() - 1;
-
-		let area:number[] = [p1,p2];
-
-		let b:string = this.value.substring(0,pos);
-		let f:string = this.value.substring(pos,area[1]);
-		let a:string = this.value.substring(area[1]+1);
-
-		let p:string = "";
-		f = this.placeholder$.charAt(b.length) + f;
-
-		while(p.length < f.length)
-			p += this.placeholder$.charAt(b.length+p.length);
-
-		this.value = b+p+a;
-
-		for (let i = 1; i < f.length; i++)
-		{
-			if (f.charAt(i) != ' ')
-				this.setCharacter(b.length+i,f.charAt(i))
-		}
-
-		let success:boolean = this.setCharacter(pos,c);
-		this.validateDateField(pos);
-
-		return(success);
-	}
-
-	public isFixed(pos:number) : boolean
-	{
-		let token:Token = this.tokens.get(pos);
-		return(token == null || token.type == 'f')
-	}
-
-	public getValue() : string
-	{
-		return(this.value);
+		return(this.placeholder$);
 	}
 
 	public get format(): string
 	{
 		return(this.pattern$);
-	}
-
-	public get placeholder() : string
-	{
-		return(this.placeholder$);
 	}
 
 	public set format(pattern:string)
@@ -251,25 +190,26 @@ export class Formatter implements FormatterType
 		});
 	}
 
-	public findField(pos:number) : Field
+	public isNull() : boolean
 	{
 		for (let i = 0; i < this.fields.length; i++)
 		{
-			let field:Field = this.fields[i];
-			if (pos >= field.pos$ && pos <= field.last)
-					return(field);
+			if (!this.fields[i].isNull())
+					return(false);
 		}
 
-		return(null);
+		return(true);
 	}
 
-	public input(pos:number) : boolean
+	public isFixed(pos:number) : boolean
 	{
-		if (pos < 0 || pos > this.placeholder$.length-1)
-			return(false);
-
 		let token:Token = this.tokens.get(pos);
-		return(token.type != 'f');
+		return(token == null || token.type == 'f')
+	}
+
+	public getValue() : string
+	{
+		return(this.value);
 	}
 
 	public setValue(value:string) : boolean
@@ -408,49 +348,43 @@ export class Formatter implements FormatterType
 		return(valid);
 	}
 
-	public findPosition(pos:number) : number
+	public insCharacter(pos:number, c:string) : boolean
 	{
-		if (!this.placeholder$) return(0);
+		if (!this.isValid(pos,c))
+			return(false);
 
-		if (pos >= this.placeholder$.length)
-			return(this.placeholder$.length-1);
+		let field:Field = this.findField(pos);
 
-		if (this.tokens.get(pos).type == 'f')
+		if (field == null)
+			return(false);
+
+		let p1:number = field.pos();
+		let p2:number = p1 + field.size() - 1;
+
+		let area:number[] = [p1,p2];
+
+		let b:string = this.value.substring(0,pos);
+		let f:string = this.value.substring(pos,area[1]);
+		let a:string = this.value.substring(area[1]+1);
+
+		let p:string = "";
+		f = this.placeholder$.charAt(b.length) + f;
+
+		while(p.length < f.length)
+			p += this.placeholder$.charAt(b.length+p.length);
+
+		this.value = b+p+a;
+
+		for (let i = 1; i < f.length; i++)
 		{
-			let fr:number = pos;
-			let to:number = pos;
-
-			let dist1:number = 0;
-			let dist2:number = 0;
-
-			while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
-			while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
-
-			if (fr == 0 && this.tokens.get(fr).type == 'f')
-					fr = to;
-
-			if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
-					to = fr;
-
-			dist1 = pos - fr;
-			dist2 = to - pos;
-
-			pos = fr;
-
-			if (dist2 < dist1)
-				pos = to;
+			if (f.charAt(i) != ' ')
+				this.setCharacter(b.length+i,f.charAt(i))
 		}
 
-		return(pos);
-	}
+		let success:boolean = this.setCharacter(pos,c);
+		this.validateDateField(pos);
 
-	public setBlank(pos:number) : boolean
-	{
-		let a:string = this.value.substring(pos+1);
-		let b:string = this.value.substring(0,pos);
-
-		this.value = b + ' ' + a;
-		return(true);
+		return(success);
 	}
 
 	public setCharacter(pos:number, c:string) : boolean
@@ -472,7 +406,85 @@ export class Formatter implements FormatterType
 		return(true);
 	}
 
-	public isValid(pos: number, c: string) : boolean
+	public delete(fr:number, to:number) : string
+	{
+		let p:string = "";
+		let a:string = this.value.substring(to);
+		let b:string = this.value.substring(0,fr);
+
+		for(let i = fr; i < to; i++)
+			p += this.placeholder$.charAt(i);
+
+		// Set area to pattern
+		this.value = b + p + a;
+
+		// Shift rest of last field left
+		let field:Field = this.findField(to);
+		if (field == null) return(this.value);
+
+		let p1:number = field.pos();
+		let p2:number = p1 + field.size() - 1;
+
+		let area:number[] = [p1,p2];
+		let shft:string = this.value.substring(to,area[1]+1);
+
+		p = "";
+
+		if (fr < area[0])
+			fr = area[0];
+
+		b = this.value.substring(0,fr);
+		a = this.value.substring(area[1]+1);
+
+		for (let i = fr; i <= area[1]; i++)
+			p += this.placeholder$.charAt(i);
+
+		this.value = b + p + a;
+
+		for (let i = 0; i < shft.length; i++)
+		{
+			if (shft.charAt(i) != ' ')
+				this.setCharacter(b.length+i,shft.charAt(i));
+		}
+
+		return(this.value);
+	}
+
+	public finish() : string
+	{
+		if (DataType[this.datatype].startsWith("date"))
+			this.value = this.finishDate();
+
+		return(this.value);
+	}
+
+	public prev(from:number) : number
+	{
+		let pos = from - 1;
+
+		while(pos >= 0)
+		{
+			if (this.input(pos)) return(pos);
+			pos--;
+		}
+
+		return(from);
+	}
+
+	public next(from:number) : number
+	{
+		let pos = from + 1;
+
+		while(pos < this.plen)
+		{
+			if (this.input(pos)) return(pos);
+			pos++;
+		}
+
+		return(from);
+	}
+
+	private isValid(pos: number, c: string) : boolean
 	{
 		if (c == this.placeholder$.charAt(pos))
 			return(true);
@@ -485,7 +497,7 @@ export class Formatter implements FormatterType
 		return(true);
 	}
 
-	public validity(pos:number, c:string) : Validity
+	private validity(pos:number, c:string) : Validity
 	{
 		let lc = c.toLocaleLowerCase();
 		let uc = c.toLocaleUpperCase();
@@ -541,131 +553,42 @@ export class Formatter implements FormatterType
 		return(valid);
 	}
 
-	public delete(fr:number, to:number) : string
+	private input(pos:number) : boolean
 	{
-		let p:string = "";
-		let a:string = this.value.substring(to);
-		let b:string = this.value.substring(0,fr);
+		if (pos < 0 || pos > this.placeholder$.length-1)
+			return(false);
 
-		for(let i = fr; i < to; i++)
-			p += this.placeholder$.charAt(i);
-
-		// Set area to pattern
-		this.value = b + p + a;
-
-		// Shift rest of last field left
-		let field:Field = this.findField(to);
-		if (field == null) return(this.value);
-
-		let p1:number = field.pos();
-		let p2:number = p1 + field.size() - 1;
-
-		let area:number[] = [p1,p2];
-		let shft:string = this.value.substring(to,area[1]+1);
-
-		p = "";
-
-		if (fr < area[0])
-			fr = area[0];
-
-		b = this.value.substring(0,fr);
-		a = this.value.substring(area[1]+1);
-
-		for (let i = fr; i <= area[1]; i++)
-			p += this.placeholder$.charAt(i);
-
-		this.value = b + p + a;
-
-		for (let i = 0; i < shft.length; i++)
-		{
-			if (shft.charAt(i) != ' ')
-				this.setCharacter(b.length+i,shft.charAt(i));
-		}
-
-		return(this.value);
-	}
-
-	public finish() : string
-	{
-		if (DataType[this.datatype].startsWith("date"))
-			this.value = this.finishDate();
-
-		return(this.value);
-	}
-
-	public getFieldArea(pos:number) : number[]
-	{
-		if (pos < 0) pos = 0;
-		if (pos >= this.plen) pos = this.plen - 1;
-
-		let fr:number = pos;
-		let to:number = pos;
 		let token:Token = this.tokens.get(pos);
-
-		if (token.type == 'f')
-		{
-			let dist1:number = 0;
-			let dist2:number = 0;
-
-			while(fr > 0 && this.tokens.get(fr).type == 'f') fr--;
-			while(to < this.placeholder$.length-1 && this.tokens.get(to).type == 'f') to++;
-
-			if (fr == 0 && this.tokens.get(fr).type == 'f')
-				fr = to;
-
-			if (to == this.placeholder$.length-1 && this.tokens.get(to).type == 'f')
-				to = fr;
-
-			dist1 = pos - fr;
-			dist2 = to - pos;
-
-			if (dist2 < dist1)
-				fr = to;
-
-			to = fr;
-		}
-
-		while(fr > 0 && this.tokens.get(fr).type != 'f') fr--;
-		while(to < this.placeholder$.length-1 && this.tokens.get(to).type != 'f') to++;
-
-		if (this.tokens.get(fr).type == 'f') fr++;
-		if (this.tokens.get(to).type == 'f') to--;
-
-		return([fr,to]);
+		return(token.type != 'f');
 	}
 
-	public prev(from:number) : number
+	private setBlank(pos:number) : boolean
 	{
-		let pos = from - 1;
+		let a:string = this.value.substring(pos+1);
+		let b:string = this.value.substring(0,pos);
 
-		while(pos >= 0)
-		{
-			if (this.input(pos)) return(pos);
-			pos--;
-		}
-
-		return(from);
+		this.value = b + ' ' + a;
+		return(true);
 	}
 
-	public next(from:number) : number
+	private findField(pos:number) : Field
 	{
-		let pos = from + 1;
-
-		while(pos < this.plen)
+		for (let i = 0; i < this.fields.length; i++)
 		{
-			if (this.input(pos)) return(pos);
-			pos++;
+			let field:Field = this.fields[i];
+			if (pos >= field.pos$ && pos <= field.last)
+					return(field);
 		}
 
-		return(from);
+		return(null);
 	}
 
-	private getstring(fr:number,to:number) : string
+	public getstring(fr:number,to:number) : string
 	{
 		return(this.value.substring(fr,to));
 	}
 
-	private setstring(pos:number,value:string) : void
+	public setstring(pos:number,value:string) : void
 	{
 		this.value = this.replace(this.value,pos,value);
 	}
@@ -913,7 +836,7 @@ class Field implements Section
 
 	public getValue() : string
 	{
-		return(this.pattern["getstring"](this.pos$,this.last+1));
+		return(this.pattern.getstring(this.pos$,this.last+1));
 	}
 
 	public setValue(value:string) : void
@@ -926,7 +849,7 @@ class Field implements Section
 		if (value.length > this.size$)
 			value = value.substring(0,this.size$);
 
-		this.pattern["setstring"](this.pos$,value);
+		this.pattern.setstring(this.pos$,value);
 	}
 
 	public init(end?:string) : void

@@ -55,13 +55,11 @@ export interface Formatter
 	prev(from?:number) : number;
 	next(from?:number) : number;
 
-	getPosition() : number;
 	getFields() : Section[];
 	getField(n:number) : Section;
 	input(pos:number) : boolean;
 	findField(pos?:number) : Section;
 	findPosition(pos:number) : number;
-	setPosition(pos:number) : boolean;
 	getFieldArea(pos:number) : number[];
 	delete(fr:number,to:number) : string;
 

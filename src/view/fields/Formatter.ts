@@ -56,9 +56,7 @@ import { Formatter as FormatterType, Section, Validity } from "./interfaces/Form
 
 export class Formatter implements FormatterType
 {
-	private pos:number = 0;
 	private plen:number = 0;
-	private fldno:number = 0;
 	private value:string = "";
 	private fields:Field[] = [];
 	private pattern$:string = null;
@@ -183,11 +181,6 @@ export class Formatter implements FormatterType
 		return(this.value);
 	}
 
-	public getPosition(): number
-	{
-		return(this.pos);
-	}
-
 	public getFormat(): string
 	{
 		return(this.pattern$);
@@ -272,8 +265,6 @@ export class Formatter implements FormatterType
 
 	public findField(pos:number) : Field
 	{
-		if (pos == null) pos = this.pos;
-
 		for (let i = 0; i < this.fields.length; i++)
 		{
 			let field:Field = this.fields[i];
@@ -429,21 +420,6 @@ export class Formatter implements FormatterType
 		return(valid);
 	}
 
-	public setPosition(pos:number) : boolean
-	{
-		if (pos < 0 || pos >= this.plen)
-			return(false);
-
-		if (this.tokens.get(pos).type != 'f')
-		{
-			this.pos = pos;
-			this.onfield();
-			return(true);
-		}
-
-		return(false);
-	}
-
 	public findPosition(pos:number) : number
 	{
 		if (!this.placeholder$) return(0);
@@ -482,11 +458,8 @@ export class Formatter implements FormatterType
 
 	public setBlank(pos:number) : boolean
 	{
-		if (!this.setPosition(pos))
-			return(false);
-
-		let a:string = this.value.substring(this.pos+1);
-		let b:string = this.value.substring(0,this.pos);
+		let a:string = this.value.substring(pos+1);
+		let b:string = this.value.substring(0,pos);
 
 		this.value = b + ' ' + a;
 		return(true);
@@ -494,9 +467,6 @@ export class Formatter implements FormatterType
 
 	public setCharacter(pos:number, c:string) : boolean
 	{
-		if (!this.setPosition(pos))
-			return(false);
-
 		let valid:Validity = this.validity(pos,c);
 
 		switch(valid)
@@ -507,8 +477,8 @@ export class Formatter implements FormatterType
 			case Validity.aslower : c = c.toLocaleLowerCase(); break;
 		}
 
-		let a:string = this.value.substring(this.pos+1);
-		let b:string = this.value.substring(0,this.pos);
+		let a:string = this.value.substring(pos+1);
+		let b:string = this.value.substring(0,pos);
 
 		this.value = b + c + a;
 		return(true);
@@ -624,14 +594,6 @@ export class Formatter implements FormatterType
 				this.setCharacter(b.length+i,shft.charAt(i));
 		}
 
-		this.setPosition(fr);
-
-		if (to - fr > 1)
-		{
-			let curr:Field = this.findField(fr);
-			if (curr != null) this.fldno = curr.fn;
-		}
-
 		return(this.value);
 	}
 
@@ -684,56 +646,30 @@ export class Formatter implements FormatterType
 		return([fr,to]);
 	}
 
-	public prev(from?:number) : number
+	public prev(from:number) : number
 	{
-		if (from != null)
-			this.pos = from;
-
-		let pos = this.pos - 1;
+		let pos = from - 1;
 
 		while(pos >= 0)
 		{
-			if (this.input(pos))
-			{
-					this.pos = pos;
-					this.onfield();
-					break;
-			}
-
+			if (this.input(pos)) return(pos);
 			pos--;
 		}
 
-		return(this.pos);
+		return(from);
 	}
 
 	public next(from?:number) : number
 	{
-		if (from != null)
-			this.pos = from;
-
-		let pos = this.pos + 1;
+		let pos = from + 1;
 
 		while(pos < this.plen)
 		{
-			if (this.input(pos))
-			{
-					this.pos = pos;
-					this.onfield();
-					break;
-			}
-
+			if (this.input(pos)) return(pos);
 			pos++;
 		}
 
-		return(this.pos);
-	}
-
-	private onfield() : void
-	{
-		let curr:Field = this.findField(this.pos);
-
-		if (curr.fn != this.fldno)
-			this.fldno = curr.fn;
+		return(from);
 	}
 
 	private getstring(fr:number,to:number) : string

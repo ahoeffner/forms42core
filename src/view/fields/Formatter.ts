@@ -48,6 +48,9 @@
  *  C  : any uppercase character
  */
 
+import { DataType } from "./DataType.js";
+import { Alert } from "../../application/Alert.js";
+import { DatePart, FormatToken, dates } from "../../model/dates/dates.js";
 import { Formatter as FormatterType, Section, Validity } from "./interfaces/Formatter.js";
 
 
@@ -61,17 +64,62 @@ export class Formatter implements FormatterType
 	private pattern$:string = null;
 	private placeholder$:string = null;
 	private predefined:string = "*#dcaAw";
+	private datetokens:FormatToken[] = null;
+	private datatype$:DataType = DataType.string;
 	private tokens:Map<number,Token> = new Map<number,Token>();
-
-	constructor(pattern:string)
-	{
-		if (pattern != null)
-			this.setFormat(pattern);
-	}
 
 	public size() : number
 	{
 		return(this.plen);
+	}
+
+	public get datatype() : DataType
+	{
+		return(this.datatype$);
+	}
+
+	public set datatype(datatype:DataType)
+	{
+		this.datatype$ = datatype;
+
+		if (datatype == DataType.date || datatype == DataType.datetime)
+		{
+			this.datetokens = [];
+
+			let parts:number = 3;
+			let datepattern:string = "";
+			let types:FormatToken[] = dates.tokenizeFormat();
+
+			types.forEach((type) =>
+			{
+				if (type.type == DatePart.Year || type.type == DatePart.Month || type.type == DatePart.Day)
+				{
+					parts--;
+					this.datetokens.push(type);
+					datepattern += "{"+type.length+"#}";
+					if (parts > 0) datepattern += type.delimitor;
+				}
+			})
+
+			if (datatype == DataType.datetime)
+			{
+				parts = 3;
+				datepattern += " ";
+
+				types.forEach((type) =>
+				{
+					if (type.type == DatePart.Hour || type.type == DatePart.Minute || type.type == DatePart.Second)
+					{
+						parts--;
+						this.datetokens.push(type);
+						datepattern += "{"+type.length+"#}";
+						if (parts > 0) datepattern += type.delimitor;
+					}
+				})
+			}
+
+			this.setFormat(datepattern);
+		}
 	}
 
 	public isNull(): boolean
@@ -118,7 +166,10 @@ export class Formatter implements FormatterType
 				this.setCharacter(b.length+i,f.charAt(i))
 		}
 
-		return(this.setCharacter(pos,c));
+		let success:boolean = this.setCharacter(pos,c);
+		this.validateDateField(pos);
+
+		return(success);
 	}
 
 	public isFixed(pos:number) : boolean
@@ -149,6 +200,9 @@ export class Formatter implements FormatterType
 
 	public setFormat(pattern:string) : void
 	{
+		if (!pattern)
+			return;
+
 		let pos:number = 0;
 		let placeholder:string = "";
 
@@ -392,6 +446,8 @@ export class Formatter implements FormatterType
 
 	public findPosition(pos:number) : number
 	{
+		if (!this.placeholder$) return(0);
+
 		if (pos >= this.placeholder$.length)
 			return(this.placeholder$.length-1);
 
@@ -682,9 +738,83 @@ export class Formatter implements FormatterType
 		this.value = this.replace(this.value,pos,value);
 	}
 
-	public replace(str:string,pos:number,val:string) : string
+	private replace(str:string,pos:number,val:string) : string
 	{
 		return(str.substring(0,pos) + val + str.substring(pos+val.length));
+	}
+
+	private validateDateField(pos:number) : void
+	{
+		if (!DataType[this.datatype$].startsWith("date"))
+			return;
+
+		let section:Section = this.findField(pos);
+		let token:FormatToken = this.datetokens[section.field()];
+
+		let maxval:number = 0;
+		let value:string = section.getValue();
+
+		switch(token.type)
+		{
+			case DatePart.Day 		: maxval = 31; break;
+			case DatePart.Month 		: maxval = 12; break;
+			case DatePart.Hour 		: maxval = 23; break;
+			case DatePart.Minute 	: maxval = 59; break;
+			case DatePart.Second 	: maxval = 59; break;
+		}
+
+		if (maxval > 0 && +value > maxval)
+			section.setValue(""+maxval);
+
+
+		let finished:boolean = true;
+		this.getFields().forEach((section) =>
+		{
+			value = section.getValue();
+
+			if (value.trim().length > 0)
+			{
+				let lpad:string = "";
+
+				for (let i = 0; i < value.length; i++)
+				{
+					if (value.charAt(i) != ' ') break;
+					else lpad += "0";
+				}
+
+				if (lpad.length > 0)
+					section.setValue(lpad+value.substring(lpad.length));
+			}
+
+			if (section.getValue().includes(' '))
+				finished = false;
+		});
+
+		if (finished)
+		{
+			let dayentry:number = -1;
+
+			for (let i = 0; i < this.datetokens.length; i++)
+			{
+				if (this.datetokens[i].type == DatePart.Day)
+					dayentry = i;
+			}
+
+			if (dayentry >= 0)
+			{
+				let tries:number = 3;
+				value = this.getValue();
+
+				while(dates.parse(value) == null && --tries >= 0)
+				{
+					let day:number = +this.getField(dayentry).getValue();
+					this.getField(dayentry).setValue(""+(day-1));
+				}
+
+				if (tries < 3)
+					Alert.message("Date '"+value+"' is invalid, changed to "+this.getValue(),"Date Validation");
+			}
+		}
 	}
 
 	private parseFieldDefinition(field:string) : Token[]

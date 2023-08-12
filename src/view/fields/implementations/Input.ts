@@ -25,13 +25,16 @@ import { Section } from "../interfaces/Formatter.js";
 import { Alert } from "../../../application/Alert.js";
 import { Formatter } from "../interfaces/Formatter.js";
 import { FieldProperties } from "../FieldProperties.js";
+import { Properties } from "../../../application/Properties.js";
 import { Formatter as DefaultFormatter } from "../Formatter.js";
+import { FormsModule } from "../../../application/FormsModule.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
 import { DatePart, dates, FormatToken } from "../../../model/dates/dates.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+import { ComponentFactory } from "../../../application/interfaces/ComponentFactory.js";
 
 enum Case
 {
@@ -50,7 +53,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private int:boolean = false;
 	private dec:boolean = false;
 	private maxlen:number = null;
-	private cse:Case = Case.mixed;
+	private case:Case = Case.mixed;
 	private state:FieldState = null;
 	private placeholder:string = null;
 	private formatter:Formatter = null;
@@ -257,13 +260,9 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		this.int = false;
 		this.dec = false;
-		this.formatter = null;
-		this.cse = Case.mixed;
+		this.case = Case.mixed;
 		this.placeholder = null;
 		this.datatype$ = DataType.string;
-
-		let datepattern:string = "";
-		let types:FormatToken[] = dates.tokenizeFormat();
 
 		this.type = attributes.get("type");
 		if (this.type == null) this.type = "text";
@@ -279,14 +278,20 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		attributes.forEach((value,attr) =>
 		{
+			if (attr == "date")
+				this.datatype$ = DataType.date;
+
+			if (attr == "datetimr")
+				this.datatype$ = DataType.datetime;
+
 			if (attr == "upper")
-				this.cse = Case.upper;
+				this.case = Case.upper;
 
 			if (attr == "lower")
-				this.cse = Case.lower;
+				this.case = Case.lower;
 
 			if (attr == "initcap")
-				this.cse = Case.initcap;
+				this.case = Case.initcap;
 
 			if (attr == "boolean")
 				this.datatype$ = DataType.boolean;
@@ -303,59 +308,6 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.datatype$ = DataType.decimal;
 			}
 
-			if (attr == "date" || attr == "datetime")
-			{
-				this.datetokens = [];
-				let parts:number = 3;
-				this.placeholder = "";
-
-				this.datatype$ = DataType.date;
-				types = dates.tokenizeFormat();
-
-				types.forEach((type) =>
-				{
-					if (type.type == DatePart.Year || type.type == DatePart.Month || type.type == DatePart.Day)
-					{
-						parts--;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-				})
-			}
-
-			if (attr == "datetime")
-			{
-				let parts:number = 3;
-				this.datatype$ = DataType.datetime;
-
-				datepattern += " ";
-				this.placeholder += " ";
-
-				types.forEach((type) =>
-				{
-					if (type.type == DatePart.Hour || type.type == DatePart.Minute || type.type == DatePart.Second)
-					{
-						parts--;
-						this.datetokens.push(type);
-						this.placeholder += type.mask;
-						datepattern += "{"+type.length+"#}";
-
-						if (parts > 0)
-						{
-							datepattern += type.delimitor;
-							this.placeholder += type.delimitor;
-						}
-					}
-				})
-			}
-
 			if (attr == "maxlength")
 			{
 				this.maxlen = +value;
@@ -364,25 +316,19 @@ export class Input implements FieldImplementation, EventListenerObject
 					this.maxlen = null;
 			}
 
-			if (attr == "format")
-				this.formatter = new DefaultFormatter(value);
-
 			if (attr == "placeholder")
 				this.placeholder = value;
 		});
 
-		if (datepattern.length > 0)
+		this.formatter = this.getFormatter(attributes);
+
+		if (this.formatter != null)
 		{
 			this.element.type = "text";
-			this.placeholder = this.placeholder.toLowerCase();
-			this.formatter = new DefaultFormatter(datepattern);
-		}
-		else if (this.formatter != null)
-		{
-			this.element.type = "text";
+			this.placeholder = this.formatter.getPlaceholder();
 
 			if (this.element.getAttribute("size") == null)
-				this.element.setAttribute("size",""+this.formatter.getPlaceholder().length);
+				this.element.setAttribute("size",""+this.formatter.size());
 		}
 
 		this.element.removeAttribute("placeholder");
@@ -460,7 +406,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				return;
 		}
 
-		if (this.cse != Case.mixed)
+		if (this.case != Case.mixed)
 		{
 			if (!this.xcase())
 				return;
@@ -550,13 +496,13 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (pos >= value.length) value += this.event.key;
 			else value = value.substring(0,pos) + this.event.key + value.substring(pos);
 
-			if (this.cse == Case.upper)
+			if (this.case == Case.upper)
 				value = value.toLocaleUpperCase();
 
-			if (this.cse == Case.lower)
+			if (this.case == Case.lower)
 				value = value.toLocaleLowerCase();
 
-			if (this.cse == Case.initcap)
+			if (this.case == Case.initcap)
 			{
 				let cap:boolean = true;
 				let initcap:string = "";
@@ -739,7 +685,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.preventDefault(true);
 
 			if (this.event.type == "keyup")
-				return(false);
+				return(true);
 
 			let area:number[] = this.getSelection();
 			if (area[0] == area[1]) area[0]--;
@@ -775,10 +721,9 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.setIntermediateValue(this.formatter.getValue());
 				this.event.preventDefault(true);
 				this.setPosition(pos);
-				return(false);
+				return(true);
 			}
 
-			this.validateDateField(pos);
 			this.setIntermediateValue(this.formatter.getValue());
 
 			let npos:number = this.formatter.next(pos);
@@ -790,7 +735,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(false);
 		}
 
-		if (this.datetokens != null)
+		if (this.formatter && DataType[this.datatype].startsWith("date"))
 		{
 			if (KeyMapping.parseBrowserEvent(this.event) == KeyMap.now)
 			{
@@ -874,80 +819,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(input);
 	}
 
-	private validateDateField(pos:number) : void
-	{
-		if (!DataType[this.datatype$].startsWith("date"))
-			return;
-
-		let section:Section = this.formatter.findField(pos);
-		let token:FormatToken = this.datetokens[section.field()];
-
-		let maxval:number = 0;
-		let value:string = section.getValue();
-
-		switch(token.type)
-		{
-			case DatePart.Day 		: maxval = 31; break;
-			case DatePart.Month 		: maxval = 12; break;
-			case DatePart.Hour 		: maxval = 23; break;
-			case DatePart.Minute 	: maxval = 59; break;
-			case DatePart.Second 	: maxval = 59; break;
-		}
-
-		if (maxval > 0 && +value > maxval)
-			section.setValue(""+maxval);
-
-
-		let finished:boolean = true;
-		this.formatter.getFields().forEach((section) =>
-		{
-			value = section.getValue();
-
-			if (value.trim().length > 0)
-			{
-				let lpad:string = "";
-
-				for (let i = 0; i < value.length; i++)
-				{
-					if (value.charAt(i) != ' ') break;
-					else lpad += "0";
-				}
-
-				if (lpad.length > 0)
-					section.setValue(lpad+value.substring(lpad.length));
-			}
-
-			if (section.getValue().includes(' '))
-				finished = false;
-		});
-
-		if (finished)
-		{
-			let dayentry:number = -1;
-
-			for (let i = 0; i < this.datetokens.length; i++)
-			{
-				if (this.datetokens[i].type == DatePart.Day)
-					dayentry = i;
-			}
-
-			if (dayentry >= 0)
-			{
-				let tries:number = 3;
-				value = this.formatter.getValue();
-
-				while(dates.parse(this.formatter.getValue()) == null && --tries >= 0)
-				{
-					let day:number = +this.formatter.getField(dayentry).getValue();
-					this.formatter.getField(dayentry).setValue(""+(day-1));
-				}
-
-				if (tries < 3)
-					Alert.message("Date '"+value+"' is invalid, changed to "+this.formatter.getValue(),"Date Validation");
-			}
-		}
-	}
-
 	private getCurrentDate() : string
 	{
 		return(dates.format(new Date()));
@@ -989,6 +860,27 @@ export class Input implements FieldImplementation, EventListenerObject
 	private get disabled() : boolean
 	{
 		return(this.element.disabled);
+	}
+
+	private getFormatter(attributes:Map<string,any>) : Formatter
+	{
+		let impl:Formatter = null;
+
+		let format:string = attributes.get("format");
+		let formatter:string = attributes.get("formatter");
+		let factory:ComponentFactory = Properties.FactoryImplementation;
+		if (formatter) impl = factory.createBean(FormsModule.get().getComponent(formatter));
+
+		if (!impl && (format || attributes.has("date") || attributes.has("datetime")))
+			impl = new DefaultFormatter();
+
+		if (impl)
+		{
+			impl.setFormat(format);
+			impl.datatype = this.datatype;
+		}
+
+		return(impl);
 	}
 
 	private addEvents(element:HTMLElement) : void

@@ -19,6 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { DataType } from "../DataType.js";
+
 export enum Validity
 {
     na,
@@ -35,6 +37,9 @@ export interface Formatter
 
 	getFormat() : string;
 	setFormat(pattern:string) : void;
+
+	datatype:DataType;
+
 	getPlaceholder() : string;
 
 	getValue() : string;

@@ -21,6 +21,11 @@
 
 import { DataType } from "../DataType.js";
 
+
+/**
+ * Formatters can be injected into an <input> field.
+ * <input format="some-mask" formatter="path_to_injected_class">
+ */
 export interface Formatter
 {
 	format:string;

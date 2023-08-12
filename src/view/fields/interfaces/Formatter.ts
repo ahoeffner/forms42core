@@ -21,23 +21,14 @@
 
 import { DataType } from "../DataType.js";
 
-export enum Validity
-{
-    na,
-    true,
-    false,
-    asupper,
-    aslower
-}
-
 export interface Formatter
 {
-	size() : number;
-	isNull() : boolean;
-
 	format:string;
 	datatype:DataType;
 	placeholder:string;
+
+	size() : number;
+	isNull() : boolean;
 
 	getValue() : string;
 	setValue(value:any) : boolean;
@@ -52,14 +43,4 @@ export interface Formatter
 	setCharacter(pos:number, c:string) : boolean;
 
 	finish() : string;
-}
-
-export interface Section
-{
-    pos() : number;
-    size() : number;
-    field() : number;
-    isNull() : boolean;
-    getValue() : string;
-    setValue(value:string) : void;
 }

@@ -51,8 +51,16 @@
 import { DataType } from "./DataType.js";
 import { Alert } from "../../application/Alert.js";
 import { DatePart, FormatToken, dates } from "../../model/dates/dates.js";
-import { Formatter as FormatterType, Section, Validity } from "./interfaces/Formatter.js";
+import { Formatter as FormatterType } from "./interfaces/Formatter.js";
 
+enum Validity
+{
+    na,
+    true,
+    false,
+    asupper,
+    aslower
+}
 
 export class Formatter implements FormatterType
 {
@@ -640,12 +648,12 @@ export class Formatter implements FormatterType
 		if (!DataType[this.datatype$].startsWith("date"))
 			return;
 
-		let section:Section = this.findField(pos);
-		let token:FormatToken = this.datetokens[section.field()];
+		let field:Field = this.findField(pos);
+		let token:FormatToken = this.datetokens[field.field()];
 
 		let maxval:number = 0;
 		let minval:number = 0;
-		let value:string = section.getValue();
+		let value:string = field.getValue();
 
 		switch(token.type)
 		{
@@ -657,10 +665,10 @@ export class Formatter implements FormatterType
 		}
 
 		if (maxval > 0 && +value > maxval)
-			section.setValue(""+maxval);
+			field.setValue(""+maxval);
 
 		if (minval > 0 && +value < minval)
-			section.setValue("0"+minval);
+			field.setValue("0"+minval);
 
 		let finished:boolean = true;
 		this.fields.forEach((section) =>
@@ -779,7 +787,7 @@ export class Formatter implements FormatterType
 }
 
 
-class Field implements Section
+class Field
 {
 	fn:number = 0;
 	pos$:number = 0;

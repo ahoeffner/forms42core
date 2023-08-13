@@ -285,6 +285,7 @@ export class Formatter implements FormatterType
 			let fr:number = prefix;
 			let to:number = prefix;
 			let nval:string = value.substring(0,prefix);
+			console.log("1 '"+value+"'")
 
 			if (value.length > this.plen)
 			{
@@ -301,6 +302,7 @@ export class Formatter implements FormatterType
 				}
 			}
 
+			console.log("2 '"+value+"'")
 			// trim all fields to the correct length
 			for (let i = 0; i < delimiters.length; i++)
 			{
@@ -310,6 +312,8 @@ export class Formatter implements FormatterType
 				else to = value.indexOf(delimiters[i],fr);
 
 				let part:string = value.substring(fr,to);
+
+				console.log(part.length+" == "+size)
 
 				while(part.length < size)
 					part += this.placeholder$.charAt(nval.length+part.length);
@@ -330,6 +334,7 @@ export class Formatter implements FormatterType
 
 				nval += part + delimiters[i];
 				fr = to + delimiters[i].length;
+				console.log("3 '"+nval+"'")
 			}
 
 			nval = nval+value.substring(value.length-postfix);
@@ -709,8 +714,7 @@ export class Formatter implements FormatterType
 
 			if (changed) Alert.message("Date '"+input+"' is not a valid date","Date Validation");
 			if (date == null) return(null);
-	}
-
+		}
 
 		return(this.value);
 	}

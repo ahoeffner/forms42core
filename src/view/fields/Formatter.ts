@@ -638,6 +638,9 @@ export class Formatter implements FormatterType
 		let input:string = this.getValue();
 		let today:string = dates.format(new Date());
 
+		if (this.isNull())
+			return(this.value);
+
 		this.datetokens.forEach((part) =>
 		{
 			empty = true;
@@ -693,16 +696,18 @@ export class Formatter implements FormatterType
 		}
 		else
 		{
+			let changed:boolean = false;
 			let date:Date = dates.parse(this.value);
 
 			for (let i = 0; date == null && i < 3; i++)
 			{
+				changed = true;
 				let day:number = +this.fields[dayentry].getValue();
 				this.fields[dayentry].setValue(""+(day-1));
 				date = dates.parse(this.value);
 			}
 
-			Alert.message("Date '"+input+"' is not a valid date","Date Validation");
+			if (changed) Alert.message("Date '"+input+"' is not a valid date","Date Validation");
 			if (date == null) return(null);
 	}
 

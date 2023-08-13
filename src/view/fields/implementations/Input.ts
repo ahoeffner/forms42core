@@ -631,8 +631,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			if (this.formatter.isNull())
 			{
+				let first:number = this.formatter.first();
 				this.setIntermediateValue(this.formatter.getValue());
-				setTimeout(() => {this.setPosition(0)},0);
+				setTimeout(() => {this.setPosition(first)},0);
 			}
 
 			return(true);
@@ -670,7 +671,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			{
 				this.formatter.setValue(this.getIntermediateValue());
 				this.setIntermediateValue(this.formatter.getValue());
-				this.setPosition(0);
+				this.setPosition(this.formatter.first());
 			}
 			return(true);
 		}
@@ -698,8 +699,8 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.type == "keypress" && this.event.isPrintableKey)
 		{
-			if (pos >= this.formatter.size())
-				pos = this.formatter.prev(pos);
+			let last:number = this.formatter.last();
+			if (pos > last) pos = this.formatter.prev(pos);
 
 			if (!this.formatter.modifiable(pos))
 			{
@@ -738,7 +739,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.formatter.setValue(this.getCurrentDate());
 				this.setElementValue(this.formatter.getValue());
 
-				this.setPosition(0);
+				this.setPosition(this.formatter.first());
 				return(true);
 			}
 		}

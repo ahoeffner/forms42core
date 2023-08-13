@@ -50,8 +50,8 @@
 
 import { DataType } from "./DataType.js";
 import { Alert } from "../../application/Alert.js";
-import { DatePart, FormatToken, dates } from "../../model/dates/dates.js";
 import { Formatter as FormatterType } from "./interfaces/Formatter.js";
+import { DatePart, FormatToken, dates } from "../../model/dates/dates.js";
 
 enum Validity
 {
@@ -207,6 +207,32 @@ export class Formatter implements FormatterType
 		}
 
 		return(true);
+	}
+
+	public last() : number
+	{
+		let tokens:Token[] = Array.from(this.tokens.values());
+
+		for (let i = tokens.length-1; i >= 0; i--)
+		{
+			if (tokens[i].type != 'f')
+				return(i);
+		}
+
+		return(0);
+	}
+
+	public first() : number
+	{
+		let tokens:Token[] = Array.from(this.tokens.values());
+
+		for (let i = 0; i < tokens.length; i++)
+		{
+			if (tokens[i].type != 'f')
+				return(i);
+		}
+
+		return(tokens.length);
 	}
 
 	public modifiable(pos:number) : boolean
@@ -628,7 +654,15 @@ export class Formatter implements FormatterType
 				if (part.type == DatePart.Year && fld.length == 2)
 					fld = today.substring(part.pos,part.pos+2) + fld;
 
-				while(fld.length < part.length) fld = "0"+fld;
+				while(fld.length < part.length)
+					fld = ' ' + fld;
+
+				for (let i = 0; i < fld.length; i++)
+				{
+					if (fld.charAt(i) == ' ')
+						fld = this.replace(fld,i,'0');
+				}
+
 				input = input.substring(0,part.pos) + fld + input.substring(part.pos+part.length);
 			}
 
@@ -640,7 +674,40 @@ export class Formatter implements FormatterType
 			}
 		})
 
-		return(input);
+		this.value = input;
+		let dayentry:number = -1;
+
+		for (let i = 0; i < this.datetokens.length; i++)
+		{
+			if (this.datetokens[i].type == DatePart.Day)
+				dayentry = i;
+		}
+
+		if (dayentry < 0)
+		{
+			if (dates.parse(this.value) == null)
+			{
+				Alert.message("Date '"+input+"' is not a valid date","Date Validation");
+				return(null);
+			}
+		}
+		else
+		{
+			let date:Date = dates.parse(this.value);
+
+			for (let i = 0; date == null && i < 3; i++)
+			{
+				let day:number = +this.fields[dayentry].getValue();
+				this.fields[dayentry].setValue(""+(day-1));
+				date = dates.parse(this.value);
+			}
+
+			Alert.message("Date '"+input+"' is not a valid date","Date Validation");
+			if (date == null) return(null);
+	}
+
+
+		return(this.value);
 	}
 
 	private validateDateField(pos:number) : void
@@ -664,59 +731,13 @@ export class Formatter implements FormatterType
 			case DatePart.Month 		: minval = 1; maxval = 12; break;
 		}
 
-		if (maxval > 0 && +value > maxval)
-			field.setValue(""+maxval);
-
-		if (minval > 0 && +value < minval)
-			field.setValue("0"+minval);
-
-		let finished:boolean = true;
-		this.fields.forEach((section) =>
+		if (value.trim().length > 0)
 		{
-			value = section.getValue();
+			if (maxval > 0 && +value > maxval)
+				field.setValue(""+maxval);
 
-			if (value.trim().length > 0)
-			{
-				let lpad:string = "";
-
-				for (let i = 0; i < value.length; i++)
-				{
-					if (value.charAt(i) != ' ') break;
-					else lpad += "0";
-				}
-
-				if (lpad.length > 0)
-					section.setValue(lpad+value.substring(lpad.length));
-			}
-
-			if (section.getValue().includes(' '))
-				finished = false;
-		});
-
-		if (finished)
-		{
-			let dayentry:number = -1;
-
-			for (let i = 0; i < this.datetokens.length; i++)
-			{
-				if (this.datetokens[i].type == DatePart.Day)
-					dayentry = i;
-			}
-
-			if (dayentry >= 0)
-			{
-				let tries:number = 3;
-				value = this.getValue();
-
-				while(dates.parse(value) == null && --tries >= 0)
-				{
-					let day:number = +this.fields[dayentry].getValue();
-					this.fields[dayentry].setValue(""+(day-1));
-				}
-
-				if (tries < 3)
-					Alert.message("Date '"+value+"' is invalid, changed to "+this.getValue(),"Date Validation");
-			}
+			if (minval > 0 && +value < minval)
+				field.setValue("0"+minval);
 		}
 	}
 

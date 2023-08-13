@@ -38,6 +38,9 @@ export interface Formatter
 	getValue() : string;
 	setValue(value:any) : boolean;
 
+	last() : number;
+	first() : number;
+
 	prev(from:number) : number;
 	next(from:number) : number;
 

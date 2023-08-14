@@ -19,50 +19,36 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-export enum Validity
+import { DataType } from "../DataType.js";
+
+
+/**
+ * Formatters can be injected into an <input> field.
+ * <input format="some-mask" formatter="path_to_injected_class">
+ */
+export interface Formatter
 {
-    na,
-    true,
-    false,
-    asupper,
-    aslower
-}
+	format:string;
+	datatype:DataType;
+	placeholder:string;
 
-export interface Pattern
-{
-    size() : number;
-    isNull() : boolean;
+	size() : number;
+	isNull() : boolean;
 
-    getPattern() : string;
-    setPattern(pattern:string) : void;
+	getValue() : string;
+	setValue(value:any) : boolean;
 
-    getValue() : string;
-    setValue(value:any) : boolean;
+	last() : number;
+	first() : number;
 
-	isValid(pos:number, c:string) : boolean
-    validity(pos:number, c:string) : Validity
+	prev(from:number) : number;
+	next(from:number) : number;
 
-    prev(printable:boolean,from?:number) : number;
-    next(printable:boolean,from?:number) : number;
+	delete(fr:number,to:number) : string;
 
-    getPosition() : number;
-    getFields() : Section[];
-    getField(n:number) : Section;
-    input(pos:number) : boolean;
-    findField(pos?:number) : Section;
-    findPosition(pos:number) : number;
-    setPosition(pos:number) : boolean;
-    getFieldArea(pos:number) : number[];
-    delete(fr:number,to:number) : string;
-    setCharacter(pos:number, c:string) : boolean;
-}
+	modifiable(pos:number) : boolean
+	insCharacter(pos:number, c:string) : boolean;
+	setCharacter(pos:number, c:string) : boolean;
 
-export interface Section
-{
-    pos() : number;
-    size() : number;
-    field() : number;
-    isNull() : boolean;
-    getValue() : string;
-    setValue(value:string) : void;
+	finish() : string;
 }

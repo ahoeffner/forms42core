@@ -24,6 +24,7 @@ import { Class } from "../../types/Class.js";
 import { DataMapper } from "./DataMapper.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
+import { Formatter } from "./interfaces/Formatter.js";
 
 
 export class FieldProperties extends BasicProperties
@@ -213,6 +214,12 @@ export class FieldProperties extends BasicProperties
 	public setMapper(mapper:Class<DataMapper>|DataMapper|string) : FieldProperties
 	{
 		super.setMapper(mapper);
+		return(this);
+	}
+
+	public setFormatter(formatter:Class<Formatter>|Formatter|string) : FieldProperties
+	{
+		super.setFormatter(formatter);
 		return(this);
 	}
 }

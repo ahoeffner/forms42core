@@ -63,6 +63,7 @@ export { DatabaseResponse } from './src/database/DatabaseResponse.js';
 
 export { dates, WeekDays } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";
+export { Formatter } from './src/view/fields/interfaces/Formatter.js'
 
 export { MouseMap } from './src/control/events/MouseMap.js';
 export { KeyCodes } from './src/control/events/KeyCodes.js';

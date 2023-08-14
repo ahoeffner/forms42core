@@ -63,7 +63,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		if (this.options$.openroot == null) this.options$.openroot = false;
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
-		if (this.options$.singlepath == null) this.options$.singlepath = true;
+		if (this.options$.multipleOpen == null) this.options$.multipleOpen = false;
 	}
 
 	public get name() : string
@@ -82,7 +82,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 		if (this.options$ == null) this.options$ = {};
 		if (this.options$.openroot == null) this.options$.openroot = false;
 		if (this.options$.skiproot == null) this.options$.skiproot = false;
-		if (this.options$.singlepath == null) this.options$.singlepath = true;
+		if (this.options$.multipleOpen == null) this.options$.multipleOpen = false;
 	}
 
 	public get target() : HTMLElement
@@ -234,7 +234,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 		let open:boolean = this.open$.has(path);
 
-		if (this.options$.singlepath)
+		if (!this.options$.multipleOpen)
 		{
 			this.open$.clear();
 

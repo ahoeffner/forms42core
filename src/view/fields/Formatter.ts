@@ -276,6 +276,10 @@ export class Formatter implements FormatterType
 		{
 			if (delimiters[i].length == 0) idx = 1;
 			else idx = value.indexOf(delimiters[i],idx);
+
+			if (delimiters[i].indexOf(' ') >= 0)
+				formatted = false;
+
 			if (idx < 0) formatted = false;
 			idx += delimiters[i].length;
 		}
@@ -310,8 +314,6 @@ export class Formatter implements FormatterType
 				else to = value.indexOf(delimiters[i],fr);
 
 				let part:string = value.substring(fr,to);
-
-				console.log(i+" part: "+part.length+" size: "+size+" fr: "+fr+" to: "+to)
 
 				while(part.length < size)
 					part += this.placeholder$.charAt(nval.length+part.length);
@@ -698,19 +700,20 @@ export class Formatter implements FormatterType
 		}
 		else
 		{
-			let changed:boolean = false;
 			let date:Date = dates.parse(this.value);
 
 			for (let i = 0; date == null && i < 3; i++)
 			{
-				changed = true;
 				let day:number = +this.fields[dayentry].getValue();
 				this.fields[dayentry].setValue(""+(day-1));
 				date = dates.parse(this.value);
 			}
 
-			if (changed) Alert.message("Date '"+input+"' is not a valid date","Date Validation");
-			if (date == null) return(null);
+			if (date == null)
+			{
+				Alert.message("Date '"+input+"' is not a valid date","Date Validation");
+				return(null);
+			}
 		}
 
 		return(this.value);

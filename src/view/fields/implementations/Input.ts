@@ -632,7 +632,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.formatter.isNull())
 			{
 				let first:number = this.formatter.first();
-				this.setIntermediateValue(this.formatter.getValue());
+				this.setElementValue(this.formatter.getValue());
 				setTimeout(() => {this.setPosition(first)},0);
 			}
 
@@ -642,8 +642,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		// Change should not fire because of preventDefault etc
 		if (this.event.type == "blur" || this.event.type == "change")
 		{
-			this.formatter.setValue(this.getIntermediateValue());
-			this.setIntermediateValue(this.formatter.getValue());
+			this.formatter.setValue(this.getElementValue());
+			this.setElementValue(this.formatter.getValue());
 			if (this.formatter.isNull()) this.clear();
 			return(true);
 		}
@@ -656,7 +656,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.event.undo)
 		{
-			this.setIntermediateValue(this.initial);
+			this.setElementValue(this.initial);
 			this.setPosition(pos);
 			return(true);
 		}
@@ -669,8 +669,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 			else
 			{
-				this.formatter.setValue(this.getIntermediateValue());
-				this.setIntermediateValue(this.formatter.getValue());
+				this.formatter.setValue(this.getElementValue());
+				this.setElementValue(this.formatter.getValue());
 				this.setPosition(this.formatter.first());
 			}
 			return(true);
@@ -688,7 +688,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (area[0] == area[1]) area[0]--;
 
 			this.formatter.delete(area[0],area[1]);
-			this.setIntermediateValue(this.formatter.getValue());
+			this.setElementValue(this.formatter.getValue());
 
 			if (!this.formatter.modifiable(pos))
 				pos = this.formatter.prev(pos) + 1;
@@ -715,13 +715,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
 			if (!this.formatter.insCharacter(pos,this.event.key))
 			{
-				this.setIntermediateValue(this.formatter.getValue());
+				this.setElementValue(this.formatter.getValue());
 				this.event.preventDefault(true);
 				this.setPosition(pos);
 				return(true);
 			}
 
-			this.setIntermediateValue(this.formatter.getValue());
+			this.setElementValue(this.formatter.getValue());
 
 			let npos:number = this.formatter.next(pos);
 			if (npos <= pos) npos++;

@@ -277,7 +277,7 @@ export class Formatter implements FormatterType
 			if (delimiters[i].length == 0) idx = 1;
 			else idx = value.indexOf(delimiters[i],idx);
 
-			if (delimiters[i].indexOf(' ') >= 0)
+			if (delimiters[i].length > 0 && delimiters[i].trim().length == 0)
 				formatted = false;
 
 			if (idx < 0) formatted = false;

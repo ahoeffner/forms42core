@@ -22,6 +22,7 @@
 import { DataType } from "./DataType.js";
 import { DataMapper } from "./DataMapper.js";
 import { Alert } from "../../application/Alert.js";
+import { Formatter } from "./interfaces/Formatter.js";
 import { Class, isClass } from "../../types/Class.js";
 import { Properties } from "../../application/Properties.js";
 import { FormsModule } from "../../application/FormsModule.js";
@@ -40,6 +41,7 @@ export class BasicProperties
 	protected styles$:Style[] = [];
 	protected classes$:string[] = [];
 	protected mapper$:DataMapper = null;
+	protected formatter$:Formatter = null;
 	protected attribs$:Map<string,string> = new Map<string,string>();
 
 	protected hidden$:boolean = false;
@@ -53,7 +55,7 @@ export class BasicProperties
 	protected values$:Map<any,any> = new Map<any,any>();
 
 	protected handled$:string[] = ["id","name",Properties.BindAttr,"row","invalid"];
-	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","advquery","value","class","style","mapper"];
+	protected structured$:string[] = ["hidden","enabled","readonly","required","derived","advquery","value","class","style","mapper","formatter"];
 
 	public get tag() : string
 	{
@@ -406,6 +408,7 @@ export class BasicProperties
 				case "class": this.setClasses(value); break;
 
 				case "mapper": this.setMapper(value); break;
+				case "formatter": this.setFormatter(value); break;
 			}
 
 			return(this);
@@ -521,6 +524,30 @@ export class BasicProperties
 			Alert.fatal("'"+(this.mapper$ as any).constructor.name+"' is not a DataMapper","DataMapper");
 			this.mapper$ = null;
 		}
+
+		return(this);
+	}
+
+	public get formatter() : Formatter
+	{
+		return(this.formatter$);
+	}
+
+	public set formatter(formatter:Formatter)
+	{
+		this.formatter$ = formatter;
+	}
+
+	public setFormatter(formatter:Class<Formatter>|Formatter|string) : BasicProperties
+	{
+		let factory:ComponentFactory =
+			Properties.FactoryImplementation;
+
+		if (typeof formatter === "string")
+			formatter = FormsModule.get().getComponent(formatter);
+
+		if (isClass(formatter))
+			this.formatter$ = factory.createBean(formatter) as Formatter;
 
 		return(this);
 	}

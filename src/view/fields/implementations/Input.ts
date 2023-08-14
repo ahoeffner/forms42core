@@ -24,15 +24,12 @@ import { DataMapper, Tier } from "../DataMapper.js";
 import { dates } from "../../../model/dates/dates.js";
 import { Formatter } from "../interfaces/Formatter.js";
 import { FieldProperties } from "../FieldProperties.js";
-import { Properties } from "../../../application/Properties.js";
 import { Formatter as DefaultFormatter } from "../Formatter.js";
-import { FormsModule } from "../../../application/FormsModule.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
-import { ComponentFactory } from "../../../application/interfaces/ComponentFactory.js";
 
 enum Case
 {
@@ -84,6 +81,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		this.datamapper = properties.mapper;
+		this.formatter  = properties.formatter;
 		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());
 	}
@@ -371,7 +369,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.event.type = "change";
 
 				if (this.formatter)
-					this.setIntermediateValue(this.formatter.finish());
+					this.setElementValue(this.formatter.finish());
 
 				this.eventhandler.handleEvent(this.event);
 
@@ -428,7 +426,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				bubble = true;
 
 			if (this.formatter)
-				this.setIntermediateValue(this.formatter.finish());
+				this.setElementValue(this.formatter.finish());
 		}
 
 		if (this.event.bubbleMouseEvent)
@@ -792,13 +790,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	private getFormatter(attributes:Map<string,any>) : Formatter
 	{
-		let impl:Formatter = null;
-
+		let impl:Formatter = this.formatter;
 		let format:string = attributes.get("format");
-		let formatter:string = attributes.get("formatter");
-		let factory:ComponentFactory = Properties.FactoryImplementation;
-		if (formatter) impl = factory.createBean(FormsModule.get().getComponent(formatter));
 
+		// custom date and datetime requires a formatter
 		if (!impl && (format || attributes.has("date") || attributes.has("datetime")))
 			impl = new DefaultFormatter();
 

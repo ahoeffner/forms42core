@@ -21,6 +21,31 @@
 
 import { DataType } from "../DataType.js";
 
+/** Only basic test */
+export function isFormatter(object:any): object is Formatter
+{
+	let pass:boolean = object.insCharacter !== undefined && object.setCharacter !== undefined;
+	return(pass);
+}
+
+/** Only basic test */
+export function isSimpleFormatter(object:any): object is SimpleFormatter
+{
+	let pass:boolean = object.insCharacter === undefined && object.setCharacter === undefined;
+	if (pass) pass = object.getValue !== undefined && object.setValue !== undefined;
+	return(pass);
+}
+
+/**
+ * Simple formatters can be injected into an <input> field.
+ * <input formatter="path_to_injected_class">
+ */
+export interface SimpleFormatter
+{
+	getValue() : string;
+	setValue(value:any) : string;
+}
+
 
 /**
  * Formatters can be injected into an <input> field.

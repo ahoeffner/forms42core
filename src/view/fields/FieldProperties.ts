@@ -24,7 +24,8 @@ import { Class } from "../../types/Class.js";
 import { DataMapper } from "./DataMapper.js";
 import { FieldInstance } from "./FieldInstance.js";
 import { BasicProperties } from "./BasicProperties.js";
-import { Formatter } from "./interfaces/Formatter.js";
+import { ListOfValues } from "../../public/ListOfValues.js";
+import { Formatter, SimpleFormatter } from "./interfaces/Formatter.js";
 
 
 export class FieldProperties extends BasicProperties
@@ -220,6 +221,20 @@ export class FieldProperties extends BasicProperties
 	public setFormatter(formatter:Class<Formatter>|Formatter|string) : FieldProperties
 	{
 		super.setFormatter(formatter);
+		return(this);
+	}
+
+	/** Set simple formatter */
+	public setSimpleFormatter(formatter:Class<SimpleFormatter>|SimpleFormatter|string) : FieldProperties
+	{
+		super.setSimpleFormatter(formatter);
+		return(this);
+	}
+
+	/** Set listofvalues */
+	public setListOfValues(listofvalues:Class<ListOfValues>|ListOfValues|string) : FieldProperties
+	{
+		super.setListOfValues(listofvalues);
 		return(this);
 	}
 }

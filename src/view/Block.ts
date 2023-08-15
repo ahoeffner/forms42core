@@ -1314,6 +1314,9 @@ export class Block
 					if (!inst.qbeProperties.advquery)
 						advquery = true;
 
+					if (inst.properties.listofvalues)
+						FormBacking.getBacking(this.form.parent).setListOfValues(this.name,inst.name,inst.properties.listofvalues);
+
 					if (inst.datatype != type)
 					{
 						switch(type)

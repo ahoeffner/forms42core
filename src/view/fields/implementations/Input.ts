@@ -22,13 +22,13 @@
 import { DataType } from "../DataType.js";
 import { DataMapper, Tier } from "../DataMapper.js";
 import { dates } from "../../../model/dates/dates.js";
-import { Formatter } from "../interfaces/Formatter.js";
 import { FieldProperties } from "../FieldProperties.js";
 import { Formatter as DefaultFormatter } from "../Formatter.js";
 import { FieldFeatureFactory } from "../../FieldFeatureFactory.js";
 import { BrowserEvent } from "../../../control/events/BrowserEvent.js";
 import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
 import { KeyMap, KeyMapping } from "../../../control/events/KeyMap.js";
+import { Formatter, SimpleFormatter } from "../interfaces/Formatter.js";
 import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
 
 enum Case
@@ -54,6 +54,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private formatter:Formatter = null;
 	private datamapper:DataMapper = null;
 	private properties:FieldProperties = null;
+	private sformatter:SimpleFormatter = null;
 	private eventhandler:FieldEventHandler = null;
 
 	private element:HTMLInputElement = null;
@@ -81,7 +82,6 @@ export class Input implements FieldImplementation, EventListenerObject
 	{
 		this.properties = properties;
 		this.datamapper = properties.mapper;
-		this.formatter  = properties.formatter;
 		if (init) this.addEvents(this.element);
 		this.setAttributes(properties.getAttributes());
 	}
@@ -149,6 +149,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.formatter != null)
 			return(this.formatter.getValue());
 
+		if (this.sformatter != null)
+			return(this.sformatter.getValue());
+
 		if (this.properties.validValues.size > 0)
 		{
 			let keyval:any = null;
@@ -200,6 +203,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (this.formatter.isNull()) value = null;
 			else value = this.formatter.getValue();
 		}
+
+		if (this.sformatter != null)
+			value = this.sformatter.setValue(value);
 
 		if (value == null)
 			value = "";
@@ -312,7 +318,7 @@ export class Input implements FieldImplementation, EventListenerObject
 				this.placeholder = value;
 		});
 
-		this.formatter = this.getFormatter(attributes);
+		this.getFormatter(attributes);
 
 		if (this.formatter != null)
 		{
@@ -349,6 +355,12 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.formatter != null)
 		{
 			if (!this.xfixed())
+					return;
+		}
+
+		if (this.sformatter != null)
+		{
+			if (!this.xformat())
 					return;
 		}
 
@@ -614,6 +626,39 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(true);
 	}
 
+	private xformat() : boolean
+	{
+		if (this.type == "range")
+			return(true);
+
+		if (this.element.readOnly)
+			return(true);
+
+		if (this.event.type == "keydown" && this.event.isPrintableKey)
+		{
+			if (this.event.ctrlkey != null || this.event.funckey != null)
+				return(true);
+
+			this.event.preventDefault(true);
+			let pos:number = this.getPosition();
+			let sel:number[] = this.getSelection();
+			let value:string = this.getElementValue();
+
+			if (sel[1] - sel[0] > 0)
+				value = value.substring(0,sel[0]) + value.substring(sel[1])
+
+			if (pos >= value.length) value += this.event.key;
+			else value = value.substring(0,pos) + this.event.key + value.substring(pos);
+
+			value = this.sformatter.setValue(value);
+
+			this.setElementValue(value);
+			this.setPosition(pos+1);
+		}
+
+		return(true);
+	}
+
 	private xfixed() : boolean
 	{
 		if (this.type == "range")
@@ -788,9 +833,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		return(this.element.disabled);
 	}
 
-	private getFormatter(attributes:Map<string,any>) : Formatter
+	private getFormatter(attributes:Map<string,any>) : void
 	{
-		let impl:Formatter = this.formatter;
+		let impl:any = this.properties.formatter;
 		let format:string = attributes.get("format");
 
 		// custom date and datetime requires a formatter
@@ -799,11 +844,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (impl)
 		{
-			impl.format = format;
-			impl.datatype = this.datatype;
+			this.formatter = impl;
+			this.formatter.format = format;
+			this.formatter.datatype = this.datatype;
 		}
 
-		return(impl);
+		if (!impl)
+			this.sformatter = this.properties.simpleformatter;
 	}
 
 	private addEvents(element:HTMLElement) : void

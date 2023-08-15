@@ -344,12 +344,46 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.waiting)
 			return;
 
+		if (this.event.undo)
+		{
+			this.event.preventDefault(true);
+
+			let pos:number = this.getPosition();
+			this.setValue(this.initial);
+
+			if (this.formatter)
+				this.setElementValue(this.formatter.getValue());
+
+			if (this.getElementValue().length > pos)
+				this.setPosition(pos);
+		}
+
+		if (this.event.paste)
+		{
+			if (this.event.type == "keydown")
+			{
+				this.element.value = "";
+			}
+			else
+			{
+				let pos:number = this.getPosition();
+				this.setValue(this.getElementValue());
+
+				if (this.formatter)
+					this.setElementValue(this.formatter.getValue());
+
+				if (this.getElementValue().length > pos)
+					this.setPosition(pos);
+			}
+		}
+
+
 		if (this.event.type == "focus")
 		{
 			bubble = true;
 			this.before = this.getElementValue();
 			this.initial = this.getIntermediateValue();
-			if (this.placeholder != null) this.element.removeAttribute("placeholder");
+			this.element.removeAttribute("placeholder");
 		}
 
 		if (this.formatter != null)
@@ -379,17 +413,9 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (change)
 			{
 				this.event.type = "change";
-
-				if (this.formatter)
-					this.setElementValue(this.formatter.finish());
-
-				this.eventhandler.handleEvent(this.event);
-
+				await this.eventhandler.handleEvent(this.event);
 				this.event.type = "blur";
 			}
-
-			if (this.placeholder != null)
-			this.element.removeAttribute("placeholder");
 		}
 
 		if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null)
@@ -423,22 +449,13 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (event.type == "change")
 		{
-			if (this.datatype$ == DataType.integer || this.datatype$ == DataType.decimal)
-			{
-				let num:string = this.getElementValue();
-
-				if (isNaN(+num)) this.setElementValue(null);
-				else if (num.trim().length > 0) this.setElementValue((+num)+"");
-			}
+			this.setValue(this.getElementValue());
 
 			bubble = false;
 			let value:string = this.getIntermediateValue();
 
 			if (value != this.initial)
 				bubble = true;
-
-			if (this.formatter)
-				this.setElementValue(this.formatter.finish());
 		}
 
 		if (this.event.bubbleMouseEvent)
@@ -685,8 +702,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		// Change should not fire because of preventDefault etc
 		if (this.event.type == "blur" || this.event.type == "change")
 		{
-			this.formatter.setValue(this.getElementValue());
-			this.setElementValue(this.formatter.getValue());
+			this.setElementValue(this.formatter.finish());
 			if (this.formatter.isNull()) this.clear();
 			return(true);
 		}
@@ -694,28 +710,6 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.type == "drop")
 		{
 			this.event.preventDefault(true);
-			return(true);
-		}
-
-		if (this.event.undo)
-		{
-			this.setElementValue(this.initial);
-			this.setPosition(pos);
-			return(true);
-		}
-
-		if (this.event.paste)
-		{
-			if (this.event.type == "keydown")
-			{
-				this.element.value = "";
-			}
-			else
-			{
-				this.formatter.setValue(this.getElementValue());
-				this.setElementValue(this.formatter.getValue());
-				this.setPosition(this.formatter.first());
-			}
 			return(true);
 		}
 

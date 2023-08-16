@@ -43,7 +43,7 @@ export function isSimpleFormatter(object:any): object is SimpleFormatter
 export interface SimpleFormatter
 {
 	getValue() : string;
-	setValue(value:any) : string;
+	setValue(value:any) : void;
 }
 
 

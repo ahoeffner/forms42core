@@ -205,7 +205,10 @@ export class Input implements FieldImplementation, EventListenerObject
 		}
 
 		if (this.sformatter != null)
-			value = this.sformatter.setValue(value);
+		{
+			this.sformatter.setValue(value);
+			value = this.sformatter.getValue();
+		}
 
 		if (value == null)
 			value = "";
@@ -687,7 +690,8 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (pos >= value.length) value += this.event.key;
 			else value = value.substring(0,pos) + this.event.key + value.substring(pos);
 
-			value = this.sformatter.setValue(value);
+			this.sformatter.setValue(value);
+			value = this.sformatter.getValue();
 
 			this.setElementValue(value);
 			this.setPosition(pos+1);

@@ -245,8 +245,8 @@ export class Field
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
-		if (brwevent.type == "blur" && inst.ignore == "blur") return;
-		if (brwevent.type == "focus" && inst.ignore == "focus") return;
+		if (brwevent.type == "blur" && inst.ignore == "blur") {inst.ignore = null; return}
+		if (brwevent.type == "focus" && inst.ignore == "focus") {inst.ignore = null; return}
 		return(await EventStack.stack(this,inst,brwevent));
 	}
 
@@ -254,9 +254,6 @@ export class Field
 	{
 		let key:KeyMap = null;
 		let success:boolean = null;
-
-		if (!brwevent.isMouseEvent)
-			console.log("event "+brwevent.type+" "+inst+" "+inst.ignore)
 
 		if (brwevent.type == "focus")
 		{
@@ -266,20 +263,17 @@ export class Field
 			if (inst.field.block.empty() && !inst.field.block.model.querymode)
 				inst.implementation.clear();
 
-			if (inst.ignore != "focus")
-				success = await this.block.form.enter(inst);
+			success = await this.block.form.enter(inst);
 
 			if (!success)
 				FlightRecorder.add("@field: focus "+inst+" ignore: "+inst.ignore+" failed");
 
-			inst.ignore = null;
 			return;
 		}
 
 		if (brwevent.type == "blur")
 		{
-			if (inst.ignore != "blur")
-				success = await this.block.form.leave(inst);
+			success = await this.block.form.leave(inst);
 
 			if (!success)
 				FlightRecorder.add("@field: blur "+inst+" failed");
@@ -290,7 +284,6 @@ export class Field
 					inst.valid = false;
 			}
 
-			inst.ignore = null;
 			return;
 		}
 

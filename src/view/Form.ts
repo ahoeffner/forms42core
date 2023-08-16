@@ -411,21 +411,6 @@ export class Form implements EventListenerObject
 			}
 		}
 
-		// Prefield
-
-		if (inst != preinst)
-		{
-			if (!await this.enterField(inst,recoffset))
-			{
-				inst.blur(true);
-
-				if (preform != this) preform.focus();
-				else if (this.curinst$) this.curinst$.focus(true);
-
-				return(false);
-			}
-		}
-
 		nxtblock.current = inst;
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
@@ -448,6 +433,21 @@ export class Form implements EventListenerObject
 			}
 
 			await this.onRecord(inst.field.block);
+		}
+
+		// Prefield
+
+		if (inst != preinst)
+		{
+			if (!await this.enterField(inst,recoffset))
+			{
+				inst.blur(true);
+
+				if (preform != this) preform.focus();
+				else if (this.curinst$) this.curinst$.focus(true);
+
+				return(false);
+			}
 		}
 
 		this.setURL();

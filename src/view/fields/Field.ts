@@ -245,6 +245,8 @@ export class Field
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
+		if (brwevent.type == "blur" && inst.ignore == "blur") return;
+		if (brwevent.type == "focus" && inst.ignore == "focus") return;
 		return(await EventStack.stack(this,inst,brwevent));
 	}
 
@@ -252,6 +254,9 @@ export class Field
 	{
 		let key:KeyMap = null;
 		let success:boolean = null;
+
+		if (!brwevent.isMouseEvent)
+			console.log("event "+brwevent.type+" "+inst+" "+inst.ignore)
 
 		if (brwevent.type == "focus")
 		{

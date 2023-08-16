@@ -213,6 +213,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		value += "";
 		this.setElementValue(value);
 
+		this.before = value;
+		this.initial = value;
+
 		return(true);
 	}
 
@@ -349,10 +352,19 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.event.preventDefault(true);
 
 			let pos:number = this.getPosition();
-			this.setValue(this.initial);
+			this.setElementValue(this.initial);
 
 			if (this.formatter)
+			{
+				this.formatter.setValue(this.getElementValue());
 				this.setElementValue(this.formatter.getValue());
+			}
+
+			if (this.sformatter)
+			{
+				this.sformatter.setValue(this.getElementValue());
+				this.setElementValue(this.sformatter.getValue());
+			}
 
 			if (this.getElementValue().length > pos)
 				this.setPosition(pos);
@@ -367,10 +379,18 @@ export class Input implements FieldImplementation, EventListenerObject
 			else
 			{
 				let pos:number = this.getPosition();
-				this.setValue(this.getElementValue());
 
 				if (this.formatter)
+				{
+					this.formatter.setValue(this.getElementValue());
 					this.setElementValue(this.formatter.getValue());
+				}
+
+				if (this.sformatter)
+				{
+					this.sformatter.setValue(this.getElementValue());
+					this.setElementValue(this.sformatter.getValue());
+				}
 
 				if (this.getElementValue().length > pos)
 					this.setPosition(pos);
@@ -403,7 +423,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			bubble = true;
 
 			let change:boolean = false;
-			let value:string = this.getIntermediateValue();
+			let value:string = this.getElementValue();
 
 			if (value != this.initial)
 				change = true;
@@ -452,7 +472,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			this.setValue(this.getElementValue());
 
 			bubble = false;
-			let value:string = this.getIntermediateValue();
+			let value:string = this.getElementValue();
 
 			if (value != this.initial)
 				bubble = true;

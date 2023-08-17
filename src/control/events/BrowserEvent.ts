@@ -467,6 +467,8 @@ export class BrowserEvent
 
 			this.type = "wait";
 			this.wait$ = true;
+
+			setTimeout(() => {this.wait$ = false}, BrowserEvent.DBLClickDetection);
 		}
 
 		if (this.type == "contextmenu")

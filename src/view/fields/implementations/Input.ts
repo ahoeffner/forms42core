@@ -218,6 +218,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		this.before = value;
 		this.initial = value;
+		console.log("setValue '"+this.initial+"'")
 
 		return(true);
 	}
@@ -431,12 +432,13 @@ export class Input implements FieldImplementation, EventListenerObject
 			if (value != this.initial)
 				change = true;
 
-			this.initial = value;
-
 			if (change)
 			{
 				this.event.type = "change";
+
+				this.setValue(value);
 				await this.eventhandler.handleEvent(this.event);
+
 				this.event.type = "blur";
 			}
 		}
@@ -470,15 +472,16 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.event.ignore) return;
 		if (this.event.custom) bubble = true;
 
-		if (event.type == "change")
+		if (this.event.type == "change")
 		{
-			this.setValue(this.getElementValue());
-
 			bubble = false;
 			let value:string = this.getElementValue();
 
 			if (value != this.initial)
+			{
 				bubble = true;
+				this.setValue(value);
+			}
 		}
 
 		if (this.event.bubbleMouseEvent)

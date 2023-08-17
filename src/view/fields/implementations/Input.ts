@@ -218,7 +218,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		this.before = value;
 		this.initial = value;
-		console.log("setValue '"+this.initial+"'")
 
 		return(true);
 	}

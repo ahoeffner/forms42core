@@ -274,6 +274,13 @@ export class DataSourceWrapper
 	{
 		this.dirty = true;
 
+		if (record == null)
+		{
+			console.log("record is null "+this.block?.name);
+			console.log(new Error().stack);
+			return(true);
+		}
+
 		if (record.block.ctrlblk)
 			return(true);
 

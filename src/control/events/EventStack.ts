@@ -126,7 +126,17 @@ export class EventStack
 		{
 			EventStack.stack$ = [];
 			EventStack.running = false;
-			Alert.fatal(error.stack+" Performing "+JSON.stringify(cmd),"Fatal Error");
+
+			try
+			{
+				Alert.fatal(error.stack+" Performing "+JSON.stringify(cmd),"Fatal Error");
+			}
+			catch (conv)
+			{
+				console.log("error converting error to string");
+				console.log(error.stack);
+				console.log(cmd);
+			}
 		}
 	}
 

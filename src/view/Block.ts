@@ -1087,7 +1087,7 @@ export class Block
 
 			let moved:number = this.model.scroll(scroll,this.row);
 
-			success = await this.form.enterRecord(this,0);
+			success = await this.form.enterRecord(this,0,true);
 			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter record. block: "+this.name+" inst: "+inst);
 
 			success = await this.form.enterField(inst,0);
@@ -1116,7 +1116,7 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			if (!await this.form.enterRecord(this,scroll))
+			if (!await this.form.enterRecord(this,scroll,true))
 				return(next);
 
 			if (!await this.form.enterField(inst,scroll))

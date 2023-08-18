@@ -504,10 +504,13 @@ export class Block
 
 		if (record != null)
 		{
+			this.dirty = true;
+
 			if (!this.view.getCurrentRow().exist)
 			{
 				before = true;
 				this.view.openrow();
+				await this.view.form.enterRecord(this.view,0,true);
 			}
 
 			this.form.view.blur(true);
@@ -600,6 +603,14 @@ export class Block
 
 		if (this.qbe.querymode)
 			return(true);
+
+		let rec:Record = this.getRecord();
+
+		if (rec?.inserted)
+		{
+			rec.state = RecordState.New;
+			await this.delete();
+		}
 
 		let undo:Record[] = await this.wrapper?.undo();
 

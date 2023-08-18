@@ -287,7 +287,6 @@ export class Form implements EventListenerObject
 		let preblock:Block = this.curinst$?.field.block;
 
 		let nxtblock:Block = inst.field.block;
-		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 
 		if (preform == this && inst == this.curinst$)
@@ -396,7 +395,7 @@ export class Form implements EventListenerObject
 				return(false);
 			}
 
-			if (!await this.enterRecord(nxtblock,recoffset))
+			if (!await this.enterRecord(nxtblock,recoffset,false))
 			{
 				this.focus();
 				return(false);
@@ -404,7 +403,7 @@ export class Form implements EventListenerObject
 		}
 		else if (recoffset != 0)
 		{
-			if (!await this.enterRecord(nxtblock,recoffset))
+			if (!await this.enterRecord(nxtblock,recoffset,false))
 			{
 				this.focus();
 				return(false);
@@ -415,28 +414,9 @@ export class Form implements EventListenerObject
 		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
-		let onrec:boolean = true;
 		if (preform) this.parent.canvas.activate();
-		let rec:Record = nxtblock.model.getRecord();
-
-		if (rec == null) onrec = false;
-		if (onrec && rec.state == RecordState.Delete) onrec = false;
-		if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
-		if (onrec && visited && (nxtblock == preblock && recoffset == 0)) onrec = false;
-
-		if (onrec)
-		{
-			if (rec.state == RecordState.New && !rec.initiated)
-			{
-				rec.initiated = true;
-				await this.onNewRecord(inst.field.block);
-			}
-
-			await this.onRecord(inst.field.block);
-		}
 
 		// Prefield
-
 		if (inst != preinst)
 		{
 			if (!await this.enterField(inst,recoffset))
@@ -492,11 +472,32 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async enterRecord(block:Block, offset:number) : Promise<boolean>
+	public async enterRecord(block:Block, offset:number, moved:boolean) : Promise<boolean>
 	{
 		if (!await this.setEventTransaction(EventType.PreRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
+
+		if (offset != 0 || moved)
+		{
+			let onrec:boolean = true;
+			let rec:Record = block.model.getRecord(offset);
+
+			if (onrec && rec.state == RecordState.Delete) onrec = false;
+			if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
+
+			if (onrec)
+			{
+				if (rec.state == RecordState.New && !rec.initiated)
+				{
+					rec.initiated = true;
+					await this.onNewRecord(block);
+				}
+
+				await this.onRecord(block);
+			}
+		}
+
 		return(success);
 	}
 
@@ -753,9 +754,15 @@ export class Form implements EventListenerObject
 				if (inst.field.block.model.queryallowed)
 				{
 					inst.blur(true);
+					await this.leaveField(inst);
 
 					success = await this.model.executeQuery(inst.field.block.model,false,true);
+
 					inst.focus(true);
+					await this.enterRecord(inst.field.block,0,true);
+
+					this.curinst$ = null;
+					await this.enterField(inst,0);
 
 					return(success);
 				}

@@ -117,7 +117,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public clear() : void
 	{
-		this.setElementValue(null);
+		this.setValue(null);
 	}
 
 	public getValue() : any
@@ -402,7 +402,6 @@ export class Input implements FieldImplementation, EventListenerObject
 					this.setPosition(pos);
 			}
 		}
-
 
 		if (this.event.type == "focus")
 		{

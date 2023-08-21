@@ -260,9 +260,6 @@ export class Field
 			this.instance$ = inst;
 			this.value$ = inst.getValue();
 
-			if (inst.field.block.empty() && !inst.field.block.model.querymode)
-				inst.implementation.clear();
-
 			success = await this.block.form.enter(inst);
 
 			if (!success)

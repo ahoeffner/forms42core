@@ -200,7 +200,9 @@ export class Radio implements FieldImplementation, EventListenerObject
 	public async handleEvent(event:Event) : Promise<void>
 	{
 		// Radio ignores readonly
-		if (event.type == "click" && this.properties.readonly)
+		let readonly:boolean = this.element.hasAttribute("readonly");
+
+		if (readonly && event.type == "click")
 		{
 			event.preventDefault();
 			return;

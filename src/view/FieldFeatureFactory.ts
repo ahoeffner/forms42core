@@ -350,8 +350,8 @@ export class FieldFeatureFactory
 
 	public static setEnabledState(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
 	{
-		if (!flag) FieldFeatureFactory.setEnabled(tag,props,flag);
-		else if (props.enabled) FieldFeatureFactory.setEnabled(tag,props,flag);
+		if (!flag) FieldFeatureFactory.setEnabled(tag,flag);
+		else if (props.enabled) FieldFeatureFactory.setEnabled(tag,flag);
 	}
 
 	public static setReadOnly(tag:HTMLElement, flag:boolean) : void
@@ -359,17 +359,25 @@ export class FieldFeatureFactory
 		if (tag instanceof HTMLInputElement)
 			tag.readOnly = flag;
 
-		if (tag instanceof HTMLSelectElement)
+		else
+
 		{
 			if (flag) tag.setAttribute("readonly","");
 			else		 tag.removeAttribute("readonly");
 		}
 	}
 
-	public static setEnabled(tag:HTMLElement, props:FieldProperties, flag:boolean) : void
+	public static setEnabled(tag:HTMLElement, flag:boolean) : void
 	{
 		if (tag instanceof HTMLInputElement || tag instanceof HTMLSelectElement)
 			tag.disabled = !flag;
+
+		else
+
+		{
+			if (flag) tag.setAttribute("disabled","");
+			else		 tag.removeAttribute("disabled");
+		}
 	}
 
 	private static getSelectOptions(tag:HTMLSelectElement) : Map<string,string>

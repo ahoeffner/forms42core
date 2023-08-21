@@ -126,8 +126,6 @@ export class EventStack
 		{
 			EventStack.stack$ = [];
 			EventStack.running = false;
-			Alert.fatal("Fatal error performing browser event. Please consult the javascript console","Fatal Error");
-			console.error(cmd);
 		}
 	}
 

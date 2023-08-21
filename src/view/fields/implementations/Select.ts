@@ -237,8 +237,22 @@ export class Select implements FieldImplementation, EventListenerObject
 
 	public async handleEvent(event:Event) : Promise<void>
 	{
+		// Select ignores readonly
+		if (event.type == "mousedown" && this.properties.readonly)
+		{
+			event.preventDefault();
+			return;
+		}
+
 		let bubble:boolean = false;
 		this.event.setEvent(event);
+
+		// Select ignores readonly
+		if (this.event.type == "keydown" && this.event.key == ' ')
+		{
+			event.preventDefault();
+			return;
+		}
 
 		if (this.event.type == "skip")
 			return;

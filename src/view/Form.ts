@@ -520,6 +520,9 @@ export class Form implements EventListenerObject
 		if (inst == this.curinst$)
 			return(true);
 
+		if (inst?.field.row.status == Status.na)
+			return(true);
+
 		this.curinst$ = inst;
 		this.lastinst$ = null;
 
@@ -554,6 +557,9 @@ export class Form implements EventListenerObject
 	public async leaveField(inst:FieldInstance) : Promise<boolean>
 	{
 		if (inst == this.lastinst$)
+			return(true);
+
+		if (inst?.field.row.status == Status.na)
 			return(true);
 
 		this.lastinst$ = inst;

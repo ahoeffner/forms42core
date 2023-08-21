@@ -520,11 +520,11 @@ export class Form implements EventListenerObject
 		if (inst == this.curinst$)
 			return(true);
 
-		if (inst?.field.row.status == Status.na)
-			return(true);
-
 		this.curinst$ = inst;
 		this.lastinst$ = null;
+
+		if (inst?.field.row.status == Status.na)
+			return(true);
 
 		if (!await this.setEventTransaction(EventType.PreField,inst.field.block,offset)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PreField,inst);

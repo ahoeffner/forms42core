@@ -491,27 +491,29 @@ export class Form implements EventListenerObject
 				if (rec.state == RecordState.New && !rec.initiated)
 				{
 					rec.initiated = true;
-					await this.onNewRecord(block);
+					await this.onNewRecord(block,offset);
 				}
 
-				await this.onRecord(block);
+				await this.onRecord(block,offset);
 			}
 		}
 
 		return(success);
 	}
 
-	public async onRecord(block:Block) : Promise<boolean>
+	public async onRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
+		if (!await this.setEventTransaction(EventType.OnRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
+		block.model.endEventTransaction(EventType.OnRecord,success);
 		return(success);
 	}
 
-	public async onNewRecord(block:Block) : Promise<boolean>
+	public async onNewRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		if (!await this.model.wait4EventTransaction(EventType.OnNewRecord,null)) return(false);
+		if (!await this.setEventTransaction(EventType.OnNewRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
+		block.model.endEventTransaction(EventType.OnNewRecord,success);
 		return(success);
 	}
 

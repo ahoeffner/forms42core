@@ -510,8 +510,9 @@ export class Block
 			{
 				before = true;
 				this.view.openrow();
-				await this.view.form.enterRecord(this.view,0,true);
 			}
+
+			await this.view.form.enterRecord(this.view,0,true);
 
 			this.form.view.blur(true);
 			this.form.view.current = null;

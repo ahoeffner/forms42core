@@ -472,13 +472,13 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async enterRecord(block:Block, offset:number, moved:boolean) : Promise<boolean>
+	public async enterRecord(block:Block, offset:number, different:boolean) : Promise<boolean>
 	{
 		if (!await this.setEventTransaction(EventType.PreRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
 
-		if (offset != 0 || moved)
+		if (offset != 0 || different)
 		{
 			let onrec:boolean = true;
 			let rec:Record = block.model.getRecord(offset);

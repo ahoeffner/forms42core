@@ -500,19 +500,19 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
+		let exists:boolean = this.view.getCurrentRow().exist;
 		let record:Record = this.wrapper.create(this.record,before);
 
 		if (record != null)
 		{
 			this.dirty = true;
 
-			if (!this.view.getCurrentRow().exist)
+			if (!exists)
 			{
 				before = true;
 				this.view.openrow();
+				await this.view.form.enterRecord(this.view,0,true);
 			}
-
-			await this.view.form.enterRecord(this.view,0,true);
 
 			this.form.view.blur(true);
 			this.form.view.current = null;
@@ -522,6 +522,9 @@ export class Block
 
 			if (before)	await this.view.refresh(record);
 			else success = await this.view.nextrecord();
+
+			if (exists && before)
+				await this.view.form.enterRecord(this.view,0,true);
 
 			if (success)
 			{

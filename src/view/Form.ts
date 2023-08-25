@@ -61,6 +61,7 @@ export class Form implements EventListenerObject
 	}
 
 	private canvas$:Canvas = null;
+	private visited$:boolean = false;
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
@@ -332,6 +333,29 @@ export class Form implements EventListenerObject
 			}
 
 			if (!await this.enterForm(this))
+			{
+				preform.focus();
+				return(false);
+			}
+
+			if (!visited && !await this.enterBlock(nxtblock,0))
+			{
+				preform.focus();
+				return(false);
+			}
+
+		}
+		else if (!this.visited$)
+		{
+			if (!await this.enterForm(this))
+			{
+				preform.focus();
+				return(false);
+			}
+
+			this.visited$ = true;
+
+			if (!await this.enterBlock(nxtblock,0))
 			{
 				preform.focus();
 				return(false);

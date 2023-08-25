@@ -395,23 +395,41 @@ export class Form
 
 		this.clearDetailDepencies(block);
 
-		if (!await this.view.leaveField())
-			return(false);
+		let inst:FieldInstance = this.view.current;
+
+		if (inst)
+		{
+			inst.blur(true);
+
+			if (!await this.view.leaveField(inst))
+				return(false);
+
+			if (!await this.view.leaveRecord(inst.field.block))
+				return(false);
+		}
 
 		await this.enterQueryMode(block);
 
-		let inst:FieldInstance = this.view.current;
-
-		inst?.blur(true);
-		
 		inst = block.view.getQBEInstance(inst);
 		if (!inst) inst = block.view.findFirstEditable(block.qberec);
 
 		inst?.focus();
 
-		block.view.current = inst;
-		this.view.onRecord(block.view);
+		if (inst)
+		{
+			block.view.form.current = null;
 
+			if (!await this.view.enterRecord(inst.field.block,0))
+				return(false);
+
+			if (!await this.view.enterField(inst,0))
+				return(false);
+		}
+
+		block.view.current = inst;
+		block.view.form.current = inst;
+
+		this.view.onRecord(block.view);
 		return(true);
 	}
 

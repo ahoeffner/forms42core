@@ -287,6 +287,7 @@ export class Form implements EventListenerObject
 		let preblock:Block = this.curinst$?.field.block;
 
 		let nxtblock:Block = inst.field.block;
+		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 
 		if (preform == this && inst == this.curinst$)
@@ -395,7 +396,7 @@ export class Form implements EventListenerObject
 				return(false);
 			}
 
-			if (!await this.enterRecord(nxtblock,recoffset,false))
+			if (!await this.enterRecord(nxtblock,recoffset))
 			{
 				this.focus();
 				return(false);
@@ -403,7 +404,7 @@ export class Form implements EventListenerObject
 		}
 		else if (recoffset != 0)
 		{
-			if (!await this.enterRecord(nxtblock,recoffset,false))
+			if (!await this.enterRecord(nxtblock,recoffset))
 			{
 				this.focus();
 				return(false);
@@ -428,6 +429,12 @@ export class Form implements EventListenerObject
 
 				return(false);
 			}
+		}
+
+		if (recoffset != 0 || !visited)
+		{
+			if (nxtblock.getRecord(recoffset))
+				await this.onRecord(nxtblock);
 		}
 
 		this.setURL();
@@ -472,48 +479,27 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async enterRecord(block:Block, offset:number, different:boolean) : Promise<boolean>
+	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
 		if (!await this.setEventTransaction(EventType.PreRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
-
-		if (offset != 0 || different)
-		{
-			let onrec:boolean = true;
-			let rec:Record = block.model.getRecord(offset);
-
-			if (onrec && rec.state == RecordState.Delete) onrec = false;
-			if (onrec && rec.state == RecordState.QueryFilter) onrec = false;
-
-			if (onrec)
-			{
-				if (rec.state == RecordState.New && !rec.initiated)
-				{
-					rec.initiated = true;
-					await this.onNewRecord(block,offset);
-				}
-
-				await this.onRecord(block,offset);
-			}
-		}
-
 		return(success);
 	}
 
-	public async onRecord(block:Block, offset:number) : Promise<boolean>
+	public async onRecord(block:Block) : Promise<boolean>
 	{
-		if (!await this.setEventTransaction(EventType.OnRecord,block,offset)) return(false);
+		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
 		block.model.endEventTransaction(EventType.OnRecord,success);
 		return(success);
 	}
 
-	public async onNewRecord(block:Block, offset:number) : Promise<boolean>
+	public async onCreateRecord(block:Block, record:Record) : Promise<boolean>
 	{
-		if (!await this.setEventTransaction(EventType.OnNewRecord,block,offset)) return(false);
-		let success:boolean = await this.fireBlockEvent(EventType.OnNewRecord,block.name);
-		block.model.endEventTransaction(EventType.OnNewRecord,success);
+		if (!await this.setEventTransaction(EventType.OnCreateRecord,block,record)) return(false);
+		let success:boolean = await this.fireBlockEvent(EventType.OnCreateRecord,block.name);
+		block.model.endEventTransaction(EventType.OnCreateRecord,success);
 		return(success);
 	}
 
@@ -551,13 +537,17 @@ export class Form implements EventListenerObject
 
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
+		if (block.getRecord() == null) return(true);
 		if (!await block.model.wait4EventTransaction(EventType.PostRecord)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
 		return(success);
 	}
 
-	public async leaveField(inst:FieldInstance) : Promise<boolean>
+	public async leaveField(inst?:FieldInstance) : Promise<boolean>
 	{
+		if (inst == null)
+			inst = this.curinst$;
+
 		if (inst == this.lastinst$)
 			return(true);
 
@@ -762,15 +752,23 @@ export class Form implements EventListenerObject
 				if (inst.field.block.model.queryallowed)
 				{
 					inst.blur(true);
-					await this.leaveField(inst);
+
+					if (!await this.leaveField(inst))
+						return(false);
+
+					if (!await this.leaveRecord(inst.field.block))
+						return(false);
 
 					success = await this.model.executeQuery(inst.field.block.model,false,true);
 
 					inst.focus(true);
-					await this.enterRecord(inst.field.block,0,true);
-
 					this.curinst$ = null;
-					await this.enterField(inst,0);
+
+					if (!await this.enterRecord(inst.field.block,0))
+						return(success)
+
+					if (await this.enterField(inst,0))
+						await this.onRecord(inst.field.block);
 
 					return(success);
 				}
@@ -809,7 +807,7 @@ export class Form implements EventListenerObject
 				{if (blk.empty) ok = false;})
 
 				if (!mblock.ctrlblk && ok)
-					mblock.insert(false);
+					await mblock.insert(false);
 
 				return(true);
 			}
@@ -1024,14 +1022,14 @@ export class Form implements EventListenerObject
 		return(next != null);
 	}
 
-	private async setEventTransaction(event:EventType, block?:Block, offset?:number) : Promise<boolean>
+	private async setEventTransaction(event:EventType, block?:Block, recoff?:Record|number) : Promise<boolean>
 	{
 		let record:Record = null;
 
-		if (block != null)
+		if (block != null && recoff != null)
 		{
-			if (offset == null) offset = 0;
-			record = block.model.getRecord(offset);
+			if (typeof(recoff) !== "number")	record = recoff;
+			else record = block.model.getRecord(recoff);
 		}
 
 		return(this.model.setEventTransaction(event,block?.model,record));

@@ -870,9 +870,9 @@ export class Block
 		return(this.displayed$.get(record?.id));
 	}
 
-	public getRecord(row:number) : Record
+	public getRecord(row?:number) : Record
 	{
-		if (row < 0) row = this.row;
+		if (!row || row < 0) row = this.row;
 		return(this.model.getRecord(row-this.row));
 	}
 
@@ -1087,7 +1087,7 @@ export class Block
 
 			let moved:number = this.model.scroll(scroll,this.row);
 
-			success = await this.form.enterRecord(this,0,true);
+			success = await this.form.enterRecord(this,0);
 			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter record. block: "+this.name+" inst: "+inst);
 
 			success = await this.form.enterField(inst,0);
@@ -1116,7 +1116,7 @@ export class Block
 			if (!await this.form.leaveRecord(this))
 				return(next);
 
-			if (!await this.form.enterRecord(this,scroll,true))
+			if (!await this.form.enterRecord(this,scroll))
 				return(next);
 
 			if (!await this.form.enterField(inst,scroll))

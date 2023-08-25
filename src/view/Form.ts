@@ -420,7 +420,7 @@ export class Form implements EventListenerObject
 		// Prefield
 		if (inst != preinst)
 		{
-			if (!await this.enterField(inst,recoffset))
+			if (!await this.enterField(inst,0))
 			{
 				inst.blur(true);
 

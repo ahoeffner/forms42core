@@ -1044,7 +1044,6 @@ export class Block
 
 	private async scroll(inst:FieldInstance, scroll:number) : Promise<FieldInstance>
 	{
-		let success:boolean = null;
 		let next:FieldInstance = inst;
 
 		if (!await this.validateRow())
@@ -1079,7 +1078,7 @@ export class Block
 				next.ignore = "focus";
 			}
 
-			if (!await this.form.leaveField(inst))
+			if (!await this.form.leaveField(inst,true))
 				return(next);
 
 			if (!await this.form.leaveRecord(this))
@@ -1087,11 +1086,26 @@ export class Block
 
 			let moved:number = this.model.scroll(scroll,this.row);
 
-			success = await this.form.enterRecord(this,0);
-			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter record. block: "+this.name+" inst: "+inst);
+			if (!await this.form.enterRecord(this,0))
+			{
+				this.model.scroll(-scroll,this.row);
+				this.setIndicators(null,this.row$);
+				return(next);
+			}
 
-			success = await this.form.enterField(inst,0);
-			if (!success) FlightRecorder.add("@view.block.scroll : unable to enter field. block: "+this.name+" inst: "+inst);
+			if (!await this.form.enterField(next,0,true))
+			{
+				this.model.scroll(-scroll,this.row);
+				this.setIndicators(null,this.row$);
+				return(next);
+			}
+
+			if (!await this.form.onRecord(next.field.block))
+			{
+				this.model.scroll(-scroll,this.row);
+				this.setIndicators(null,this.row$);
+				return(next);
+			}
 
 			if (moved < scroll)
 				this.row$ -= scroll - moved;
@@ -1110,17 +1124,17 @@ export class Block
 			if (this.getRow(this.row+scroll).status == Status.na)
 				return(inst);
 
-			if (!await this.form.leaveField(inst))
-				return(next);
+			if (!await this.form.leaveField(inst,true))
+				return(inst);
 
 			if (!await this.form.leaveRecord(this))
-				return(next);
+				return(inst);
 
 			if (!await this.form.enterRecord(this,scroll))
-				return(next);
+				return(inst);
 
-			if (!await this.form.enterField(inst,scroll))
-				return(next);
+			if (!await this.form.enterField(inst,scroll,true))
+				return(inst);
 
 			this.setCurrentRow(this.row+scroll,true);
 		}

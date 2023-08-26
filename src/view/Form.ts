@@ -527,15 +527,15 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async enterField(inst:FieldInstance, offset:number) : Promise<boolean>
+	public async enterField(inst:FieldInstance, offset:number, force?:boolean) : Promise<boolean>
 	{
-		if (inst == this.curinst$)
+		if (!force && inst == this.curinst$)
 			return(true);
 
 		this.curinst$ = inst;
 		this.lastinst$ = null;
 
-		if (inst?.field.row.status == Status.na)
+		if (!force && inst?.field.row.status == Status.na)
 			return(true);
 
 		if (!await this.setEventTransaction(EventType.PreField,inst.field.block,offset)) return(false);
@@ -567,12 +567,12 @@ export class Form implements EventListenerObject
 		return(success);
 	}
 
-	public async leaveField(inst?:FieldInstance) : Promise<boolean>
+	public async leaveField(inst?:FieldInstance, force?:boolean) : Promise<boolean>
 	{
 		if (inst == null)
 			inst = this.curinst$;
 
-		if (inst == this.lastinst$)
+		if (!force && inst == this.lastinst$)
 			return(true);
 
 		if (inst?.field.row.status == Status.na)

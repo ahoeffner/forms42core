@@ -41,6 +41,10 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private datatype$:DataType = DataType.string;
    private event:BrowserEvent = BrowserEvent.get();
 
+	public setValidated() : void
+	{
+	}
+
 	public get datatype() : DataType
 	{
 		return(this.datatype$);

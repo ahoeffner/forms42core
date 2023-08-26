@@ -71,6 +71,11 @@ export class Input implements FieldImplementation, EventListenerObject
 		this.datatype$ = type;
 	}
 
+	public setValidated() : void
+	{
+		this.initial = this.getElementValue();
+	}
+
 	public create(eventhandler:FieldEventHandler, _tag:string) : HTMLInputElement
 	{
 		this.element = document.createElement("input");

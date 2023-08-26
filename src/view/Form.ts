@@ -777,6 +777,9 @@ export class Form implements EventListenerObject
 				{
 					inst.blur(true);
 
+					if (!await this.validate())
+						return(false);
+
 					if (!await this.leaveField(inst))
 						return(false);
 

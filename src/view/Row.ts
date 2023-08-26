@@ -178,7 +178,7 @@ export class Row
 			return(true);
 
 		let valid:boolean = true;
-		let validated:boolean = false;
+		let validated:boolean = true;
 		let fields:Field[] = this.getFields();
 
 		for (let i = 0; i < fields.length; i++)
@@ -214,12 +214,10 @@ export class Row
 		}
 
 		if (!valid) return(false);
-		else
-		{
-			if (validated) this.validated = true;
-			else this.validated = await this.block.model.validateRecord();
-		}
 
+		if (validated) this.validated = true;
+		else this.validated = await this.block.model.validateRecord();
+		
 		return(this.validated);
 	}
 

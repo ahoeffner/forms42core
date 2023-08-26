@@ -112,9 +112,15 @@ export class Field
 		return(this.validated$);
 	}
 
-	public set validated(flag:boolean)
+	public set validated(validated:boolean)
 	{
-		this.validated$ = flag;
+		this.validated$ = validated;
+
+		if (validated)
+		{
+			this.instances$.forEach((inst) =>
+				{inst.setValidated()})
+		}
 	}
 
 	public get mdlblock() : ModelBlock

@@ -215,9 +215,7 @@ export class Row
 
 		if (!valid) return(false);
 
-		if (validated) this.validated = true;
-		else this.validated = await this.block.model.validateRecord();
-		
+		this.validated = await this.block.model.validateRecord();
 		return(this.validated);
 	}
 

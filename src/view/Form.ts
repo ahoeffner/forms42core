@@ -272,6 +272,12 @@ export class Form implements EventListenerObject
 				preform.focus();
 				return(false);
 			}
+			
+			if (!await this.enterForm(this))
+			{
+				preform.focus();
+				return(false);
+			}
 
 			this.setURL();
 			this.canvas.activate();
@@ -303,7 +309,7 @@ export class Form implements EventListenerObject
 		// Check if 'I' have been closed
 		if (backing == null) return(false);
 
-		if (preform && this != preform)
+		if (this != preform)
 		{
 			// When modal call, allow leaving former form in any state
 
@@ -337,13 +343,6 @@ export class Form implements EventListenerObject
 				preform.focus();
 				return(false);
 			}
-
-			if (!visited && !await this.enterBlock(nxtblock,0))
-			{
-				preform.focus();
-				return(false);
-			}
-
 		}
 		else if (!this.visited$)
 		{
@@ -354,12 +353,6 @@ export class Form implements EventListenerObject
 			}
 
 			this.visited$ = true;
-
-			if (!await this.enterBlock(nxtblock,0))
-			{
-				preform.focus();
-				return(false);
-			}
 		}
 
 		/**********************************************************************
@@ -374,7 +367,6 @@ export class Form implements EventListenerObject
 			{
 				if (!await preblock.validate())
 				{
-					FlightRecorder.debug("Block '"+preblock.name+"' not validated");
 					this.focus();
 					return(false);
 				}
@@ -395,7 +387,6 @@ export class Form implements EventListenerObject
 			{
 				if (!await nxtblock.validateRow())
 				{
-					FlightRecorder.debug("Row in '"+nxtblock.name+"' not validated");
 					this.focus();
 					return(false);
 				}
@@ -412,7 +403,7 @@ export class Form implements EventListenerObject
 			Enter this forms current block and record
 		 **********************************************************************/
 
-		if (preblock != null && nxtblock != preblock)
+		if (nxtblock != preblock)
 		{
 			if (!await this.enterBlock(nxtblock,recoffset))
 			{
@@ -505,6 +496,7 @@ export class Form implements EventListenerObject
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
+		if (block.model.getRecord(offset) == null) return(true);
 		if (!await this.setEventTransaction(EventType.PreRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);

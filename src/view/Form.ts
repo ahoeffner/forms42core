@@ -272,7 +272,7 @@ export class Form implements EventListenerObject
 				preform.focus();
 				return(false);
 			}
-			
+
 			if (!await this.enterForm(this))
 			{
 				preform.focus();
@@ -446,7 +446,7 @@ export class Form implements EventListenerObject
 			}
 		}
 
-		if (recoffset != 0 || !visited)
+		if (preblock != nxtblock || recoffset != 0 || !visited)
 		{
 			if (nxtblock.getRecord(recoffset))
 				await this.onRecord(nxtblock);

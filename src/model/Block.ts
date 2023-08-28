@@ -772,7 +772,7 @@ export class Block
 			found = true;
 			this.record = 0;
 			this.view.display(i,record);
-			if (i == 0)	this.view$.setCurrentRow(0,false);
+			if (i == 0)	await this.view$.setCurrentRow(0,false);
 		}
 
 		if (!found)
@@ -1046,13 +1046,19 @@ export class Block
 		if (!this.form.finalized)
 			return(true);
 
+		let success:boolean = true;
 		let qryid:object = this.getQueryID();
 		if (newqry) qryid = this.startNewQueryChain();
 
-		this.getDetailBlocks(true).forEach((detail) =>
-			{detail.executeQuery(qryid)})
+		let blocks:Block[] = this.getDetailBlocks(true);
 
-		return(true);
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!await blocks[i].executeQuery(qryid))
+				success = false;
+		}
+
+		return(success);
 	}
 
 	public async prefetch(records:number, offset:number) : Promise<number>

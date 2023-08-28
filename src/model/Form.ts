@@ -558,8 +558,7 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		let succces:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
-		return(succces);
+		return(block.executeQuery(this.qrymgr$.startNewChain()));
 	}
 
 	public async initControlBlocks() : Promise<void>

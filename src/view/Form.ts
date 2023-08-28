@@ -765,7 +765,7 @@ export class Form implements EventListenerObject
 
 			if (key == KeyMap.executequery)
 			{
-				if (inst.field.block.model.queryallowed)
+				if (mblock.queryallowed)
 				{
 					inst.blur(true);
 
@@ -778,7 +778,7 @@ export class Form implements EventListenerObject
 					if (!await this.leaveRecord(inst.field.block))
 						return(false);
 
-					success = await this.model.executeQuery(inst.field.block.model,false,true);
+					success = await this.model.executeQuery(mblock,false,true);
 
 					inst.focus(true);
 					this.curinst$ = null;
@@ -787,7 +787,12 @@ export class Form implements EventListenerObject
 						return(success)
 
 					if (await this.enterField(inst,0))
-						await this.onRecord(inst.field.block);
+					{
+						inst.field.block.current = inst;
+
+						if (mblock.getRecord())
+							success = await this.onRecord(inst.field.block);
+					}
 
 					return(success);
 				}

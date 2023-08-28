@@ -772,10 +772,13 @@ export class Block
 			found = true;
 			this.record = 0;
 			this.view.display(i,record);
-			if (i == 0)	await this.view$.setCurrentRow(0,false);
 		}
 
-		if (!found)
+		if (found)
+		{
+			await this.view$.setCurrentRow(0,false);
+		}
+		else
 		{
 			let blocks:Block[] = this.getAllDetailBlocks(true);
 			blocks.forEach((det) => {det.view.clear(true,true,true)})

@@ -489,7 +489,7 @@ export class Block
 
 	public async wait4EventTransaction(event:EventType) : Promise<boolean>
 	{
-		return(this.model.wait4EventTransaction(event));
+		return(this.model.checkEventTransaction(event));
 	}
 
 	public endEventTransaction(event:EventType, apply:boolean) : void
@@ -809,8 +809,10 @@ export class Block
 		return(this.rows$.get(this.row));
 	}
 
-	public setCurrentRow(rownum:number, newqry:boolean) : void
+	public async setCurrentRow(rownum:number, newqry:boolean) : Promise<boolean>
 	{
+		let success:boolean = true;
+
 		if (this.row$ < 0)
 		{
 			this.row$ = 0;
@@ -824,15 +826,15 @@ export class Block
 				this.displaycurrent();
 
 				if (this.getRow(this.row).status != Status.qbe)
-					this.model.queryDetails(newqry);
+					success = await this.model.queryDetails(newqry);
 			}
 
 			this.setIndicators(null,rownum);
-			return;
+			return(success);
 		}
 
 		if (rownum == this.row || rownum == -1)
-			return;
+			return(success);
 
 		this.model$.move(rownum-this.row);
 		this.setIndicators(this.row$,rownum);
@@ -849,10 +851,11 @@ export class Block
 			this.openrow();
 
 			if (this.getRow(this.row).status != Status.qbe)
-				this.model.queryDetails(newqry);
+				success = await this.model.queryDetails(newqry);
 		}
 
 		this.displaycurrent();
+		return(success);
 	}
 
 	public addRow(row:Row) : void

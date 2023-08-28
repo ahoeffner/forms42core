@@ -505,7 +505,7 @@ export class Form implements EventListenerObject
 
 	public async onRecord(block:Block) : Promise<boolean>
 	{
-		if (!await this.model.wait4EventTransaction(EventType.OnRecord,null)) return(false);
+		if (!await this.model.checkEventTransaction(EventType.OnRecord,null)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
 		block.model.endEventTransaction(EventType.OnRecord,success);
 		return(success);
@@ -538,14 +538,14 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!await this.model.wait4EventTransaction(EventType.PostForm,null)) return(false);
+		if (!await this.model.checkEventTransaction(EventType.PostForm,null)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		return(success);
 	}
 
 	public async leaveBlock(block:Block) : Promise<boolean>
 	{
-		if (!await block.model.wait4EventTransaction(EventType.PostBlock)) return(false);
+		if (!await block.model.checkEventTransaction(EventType.PostBlock)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
 		if (success) success = await block.model.flush();
 		return(success);
@@ -554,7 +554,7 @@ export class Form implements EventListenerObject
 	public async leaveRecord(block:Block) : Promise<boolean>
 	{
 		if (block.getRecord() == null) return(true);
-		if (!await block.model.wait4EventTransaction(EventType.PostRecord)) return(false);
+		if (!await block.model.checkEventTransaction(EventType.PostRecord)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
 		return(success);
 	}
@@ -571,7 +571,7 @@ export class Form implements EventListenerObject
 			return(true);
 
 		this.lastinst$ = inst;
-		if (!await inst.field.block.model.wait4EventTransaction(EventType.PostField)) return(false);
+		if (!await inst.field.block.model.checkEventTransaction(EventType.PostField)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		return(success);
 	}

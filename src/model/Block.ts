@@ -197,14 +197,9 @@ export class Block
 		return(this.form.hasEventTransaction(this));
 	}
 
-	public checkEventTransaction(event:EventType) : boolean
+	public async checkEventTransaction(event:EventType) : Promise<boolean>
 	{
 		return(this.form.checkEventTransaction(event,this));
-	}
-
-	public async wait4EventTransaction(event:EventType) : Promise<boolean>
-	{
-		return(this.form.wait4EventTransaction(event,this));
 	}
 
 	public async setEventTransaction(event:EventType, record:Record) : Promise<boolean>
@@ -372,7 +367,7 @@ export class Block
 	public async postQuery() : Promise<boolean>
 	{
 		if (this.ctrlblk) return(true);
-		if (!await this.wait4EventTransaction(EventType.PostQuery)) return(false);
+		if (!await this.checkEventTransaction(EventType.PostQuery)) return(false);
 		let success:boolean = await this.fire(EventType.PostQuery);
 		return(success);
 	}

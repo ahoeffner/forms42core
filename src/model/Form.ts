@@ -37,6 +37,7 @@ import { FormMetaData } from '../application/FormMetaData.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { BlockCoordinator } from './relations/BlockCoordinator.js';
+import { FormsModule } from '../application/FormsModule.js';
 
 
 export class Form
@@ -241,17 +242,7 @@ export class Form
 		return(this.eventTransaction.getEvent(block) != null);
 	}
 
-	public checkEventTransaction(event:EventType, block:Block) : boolean
-	{
-		let running:EventType = this.eventTransaction.getEvent(block);
-
-		if (running != null)
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
-
-		return(running == null);
-	}
-
-	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
+	public async checkEventTransaction(event:EventType, block:Block) : Promise<boolean>
 	{
 		let running:EventType = this.eventTransaction.getTrxSlot(block);
 
@@ -567,7 +558,8 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		return(block.executeQuery(this.qrymgr$.startNewChain()));
+		let succces:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
+		return(succces);
 	}
 
 	public async initControlBlocks() : Promise<void>

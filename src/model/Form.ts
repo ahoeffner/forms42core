@@ -37,6 +37,7 @@ import { FormMetaData } from '../application/FormMetaData.js';
 import { EventFilter } from '../control/events/EventFilter.js';
 import { FieldInstance } from '../view/fields/FieldInstance.js';
 import { BlockCoordinator } from './relations/BlockCoordinator.js';
+import { FormsModule } from '../application/FormsModule.js';
 
 
 export class Form
@@ -241,17 +242,7 @@ export class Form
 		return(this.eventTransaction.getEvent(block) != null);
 	}
 
-	public checkEventTransaction(event:EventType, block:Block) : boolean
-	{
-		let running:EventType = this.eventTransaction.getEvent(block);
-
-		if (running != null)
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
-
-		return(running == null);
-	}
-
-	public async wait4EventTransaction(event:EventType, block:Block) : Promise<boolean>
+	public async checkEventTransaction(event:EventType, block:Block) : Promise<boolean>
 	{
 		let running:EventType = this.eventTransaction.getTrxSlot(block);
 
@@ -395,16 +386,41 @@ export class Form
 
 		this.clearDetailDepencies(block);
 
-		await this.enterQueryMode(block);
-
 		let inst:FieldInstance = this.view.current;
 
-		inst?.blur(true);
+		if (inst)
+		{
+			inst.blur(true);
+
+			if (!await this.view.leaveField(inst))
+				return(false);
+
+			if (!await this.view.leaveRecord(inst.field.block))
+				return(false);
+		}
+
+		await this.enterQueryMode(block);
+
 		inst = block.view.getQBEInstance(inst);
+		if (!inst) inst = block.view.findFirstEditable(block.qberec);
 
-		if (inst) inst.focus();
-		else block.view.findFirstEditable(block.qberec)?.focus();
+		inst?.focus();
 
+		if (inst)
+		{
+			block.view.form.current = null;
+
+			if (!await this.view.enterRecord(inst.field.block,0))
+				return(false);
+
+			if (!await this.view.enterField(inst,0))
+				return(false);
+		}
+
+		block.view.current = inst;
+		block.view.form.current = inst;
+
+		this.view.onRecord(block.view);
 		return(true);
 	}
 

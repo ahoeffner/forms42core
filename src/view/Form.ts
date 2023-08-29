@@ -571,6 +571,8 @@ export class Form implements EventListenerObject
 			return(true);
 
 		this.lastinst$ = inst;
+		if (!inst) return(true);
+
 		if (!await inst.field.block.model.checkEventTransaction(EventType.PostField)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
 		return(success);
@@ -767,33 +769,7 @@ export class Form implements EventListenerObject
 			{
 				if (mblock.queryallowed)
 				{
-					inst.blur(true);
-
-					if (!await this.validate())
-						return(false);
-
-					if (!await this.leaveField(inst))
-						return(false);
-
-					if (!await this.leaveRecord(inst.field.block))
-						return(false);
-
 					success = await this.model.executeQuery(mblock,false,true);
-
-					inst.focus(true);
-					this.curinst$ = null;
-
-					if (!await this.enterRecord(inst.field.block,0))
-						return(success)
-
-					if (await this.enterField(inst,0))
-					{
-						inst.field.block.current = inst;
-
-						if (mblock.getRecord())
-							success = await this.onRecord(inst.field.block);
-					}
-
 					return(success);
 				}
 			}
@@ -822,13 +798,10 @@ export class Form implements EventListenerObject
 			{
 				if (qmode) return(false);
 
-				if (!await inst.field.validate(inst))
-					return(false);
-
 				let ok:boolean = mblock.insertallowed;
 
 				mblock.getMasterBlocks().forEach((blk) =>
-				{if (blk.empty) ok = false;})
+					{if (blk.empty) ok = false;})
 
 				if (!mblock.ctrlblk && ok)
 					await mblock.insert(false);

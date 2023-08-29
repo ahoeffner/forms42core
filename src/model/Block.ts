@@ -480,6 +480,7 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
+		console.log("1")
 		if (before == null)
 			before = false;
 
@@ -495,17 +496,16 @@ export class Block
 			return(false);
 		}
 
+		if (!await this.view.validateRow())
+			return(false);
+
 		if (!await this.form.view.leaveField())
 			return(false);
 
 		if (!await this.form.view.leaveRecord(this.view))
 			return(false);
 
-		if (!await this.view.validateRow())
-			return(false);
-
 		let record:Record = this.wrapper.create(this.record,before);
-
 		if (!record) return(false);
 
 		if (!await this.form.view.onCreateRecord(this.view,record))
@@ -518,6 +518,9 @@ export class Block
 			return(false);
 
 		let exists:boolean = this.view.getCurrentRow().exist;
+		let last:boolean = this.view.row == this.view.rows - 1;
+
+		console.log("exists: "+exists+" before: "+before+" last: "+last)
 
 		if (record != null)
 		{
@@ -539,8 +542,8 @@ export class Block
 			if (before)	await this.view.refresh(record);
 			else success = await this.view.nextrecord();
 
-			if (exists && before)
-				await this.view.form.enterRecord(this.view,0);
+			//if (exists && before)
+				//await this.view.form.enterRecord(this.view,0);
 
 			if (success)
 			{
@@ -552,7 +555,9 @@ export class Block
 						await details[i].clear(true);
 				}
 
+				console.log("2")
 				this.view.findFirstEditable(record)?.focus();
+				console.log("3")
 			}
 
 			return(success);

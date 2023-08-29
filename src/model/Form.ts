@@ -525,6 +525,12 @@ export class Form
 		if (flush)
 			await this.flush();
 
+		if (!await this.view.leaveField())
+			return(false);
+
+		if (!await this.view.leaveRecord(block.view))
+			return(false);
+
 		if (block.querymode)
 		{
 			block = this.blkcord$.getQueryMaster(block);
@@ -558,7 +564,28 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		return(block.executeQuery(this.qrymgr$.startNewChain()));
+		let inst:FieldInstance = this.view.current;
+
+		inst?.blur(true);
+		this.view.current = null;
+
+		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
+
+		if (!await this.view.enterRecord(block.view,0))
+			return(success)
+
+		if (await this.view.enterField(inst,0))
+		{
+			if (block.getRecord())
+				success = await this.view.onRecord(inst.field.block);
+		}
+
+		inst?.focus(true);
+		this.view.current = inst;
+
+		// Make sure onRecord doesn't fire twice
+		if (inst) inst.field.block.current = inst;
+		return(success);
 	}
 
 	public async initControlBlocks() : Promise<void>

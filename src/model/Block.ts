@@ -509,8 +509,13 @@ export class Block
 
 		if (record != null)
 		{
-			this.form.view.blur(true);
 			let noex:boolean = this.view.empty();
+
+			if (noex)
+			{
+				before = true;
+				this.view.openrow();
+			}
 
 			if (before && !noex)
 			{
@@ -525,12 +530,6 @@ export class Block
 					this.wrapper.delete(record);
 					return(false);
 				}
-			}
-
-			if (noex)
-			{
-				before = true;
-				this.view.openrow();
 			}
 
 			this.dirty = true;

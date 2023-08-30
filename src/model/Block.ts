@@ -553,6 +553,7 @@ export class Block
 				if (noex || before)
 				{
 					this.view.current = inst;
+					this.view.form.blur(true);
 
 					if (!await this.form.view.enterRecord(this.view,0))
 					{

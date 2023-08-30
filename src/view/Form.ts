@@ -539,28 +539,31 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!await this.model.checkEventTransaction(EventType.PostForm,null)) return(false);
+		if (!await this.setEventTransaction(EventType.PostForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
+		this.endEventTransaction(EventType.PostBlock,success);
 		return(success);
 	}
 
-	public async leaveBlock(block:Block) : Promise<boolean>
+	public async leaveBlock(block:Block, offset?:number) : Promise<boolean>
 	{
-		if (!await block.model.checkEventTransaction(EventType.PostBlock)) return(false);
+		if (!await this.setEventTransaction(EventType.PostBlock,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
+		block.endEventTransaction(EventType.PostBlock,success);
 		if (success) success = await block.model.flush();
 		return(success);
 	}
 
-	public async leaveRecord(block:Block) : Promise<boolean>
+	public async leaveRecord(block:Block, offset?:number) : Promise<boolean>
 	{
-		if (block.getRecord() == null) return(true);
-		if (!await block.model.checkEventTransaction(EventType.PostRecord)) return(false);
+		if (block.model.getRecord(offset) == null) return(true);
+		if (!await this.setEventTransaction(EventType.PostRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
+		block.endEventTransaction(EventType.PostRecord,success);
 		return(success);
 	}
 
-	public async leaveField(inst?:FieldInstance, force?:boolean) : Promise<boolean>
+	public async leaveField(inst?:FieldInstance, offset?:number, force?:boolean) : Promise<boolean>
 	{
 		if (inst == null)
 			inst = this.curinst$;
@@ -574,8 +577,10 @@ export class Form implements EventListenerObject
 		this.lastinst$ = inst;
 		if (!inst) return(true);
 
-		if (!await inst.field.block.model.checkEventTransaction(EventType.PostField)) return(false);
+		if (!await this.setEventTransaction(EventType.PostField,inst.field.block,offset)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
+		inst.field.block.model.endEventTransaction(EventType.PostField,success);
+
 		return(success);
 	}
 
@@ -1014,14 +1019,20 @@ export class Form implements EventListenerObject
 	private async setEventTransaction(event:EventType, block?:Block, recoff?:Record|number) : Promise<boolean>
 	{
 		let record:Record = null;
+		if (recoff == null) recoff = 0;
 
-		if (block != null && recoff != null)
+		if (block != null)
 		{
 			if (typeof(recoff) !== "number")	record = recoff;
 			else record = block.model.getRecord(recoff);
 		}
 
 		return(this.model.setEventTransaction(event,block?.model,record));
+	}
+
+	private endEventTransaction(event:EventType, apply:boolean) : void
+	{
+		this.model.endEventTransaction(event,null,apply);
 	}
 
 	private event:BrowserEvent = BrowserEvent.get();

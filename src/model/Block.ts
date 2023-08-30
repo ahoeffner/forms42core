@@ -509,26 +509,23 @@ export class Block
 
 		if (record != null)
 		{
-
+			this.form.view.blur(true);
 			let noex:boolean = this.view.empty();
-			let last:boolean = this.view.row == this.view.rows - 1;
 
 			if (before && !noex)
 			{
-				if (!await this.form.view.leaveField())
+				if (!await this.form.view.leaveField(null,1))
 				{
 					this.wrapper.delete(record);
 					return(false);
 				}
 
-				if (!await this.form.view.leaveRecord(this.view))
+				if (!await this.form.view.leaveRecord(this.view,1))
 				{
 					this.wrapper.delete(record);
 					return(false);
 				}
 			}
-
-			this.dirty = true;
 
 			if (noex)
 			{
@@ -536,12 +533,7 @@ export class Block
 				this.view.openrow();
 			}
 
-			if (noex || last)
-				this.form.view.blur(true);
-
-			if (!noex || before)
-				this.form.view.blur();
-
+			this.dirty = true;
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
 

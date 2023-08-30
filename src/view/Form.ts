@@ -22,6 +22,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
+import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { Classes } from '../internal/Classes.js';
@@ -29,7 +30,6 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
-import { Record, RecordState } from '../model/Record.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -114,7 +114,7 @@ export class Form implements EventListenerObject
 		return(this.curinst$);
 	}
 
-	public set current(inst: FieldInstance)
+	public set current(inst:FieldInstance)
 	{
 		this.curinst$ = inst;
 	}
@@ -505,6 +505,7 @@ export class Form implements EventListenerObject
 
 	public async onRecord(block:Block) : Promise<boolean>
 	{
+		if (!block) return(true);
 		if (!await this.model.checkEventTransaction(EventType.OnRecord,null)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
 		block.model.endEventTransaction(EventType.OnRecord,success);
@@ -674,12 +675,6 @@ export class Form implements EventListenerObject
 			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
-		if (key.key == "enter" && key.shift)
-		{
-			if (inst?.field.row.status == Status.insert)
-				key = KeyMap.insert;
-		}
-
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
 
 		if (!await FormEvents.raise(frmevent))
@@ -812,9 +807,6 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.insertAbove)
 			{
 				if (qmode) return(false);
-
-				if (!await inst.field.validate(inst))
-					return(false);
 
 				let ok:boolean = mblock.insertallowed;
 

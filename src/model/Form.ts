@@ -248,8 +248,8 @@ export class Form
 
 		if (running)
 		{
-			let source:string = this.name+(block ? "."+block.name : "")
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
+			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 
@@ -262,8 +262,8 @@ export class Form
 
 		if (running)
 		{
-			let source:string = this.name+(block ? "."+block.name+"."+block.view.current : "");
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
+			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 
@@ -577,7 +577,7 @@ export class Form
 		if (await this.view.enterField(inst,0))
 		{
 			if (block.getRecord())
-				success = await this.view.onRecord(inst.field.block);
+				success = await this.view.onRecord(inst?.field.block);
 		}
 
 		inst?.focus(true);

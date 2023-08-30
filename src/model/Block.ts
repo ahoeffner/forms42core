@@ -480,14 +480,10 @@ export class Block
 
 	public async insert(before?:boolean) : Promise<boolean>
 	{
-		console.log("1")
 		if (before == null)
 			before = false;
 
 		if (this.querymode)
-			return(false);
-
-		if (!this.source$.insertallowed)
 			return(false);
 
 		if (!this.view.hasInsertableFields())
@@ -496,14 +492,23 @@ export class Block
 			return(false);
 		}
 
-		if (!await this.view.validateRow())
+		if (!await this.view.form.validate())
 			return(false);
 
-		if (!await this.form.view.leaveField())
+		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		if (!await this.form.view.leaveRecord(this.view))
-			return(false);
+		let noex:boolean = this.view.empty();
+		let last:boolean = this.view.row == this.view.rows - 1;
+
+		if (before && !noex)
+		{
+			if (!await this.form.view.leaveField())
+				return(false);
+
+			if (!await this.form.view.leaveRecord(this.view))
+				return(false);
+		}
 
 		let record:Record = this.wrapper.create(this.record,before);
 		if (!record) return(false);
@@ -514,27 +519,21 @@ export class Block
 			return(false);
 		}
 
-		if (!this.checkEventTransaction(EventType.PreInsert))
-			return(false);
-
-		let exists:boolean = this.view.getCurrentRow().exist;
-		let last:boolean = this.view.row == this.view.rows - 1;
-
-		console.log("exists: "+exists+" before: "+before+" last: "+last)
-
 		if (record != null)
 		{
 			this.dirty = true;
 
-			if (!exists)
+			if (noex)
 			{
 				before = true;
 				this.view.openrow();
-				await this.view.form.enterRecord(this.view,0);
 			}
 
-			this.form.view.blur(true);
-			this.form.view.current = null;
+			if (noex || last)
+				this.form.view.blur(true);
+
+			if (!noex || before)
+				this.form.view.blur();
 
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
@@ -542,12 +541,10 @@ export class Block
 			if (before)	await this.view.refresh(record);
 			else success = await this.view.nextrecord();
 
-			//if (exists && before)
-				//await this.view.form.enterRecord(this.view,0);
-
 			if (success)
 			{
 				let details:Block[] = this.getAllDetailBlocks(true);
+				let inst:FieldInstance = this.view.findFirstEditable(record);
 
 				for (let i = 0; i < details.length; i++)
 				{
@@ -555,9 +552,30 @@ export class Block
 						await details[i].clear(true);
 				}
 
-				console.log("2")
-				this.view.findFirstEditable(record)?.focus();
-				console.log("3")
+				if (noex || before)
+				{
+					this.view.current = inst;
+
+					if (!await this.form.view.enterRecord(this.view,0))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+
+					if (!await this.form.view.enterField(inst,0,true))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+
+					if (!await this.form.view.onRecord(this.view))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+				}
+
+				inst?.focus();
 			}
 
 			return(success);

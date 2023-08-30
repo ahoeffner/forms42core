@@ -498,18 +498,6 @@ export class Block
 		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
-		let noex:boolean = this.view.empty();
-		let last:boolean = this.view.row == this.view.rows - 1;
-
-		if (before && !noex)
-		{
-			if (!await this.form.view.leaveField())
-				return(false);
-
-			if (!await this.form.view.leaveRecord(this.view))
-				return(false);
-		}
-
 		let record:Record = this.wrapper.create(this.record,before);
 		if (!record) return(false);
 
@@ -521,6 +509,19 @@ export class Block
 
 		if (record != null)
 		{
+
+			let noex:boolean = this.view.empty();
+			let last:boolean = this.view.row == this.view.rows - 1;
+
+			if (before && !noex)
+			{
+				if (!await this.form.view.leaveField())
+					return(false);
+
+				if (!await this.form.view.leaveRecord(this.view))
+					return(false);
+			}
+
 			this.dirty = true;
 
 			if (noex)

@@ -569,7 +569,7 @@ export class Form
 		inst?.blur(true);
 		this.view.current = null;
 
-		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
+		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain(),true);
 
 		if (!await this.view.enterRecord(block.view,0))
 			return(success)
@@ -597,7 +597,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executeQuery();
+				await block.executeQuery(null,false);
 			}
 		}
 	}

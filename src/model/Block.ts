@@ -716,7 +716,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(qryid?:object) : Promise<boolean>
+	public async executeQuery(qryid:object, postquery:boolean) : Promise<boolean>
 	{
 		this.queried = true;
 		let runid:object = null;
@@ -809,6 +809,8 @@ export class Block
 		this.form.QueryManager.setRunning(this,null);
 
 		this.view.lockUnused();
+
+		if (!postquery) return(true);
 		return(await this.postQuery());
 	}
 
@@ -1079,7 +1081,7 @@ export class Block
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!await blocks[i].executeQuery(qryid))
+			if (!await blocks[i].executeQuery(qryid,false))
 				success = false;
 		}
 

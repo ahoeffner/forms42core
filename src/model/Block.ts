@@ -516,10 +516,16 @@ export class Block
 			if (before && !noex)
 			{
 				if (!await this.form.view.leaveField())
+				{
+					this.wrapper.delete(record);
 					return(false);
+				}
 
 				if (!await this.form.view.leaveRecord(this.view))
+				{
+					this.wrapper.delete(record);
 					return(false);
+				}
 			}
 
 			this.dirty = true;

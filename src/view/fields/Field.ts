@@ -121,6 +121,10 @@ export class Field
 			this.instances$.forEach((inst) =>
 				{inst.setValidated()})
 		}
+		else
+		{
+			this.row.invalidate();
+		}
 	}
 
 	public get mdlblock() : ModelBlock
@@ -311,7 +315,6 @@ export class Field
 
 			this.dirty = true;
 			inst.valid = true;
-			this.row.invalidate();
 
 			this.validated = false;
 			this.distribute(inst,value,this.dirty);

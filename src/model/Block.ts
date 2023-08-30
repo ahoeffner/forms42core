@@ -582,7 +582,7 @@ export class Block
 					}
 				}
 
-				inst?.focus();
+				inst.focus();
 			}
 
 			return(success);

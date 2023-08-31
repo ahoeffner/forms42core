@@ -489,11 +489,12 @@ export class Form
 	public async queryFieldDetails(block:string,field:string) : Promise<boolean>
 	{
 		let blk:Block = this.getBlock(block);
+		let qryid:object = this.QueryManager.startNewChain();
 		let blocks:Block[] = this.blkcord$.getDetailBlocksForField(blk,field);
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			this.executeQuery(blocks[i],true,false);
+			blocks[i].executeQuery(qryid,false);
 
 			let filters:boolean = false;
 			if (!blocks[i].QueryFilter.empty) filters = true;

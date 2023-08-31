@@ -509,75 +509,81 @@ export class Block
 
 		if (record != null)
 		{
+			let offset:number = 0;
 			let noex:boolean = this.view.empty();
+			let last:boolean = this.view.row == this.view.rows-1;
 
 			if (noex)
 			{
 				before = true;
 				this.view.openrow();
 			}
-
-			if (before && !noex)
+			else
 			{
-				if (!await this.form.view.leaveField(null,1))
+				if (last) offset = 1;
+
+				if (!await this.form.view.leaveField(null,offset))
 				{
 					this.wrapper.delete(record);
 					return(false);
 				}
 
-				if (!await this.form.view.leaveRecord(this.view,1))
+				if (!await this.form.view.leaveRecord(this.view,offset))
 				{
 					this.wrapper.delete(record);
 					return(false);
 				}
 			}
 
+			this.scroll(offset,this.view.row);
+			await this.view.refresh(record);
+
+			let details:Block[] = this.getAllDetailBlocks(true);
+			let inst:FieldInstance = this.view.findFirstEditable(record);
+
+			if (inst == null)
+			{
+				this.wrapper.delete(record);
+				return(false);
+			}
+
+			for (let i = 0; i < details.length; i++)
+			{
+				if (details[i]!= this)
+					await details[i].clear(true);
+			}
+
+			this.view.current = inst;
+			this.view.form.blur(true);
+
+			if (!before && !last)
+			{
+				this.move(1);
+				this.view.move(1);
+			}
+
+			if (!await this.form.view.enterRecord(this.view,0))
+			{
+				this.wrapper.delete(record);
+				return(false);
+			}
+
+			if (!await this.form.view.enterField(inst,0,true))
+			{
+				this.wrapper.delete(record);
+				return(false);
+			}
+
+			if (!await this.form.view.onRecord(this.view))
+			{
+				this.wrapper.delete(record);
+				return(false);
+			}
+
+			inst.focus(true);
 			this.dirty = true;
-			let success:boolean = true;
-			this.scroll(0,this.view.row);
 
-			if (before)	await this.view.refresh(record);
-			else success = await this.view.nextrecord();
-
-			if (success)
-			{
-				let details:Block[] = this.getAllDetailBlocks(true);
-				let inst:FieldInstance = this.view.findFirstEditable(record);
-
-				for (let i = 0; i < details.length; i++)
-				{
-					if (details[i]!= this)
-						await details[i].clear(true);
-				}
-
-				if (noex || before)
-				{
-					this.view.current = inst;
-					this.view.form.blur(true);
-
-					if (!await this.form.view.enterRecord(this.view,0))
-					{
-						this.wrapper.delete(record);
-						return(false);
-					}
-
-					if (!await this.form.view.enterField(inst,0,true))
-					{
-						this.wrapper.delete(record);
-						return(false);
-					}
-
-					if (!await this.form.view.onRecord(this.view))
-					{
-						this.wrapper.delete(record);
-						return(false);
-					}
-				}
-
-				inst.focus();
-			}
-
-			return(success);
+			return(true);
 		}
 
 		return(false);

@@ -121,6 +121,10 @@ export class Field
 			this.instances$.forEach((inst) =>
 				{inst.setValidated()})
 		}
+		else
+		{
+			this.row.invalidate();
+		}
 	}
 
 	public get mdlblock() : ModelBlock
@@ -267,30 +271,10 @@ export class Field
 			this.value$ = inst.getValue();
 
 			success = await this.block.form.enter(inst);
-
-			if (!success)
-				FlightRecorder.add("@field: focus "+inst+" ignore: "+inst.ignore+" failed");
-
 			return;
 		}
 
-		if (brwevent.type == "blur")
-		{
-			success = await this.block.form.leave(inst);
-
-			if (!success)
-				FlightRecorder.add("@field: blur "+inst+" failed");
-
-			if (!this.valid$)
-			{
-				if (inst.getValue() == this.value$)
-					inst.valid = false;
-			}
-
-			return;
-		}
-
-		if (brwevent.type == "change")
+		if (brwevent.type == "change" || brwevent.type == "change+blur")
 		{
 			this.row.invalidate();
 			success = await this.validate(inst);
@@ -298,8 +282,18 @@ export class Field
 			this.distribute(inst,this.value$,this.dirty);
 			this.block.distribute(this,this.value$,this.dirty);
 
-			if (!success)
-				FlightRecorder.add("@field: change "+inst+" failed");
+			if (brwevent.type == "change") return;
+		}
+
+		if (brwevent.type == "blur" || brwevent.type == "change+blur")
+		{
+			success = await this.block.form.leave(inst);
+
+			if (!this.valid$)
+			{
+				if (inst.getValue() == this.value$)
+					inst.valid = false;
+			}
 
 			return;
 		}
@@ -311,7 +305,6 @@ export class Field
 
 			this.dirty = true;
 			inst.valid = true;
-			this.row.invalidate();
 
 			this.validated = false;
 			this.distribute(inst,value,this.dirty);
@@ -341,10 +334,6 @@ export class Field
 				key = KeyMapping.parseBrowserEvent(brwevent);
 
 			success = await this.block.form.keyhandler(key,inst);
-
-			if (!success)
-				FlightRecorder.add("@field: keyhandler "+inst+" failed");
-
 			return;
 		}
 
@@ -352,10 +341,6 @@ export class Field
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
 			success = await this.block.form.mousehandler(mevent,brwevent.event,inst);
-
-			if (!success)
-				FlightRecorder.add("@field: mouseevent "+inst+" failed");
-
 			return;
 		}
 	}

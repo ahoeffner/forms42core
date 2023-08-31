@@ -486,26 +486,19 @@ export class Block
 		if (this.querymode)
 			return(false);
 
-		if (!this.source$.insertallowed)
-			return(false);
-
 		if (!this.view.hasInsertableFields())
 		{
 			Alert.warning("'"+this.name+"' has no allowed input fields","Insert Record");
 			return(false);
 		}
 
-		if (!await this.form.view.leaveField())
+		if (!await this.view.form.validate())
 			return(false);
 
-		if (!await this.form.view.leaveRecord(this.view))
-			return(false);
-
-		if (!await this.view.validateRow())
+		if (!this.checkEventTransaction(EventType.PreInsert))
 			return(false);
 
 		let record:Record = this.wrapper.create(this.record,before);
-
 		if (!record) return(false);
 
 		if (!await this.form.view.onCreateRecord(this.view,record))
@@ -514,37 +507,42 @@ export class Block
 			return(false);
 		}
 
-		if (!this.checkEventTransaction(EventType.PreInsert))
-			return(false);
-
-		let exists:boolean = this.view.getCurrentRow().exist;
-
 		if (record != null)
 		{
-			this.dirty = true;
+			let noex:boolean = this.view.empty();
 
-			if (!exists)
+			if (noex)
 			{
 				before = true;
 				this.view.openrow();
-				await this.view.form.enterRecord(this.view,0);
 			}
 
-			this.form.view.blur(true);
-			this.form.view.current = null;
+			if (before && !noex)
+			{
+				if (!await this.form.view.leaveField(null,1))
+				{
+					this.wrapper.delete(record);
+					return(false);
+				}
 
+				if (!await this.form.view.leaveRecord(this.view,1))
+				{
+					this.wrapper.delete(record);
+					return(false);
+				}
+			}
+
+			this.dirty = true;
 			let success:boolean = true;
 			this.scroll(0,this.view.row);
 
 			if (before)	await this.view.refresh(record);
 			else success = await this.view.nextrecord();
 
-			if (exists && before)
-				await this.view.form.enterRecord(this.view,0);
-
 			if (success)
 			{
 				let details:Block[] = this.getAllDetailBlocks(true);
+				let inst:FieldInstance = this.view.findFirstEditable(record);
 
 				for (let i = 0; i < details.length; i++)
 				{
@@ -552,7 +550,31 @@ export class Block
 						await details[i].clear(true);
 				}
 
-				this.view.findFirstEditable(record)?.focus();
+				if (noex || before)
+				{
+					this.view.current = inst;
+					this.view.form.blur(true);
+
+					if (!await this.form.view.enterRecord(this.view,0))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+
+					if (!await this.form.view.enterField(inst,0,true))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+
+					if (!await this.form.view.onRecord(this.view))
+					{
+						this.wrapper.delete(record);
+						return(false);
+					}
+				}
+
+				inst.focus();
 			}
 
 			return(success);
@@ -694,7 +716,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(qryid?:object) : Promise<boolean>
+	public async executeQuery(qryid:object, trgs:boolean) : Promise<boolean>
 	{
 		this.queried = true;
 		let runid:object = null;
@@ -787,6 +809,8 @@ export class Block
 		this.form.QueryManager.setRunning(this,null);
 
 		this.view.lockUnused();
+
+		if (!trgs) return(true);
 		return(await this.postQuery());
 	}
 
@@ -1057,7 +1081,7 @@ export class Block
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!await blocks[i].executeQuery(qryid))
+			if (!await blocks[i].executeQuery(qryid,false))
 				success = false;
 		}
 

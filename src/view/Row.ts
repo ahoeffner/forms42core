@@ -178,14 +178,10 @@ export class Row
 			return(true);
 
 		let valid:boolean = true;
-		let validated:boolean = true;
 		let fields:Field[] = this.getFields();
 
 		for (let i = 0; i < fields.length; i++)
-		{
 			if (!fields[i].valid) valid = false;
-			if (!fields[i].validated) validated = false;
-		}
 
 		if (this.rownum >= 0)
 		{
@@ -196,10 +192,7 @@ export class Row
 				fields = curr.getFields();
 
 				for (let i = 0; i < fields.length; i++)
-				{
 					if (!fields[i].valid) valid = false;
-					if (!fields[i].validated) validated = false;
-				}
 			}
 		}
 		else
@@ -207,17 +200,12 @@ export class Row
 			fields = this.block.getCurrentRow().getFields();
 
 			for (let i = 0; i < fields.length; i++)
-			{
 				if (!fields[i].valid) valid = false;
-				if (!fields[i].validated) validated = false;
-			}
 		}
 
 		if (!valid) return(false);
+		this.validated = await this.block.model.validateRecord();
 
-		if (validated) this.validated = true;
-		else this.validated = await this.block.model.validateRecord();
-		
 		return(this.validated);
 	}
 

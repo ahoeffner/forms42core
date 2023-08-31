@@ -67,8 +67,8 @@ export class KeyMap
 
 	public static delete:KeyMap = new KeyMap({key: KeyCodes.f6},"delete","delete record");
 
-	public static insert:KeyMap = new KeyMap({key: KeyCodes.f5},"insert","insert record");
-	public static insertAbove:KeyMap = new KeyMap({key: KeyCodes.f5, shift: true},"insert above","insert record above the current");
+	public static insert:KeyMap = new KeyMap({key: KeyCodes.Enter, shift: true},"insert","insert record");
+	public static insertAbove:KeyMap = new KeyMap({key: KeyCodes.Enter, ctrl: true},"insert above","insert record above the current");
 
 	public static lov:KeyMap = new KeyMap({key: KeyCodes.f9},"list of values","show valid values");
 	public static calendar:KeyMap = new KeyMap({key: KeyCodes.f9},"datepicker","show datepicker");

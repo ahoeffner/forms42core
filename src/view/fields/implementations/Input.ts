@@ -432,20 +432,12 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			bubble = true;
 
-			let change:boolean = false;
 			let value:string = this.getElementValue();
 
 			if (value != this.initial)
-				change = true;
-
-			if (change)
 			{
-				this.event.type = "change";
-
 				this.setValue(value);
-				await this.eventhandler.handleEvent(this.event);
-
-				this.event.type = "blur";
+				this.event.type = "change+blur";
 			}
 		}
 

@@ -22,6 +22,7 @@
 import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
+import { Record } from '../model/Record.js';
 import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { Classes } from '../internal/Classes.js';
@@ -29,7 +30,6 @@ import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
-import { Record, RecordState } from '../model/Record.js';
 import { Form as InterfaceForm } from '../public/Form.js';
 import { FieldInstance } from './fields/FieldInstance.js';
 import { EventType } from '../control/events/EventType.js';
@@ -114,7 +114,7 @@ export class Form implements EventListenerObject
 		return(this.curinst$);
 	}
 
-	public set current(inst: FieldInstance)
+	public set current(inst:FieldInstance)
 	{
 		this.curinst$ = inst;
 	}
@@ -505,6 +505,7 @@ export class Form implements EventListenerObject
 
 	public async onRecord(block:Block) : Promise<boolean>
 	{
+		if (!block) return(true);
 		if (!await this.model.checkEventTransaction(EventType.OnRecord,null)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.OnRecord,block.name);
 		block.model.endEventTransaction(EventType.OnRecord,success);
@@ -538,28 +539,31 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!await this.model.checkEventTransaction(EventType.PostForm,null)) return(false);
+		if (!await this.setEventTransaction(EventType.PostForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
+		this.endEventTransaction(EventType.PostBlock,success);
 		return(success);
 	}
 
-	public async leaveBlock(block:Block) : Promise<boolean>
+	public async leaveBlock(block:Block, offset?:number) : Promise<boolean>
 	{
-		if (!await block.model.checkEventTransaction(EventType.PostBlock)) return(false);
+		if (!await this.setEventTransaction(EventType.PostBlock,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
+		block.endEventTransaction(EventType.PostBlock,success);
 		if (success) success = await block.model.flush();
 		return(success);
 	}
 
-	public async leaveRecord(block:Block) : Promise<boolean>
+	public async leaveRecord(block:Block, offset?:number) : Promise<boolean>
 	{
-		if (block.getRecord() == null) return(true);
-		if (!await block.model.checkEventTransaction(EventType.PostRecord)) return(false);
+		if (block.model.getRecord(offset) == null) return(true);
+		if (!await this.setEventTransaction(EventType.PostRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
+		block.endEventTransaction(EventType.PostRecord,success);
 		return(success);
 	}
 
-	public async leaveField(inst?:FieldInstance, force?:boolean) : Promise<boolean>
+	public async leaveField(inst?:FieldInstance, offset?:number, force?:boolean) : Promise<boolean>
 	{
 		if (inst == null)
 			inst = this.curinst$;
@@ -571,8 +575,12 @@ export class Form implements EventListenerObject
 			return(true);
 
 		this.lastinst$ = inst;
-		if (!await inst.field.block.model.checkEventTransaction(EventType.PostField)) return(false);
+		if (!inst) return(true);
+
+		if (!await this.setEventTransaction(EventType.PostField,inst.field.block,offset)) return(false);
 		let success:boolean = await this.fireFieldEvent(EventType.PostField,inst);
+		inst.field.block.model.endEventTransaction(EventType.PostField,success);
+
 		return(success);
 	}
 
@@ -672,12 +680,6 @@ export class Form implements EventListenerObject
 			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
-		if (key.key == "enter" && key.shift)
-		{
-			if (inst?.field.row.status == Status.insert)
-				key = KeyMap.insert;
-		}
-
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);
 
 		if (!await FormEvents.raise(frmevent))
@@ -767,33 +769,7 @@ export class Form implements EventListenerObject
 			{
 				if (mblock.queryallowed)
 				{
-					inst.blur(true);
-
-					if (!await this.validate())
-						return(false);
-
-					if (!await this.leaveField(inst))
-						return(false);
-
-					if (!await this.leaveRecord(inst.field.block))
-						return(false);
-
 					success = await this.model.executeQuery(mblock,false,true);
-
-					inst.focus(true);
-					this.curinst$ = null;
-
-					if (!await this.enterRecord(inst.field.block,0))
-						return(success)
-
-					if (await this.enterField(inst,0))
-					{
-						inst.field.block.current = inst;
-
-						if (mblock.getRecord())
-							success = await this.onRecord(inst.field.block);
-					}
-
 					return(success);
 				}
 			}
@@ -822,13 +798,10 @@ export class Form implements EventListenerObject
 			{
 				if (qmode) return(false);
 
-				if (!await inst.field.validate(inst))
-					return(false);
-
 				let ok:boolean = mblock.insertallowed;
 
 				mblock.getMasterBlocks().forEach((blk) =>
-				{if (blk.empty) ok = false;})
+					{if (blk.empty) ok = false;})
 
 				if (!mblock.ctrlblk && ok)
 					await mblock.insert(false);
@@ -839,9 +812,6 @@ export class Form implements EventListenerObject
 			if (key == KeyMap.insertAbove)
 			{
 				if (qmode) return(false);
-
-				if (!await inst.field.validate(inst))
-					return(false);
 
 				let ok:boolean = mblock.insertallowed;
 
@@ -1049,14 +1019,20 @@ export class Form implements EventListenerObject
 	private async setEventTransaction(event:EventType, block?:Block, recoff?:Record|number) : Promise<boolean>
 	{
 		let record:Record = null;
+		if (recoff == null) recoff = 0;
 
-		if (block != null && recoff != null)
+		if (block != null)
 		{
 			if (typeof(recoff) !== "number")	record = recoff;
 			else record = block.model.getRecord(recoff);
 		}
 
 		return(this.model.setEventTransaction(event,block?.model,record));
+	}
+
+	private endEventTransaction(event:EventType, apply:boolean) : void
+	{
+		this.model.endEventTransaction(event,null,apply);
 	}
 
 	private event:BrowserEvent = BrowserEvent.get();

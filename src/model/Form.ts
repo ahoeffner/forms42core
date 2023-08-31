@@ -248,8 +248,8 @@ export class Form
 
 		if (running)
 		{
-			let source:string = this.name+(block ? "."+block.name : "")
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
+			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 
@@ -262,8 +262,8 @@ export class Form
 
 		if (running)
 		{
-			let source:string = this.name+(block ? "."+block.name+"."+block.view.current : "");
-			Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running]+" on "+source,"Transaction Violation");
+			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 
@@ -489,11 +489,12 @@ export class Form
 	public async queryFieldDetails(block:string,field:string) : Promise<boolean>
 	{
 		let blk:Block = this.getBlock(block);
+		let qryid:object = this.QueryManager.startNewChain();
 		let blocks:Block[] = this.blkcord$.getDetailBlocksForField(blk,field);
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			this.executeQuery(blocks[i],true,false);
+			blocks[i].executeQuery(qryid,false);
 
 			let filters:boolean = false;
 			if (!blocks[i].QueryFilter.empty) filters = true;
@@ -524,6 +525,12 @@ export class Form
 
 		if (flush)
 			await this.flush();
+
+		if (!await this.view.leaveField())
+			return(false);
+
+		if (!await this.view.leaveRecord(block.view))
+			return(false);
 
 		if (block.querymode)
 		{
@@ -558,7 +565,28 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		return(block.executeQuery(this.qrymgr$.startNewChain()));
+		let inst:FieldInstance = this.view.current;
+
+		inst?.blur(true);
+		this.view.current = null;
+
+		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain(),true);
+
+		if (!await this.view.enterRecord(block.view,0))
+			return(success)
+
+		if (await this.view.enterField(inst,0))
+		{
+			if (block.getRecord())
+				success = await this.view.onRecord(inst?.field.block);
+		}
+
+		inst?.focus(true);
+		this.view.current = inst;
+
+		// Make sure onRecord doesn't fire twice
+		if (inst) inst.field.block.current = inst;
+		return(success);
 	}
 
 	public async initControlBlocks() : Promise<void>
@@ -570,7 +598,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executeQuery();
+				await block.executeQuery(null,false);
 			}
 		}
 	}

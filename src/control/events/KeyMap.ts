@@ -42,7 +42,7 @@ export class KeyMap
 	public static refresh:KeyMap = new KeyMap({key: 'u', ctrl: true}, "refresh","Refresh value from backend");
 
 	public static clearblock:KeyMap = new KeyMap({key: KeyCodes.f4},"clear block","clear block");
-	public static clearform:KeyMap = new KeyMap({key: KeyCodes.f4, shift: true},"clear block","clear block");
+	public static clearform:KeyMap = new KeyMap({key: KeyCodes.f4, shift: true},"clear form","clear form");
 
 	public static enterquery:KeyMap = new KeyMap({key: KeyCodes.f7},"enter query","start query by example mode");
 	public static executequery:KeyMap = new KeyMap({key: KeyCodes.f8},"execute query","execute query");
@@ -99,6 +99,13 @@ export class KeyMap
 				}
 			}
 		});
+
+		list.sort((k0,k1) =>
+		{
+			if (k0[1] > k1[1]) return(1);
+			if (k0[1] < k1[1]) return(-11);
+			return(0);
+		})
 
 		return(list);
 	}

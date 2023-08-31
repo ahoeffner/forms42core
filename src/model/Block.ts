@@ -510,6 +510,7 @@ export class Block
 		if (record != null)
 		{
 			let offset:number = 0;
+			let inst:FieldInstance = null;
 			let noex:boolean = this.view.empty();
 			let last:boolean = this.view.row == this.view.rows-1;
 
@@ -520,7 +521,8 @@ export class Block
 			}
 			else
 			{
-				if (last) offset = 1;
+				if (last && !before)
+					offset = 1;
 
 				if (!await this.form.view.leaveField(null,offset))
 				{
@@ -537,15 +539,16 @@ export class Block
 
 			this.scroll(offset,this.view.row);
 			await this.view.refresh(record);
-
-			let details:Block[] = this.getAllDetailBlocks(true);
-			let inst:FieldInstance = this.view.findFirstEditable(record);
+			inst = this.view.findFirstEditable(record);
 
 			if (inst == null)
 			{
 				this.wrapper.delete(record);
+				Alert.warning("'"+this.name+"' has no allowed input fields","Insert Record");
 				return(false);
 			}
+
+			let details:Block[] = this.getAllDetailBlocks(true);
 
 			for (let i = 0; i < details.length; i++)
 			{
@@ -582,6 +585,7 @@ export class Block
 
 			inst.focus(true);
 			this.dirty = true;
+			this.view.refresh(record);
 
 			return(true);
 		}

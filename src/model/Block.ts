@@ -716,7 +716,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(qryid:object, postquery:boolean) : Promise<boolean>
+	public async executeQuery(qryid:object, trgs:boolean) : Promise<boolean>
 	{
 		this.queried = true;
 		let runid:object = null;
@@ -810,7 +810,7 @@ export class Block
 
 		this.view.lockUnused();
 
-		if (!postquery) return(true);
+		if (!trgs) return(true);
 		return(await this.postQuery());
 	}
 

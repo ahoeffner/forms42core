@@ -523,14 +523,20 @@ export class Form
 				return(false);
 		}
 
+		let inst:FieldInstance = this.view.current;
+		let init:boolean = inst?.field.block.model == block;
+
 		if (flush)
 			await this.flush();
 
-		if (!await this.view.leaveField())
-			return(false);
+		if (init)
+		{
+			if (!await this.view.leaveField())
+				return(false);
 
-		if (!await this.view.leaveRecord(block.view))
-			return(false);
+			if (!await this.view.leaveRecord(block.view))
+				return(false);
+		}
 
 		if (block.querymode)
 		{
@@ -565,27 +571,29 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		let inst:FieldInstance = this.view.current;
-
-		inst?.blur(true);
+		if (init) inst?.blur(true);
 		this.view.current = null;
 
 		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain(),true);
 
-		if (!await this.view.enterRecord(block.view,0))
-			return(success)
-
-		if (await this.view.enterField(inst,0))
+		if (init)
 		{
-			if (block.getRecord())
-				success = await this.view.onRecord(inst?.field.block);
+			if (!await this.view.enterRecord(block.view,0))
+				return(success)
+
+			if (await this.view.enterField(inst,0))
+			{
+				if (block.getRecord())
+					success = await this.view.onRecord(inst?.field.block);
+			}
+
+			inst?.focus(true);
+			this.view.current = inst;
+
+			// Make sure onRecord doesn't fire twice
+			if (inst) inst.field.block.current = inst;
 		}
 
-		inst?.focus(true);
-		this.view.current = inst;
-
-		// Make sure onRecord doesn't fire twice
-		if (inst) inst.field.block.current = inst;
 		return(success);
 	}
 

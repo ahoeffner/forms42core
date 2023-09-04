@@ -512,6 +512,7 @@ export class Block
 			let offset:number = 0;
 			let inst:FieldInstance = null;
 			let noex:boolean = this.view.empty();
+			let init:boolean = inst?.field.block.model == this;
 			let last:boolean = this.view.row == this.view.rows-1;
 
 			if (noex)
@@ -524,13 +525,13 @@ export class Block
 				if (last && !before)
 					offset = 1;
 
-				if (!await this.form.view.leaveField(null,offset))
+				if (init && !await this.form.view.leaveField(null,offset))
 				{
 					this.wrapper.delete(record);
 					return(false);
 				}
 
-				if (!await this.form.view.leaveRecord(this.view,offset))
+				if (init && !await this.form.view.leaveRecord(this.view,offset))
 				{
 					this.wrapper.delete(record);
 					return(false);

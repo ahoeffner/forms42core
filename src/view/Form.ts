@@ -334,7 +334,6 @@ export class Form implements EventListenerObject
 					}
 
 					inst.focus(true);
-					preform.blur(true);
 				}
 			}
 

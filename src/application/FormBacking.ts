@@ -104,10 +104,9 @@ export class FormBacking
 		{
 			if (!await currw.checkLeave(currw))
 				return(null);
-		}
 
-		// Wait for events
-		await EventStack.wait();
+			currw.blur(true);
+		}
 
 		if (container == null)
 			container = FormsModule.get().getRootElement();
@@ -136,8 +135,6 @@ export class FormBacking
 			let backing:FormBacking = FormBacking.getBacking(parent);
 			if (backing) backing.hasModalChild = true;
 		}
-
-		FormBacking.setCurrentForm(instance);
 
 		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
 			instance.focus();

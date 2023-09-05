@@ -105,6 +105,11 @@ export class FormBacking
 			if (currw && !await currw.checkLeave(currw))
 				return(null);
 		}
+		else
+		{
+			// Don't validate
+			currw?.defer();
+		}
 
 		if (container == null)
 			container = FormsModule.get().getRootElement();

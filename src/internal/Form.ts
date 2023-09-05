@@ -403,7 +403,12 @@ export class Form implements CanvasComponent
 
 		if (parent != null)
 		{
-			parent.canvas?.unblock(); parent.focus();
+			parent.canvas?.unblock();
+			let pform:ViewForm = FormBacking.getViewForm(parent);
+
+			pform.resume();
+			parent.focus();
+
 			if (backing) backing.hasModalChild = false;
 		}
 

@@ -60,8 +60,8 @@ export class Form implements EventListenerObject
 		return(FormBacking.getPreviousViewForm());
 	}
 
-	private focus$:boolean = null;
 	private canvas$:Canvas = null;
+	private visited$:boolean = false;
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
@@ -281,6 +281,7 @@ export class Form implements EventListenerObject
 
 			this.setURL();
 			this.canvas.activate();
+			FormBacking.setCurrentForm(this);
 		}
 
 		return(true);
@@ -312,16 +313,19 @@ export class Form implements EventListenerObject
 		{
 			// When modal call, allow leaving former form in any state
 
-			if (preform)
+			let modal:boolean = false;
+
+			if (backing.wasCalled && preform.parent == backing.parent)
+				modal = true;
+
+			if (!modal)
 			{
-				let modal:boolean = false;
+				preform = this;
 
-				if (backing.wasCalled && preform.parent == backing.parent)
-					modal = true;
-
-				if (!modal)
+				if (Form.current() != null)
 				{
-					preform?.curinst$?.blur(true);
+					preform = Form.current();
+					preform.curinst$?.blur(true);
 
 					if (!await this.checkLeave(preform))
 					{
@@ -329,6 +333,8 @@ export class Form implements EventListenerObject
 						preform.focus();
 						return(false);
 					}
+
+					inst.focus(true);
 				}
 			}
 
@@ -337,6 +343,16 @@ export class Form implements EventListenerObject
 				preform.focus();
 				return(false);
 			}
+		}
+		else if (!this.visited$)
+		{
+			if (!await this.enterForm(this))
+			{
+				preform.focus();
+				return(false);
+			}
+
+			this.visited$ = true;
 		}
 
 		/**********************************************************************
@@ -411,6 +427,7 @@ export class Form implements EventListenerObject
 		}
 
 		nxtblock.current = inst;
+		FormBacking.setCurrentForm(this);
 		nxtblock.setCurrentRow(inst.row,true);
 
 		if (preform) this.parent.canvas.activate();
@@ -462,13 +479,10 @@ export class Form implements EventListenerObject
 
 	public async enterForm(form:Form) : Promise<boolean>
 	{
-		form.focus$ = true;
-		FormBacking.setCurrentForm(this);
 		if (!await this.setEventTransaction(EventType.PreForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		this.model.endEventTransaction(EventType.PreForm,null,success);
 		if (success && FormsModule.get().showurl) this.setURL();
-		if (!success) FormBacking.setCurrentForm(null);
 		return(success);
 	}
 
@@ -525,11 +539,9 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
-		if (!form.focus$) return(true);
 		if (!await this.setEventTransaction(EventType.PostForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		this.endEventTransaction(EventType.PostBlock,success);
-		if (success) form.focus$ = false;
 		return(success);
 	}
 

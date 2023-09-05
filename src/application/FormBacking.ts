@@ -100,9 +100,9 @@ export class FormBacking
 		let currw:ViewForm = FormBacking.getViewForm(curr);
 
 		// check if ok to leave curr
-		if (currw && parent != curr)
+		if (!parent)
 		{
-			if (!await currw.checkLeave(currw))
+			if (currw && !await currw.checkLeave(currw))
 				return(null);
 		}
 

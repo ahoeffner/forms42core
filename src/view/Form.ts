@@ -211,16 +211,6 @@ export class Form implements EventListenerObject
 		this.lastinst$ = this.curinst$;
 	}
 
-	public defer() : void
-	{
-		this.curinst$?.defer();
-	}
-
-	public resume() : void
-	{
-		this.curinst$?.resume();
-	}
-
 	public async focus() : Promise<boolean>
 	{
 		let inst:FieldInstance = this.curinst$;

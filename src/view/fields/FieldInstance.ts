@@ -40,7 +40,6 @@ export class FieldInstance implements FieldEventHandler
 	private form$:Form = null;
 	private field$:Field = null;
 	private ignore$:string = null;
-	private deferred$:boolean = false;
 	private element$:HTMLElement = null;
 	private impl:FieldImplementation = null;
 	private properties$:FieldProperties = null;
@@ -302,18 +301,6 @@ export class FieldInstance implements FieldEventHandler
 		return(this.insproperties$);
 	}
 
-	public defer() : void
-	{
-		console.log("defer "+this)
-		this.deferred$ = true;
-	}
-
-	public resume() : void
-	{
-		console.log("resume "+this)
-		this.deferred$ = false;
-	}
-
 	public clear() : void
 	{
 		this.valid = true;
@@ -433,7 +420,6 @@ export class FieldInstance implements FieldEventHandler
 
 	public async handleEvent(event:Event) : Promise<void>
 	{
-		if (this.deferred$) return;
 		return(this.field.handleEvent(this,event));
 	}
 

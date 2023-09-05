@@ -515,8 +515,8 @@ export class Block
 		if (record != null)
 		{
 			let offset:number = 0;
-			let inst:FieldInstance = null;
 			let noex:boolean = this.view.empty();
+			let inst:FieldInstance = this.view.form.current;
 			let init:boolean = inst?.field.block.model == this;
 			let last:boolean = this.view.row == this.view.rows-1;
 

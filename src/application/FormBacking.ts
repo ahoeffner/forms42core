@@ -100,14 +100,11 @@ export class FormBacking
 		let currw:ViewForm = FormBacking.getViewForm(curr);
 
 		// check if ok to leave curr
-		if (curr && parent != curr)
+		if (!parent)
 		{
-			if (!await currw.checkLeave(currw))
+			if (currw && !await currw.checkLeave(currw))
 				return(null);
 		}
-
-		// Wait for events
-		await EventStack.wait();
 
 		if (container == null)
 			container = FormsModule.get().getRootElement();
@@ -136,8 +133,6 @@ export class FormBacking
 			let backing:FormBacking = FormBacking.getBacking(parent);
 			if (backing) backing.hasModalChild = true;
 		}
-
-		FormBacking.setCurrentForm(instance);
 
 		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
 			instance.focus();

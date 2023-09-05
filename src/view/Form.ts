@@ -60,8 +60,10 @@ export class Form implements EventListenerObject
 		return(FormBacking.getPreviousViewForm());
 	}
 
+	private focus$:boolean = null;
 	private canvas$:Canvas = null;
-	private visited$:boolean = false;
+	private currblk$:Block = null;
+	private currrec$:Record = null;
 	private modfrm$:ModelForm = null;
 	private parent$:InterfaceForm = null;
 	private curinst$:FieldInstance = null;
@@ -206,6 +208,7 @@ export class Form implements EventListenerObject
 	public blur(ignore?:boolean) : void
 	{
 		this.curinst$?.blur(ignore);
+		this.lastinst$ = this.curinst$;
 	}
 
 	public async focus() : Promise<boolean>
@@ -320,12 +323,9 @@ export class Form implements EventListenerObject
 
 			if (!modal)
 			{
-				preform = this;
-
-				if (Form.current() != null)
+				if (preform != null)
 				{
-					preform = Form.current();
-					preform.curinst$?.blur(true);
+					preform.blur(true);
 
 					if (!await this.checkLeave(preform))
 					{
@@ -343,16 +343,6 @@ export class Form implements EventListenerObject
 				preform.focus();
 				return(false);
 			}
-		}
-		else if (!this.visited$)
-		{
-			if (!await this.enterForm(this))
-			{
-				preform.focus();
-				return(false);
-			}
-
-			this.visited$ = true;
 		}
 
 		/**********************************************************************
@@ -461,6 +451,9 @@ export class Form implements EventListenerObject
 		if (!await curr.validate())
 			return(false);
 
+		if (this.focus$ && !await curr.leaveField(null,0,true))
+			return(false);
+
 		if (!await this.leaveForm(curr))
 			return(false);
 
@@ -479,27 +472,52 @@ export class Form implements EventListenerObject
 
 	public async enterForm(form:Form) : Promise<boolean>
 	{
+		FormBacking.setCurrentForm(form);
 		if (!await this.setEventTransaction(EventType.PreForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PreForm,form.parent);
 		this.model.endEventTransaction(EventType.PreForm,null,success);
-		if (success && FormsModule.get().showurl) this.setURL();
+
+		if (success)
+		{
+			form.focus$ = true;
+			if (FormsModule.get().showurl) this.setURL();
+		}
+		else
+		{
+			FormBacking.setCurrentForm(null);
+		}
+
 		return(success);
 	}
 
 	public async enterBlock(block:Block, offset:number) : Promise<boolean>
 	{
+		if (block == this.currblk$)
+			return(true);
+
+		this.currblk$ = block;
 		if (!await this.setEventTransaction(EventType.PreBlock,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreBlock,block.name);
 		block.model.endEventTransaction(EventType.PreBlock,success);
+		if (!success) this.currblk$ = null;
+
 		return(success);
 	}
 
 	public async enterRecord(block:Block, offset:number) : Promise<boolean>
 	{
-		if (block.model.getRecord(offset) == null) return(true);
+		let rec:Record = block.model.getRecord(offset);
+
+		if (rec == null || rec == this.currrec$)
+			return(true);
+
+		this.currrec$ = rec;
+
 		if (!await this.setEventTransaction(EventType.PreRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PreRecord,block.name);
 		block.model.endEventTransaction(EventType.PreRecord,success);
+
+		if (!success) this.currrec$ = null;
 		return(success);
 	}
 
@@ -539,9 +557,11 @@ export class Form implements EventListenerObject
 
 	public async leaveForm(form:Form) : Promise<boolean>
 	{
+		if (!form.focus$) return(true);
 		if (!await this.setEventTransaction(EventType.PostForm)) return(false);
 		let success:boolean = await this.fireFormEvent(EventType.PostForm,form.parent);
 		this.endEventTransaction(EventType.PostBlock,success);
+		if (success) form.focus$ = false;
 		return(success);
 	}
 
@@ -550,16 +570,30 @@ export class Form implements EventListenerObject
 		if (!await this.setEventTransaction(EventType.PostBlock,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostBlock,block.name);
 		block.endEventTransaction(EventType.PostBlock,success);
-		if (success) success = await block.model.flush();
+
+		if (success)
+		{
+			this.currblk$ = null;
+			success = await block.model.flush();
+		}
+
 		return(success);
 	}
 
 	public async leaveRecord(block:Block, offset?:number) : Promise<boolean>
 	{
-		if (block.model.getRecord(offset) == null) return(true);
+		let bef:Record = this.currrec$;
+		let rec:Record = block.model.getRecord(offset);
+
+		if (rec == null || rec == this.currrec$)
+			return(true);
+
+		this.currrec$ = null;
 		if (!await this.setEventTransaction(EventType.PostRecord,block,offset)) return(false);
 		let success:boolean = await this.fireBlockEvent(EventType.PostRecord,block.name);
 		block.endEventTransaction(EventType.PostRecord,success);
+
+		if (!success) this.currrec$ = bef;
 		return(success);
 	}
 

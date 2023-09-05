@@ -20,6 +20,7 @@
 */
 
 import { Form } from "./Form.js";
+import { Row } from "../view/Row.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { Alert } from "../application/Alert.js";
@@ -399,11 +400,12 @@ export class Block
 	public async validateRecord() : Promise<boolean>
 	{
 		let record:Record = this.getRecord();
+		let row:Row = this.view.displayed(record);
 
 		if (record == null)
 			return(true);
 
-		if (this.view.displayed(record)?.validated)
+		if (row?.validated)
 			return(true);
 
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
@@ -412,6 +414,9 @@ export class Block
 
 		if (success)
 			success = await this.wrapper.modified(record,false);
+
+		if (success)
+			row.validated = true;
 
 		return(success);
 	}

@@ -248,8 +248,8 @@ export class Form
 
 		if (running)
 		{
-			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
-			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
+			if (!block) Alert.fatal("Form "+this.name+", cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Form "+this.name+", cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 
@@ -262,8 +262,8 @@ export class Form
 
 		if (running)
 		{
-			if (!block) Alert.fatal("Cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
-			else			Alert.fatal("Cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
+			if (!block) Alert.fatal("Form "+this.name+", cannot start transaction "+EventType[event]+" while running "+EventType[running],"Transaction Violation");
+			else			Alert.fatal("Form "+this.name+", cannot start transaction "+EventType[event]+" in "+block.name+" while running "+EventType[running],"Transaction Violation");
 			return(false);
 		}
 

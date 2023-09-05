@@ -312,19 +312,16 @@ export class Form implements EventListenerObject
 		{
 			// When modal call, allow leaving former form in any state
 
-			let modal:boolean = false;
-
-			if (backing.wasCalled && preform.parent == backing.parent)
-				modal = true;
-
-			if (!modal)
+			if (preform)
 			{
-				preform = this;
+				let modal:boolean = false;
 
-				if (Form.current() != null)
+				if (backing.wasCalled && preform.parent == backing.parent)
+					modal = true;
+
+				if (!modal)
 				{
-					preform = Form.current();
-					preform.curinst$?.blur(true);
+					preform?.curinst$?.blur(true);
 
 					if (!await this.checkLeave(preform))
 					{
@@ -332,8 +329,6 @@ export class Form implements EventListenerObject
 						preform.focus();
 						return(false);
 					}
-
-					inst.focus(true);
 				}
 			}
 

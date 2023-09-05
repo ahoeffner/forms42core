@@ -107,8 +107,7 @@ export class FormBacking
 		}
 		else
 		{
-			// Don't validate
-			currw?.defer();
+			currw?.blur(true);
 		}
 
 		if (container == null)

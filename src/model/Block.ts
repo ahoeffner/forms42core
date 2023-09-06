@@ -402,10 +402,10 @@ export class Block
 		let record:Record = this.getRecord();
 		let row:Row = this.view.displayed(record);
 
-		if (record == null)
+		if (!record || !row)
 			return(true);
 
-		if (row?.validated)
+		if (row.validated)
 			return(true);
 
 		if (!await this.setEventTransaction(EventType.WhenValidateRecord,record)) return(false);
@@ -613,14 +613,21 @@ export class Block
 				return(false);
 		}
 
+		let inst:FieldInstance = this.view.form.current;
+		let init:boolean = inst?.field.block.model == this;
+
+		if (init && !await this.form.view.leaveField(null))
+			return(false);
+
+		if (init && !await this.form.view.leaveRecord(this.view))
+			return(false);
+
 		let empty:boolean = false;
-		let inst:FieldInstance = null;
 		let offset:number = this.view.rows - this.view.row - 1;
 		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{
-			inst = this.view.current;
 			await this.prefetch(1,offset-1);
 			empty = this.wrapper.getRecords() <= this.record;
 
@@ -635,9 +642,21 @@ export class Block
 			await this.view.refresh(this.getRecord());
 
 			if (!empty) this.view.current = inst;
-			else this.view.getPreviousInstance(inst)?.focus();
+			else this.view.getPreviousInstance(inst)?.focus(true);
 
 			this.view.getRow(this.view.row).validated = true;
+
+			if (this.getRecord() != null)
+			{
+				if (!await this.form.view.enterRecord(this.view,0))
+					return(false);
+
+				if (!await this.form.view.enterField(inst,0,true))
+					return(false);
+
+				if (!await this.form.view.onRecord(this.view))
+					return(false);
+			}
 		}
 		else
 		{

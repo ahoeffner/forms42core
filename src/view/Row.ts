@@ -171,7 +171,7 @@ export class Row
 
 			if (this.rownum == this.block.row)
 			{
-				this.block.getRow(-1).getFieldInstances().forEach((inst) =>
+				this.block.getRow(-1)?.getFieldInstances().forEach((inst) =>
 					{inst.valid = true;})
 			}
 		}

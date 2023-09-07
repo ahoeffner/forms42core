@@ -25,7 +25,6 @@ import { MenuEntry } from './interfaces/MenuEntry.js';
 import { FormEvent, FormEvents } from '../events/FormEvents.js';
 import { EventListenerClass } from '../events/EventListenerClass.js';
 import { MenuOptions, Navigation } from './interfaces/MenuOptions.js';
-import { FormsModule } from '../../application/FormsModule.js';
 
 
 /**

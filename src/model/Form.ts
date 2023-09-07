@@ -587,12 +587,12 @@ export class Form
 					success = await this.view.onRecord(inst?.field.block);
 			}
 
-			inst?.focus(true);
-			this.view.current = inst;
-
 			// Make sure onRecord doesn't fire twice
 			if (inst) inst.field.block.current = inst;
 		}
+
+		inst?.focus(true);
+		this.view.current = inst;
 
 		return(success);
 	}

@@ -106,7 +106,7 @@ export class Form implements EventListenerObject
 
 	public get block() : Block
 	{
-		return(this.curinst$?.field.block);
+		return(this.current?.field.block);
 	}
 
 	public get current() : FieldInstance
@@ -205,13 +205,13 @@ export class Form implements EventListenerObject
 
 	public blur(ignore?:boolean) : void
 	{
-		this.curinst$?.blur(ignore);
-		this.lastinst$ = this.curinst$;
+		this.current.blur(ignore);
+		this.lastinst$ = this.current;
 	}
 
 	public async focus() : Promise<boolean>
 	{
-		let inst:FieldInstance = this.curinst$;
+		let inst:FieldInstance = this.current;
 		if (!inst && this.blocks$.size > 0) inst = this.blocks$.values().next().value.current;
 
 		if (!inst) return(false);
@@ -226,7 +226,7 @@ export class Form implements EventListenerObject
 
 	public async validate() : Promise<boolean>
 	{
-		let inst:FieldInstance = this.curinst$;
+		let inst:FieldInstance = this.current;
 
 		if (inst == null)
 			return(true);
@@ -291,14 +291,14 @@ export class Form implements EventListenerObject
 	public async enter(inst:FieldInstance) : Promise<boolean>
 	{
 		let preform:Form = Form.current();
-		let preinst:FieldInstance = this.curinst$;
-		let preblock:Block = this.curinst$?.field.block;
+		let preinst:FieldInstance = this.current;
+		let preblock:Block = this.current?.field.block;
 
 		let nxtblock:Block = inst.field.block;
 		let visited:boolean = nxtblock.visited;
 		let recoffset:number = nxtblock.offset(inst);
 
-		if (preform == this && inst == this.curinst$)
+		if (preform == this && inst == this.current)
 			return(true);
 
 		/**********************************************************************
@@ -428,7 +428,7 @@ export class Form implements EventListenerObject
 				inst.blur(true);
 
 				if (preform != this) preform.focus();
-				else if (this.curinst$) this.curinst$.focus(true);
+				else if (this.current) this.current.focus(true);
 
 				return(false);
 			}
@@ -441,6 +441,8 @@ export class Form implements EventListenerObject
 		}
 
 		this.setURL();
+		this.current = inst;
+
 		return(true);
 	}
 
@@ -524,10 +526,10 @@ export class Form implements EventListenerObject
 
 	public async enterField(inst:FieldInstance, offset:number, force?:boolean) : Promise<boolean>
 	{
-		if (!force && inst == this.curinst$)
+		if (!force && inst == this.current)
 			return(true);
 
-		this.curinst$ = inst;
+		this.current = inst;
 		this.lastinst$ = null;
 
 		if (!force && inst?.field.row.status == Status.na)
@@ -570,7 +572,7 @@ export class Form implements EventListenerObject
 	public async leaveField(inst?:FieldInstance, offset?:number, force?:boolean) : Promise<boolean>
 	{
 		if (inst == null)
-			inst = this.curinst$;
+			inst = this.current;
 
 		if (!force && inst == this.lastinst$)
 			return(true);
@@ -596,10 +598,10 @@ export class Form implements EventListenerObject
 		let brwevent:BrowserEvent = BrowserEvent.get().clone();
 		brwevent.setKeyEvent(key);
 
-		if (this.curinst$)
+		if (this.current)
 		{
-			if (!field) field = this.curinst$.field.name;
-			if (!block) block = this.curinst$.field.block.name;
+			if (!field) field = this.current.field.name;
+			if (!block) block = this.current.field.block.name;
 		}
 
 		if (!block || !field)
@@ -608,14 +610,14 @@ export class Form implements EventListenerObject
 			return(false);
 		}
 
-		if (this.curinst$)
+		if (this.current)
 		{
 			// If field matches current field instance, then use that
-			if (field == this.curinst$.field.name && block == this.curinst$.field.block.name)
+			if (field == this.current.field.name && block == this.current.field.block.name)
 			{
-				if (!clazz || (clazz && !this.curinst$.properties.hasClass(clazz)))
+				if (!clazz || (clazz && !this.current.properties.hasClass(clazz)))
 				{
-					EventStack.send(this.curinst$,brwevent);
+					EventStack.send(this.current,brwevent);
 					return(true);
 				}
 			}
@@ -651,28 +653,28 @@ export class Form implements EventListenerObject
 		if (inst == null)
 		{
 			if (key == KeyMap.lov)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.calendar)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.delete)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.refresh)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.lastquery)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.enterquery)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.executequery)
-				inst = this.curinst$;
+				inst = this.current;
 
 			if (key == KeyMap.insert || KeyMap.insertAbove)
-				inst = this.curinst$;
+				inst = this.current;
 
 			block = inst?.field.block;
 			mblock =	inst?.field.block.model;
@@ -681,7 +683,7 @@ export class Form implements EventListenerObject
 		if (key == KeyMap.enter)
 		{
 			if (mblock && mblock.querymode) key = KeyMap.executequery;
-			else if (this.curinst$?.field.block.model.querymode) key = KeyMap.executequery;
+			else if (this.current.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);

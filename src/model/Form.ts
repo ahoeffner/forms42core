@@ -606,10 +606,6 @@ export class Form
 			inst.focus(true);
 			this.view.current = inst;
 		}
-		else
-		{
-			this.view.blur(true);
-		}
 
 		return(success);
 	}

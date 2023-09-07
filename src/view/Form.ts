@@ -205,7 +205,7 @@ export class Form implements EventListenerObject
 
 	public blur(ignore?:boolean) : void
 	{
-		this.current.blur(ignore);
+		this.current?.blur(ignore);
 		this.lastinst$ = this.current;
 	}
 

@@ -494,7 +494,7 @@ export class Form
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			blocks[i].executeQuery(qryid,false);
+			blocks[i].executeQuery(qryid);
 
 			let filters:boolean = false;
 			if (!blocks[i].QueryFilter.empty) filters = true;
@@ -574,7 +574,17 @@ export class Form
 		if (init) inst?.blur(true);
 		this.view.current = null;
 
-		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain(),true);
+		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
+		if (!success) return(false);
+
+		for (let i = 0; i < blocks.length; i++)
+		{
+			if (!await blocks[i].postQuery())
+			{
+				success = false;
+				break;
+			}
+		}
 
 		if (init)
 		{
@@ -606,7 +616,7 @@ export class Form
 				block.datasource = block.createMemorySource();
 
 				block.ctrlblk = true;
-				await block.executeQuery(null,false);
+				await block.executeQuery(null);
 			}
 		}
 	}

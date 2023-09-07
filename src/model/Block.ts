@@ -755,7 +755,7 @@ export class Block
 		return(true);
 	}
 
-	public async executeQuery(qryid:object, trgs:boolean) : Promise<boolean>
+	public async executeQuery(qryid:object) : Promise<boolean>
 	{
 		this.queried = true;
 		let runid:object = null;
@@ -848,9 +848,7 @@ export class Block
 		this.form.QueryManager.setRunning(this,null);
 
 		this.view.lockUnused();
-
-		if (!trgs) return(true);
-		return(await this.postQuery());
+		return(true);
 	}
 
 	public showLastQuery() : void
@@ -1120,7 +1118,7 @@ export class Block
 
 		for (let i = 0; i < blocks.length; i++)
 		{
-			if (!await blocks[i].executeQuery(qryid,false))
+			if (!await blocks[i].executeQuery(qryid))
 				success = false;
 		}
 

@@ -555,12 +555,16 @@ export class Form
 		let blocks:Block[] = block.getAllDetailBlocks(true);
 
 		for (let i = 0; i < blocks.length; i++)
-		{
 			blocks[i].view.clear(true,true,true);
 
+		for (let i = blocks.length-1; i >= 0; i--)
+		{
 			if (!await blocks[i].preQuery())
 				return(false);
+		}
 
+		for (let i = 0; i < blocks.length; i++)
+		{
 			if (!await blocks[i].setDetailDependencies())
 				return(false);
 
@@ -577,7 +581,7 @@ export class Form
 		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
 		if (!success) return(false);
 
-		for (let i = 0; i < blocks.length; i++)
+		for (let i = blocks.length-1; i >= 0; i--)
 		{
 			if (!await blocks[i].postQuery())
 			{

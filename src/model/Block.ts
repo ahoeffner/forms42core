@@ -614,7 +614,6 @@ export class Block
 		}
 
 		let inst:FieldInstance = this.view.form.current;
-		let init:boolean = inst?.field.block.model == this;
 
 		let empty:boolean = false;
 		let offset:number = this.view.rows - this.view.row - 1;
@@ -645,19 +644,19 @@ export class Block
 			{
 				if (!await this.form.view.enterRecord(this.view,0))
 				{
-					inst.blur();
+					inst?.blur();
 					return(false);
 				}
 
 				if (!await this.form.view.enterField(inst,0,true))
 				{
-					inst.blur();
+					inst?.blur();
 					return(false);
 				}
 
 				if (!await this.form.view.onRecord(this.view))
 				{
-					inst.blur();
+					inst?.blur();
 					return(false);
 				}
 			}

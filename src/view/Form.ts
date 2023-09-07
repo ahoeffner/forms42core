@@ -526,6 +526,9 @@ export class Form implements EventListenerObject
 
 	public async enterField(inst:FieldInstance, offset:number, force?:boolean) : Promise<boolean>
 	{
+		if (inst == null)
+			return(false);
+
 		if (!force && inst == this.current)
 			return(true);
 

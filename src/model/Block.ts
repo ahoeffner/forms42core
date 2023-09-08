@@ -622,6 +622,7 @@ export class Block
 		if (success)
 		{
 			this.view.skip();
+			
 			await this.prefetch(1,offset-1);
 			empty = this.wrapper.getRecords() <= this.record;
 

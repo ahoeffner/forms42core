@@ -157,8 +157,7 @@ export class Form
 
 		for (let i = 0; i < dirty.length; i++)
 		{
-			this.blkcord$.getDetailBlocks(dirty[i],true).
-			forEach((detail) =>
+			this.blkcord$.getDetailBlocks(dirty[i],true).forEach((detail) =>
 			{
 				if (!detail.ctrlblk)
 					requery.delete(detail)

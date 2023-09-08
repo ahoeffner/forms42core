@@ -688,14 +688,6 @@ export class Block
 		if (this.qbe.querymode)
 			return(true);
 
-		let rec:Record = this.getRecord();
-
-		if (rec?.inserted)
-		{
-			rec.state = RecordState.New;
-			await this.delete();
-		}
-
 		let undo:Record[] = await this.wrapper?.undo();
 
 		if (requery)

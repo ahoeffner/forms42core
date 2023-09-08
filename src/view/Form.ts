@@ -203,6 +203,11 @@ export class Form implements EventListenerObject
 		fltindicators.push(ind);
 	}
 
+	public skip() : void
+	{
+		this.current?.skip();
+	}
+
 	public blur(ignore?:boolean) : void
 	{
 		this.current?.blur(ignore);
@@ -686,7 +691,7 @@ export class Form implements EventListenerObject
 		if (key == KeyMap.enter)
 		{
 			if (mblock && mblock.querymode) key = KeyMap.executequery;
-			else if (this.current.field.block.model.querymode) key = KeyMap.executequery;
+			else if (this.current?.field.block.model.querymode) key = KeyMap.executequery;
 		}
 
 		let frmevent:FormEvent = FormEvent.KeyEvent(this.parent,inst,key);

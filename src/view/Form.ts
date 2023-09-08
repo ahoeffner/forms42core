@@ -126,7 +126,7 @@ export class Form implements EventListenerObject
 
 		this.blocks$.forEach((block) =>
 		{
-			if (!block.model.ctrlblk)
+			if (block.model.ctrlblk)
 			{
 				block.clear(true,true,true);
 			}

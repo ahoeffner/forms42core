@@ -111,6 +111,11 @@ export class Block
 		this.curinst$ = inst;
 	}
 
+	public skip() : void
+	{
+		this.current?.skip();
+	}
+
 	public blur(ignore?:boolean) : void
 	{
 		this.current?.blur(ignore);

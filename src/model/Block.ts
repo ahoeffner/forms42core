@@ -621,6 +621,7 @@ export class Block
 
 		if (success)
 		{
+			this.view.skip();
 			await this.prefetch(1,offset-1);
 			empty = this.wrapper.getRecords() <= this.record;
 
@@ -628,7 +629,6 @@ export class Block
 			{
 				this.move(-1);
 				this.view.move(-1);
-				if (inst?.row >= 0) inst.blur(true);
 			}
 
 			this.scroll(0,this.view.row);

@@ -254,6 +254,15 @@ export class Field
 
 	public async handleEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
+		if (inst.ignore == "skip")
+		{
+			if (brwevent.type == "blur" || brwevent.type == "change+blur")
+				inst.ignore = null;
+
+			return;
+		}
+
+
 		if (brwevent.type == "blur" && inst.ignore == "blur") {inst.ignore = null; return}
 		if (brwevent.type == "focus" && inst.ignore == "focus") {inst.ignore = null; return}
 		return(await EventStack.stack(this,inst,brwevent));

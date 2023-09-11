@@ -612,8 +612,13 @@ export class Block
 
 	public clear(props:boolean, rewind:boolean, fields?:boolean) : void
 	{
+		if (this.current.hasFocus() && this.row > 0)
+			this.current.skip();
+
 		this.current = null;
-		this.displayed$.clear();
+
+		if (!this.model.ctrlblk)
+			this.displayed$.clear();
 
 		if (rewind)
 		{
@@ -623,6 +628,18 @@ export class Block
 
 		if (props) this.recprops$.clear();
 		if (fields) this.model.querymode = false;
+
+		if (this.model.ctrlblk)
+		{
+			if (fields)
+			{
+				this.rows$.forEach((row) => {row.clear()});
+				this.getRow(this.row).activateIndicators(true);
+			}
+
+			return;
+		}
+
 
 		this.rows$.forEach((row) =>
 		{

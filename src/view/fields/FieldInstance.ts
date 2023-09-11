@@ -378,6 +378,11 @@ export class FieldInstance implements FieldEventHandler
 		}
 	}
 
+	public hasFocus() : boolean
+	{
+		return(this.impl.getElement() == document.activeElement);
+	}
+
 	public focusable(status?:Status) : boolean
 	{
 		let props:FieldProperties = this.properties$;

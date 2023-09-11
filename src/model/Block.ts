@@ -182,12 +182,12 @@ export class Block
 		{
 			for (let i = 0; i < this.wrapper.getRecords(); i++)
 				this.wrapper.getRecord(i).clear();
-
-			return(true);
 		}
-
-		if (!await this.wrapper.clear(flush))
-			return(false);
+		else
+		{
+			if (!await this.wrapper.clear(flush))
+				return(false);
+		}
 
 		this.form.clearBlock(this);
 		return(true);

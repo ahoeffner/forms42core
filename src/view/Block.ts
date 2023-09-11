@@ -612,7 +612,7 @@ export class Block
 
 	public clear(props:boolean, rewind:boolean, fields?:boolean) : void
 	{
-		if (this.current.hasFocus() && this.row > 0)
+		if (this.current?.hasFocus() && this.row > 0)
 			this.current.skip();
 
 		this.current = null;

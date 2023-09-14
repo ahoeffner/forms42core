@@ -32,6 +32,7 @@ export enum FieldState
 
 export interface FieldImplementation
 {
+	trim:boolean;
 	datatype:DataType;
 
 	apply(properties:FieldProperties, init:boolean) : void

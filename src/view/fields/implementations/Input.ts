@@ -47,6 +47,7 @@ export class Input implements FieldImplementation, EventListenerObject
 	private initial:string = "";
 	private int:boolean = false;
 	private dec:boolean = false;
+	private trim$:boolean = true;
 	private maxlen:number = null;
 	private case:Case = Case.mixed;
 	private state:FieldState = null;
@@ -60,6 +61,16 @@ export class Input implements FieldImplementation, EventListenerObject
 	private element:HTMLInputElement = null;
 	private datatype$:DataType = DataType.string;
 	private event:BrowserEvent = BrowserEvent.get();
+
+	public get trim() : boolean
+	{
+		return(this.trim$);
+	}
+
+	public set trim(flag:boolean)
+	{
+		this.trim$ = flag;
+	}
 
 	public get datatype() : DataType
 	{
@@ -127,7 +138,10 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public getValue() : any
 	{
-		let value:string = this.getElementValue().trim();
+		let value:string = this.getElementValue();
+
+		if (this.trim)
+			value = value?.trim();
 
 		if (this.datamapper != null)
 		{
@@ -136,7 +150,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(value);
 		}
 
-		if (value.trim().length == 0)
+		if (value.length == 0)
 			return(null);
 
 		if (this.datatype$ == DataType.boolean)
@@ -233,7 +247,12 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(this.datamapper.getIntermediateValue(Tier.Backend));
 
 		let value:string = this.getElementValue();
-		if (this.formatter == null) value = value.trim();
+
+		if (this.formatter == null)
+		{
+			if (this.trim)
+				value = value?.trim();
+		}
 
 		return(value);
 	}
@@ -249,7 +268,8 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (value == null)
 			value = "";
 
-		value = value.trim();
+		if (this.trim)
+			value = value?.trim();
 
 		if (this.formatter != null && value.length > 0)
 		{
@@ -287,6 +307,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		attributes.forEach((value,attr) =>
 		{
+			if (attr == "trim")
+				this.trim = value?.trim().toLowerCase() == "true";
+
 			if (attr == "date")
 				this.datatype$ = DataType.date;
 

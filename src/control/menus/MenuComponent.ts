@@ -741,7 +741,7 @@ export class MenuComponent extends EventListenerClass implements EventListenerOb
 
 	private removeFocus() : void
 	{
-		this.entries$.get(this.active$)?.element.parentElement.classList.remove("focus");
+		this.entries$.get(this.active$)?.element?.parentElement?.classList?.remove("focus");
 	}
 
 	private getElement(elem:HTMLElement) : HTMLAnchorElement

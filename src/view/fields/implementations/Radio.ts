@@ -41,15 +41,6 @@ export class Radio implements FieldImplementation, EventListenerObject
 	private datatype$:DataType = DataType.string;
    private event:BrowserEvent = BrowserEvent.get();
 
-	public get trim() : boolean
-	{
-		return(true);
-	}
-
-	public set trim(_flag:boolean)
-	{
-	}
-
 	public setValidated() : void
 	{
 	}

@@ -65,13 +65,12 @@ export class ListOfValues extends Form
 		return(this.close());
 	}
 
-	private async done() : Promise<boolean>
+	private async done(event:FormEvent) : Promise<boolean>
 	{
-		this.cancelled = false;
-		let field:HTMLElement = FormsModule.get().getJSEvent().target;
-
-		if (field.tagName != "INPUT")
+		if (event.field != "display")
 			return(true);
+		
+		this.cancelled = false;
 
 		let source:string|string[] = this.props.sourcefields;
 		let target:string|string[] = this.props.targetfields;

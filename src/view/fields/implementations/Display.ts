@@ -100,7 +100,7 @@ export class Display implements FieldImplementation, EventListenerObject
 			return(this.value$);
 		}
 
-		if (this.trim)
+		if (this.trim && typeof this.value$ === "string")
 			this.value$ = this.value$?.trim();
 
 		if (this.datatype$ == DataType.boolean)
@@ -121,7 +121,7 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
-		if (this.trim)
+		if (this.trim && typeof this.value$ === "string")
 			value = value?.trim();
 
 		if (this.datamapper != null)
@@ -171,7 +171,7 @@ export class Display implements FieldImplementation, EventListenerObject
 
 	public getIntermediateValue() : string
 	{
-		if (this.trim)
+		if (this.trim && typeof this.value$ === "string")
 			this.value$ = this.value$?.trim();
 
 		if (this.datamapper != null)

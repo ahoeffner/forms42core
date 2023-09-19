@@ -192,6 +192,9 @@ export class Input implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
+		if (this.trim && typeof value === "string")
+			value = value?.trim();
+
 		if (this.datamapper != null)
 		{
 			this.datamapper.setValue(Tier.Backend,value);
@@ -233,6 +236,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			value = "";
 
 		value += "";
+
 		this.setElementValue(value);
 
 		this.before = value;

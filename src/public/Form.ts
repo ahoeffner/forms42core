@@ -121,7 +121,7 @@ export class Form implements CanvasComponent
 
 	public getCurrentBlock() : Block
 	{
-		return(this.getBlock(FormBacking.getViewForm(this).block.name));
+		return(this.getBlock(FormBacking.getViewForm(this)?.block?.name));
 	}
 
 	/** Requires the block using the current filter. Often used with sorting */

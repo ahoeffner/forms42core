@@ -574,8 +574,11 @@ export class Form
 			this.view.setFilterIndicator(blocks[i],filters);
 		}
 
-		this.view.current = null;
-		if (init) inst?.blur(true);
+		if (init && inst)
+		{
+			inst.blur(true);
+			this.view.current = null;
+		}
 
 		let success:boolean = await block.executeQuery(this.qrymgr$.startNewChain());
 		if (!success) return(false);
@@ -604,8 +607,11 @@ export class Form
 			if (inst) inst.field.block.current = inst;
 		}
 
-		this.view.current = inst;
-		if (inst && init) inst.focus(true);
+		if (init && inst && inst.field.row.exist)
+		{
+			inst.focus(true);
+			this.view.current = inst;
+		}
 
 		return(success);
 	}

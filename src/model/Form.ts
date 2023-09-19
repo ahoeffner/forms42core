@@ -604,7 +604,7 @@ export class Form
 			if (inst) inst.field.block.current = inst;
 		}
 
-		if (inst)
+		if (inst && init)
 		{
 			inst.focus(true);
 			this.view.current = inst;

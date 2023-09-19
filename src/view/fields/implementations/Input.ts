@@ -467,7 +467,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			}
 		}
 
-		if (!this.disabled && this.event.type == "mouseover" && this.placeholder != null)
+		if (!this.disabled && !this.readonly && this.event.type == "mouseover" && this.placeholder != null)
 			this.element.setAttribute("placeholder",this.placeholder);
 
 		if (this.event.type == "mouseout" && this.placeholder != null)
@@ -876,6 +876,11 @@ export class Input implements FieldImplementation, EventListenerObject
 	private get disabled() : boolean
 	{
 		return(this.element.disabled);
+	}
+
+	private get readonly() : boolean
+	{
+		return(this.element.readOnly);
 	}
 
 	private getFormatter(attributes:Map<string,any>) : void

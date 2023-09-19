@@ -30,6 +30,7 @@ import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Properties } from "../../public/ListOfValues.js";
+import { FormsModule } from "../../application/FormsModule.js";
 
 
 export class ListOfValues extends Form
@@ -67,6 +68,10 @@ export class ListOfValues extends Form
 	private async done() : Promise<boolean>
 	{
 		this.cancelled = false;
+		let field:HTMLElement = FormsModule.get().getJSEvent().target;
+
+		if (field.tagName != "INPUT")
+			return(true);
 
 		let source:string|string[] = this.props.sourcefields;
 		let target:string|string[] = this.props.targetfields;

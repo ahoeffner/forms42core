@@ -39,7 +39,6 @@ enum Case
 	initcap
 }
 
-
 export class Input implements FieldImplementation, EventListenerObject
 {
 	private type:string = null;

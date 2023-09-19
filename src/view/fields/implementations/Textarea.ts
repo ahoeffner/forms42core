@@ -107,14 +107,14 @@ export class Textarea implements FieldImplementation, EventListenerObject
 
 	public setValue(value:any) : boolean
 	{
+		if (this.trim && typeof value === "string")
+			value = value?.trim();
+
 		if (this.datamapper != null)
 		{
 			this.datamapper.setValue(Tier.Backend,value);
 			value = this.datamapper.getValue(Tier.Frontend);
 		}
-
-		if (this.trim)
-			value = value?.trim();
 
 		this.element.value = value;
 		return(true);

@@ -67,9 +67,9 @@ export class ListOfValues extends Form
 
 	private async done(event:FormEvent) : Promise<boolean>
 	{
-		if (event.field != "display")
+		if (event.field == null)
 			return(true);
-		
+
 		this.cancelled = false;
 
 		let source:string|string[] = this.props.sourcefields;

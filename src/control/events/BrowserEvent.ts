@@ -420,6 +420,9 @@ export class BrowserEvent
 				if (this.key == "Enter") this.prevent = true;
 				if (this.key == "Escape") this.prevent = true;
 
+				if (this.key == "Insert") this.prevent = true;
+				if (this.key == "Delete") this.prevent = true;
+
 				if (this.key == "PageUp") this.prevent = true;
 				if (this.key == "PageDown") this.prevent = true;
 

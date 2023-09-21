@@ -735,6 +735,9 @@ export class Input implements FieldImplementation, EventListenerObject
 		if (this.element.readOnly)
 			return(true);
 
+		if (this.event.key == "Insert")
+			this.event.event.preventDefault();
+
 		this.event.preventDefault();
 		let pos:number = this.getPosition();
 
@@ -764,7 +767,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			return(true);
 		}
 
-		if (this.event.key == "Backspace" && !this.event.modifier)
+		if ((this.event.key == "Backspace" || this.event.key == "Delete") && !this.event.modifier)
 		{
 			if (pos > 0) pos--;
 			this.event.preventDefault(true);

@@ -48,7 +48,6 @@ export class Block
 	private row$:number = -1;
 	private form$:Form = null;
 	private name$:string = null;
-	private focus$:boolean = null;
 	private model$:ModelBlock = null;
 	private finalized$:boolean = false;
 	private fieldnames$:string[] = null;

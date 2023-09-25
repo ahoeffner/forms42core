@@ -263,9 +263,10 @@ export class Record
 	}
 
 	/** Get a copy of all properties for a given field */
-	public getProperties(field?:string, clazz?:string) : FieldProperties
+	public getProperties(field:string, clazz?:string) : FieldProperties
 	{
-		field = field?.toLowerCase();
+		if (!field) return(null);
+		field = field.toLowerCase();
 		let blk:ModelBlock = this.rec$.block;
 		return(new FieldProperties(blk.view.getRecordProperties(this.rec$,field,clazz)));
 	}

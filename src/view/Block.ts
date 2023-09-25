@@ -426,9 +426,6 @@ export class Block
 
 	public getRecordProperties(record:Record, field:string, clazz:string) : BasicProperties
 	{
-		if (field == null)
-			field = this.current.name;
-
 		let props:BasicProperties = this.recprops$.get(record,field,clazz);
 
 		if (props == null)

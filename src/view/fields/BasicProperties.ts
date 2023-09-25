@@ -591,7 +591,11 @@ export class BasicProperties
 			Properties.FactoryImplementation;
 
 		if (typeof formatter === "string")
-			formatter = FormsModule.get().getComponent(formatter);
+		{
+			let map:string = formatter;
+			formatter = FormsModule.get().getComponent(map);
+			if (!formatter) Alert.fatal("Formatter '"+map+"' is not mapped","Formatters");
+		}
 
 		else
 
@@ -621,7 +625,11 @@ export class BasicProperties
 			Properties.FactoryImplementation;
 
 		if (typeof listofvalues === "string")
-			listofvalues = FormsModule.get().getComponent(listofvalues);
+		{
+			let map:string = listofvalues;
+			listofvalues = FormsModule.get().getComponent(map);
+			if (!listofvalues) Alert.fatal("ListOfValues '"+map+"' is not mapped","ListOfValues");
+		}
 
 		if (!isClass(listofvalues)) this.listofvalues$ = listofvalues;
 		else this.listofvalues$ = factory.createBean(listofvalues) as ListOfValues;

@@ -126,12 +126,10 @@ export class Connection extends BaseConnection
 
 		switch(this.scope)
 		{
-			case ConnectionScope.stateless: scope = "none"; break;
+			case ConnectionScope.stateless: scope = "stateless"; break;
 			case ConnectionScope.dedicated: scope = "dedicated"; break;
 			case ConnectionScope.transactional: scope = "transaction"; break;
 		}
-
-		if (this.scope == ConnectionScope.stateless) scope = "none";
 
 		let payload:any =
 		{
@@ -154,6 +152,9 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			return(false);
 		}
+
+		if (response["version"])
+			console.log("OpenRestDB Version: "+response.version);
 
 		this.trx$ = new Object();
 		this.conn$ = response.session;

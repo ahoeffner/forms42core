@@ -256,6 +256,12 @@ export class Block
 		return(FormBacking.getModelBlock(this).ctrlblk);
 	}
 
+	/** Get the LOV for the given block and field */
+	public getListOfValues(field:string) : ListOfValues
+	{
+		return(FormBacking.getBacking(this.form).getListOfValues(this.name,field));
+	}
+
 	/** Bind LOV to field(s) */
 	public setListOfValues(lov:ListOfValues, field:string|string[]) : void
 	{

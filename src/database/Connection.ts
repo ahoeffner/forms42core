@@ -148,7 +148,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error("failed to connect as "+this.username);
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			return(false);
 		}
@@ -241,6 +241,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
+			console.error(response);
 			Alert.fatal(response.message,"Database Connection");
 			return(false);
 		}
@@ -365,7 +366,6 @@ export class Connection extends BaseConnection
 			if (!response.success)
 			{
 				console.error(response);
-				console.error(new Error().stack);
 				Alert.warning(response.message,"Database Connection");
 				return(response);
 			}
@@ -471,7 +471,6 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
-			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -509,7 +508,6 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
-			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -547,7 +545,6 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			console.error(response);
-			console.error(new Error().stack);
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
@@ -664,6 +661,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			this.conn$ = null;
+			console.error(response);
 			Alert.warning(response.message,"Database Connection");
 			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			this.running$ = false;
@@ -715,11 +713,14 @@ export class Connection extends BaseConnection
 		bindv.forEach((b) =>
 		{
 			let value:any = b.value;
-			if (value instanceof Date) value = value.getTime();
+
+			if (value instanceof Date)
+				value = value.getTime();
+
 			if (b.outtype) binds.push({name: b.name, type: b.type});
 			else
 			{
-				if (!value) binds.push({name: b.name, type: b.type});
+				if (value == null) binds.push({name: b.name, type: b.type});
 				else binds.push({name: b.name, value: value, type: b.type});
 			}
 		})

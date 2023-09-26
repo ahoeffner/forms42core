@@ -258,6 +258,12 @@ export class FieldFeatureFactory
 		if (props.getAttribute(Properties.RecordModeAttr) != null)
 			return;
 
+		if (props.readonly || !props.enabled)
+		{
+			tag.setAttribute(Properties.RecordModeAttr,"na");
+			return;
+		}
+
 		if (inst.field.row.status == Status.na)
 		{
 			tag.removeAttribute(Properties.Classes.Invalid);

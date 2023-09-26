@@ -260,7 +260,7 @@ export class FieldFeatureFactory
 
 		if (props.readonly || !props.enabled)
 		{
-			tag.setAttribute(Properties.RecordModeAttr,"na");
+			tag.setAttribute(Properties.RecordModeAttr,"-");
 			return;
 		}
 

@@ -108,6 +108,7 @@ export class KeyMap
 		})
 
 		let unique:string[][] = [];
+		
 		list.forEach((entry) =>
 		{
 			let len:number = unique.length;

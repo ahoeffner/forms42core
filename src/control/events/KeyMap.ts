@@ -103,11 +103,19 @@ export class KeyMap
 		list.sort((k0,k1) =>
 		{
 			if (k0[1] > k1[1]) return(1);
-			if (k0[1] < k1[1]) return(-11);
+			if (k0[1] < k1[1]) return(-1);
 			return(0);
 		})
 
-		return(list);
+		let unique:string[][] = [];
+		list.forEach((entry) =>
+		{
+			let len:number = unique.length;
+			let last:string = len > 0 ? unique[len-1][1] : null;
+			if (entry[1] != last) unique.push(entry);
+		})
+
+		return(unique);
 	}
 
 	private key$:string;

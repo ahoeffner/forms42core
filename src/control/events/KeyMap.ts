@@ -199,6 +199,36 @@ export class KeyMap
 		return(this.signature$);
 	}
 
+	public get definition() : KeyDefinition
+	{
+		let def:KeyDefinition =
+		{
+			key: this.key$,
+			alt:	this.alt$,
+			ctrl:	this.ctrl$,
+			meta: this.meta$,
+			shift: this.shift$
+		}
+
+		return(def);
+	}
+
+	public setSignature(def:KeyDefinition) : void
+	{
+		this.key$ = def.key;
+		this.alt$ = def.alt;
+		this.ctrl$ = def.ctrl;
+		this.meta$ = def.meta;
+		this.shift$ = def.shift;
+
+		this.signature$ = ""+this.key$ + "|";
+
+		this.signature$ += (this.alt$   ? 't' : 'f');
+		this.signature$ += (this.ctrl$  ? 't' : 'f');
+		this.signature$ += (this.meta$  ? 't' : 'f');
+		this.signature$ += (this.shift$ ? 't' : 'f');
+	}
+
 	public toString() : string
 	{
 		let str:string = "";
@@ -272,7 +302,17 @@ export class KeyMapping
 				let existing:KeyMap = KeyMapping.get(KeyMap[mapped]?.signature);
 
 				if (existing == null) KeyMapping.add(map[mapped]);
-				else map[mapped] = KeyMapping.get(map[mapped].signature);
+				else
+				{
+					let def:KeyDefinition =
+						map[mapped].definition;
+
+					map[mapped] = existing;
+					KeyMapping.remove(existing);
+
+					existing.setSignature(def);
+					KeyMapping.add(existing);
+				}
 			}
 		});
 	}
@@ -313,6 +353,11 @@ export class KeyMapping
 	{
 		if (keymap != null && KeyMapping.map.get(keymap.signature) == null)
 			KeyMapping.map.set(keymap.signature,keymap);
+	}
+
+	public static remove(keymap:KeyMap) : void
+	{
+		KeyMapping.map.delete(keymap.signature);
 	}
 
 	public static get(signature:string, validated?:boolean) : KeyMap

@@ -208,19 +208,19 @@ export class KeyMap
 
 		if (this.alt$)
 		{
-			if (str.length > 0) str += " +";
+			if (str.length > 0) str += " + ";
 			str += "alt";
 		}
 
 		if (this.shift$)
 		{
-			if (str.length > 0) str += " +";
+			if (str.length > 0) str += " + ";
 			str += "shift";
 		}
 
 		if (this.meta$)
 		{
-			if (str.length > 0) str += " +";
+			if (str.length > 0) str += " + ";
 			str += "meta";
 		}
 
@@ -228,6 +228,10 @@ export class KeyMap
 			str += " ";
 
 		str += this.key$;
+
+		if (this.name != null)
+			str += " "+this.name;
+
 		return(str);
 	}
 }

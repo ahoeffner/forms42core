@@ -353,7 +353,7 @@ export class Block
 		return(FormBacking.getViewBlock(this).isValid(field));
 	}
 
-	/** Mark the block valid */
+	/** Mark the field valid */
 	public setValid(field:string, flag:boolean) : void
 	{
 		FormBacking.getViewBlock(this).setValid(field,flag);

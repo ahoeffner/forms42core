@@ -88,8 +88,6 @@ export class FormBacking
 
 	public static async showform(form:Class<Form|InternalForm>|string, parent:Form|InternalForm, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
-		EventStack.clear();
-
 		if (typeof form === "string")
 		{
 			let path:string = form;
@@ -134,6 +132,7 @@ export class FormBacking
 
 		if (parent)
 		{
+			EventStack.clear();
 			parent.canvas?.block();
 			FormBacking.getBacking(instance).parent = parent;
 			let backing:FormBacking = FormBacking.getBacking(parent);

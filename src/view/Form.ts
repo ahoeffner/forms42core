@@ -649,6 +649,9 @@ export class Form implements EventListenerObject
 		let success:boolean = false;
 		if (key == null) return(true);
 
+		console.log(key.toString());
+		console.log(KeyMap.lastquery.toString());
+
 		let block:Block = inst?.field.block;
 		let mblock:ModelBlock = inst?.field.block.model;
 

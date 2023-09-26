@@ -40,6 +40,7 @@ import { Form as InternalForm } from '../internal/Form.js';
 import { DateConstraint } from '../public/DateConstraint.js';
 import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
+import { EventStack } from '../control/events/EventStack.js';
 
 export class FormBacking
 {
@@ -87,6 +88,8 @@ export class FormBacking
 
 	public static async showform(form:Class<Form|InternalForm>|string, parent:Form|InternalForm, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
+		EventStack.clear();
+
 		if (typeof form === "string")
 		{
 			let path:string = form;

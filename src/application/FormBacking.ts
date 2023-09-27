@@ -116,6 +116,8 @@ export class FormBacking
 		if (!(form.prototype instanceof Form) && !(form.prototype instanceof InternalForm))
 			throw "@Application: Component mapped to '"+form+"' is not a form";
 
+		EventStack.clear();
+
 		let factory:ComponentFactory = Properties.FactoryImplementation;
 		let canvasimpl:Class<Canvas> = Properties.CanvasImplementationClass;
 
@@ -132,7 +134,6 @@ export class FormBacking
 
 		if (parent)
 		{
-			EventStack.clear();
 			parent.canvas?.block();
 			FormBacking.getBacking(instance).parent = parent;
 			let backing:FormBacking = FormBacking.getBacking(parent);

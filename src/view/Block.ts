@@ -214,35 +214,18 @@ export class Block
 			return(false);
 		}
 
-		if (this.form.block != this && this.form.current)
+		this.form.current.blur(true);
+
+		if (await this.form.leave(this.form.current,true))
 		{
-			if (!await this.form.current.field.validate(this.form.current))
-				return(false);
+			inst.focus();
 
-			if (!await this.form.leave(this.form.current))
-				return(false);
+			if (inst.hasFocus())
+				return(this.form.enter(inst));
 
-			this.form.current.blur(true);
 		}
 
-		else
-
-		if (this.curinst$)
-		{
-			if (!await this.curinst$.field.validate(this.curinst$))
-				return(false);
-
-			if (!await this.form.leave(this.curinst$))
-				return(false);
-
-			this.curinst$.blur(true);
-		}
-
-		if (!await this.form.enter(inst))
-			return(false);
-
-		inst.focus(true);
-		return(true);
+		return(false);
 	}
 
 	public empty(rownum?:number) : boolean
@@ -683,37 +666,21 @@ export class Block
 		if (this.getRow(row).status == Status.na)
 			return(false);
 
-		if (this.form.block != this && this.form.current)
-		{
-			if (!await this.form.validate())
-				return(false);
-
-			if (!await this.form.leave(this.form.current))
-				return(false);
-
-			this.form.current.blur(true);
-		}
-
-		else
-
-		if (this.curinst$)
-		{
-			if (!await this.getCurrentRow().validate())
-				return(false);
-
-			if (!await this.form.leave(this.curinst$))
-				return(false);
-
-			this.curinst$.blur(true);
-		}
-
 		let idx:number = this.getCurrentRow().getFieldIndex(this.current);
 		let inst:FieldInstance = this.getRow(row)?.getFieldByIndex(idx);
 
 		if (inst)
 		{
-			inst.focus();
-			return(true);
+			this.form.current.blur(true);
+
+			if (await this.form.leave(this.form.current,true))
+			{
+				inst.focus();
+
+				if (inst.hasFocus())
+					return(this.form.enter(inst));
+
+			}
 		}
 
 		return(false);

@@ -214,16 +214,17 @@ export class Block
 			return(false);
 		}
 
-		this.form.current.blur(true);
-
-		if (await this.form.leave(this.form.current,true))
+		if (this.form.current)
 		{
-			inst.focus();
-
-			if (inst.hasFocus())
-				return(this.form.enter(inst));
-
+			this.form.current.blur(true);
+			if (!await this.form.leave(this.form.current,true))
+				return(false);
 		}
+
+		inst.focus(true);
+
+		if (inst.hasFocus())
+			return(this.form.enter(inst));
 
 		return(false);
 	}
@@ -671,16 +672,19 @@ export class Block
 
 		if (inst)
 		{
-			this.form.current.blur(true);
-
-			if (await this.form.leave(this.form.current,true))
+			if (this.form.current)
 			{
-				inst.focus();
+				this.form.current.blur(true);
 
-				if (inst.hasFocus())
-					return(this.form.enter(inst));
-
+				if (!await this.form.leave(this.form.current,true))
+					return(false);
 			}
+
+			inst.focus(true);
+
+			if (inst.hasFocus())
+				return(this.form.enter(inst));
+
 		}
 
 		return(false);

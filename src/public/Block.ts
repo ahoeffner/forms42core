@@ -188,14 +188,14 @@ export class Block
 	}
 
 	/** Show the datepicker for the specified field */
-	public showDatePicker(field:string) : void
+	public showDatePicker(field:string, row?:number) : void
 	{
 		field = field?.toLowerCase();
 		FormBacking.getViewForm(this.form).showDatePicker(this.name,field);
 	}
 
 	/** Show the LOV associated with the field. Normally only 1 LOV can be active, force overrules this rule */
-	public showListOfValues(field:string, force?:boolean) : void
+	public showListOfValues(field:string, row?:number, force?:boolean) : void
 	{
 		field = field?.toLowerCase();
 		FormBacking.getViewForm(this.form).showListOfValues(this.name,field,force);

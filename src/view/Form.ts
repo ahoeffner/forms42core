@@ -211,6 +211,7 @@ export class Form implements EventListenerObject
 	public blur(ignore?:boolean, stay?:boolean) : void
 	{
 		this.current?.blur(ignore);
+		// Should postfield trigger or not
 		if (!stay) this.lastinst$ = this.current;
 	}
 

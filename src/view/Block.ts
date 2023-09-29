@@ -217,7 +217,8 @@ export class Block
 		if (this.form.current)
 		{
 			this.form.current.blur(true);
-			if (!await this.form.leave(this.form.current,true))
+
+			if (!await this.form.leave(this.form.current))
 				return(false);
 		}
 
@@ -667,6 +668,9 @@ export class Block
 		if (!(typeof rownum === "number"))
 			rownum = +rownum;
 
+		if (rownum < 0)
+			return(false);
+
 		if (rownum == this.row)
 			return(true);
 
@@ -690,7 +694,7 @@ export class Block
 			{
 				this.form.current.blur(true);
 
-				if (!await this.form.leave(this.form.current,true))
+				if (!await this.form.leave(this.form.current))
 					return(false);
 			}
 

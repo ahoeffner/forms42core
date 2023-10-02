@@ -418,7 +418,7 @@ export class Form
 		block.view.current = inst;
 		block.view.form.current = inst;
 
-		this.view.onRecord(block.view);
+		await this.view.onRecord(block.view);
 		return(true);
 	}
 

@@ -403,10 +403,9 @@ export class Form
 		inst = block.view.getQBEInstance(inst);
 		if (!inst) inst = block.view.findFirstEditable(block.qberec);
 
-		inst?.focus();
-
 		if (inst)
 		{
+			inst.focus(true);
 			block.view.form.current = null;
 
 			if (!await this.view.enterRecord(inst.field.block,0))

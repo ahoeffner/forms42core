@@ -333,7 +333,7 @@ export class DataSourceWrapper
 
 		this.block.view.refresh(record);
 		await this.block.onFetch(record);
-		
+
 		this.block.view.setAttributes(record);
 	}
 

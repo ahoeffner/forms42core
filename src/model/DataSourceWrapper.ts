@@ -281,6 +281,9 @@ export class DataSourceWrapper
 		if (this.locked(record))
 			return(true);
 
+		if (!this.source.transactional)
+			return(true);
+
 		if (this.source.rowlocking == LockMode.None)
 			return(true);
 
@@ -401,6 +404,9 @@ export class DataSourceWrapper
 				break;
 			}
 		}
+
+		if (!this.source.transactional)
+			success = await this.flush();
 
 		return(success);
 	}

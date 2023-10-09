@@ -386,11 +386,11 @@ export class Connection extends BaseConnection
 
 	public async lock(sql:SQLRest) : Promise<Response>
 	{
-		let response:any = null;
-		let trxstart:boolean = this.modified$ == null;
-
 		if (this.scope == ConnectionScope.stateless)
 			return({success: true, message: null, rows: []});
+
+		let response:any = null;
+		let trxstart:boolean = this.modified$ == null;
 
 		let payload:any =
 		{
@@ -462,7 +462,8 @@ export class Connection extends BaseConnection
 
 	public async insert(sql:SQLRest) : Promise<Response>
 	{
-		let trxstart:boolean = this.modified$ == null;
+		let trxstart:boolean =
+			this.modified$ == null && this.transactional;
 
 		let payload:any =
 		{
@@ -502,7 +503,8 @@ export class Connection extends BaseConnection
 
 	public async update(sql:SQLRest) : Promise<Response>
 	{
-		let trxstart:boolean = this.modified$ == null;
+		let trxstart:boolean =
+			this.modified$ == null && this.transactional;
 
 		let payload:any =
 		{
@@ -542,7 +544,8 @@ export class Connection extends BaseConnection
 
 	public async delete(sql:SQLRest) : Promise<Response>
 	{
-		let trxstart:boolean = this.modified$ == null;
+		let trxstart:boolean =
+			this.modified$ == null && this.transactional;
 
 		let payload:any =
 		{
@@ -583,7 +586,9 @@ export class Connection extends BaseConnection
 	public async call(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
-		let trxstart:boolean = this.modified$ == null;
+
+		let trxstart:boolean =
+			this.modified$ == null && this.transactional;
 
 		let payload:any =
 		{
@@ -622,7 +627,9 @@ export class Connection extends BaseConnection
 	public async execute(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
-		let trxstart:boolean = this.modified$ == null;
+		
+		let trxstart:boolean =
+			this.modified$ == null && this.transactional;
 
 		let payload:any =
 		{

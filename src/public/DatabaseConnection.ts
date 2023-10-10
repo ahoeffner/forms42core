@@ -77,6 +77,18 @@ export class DatabaseConnection
 		this.conn$.scope = scope;
 	}
 
+	/** The authorization method */
+	public get authmethod() : string
+	{
+		return(this.conn$.authmethod);
+	}
+
+	/** The authorization method */
+	public set authmethod(method:string)
+	{
+		this.conn$.authmethod = method;
+	}
+
 	/** Is connection scope transactional */
 	public get transactional() : boolean
 	{
@@ -84,9 +96,9 @@ export class DatabaseConnection
 	}
 
 	/** Connect to database */
-	public async connect(username?:string, password?:string, method?:string, custom?:Map<string,any>) : Promise<boolean>
+	public async connect(username?:string, password?:string, custom?:Map<string,any>) : Promise<boolean>
 	{
-		return(this.conn$.connect(username,password,method,custom));
+		return(this.conn$.connect(username,password,custom));
 	}
 
 	/** Disconnect from database */

@@ -30,6 +30,7 @@ export class Connection
 	private base$:URL = null;
 	private headers$:any = {};
 	private method$:string = null;
+	private authmeth$:string = null;
 	private success$:boolean = true;
 
 	/** Create connection. If no url specified, the Origin of the page is used */
@@ -48,6 +49,18 @@ export class Connection
 	public get baseURL() : URL
 	{
 		return(this.base$);
+	}
+
+	/** The authorization method. Not used in base class */
+	public get authmethod() : string
+	{
+		return(this.authmeth$);
+	}
+
+	/** The authorization method. Not used in base class */
+	public set authmethod(method:string)
+	{
+		this.authmeth$ = method;
 	}
 
 	/** Whether the last request was successfull */

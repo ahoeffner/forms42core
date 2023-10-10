@@ -41,6 +41,7 @@ export class Connection extends BaseConnection
 	private keepalive$:number = 20;
 	private running$:boolean = false;
 	private tmowarn$:boolean = false;
+	private authmethod$:string = null;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
 	public static TRXTIMEOUT:number = 240;
@@ -82,6 +83,16 @@ export class Connection extends BaseConnection
 		this.scope$ = scope;
 	}
 
+	public get authmethod() : string
+	{
+		return(this.authmethod$);
+	}
+
+	public set authmethod(method:string)
+	{
+		this.authmethod$ = method;
+	}
+
 	public get transactional() : boolean
 	{
 		return(this.scope != ConnectionScope.stateless);
@@ -102,7 +113,7 @@ export class Connection extends BaseConnection
 		return(this.running$);
 	}
 
-	public async connect(username?:string, password?:string, method?:string, custom?:Map<string,any>) : Promise<boolean>
+	public async connect(username?:string, password?:string, custom?:Map<string,any>) : Promise<boolean>
 	{
 		this.touched$ = null;
 		this.tmowarn$ = false;
@@ -116,8 +127,8 @@ export class Connection extends BaseConnection
 			case ConnectionScope.transactional: scope = "transaction"; break;
 		}
 
-		if (!method)
-			method = "database";
+		let method:string = this.authmethod$;
+		if (!method) method = "database";
 
 		let payload:any =
 		{

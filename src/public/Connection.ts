@@ -28,8 +28,6 @@ import { FlightRecorder } from "../application/FlightRecorder.js";
 export class Connection
 {
 	private base$:URL = null;
-	private usr$:string = null;
-	private pwd$:string = null;
 	private headers$:any = {};
 	private method$:string = null;
 	private success$:boolean = true;
@@ -50,30 +48,6 @@ export class Connection
 	public get baseURL() : URL
 	{
 		return(this.base$);
-	}
-
-	/** Not used in base class */
-	public get username() : string
-	{
-		return(this.usr$);
-	}
-
-	/** Not used in base class */
-	public set username(username:string)
-	{
-		this.usr$ = username;
-	}
-
-	/** Not used in base class */
-	public get password() : string
-	{
-		return(this.pwd$);
-	}
-
-	/** Not used in base class */
-	public set password(password:string)
-	{
-		this.pwd$ = password;
 	}
 
 	/** Whether the last request was successfull */

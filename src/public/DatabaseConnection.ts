@@ -83,16 +83,10 @@ export class DatabaseConnection
 		return(this.conn$.transactional);
 	}
 
-	/** Set secret for non database connections */
-	public set preAuthenticated(secret:string)
-	{
-		this.conn$.preAuthenticated = secret;
-	}
-
 	/** Connect to database */
-	public async connect(username?:string, password?:string) : Promise<boolean>
+	public async connect(username?:string, password?:string, method?:string, custom?:Map<string,any>) : Promise<boolean>
 	{
-		return(this.conn$.connect(username,password));
+		return(this.conn$.connect(username,password,method,custom));
 	}
 
 	/** Disconnect from database */

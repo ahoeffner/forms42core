@@ -38,7 +38,6 @@ export class Connection extends BaseConnection
 	private conn$:string = null;
 	private touched$:Date = null;
 	private modified$:Date = null;
-	private secret$:string = null;
 	private keepalive$:number = 20;
 	private running$:boolean = false;
 	private tmowarn$:boolean = false;
@@ -88,11 +87,6 @@ export class Connection extends BaseConnection
 		return(this.scope != ConnectionScope.stateless);
 	}
 
-	public set preAuthenticated(secret:string)
-	{
-		this.secret$ = secret;
-	}
-
 	public connected() : boolean
 	{
 		return(this.conn$ != null);
@@ -108,21 +102,12 @@ export class Connection extends BaseConnection
 		return(this.running$);
 	}
 
-	public async connect(username?:string, password?:string) : Promise<boolean>
+	public async connect(username?:string, password?:string, method?:string, custom?:Map<string,any>) : Promise<boolean>
 	{
 		this.touched$ = null;
 		this.tmowarn$ = false;
 
-		if (username) this.username = username;
-		if (password) this.password = password;
-
 		let scope:string = null;
-
-		let method:string = "database";
-		if (this.secret$) method = "token";
-
-		let secret:string = this.password;
-		if (this.secret$) secret = this.secret$;
 
 		switch(this.scope)
 		{
@@ -131,15 +116,26 @@ export class Connection extends BaseConnection
 			case ConnectionScope.transactional: scope = "transaction"; break;
 		}
 
+		if (!method)
+			method = "database";
+
 		let payload:any =
 		{
 			"scope": scope,
-			"auth.method": method,
-			"auth.secret": secret
+			"auth.method": method
 		};
 
 		if (username)
 			payload.username = username;
+
+		if (password)
+			payload["auth.secret"] = password;
+
+		if (custom)
+		{
+			custom.forEach((value,name) =>
+			  {payload[name] = value})
+		}
 
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.get().showLoading("Connecting");
@@ -627,7 +623,7 @@ export class Connection extends BaseConnection
 	public async execute(patch:boolean, sql:SQLRest) : Promise<Response>
 	{
 		let response:any = null;
-		
+
 		let trxstart:boolean =
 			this.modified$ == null && this.transactional;
 

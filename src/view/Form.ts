@@ -322,7 +322,7 @@ export class Form implements EventListenerObject
 
 			let modal:boolean = false;
 
-			if (backing.wasCalled && preform.parent == backing.parent)
+			if (backing.wasCalled && preform?.parent == backing.parent)
 				modal = true;
 
 			if (!modal)

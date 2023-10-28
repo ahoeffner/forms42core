@@ -765,7 +765,6 @@ export class Connection extends BaseConnection
 
 			if (this.touched && !this.modified)
 			{
-				console.log((new Date()).getTime()-this.touched.getTime()+" > "+(1000 * Connection.CONNTIMEOUT))
 				if ((new Date()).getTime() - this.touched.getTime() > 1000 * Connection.CONNTIMEOUT)
 				{
 					await this.rollback();

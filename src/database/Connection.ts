@@ -44,7 +44,9 @@ export class Connection extends BaseConnection
 	private authmethod$:string = null;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
+	public static MAXLOCKS:number = 32;
 	public static TRXTIMEOUT:number = 240;
+	public static LOCKTIMEOUT:number = 120;
 	public static CONNTIMEOUT:number = 120;
 
 
@@ -66,6 +68,11 @@ export class Connection extends BaseConnection
 	public get locks() : number
 	{
 		return(this.locks$);
+	}
+
+	public set locks(locks:number)
+	{
+		this.locks$ = locks;
 	}
 
 	public get scope() : ConnectionScope
@@ -166,6 +173,10 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.conn$ = response.session;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
+
+		if (this.keepalive$ > 4/5*Connection.LOCKTIMEOUT*1000)
+			this.keepalive$ = 4/5*Connection.LOCKTIMEOUT*1000;
+
 		await FormEvents.raise(FormEvent.AppEvent(EventType.Connect));
 
 		if (!this.running$)
@@ -742,12 +753,29 @@ export class Connection extends BaseConnection
 		if (response["session"])
 			this.conn$ = response.session;
 
+		let idle:number = ((new Date()).getTime() - this.modified.getTime())/1000;
+
+		if (this.scope != ConnectionScope.stateless)
+		{
+			if (this.locks >= Connection.MAXLOCKS)
+			{
+				if (!this.tmowarn$)
+				{
+					this.tmowarn = true;
+					Alert.warning("Maximum number of locks reached. Transaction will be rolled back in "+Connection.TRXTIMEOUT+" seconds","Database Connection");
+				}
+				else
+				{
+					Alert.warning("Transaction is being rolled back","Database Connection");
+					await FormBacking.rollback();
+				}
+			}
+		}
+
 		if (this.scope == ConnectionScope.transactional)
 		{
 			if (this.modified)
 			{
-				let idle:number = ((new Date()).getTime() - this.modified.getTime())/1000;
-
 				if (idle > Connection.TRXTIMEOUT && this.tmowarn)
 				{
 					Alert.warning("Transaction is being rolled back","Database Connection");

@@ -241,13 +241,41 @@ export class Connection extends BaseConnection
 
 	public async rollback() : Promise<boolean>
 	{
+		if (!this.modified)
+			return(true);
+
 		this.tmowarn = false;
-		this.trx = new Object();
-		this.touched = new Date();
 
 		Logger.log(Type.database,"rollback");
 		let thread:number = FormsModule.get().showLoading("Rolling back");
 		let response:any = await this.post("rollback",{session: this.conn$});
+		FormsModule.get().hideLoading(thread);
+
+		if (response.success)
+		{
+			this.locks$ = 0;
+			this.touched = null;
+			this.modified = null;
+			this.trx = new Object();
+		}
+
+		if (!response.success)
+		{
+			console.error(response);
+			Alert.fatal(response.message,"Database Connection");
+			return(false);
+		}
+
+		return(true);
+	}
+
+	public async release() : Promise<boolean>
+	{
+		this.tmowarn = false;
+
+		Logger.log(Type.database,"rollback");
+		let thread:number = FormsModule.get().showLoading("Releasing connection");
+		let response:any = await this.post("release",{session: this.conn$});
 		FormsModule.get().hideLoading(thread);
 
 		if (response.success)
@@ -802,13 +830,7 @@ export class Connection extends BaseConnection
 			if (this.touched)
 			{
 				idle = ((new Date()).getTime() - this.touched.getTime())/1000;
-
-				if (idle > Connection.CONNTIMEOUT)
-				{
-					await this.rollback();
-					this.touched = null;
-					this.modified = null;
-				}
+				if (idle > Connection.CONNTIMEOUT) await this.release();
 			}
 		}
 

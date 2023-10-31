@@ -72,6 +72,9 @@ export class Connection extends BaseConnection
 
 	public set locks(locks:number)
 	{
+		if (!this.modified)
+			this.modified = new Date();
+
 		this.locks$ = locks;
 	}
 
@@ -753,7 +756,10 @@ export class Connection extends BaseConnection
 		if (response["session"])
 			this.conn$ = response.session;
 
-		let idle:number = ((new Date()).getTime() - this.modified.getTime())/1000;
+		let idle:number = 0;
+
+		if (this.modified)
+			idle = ((new Date()).getTime() - this.modified.getTime())/1000;
 
 		if (this.scope != ConnectionScope.stateless)
 		{
@@ -791,9 +797,13 @@ export class Connection extends BaseConnection
 				}
 			}
 
-			if (this.touched && !this.modified)
+			else
+
+			if (this.touched)
 			{
-				if ((new Date()).getTime() - this.touched.getTime() > 1000 * Connection.CONNTIMEOUT)
+				idle = ((new Date()).getTime() - this.touched.getTime())/1000;
+
+				if (idle > Connection.CONNTIMEOUT)
 				{
 					await this.rollback();
 					this.touched = null;

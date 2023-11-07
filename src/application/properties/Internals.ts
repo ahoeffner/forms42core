@@ -123,9 +123,11 @@ export class Internals
 
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
+		let scope:HTMLElement = view.querySelector('div[name="scope"]');
 		let login:HTMLElement = view.querySelector('div[name="login"]');
 		let loading:HTMLElement = view.querySelector('div[name="loading"]');
 		let body:HTMLElement = view.querySelector('div[name="popup-body"]');
+		let database:HTMLElement = view.querySelector('div[name="database"]');
 		let close:HTMLElement = view.querySelector('div[name="close-button"]');
 		let header:HTMLElement = view.querySelector('div[name="popup-header"]');
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
@@ -145,6 +147,11 @@ export class Internals
 		if (close && Internals.close)
 			close.innerHTML = Internals.close;
 
+		if(scope.hasAttribute("true")) scope.style.display = "grid";
+		else scope.style.display = "none";
+
+		if(database.hasAttribute("true")) database.style.display = "grid";
+		else database.style.display = "none";
 
 		if (login && Internals.PopupStyleLogin) login.style.cssText = Internals.PopupStyleLogin;
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;

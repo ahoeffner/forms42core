@@ -35,6 +35,8 @@ export class UsernamePassword extends Form
     public username:string = null;
     public password:string = null;
 	 public accepted:boolean = false;
+	 public static scope:boolean = false;
+	 public static database:boolean = false;
 
 	constructor()
 	{
@@ -97,11 +99,11 @@ export class UsernamePassword extends Form
 				<label for="password">Password</label>
 				<input type="password" tabindex="1" from="login" name="password"/>
 				<div name="indexing"> 
-					<div name="scope">
+					<div name="scope" `+ UsernamePassword.scope +`>
 						<label for="scope" false>Scope</label>
 						<select tabindex="2" from="login" name="scope"></select>
 					</div>
-					<div name="database">
+					<div name="database" `+ UsernamePassword.database +`>
 						<label for="database">Database</label>
 						<select  tabindex="3" from="login" name="database"></select>
 					</div>

@@ -148,12 +148,18 @@ export class Internals
 		if (close && Internals.close)
 			close.innerHTML = Internals.close;
 
-		if(scope.hasAttribute("true")) scope.style.display = "grid";
-		else scope.style.display = "none";
-
-		if(database.hasAttribute("true")) database.style.display = "grid";
-		else database.style.display = "none";
-
+		if (scope != null)
+		{
+			if (scope.hasAttribute("true")) scope.style.display = "grid";
+			else scope.style.display = "none";
+		}
+			
+		if (database != null)
+		{
+			if (database.hasAttribute("true")) database.style.display = "grid";
+			else database.style.display = "none";
+		}
+	
 		if (login && Internals.PopupStyleLogin) login.style.cssText = Internals.PopupStyleLogin;
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
 		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;

@@ -103,6 +103,7 @@ export class Internals
 		display: flex;
 		font-size:20px;
 		cursor: default;
+		line-height: 15px;
 		position: absolute;
 		justify-content: center;
 	`;

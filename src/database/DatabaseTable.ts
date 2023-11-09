@@ -28,6 +28,7 @@ import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { ConnectionScope } from "./ConnectionScope.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
@@ -324,6 +325,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
+		
+		SQLRestBuilder.assert(sql,this.columns,record);
+
+		if (sql.assertions != null)
+			this.setTypes(sql.assertions);
 
 		let response:any = await this.conn$.lock(sql);
 		let fetched:Record[] = this.parse(response,null);
@@ -392,6 +398,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!await this.describe())
 			return(null);
+
+		let lock:boolean = this.conn$.scope == ConnectionScope.stateless;
+
+		if (this.rowlocking == LockMode.None)
+			lock = false;
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{

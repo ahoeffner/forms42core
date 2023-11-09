@@ -446,6 +446,9 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		if (sql.assertions)
+			payload.assert = this.convert(sql.assertions);
+
 		this.tmowarn = false;
 		this.touched = new Date();
 

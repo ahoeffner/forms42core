@@ -459,7 +459,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
+			console.log(response);
 			return(response);
 		}
 

@@ -325,14 +325,13 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
 		this.setTypes(sql.bindvalues);
-		
+
 		SQLRestBuilder.assert(sql,this.columns,record);
 
 		if (sql.assertions != null)
 			this.setTypes(sql.assertions);
 
 		let response:any = await this.conn$.lock(sql);
-		let fetched:Record[] = this.parse(response,null);
 
 		if (!response.success)
 		{
@@ -340,27 +339,31 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(false);
 		}
 
-		if (fetched.length == 0)
+		if (response.warning)
 		{
-			record.state = RecordState.Deleted;
-			Alert.warning("Record has been deleted by another user","Lock Record");
-			return(false);
-		}
-
-		for (let i = 0; i < this.columns.length; i++)
-		{
-			let lv:any = fetched[0].getValue(this.columns[i]);
-			let cv:any = record.getInitialValue(this.columns[i]);
-
-			if (lv instanceof Date) lv = lv.getTime();
-			if (cv instanceof Date) cv = cv.getTime();
-
-			if (lv != cv)
+			if (response.violations)
 			{
-				console.log("Inconsistency: "+this.columns[i]+" -> '"+lv+"' != '"+cv+"'");
-				Alert.warning("Record has been changed by another user","Lock Record");
-				return(false);
+				let columns:string = "";
+				let violations:any[] = response.violations;
+
+				for (let i = 0; i < violations.length && i < 5; i++)
+				{
+					if (i > 0) columns += ", ";
+					columns += violations[i].column;
+				}
+
+				if (violations.length > 5)
+					columns += ", ...";
+
+				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
 			}
+			else
+			{
+				record.state = RecordState.Deleted;
+				Alert.warning("Record has been deleted by another user","Lock Record");
+			}
+
+			return(false);
 		}
 
 		return(true);

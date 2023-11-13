@@ -167,8 +167,11 @@ export class DataSourceWrapper
 			{
 				for (let i = 0; i < this.cache$.length; i++)
 				{
-					if (!await this.lock(this.cache$[i],true))
+					if (this.cache$[i].dirty)
+					{
+						if (!await this.lock(this.cache$[i],true))
 						this.cache$[i].failed = true;
+					}
 				}
 			}
 
@@ -274,6 +277,12 @@ export class DataSourceWrapper
 	public async lock(record:Record, force:boolean) : Promise<boolean>
 	{
 		this.dirty = true;
+
+		if (record == null || record.block == null)
+		{
+			console.log(record?.toString());
+			return(false);
+		}
 
 		if (record.block.ctrlblk)
 			return(true);

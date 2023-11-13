@@ -448,6 +448,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 				processed.push(rec);
 				rec.response = null;
 
+				console.log("update: "+rec.locked);
+
 				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
@@ -795,6 +797,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			let response:any = {succes: true, rows: [rows[r]]};
 			record.response = new DatabaseResponse(response,this.columns);
 
+			record.cleanup();
 			fetched.push(record);
 		}
 

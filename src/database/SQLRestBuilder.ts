@@ -373,7 +373,7 @@ export class SQLRestBuilder
 		let binds:BindValue[] = [];
 
 		columns.forEach((column) =>
-		{binds.push(new BindValue(column,record.getValue(column)))});
+		{binds.push(new BindValue(column,record.getInitialValue(column)))});
 
 		if (binds.length> 0)
 			sql.assertions = binds;

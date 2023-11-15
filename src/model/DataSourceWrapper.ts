@@ -163,18 +163,6 @@ export class DataSourceWrapper
 					record.state = RecordState.Insert;
 			});
 
-			if (this.source.rowlocking == LockMode.Optimistic)
-			{
-				for (let i = 0; i < this.cache$.length; i++)
-				{
-					if (this.cache$[i].dirty)
-					{
-						if (!await this.lock(this.cache$[i],true))
-						this.cache$[i].failed = true;
-					}
-				}
-			}
-
 			let succces:boolean = true;
 			let records:Record[] = await this.source.flush();
 
@@ -277,12 +265,6 @@ export class DataSourceWrapper
 	public async lock(record:Record, force:boolean) : Promise<boolean>
 	{
 		this.dirty = true;
-
-		if (record == null || record.block == null)
-		{
-			console.log(record?.toString());
-			return(false);
-		}
 
 		if (record.block.ctrlblk)
 			return(true);

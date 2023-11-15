@@ -39,6 +39,7 @@ export class Connection extends BaseConnection
 	private touched$:Date = null;
 	private modified$:Date = null;
 	private keepalive$:number = 20;
+	private nowait$:boolean = false;
 	private running$:boolean = false;
 	private tmowarn$:boolean = false;
 	private authmethod$:string = null;
@@ -175,6 +176,7 @@ export class Connection extends BaseConnection
 
 		this.trx$ = new Object();
 		this.conn$ = response.session;
+		this.nowait$ = response.nowait;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
 		if (this.keepalive$ > 4/5*Connection.LOCKTIMEOUT*1000)
@@ -436,6 +438,9 @@ export class Connection extends BaseConnection
 		let response:any = null;
 		let trxstart:boolean = this.modified == null;
 
+		if (this.nowait$)
+			sql.stmt += " nowait";
+
 		let payload:any =
 		{
 			rows: 1,
@@ -575,6 +580,71 @@ export class Connection extends BaseConnection
 		{
 			console.error(response);
 			Alert.warning(response.message,"Database Connection");
+			return(response);
+		}
+
+		this.tmowarn = false;
+		this.touched = new Date();
+		this.modified = new Date();
+
+		if (trxstart)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
+		return(response);
+	}
+
+	public async lockAndExecute(lock:SQLRest, stmt:SQLRest) : Promise<Response>
+	{
+		let type:string = stmt.stmt.substring(0,6);
+
+		let trxstart:boolean =
+			this.modified == null && this.transactional;
+
+		let lpayload:any =
+		{
+			sql: lock.stmt,
+			dateformat: "UTC",
+			assert: this.convert(lock.assertions),
+			bindvalues: this.convert(lock.bindvalues)
+		};
+
+		let spayload:any =
+		{
+			sql: stmt.stmt,
+			dateformat: "UTC",
+			bindvalues: this.convert(stmt.bindvalues)
+		};
+
+		let payload:any =
+		{
+			script:
+			[
+				{
+					path: "select",
+					payload: lpayload
+				}
+				,
+				{
+					path: type,
+					payload: spayload
+				}
+			]
+			,
+			session: this.conn$
+		}
+
+		Logger.log(Type.database,type);
+		let thread:number = FormsModule.get().showLoading(type);
+		let response:any = await this.post("script",payload);
+		FormsModule.get().hideLoading(thread);
+
+		if (!response.success)
+		{
+			if (response.step > 0)
+			{
+				console.error(response);
+				Alert.warning(response.message,"Database Connection");
+			}
 			return(response);
 		}
 

@@ -151,7 +151,7 @@ export class SQLRestBuilder
 		}
 
 		stmt += filters.asSQL();
-		stmt += " for update nowait";
+		stmt += " for update";
 
 		parsed.stmt = stmt;
 		parsed.bindvalues = filters.getBindValues();

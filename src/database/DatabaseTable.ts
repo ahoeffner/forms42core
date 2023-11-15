@@ -318,55 +318,16 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (!this.rowlocking)
 			return(true);
 
-		let sql:SQLRest = null;
-
 		if (!await this.describe())
 			return(false);
 
-		sql = SQLRestBuilder.lock(this.table$,this.primary$,this.columns,record);
-		this.setTypes(sql.bindvalues);
+		let columns:string[] =
+			this.mergeColumns(this.columns,this.dmlcols$);
 
-		SQLRestBuilder.assert(sql,this.columns,record);
-
-		if (sql.assertions != null)
-			this.setTypes(sql.assertions);
-
+		let sql:SQLRest = this.createLockStmt(record,columns);
 		let response:any = await this.conn$.lock(sql);
 
-		if (!response.success)
-		{
-			Alert.warning("Record is locked by another user. Try again later","Lock Record");
-			return(false);
-		}
-
-		if (response.warning)
-		{
-			if (response.violations)
-			{
-				let columns:string = "";
-				let violations:any[] = response.violations;
-
-				for (let i = 0; i < violations.length && i < 5; i++)
-				{
-					if (i > 0) columns += ", ";
-					columns += violations[i].column;
-				}
-
-				if (violations.length > 5)
-					columns += ", ...";
-
-				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
-			}
-			else
-			{
-				record.state = RecordState.Deleted;
-				Alert.warning("Record has been deleted by another user","Lock Record");
-			}
-
-			return(false);
-		}
-
-		return(true);
+		return(this.checkLock(record,response));
 	}
 
 	/** Undo not flushed changes */
@@ -401,11 +362,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!await this.describe())
 			return(null);
-
-		let lock:boolean = this.conn$.scope == ConnectionScope.stateless;
-
-		if (this.rowlocking == LockMode.None)
-			lock = false;
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
@@ -448,14 +404,29 @@ export class DatabaseTable extends SQLSource implements DataSource
 				processed.push(rec);
 				rec.response = null;
 
-				console.log("update: "+rec.locked);
-
 				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
-				if (sql != null)
+				this.setTypes(sql.bindvalues);
+
+				if (this.rowlocking != LockMode.None && !rec.locked)
 				{
-					this.setTypes(sql.bindvalues);
+					let lock:SQLRest = this.createLockStmt(rec,columns);
+					response = await this.conn$.lockAndExecute(lock,sql);
+
+					let success:boolean = this.checkLock(rec,response);
+
+					this.castResponse(response);
+					rec.response = new DatabaseResponse(response,this.updreturncolumns$);
+
+					if (!success)
+					{
+						await rec.block.wrapper.refresh(rec);
+						await rec.block.view.refresh(rec);
+					}
+				}
+				else
+				{
 					response = await this.conn$.update(sql);
 
 					this.castResponse(response);
@@ -825,6 +796,64 @@ export class DatabaseTable extends SQLSource implements DataSource
 					rows[r][col] = new Date(value);
 			})
 		}
+	}
+
+	private createLockStmt(record:Record, columns:string[]) : SQLRest
+	{
+		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,columns,record);
+		this.setTypes(sql.bindvalues);
+
+		SQLRestBuilder.assert(sql,this.columns,record);
+
+		if (sql.assertions != null)
+			this.setTypes(sql.assertions);
+
+		return(sql);
+	}
+
+	private checkLock(record:Record, response:any) : boolean
+	{
+		record.failed = true;
+
+		if (!response.success)
+		{
+			if (response.violations)
+			{
+				let columns:string = "";
+				let violations:any[] = response.violations;
+
+				for (let i = 0; i < violations.length && i < 5; i++)
+				{
+					if (i > 0) columns += ", ";
+					columns += violations[i].column;
+				}
+
+				if (violations.length > 5)
+					columns += ", ...";
+
+				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
+			}
+			else
+			{
+				if (response.rows?.length == 0)
+				{
+					record.state = RecordState.Deleted;
+					Alert.warning("Record has been deleted by another user","Lock Record");
+				}
+				else
+				{
+					Alert.warning("Record is locked by another user. Try again later","Lock Record");
+					return(false);
+				}
+			}
+
+			return(false);
+		}
+
+		record.locked = true;
+		record.failed = false;
+
+		return(true);
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

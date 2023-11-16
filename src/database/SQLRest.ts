@@ -24,21 +24,21 @@ import { BindValue } from "./BindValue";
 export class SQLRest
 {
 	stmt:string = "";
+	assert:BindValue[];
 	returnclause:boolean;
 	bindvalues:BindValue[];
-	assertions:BindValue[];
 
 	toString() : string
 	{
 		let str = this.stmt;
 
-		if (this.assertions != null && this.assertions.length > 0)
+		if (this.assert != null && this.assert.length > 0)
 		{
 			str += "[";
-			for (let i = 0; i < this.assertions.length; i++)
+			for (let i = 0; i < this.assert.length; i++)
 			{
 				if (i > 0) str += ", ";
-				str += this.assertions[i].toString();
+				str += this.assert[i].toString();
 			}
 			str += "]";
 		}

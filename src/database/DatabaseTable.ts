@@ -363,6 +363,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (!await this.describe())
 			return(null);
 
+		let columns:string[] =
+			this.mergeColumns(this.columns,this.dmlcols$);
+
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
 			let rec:Record = this.dirty$[i];
@@ -374,7 +377,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				processed.push(rec);
 
-				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
 				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
@@ -389,13 +391,25 @@ export class DatabaseTable extends SQLSource implements DataSource
 			if (rec.state == RecordState.Delete)
 			{
 				processed.push(rec);
+				rec.response = null;
+
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
+				let locking:boolean = !rec.locked;
+
+				if (this.rowlocking == LockMode.None)
+					locking = false;
+
+				if (locking)
+					SQLRestBuilder.assert(sql,columns,rec);
+
 				response = await this.conn$.delete(sql);
 
 				this.castResponse(response);
 				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
+
+				this.checkLock(rec,response);
 			}
 
 			else if (rec.state != RecordState.Deleted)
@@ -404,33 +418,26 @@ export class DatabaseTable extends SQLSource implements DataSource
 				processed.push(rec);
 				rec.response = null;
 
-				let columns:string[] = this.mergeColumns(this.columns,this.dmlcols$);
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
 				this.setTypes(sql.bindvalues);
+				let locking:boolean = !rec.locked;
 
-				if (this.rowlocking != LockMode.None && !rec.locked)
+				if (this.rowlocking == LockMode.None)
+					locking = false;
+
+				if (locking)
+					SQLRestBuilder.assert(sql,columns,rec);
+
+				response = await this.conn$.update(sql);
+
+				this.castResponse(response);
+				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
+
+				if (!this.checkLock(rec,response))
 				{
-					let lock:SQLRest = this.createLockStmt(rec,columns);
-					response = await this.conn$.lockAndExecute(lock,sql);
-
-					let success:boolean = this.checkLock(rec,response);
-
-					this.castResponse(response);
-					rec.response = new DatabaseResponse(response,this.updreturncolumns$);
-
-					if (!success)
-					{
-						await rec.block.wrapper.refresh(rec);
-						await rec.block.view.refresh(rec);
-					}
-				}
-				else
-				{
-					response = await this.conn$.update(sql);
-
-					this.castResponse(response);
-					rec.response = new DatabaseResponse(response,this.updreturncolumns$);
+					await rec.block.wrapper.refresh(rec);
+					await rec.block.view.refresh(rec);
 				}
 			}
 		}
@@ -805,8 +812,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		SQLRestBuilder.assert(sql,this.columns,record);
 
-		if (sql.assertions != null)
-			this.setTypes(sql.assertions);
+		if (sql.assert != null)
+			this.setTypes(sql.assert);
 
 		return(sql);
 	}

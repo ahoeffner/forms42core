@@ -376,6 +376,6 @@ export class SQLRestBuilder
 		{binds.push(new BindValue(column,record.getInitialValue(column)))});
 
 		if (binds.length> 0)
-			sql.assertions = binds;
+			sql.assert = binds;
 	}
 }

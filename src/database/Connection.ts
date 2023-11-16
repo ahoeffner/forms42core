@@ -451,8 +451,8 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
-		if (sql.assertions)
-			payload.assert = this.convert(sql.assertions);
+		if (sql.assert)
+			payload.assert = this.convert(sql.assert);
 
 		this.tmowarn = false;
 		this.touched = new Date();
@@ -464,8 +464,11 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.log(response);
-			return(response);
+			if (response.assert == null)
+			{
+				console.log(response);
+				return(response);
+			}
 		}
 
 		this.locks$++;
@@ -568,6 +571,9 @@ export class Connection extends BaseConnection
 		if (sql.returnclause)
 			payload.returning = true;
 
+		if (sql.assert)
+			payload.assert = this.convert(sql.assert);
+
 		this.tmowarn = false;
 		this.touched = new Date();
 
@@ -576,16 +582,21 @@ export class Connection extends BaseConnection
 		let response:any = await this.post("update",payload);
 		FormsModule.get().hideLoading(thread);
 
+		console.log(JSON.stringify(response));
+
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
-			return(response);
+			if (response.assert == null)
+			{
+				console.error(response);
+				return(response);
+			}
 		}
 
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
+		if (sql.assert) this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -604,7 +615,7 @@ export class Connection extends BaseConnection
 		{
 			sql: lock.stmt,
 			dateformat: "UTC",
-			assert: this.convert(lock.assertions),
+			assert: this.convert(lock.assert),
 			bindvalues: this.convert(lock.bindvalues)
 		};
 
@@ -648,6 +659,8 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
+
+		this.locks$++;
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
@@ -674,6 +687,9 @@ export class Connection extends BaseConnection
 		if (sql.returnclause)
 			payload.returning = true;
 
+		if (sql.assert)
+			payload.assert = this.convert(sql.assert);
+
 		this.tmowarn = false;
 		this.touched = new Date();
 
@@ -684,14 +700,17 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
-			return(response);
+			if (response.assert == null)
+			{
+				console.error(response);
+				return(response);
+			}
 		}
 
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
+		if (sql.assert) this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));

@@ -26,7 +26,7 @@ import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
-import { Connection } from "../database/Connection.js";
+import { Connection, Step } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { ConnectionScope } from "./ConnectionScope.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
@@ -324,7 +324,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 		let columns:string[] =
 			this.mergeColumns(this.columns,this.dmlcols$);
 
-		let sql:SQLRest = this.createLockStmt(record,columns);
+		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,columns,record);
+		this.setTypes(sql.bindvalues);
+
+		SQLRestBuilder.assert(sql,this.columns,record);
+
+		if (sql.assert != null)
+			this.setTypes(sql.assert);
+
 		let response:any = await this.conn$.lock(sql);
 
 		return(this.checkLock(record,response));
@@ -346,6 +353,133 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	/** Flush changes to backend */
 	public async flush() : Promise<Record[]>
+	{
+		let sql:SQLRest = null;
+		let response:any = null;
+		let processed:Record[] = [];
+
+		if (this.dirty$.length == 0)
+			return([]);
+
+		if (!this.conn$.connected())
+		{
+			Alert.fatal("Not connected","Database Connection");
+			return([]);
+		}
+
+		if (!await this.describe())
+			return(null);
+
+		let columns:string[] =
+		this.mergeColumns(this.columns,this.dmlcols$);
+
+		let records:{step:Step, record:Record}[] = [];
+
+		for (let i = 0; i < this.dirty$.length; i++)
+		{
+			let rec:Record = this.dirty$[i];
+			console.log(rec.getDirty())
+
+			if (rec.failed)
+				continue;
+
+			if (rec.state == RecordState.Insert)
+			{
+				processed.push(rec);
+				rec.response = null;
+
+				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
+				this.setTypes(sql.bindvalues);
+
+				records.push({record:rec,
+				step:
+				{
+					path: "insert",
+					stmt: sql.stmt,
+					assert: sql.assert,
+					bindvalues: sql.bindvalues,
+					retcols: this.insreturncolumns$
+				}
+				});
+			}
+
+			else
+
+			if (rec.state == RecordState.Delete)
+			{
+				processed.push(rec);
+				rec.response = null;
+
+				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
+
+				this.setTypes(sql.bindvalues);
+				let locking:boolean = !rec.locked;
+
+				if (this.rowlocking == LockMode.None)
+					locking = false;
+
+				if (locking)
+					SQLRestBuilder.assert(sql,columns,rec);
+
+				records.push({record:rec,
+				step:
+				{
+					path: "delete",
+					stmt: sql.stmt,
+					assert: sql.assert,
+					bindvalues: sql.bindvalues,
+					retcols: this.delreturncolumns$
+				}
+				});
+			}
+
+			else
+
+			if (rec.state != RecordState.Deleted)
+			{
+				if (rec.getDirty().length == 0)
+				{
+					console.error("untouched ?? "+rec);
+					continue;
+				}
+
+				processed.push(rec);
+				rec.response = null;
+
+				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
+
+				this.setTypes(sql.bindvalues);
+				let locking:boolean = !rec.locked;
+
+				if (this.rowlocking == LockMode.None)
+					locking = false;
+
+				if (locking)
+					SQLRestBuilder.assert(sql,columns,rec);
+
+				records.push({record:rec,
+				step:
+				{
+					path: "update",
+					stmt: sql.stmt,
+					assert: sql.assert,
+					bindvalues: sql.bindvalues,
+					retcols: this.updreturncolumns$
+				}
+				});
+			}
+		}
+
+		let stmts:Step[] = [];
+		records.forEach((record) =>
+		{stmts.push(record.step);})
+
+		this.conn$.batch(stmts);
+
+		return([]);
+	}
+
+	public async flushOld() : Promise<Record[]>
 	{
 		let sql:SQLRest = null;
 		let response:any = null;
@@ -803,19 +937,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 					rows[r][col] = new Date(value);
 			})
 		}
-	}
-
-	private createLockStmt(record:Record, columns:string[]) : SQLRest
-	{
-		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,columns,record);
-		this.setTypes(sql.bindvalues);
-
-		SQLRestBuilder.assert(sql,this.columns,record);
-
-		if (sql.assert != null)
-			this.setTypes(sql.assert);
-
-		return(sql);
 	}
 
 	private checkLock(record:Record, response:any) : boolean

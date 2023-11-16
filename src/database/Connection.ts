@@ -43,6 +43,7 @@ export class Connection extends BaseConnection
 	private running$:boolean = false;
 	private tmowarn$:boolean = false;
 	private authmethod$:string = null;
+	private autocommit$:boolean = false;
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
 	public static MAXLOCKS:number = 32;
@@ -73,6 +74,9 @@ export class Connection extends BaseConnection
 
 	public set locks(locks:number)
 	{
+		if (this.autocommit$)
+			return;
+
 		if (!this.modified)
 			this.modified = new Date();
 
@@ -177,6 +181,7 @@ export class Connection extends BaseConnection
 		this.trx$ = new Object();
 		this.conn$ = response.session;
 		this.nowait$ = response.nowait;
+		this.autocommit$ = response.autocommit;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
 		if (this.keepalive$ > 4/5*Connection.LOCKTIMEOUT*1000)
@@ -596,7 +601,7 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
-		if (sql.assert) this.locks$++;
+		if (sql.assert && !this.autocommit$) this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -604,63 +609,58 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async lockAndExecute(lock:SQLRest, stmt:SQLRest) : Promise<Response>
+	public async batch(stmts:Step[]) : Promise<any[]>
 	{
-		let type:string = stmt.stmt.substring(0,6);
-
 		let trxstart:boolean =
 			this.modified == null && this.transactional;
 
-		let lpayload:any =
+		let request:any[] = [];
+		stmts.forEach((stmt) =>
 		{
-			sql: lock.stmt,
-			dateformat: "UTC",
-			assert: this.convert(lock.assert),
-			bindvalues: this.convert(lock.bindvalues)
-		};
-
-		let spayload:any =
-		{
-			sql: stmt.stmt,
-			dateformat: "UTC",
-			bindvalues: this.convert(stmt.bindvalues)
-		};
-
-		let payload:any =
-		{
-			script:
-			[
+			let step:any =
+			{
+				path: stmt.path,
+				payload:
 				{
-					path: "select",
-					payload: lpayload
+					sql: stmt.stmt,
+					dateformat: "UTC",
+					bindvalues: this.convert(stmt.bindvalues)
 				}
-				,
-				{
-					path: type,
-					payload: spayload
-				}
-			]
-			,
+			}
+
+			if (stmt.retcols?.length > 0)
+				step.payload.returning = true;
+
+			if (stmt.assert)
+				step.payload.assert = this.convert(stmt.assert);
+
+			request.push(step);
+		});
+
+		let batch:any =
+		{
+			batch: request,
 			session: this.conn$
-		}
+		};
 
-		Logger.log(Type.database,type);
-		let thread:number = FormsModule.get().showLoading(type);
-		let response:any = await this.post("script",payload);
+		Logger.log(Type.database,"batch");
+		let thread:number = FormsModule.get().showLoading("batch");
+		let response:any = await this.post("batch",batch);
 		FormsModule.get().hideLoading(thread);
 
-		if (!response.success)
+		let steps:any[] = response.steps;
+
+		for (let i = 0; i < steps.length; i++)
 		{
-			if (response.step > 0)
+			let resp:any = steps[i];
+
+			if (resp.success && !this.autocommit$)
 			{
-				console.error(response);
-				Alert.warning(response.message,"Database Connection");
+				if (stmts[i].path == "update") this.locks$++;
+				else if (stmts[i].path == "delete") this.locks$++;
 			}
-			return(response);
 		}
 
-
-		this.locks$++;
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
@@ -668,7 +668,7 @@ export class Connection extends BaseConnection
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
-		return(response);
+		return(steps);
 	}
 
 	public async delete(sql:SQLRest) : Promise<Response>
@@ -710,7 +710,7 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
-		if (sql.assert) this.locks$++;
+		if (sql.assert && !this.autocommit$) this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -958,4 +958,13 @@ export class Response
 	public rows:any[];
 	public message:string = null;
 	public success:boolean = true;
+}
+
+export class Step
+{
+	public path:string;
+	public stmt:string;
+	public retcols:string[];
+	public assert:BindValue[];
+	public bindvalues:BindValue[];
 }

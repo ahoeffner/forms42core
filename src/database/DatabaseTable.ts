@@ -482,21 +482,21 @@ export class DatabaseTable extends SQLSource implements DataSource
 			if (step.path == "insert")
 			{
 				record.response = new DatabaseResponse(response,this.insreturncolumns$);
-				this.process(record,response);
+				await this.process(record,response);
 			}
 			else if (step.path == "update")
 			{
 				record.response = new DatabaseResponse(response,this.updreturncolumns$);
-				this.process(record,response);
+				await this.process(record,response);
 			}
 			else if (step.path == "delete")
 			{
 				record.response = new DatabaseResponse(response,this.delreturncolumns$);
-				this.process(record,response);
+				await this.process(record,response);
 			}
 		}
 
-		return([]);
+		return(processed);
 	}
 
 	public async flushOld() : Promise<Record[]>
@@ -959,7 +959,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 	}
 
-	private process(record:Record, response:any) : boolean
+	private async process(record:Record, response:any) : Promise<boolean>
 	{
 		record.failed = true;
 
@@ -979,7 +979,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 				if (violations.length > 5)
 					columns += ", ...";
 
-				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
+				await record.block.wrapper.refresh(record);
+				let row:number = record.block.view.displayed(record)?.rownum;
+
+				if (row != null)
+					await record.block.view.refresh(record);
+
+				if (row == null) Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
+				else Alert.warning("Record at row "+row+" has been changed by another user ("+columns+")","Lock Record");
 			}
 			else
 			{
@@ -992,7 +999,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 					}
 					else
 					{
-						Alert.warning("Record is locked by another user. Try again later","Lock Record");
+						await record.block.wrapper.refresh(record);
+						let row:number = record.block.view.displayed(record)?.rownum;
+
+						if (row != null)
+							await record.block.view.refresh(record);
+
+						if (row == null) Alert.warning("Record is locked by another user. Try again later","Lock Record");
+						else Alert.warning("Record at row "+row+" is locked by another user. Try again later","Lock Record");
 					}
 				}
 				else

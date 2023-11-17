@@ -355,7 +355,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 	public async flush() : Promise<Record[]>
 	{
 		let sql:SQLRest = null;
-		let response:any = null;
 		let processed:Record[] = [];
 
 		if (this.dirty$.length == 0)
@@ -378,7 +377,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
 			let rec:Record = this.dirty$[i];
-			console.log(rec.getDirty())
 
 			if (rec.failed)
 				continue;
@@ -438,10 +436,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			if (rec.state != RecordState.Deleted)
 			{
 				if (rec.getDirty().length == 0)
-				{
-					console.error("untouched ?? "+rec);
-					continue;
-				}
+					rec.setDirty();
 
 				processed.push(rec);
 				rec.response = null;
@@ -474,7 +469,32 @@ export class DatabaseTable extends SQLSource implements DataSource
 		records.forEach((record) =>
 		{stmts.push(record.step);})
 
-		this.conn$.batch(stmts);
+		let responses:any[] = await this.conn$.batch(stmts);
+
+		for (let i = 0; i < records.length; i++)
+		{
+			let step:Step = records[i].step;
+			let response:any = responses[i];
+			let record:Record = records[i].record;
+
+			this.castResponse(response);
+
+			if (step.path == "insert")
+			{
+				record.response = new DatabaseResponse(response,this.insreturncolumns$);
+				this.process(record,response);
+			}
+			else if (step.path == "update")
+			{
+				record.response = new DatabaseResponse(response,this.updreturncolumns$);
+				this.process(record,response);
+			}
+			else if (step.path == "delete")
+			{
+				record.response = new DatabaseResponse(response,this.delreturncolumns$);
+				this.process(record,response);
+			}
+		}
 
 		return([]);
 	}
@@ -937,6 +957,57 @@ export class DatabaseTable extends SQLSource implements DataSource
 					rows[r][col] = new Date(value);
 			})
 		}
+	}
+
+	private process(record:Record, response:any) : boolean
+	{
+		record.failed = true;
+
+		if (!response.success)
+		{
+			if (response.violations)
+			{
+				let columns:string = "";
+				let violations:any[] = response.violations;
+
+				for (let i = 0; i < violations.length && i < 5; i++)
+				{
+					if (i > 0) columns += ", ";
+					columns += violations[i].column;
+				}
+
+				if (violations.length > 5)
+					columns += ", ...";
+
+				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
+			}
+			else
+			{
+				if (response.lock)
+				{
+					if (response.rows?.length == 0)
+					{
+						record.state = RecordState.Deleted;
+						Alert.warning("Record has been deleted by another user","Lock Record");
+					}
+					else
+					{
+						Alert.warning("Record is locked by another user. Try again later","Lock Record");
+					}
+				}
+				else
+				{
+					Alert.fatal(response.message,response.path);
+				}
+			}
+
+			return(false);
+		}
+
+		record.failed = false;
+		if (response.lock) record.locked = true;
+
+		return(true);
 	}
 
 	private checkLock(record:Record, response:any) : boolean

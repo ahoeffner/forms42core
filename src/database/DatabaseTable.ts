@@ -435,9 +435,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (rec.state != RecordState.Deleted)
 			{
-				if (rec.getDirty().length == 0)
-					rec.setDirty();
-
 				processed.push(rec);
 				rec.response = null;
 
@@ -961,8 +958,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	private async process(record:Record, response:any) : Promise<boolean>
 	{
-		record.failed = true;
-
 		if (!response.success)
 		{
 			if (response.violations)
@@ -1015,6 +1010,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 				}
 			}
 
+			record.failed = true;
 			return(false);
 		}
 

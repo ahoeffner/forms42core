@@ -168,6 +168,7 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
+				console.log(records[i].failed+" "+records[i])
 				if (!records[i].dirty || records[i].failed)
 					continue;
 

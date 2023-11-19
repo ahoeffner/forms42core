@@ -434,6 +434,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 			if (rec.state != RecordState.Deleted)
 			{
+				if (!rec.dirty)
+					continue;
+				
 				processed.push(rec);
 				rec.response = null;
 

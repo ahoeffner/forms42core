@@ -479,7 +479,6 @@ export class Block
 
 		let record:Record = this.getRecord(recno);
 		await this.wrapper.refresh(record);
-		record.setClean(false);
 
 		this.view.refresh(record);
 	}
@@ -498,7 +497,7 @@ export class Block
 			return(false);
 		}
 
-		if (!await this.view.form.validate())
+		if (!await this.view.validate())
 			return(false);
 
 		if (!this.checkEventTransaction(EventType.PreInsert))

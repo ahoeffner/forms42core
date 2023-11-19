@@ -333,7 +333,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		let response:any = await this.conn$.lock(sql);
 
-		return(this.checkLock(record,response));
+		return(this.process(record,response));
 	}
 
 	/** Undo not flushed changes */
@@ -491,11 +491,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 				await this.process(record,response);
 			}
 		}
-
-		this.fetched$.forEach((rec) =>
-		{
-			console.log(rec.failed+" "+rec.dirty);
-		})
 
 		this.dirty$ = [];
 		return(processed);
@@ -866,6 +861,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			if (response.violations)
 			{
+				record.locked = true;
+
 				let columns:string = "";
 				let violations:any[] = response.violations;
 
@@ -882,10 +879,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 				let row:number = record.block.view.displayed(record)?.rownum;
 
 				if (row != null)
-				{
 					await record.block.view.refresh(record);
-					record.setClean(false);
-				}
 
 				if (row == null) Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
 				else Alert.warning("Record at row "+row+" has been changed by another user ("+columns+")","Lock Record");
@@ -921,56 +915,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 
 			record.failed = true;
-			return(false);
-		}
-
-		record.failed = false;
-		if (response.lock) record.locked = true;
-
-		return(true);
-	}
-
-	private checkLock(record:Record, response:any) : boolean
-	{
-		record.failed = true;
-
-		if (!response.success)
-		{
-			if (response.violations)
-			{
-				let columns:string = "";
-				let violations:any[] = response.violations;
-
-				for (let i = 0; i < violations.length && i < 5; i++)
-				{
-					if (i > 0) columns += ", ";
-					columns += violations[i].column;
-				}
-
-				if (violations.length > 5)
-					columns += ", ...";
-
-				Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
-			}
-			else
-			{
-				if (response.rows?.length == 0)
-				{
-					record.state = RecordState.Deleted;
-					Alert.warning("Record has been deleted by another user","Lock Record");
-				}
-				else
-				{
-					Alert.warning("Record is locked by another user. Try again later","Lock Record");
-					return(false);
-				}
-			}
+			record.locked = false;
 
 			return(false);
 		}
-
-		record.locked = true;
-		record.failed = false;
 
 		return(true);
 	}

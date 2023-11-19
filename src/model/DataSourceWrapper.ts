@@ -168,14 +168,15 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
-				console.log(records[i].failed+" "+records[i])
 				if (!records[i].dirty || records[i].failed)
 					continue;
 
 				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
+					console.log("1 "+records[i].getValue("employee_id"));
 					succces = await this.block.postInsert(records[i]);
+					console.log("2 "+records[i]);
 					records[i].flushing = false;
 
 					if (succces)
@@ -228,6 +229,12 @@ export class DataSourceWrapper
 					}
 				}
 			}
+
+			this.cache$.forEach((record) =>
+			{
+				let id:number = record.getValue("employee_id");
+				if (id) console.log("emp: "+id+" - "+record.dirty+" "+record.failed);
+			});
 
 			return(true);
 		}

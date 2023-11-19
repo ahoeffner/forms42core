@@ -366,7 +366,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		}
 
 		if (!await this.describe())
-			return(null);
+			return([]);
 
 		let columns:string[] =
 		this.mergeColumns(this.columns,this.dmlcols$);

@@ -168,15 +168,18 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
-				if (!records[i].dirty || records[i].failed)
+				if (records[i].failed)
+				{
+					console.log("Failed: "+records[i]);
+				}
+
+				if (!records[i].dirty)
 					continue;
 
 				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
-					console.log("1 "+records[i].getValue("employee_id"));
 					succces = await this.block.postInsert(records[i]);
-					console.log("2 "+records[i]);
 					records[i].flushing = false;
 
 					if (succces)

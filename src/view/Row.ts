@@ -99,6 +99,11 @@ export class Row
 		});
 	}
 
+	public get inserted() : boolean
+	{
+		return(this.status == Status.new || this.status == Status.insert);
+	}
+
 	public setSingleRow() : void
 	{
 		this.rownum$ = 0;

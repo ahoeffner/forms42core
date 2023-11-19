@@ -686,7 +686,13 @@ export class Block
 			return(true);
 
 		if (this.qbe.querymode)
+		{
+			this.form.cancelQueryMode(this);
 			return(true);
+		}
+
+		if (this.view.getCurrentRow().inserted)
+			await this.delete();
 
 		let undo:Record[] = await this.wrapper?.undo();
 

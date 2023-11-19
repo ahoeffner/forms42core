@@ -479,6 +479,7 @@ export class Block
 
 		let record:Record = this.getRecord(recno);
 		await this.wrapper.refresh(record);
+		record.setClean(false);
 
 		this.view.refresh(record);
 	}

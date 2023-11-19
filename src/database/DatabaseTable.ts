@@ -26,12 +26,11 @@ import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Alert } from "../application/Alert.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
-import { Connection, Step } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
-import { ConnectionScope } from "./ConnectionScope.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
+import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
@@ -493,105 +492,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 			}
 		}
 
-		return(processed);
-	}
-
-	public async flushOld() : Promise<Record[]>
-	{
-		let sql:SQLRest = null;
-		let response:any = null;
-		let processed:Record[] = [];
-
-		if (this.dirty$.length == 0)
-			return([]);
-
-		if (!this.conn$.connected())
+		this.fetched$.forEach((rec) =>
 		{
-			Alert.fatal("Not connected","Database Connection");
-			return([]);
-		}
-
-		if (!await this.describe())
-			return(null);
-
-		let columns:string[] =
-			this.mergeColumns(this.columns,this.dmlcols$);
-
-		for (let i = 0; i < this.dirty$.length; i++)
-		{
-			let rec:Record = this.dirty$[i];
-
-			if (rec.failed)
-				continue;
-
-			if (rec.state == RecordState.Insert)
-			{
-				processed.push(rec);
-
-				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				response = await this.conn$.insert(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.insreturncolumns$);
-			}
-
-			else
-
-			if (rec.state == RecordState.Delete)
-			{
-				processed.push(rec);
-				rec.response = null;
-
-				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				let locking:boolean = !rec.locked;
-
-				if (this.rowlocking == LockMode.None)
-					locking = false;
-
-				if (locking)
-					SQLRestBuilder.assert(sql,columns,rec);
-
-				response = await this.conn$.delete(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.delreturncolumns$);
-
-				this.checkLock(rec,response);
-			}
-
-			else if (rec.state != RecordState.Deleted)
-
-			{
-				processed.push(rec);
-				rec.response = null;
-
-				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
-
-				this.setTypes(sql.bindvalues);
-				let locking:boolean = !rec.locked;
-
-				if (this.rowlocking == LockMode.None)
-					locking = false;
-
-				if (locking)
-					SQLRestBuilder.assert(sql,columns,rec);
-
-				response = await this.conn$.update(sql);
-
-				this.castResponse(response);
-				rec.response = new DatabaseResponse(response,this.updreturncolumns$);
-
-				if (!this.checkLock(rec,response))
-				{
-					await rec.block.wrapper.refresh(rec);
-					await rec.block.view.refresh(rec);
-				}
-			}
-		}
+			console.log(rec.failed+" "+rec.dirty);
+		})
 
 		this.dirty$ = [];
 		return(processed);
@@ -978,7 +882,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 				let row:number = record.block.view.displayed(record)?.rownum;
 
 				if (row != null)
+				{
 					await record.block.view.refresh(record);
+					record.setClean(false);
+				}
 
 				if (row == null) Alert.warning("Record has been changed by another user ("+columns+")","Lock Record");
 				else Alert.warning("Record at row "+row+" has been changed by another user ("+columns+")","Lock Record");
@@ -998,7 +905,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 						let row:number = record.block.view.displayed(record)?.rownum;
 
 						if (row != null)
+						{
 							await record.block.view.refresh(record);
+							record.setClean(true);
+						}
 
 						if (row == null) Alert.warning("Record is locked by another user. Try again later","Lock Record");
 						else Alert.warning("Record at row "+row+" is locked by another user. Try again later","Lock Record");

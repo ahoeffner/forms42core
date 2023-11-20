@@ -586,7 +586,13 @@ export class Block
 
 	public set validated(flag:boolean)
 	{
-		this.getRow(this.row).validated = flag;
+		let row:Row = this.getRow(this.row);
+
+		if (flag && row && row.status == Status.new)
+		 row.status = Status.insert;
+
+		if (row)
+			row.validated = flag;
 	}
 
 	public get validated() : boolean

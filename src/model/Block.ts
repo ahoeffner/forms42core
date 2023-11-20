@@ -691,9 +691,6 @@ export class Block
 			return(true);
 		}
 
-		if (this.view.getCurrentRow().inserted)
-			await this.delete();
-
 		let undo:Record[] = await this.wrapper?.undo();
 
 		if (requery)

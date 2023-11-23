@@ -118,6 +118,12 @@ export class Row
 		this.indicators.push(ind);
 	}
 
+	public setIndicatorState(state:string) : void
+	{
+		this.indicators.forEach((ind) =>
+		{ind.element.setAttribute(Properties.Classes.RowState,state);})
+	}
+
 	public activateIndicators(flag:boolean) : void
 	{
 		if (flag && this.indicator$) return;
@@ -369,6 +375,7 @@ export class Row
 
 	public clear() : void
 	{
+		this.setIndicatorState("na");
 		this.activateIndicators(false);
 		this.getFields().forEach((fld) => {fld.clear()});
 	}

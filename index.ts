@@ -7,6 +7,7 @@ export { Alert } from './src/application/Alert.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { QueryTable } from './src/database/QueryTable.js';
+export { Step as SQLStep } from './src/database/Connection.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 export { ConnectionScope } from './src/database/ConnectionScope.js';

@@ -20,7 +20,7 @@
 */
 
 import { ConnectionScope } from "../database/ConnectionScope.js";
-import { Connection as RestConnection } from "../database/Connection.js";
+import { Connection as RestConnection, Step } from "../database/Connection.js";
 
 /**
  * Connection to DatabaseJS.
@@ -141,5 +141,17 @@ export class DatabaseConnection
 	public async rollback() : Promise<boolean>
 	{
 		return(this.conn$.rollback());
+	}
+
+	/** Execute script */
+	public async script(steps:Step[], attributes?:{name:string, value:object}[]) : Promise<any>
+	{
+		return(this.conn$.script(steps,attributes));
+	}
+
+	/** Execute batch */
+	public async batch(stmts:Step[], attributes?:{name:string, value:object}[]) : Promise<any[]>
+	{
+		return(this.conn$.batch(stmts,attributes));
 	}
 }

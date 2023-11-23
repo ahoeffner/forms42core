@@ -465,7 +465,13 @@ export class Block
 		let row:Row = this.displayed(record);
 
 		if (!baserec) row = this.getRow(-1);
-		if (row != null) this.recprops$.apply(row,record,field);
+
+		if (row)
+		{
+			if (record.failed) row.setIndicatorState("observe");
+			else row.setIndicatorState(Status[row.status]);
+			this.recprops$.apply(row,record,field);
+		}
 	}
 
 	public async setEventTransaction(event:EventType) : Promise<void>

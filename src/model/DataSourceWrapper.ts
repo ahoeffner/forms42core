@@ -168,14 +168,6 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
-				if (records[i].failed)
-				{
-					console.log("Failed: "+records[i]);
-				}
-
-				if (!records[i].dirty)
-					continue;
-
 				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
@@ -197,7 +189,12 @@ export class DataSourceWrapper
 					records[i].flushing = true;
 					succces = await this.block.postUpdate(records[i]);
 					records[i].flushing = false;
-					if (succces) records[i].setClean(false);
+
+					if (succces)
+					{
+						this.block.view.setAttributes(records[i]);
+						records[i].setClean(false);
+					}
 				}
 
 				else
@@ -232,12 +229,6 @@ export class DataSourceWrapper
 					}
 				}
 			}
-
-			this.cache$.forEach((record) =>
-			{
-				let id:number = record.getValue("employee_id");
-				if (id) console.log("emp: "+id+" - "+record.dirty+" "+record.failed);
-			});
 
 			return(true);
 		}

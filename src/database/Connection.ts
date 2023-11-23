@@ -74,6 +74,9 @@ export class Connection extends BaseConnection
 
 	public set locks(locks:number)
 	{
+		let trxstart:boolean =
+			this.modified == null && this.transactional;
+
 		if (this.autocommit$)
 			return;
 
@@ -81,6 +84,9 @@ export class Connection extends BaseConnection
 			this.modified = new Date();
 
 		this.locks$ = locks;
+
+		if (trxstart)
+			FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 	}
 
 	public get scope() : ConnectionScope
@@ -609,7 +615,72 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	public async batch(stmts:Step[]) : Promise<any[]>
+	public async script(steps:Step[], attributes?:{name:string, value:object}[]) : Promise<any>
+	{
+		let request:any[] = [];
+		steps.forEach((stmt) =>
+		{
+			let step:any =
+			{
+				path: stmt.path,
+				payload:
+				{
+					sql: stmt.stmt,
+					dateformat: "UTC"
+				}
+			}
+
+			if (stmt.retcols?.length > 0)
+				step.payload.returning = true;
+
+			if (stmt.attributes)
+			{
+				stmt.attributes.forEach((entry) =>
+				{step.payload[entry.name] = entry.value;})
+			}
+
+			if (stmt.assert)
+				step.payload.assert = this.convert(stmt.assert);
+
+			step.payload.bindvalues = this.convert(stmt.bindvalues);
+
+			request.push(step);
+		});
+
+		let script:any =
+		{
+			script: request,
+			session: this.conn$
+		};
+
+		if (attributes)
+		{
+			attributes.forEach((entry) =>
+			{script[entry.name] = entry.value;})
+		}
+
+		Logger.log(Type.database,"script");
+		let thread:number = FormsModule.get().showLoading("script");
+		let response:any = await this.post("script",script);
+		FormsModule.get().hideLoading(thread);
+
+		this.tmowarn = false;
+		this.touched = new Date();
+		this.modified = new Date();
+
+		if (!response.success)
+		{
+			if (response.assert == null)
+			{
+				console.error(response);
+				return(response);
+			}
+		}
+
+		return(response);
+	}
+
+	public async batch(stmts:Step[], attributes?:{name:string, value:object}[]) : Promise<any[]>
 	{
 		let trxstart:boolean =
 			this.modified == null && this.transactional;
@@ -623,16 +694,23 @@ export class Connection extends BaseConnection
 				payload:
 				{
 					sql: stmt.stmt,
-					dateformat: "UTC",
-					bindvalues: this.convert(stmt.bindvalues)
+					dateformat: "UTC"
 				}
 			}
 
 			if (stmt.retcols?.length > 0)
 				step.payload.returning = true;
 
+			if (stmt.attributes)
+			{
+				stmt.attributes.forEach((entry) =>
+				{step.payload[entry.name] = entry.value;})
+			}
+
 			if (stmt.assert)
 				step.payload.assert = this.convert(stmt.assert);
+
+			step.payload.bindvalues = this.convert(stmt.bindvalues);
 
 			request.push(step);
 		});
@@ -643,11 +721,18 @@ export class Connection extends BaseConnection
 			session: this.conn$
 		};
 
+		if (attributes)
+		{
+			attributes.forEach((entry) =>
+			{batch[entry.name] = entry.value;})
+		}
+
 		Logger.log(Type.database,"batch");
 		let thread:number = FormsModule.get().showLoading("batch");
 		let response:any = await this.post("batch",batch);
 		FormsModule.get().hideLoading(thread);
 
+		let locks:number = this.locks$;
 		let steps:any[] = response.steps;
 
 		for (let i = 0; i < steps.length; i++)
@@ -665,7 +750,7 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 		this.modified = new Date();
 
-		if (trxstart)
+		if (trxstart && this.locks$ > locks)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
 		return(steps);
@@ -967,4 +1052,5 @@ export class Step
 	public retcols:string[];
 	public assert:BindValue[];
 	public bindvalues:BindValue[];
+	public attributes?:{name:string, value:any}[];
 }

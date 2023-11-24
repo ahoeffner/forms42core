@@ -348,6 +348,12 @@ export class Connection extends BaseConnection
 			cursor.bindvalues = sql.bindvalues;
 		}
 
+		if (sql.attributes)
+		{
+			sql.attributes.forEach((entry) =>
+			{payload[entry.name] = entry.value;})
+		}
+
 		Logger.log(Type.database,"select");
 		let thread:number = FormsModule.get().showLoading("Querying");
 		let response:any = await this.post("select",payload);
@@ -462,6 +468,12 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		if (sql.attributes)
+		{
+			sql.attributes.forEach((entry) =>
+			{payload[entry.name] = entry.value;})
+		}
+
 		if (sql.assert)
 			payload.assert = this.convert(sql.assert);
 
@@ -507,6 +519,12 @@ export class Connection extends BaseConnection
 			bindvalues: this.convert(sql.bindvalues)
 		};
 
+		if (sql.attributes)
+		{
+			sql.attributes.forEach((entry) =>
+			{payload[entry.name] = entry.value;})
+		}
+
 		this.tmowarn = false;
 		this.touched = new Date();
 
@@ -540,6 +558,12 @@ export class Connection extends BaseConnection
 
 		if (sql.returnclause)
 			payload.returning = true;
+
+		if (sql.attributes)
+		{
+			sql.attributes.forEach((entry) =>
+			{payload[entry.name] = entry.value;})
+		}
 
 		this.tmowarn = false;
 		this.touched = new Date();
@@ -582,6 +606,12 @@ export class Connection extends BaseConnection
 		if (sql.returnclause)
 			payload.returning = true;
 
+		if (sql.attributes)
+		{
+			sql.attributes.forEach((entry) =>
+			{payload[entry.name] = entry.value;})
+		}
+
 		if (sql.assert)
 			payload.assert = this.convert(sql.assert);
 
@@ -592,8 +622,6 @@ export class Connection extends BaseConnection
 		let thread:number = FormsModule.get().showLoading("Update");
 		let response:any = await this.post("update",payload);
 		FormsModule.get().hideLoading(thread);
-
-		console.log(JSON.stringify(response));
 
 		if (!response.success)
 		{
@@ -630,7 +658,7 @@ export class Connection extends BaseConnection
 				}
 			}
 
-			if (stmt.retcols?.length > 0)
+			if (stmt.returnclause)
 				step.payload.returning = true;
 
 			if (stmt.attributes)
@@ -698,7 +726,7 @@ export class Connection extends BaseConnection
 				}
 			}
 
-			if (stmt.retcols?.length > 0)
+			if (stmt.returnclause)
 				step.payload.returning = true;
 
 			if (stmt.attributes)
@@ -1045,12 +1073,7 @@ export class Response
 	public success:boolean = true;
 }
 
-export class Step
+export class Step extends SQLRest
 {
 	public path:string;
-	public stmt:string;
-	public retcols:string[];
-	public assert:BindValue[];
-	public bindvalues:BindValue[];
-	public attributes?:{name:string, value:any}[];
 }

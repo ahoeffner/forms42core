@@ -375,6 +375,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
+			let retcols:string[] = [];
 			let rec:Record = this.dirty$[i];
 
 			if (rec.failed)
@@ -384,6 +385,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				processed.push(rec);
 				rec.response = null;
+
+				retcols = this.insertReturnColumns;
+				if (retcols == null) retcols = [];
 
 				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
 				this.setTypes(sql.bindvalues);
@@ -395,7 +399,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 					stmt: sql.stmt,
 					assert: sql.assert,
 					bindvalues: sql.bindvalues,
-					retcols: this.insreturncolumns$
+					returnclause: retcols.length > 0
 				}
 				});
 			}
@@ -406,6 +410,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				processed.push(rec);
 				rec.response = null;
+
+				retcols = this.delreturncolumns$;
+				if (retcols == null) retcols = [];
 
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 
@@ -425,7 +432,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 					stmt: sql.stmt,
 					assert: sql.assert,
 					bindvalues: sql.bindvalues,
-					retcols: this.delreturncolumns$
+					returnclause: retcols.length > 0
 				}
 				});
 			}
@@ -436,9 +443,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				if (!rec.dirty)
 					continue;
-				
+
 				processed.push(rec);
 				rec.response = null;
+
+				retcols = this.delreturncolumns$;
+				if (retcols == null) retcols = [];
 
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 
@@ -458,7 +468,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 					stmt: sql.stmt,
 					assert: sql.assert,
 					bindvalues: sql.bindvalues,
-					retcols: this.updreturncolumns$
+					returnclause: retcols.length > 0
 				}
 				});
 			}

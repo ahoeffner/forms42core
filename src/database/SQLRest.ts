@@ -23,10 +23,11 @@ import { BindValue } from "./BindValue";
 
 export class SQLRest
 {
-	stmt:string = "";
-	assert:BindValue[];
-	returnclause:boolean;
-	bindvalues:BindValue[];
+	public stmt:string = "";
+	public assert:BindValue[];
+	public returnclause?:boolean;
+	public bindvalues:BindValue[];
+	public attributes?:{name:string, value:any}[];
 
 	toString() : string
 	{

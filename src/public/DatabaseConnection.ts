@@ -21,6 +21,7 @@
 
 import { ConnectionScope } from "../database/ConnectionScope.js";
 import { Connection as RestConnection, Step } from "../database/Connection.js";
+import { SQLRest } from "../database/SQLRest.js";
 
 /**
  * Connection to DatabaseJS.
@@ -141,6 +142,24 @@ export class DatabaseConnection
 	public async rollback() : Promise<boolean>
 	{
 		return(this.conn$.rollback());
+	}
+
+	/** Execute insert */
+	public async insert(payload:SQLRest) : Promise<any>
+	{
+		return(this.conn$.insert(payload));
+	}
+
+	/** Execute update */
+	public async update(payload:SQLRest) : Promise<any>
+	{
+		return(this.conn$.update(payload));
+	}
+
+	/** Execute delete */
+	public async delete(payload:SQLRest) : Promise<any>
+	{
+		return(this.conn$.delete(payload));
 	}
 
 	/** Execute script */

@@ -44,7 +44,6 @@ export enum ScrollDirection
 export interface ClassNames
 {
 	Invalid:string;
-	RowState:string;
 	RowIndicator:string;
 	FilterIndicator:string;
 }
@@ -82,9 +81,8 @@ export class Properties
 	public static Classes:ClassNames =
 	{
 		Invalid: "invalid",
-		RowState: "row-state",
-		RowIndicator:"row-indicator",
-		FilterIndicator:"filter-indicator"
+		RowIndicator:"active",
+		FilterIndicator:"active"
 	};
 
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;

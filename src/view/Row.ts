@@ -120,8 +120,22 @@ export class Row
 
 	public setIndicatorState(state:string) : void
 	{
+		let mode:string = "";
 		this.indicators.forEach((ind) =>
-		{ind.element.setAttribute(Properties.Classes.RowState,state);})
+		{
+			switch(this.status)
+			{
+				case Status.na : mode = "na"; break;
+				case Status.qbe : mode = "query"; break;
+				case Status.new : mode = "insert"; break;
+				case Status.insert : mode = "insert"; break;
+				case Status.update : mode = "update"; break;
+				case Status.delete : mode = "deleted"; break;
+			}
+
+			ind.element.setAttribute("mode",mode);
+			ind.element.setAttribute("state",state);
+		})
 	}
 
 	public activateIndicators(flag:boolean) : void

@@ -25,6 +25,7 @@ import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
 import { EventType } from "../control/events/EventType.js";
+import { FlushStrategy } from "../application/FormsModule.js";
 import { DataSource, LockMode } from "./interfaces/DataSource.js";
 
 export class DataSourceWrapper
@@ -402,7 +403,7 @@ export class DataSourceWrapper
 			}
 		}
 
-		if (!this.source.transactional)
+		if (this.block?.interface.flushStrategy == FlushStrategy.Row)
 			success = await this.flush();
 
 		return(success);

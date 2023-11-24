@@ -43,6 +43,7 @@ import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
 export class FormsModule
 {
 	private root$:HTMLElement;
+	private flush$:FlushStrategy;
 	private showurl$:boolean = true;
 	private static instance:FormsModule;
 
@@ -78,6 +79,21 @@ export class FormsModule
 	public set showurl(flag:boolean)
 	{
 		this.showurl$ = flag;
+	}
+
+	/** Flush when leaving row or block */
+	public get defaultFlushStrategy() : FlushStrategy
+	{
+		if (this.flush$ == null)
+			this.flush$ = FlushStrategy.Block;
+
+		return(this.flush$);
+	}
+
+	/** Flush when leaving row or block */
+	public set defaultFlushStrategy(strategy:FlushStrategy)
+	{
+		this.flush$ = strategy;
 	}
 
 	/** The root element to which 'popup' forms will be added (default document.body) */
@@ -288,4 +304,10 @@ export class FormsModule
 	{
 		return(FormEvents.addListener(form,this,method,filter));
 	}
+}
+
+export enum FlushStrategy
+{
+	Row,
+	Block
 }

@@ -4,6 +4,7 @@ export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { Key } from './src/model/relations/Key.js';
 export { Alert } from './src/application/Alert.js';
+export { SQLRest } from './src/database/SQLRest.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
 export { QueryTable } from './src/database/QueryTable.js';

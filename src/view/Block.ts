@@ -468,8 +468,12 @@ export class Block
 
 		if (row)
 		{
-			if (record.failed) row.setIndicatorState("observe");
-			else row.setIndicatorState(Status[row.status]);
+			if (baserec)
+			{
+				if (record.failed) row.setIndicatorState("observe");
+				else row.setIndicatorState(RecordState[record.state]);
+			}
+
 			this.recprops$.apply(row,record,field);
 		}
 	}

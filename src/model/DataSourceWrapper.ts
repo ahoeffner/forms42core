@@ -403,7 +403,7 @@ export class DataSourceWrapper
 			}
 		}
 
-		if (this.block?.interface.flushStrategy == FlushStrategy.Row)
+		if (success && this.block?.interface.flushStrategy == FlushStrategy.Row)
 			success = await this.flush();
 
 		return(success);

@@ -469,10 +469,7 @@ export class Block
 		if (row)
 		{
 			if (baserec)
-			{
-				if (record.failed) row.setIndicatorState("observe");
-				else row.setIndicatorState(RecordState[record.state]);
-			}
+				row.setIndicatorState(RecordState[record.state],record.failed);
 
 			this.recprops$.apply(row,record,field);
 		}

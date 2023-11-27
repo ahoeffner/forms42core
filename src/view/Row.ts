@@ -118,7 +118,7 @@ export class Row
 		this.indicators.push(ind);
 	}
 
-	public setIndicatorState(state:string) : void
+	public setIndicatorState(state:string,failed:boolean) : void
 	{
 		let mode:string = "";
 		this.indicators.forEach((ind) =>
@@ -135,6 +135,9 @@ export class Row
 
 			ind.element.setAttribute("mode",mode);
 			ind.element.setAttribute("state",state);
+
+			if (failed) ind.element.classList.add("failed");
+			else ind.element.classList.remove("failed");
 		})
 	}
 
@@ -389,8 +392,8 @@ export class Row
 
 	public clear() : void
 	{
-		this.setIndicatorState("na");
 		this.activateIndicators(false);
+		this.setIndicatorState("na",false);
 		this.getFields().forEach((fld) => {fld.clear()});
 	}
 

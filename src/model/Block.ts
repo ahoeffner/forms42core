@@ -480,6 +480,7 @@ export class Block
 		let record:Record = this.getRecord(recno);
 		await this.wrapper.refresh(record);
 
+		record.failed = false;
 		this.view.refresh(record);
 	}
 

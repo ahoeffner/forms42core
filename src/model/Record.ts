@@ -134,14 +134,12 @@ export class Record
 		this.initial$ = [];
 		this.dirty$.clear();
 		this.locked$ = false;
-		this.failed$ = false;
 	}
 
 	public setClean(release:boolean) : void
 	{
 		this.initial$ = [];
 		this.dirty$.clear();
-		this.failed$ = false;
 		if (release) this.locked$ = false;
 		this.initial$.push(...this.values$);
 	}

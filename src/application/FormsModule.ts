@@ -139,13 +139,6 @@ export class FormsModule
 		return(Components.classmap.get(path.toLowerCase()));
 	}
 
-	/** Parse a given Element to find and process FutureForms elements */
-	public static parse(doc?:Element) : void
-	{
-		if (doc == null) doc = document.body;
-		Framework.parse(this,doc);
-	}
-
 	/** Update the internal KeyMap based on a new KeyMap */
 	public static updateKeyMap(map:Class<KeyMap>) : void
 	{
@@ -291,6 +284,13 @@ export class FormsModule
 		KeyMapping.init();
 		ApplicationHandler.init();
 		FormsModule.instance$ = this;
+	}
+
+	/** Parse a given Element to find and process FutureForms elements */
+	public parse(doc?:Element) : void
+	{
+		if (doc == null) doc = document.body;
+		Framework.parse(this,doc);
 	}
 
 	/** Add an event-listener */

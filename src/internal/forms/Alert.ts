@@ -33,6 +33,7 @@ export class Alert extends Form
 	private created:number = 0;
 	public static WIDTH:number = 300;
 	public static HEIGHT:number = null;
+	public static MAXWORDLEN:number = 32;
 	private closeButton:HTMLElement = null;
 
 	public static BlurStyle:string =
@@ -84,6 +85,23 @@ export class Alert extends Form
 		this.msg = this.parameters.get("message");
 		this.closeButton = view.querySelector('button[name="close"]');
 
+		let split:boolean = false;
+		let words:string[] = this.msg.split(" ");
+		words.forEach((word) => {if (word.length > Alert.MAXWORDLEN) split = true});
+
+		if (split)
+		{
+			this.msg = "";
+
+			for (let i = 0; i < words.length; i++)
+			{
+				if (words[i].length <= Alert.MAXWORDLEN) this.msg += words[i];
+				else this.msg += this.split(words[i]);
+				if (i < words.length - 1) this.msg += " ";
+			}
+		}
+
+
 		let fatal:boolean = this.parameters.get("fatal");
 		let warning:boolean = this.parameters.get("warning");
 
@@ -131,12 +149,27 @@ export class Alert extends Form
 		return(true);
 	}
 
+	private split(word:string) : string
+	{
+		let pos:number = 0;
+		let split:string = "";
+
+		while(pos < word.length)
+		{
+			split += word.substring(pos,pos+Alert.MAXWORDLEN);
+
+			pos += Alert.MAXWORDLEN;
+			if (pos < word.length) split += " ";
+		}
+
+		return(split);
+	}
+
 	public static page:string =
 		`<div id="block"></div>` +
 
 		Internals.header +
 		`
-
 		<div name="popup-body">
 			<div name="popup-alert">
 				<div name="alertlogo"></div>

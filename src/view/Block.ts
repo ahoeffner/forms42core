@@ -464,7 +464,8 @@ export class Block
 	{
 		let row:Row = this.displayed(record);
 
-		if (!baserec) row = this.getRow(-1);
+		if (!baserec)
+			row = this.getRow(-1);
 
 		if (row)
 		{

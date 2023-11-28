@@ -121,6 +121,14 @@ export class Row
 	public setIndicatorState(state:string,failed:boolean) : void
 	{
 		let mode:string = "";
+		if (this.rownum < 0) return;
+
+		if (this.rownum == 1)
+		{
+			console.log(this.rownum+" "+failed);
+			console.log(new Error().stack)
+		}
+
 		this.indicators.forEach((ind) =>
 		{
 			switch(this.status)

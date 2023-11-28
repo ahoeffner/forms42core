@@ -34,10 +34,7 @@ export class Alert
 	/** Alert the user that a fatal event has occured */
 	public static async fatal(msg:string, title:string)
 	{
-		FlightRecorder.add("alert.fatal: "+title+" - "+msg);
-
 		Alert.callform(msg,title,false,true);
-		console.log(title+": "+msg+" "+(new Error()).stack);
 	}
 
 	/** Alert the user that an event causing an warning has occured */
@@ -63,7 +60,10 @@ export class Alert
 		params.set("warning",warning);
 
 		if (fatal)
-			console.error(new Error().stack)
+		{
+			console.log(title+": "+msg+" "+(new Error()).stack);
+			FlightRecorder.add("alert.fatal: "+title+" - "+msg);
+		}
 
 		let curr:Form = FormBacking.getCurrentForm();
 		if (curr) curr.callform(Classes.AlertClass,params);

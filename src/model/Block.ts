@@ -497,7 +497,7 @@ export class Block
 			return(false);
 		}
 
-		if (!await this.view.form.validate())
+		if (!await this.view.validate())
 			return(false);
 
 		if (!this.checkEventTransaction(EventType.PreInsert))
@@ -686,7 +686,10 @@ export class Block
 			return(true);
 
 		if (this.qbe.querymode)
+		{
+			this.form.cancelQueryMode(this);
 			return(true);
+		}
 
 		let undo:Record[] = await this.wrapper?.undo();
 

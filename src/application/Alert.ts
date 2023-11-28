@@ -67,6 +67,6 @@ export class Alert
 
 		let curr:Form = FormBacking.getCurrentForm();
 		if (curr) curr.callform(Classes.AlertClass,params);
-		else FormsModule.get().showform(Classes.AlertClass,params);
+		else FormsModule.showform(Classes.AlertClass,params);
 	}
 }

@@ -107,7 +107,7 @@ export class Alert extends Form
 		let alerts:Alert[] = [];
 		this.created = new Date().getTime();
 
-		FormsModule.get().getRunningForms().forEach((form) =>
+		FormsModule.getRunningForms().forEach((form) =>
 		{
 			if (form instanceof Alert && form != this)
 				alerts.push(form);

@@ -170,9 +170,9 @@ export class Connection extends BaseConnection
 		}
 
 		Logger.log(Type.database,"connect");
-		let thread:number = FormsModule.get().showLoading("Connecting");
+		let thread:number = FormsModule.showLoading("Connecting");
 		let response:any = await this.post("connect",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -231,9 +231,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"commit");
-		let thread:number = FormsModule.get().showLoading("Comitting");
+		let thread:number = FormsModule.showLoading("Comitting");
 		let response:any = await this.post("commit",{session: this.conn$});
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (response.success)
 		{
@@ -260,9 +260,9 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 
 		Logger.log(Type.database,"rollback");
-		let thread:number = FormsModule.get().showLoading("Rolling back");
+		let thread:number = FormsModule.showLoading("Rolling back");
 		let response:any = await this.post("rollback",{session: this.conn$});
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (response.success)
 		{
@@ -287,9 +287,9 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 
 		Logger.log(Type.database,"rollback");
-		let thread:number = FormsModule.get().showLoading("Releasing connection");
+		let thread:number = FormsModule.showLoading("Releasing connection");
 		let response:any = await this.post("release",{session: this.conn$});
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (response.success)
 		{
@@ -355,9 +355,9 @@ export class Connection extends BaseConnection
 		}
 
 		Logger.log(Type.database,"select");
-		let thread:number = FormsModule.get().showLoading("Querying");
+		let thread:number = FormsModule.showLoading("Querying");
 		let response:any = await this.post("select",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -397,9 +397,9 @@ export class Connection extends BaseConnection
 
 		Logger.log(Type.database,"fetch");
 		let payload:any = {session: this.conn$, cursor: cursor.name};
-		let thread:number = FormsModule.get().showLoading("Fetching data");
+		let thread:number = FormsModule.showLoading("Fetching data");
 		let response:any = await this.post("fetch",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -481,9 +481,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"lock");
-		let thread:number = FormsModule.get().showLoading("Locking");
+		let thread:number = FormsModule.showLoading("Locking");
 		response = await this.post("select",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -529,9 +529,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"refresh");
-		let thread:number = FormsModule.get().showLoading("Refresh row");
+		let thread:number = FormsModule.showLoading("Refresh row");
 		response = await this.post("select",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -569,9 +569,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"insert");
-		let thread:number = FormsModule.get().showLoading("Insert");
+		let thread:number = FormsModule.showLoading("Insert");
 		let response:any = await this.post("insert",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -619,9 +619,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"update");
-		let thread:number = FormsModule.get().showLoading("Update");
+		let thread:number = FormsModule.showLoading("Update");
 		let response:any = await this.post("update",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -688,9 +688,9 @@ export class Connection extends BaseConnection
 		}
 
 		Logger.log(Type.database,"script");
-		let thread:number = FormsModule.get().showLoading("script");
+		let thread:number = FormsModule.showLoading("script");
 		let response:any = await this.post("script",script);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		this.tmowarn = false;
 		this.touched = new Date();
@@ -756,9 +756,9 @@ export class Connection extends BaseConnection
 		}
 
 		Logger.log(Type.database,"batch");
-		let thread:number = FormsModule.get().showLoading("batch");
+		let thread:number = FormsModule.showLoading("batch");
 		let response:any = await this.post("batch",batch);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		let locks:number = this.locks$;
 		let steps:any[] = response.steps;
@@ -807,9 +807,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"delete");
-		let thread:number = FormsModule.get().showLoading("Delete");
+		let thread:number = FormsModule.showLoading("Delete");
 		let response:any = await this.post("delete",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -850,10 +850,10 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"call");
-		let thread:number = FormsModule.get().showLoading("Call procedure");
+		let thread:number = FormsModule.showLoading("Call procedure");
 		if (patch) response = await this.patch("call",payload);
 		else 		  response = await this.post("call",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{
@@ -891,10 +891,10 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 
 		Logger.log(Type.database,"execute");
-		let thread:number = FormsModule.get().showLoading("Execute procedure");
+		let thread:number = FormsModule.showLoading("Execute procedure");
 		if (patch) response = await this.patch("call",payload);
 		else 		  response = await this.post("call",payload);
-		FormsModule.get().hideLoading(thread);
+		FormsModule.hideLoading(thread);
 
 		if (!response.success)
 		{

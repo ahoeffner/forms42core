@@ -78,7 +78,7 @@ export class Block
 		this.form$ = form;
 		this.name$ = name?.toLowerCase();
 		FormBacking.getModelBlock(this,true);
-		this.flush$ = FormsModule.get().defaultFlushStrategy;
+		this.flush$ = FormsModule.defaultFlushStrategy;
 		FormBacking.getBacking(form).blocks.set(this.name$,this);
 	}
 

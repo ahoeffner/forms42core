@@ -193,7 +193,7 @@ export class Block
 	public async refresh(offset?:number) : Promise<void>
 	{
 		if (offset == null) offset = 0;
-		await FormBacking.getModelBlock(this).refresh(offset);
+		await FormBacking.getModelBlock(this).refresh(offset,true);
 	}
 
 	/** Is field bound to this block */

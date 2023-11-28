@@ -762,7 +762,7 @@ export class Form implements EventListenerObject
 				if (inst.field.block.empty())
 					return(true);
 
-				await mblock.refresh();
+				await mblock.refresh(0,true);
 				return(true);
 			}
 

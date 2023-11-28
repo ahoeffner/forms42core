@@ -498,7 +498,7 @@ export class Block
 
 		if (!success)
 		{
-			await this.model.refresh();
+			await this.model.refresh(0,false);
 			return(false);
 		}
 

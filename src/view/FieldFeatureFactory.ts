@@ -178,7 +178,7 @@ export class FieldFeatureFactory
 			props.setAttribute("size",Properties.DateFormat.length);
 
 		if (props.hasAttribute("datetime") && !props.hasAttribute("size"))
-			props.setAttribute("size",(Properties.DateFormat+Properties.TimeFormat).length);
+			props.setAttribute("size",(Properties.DateFormat+Properties.TimeFormat).length+1);
 
 		return(props);
 	}

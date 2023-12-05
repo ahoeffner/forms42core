@@ -82,7 +82,7 @@ export class Alert extends Form
 		let view:HTMLElement = this.getView();
 		let title:string = this.parameters.get("title");
 
-		this.msg = this.parameters.get("message");
+		this.msg = this.parameters.get("message")+"";
 		this.closeButton = view.querySelector('button[name="close"]');
 
 		let split:boolean = false;

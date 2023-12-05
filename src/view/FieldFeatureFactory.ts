@@ -174,6 +174,12 @@ export class FieldFeatureFactory
 				props.setAttribute(name,tag.getAttribute(name));
 		});
 
+		if (props.hasAttribute("date"))
+			props.setAttribute("type","text");
+
+		if (props.hasAttribute("datetime"))
+			props.setAttribute("type","text");
+
 		if (props.hasAttribute("date") && !props.hasAttribute("size"))
 			props.setAttribute("size",Properties.DateFormat.length);
 

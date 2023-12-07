@@ -168,7 +168,9 @@ export class FieldDrag implements EventListenerObject
 		let id:string = header.getAttribute("for");
 
 		if (id == null) return(null);
+
 		id = id.replaceAll(".","\\.");
+		id = id.replaceAll(":","\\:");
 
 		let elem:HTMLElement[] = [];
 

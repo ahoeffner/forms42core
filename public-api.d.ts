@@ -9,6 +9,7 @@ export { Connection } from './src/public/Connection.js';
 export { QueryTable } from './src/database/QueryTable.js';
 export { Step as SQLStep } from './src/database/Connection.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { FlushStrategy } from './src/application/FormsModule.js';
 export { FieldProperties } from './src/public/FieldProperties.js';
 export { ConnectionScope } from './src/database/ConnectionScope.js';
 export { DatabaseConnection } from './src/public/DatabaseConnection.js';

@@ -298,7 +298,7 @@ export class Record
 	}
 
 	/** Clear all custom properties for the given record, field and class */
-	public clearProperties(field:string, clazz?:string) : void
+	public clearProperties(field?:string, clazz?:string) : void
 	{
 		field = field?.toLowerCase();
 		clazz = clazz?.toLowerCase();

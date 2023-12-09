@@ -305,9 +305,16 @@ export class Framework
 
 		for(let r=0; r < replace.length; r++)
 		{
+			let elements:HTMLElement[] = [replace[r]];
 			let deep:Implementation = this.getImplementation(replace[r]);
-			if (deep) nested.set(r,this.getReplacement(deep));
-			else nested.set(r,[replace[r]]);
+
+			if (deep)
+			{
+				elements = this.getReplacement(deep);
+				if (elements.length == 0) elements = [replace[r]];
+			}
+
+			nested.set(r,elements);
 		}
 
 		let nodes:HTMLElement[] = [];

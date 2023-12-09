@@ -354,6 +354,7 @@ export class FieldInstance implements FieldEventHandler
 		{
 			if (ignore) this.ignore = "blur";
 			inst.blur();
+			this.ignore = null;
 		}
 	}
 
@@ -375,6 +376,8 @@ export class FieldInstance implements FieldEventHandler
 				event.setFocusEvent();
 				this.field.handleEvent(this,event);
 			}
+
+			this.ignore = null;
 		}
 	}
 

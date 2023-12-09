@@ -433,7 +433,7 @@ export class Block
 		return(props);
 	}
 
-	public setRecordProperties(record:Record, field:string, clazz:string, props:BasicProperties) : void
+	public setRecordProperties(record:Record, field?:string, clazz?:string, props?:BasicProperties) : void
 	{
 		if (props == null)
 		{

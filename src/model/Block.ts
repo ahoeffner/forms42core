@@ -477,9 +477,11 @@ export class Block
 		if (this.querymode) return;
 
 		let record:Record = this.getRecord(offset);
-		await this.wrapper.refresh(record);
+		this.view.setRecordProperties(record);
 
+		await this.wrapper.refresh(record);
 		if (reset) record.failed = false;
+		
 		this.view.refresh(record);
 	}
 

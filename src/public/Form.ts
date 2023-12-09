@@ -54,6 +54,7 @@ import { FormEvent, FormEvents } from '../control/events/FormEvents.js';
 
 export class Form implements CanvasComponent
 {
+	public title:string = "";
 	public moveable:boolean = false;
 	public resizable:boolean = false;
 	public initiated:Date = new Date();

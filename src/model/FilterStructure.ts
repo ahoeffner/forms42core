@@ -251,7 +251,6 @@ export class FilterStructure
 				if (constr.filter.hasChildFilters())
 				{
 					let clause:string = constr.filter.build(clauses);
-					console.log("1 "+constr.opr+" "+clause);
 
 					if (clause != null && clause.length > 0)
 					{
@@ -260,8 +259,6 @@ export class FilterStructure
 						first = false;
 						clauses++;
 					}
-
-					console.log("2 "+stmt);
 				}
 				else
 				{

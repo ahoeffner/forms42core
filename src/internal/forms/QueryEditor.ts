@@ -32,6 +32,7 @@ import { FormEvent } from "../../control/events/FormEvent.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
+import { Between } from "../../../index.js";
 
 /**
  * Form used for creating more advanced query-filters
@@ -144,7 +145,7 @@ export class QueryEditor extends Form
 						for (let i = 0; i < values.length; i++)
 						{
 							let date:Date = values[i];
-							filter.or(Filters.DateInterval(field).Day(date),field+i);
+							filter.or(Filters.DateInterval(field).Day(date).setBindValueName("field"+i),field+i);
 						}
 					}
 					else

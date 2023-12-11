@@ -29,6 +29,7 @@ import { Filter } from "../../model/interfaces/Filter.js";
 import { Properties } from "../../application/Properties.js";
 import { EventType } from "../../control/events/EventType.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
+import { FilterStructure } from "../../model/FilterStructure.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 
@@ -78,7 +79,7 @@ export class QueryEditor extends Form
 		let incl:boolean;
 
 		await this.validate();
-		let filter:Filter = null;
+		let filter:Filter|FilterStructure = null;
 
 		let form:Form = this.parameters.get("form");
 		let block:string = this.parameters.get("block");
@@ -96,6 +97,12 @@ export class QueryEditor extends Form
 
 				if (value != null)
 				{
+					if (value instanceof Date)
+					{
+						if (incl) value = this.last(value);
+						else value = this.first(value);
+					}
+
 					form.setValue(block,field,value);
 					filter = Filters.LessThan(field,incl);
 					filter.constraint = value;
@@ -108,6 +115,12 @@ export class QueryEditor extends Form
 
 				if (value != null)
 				{
+					if (value instanceof Date)
+					{
+						if (incl) value = this.first(value);
+						else value = this.last(value);
+					}
+
 					form.setValue(block,field,value);
 					filter = Filters.GreaterThan(field,incl);
 					filter.constraint = value;
@@ -123,8 +136,22 @@ export class QueryEditor extends Form
 				if (values.length > 0)
 				{
 					form.setValue(block,field,values[0]);
-					filter = Filters.AnyOf(field);
-					filter.constraint = values;
+
+					if (values[0] instanceof Date)
+					{
+						filter = new FilterStructure(field);
+
+						for (let i = 0; i < values.length; i++)
+						{
+							let date:Date = values[i];
+							filter.or(Filters.DateInterval(field).Day(date),field+i);
+						}
+					}
+					else
+					{
+						filter = Filters.AnyOf(field);
+						filter.constraint = values;
+					}
 				}
 				break;
 
@@ -135,6 +162,12 @@ export class QueryEditor extends Form
 
 				if (fr != null && to != null)
 				{
+					if (fr instanceof Date)
+					{
+						fr = this.first(fr);
+						to = this.last(to);
+					}
+
 					form.setValue(block,field,fr);
 					filter = Filters.Between(field,incl);
 					filter.constraint = [fr,to];
@@ -416,6 +449,18 @@ export class QueryEditor extends Form
 		this.fltprops.setClasses("multi-value");
 		this.values.setDefaultProperties(this.fltprops,"value","multi-value");
 		this.fltprops.removeClass("multi-value");
+	}
+
+	private last(date:Date) : Date
+	{
+		date.setHours(23,59,59,999);
+		return(date);
+	}
+
+	private first(date:Date) : Date
+	{
+		date.setHours(0,0,0,0);
+		return(date);
 	}
 
 	public static page:string =

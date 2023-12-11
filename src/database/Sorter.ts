@@ -124,10 +124,10 @@ class Section
 
 	toString() : string
 	{
-		let order:string = "order by";
+		let order:string = "";
 		this.fixed.forEach((clause) => {order += " "+clause});
 		this.order.forEach((clause) => {order += " "+clause});
-		return(order);
+		return(order.substring(1));
 	}
 }
 

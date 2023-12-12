@@ -48,7 +48,7 @@ export class Connection extends BaseConnection
 
 	public static MAXLOCKS:number = 32;
 	public static TRXTIMEOUT:number = 240;
-	public static LOCKTIMEOUT:number = 120;
+	public static LOCKINSPECT:number = 120;
 	public static CONNTIMEOUT:number = 120;
 
 
@@ -190,8 +190,8 @@ export class Connection extends BaseConnection
 		this.autocommit$ = response.autocommit;
 		this.keepalive$ = (+response.timeout * 4/5)*1000;
 
-		if (this.keepalive$ > 4/5*Connection.LOCKTIMEOUT*1000)
-			this.keepalive$ = 4/5*Connection.LOCKTIMEOUT*1000;
+		if (this.keepalive$ > 4/5*Connection.LOCKINSPECT*1000)
+			this.keepalive$ = 4/5*Connection.LOCKINSPECT*1000;
 
 		await FormEvents.raise(FormEvent.AppEvent(EventType.Connect));
 

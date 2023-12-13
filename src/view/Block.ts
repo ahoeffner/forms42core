@@ -548,7 +548,7 @@ export class Block
 		let value:any = inst.getValue();
 
 		if (this.model.getValue(inst.name) == value)
-			return(true);
+			return(inst.valid);
 
 		if (!await this.validateDate(inst.name,value))
 			return(false);

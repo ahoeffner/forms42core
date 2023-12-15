@@ -710,6 +710,12 @@ export class Connection extends BaseConnection
 
 	public async batch(stmts:Step[], attributes?:{name:string, value:object}[]) : Promise<any[]>
 	{
+		if (!stmts || stmts.length == 0)
+		{
+			console.error("Nothing to do");
+			return([]);
+		}
+
 		let trxstart:boolean =
 			this.modified == null && this.transactional;
 
@@ -762,6 +768,12 @@ export class Connection extends BaseConnection
 
 		let locks:number = this.locks$;
 		let steps:any[] = response.steps;
+
+		if (!steps || steps.length == 0)
+		{
+			console.error("No response");
+			return([]);
+		}
 
 		for (let i = 0; i < steps.length; i++)
 		{
@@ -956,6 +968,14 @@ export class Connection extends BaseConnection
 	private async keepalive() : Promise<void>
 	{
 		this.running$ = true;
+		//console.log("keepalive")
+
+		if (this.touched$)
+		{
+			let recent:number = (new Date().getTime()) - this.touched$.getTime();
+			//console.log("keepalive: "+this.keepalive$+" skip: "+(this.keepalive$-recent));
+		}
+
 		await FormsModule.sleep(this.keepalive$);
 
 		if (!this.connected())

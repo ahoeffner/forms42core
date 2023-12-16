@@ -968,15 +968,19 @@ export class Connection extends BaseConnection
 	private async keepalive() : Promise<void>
 	{
 		this.running$ = true;
-		//console.log("keepalive")
+		await FormsModule.sleep(this.keepalive$);
 
 		if (this.touched$)
 		{
-			let recent:number = (new Date().getTime()) - this.touched$.getTime();
-			//console.log("keepalive: "+this.keepalive$+" skip: "+(this.keepalive$-recent));
-		}
+			let inact:number = (new Date()).getTime() - this.touched$.getTime();
 
-		await FormsModule.sleep(this.keepalive$);
+			if (inact < 0.90 * this.keepalive$)
+			{
+				// take a nap before pinging
+				let nap:number = this.keepalive$-inact;
+				await FormsModule.sleep(nap);
+			}
+		}
 
 		if (!this.connected())
 		{

@@ -240,6 +240,9 @@ export class Connection extends BaseConnection
 			this.locks$ = 0;
 			this.touched = null;
 			this.modified = null;
+
+			if (response["session"])
+				this.conn$ = response.session;
 		}
 
 		if (!response.success)
@@ -270,6 +273,9 @@ export class Connection extends BaseConnection
 			this.touched = null;
 			this.modified = null;
 			this.trx = new Object();
+
+			if (response["session"])
+				this.conn$ = response.session;
 		}
 
 		if (!response.success)
@@ -369,6 +375,9 @@ export class Connection extends BaseConnection
 		if (cursor)
 			cursor.eof = !response.more;
 
+		if (response["session"])
+			this.conn$ = response.session;
+
 		return(response);
 	}
 
@@ -411,6 +420,9 @@ export class Connection extends BaseConnection
 		cursor.eof = !response.more;
 		cursor.pos += response.rows.length;
 
+		if (response["session"])
+			this.conn$ = response.session;
+
 		return(response);
 	}
 
@@ -442,6 +454,9 @@ export class Connection extends BaseConnection
 				Alert.warning(response.message,"Database Connection");
 				return(response);
 			}
+
+			if (response["session"])
+				this.conn$ = response.session;
 		}
 
 		return(response);
@@ -499,6 +514,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 		this.modified = new Date();
 
+		if (response["session"])
+			this.conn$ = response.session;
+
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
@@ -539,6 +557,9 @@ export class Connection extends BaseConnection
 			Alert.warning(response.message,"Database Connection");
 			return(response);
 		}
+
+		if (response["session"])
+			this.conn$ = response.session;
 
 		return(response);
 	}
@@ -583,6 +604,9 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
+
+		if (response["session"])
+			this.conn$ = response.session;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -635,7 +659,12 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
-		if (sql.assert && !this.autocommit$) this.locks$++;
+
+		if (response["session"])
+			this.conn$ = response.session;
+
+		if (sql.assert && !this.autocommit$)
+			this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -704,6 +733,9 @@ export class Connection extends BaseConnection
 				return(response);
 			}
 		}
+
+		if (response["session"])
+			this.conn$ = response.session;
 
 		return(response);
 	}
@@ -790,6 +822,9 @@ export class Connection extends BaseConnection
 		this.touched = new Date();
 		this.modified = new Date();
 
+		if (response["session"])
+			this.conn$ = response.session;
+
 		if (trxstart && this.locks$ > locks)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
@@ -835,7 +870,12 @@ export class Connection extends BaseConnection
 		this.tmowarn = false;
 		this.touched = new Date();
 		this.modified = new Date();
-		if (sql.assert && !this.autocommit$) this.locks$++;
+
+		if (response["session"])
+			this.conn$ = response.session;
+
+		if (sql.assert && !this.autocommit$)
+			this.locks$++;
 
 		if (trxstart)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -876,7 +916,12 @@ export class Connection extends BaseConnection
 
 		this.tmowarn = false;
 		this.touched = new Date();
-		if (patch) this.modified = new Date();
+
+		if (patch)
+			this.modified = new Date();
+
+		if (response["session"])
+			this.conn$ = response.session;
 
 		if (trxstart && patch)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -917,7 +962,12 @@ export class Connection extends BaseConnection
 
 		this.tmowarn = false;
 		this.touched = new Date();
-		if (patch) this.modified = new Date();
+
+		if (patch)
+			this.modified = new Date();
+
+		if (response["session"])
+			this.conn$ = response.session;
 
 		if (trxstart && patch)
 			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
@@ -972,14 +1022,11 @@ export class Connection extends BaseConnection
 
 		if (this.touched$)
 		{
-			let inact:number = (new Date()).getTime() - this.touched$.getTime();
+			let now:number = (new Date()).getTime();
+			let next:number = this.touched$.getTime() + this.keepalive$;
 
-			if (inact < 0.90 * this.keepalive$)
-			{
-				// take a nap before pinging
-				let nap:number = this.keepalive$-inact;
-				await FormsModule.sleep(nap);
-			}
+			let nap:number = next - now;
+			if (nap > 1000) await FormsModule.sleep(nap);
 		}
 
 		if (!this.connected())

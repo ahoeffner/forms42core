@@ -34,6 +34,7 @@ import { RowIndicator } from './tags/RowIndicator.js';
 import { FromAttribute } from './tags/FromAttribute.js';
 import { ImplAttribute } from './tags/ImplAttribute.js';
 import { FilterIndicator } from './tags/FilterIndicator.js';
+import { FormTag } from './tags/FormTag.js';
 
 export enum ScrollDirection
 {
@@ -60,12 +61,14 @@ export class Properties
 	public static ParseTags:boolean = true;
 	public static ParseEvents:boolean = true;
 
+	public static IncludeTag:string = "include";
+	public static FormTag:string = "FutureForms";
+
 	public static BindAttr:string = "from";
 	public static RecordModeAttr:string = "mode";
 
 	public static ImplAttr:string = "implementation";
 
-	public static IncludeTag:string = "include";
 	public static ForeachAttr:string = "foreach";
 
 	public static DateDelimitors:string = "./-: ";
@@ -91,9 +94,11 @@ export class Properties
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
 
 	public static TagLibrary : Map<string,Class<Tag>> =
+	
 	new Map<string,Class<Tag>>
 	(
 			[
+				[Properties.FormTag,FormTag],
 				[Properties.IncludeTag,Include]
 			]
 	);

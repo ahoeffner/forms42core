@@ -36,7 +36,6 @@ export class FormTag implements Tag
 			if (attr.name != "form") params.set(attr.name,attr.value);
 		}
 
-		console.log("show form "+form);
 		FormBacking.showform(form,null,params,tag);
       return(tag);
    }

@@ -78,6 +78,8 @@ export { MenuEvent } from './src/control/events/MenuEvent.js';
 export { CustomEvent } from './src/control/events/CustomEvent.js';
 export { EventFilter } from './src/control/events/EventFilter.js';
 export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
+
+export { Alert as AlertImplementation } from './src/application/interfaces/Alert.js';
 export { EventListenerClass as EventListener } from './src/control/events/EventListenerClass.js';
 
 export { Class } from './src/types/Class.js';

@@ -20,6 +20,8 @@
 */
 
 import { Class } from '../types/Class.js';
+import { Alert } from './interfaces/Alert.js';
+import { Alert as AlertImplementation } from './Alert.js';
 
 import { Canvas as CanvasImpl } from './Canvas.js';
 import { Canvas as CanvasType } from './interfaces/Canvas.js';
@@ -88,13 +90,23 @@ export class Properties
 		FilterIndicator:"active"
 	};
 
+	public static get AlertHandler() : Alert
+	{
+		return(AlertImplementation.interceptor);
+	}
+
+	public static set AlertHandler(alert:Alert)
+	{
+		AlertImplementation.interceptor = alert;
+	}
+
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;
 	public static FactoryImplementation:ComponentFactory = new FactoryImpl();
 
 	public static MouseScrollDirection:ScrollDirection = ScrollDirection.Up;
 
 	public static TagLibrary : Map<string,Class<Tag>> =
-	
+
 	new Map<string,Class<Tag>>
 	(
 			[

@@ -196,6 +196,7 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.datamapper != null)
 		{
+			console.log("set "+value)
 			this.datamapper.setValue(Tier.Backend,value);
 			value = this.datamapper.getValue(Tier.Frontend);
 		}
@@ -459,6 +460,7 @@ export class Input implements FieldImplementation, EventListenerObject
 			bubble = true;
 
 			let value:string = this.getElementValue();
+			if (this.datamapper) value = this.datamapper.getValue(Tier.Backend);
 
 			if (value != this.initial)
 			{

@@ -527,14 +527,8 @@ export class BasicProperties
 		if (typeof mapper === "string")
 			mapper = FormsModule.getComponent(mapper);
 
-		else
-
-		if (isClass(mapper))
-			this.mapper$ = factory.createBean(mapper) as DataMapper;
-
-		else
-
-		this.mapper$ = mapper;
+		if (!isClass(mapper)) this.mapper$ = mapper;
+		else this.mapper$ = factory.createBean(mapper) as DataMapper;
 
 		if (this.mapper$ != null && !("getIntermediateValue" in this.mapper$))
 		{

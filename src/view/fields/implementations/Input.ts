@@ -501,6 +501,7 @@ export class Input implements FieldImplementation, EventListenerObject
 		{
 			bubble = false;
 			let value:string = this.getElementValue();
+			if (this.datamapper) value = this.datamapper.getValue(Tier.Backend);
 
 			if (value != this.initial)
 			{

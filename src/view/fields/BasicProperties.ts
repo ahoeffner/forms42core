@@ -557,14 +557,8 @@ export class BasicProperties
 		if (typeof formatter === "string")
 			formatter = FormsModule.getComponent(formatter);
 
-		else
-
-		if (isClass(formatter))
-			this.formatter$ = factory.createBean(formatter) as Formatter;
-
-		else
-
-		this.formatter$ = formatter;
+		if (!isClass(formatter)) this.formatter$ = formatter;
+		else this.formatter$ = factory.createBean(formatter) as Formatter;
 
 		return(this);
 	}
@@ -591,14 +585,8 @@ export class BasicProperties
 			if (!formatter) Alert.fatal("Formatter '"+map+"' is not mapped","Formatters");
 		}
 
-		else
-
-		if (isClass(formatter))
-			this.simpleformatter$ = factory.createBean(formatter) as SimpleFormatter;
-
-		else
-
-		this.simpleformatter$ = formatter;
+		if (!isClass(formatter)) this.simpleformatter$ = formatter;
+		else this.simpleformatter$ = factory.createBean(formatter) as SimpleFormatter;
 
 		return(this);
 	}

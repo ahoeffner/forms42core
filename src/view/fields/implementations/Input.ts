@@ -196,7 +196,6 @@ export class Input implements FieldImplementation, EventListenerObject
 
 		if (this.datamapper != null)
 		{
-			console.log("set "+value)
 			this.datamapper.setValue(Tier.Backend,value);
 			value = this.datamapper.getValue(Tier.Frontend);
 		}

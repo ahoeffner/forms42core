@@ -270,7 +270,7 @@ export class Form implements CanvasComponent
 	/** Set the datasource for the given block */
 	public setDataSource(block:string,source:DataSource) : void
 	{
-		FormBacking.getModelForm(this).setDataSource(block?.toLowerCase(),source);
+		FormBacking.getModelForm(this,true).setDataSource(block?.toLowerCase(),source);
 	}
 
 	/** Get the LOV for the given block and field */

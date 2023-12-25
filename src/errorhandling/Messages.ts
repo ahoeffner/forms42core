@@ -19,7 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Bundle } from "./interfaces/Bundle";
+import { Bundle } from "./interfaces/Bundle.js";
 
 export class Messages
 {
@@ -46,16 +46,8 @@ export class Messages
 			Messages.files$.push(bundle);
 	}
 
-	public static get bundles() : string
+	public static get bundles() : Bundle[]
 	{
-		let str:string = "";
-
-		for (let i = 0; i < Messages.files$.length; i++)
-		{
-			str += Messages.files$[i].name;
-			if (i < Messages.files$.length-1) str += ", ";
-		}
-
-		return(str);
+		return(Messages.files$);
 	}
 }

@@ -21,7 +21,7 @@
 
 export interface Group
 {
-	group:number;
+	grpno:number;
 	title:string;
 	language:string;
 }

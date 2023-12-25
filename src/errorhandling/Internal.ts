@@ -19,9 +19,9 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Bundle } from "./interfaces/Bundle";
-import { Group } from "./interfaces/Group";
-import { Message } from "./interfaces/Message";
+import { Group } from "./interfaces/Group.js";
+import { Bundle } from "./interfaces/Bundle.js";
+import { Message } from "./interfaces/Message.js";
 
 export class Internal implements Bundle
 {
@@ -29,12 +29,12 @@ export class Internal implements Bundle
 
 	public groups: Group[] =
 	[
-		{group: 1, language: "us", title: "Backend"}
+		{grpno: 1, language: "us", title: "Backend"}
 	];
 
 	public messages: Message[] =
 	[
-		{group: 1, errno: 1, message: "", title: ""}
+		{grpno: 1, errno: 1, message: "", title: ""}
 	];
 
 }

@@ -21,7 +21,7 @@
 
 export interface Message
 {
-	group:number;
+	grpno:number;
 	errno:number;
 	title?:string;
 	message:string;

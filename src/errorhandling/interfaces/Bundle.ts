@@ -19,8 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Group } from "./Group";
-import { Message } from "./Message";
+import { Group } from "./Group.js";
+import { Message } from "./Message.js";
 
 export abstract class Bundle
 {

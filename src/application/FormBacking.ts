@@ -21,7 +21,7 @@
 
 import { Alert } from './Alert.js';
 import { Form } from '../public/Form.js';
-import { Class } from '../types/Class.js';
+import { Class } from '../public/Class.js';
 import { Block } from '../public/Block.js';
 import { Properties } from './Properties.js';
 import { FormsModule } from './FormsModule.js';

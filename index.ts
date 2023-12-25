@@ -82,7 +82,7 @@ export { KeyMap, KeyDefinition } from './src/control/events/KeyMap.js';
 export { Alert as AlertImplementation } from './src/application/interfaces/Alert.js';
 export { EventListenerClass as EventListener } from './src/control/events/EventListenerClass.js';
 
-export { Class } from './src/types/Class.js';
+export { Class } from './src/public/Class.js';
 export { FormsModule } from './src/application/FormsModule.js';
 export { HTMLFragment } from './src/application/HTMLFragment.js';
 export { Canvas, View } from './src/application/interfaces/Canvas';

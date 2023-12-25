@@ -19,8 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Class } from './Class.js';
 import { Block } from './Block.js';
-import { Class } from '../types/Class.js';
 import { Alert } from '../application/Alert.js';
 import { Key } from '../model/relations/Key.js';
 import { ListOfValues } from './ListOfValues.js';

@@ -21,7 +21,7 @@
 
 import { Alert } from './Alert.js';
 import { Tag } from './tags/Tag.js';
-import { Class } from '../types/Class.js';
+import { Class } from '../public/Class.js';
 import { Logger, Type } from './Logger.js';
 import { Properties } from './Properties.js';
 import { EventStack } from '../control/events/EventStack.js';

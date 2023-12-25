@@ -24,7 +24,7 @@ import { Status } from "../Row.js";
 import { DataType } from "./DataType.js";
 import { Form } from "../../public/Form.js";
 import { FieldTypes } from "./FieldType.js";
-import { Class } from "../../types/Class.js";
+import { Class } from "../../public/Class.js";
 import { Display } from "./implementations/Display.js";
 import { FieldProperties } from "./FieldProperties.js";
 import { CheckBox } from "./implementations/CheckBox.js";

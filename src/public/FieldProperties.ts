@@ -19,7 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Class } from '../types/Class.js';
+import { Class } from './Class.js';
 import { Alert } from '../application/Alert.js';
 import { ListOfValues } from './ListOfValues.js';
 import { DataType } from '../view/fields/DataType.js';

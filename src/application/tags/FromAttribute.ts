@@ -21,7 +21,7 @@
 
 import { Tag } from "./Tag.js";
 import { Form } from "../../public/Form.js";
-import { Class } from "../../types/Class.js";
+import { Class } from "../../public/Class.js";
 import { Properties } from "../Properties.js";
 import { Form as InternalForm } from "../../internal/Form.js";
 import { FieldInstance } from "../../view/fields/FieldInstance.js";

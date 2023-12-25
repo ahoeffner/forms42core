@@ -20,9 +20,8 @@
 */
 
 import { Form } from './Form.js';
-import { Class } from '../types/Class.js';
-
 import { Alert } from './forms/Alert.js';
+import { Class } from '../public/Class.js';
 import { DatePicker } from './forms/DatePicker.js';
 import { QueryEditor } from './forms/QueryEditor.js';
 import { ListOfValues } from './forms/ListOfValues.js';

@@ -146,6 +146,9 @@ export class Framework
 		if (doc == null)
 			return;
 
+		if (!doc.childNodes)
+			return;
+
 		this.addEvents(doc);
 
 		let nodes:Node[] = [];

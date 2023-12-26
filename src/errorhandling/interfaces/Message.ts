@@ -19,10 +19,15 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Level } from "../Messages";
+
 export interface Message
 {
 	grpno:number;
 	errno:number;
 	title?:string;
 	message:string;
+
+	level?:Level;
+	ignore?:boolean;
 }

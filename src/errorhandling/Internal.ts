@@ -25,11 +25,12 @@ import { Message } from "./interfaces/Message.js";
 
 export class Internal implements Bundle
 {
-	name:string = "Internal";
+	public lang:string = "US";
+	public name:string = "Internal";
 
 	public groups: Group[] =
 	[
-		{grpno: 1, language: "us", title: "Backend"}
+		{grpno: 1, title: "Backend"}
 	];
 
 	public messages: Message[] =

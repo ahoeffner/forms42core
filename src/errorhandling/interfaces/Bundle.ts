@@ -24,6 +24,7 @@ import { Message } from "./Message.js";
 
 export abstract class Bundle
 {
+	public lang:string;
 	public abstract name:string;
 	public abstract groups:Group[];
 	public abstract messages:Message[];

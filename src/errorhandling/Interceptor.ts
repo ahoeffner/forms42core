@@ -19,11 +19,9 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-export interface Group
+import { Message } from "./interfaces/Message";
+
+export interface Interceptor
 {
-	grpno:number;
-	title:string;
-	ignore?:boolean;
-	console?:boolean;
-	stacktrace?:boolean;
+	handle(error:Message) : boolean|Promise<boolean>;
 }

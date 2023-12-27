@@ -22,9 +22,9 @@
 import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
-import { Alert } from "../application/Alert.js";
 import { ConnectionScope } from "./ConnectionScope.js";
 import { Logger, Type } from "../application/Logger.js";
+import { Messages, Level } from "../messages/Messages.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -33,6 +33,8 @@ import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 export class Connection extends BaseConnection
 {
+	private MGRP = 5010;
+
 	private locks$:number = 0;
 	private trx$:object = null;
 	private conn$:string = null;
@@ -98,7 +100,7 @@ export class Connection extends BaseConnection
 	{
 		if (this.connected())
 		{
-			Alert.warning("Connection scope cannot be changed after connect","Database Connection");
+			Messages.warn(this.MGRP,1) // Connection scope cannot be changed after connect
 			return;
 		}
 		this.scope$ = scope;
@@ -176,8 +178,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(false);
 		}
 
@@ -247,8 +248,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(false);
 		}
 
@@ -280,8 +280,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.fatal(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(false);
 		}
 
@@ -306,8 +305,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.fatal(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(false);
 		}
 
@@ -367,8 +365,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -412,8 +409,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -450,8 +446,7 @@ export class Connection extends BaseConnection
 
 			if (!response.success)
 			{
-				console.error(response);
-				Alert.warning(response.message,"Database Connection");
+				Messages.handle(this.MGRP,response.message,Level.fine);
 				return(response);
 			}
 
@@ -553,8 +548,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -596,8 +590,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -909,8 +902,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -955,8 +947,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			return(response);
 		}
 
@@ -1050,8 +1041,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			this.conn$ = null;
-			console.error(response);
-			Alert.warning(response.message,"Database Connection");
+			Messages.handle(this.MGRP,response.message,Level.fine);
 			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			this.running$ = false;
 			return(response);
@@ -1072,11 +1062,11 @@ export class Connection extends BaseConnection
 				if (!this.tmowarn$)
 				{
 					this.tmowarn = true;
-					Alert.warning("Maximum number of locks reached. Transaction will be rolled back in "+Connection.TRXTIMEOUT+" seconds","Database Connection");
+					Messages.warn(this.MGRP,2,Connection.TRXTIMEOUT); // Maximum number of locks reached
 				}
 				else
 				{
-					Alert.warning("Transaction is being rolled back","Database Connection");
+					Messages.warn(this.MGRP,3); // Transaction is being rolled back
 					await FormBacking.rollback();
 				}
 			}
@@ -1088,7 +1078,7 @@ export class Connection extends BaseConnection
 			{
 				if (idle > Connection.TRXTIMEOUT && this.tmowarn)
 				{
-					Alert.warning("Transaction is being rolled back","Database Connection");
+					Messages.warn(this.MGRP,3); // Transaction is being rolled back
 					await FormBacking.rollback();
 				}
 				else
@@ -1096,7 +1086,7 @@ export class Connection extends BaseConnection
 					if (idle > Connection.TRXTIMEOUT*2/3 && !this.tmowarn)
 					{
 						this.tmowarn = true;
-						Alert.warning("Transaction will be rolled back in "+Connection.TRXTIMEOUT+" seconds","Database Connection");
+						Messages.warn(this.MGRP,4,Connection.TRXTIMEOUT); // Transaction will be rolled back
 					}
 				}
 			}

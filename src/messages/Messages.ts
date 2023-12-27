@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { InternalUS } from "./InternalUS.js";
 import { Group } from "./interfaces/Group.js";
 import { Bundle } from "./interfaces/Bundle.js";
 import { Alert } from "../application/Alert.js";
@@ -38,7 +39,19 @@ export class Messages
 	/** all messages language */
 	public static set language(language:string)
 	{
-		Messages.language$ = language;
+		if (!Messages.language$)
+		{
+			// Add internal bundles
+			Messages.addBundle(new InternalUS());
+		}
+
+		Messages.language$ = language.toUpperCase();
+
+		this.files$.forEach((bundle) =>
+		{
+			if (bundle.lang == Messages.language)
+				Messages.load(bundle);
+		})
 	}
 
 	/** all messages language */
@@ -53,25 +66,11 @@ export class Messages
 		if (!Messages.files$.includes(bundle))
 			Messages.files$.push(bundle);
 
-		Messages.load(bundle);
+		bundle.lang = bundle.lang.toUpperCase();
+		if (bundle.lang == Messages.language) Messages.load(bundle);
 	}
 
-	public static get bundles() : Bundle[]
-	{
-		return(Messages.files$);
-	}
-
-	public static async info(grpno:number,errno:number) : Promise<void>
-	{
-		await Messages.show(grpno,errno,Level.info);
-	}
-
-	public static getGroup(grpno:number) : Group
-	{
-		return(Messages.groups$.get(grpno));
-	}
-
-	public static getMessage(grpno:number,errno:number) : Message
+	public static get(grpno:number,errno:number) : Message
 	{
 		let msg:Message = null;
 		let group:Map<number,Message> = Messages.messages$.get(grpno);
@@ -79,54 +78,104 @@ export class Messages
 		return(msg);
 	}
 
-	private static async show(grpno:number,errno:number,level:Level) : Promise<void>
+	public static getGroup(grpno:number) : Group
+	{
+		return(Messages.groups$.get(grpno));
+	}
+
+	public static getBundles() : Bundle[]
+	{
+		return(Messages.files$);
+	}
+
+	public static async fine(grpno:number,errno:number,...args:any) : Promise<void>
+	{
+		await Messages.show(grpno,errno,Level.fine,args);
+	}
+
+	public static async info(grpno:number,errno:number,...args:any) : Promise<void>
+	{
+		await Messages.show(grpno,errno,Level.info,args);
+	}
+
+	public static async warn(grpno:number,errno:number,...args:any) : Promise<void>
+	{
+		await Messages.show(grpno,errno,Level.warn,args);
+	}
+
+	public static async severe(grpno:number,errno:number,...args:any) : Promise<void>
+	{
+		await Messages.show(grpno,errno,Level.severe,args);
+	}
+
+	public static async handle(grpno:number,message:string,level:Level) : Promise<void>
 	{
 		let group:Group = Messages.getGroup(grpno);
-		let msg:Message = Messages.getMessage(grpno,errno);
+
+		let msg:Message =
+		{
+			errno: 0,
+			grpno: grpno,
+			message: message,
+			title: group.title
+		}
+
+		Alert.handle(msg);
+	}
+
+	private static async show(grpno:number,errno:number,level:Level,...args:any) : Promise<void>
+	{
+		let group:Group = Messages.getGroup(grpno);
+		let msg:Message = Messages.get(grpno,errno);
 
 		if (!msg) msg =
 		{
-			grpno: grpno,
 			errno: errno,
-			level: level,
+			grpno: grpno,
 			title: "Missing message",
 			message: "Unknow error number '"+errno+"' in group'"+grpno+"'"
 		}
 		else
 		{
 			msg = {...msg};
-			msg.level = level;
-
-			if (msg.ignore == null)
-			{
-				msg.ignore = group.ignore;
-				if (msg.ignore == null) msg.ignore = false;
-			}
+			if (!msg.title) msg.title = group.title;
 		}
 
+		args?.forEach((arg) =>
+		{msg.message = Messages.replace(msg.message,arg)})
+
+		console.log(msg.message)
 		Alert.handle(msg);
 	}
 
 	private static load(bundle:Bundle) : void
 	{
-		bundle.groups.forEach((group) =>
+		bundle?.groups.forEach((group) =>
 		{
 			Messages.groups$.set(group.grpno,group);
 			let msgs:Map<number,Message> = Messages.messages$.get(group.grpno);
 			if (!msgs) Messages.messages$.set(group.grpno,new Map<number,Message>());
 		});
 
-		bundle.messages.forEach((msg) =>
+		bundle?.messages.forEach((msg) =>
 		{
 			let group:Map<number,Message> = Messages.messages$.get(msg.grpno);
 			if (group) group.set(msg.errno,msg);
 		})
 	}
+
+	private static replace(message:string,arg:any) : string
+	{
+		let pos:number = message.indexOf("%");
+		if (pos >= 0) message = message.substring(0,pos) + arg + message.substring(pos+1);
+		return(message);
+	}
 }
 
 export enum Level
 {
+	fine,
 	info,
 	warn,
-	fatal
+	severe
 }

@@ -24,7 +24,7 @@ import { FormsModule } from './FormsModule.js';
 import { FormBacking } from './FormBacking.js';
 import { Classes } from '../internal/Classes.js';
 import { FlightRecorder } from './FlightRecorder.js';
-import { Message } from '../errorhandling/interfaces/Message.js';
+import { Message } from '../messages/interfaces/Message.js';
 import { Alert as Interceptor } from '../application/interfaces/Alert.js';
 
 /**

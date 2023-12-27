@@ -19,23 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Group } from "./interfaces/Group.js";
-import { Bundle } from "./interfaces/Bundle.js";
-import { Message } from "./interfaces/Message.js";
-
-export class Internal implements Bundle
+export interface Group
 {
-	public lang:string = "US";
-	public name:string = "Internal";
-
-	public groups: Group[] =
-	[
-		{grpno: 1, title: "Backend"}
-	];
-
-	public messages: Message[] =
-	[
-		{grpno: 1, errno: 1, message: "", title: ""}
-	];
-
+	grpno:number;
+	title:string;
+	console?:boolean;
+	stacktrace?:boolean;
 }

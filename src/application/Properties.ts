@@ -30,13 +30,13 @@ import { ComponentFactory } from './interfaces/ComponentFactory.js';
 import { ComponentFactory as FactoryImpl } from './ComponentFactory.js';
 
 import { Tag } from './tags/Tag.js';
+import { FormTag } from './tags/FormTag.js';
 import { Include } from './tags/Include.js';
 import { Foreach } from './tags/Foreach.js';
 import { RowIndicator } from './tags/RowIndicator.js';
 import { FromAttribute } from './tags/FromAttribute.js';
 import { ImplAttribute } from './tags/ImplAttribute.js';
 import { FilterIndicator } from './tags/FilterIndicator.js';
-import { FormTag } from './tags/FormTag.js';
 
 export enum ScrollDirection
 {

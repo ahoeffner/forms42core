@@ -19,15 +19,25 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Level } from "../Messages";
+import { Group } from "./interfaces/Group.js";
+import { Bundle } from "./interfaces/Bundle.js";
+import { Message } from "./interfaces/Message.js";
 
-export interface Message
+export class InternalUS implements Bundle
 {
-	grpno:number;
-	errno:number;
-	title?:string;
-	message:string;
+	public lang:string = "US";
+	public name:string = "Internal";
 
-	level?:Level;
-	ignore?:boolean;
+	public groups: Group[] =
+	[
+		{grpno: 5010, title: "Database Connection"}
+	];
+
+	public messages: Message[] =
+	[
+		{grpno: 5010, errno: 1, message: "Connection scope cannot be changed after connect"},
+		{grpno: 5010, errno: 2, message: "Maximum number of locks reached. Transaction will be rolled back in % seconds"},
+		{grpno: 5010, errno: 3, message: "Transaction is being rolled back"},
+		{grpno: 5010, errno: 4, message: "Transaction will be rolled back in % seconds"},
+	];
 }

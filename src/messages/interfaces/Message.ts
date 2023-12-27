@@ -19,11 +19,12 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-export interface Group
+import { Level } from "../Messages";
+
+export interface Message
 {
 	grpno:number;
-	title:string;
-	ignore?:boolean;
-	console?:boolean;
-	stacktrace?:boolean;
+	errno:number;
+	title?:string;
+	message:string;
 }

@@ -27,6 +27,7 @@ import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
 import { Form as ViewForm } from '../view/Form.js';
+import { Messages } from '../messages/Messages.js';
 import { Loading } from '../internal/forms/Loading.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
@@ -48,11 +49,11 @@ export class FormsModule
 	private static instance$:FormsModule = null;
 
 	/** Static method to return the singleton */
-	public static get() : FormsModule
+	public static get<FormsModule>() : FormsModule
 	{
 		if (FormsModule.instance$ == null)
 			FormsModule.instance$ = new FormsModule();
-		return(FormsModule.instance$);
+		return(FormsModule.instance$ as FormsModule);
 	}
 
 	/** Whether or not to display the active form in the url */
@@ -282,6 +283,7 @@ export class FormsModule
 	{
 		dates.validate();
 		KeyMapping.init();
+		Messages.language = "us";
 		ApplicationHandler.init();
 		FormsModule.instance$ = this;
 	}

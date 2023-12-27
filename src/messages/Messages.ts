@@ -20,13 +20,20 @@
 */
 
 import { InternalUS } from "./InternalUS.js";
+
+import { Form } from "../public/Form.js";
 import { Group } from "./interfaces/Group.js";
 import { Bundle } from "./interfaces/Bundle.js";
-import { Alert } from "../application/Alert.js";
+import { Classes } from "../internal/Classes.js";
 import { Message } from "./interfaces/Message.js";
+import { FormBacking } from "../application/FormBacking.js";
+import { FormsModule } from "../application/FormsModule.js";
 
 export class Messages
 {
+	private static alert$:Level = null;
+	private static console$:Level = null;
+
 	private static files$:Bundle[] = [];
 	private static language$:string = null;
 
@@ -35,6 +42,28 @@ export class Messages
 
 	private static messages$:Map<number,Map<number,Message>> =
 		new Map<number,Map<number,Message>>();
+
+	public static get alert() : Level
+	{
+		if (!Messages.alert$) return(Level.warn);
+		return(Messages.alert$);
+	}
+
+	public static set alert(level:Level)
+	{
+		Messages.alert$ = level;
+	}
+
+	public static get console() : Level
+	{
+		if (!Messages.console$) return(Level.info);
+		return(Messages.console$);
+	}
+
+	public static set console(level:Level)
+	{
+		Messages.console$ = level;
+	}
 
 	/** all messages language */
 	public static set language(language:string)
@@ -120,7 +149,7 @@ export class Messages
 			title: group.title
 		}
 
-		Alert.handle(msg);
+		Messages.display(group,msg,level);
 	}
 
 	private static async show(grpno:number,errno:number,level:Level,...args:any) : Promise<void>
@@ -144,8 +173,7 @@ export class Messages
 		args?.forEach((arg) =>
 		{msg.message = Messages.replace(msg.message,arg)})
 
-		console.log(msg.message)
-		Alert.handle(msg);
+		Messages.display(group,msg,level);
 	}
 
 	private static load(bundle:Bundle) : void
@@ -169,6 +197,45 @@ export class Messages
 		let pos:number = message.indexOf("%");
 		if (pos >= 0) message = message.substring(0,pos) + arg + message.substring(pos+1);
 		return(message);
+	}
+
+	private static display(group:Group, msg:Message, level:Level) : void
+	{
+		let cons:boolean = false;
+		if (level >= Messages.console) cons = true;
+		if (group.console != null) cons = group.console;
+
+		let alert:boolean = false;
+		if (level >= Messages.alert) alert = true;
+
+		let gno:string = msg.grpno+"";
+		while(gno.length < 4) gno = "0"+gno;
+
+		let mno:string = msg.errno+"";
+		while(mno.length < 3) mno = "0"+mno;
+
+		let message:string = msg.message;
+		message = gno+"-"+mno+": "+message;
+
+		if (cons)
+		{
+			console.log(message);
+		}
+
+		if (alert)
+		{
+			let params:Map<string,any> = new Map<string,any>();
+
+			params.set("title",msg.title);
+			params.set("message",message);
+
+			params.set("warning",(level == Level.warn));
+			params.set("severe",(level == Level.severe));
+
+			let curr:Form = FormBacking.getCurrentForm();
+			if (curr) curr.callform(Classes.AlertClass,params);
+			else FormsModule.showform(Classes.AlertClass,params);
+		}
 	}
 }
 

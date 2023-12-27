@@ -102,7 +102,7 @@ export class Alert extends Form
 		}
 
 
-		let fatal:boolean = this.parameters.get("fatal");
+		let severe:boolean = this.parameters.get("severe");
 		let warning:boolean = this.parameters.get("warning");
 
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
@@ -116,7 +116,7 @@ export class Alert extends Form
 		block.style.width = document.body.offsetWidth+"px";
 		block.style.height = document.body.offsetHeight+"px";
 
-		if (fatal) block.classList.add("type","fatal");
+		if (severe) block.classList.add("type","severe");
 		if (warning) block.classList.add("type","warning");
 
 		this.canvas.zindex = 2147483647;

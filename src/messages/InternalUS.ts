@@ -57,5 +57,8 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FRAMEWORK, errno: 3, message: "Failed to invoke method '%s'  on component '%s'"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 4, message: "Cannot find '%s' on this or parent elements"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 5, message: "Use of @formevent on non compatable class '%s'"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 6, message: "%s returned %s"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 7, message: "EventListner '%s' did not return Promise<boolean>, but '%s'"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 8, message: "EventListner '%s' did not return boolean, but '%s'"},
 	];
 }

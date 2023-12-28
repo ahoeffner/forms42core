@@ -56,7 +56,7 @@ export class SQLStatement
 		if (connection == null)
 		{
 			// Not connected
-			Messages.severe(MSGGRP.ORDB,3);
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return;
 		}
 

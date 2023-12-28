@@ -177,7 +177,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(MSGGRP.CONN,response.message,Level.fine);
+			Messages.handle(MSGGRP.ORDB,response.message,Level.fine);
 			return(false);
 		}
 

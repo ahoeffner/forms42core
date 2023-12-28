@@ -85,8 +85,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (connection == null)
 		{
-			// Cannot create datasource when connection is null
-			Messages.severe(MSGGRP.CONN,2,this.constructor.name);
+			// Not connected
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return;
 		}
 
@@ -364,7 +364,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (!this.conn$.connected())
 		{
 			// Not connected
-			Messages.severe(MSGGRP.CONN,3);
+			Messages.severe(MSGGRP.ORDB,4,this.constructor.name);
 			return([]);
 		}
 
@@ -580,7 +580,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!this.conn$.connected())
 		{
-			Messages.severe(MSGGRP.ORDB,3); // Not connected
+			// Not connected
+			Messages.severe(MSGGRP.ORDB,4,this.constructor.name);
 			return(null);
 		}
 
@@ -629,7 +630,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		if (!this.conn$.connected())
 		{
-			Messages.severe(MSGGRP.ORDB,3); // Not connected
+			// Not connected
+			Messages.severe(MSGGRP.ORDB,4,this.constructor.name);
 			return(false);
 		}
 

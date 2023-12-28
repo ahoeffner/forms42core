@@ -66,7 +66,8 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.ORDB, errno: 0, message: ""},
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
 		{grpno: MSGGRP.ORDB, errno: 2, message: "Cannot create datasource when connection is null ('%')"},
-		{grpno: MSGGRP.ORDB, errno: 3, message: "Not connected"},
+		{grpno: MSGGRP.ORDB, errno: 3, message: "Failed to create %s, not connected"},
+		{grpno: MSGGRP.ORDB, errno: 4, message: "%s Not connected"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno: 0, message: ""},
 		{grpno: MSGGRP.FRAMEWORK, errno: 1, message: "Attribute '%' on component '%' is null"},

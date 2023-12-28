@@ -26,7 +26,7 @@ import { Framework } from './Framework.js';
 import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
-import { Messages } from '../messages/Messages.js';
+import { Level, Messages } from '../messages/Messages.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Loading } from '../internal/forms/Loading.js';
 import { Form as InternalForm } from '../internal/Form.js';
@@ -212,6 +212,12 @@ export class FormsModule
 		return(FormBacking.rollback());
 	}
 
+	/** Handle fine message */
+	public static fine(grpno:number,errno:number,...args:any) : void
+	{
+		Messages.fine(grpno,errno,args);
+	}
+
 	/** Handle info message */
 	public static info(grpno:number,errno:number,...args:any) : void
 	{
@@ -231,15 +237,18 @@ export class FormsModule
 	}
 
 	/** Popup a message */
-	public static fatal(msg:string, title?:string) : void
+	public static alert(msg:string, title:string, level?:Level) : void
 	{
-		Alert.fatal(msg,title);
-	}
+		if (!level)
+			level = Level.info;
 
-	/** Popup a message */
-	public static alert(msg:string, title:string) : void
-	{
-		Alert.warning(msg,title);
+		switch(level)
+		{
+			case Level.info: Alert.message(msg,title); break;
+			case Level.warn: Alert.warning(msg,title); break;
+			case Level.severe: Alert.fatal(msg,title); break;
+		}
+
 	}
 
 	/** Get all active forms */

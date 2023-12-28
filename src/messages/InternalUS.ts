@@ -50,5 +50,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.TRX, errno: 8, message: "Transaction will be rolled back in % seconds"},
 
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
+
+		{grpno: MSGGRP.FRAMEWORK, errno: 0, message: ""},
 	];
 }

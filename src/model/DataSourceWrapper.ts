@@ -19,11 +19,12 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Alert } from "../application/Alert.js";
+import { MSGGRP } from "../messages/Internal.js";
 import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
+import { Level, Messages } from "../messages/Messages.js";
 import { EventType } from "../control/events/EventType.js";
 import { FlushStrategy } from "../application/FormsModule.js";
 import { DataSource, LockMode } from "./interfaces/DataSource.js";
@@ -235,7 +236,7 @@ export class DataSourceWrapper
 		}
 		catch (error)
 		{
-			Alert.fatal(error+"","Backend failure")
+			Messages.handle(MSGGRP.FRAMEWORK,error,Level.severe);
 			return(false);
 		}
 	}

@@ -37,15 +37,18 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.ORDB, title: "OpenRestDB"},
 		{grpno: MSGGRP.FORM, title: "Form Failure"},
 		{grpno: MSGGRP.BLOCK, title: "Block/Section"},
+		{grpno: MSGGRP.FIELD, title: "HTML Field tag"},
+		{grpno: MSGGRP.FRAMEWORK, title: "FutureForms"},
+		{grpno: MSGGRP.VALIDATION, title: "Validation"},
 	];
 
 	public messages: Message[] =
 	[
-		{grpno: MSGGRP.TRX, errno: 1,  message: "Transactions successfully saved", important: true},
+		{grpno: MSGGRP.TRX, errno: 1,  message: "Transactions successfully saved"},
 		{grpno: MSGGRP.TRX, errno: 2,  message: "Failed to push transactions to backend"},
 		{grpno: MSGGRP.TRX, errno: 3,  message: "Failed to undo transactions for form '%'"},
 		{grpno: MSGGRP.TRX, errno: 4,  message: "Failed to roll back transactions"},
-		{grpno: MSGGRP.TRX, errno: 5,  message: "Transactions successfully rolled back", important: true},
+		{grpno: MSGGRP.TRX, errno: 5,  message: "Transactions successfully rolled back"},
 		{grpno: MSGGRP.TRX, errno: 6,  message: "Maximum number of locks reached. Transaction will be rolled back in % seconds"},
 		{grpno: MSGGRP.TRX, errno: 7,  message: "Transaction is being rolled back"},
 		{grpno: MSGGRP.TRX, errno: 8,  message: "Transaction will be rolled back in % seconds"},
@@ -69,15 +72,22 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.ORDB, errno: 3, message: "Failed to create %s, not connected"},
 		{grpno: MSGGRP.ORDB, errno: 4, message: "%s Not connected"},
 
-		{grpno: MSGGRP.FRAMEWORK, errno: 0, message: ""},
-		{grpno: MSGGRP.FRAMEWORK, errno: 1, message: "Attribute '%' on component '%' is null"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 2, message: "Attribute '%' on component '%' does not exist"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 3, message: "Failed to invoke method '%'  on component '%'"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 4, message: "Cannot find '%' on this or parent elements"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 5, message: "Use of @formevent on non compatable class '%'"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 6, message: "% returned %"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 7, message: "EventListner '%' did not return Promise<boolean>, but '%'"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 8, message: "EventListner '%' did not return boolean, but '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  0, message: ""},
+		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  3, message: "Failed to invoke method '%'  on component '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  4, message: "Cannot find '%' on this or parent elements"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  5, message: "Use of @formevent on non compatable class '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  6, message: "% returned %"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  7, message: "EventListner '%' did not return Promise<boolean>, but '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  8, message: "EventListner '%' did not return boolean, but '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  9, message: "Form '%', cannot start transaction % while running %"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 10, message: "Form '%', cannot start transaction % in '%' while running %"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 11, message: "Token '%' is not supported in default format"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 12, message: "Date delimitors can only be 1 character"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 13, message: "Relation '%' -> '%' is self referencing"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 14, message: "Invalid key definition, block: 'null'"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 15, message: "Invalid key definition, fields: 'null'"},
 
 		{grpno: MSGGRP.FORM, errno: 1, message: "Block '%' does not exist"},
 		{grpno: MSGGRP.FORM, errno: 2, message: "Form must be validated before layout can be changed"},
@@ -90,5 +100,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.BLOCK, errno: 2, message: "Block '%', Cannot navigate to record"},
 		{grpno: MSGGRP.BLOCK, errno: 3, message: "Block '%', Waiting for previous query to finish"},
 		{grpno: MSGGRP.BLOCK, errno: 4, message: "Block '%', Datasource is lacking"},
+
+		{grpno: MSGGRP.FIELD, errno: 1, message: "'%', Data type cannot be changed"},
 	];
 }

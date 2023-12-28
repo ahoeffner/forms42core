@@ -32,6 +32,8 @@ import { DateConstraint } from "../../public/DateConstraint.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { DatePicker as Properties } from "../../application/properties/DatePicker.js";
+import { Level, Messages } from "../../messages/Messages.js";
+import { MSGGRP } from "../../messages/Internal.js";
 
 /**
  * Form emulating a calendar
@@ -114,7 +116,8 @@ export class DatePicker extends Form
 				await this.close();
 				return(false);
 			}
-			this.warning(this.constraint.message);
+			
+			Messages.handle(MSGGRP.VALIDATION,this.constraint.message,Level.warn);
 		}
 
 		return(true);

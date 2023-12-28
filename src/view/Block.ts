@@ -22,14 +22,15 @@
 import { Form } from "./Form.js";
 import { Row, Status } from "./Row.js";
 import { Field } from "./fields/Field.js";
-import { Alert } from "../application/Alert.js";
 import { DataType } from "./fields/DataType.js";
+import { MSGGRP } from "../messages/Internal.js";
 import { FieldInfo } from "./fields/FieldInfo.js";
 import { KeyMap } from "../control/events/KeyMap.js";
 import { Block as ModelBlock } from '../model/Block.js';
 import { RecordProperties } from "./RecordProperties.js";
 import { Record, RecordState } from "../model/Record.js";
 import { Properties } from "../application/Properties.js";
+import { Level, Messages } from "../messages/Messages.js";
 import { FieldInstance } from "./fields/FieldInstance.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormBacking } from "../application/FormBacking.js";
@@ -518,7 +519,7 @@ export class Block
 			if (datecstr)
 			{
 				success = datecstr.valid(date);
-				if (!success) Alert.warning(datecstr.message,"Date Validation");
+				if (!success) Messages.handle(MSGGRP.VALIDATION,datecstr.message,Level.warn);
 			}
 		}
 

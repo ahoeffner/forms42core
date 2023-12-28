@@ -52,5 +52,9 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno: 0, message: ""},
+		{grpno: MSGGRP.FRAMEWORK, errno: 1, message: "Attribute '%s' on component '%s' is null"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 2, message: "Attribute '%s' on component '%s' does not exist"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 3, message: "Failed to invoke method '%s'  on component '%s'"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 4, message: "Cannot find '%s' on this or parent elements"},
 	];
 }

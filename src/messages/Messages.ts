@@ -99,6 +99,7 @@ export class Messages
 		if (bundle.lang == Messages.language) Messages.load(bundle);
 	}
 
+	/** Get message by group# and message# */
 	public static get(grpno:number,errno:number) : Message
 	{
 		let msg:Message = null;
@@ -107,36 +108,43 @@ export class Messages
 		return(msg);
 	}
 
+	/** Get message group by group# */
 	public static getGroup(grpno:number) : Group
 	{
 		return(Messages.groups$.get(grpno));
 	}
 
+	/** Get message bundles */
 	public static getBundles() : Bundle[]
 	{
 		return(Messages.files$);
 	}
 
+	/** Handle message using Level.fine. Any '%' will be substituded by args */
 	public static async fine(grpno:number,errno:number,...args:any) : Promise<void>
 	{
 		await Messages.show(grpno,errno,Level.fine,args);
 	}
 
+	/** Handle message using Level.info. Any '%' will be substituded by args */
 	public static async info(grpno:number,errno:number,...args:any) : Promise<void>
 	{
 		await Messages.show(grpno,errno,Level.info,args);
 	}
 
+	/** Handle message using Level.warn. Any '%' will be substituded by args */
 	public static async warn(grpno:number,errno:number,...args:any) : Promise<void>
 	{
 		await Messages.show(grpno,errno,Level.warn,args);
 	}
 
+	/** Handle message using Level.severe. Any '%' will be substituded by args */
 	public static async severe(grpno:number,errno:number,...args:any) : Promise<void>
 	{
 		await Messages.show(grpno,errno,Level.severe,args);
 	}
 
+	/** Handle unknown message (typically from backend systems) */
 	public static async handle(grpno:number,message:string,level:Level) : Promise<void>
 	{
 		let group:Group = Messages.getGroup(grpno);
@@ -206,6 +214,7 @@ export class Messages
 		if (group.console != null) cons = group.console;
 
 		let alert:boolean = false;
+		if (msg.important) alert = true;
 		if (level >= Messages.alert) alert = true;
 
 		let gno:string = msg.grpno+"";
@@ -239,6 +248,7 @@ export class Messages
 	}
 }
 
+/** Severity */
 export enum Level
 {
 	fine,

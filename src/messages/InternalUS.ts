@@ -19,9 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { MSGGRP } from "./Internal.js";
 import { Group } from "./interfaces/Group.js";
 import { Bundle } from "./interfaces/Bundle.js";
 import { Message } from "./interfaces/Message.js";
+
 
 export class InternalUS implements Bundle
 {
@@ -30,14 +32,23 @@ export class InternalUS implements Bundle
 
 	public groups: Group[] =
 	[
-		{grpno: 5010, title: "Database Connection"}
+		{grpno: MSGGRP.SQL, title: "Database"},
+		{grpno: MSGGRP.TRX, title: "Transaction"},
+		{grpno: MSGGRP.ORDB, title: "OpenRestDB"},
 	];
 
 	public messages: Message[] =
 	[
-		{grpno: 5010, errno: 1, message: "Connection scope cannot be changed after connect"},
-		{grpno: 5010, errno: 2, message: "Maximum number of locks reached. Transaction will be rolled back in % seconds"},
-		{grpno: 5010, errno: 3, message: "Transaction is being rolled back"},
-		{grpno: 5010, errno: 4, message: "Transaction will be rolled back in % seconds"},
+		{grpno: MSGGRP.TRX, errno: 0, message: ""},
+		{grpno: MSGGRP.TRX, errno: 1, message: "Transactions successfully saved", important: true},
+		{grpno: MSGGRP.TRX, errno: 2, message: "Failed to push transactions to backend"},
+		{grpno: MSGGRP.TRX, errno: 3, message: "Failed to undo transactions for form '%'"},
+		{grpno: MSGGRP.TRX, errno: 4, message: "Failed to roll back transactions"},
+		{grpno: MSGGRP.TRX, errno: 5, message: "Transactions successfully rolled back", important: true},
+		{grpno: MSGGRP.TRX, errno: 6, message: "Maximum number of locks reached. Transaction will be rolled back in % seconds"},
+		{grpno: MSGGRP.TRX, errno: 7, message: "Transaction is being rolled back"},
+		{grpno: MSGGRP.TRX, errno: 8, message: "Transaction will be rolled back in % seconds"},
+
+		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
 	];
 }

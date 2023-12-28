@@ -22,6 +22,7 @@
 import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
+import { MSGGRP } from "../messages/Internal.js";
 import { ConnectionScope } from "./ConnectionScope.js";
 import { Logger, Type } from "../application/Logger.js";
 import { Messages, Level } from "../messages/Messages.js";
@@ -33,8 +34,6 @@ import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 
 export class Connection extends BaseConnection
 {
-	private MGRP = 5010;
-
 	private locks$:number = 0;
 	private trx$:object = null;
 	private conn$:string = null;
@@ -100,7 +99,7 @@ export class Connection extends BaseConnection
 	{
 		if (this.connected())
 		{
-			Messages.warn(this.MGRP,1) // Connection scope cannot be changed after connect
+			Messages.warn(MSGGRP.ORDB,1) // Connection scope cannot be changed after connect
 			return;
 		}
 		this.scope$ = scope;
@@ -178,7 +177,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.CONN,response.message,Level.fine);
 			return(false);
 		}
 
@@ -248,7 +247,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.TRX,response.message,Level.fine);
 			return(false);
 		}
 
@@ -280,7 +279,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.TRX,response.message,Level.fine);
 			return(false);
 		}
 
@@ -305,7 +304,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.TRX,response.message,Level.fine);
 			return(false);
 		}
 
@@ -365,7 +364,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -409,7 +408,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -433,8 +432,6 @@ export class Connection extends BaseConnection
 
 		if (cursor.trx == this.trx)
 		{
-			Logger.log(Type.database,"close cursor");
-
 			let payload:any =
 			{
 				close: true,
@@ -446,7 +443,7 @@ export class Connection extends BaseConnection
 
 			if (!response.success)
 			{
-				Messages.handle(this.MGRP,response.message,Level.fine);
+				Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 				return(response);
 			}
 
@@ -548,7 +545,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -590,7 +587,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -902,7 +899,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -947,7 +944,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
 			return(response);
 		}
 
@@ -1041,7 +1038,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			this.conn$ = null;
-			Messages.handle(this.MGRP,response.message,Level.fine);
+			Messages.handle(MSGGRP.ORDB,response.message,Level.fine);
 			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			this.running$ = false;
 			return(response);
@@ -1062,11 +1059,11 @@ export class Connection extends BaseConnection
 				if (!this.tmowarn$)
 				{
 					this.tmowarn = true;
-					Messages.warn(this.MGRP,2,Connection.TRXTIMEOUT); // Maximum number of locks reached
+					Messages.warn(MSGGRP.TRX,6,Connection.TRXTIMEOUT); // Maximum number of locks reached
 				}
 				else
 				{
-					Messages.warn(this.MGRP,3); // Transaction is being rolled back
+					Messages.warn(MSGGRP.TRX,7); // Transaction is being rolled back
 					await FormBacking.rollback();
 				}
 			}
@@ -1078,7 +1075,7 @@ export class Connection extends BaseConnection
 			{
 				if (idle > Connection.TRXTIMEOUT && this.tmowarn)
 				{
-					Messages.warn(this.MGRP,3); // Transaction is being rolled back
+					Messages.warn(MSGGRP.TRX,7); // Transaction is being rolled back
 					await FormBacking.rollback();
 				}
 				else
@@ -1086,7 +1083,7 @@ export class Connection extends BaseConnection
 					if (idle > Connection.TRXTIMEOUT*2/3 && !this.tmowarn)
 					{
 						this.tmowarn = true;
-						Messages.warn(this.MGRP,4,Connection.TRXTIMEOUT); // Transaction will be rolled back
+						Messages.warn(MSGGRP.TRX,8,Connection.TRXTIMEOUT); // Transaction will be rolled back
 					}
 				}
 			}

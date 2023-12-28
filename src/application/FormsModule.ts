@@ -26,8 +26,8 @@ import { Framework } from './Framework.js';
 import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
 import { dates } from '../model/dates/dates.js';
-import { Form as ViewForm } from '../view/Form.js';
 import { Messages } from '../messages/Messages.js';
+import { Form as ViewForm } from '../view/Form.js';
 import { Loading } from '../internal/forms/Loading.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
@@ -212,22 +212,34 @@ export class FormsModule
 		return(FormBacking.rollback());
 	}
 
+	/** Handle info message */
+	public static info(grpno:number,errno:number,...args:any) : void
+	{
+		Messages.info(grpno,errno,args);
+	}
+
+	/** Handle warning message */
+	public static warn(grpno:number,errno:number,...args:any) : void
+	{
+		Messages.warn(grpno,errno,args);
+	}
+
+	/** Handle severe message */
+	public static severe(grpno:number,errno:number,...args:any) : void
+	{
+		Messages.severe(grpno,errno,args);
+	}
+
 	/** Popup a message */
-	public static message(msg:string, title?:string) : void
-	{
-		Alert.message(msg,title);
-	}
-
-	/** Popup a warning */
-	public static warning(msg:string, title?:string) : void
-	{
-		Alert.warning(msg,title);
-	}
-
-	/** Popup a fatal */
 	public static fatal(msg:string, title?:string) : void
 	{
 		Alert.fatal(msg,title);
+	}
+
+	/** Popup a message */
+	public static alert(msg:string, title:string) : void
+	{
+		Alert.warning(msg,title);
 	}
 
 	/** Get all active forms */

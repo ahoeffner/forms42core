@@ -27,4 +27,5 @@ export interface Message
 	errno:number;
 	title?:string;
 	message:string;
+	important?:boolean;
 }

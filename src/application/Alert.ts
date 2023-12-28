@@ -24,7 +24,6 @@ import { FormsModule } from './FormsModule.js';
 import { FormBacking } from './FormBacking.js';
 import { Classes } from '../internal/Classes.js';
 import { FlightRecorder } from './FlightRecorder.js';
-import { Message } from '../messages/interfaces/Message.js';
 import { Alert as Interceptor } from '../application/interfaces/Alert.js';
 
 /**
@@ -54,13 +53,6 @@ export class Alert
 	{
 		if (this.interceptor) Alert.interceptor.message(msg,title);
 		else Alert.callform(msg,title,false,false);
-	}
-
-	/** Alert the user an event has occured */
-	public static async handle(error:Message)
-	{
-		//if (this.interceptor) Alert.interceptor.message(msg,title);
-		//else Alert.callform(msg,title,false,false);
 	}
 
 	private static async callform(msg:string, title:string, warning:boolean, fatal:boolean) : Promise<void>

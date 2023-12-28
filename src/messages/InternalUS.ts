@@ -53,10 +53,15 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.TRX, errno: 11, message: "Record has been delete by another user"},
 		{grpno: MSGGRP.TRX, errno: 12, message: "Record is locked by another user"},
 		{grpno: MSGGRP.TRX, errno: 13, message: "Record at row % is locked by another user"},
+		{grpno: MSGGRP.TRX, errno: 14, message: "Cannot lock records on datasource based on a query"},
+		{grpno: MSGGRP.TRX, errno: 15, message: "Cannot insert records on datasource based on a query"},
+		{grpno: MSGGRP.TRX, errno: 16, message: "Cannot update records on datasource based on a query"},
+		{grpno: MSGGRP.TRX, errno: 17, message: "Cannot delete records on datasource based on a query"},
 
 		{grpno: MSGGRP.SQL, errno: 0, message: ""},
 		{grpno: MSGGRP.SQL, errno: 1, message: "Record has been deleted by another user"},
 		{grpno: MSGGRP.SQL, errno: 2, message: "Unable to describe table '%' [%]"},
+		{grpno: MSGGRP.SQL, errno: 3, message: "Unable to describe query '%'"},
 
 		{grpno: MSGGRP.ORDB, errno: 0, message: ""},
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},

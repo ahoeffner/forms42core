@@ -15,6 +15,12 @@ export { FieldProperties } from './src/public/FieldProperties.js';
 export { ConnectionScope } from './src/database/ConnectionScope.js';
 export { DatabaseConnection } from './src/public/DatabaseConnection.js';
 
+export { Messages } from './src/messages/Messages.js';
+export { Message } from './src/messages/interfaces/Message.js';
+export { MessageHandler } from './src/messages/MessageHandler.js';
+export { Group as MessageGroup } from './src/messages/interfaces/Group.js';
+export { Bundle as MessageBundle } from './src/messages/interfaces/Bundle.js';
+
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
 export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 

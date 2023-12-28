@@ -85,6 +85,11 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FRAMEWORK, errno: 13, message: "Relation '%' -> '%' is self referencing"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 14, message: "Invalid key definition, block: 'null'"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 15, message: "Invalid key definition, fields: 'null'"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 16, message: "During transaction %s only current record can be accessed"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 17, message: "Sendkey unable to locate field or block %"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 18, message: "Class % is not an instance of DataMapper"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 19, message: "% is mapped to a class"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 20, message: "% is cannot be parsed as a valid date"},
 
 		{grpno: MSGGRP.FORM, errno: 1, message: "Block '%' does not exist"},
 		{grpno: MSGGRP.FORM, errno: 2, message: "Form must be validated before layout can be changed"},

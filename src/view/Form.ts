@@ -23,9 +23,10 @@ import { Status } from './Row.js';
 import { Block } from './Block.js';
 import { FieldDrag } from './FieldDrag.js';
 import { Record } from '../model/Record.js';
-import { Alert } from '../application/Alert.js';
 import { DataType } from './fields/DataType.js';
 import { Classes } from '../internal/Classes.js';
+import { MSGGRP } from '../messages/Internal.js';
+import { Messages } from '../messages/Messages.js';
 import { Form as ModelForm } from '../model/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
@@ -618,7 +619,8 @@ export class Form implements EventListenerObject
 
 		if (!block || !field)
 		{
-			Alert.warning("field or block undefined","Send Key");
+			// Unable to locate field or block
+			Messages.warn(MSGGRP.FRAMEWORK,17,block+"."+field);
 			return(false);
 		}
 
@@ -640,7 +642,8 @@ export class Form implements EventListenerObject
 
 		if (!match || match.length == 0)
 		{
-			Alert.warning("unable to locate field '"+field+"' or block '"+block+"'","Send Key");
+			// Unable to locate field or block
+			Messages.warn(MSGGRP.FRAMEWORK,17,block+"."+field);
 			return(false);
 		}
 

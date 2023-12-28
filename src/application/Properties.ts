@@ -20,8 +20,9 @@
 */
 
 import { Class } from '../public/Class.js';
-import { Alert } from './interfaces/Alert.js';
-import { Alert as AlertImplementation } from './Alert.js';
+
+import { Messages } from '../messages/Messages.js';
+import { MessageHandler } from '../messages/MessageHandler.js';
 
 import { Canvas as CanvasImpl } from './Canvas.js';
 import { Canvas as CanvasType } from './interfaces/Canvas.js';
@@ -90,14 +91,16 @@ export class Properties
 		FilterIndicator:"active"
 	};
 
-	public static get AlertHandler() : Alert
+	/** Interceptor for message handling */
+	public static get MessageHandler() : MessageHandler
 	{
-		return(AlertImplementation.interceptor);
+		return(Messages.MessageHandler);
 	}
 
-	public static set AlertHandler(alert:Alert)
+	/** Interceptor for message handling */
+	public static set MessageHandler(handler:MessageHandler)
 	{
-		AlertImplementation.interceptor = alert;
+		Messages.MessageHandler = handler;
 	}
 
 	public static CanvasImplementationClass:Class<CanvasType> = CanvasImpl;

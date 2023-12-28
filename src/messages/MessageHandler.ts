@@ -19,9 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Level } from "./Messages";
 import { Message } from "./interfaces/Message";
 
-export interface Interceptor
+export interface MessageHandler
 {
-	handle(error:Message) : boolean|Promise<boolean>;
+	handle(error:Message, level:Level) : boolean|Promise<boolean>;
 }

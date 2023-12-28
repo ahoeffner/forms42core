@@ -28,6 +28,7 @@ import { Classes } from "../internal/Classes.js";
 import { Message } from "./interfaces/Message.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { FormsModule } from "../application/FormsModule.js";
+import { MessageHandler } from "./MessageHandler.js";
 
 export class Messages
 {
@@ -37,32 +38,50 @@ export class Messages
 	private static files$:Bundle[] = [];
 	private static language$:string = null;
 
+	private static handler$:MessageHandler = null;
+
 	private static groups$:Map<number,Group> =
 		new Map<number,Group>();
 
 	private static messages$:Map<number,Map<number,Message>> =
 		new Map<number,Map<number,Message>>();
 
-	public static get alert() : Level
+	/** Level at which messages are alerted */
+	public static get alertLevel() : Level
 	{
 		if (!Messages.alert$) return(Level.warn);
 		return(Messages.alert$);
 	}
 
-	public static set alert(level:Level)
+	/** Level at which messages are alerted */
+	public static set alertLevel(level:Level)
 	{
 		Messages.alert$ = level;
 	}
 
-	public static get console() : Level
+	/** Level at which messages written to console */
+	public static get consoleLevel() : Level
 	{
 		if (!Messages.console$) return(Level.info);
 		return(Messages.console$);
 	}
 
-	public static set console(level:Level)
+	/** Level at which messages written to console */
+	public static set consoleLevel(level:Level)
 	{
 		Messages.console$ = level;
+	}
+
+	/** Interceptor for handling messages */
+	public static get MessageHandler() : MessageHandler
+	{
+		return(Messages.handler$);
+	}
+
+	/** Interceptor for handling messages */
+	public static set MessageHandler(handler:MessageHandler)
+	{
+		Messages.handler$ = handler;
 	}
 
 	/** all messages language */
@@ -210,12 +229,12 @@ export class Messages
 	private static display(group:Group, msg:Message, level:Level) : void
 	{
 		let cons:boolean = false;
-		if (level >= Messages.console) cons = true;
+		if (level >= Messages.consoleLevel) cons = true;
 		if (group.console != null) cons = group.console;
 
 		let alert:boolean = false;
 		if (msg.important) alert = true;
-		if (level >= Messages.alert) alert = true;
+		if (level >= Messages.alertLevel) alert = true;
 
 		let gno:string = msg.grpno+"";
 		while(gno.length < 4) gno = "0"+gno;

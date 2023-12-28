@@ -66,13 +66,10 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.SQL, errno: 2, message: "Unable to describe table '%' [%]"},
 		{grpno: MSGGRP.SQL, errno: 3, message: "Unable to describe query '%'"},
 
-		{grpno: MSGGRP.ORDB, errno: 0, message: ""},
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
-		{grpno: MSGGRP.ORDB, errno: 2, message: "Cannot create datasource when connection is null ('%')"},
-		{grpno: MSGGRP.ORDB, errno: 3, message: "Failed to create %s, not connected"},
-		{grpno: MSGGRP.ORDB, errno: 4, message: "%s Not connected"},
+		{grpno: MSGGRP.ORDB, errno: 2, message: "Failed to create %s, connection is null"},
+		{grpno: MSGGRP.ORDB, errno: 3, message: "%s Not connected"},
 
-		{grpno: MSGGRP.FRAMEWORK, errno:  0, message: ""},
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  3, message: "Failed to invoke method '%'  on component '%'"},

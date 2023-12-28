@@ -72,8 +72,8 @@ export class QueryTable extends SQLSource implements DataSource
 
 		if (connection == null)
 		{
-			// Not connected
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			// Cannot create object when onnection is null
+			Messages.severe(MSGGRP.ORDB,2,this.constructor.name);
 			return;
 		}
 
@@ -281,7 +281,7 @@ export class QueryTable extends SQLSource implements DataSource
 		if (!this.conn$.connected())
 		{
 			// Not connected
-			Messages.severe(MSGGRP.ORDB,4,this.constructor.name);
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return(false);
 		}
 

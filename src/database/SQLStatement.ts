@@ -55,8 +55,8 @@ export class SQLStatement
 	{
 		if (connection == null)
 		{
-			// Not connected
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			// Cannot create object when onnection is null
+			Messages.severe(MSGGRP.ORDB,2,this.constructor.name);
 			return;
 		}
 

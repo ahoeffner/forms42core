@@ -56,5 +56,6 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FRAMEWORK, errno: 2, message: "Attribute '%s' on component '%s' does not exist"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 3, message: "Failed to invoke method '%s'  on component '%s'"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 4, message: "Cannot find '%s' on this or parent elements"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 5, message: "Use of @formevent on non compatable class '%s'"},
 	];
 }

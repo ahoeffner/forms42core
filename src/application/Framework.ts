@@ -224,7 +224,7 @@ export class Framework
 				}
 
 				events.push([attrnames[an],attrvalue]);
-				element.removeAttribute(attrnames[an]);
+				element.removeAttribute(prefix+attrnames[an]);
 
 				Logger.log(Type.eventparser,"Add event: '"+attrvalue+"' for: "+attrnames[an]);
 			}

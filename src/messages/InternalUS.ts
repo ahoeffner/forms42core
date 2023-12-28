@@ -35,11 +35,11 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.SQL, title: "Database"},
 		{grpno: MSGGRP.TRX, title: "Transaction"},
 		{grpno: MSGGRP.ORDB, title: "OpenRestDB"},
+		{grpno: MSGGRP.FORM, title: "Form Failure"},
 	];
 
 	public messages: Message[] =
 	[
-		{grpno: MSGGRP.TRX, errno: 0,  message: ""},
 		{grpno: MSGGRP.TRX, errno: 1,  message: "Transactions successfully saved", important: true},
 		{grpno: MSGGRP.TRX, errno: 2,  message: "Failed to push transactions to backend"},
 		{grpno: MSGGRP.TRX, errno: 3,  message: "Failed to undo transactions for form '%'"},
@@ -58,7 +58,6 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.TRX, errno: 16, message: "Cannot update records on datasource based on a query"},
 		{grpno: MSGGRP.TRX, errno: 17, message: "Cannot delete records on datasource based on a query"},
 
-		{grpno: MSGGRP.SQL, errno: 0, message: ""},
 		{grpno: MSGGRP.SQL, errno: 1, message: "Record has been deleted by another user"},
 		{grpno: MSGGRP.SQL, errno: 2, message: "Unable to describe table '%' [%]"},
 		{grpno: MSGGRP.SQL, errno: 3, message: "Unable to describe query '%'"},
@@ -78,5 +77,9 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FRAMEWORK, errno: 6, message: "% returned %"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 7, message: "EventListner '%' did not return Promise<boolean>, but '%'"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 8, message: "EventListner '%' did not return boolean, but '%'"},
+
+		{grpno: MSGGRP.FORM, errno: 1, message: "Block '%' does not exist"},
+		{grpno: MSGGRP.FORM, errno: 2, message: "Form must be validated before layout can be changed"},
+		{grpno: MSGGRP.FORM, errno: 3, message: "Replacing view will remove all event listeners"},
 	];
 }

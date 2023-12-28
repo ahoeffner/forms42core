@@ -248,7 +248,6 @@ export class FormsModule
 			case Level.warn: Alert.warning(msg,title); break;
 			case Level.severe: Alert.fatal(msg,title); break;
 		}
-
 	}
 
 	/** Get all active forms */

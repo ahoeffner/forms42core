@@ -216,31 +216,31 @@ export class Form implements CanvasComponent
 	}
 
 	/** Handle fine message */
-	public static fine(grpno:number,errno:number,...args:any) : void
+	public fine(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.fine(grpno,errno,args);
 	}
 
 	/** Handle info message */
-	public static info(grpno:number,errno:number,...args:any) : void
+	public info(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.info(grpno,errno,args);
 	}
 
 	/** Handle warning message */
-	public static warn(grpno:number,errno:number,...args:any) : void
+	public warn(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.warn(grpno,errno,args);
 	}
 
 	/** Handle severe message */
-	public static severe(grpno:number,errno:number,...args:any) : void
+	public severe(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.severe(grpno,errno,args);
 	}
 
 	/** Popup a message */
-	public static alert(msg:string, title:string, level?:Level) : void
+	public alert(msg:string, title:string, level?:Level) : void
 	{
 		if (!level)
 			level = Level.info;

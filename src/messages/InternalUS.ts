@@ -44,7 +44,7 @@ export class InternalUS implements Bundle
 
 	public messages: Message[] =
 	[
-		{grpno: MSGGRP.TRX, errno: 1,  message: "Transactions successfully saved"},
+		{grpno: MSGGRP.TRX, errno: 1,  message: "Transactions successfully comitted"},
 		{grpno: MSGGRP.TRX, errno: 2,  message: "Failed to push transactions to backend"},
 		{grpno: MSGGRP.TRX, errno: 3,  message: "Failed to undo transactions for form '%'"},
 		{grpno: MSGGRP.TRX, errno: 4,  message: "Failed to roll back transactions"},

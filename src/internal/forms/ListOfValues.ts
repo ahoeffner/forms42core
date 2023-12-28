@@ -23,14 +23,14 @@ import { Form } from "../Form.js";
 import { Classes } from "../Classes.js";
 import { Case } from "../../public/Case.js";
 import { Block } from "../../public/Block.js";
-import { Alert } from "../../application/Alert.js";
+import { MSGGRP } from "../../messages/Internal.js";
+import { Messages } from "../../messages/Messages.js";
 import { KeyMap } from "../../control/events/KeyMap.js";
 import { MouseMap } from "../../control/events/MouseMap.js";
 import { FormEvent } from "../../control/events/FormEvent.js";
 import { EventType } from "../../control/events/EventType.js";
 import { Internals } from "../../application/properties/Internals.js";
 import { ListOfValues as Properties } from "../../public/ListOfValues.js";
-import { FormsModule } from "../../application/FormsModule.js";
 
 
 export class ListOfValues extends Form
@@ -200,19 +200,19 @@ export class ListOfValues extends Form
 
 		if (this.props == null)
 		{
-			Alert.fatal("No ListOfValues properties passed","List Of Values");
+			Messages.severe(MSGGRP.FORM,4); // ListOfValues does not exist
 			return(true);
 		}
 
 		if (this.props.datasource == null)
 		{
-			Alert.fatal("No datasource defined in ListOfValues","List Of Values");
+			Messages.severe(MSGGRP.FORM,5); // ListOfValues does not exist
 			return(true);
 		}
 
 		if (this.props.displayfields == null)
 		{
-			Alert.fatal("No display fields defined in ListOfValues","List Of Values");
+			Messages.severe(MSGGRP.FORM,6); // No display fields defined
 			return(true);
 		}
 

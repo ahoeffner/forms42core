@@ -36,6 +36,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.TRX, title: "Transaction"},
 		{grpno: MSGGRP.ORDB, title: "OpenRestDB"},
 		{grpno: MSGGRP.FORM, title: "Form Failure"},
+		{grpno: MSGGRP.BLOCK, title: "Block/Section"},
 	];
 
 	public messages: Message[] =
@@ -81,5 +82,13 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FORM, errno: 1, message: "Block '%' does not exist"},
 		{grpno: MSGGRP.FORM, errno: 2, message: "Form must be validated before layout can be changed"},
 		{grpno: MSGGRP.FORM, errno: 3, message: "Replacing view will remove all event listeners"},
+		{grpno: MSGGRP.FORM, errno: 4, message: "ListOfValues does not exist"},
+		{grpno: MSGGRP.FORM, errno: 5, message: "No datasource defined in ListOfValues"},
+		{grpno: MSGGRP.FORM, errno: 6, message: "No display fields defined in ListOfValues"},
+
+		{grpno: MSGGRP.BLOCK, errno: 1, message: "Block '%', Has no insertable fields"},
+		{grpno: MSGGRP.BLOCK, errno: 2, message: "Block '%', Cannot navigate to record"},
+		{grpno: MSGGRP.BLOCK, errno: 3, message: "Block '%', Waiting for previous query to finish"},
+		{grpno: MSGGRP.BLOCK, errno: 4, message: "Block '%', Datasource is lacking"},
 	];
 }

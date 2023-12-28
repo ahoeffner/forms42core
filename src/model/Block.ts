@@ -23,11 +23,12 @@ import { Form } from "./Form.js";
 import { Row } from "../view/Row.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
-import { Alert } from "../application/Alert.js";
 import { SQLRest } from "../database/SQLRest.js";
+import { MSGGRP } from "../messages/Internal.js";
 import { SubQuery } from "./filters/SubQuery.js";
 import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
+import { Messages } from "../messages/Messages.js";
 import { SQLSource } from "../database/SQLSource.js";
 import { QueryByExample } from "./QueryByExample.js";
 import { Block as ViewBlock } from '../view/Block.js';
@@ -481,7 +482,7 @@ export class Block
 
 		await this.wrapper.refresh(record);
 		if (reset) record.failed = false;
-		
+
 		this.view.refresh(record);
 	}
 
@@ -495,7 +496,7 @@ export class Block
 
 		if (!this.view.hasInsertableFields())
 		{
-			Alert.warning("'"+this.name+"' has no allowed input fields","Insert Record");
+			Messages.warn(MSGGRP.BLOCK,1,this.name); // No insertable fields
 			return(false);
 		}
 
@@ -551,8 +552,9 @@ export class Block
 
 			if (inst == null)
 			{
+				// Cannot navigate to record
 				await this.wrapper.delete(record);
-				Alert.warning("'"+this.name+"' has no allowed input fields","Insert Record");
+				Messages.warn(MSGGRP.BLOCK,2,this.name);
 				return(false);
 			}
 
@@ -791,8 +793,8 @@ export class Block
 
 			if (runid && waits > 1000)
 			{
-				waits = 0;
-				Alert.warning("Waiting for previous query to finish","Execute Query");
+				waits = 0; // Waiting on previous query
+				Messages.warn(MSGGRP.BLOCK,3,this.name);
 			}
 		}
 
@@ -815,7 +817,8 @@ export class Block
 
 		while(!this.view.empty(0))
 		{
-			Alert.fatal("Data provider for '"+this.name+"' is lacking. Please requery","Query");
+			// Datasource is lacking
+			Messages.severe(MSGGRP.BLOCK,4,this.name);
 			return(false);
 		}
 

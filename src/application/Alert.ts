@@ -27,7 +27,7 @@ import { FlightRecorder } from './FlightRecorder.js';
 import { Alert as Interceptor } from '../application/interfaces/Alert.js';
 
 /**
- * A popup form meant to alert the user that some event
+ * A popup form to alert the user that some event
  * has occured
  */
 export class Alert

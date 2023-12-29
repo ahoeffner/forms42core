@@ -25,7 +25,7 @@
  */
 export class Internals
 {
-	public static close:string = null;
+	public static CloseButtonText:string = null;
 
 	public static header:string =
 	`
@@ -147,8 +147,8 @@ export class Internals
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;
 		if (indexing && Internals.PopupStyleIndexing) indexing.style.cssText = Internals.PopupStyleIndexing;
 
-		if (close && Internals.close)
-			close.innerHTML = Internals.close;
+		if (close && Internals.CloseButtonText)
+			close.innerHTML = Internals.CloseButtonText;
 
 		if (scope != null)
 		{

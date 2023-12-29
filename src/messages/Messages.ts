@@ -250,6 +250,11 @@ export class Messages
 			console.log(message);
 		}
 
+		if (group.stacktrace)
+		{
+			console.log(new Error().stack)
+		}
+
 		if (alert)
 		{
 			let params:Map<string,any> = new Map<string,any>();

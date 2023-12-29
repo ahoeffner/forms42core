@@ -981,9 +981,9 @@ export class Form implements EventListenerObject
 			if (!await blk.goRow(row))
 				return(false);
 
+			params.set("lov",lov);
 			params.set("field",field);
 			params.set("block",block);
-			params.set("properties",lov);
 			params.set("form",this.parent);
 			this.parent.callform(Classes.ListOfValuesClass,params);
 

@@ -930,7 +930,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 				}
 				else
 				{
-					Messages.handle(MSGGRP.TRX,response.message+" "+response.path,Level.severe);
+					Messages.handle(MSGGRP.TRX,response.message+" ["+response.assert+"]",Level.severe);
 				}
 			}
 

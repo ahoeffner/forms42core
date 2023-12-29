@@ -25,6 +25,7 @@ import { Class } from '../public/Class.js';
 import { Framework } from './Framework.js';
 import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
+import { Canvas } from './properties/Canvas.js';
 import { dates } from '../model/dates/dates.js';
 import { Level, Messages } from '../messages/Messages.js';
 import { Form as ViewForm } from '../view/Form.js';
@@ -54,6 +55,18 @@ export class FormsModule
 		if (FormsModule.instance$ == null)
 			FormsModule.instance$ = new FormsModule();
 		return(FormsModule.instance$ as FormsModule);
+	}
+
+	/** Change form postion to absolute */
+	public static setFormPositionAbsolute() : void
+	{
+		Canvas.CanvasStyle = Canvas.CanvasStyle.replace("relative","absolute");
+	}
+
+	/** Change form postion to relative */
+	public static setFormPositionRelative() : void
+	{
+		Canvas.CanvasStyle = Canvas.CanvasStyle.replace("absolute","relative");
 	}
 
 	/** Whether or not to display the active form in the url */

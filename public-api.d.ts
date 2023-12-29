@@ -33,7 +33,9 @@ export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';
 
 export { Case } from './src/public/Case.js';
 export { DateConstraint } from './src/public/DateConstraint.js';
-export { ListOfValues, LOVFilterPreProcessor } from './src/public/ListOfValues.js';
+
+export { ListOfValues } from './src/public/ListOfValues.js';
+export type { LOVFilterPreProcessor } from './src/public/ListOfValues.js';
 
 export { Canvas as CanvasConfig } from './src/application/properties/Canvas.js';
 export { DatePicker as DatePickerConfig } from './src/application/properties/DatePicker.js';

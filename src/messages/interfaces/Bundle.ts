@@ -22,10 +22,10 @@
 import { Group } from "./Group.js";
 import { Message } from "./Message.js";
 
-export abstract class Bundle
+export interface Bundle
 {
-	public lang:string;
-	public abstract name:string;
-	public abstract groups:Group[];
-	public abstract messages:Message[];
+	lang:string;
+	name:string;
+	groups:Group[];
+	messages:Message[];
 }

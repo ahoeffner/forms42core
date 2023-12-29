@@ -318,6 +318,7 @@ export class QueryEditor extends Form
 			.setClasses(fprops.getClasses())
 			.setAttributes(fprops.getAttributes())
 			.setAttribute(Properties.RecordModeAttr,"update")
+			.setAttribute("autocomplete","off")
 			.setHidden(true);
 
 		this.inclprops.setHidden(true).removeClass("single-value");

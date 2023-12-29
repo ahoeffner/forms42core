@@ -101,7 +101,6 @@ export class Alert extends Form
 			}
 		}
 
-
 		let severe:boolean = this.parameters.get("severe");
 		let warning:boolean = this.parameters.get("warning");
 
@@ -173,7 +172,7 @@ export class Alert extends Form
 		<div name="popup-body">
 			<div name="popup-alert">
 				<div name="alertlogo"></div>
-				<div name="msg" from="alert"></div>
+				<div name="msg" from="alert" style="margin:10px;"></div>
 			</div>
 		</div>
 

@@ -53,7 +53,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.TRX, errno: 7,  message: "Transaction is being rolled back"},
 		{grpno: MSGGRP.TRX, errno: 8,  message: "Transaction will be rolled back in % seconds"},
 		{grpno: MSGGRP.TRX, errno: 9,  message: "Record has been changed by another user '%'"},
-		{grpno: MSGGRP.TRX, errno: 10, message: "Record at row % has been changed by another user '%'"},
+		{grpno: MSGGRP.TRX, errno: 10, message: "Record at row % has been changed by another user"},
 		{grpno: MSGGRP.TRX, errno: 11, message: "Record has been delete by another user"},
 		{grpno: MSGGRP.TRX, errno: 12, message: "Record is locked by another user"},
 		{grpno: MSGGRP.TRX, errno: 13, message: "Record at row % is locked by another user"},

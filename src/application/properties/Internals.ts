@@ -55,7 +55,6 @@ export class Internals
 		gap:2px;
 		display:grid;
 		hyphens:auto;
-		min-height:30px;
 		align-items: center;
 		overflow-wrap: normal;
 		align-content: center;

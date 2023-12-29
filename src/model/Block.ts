@@ -622,10 +622,7 @@ export class Block
 		let empty:boolean = false;
 		let offset:number = this.view.rows - this.view.row - 1;
 
-		let success:boolean = true;
-
-		console.log(RecordState[this.getRecord().state])
-		success = await this.wrapper.modified(this.getRecord(),true);
+		let success:boolean = await this.wrapper.modified(this.getRecord(),true);
 
 		if (success)
 		{

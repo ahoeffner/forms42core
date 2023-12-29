@@ -170,6 +170,9 @@ export class DataSourceWrapper
 
 			for (let i = 0; i < records.length; i++)
 			{
+				if (records[i].failed)
+					continue;
+
 				if (records[i].state == RecordState.Insert)
 				{
 					records[i].flushing = true;
@@ -453,7 +456,11 @@ export class DataSourceWrapper
 
 	public async delete(record:Record) : Promise<boolean>
 	{
+		let skip:boolean = false;
 		let pos:number = this.index(record);
+
+		if (record.state == RecordState.New) skip = true;
+		if (record.state == RecordState.Insert) skip = true;
 
 		if (pos < 0)
 			return(false);
@@ -461,7 +468,7 @@ export class DataSourceWrapper
 		if (!await this.block.preDelete(record))
 			return(false);
 
-		if (!await this.source.delete(record))
+		if (!skip && !await this.source.delete(record))
 			return(false);
 
 		this.hwm$--;

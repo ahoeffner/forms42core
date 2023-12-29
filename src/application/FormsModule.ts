@@ -57,18 +57,6 @@ export class FormsModule
 		return(FormsModule.instance$ as FormsModule);
 	}
 
-	/** Change form postion to absolute */
-	public static setFormPositionAbsolute() : void
-	{
-		Canvas.CanvasStyle = Canvas.CanvasStyle.replace("relative","absolute");
-	}
-
-	/** Change form postion to relative */
-	public static setFormPositionRelative() : void
-	{
-		Canvas.CanvasStyle = Canvas.CanvasStyle.replace("absolute","relative");
-	}
-
 	/** Whether or not to display the active form in the url */
 	public static get showurl() : boolean
 	{

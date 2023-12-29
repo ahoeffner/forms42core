@@ -271,7 +271,8 @@ export class Form implements CanvasComponent
 	public getView() : HTMLElement
 	{
 		let view:HTMLElement = this.canvas?.getView();
-		if (view != null) return(this.canvas.getView());
+
+		if (view != null) return(view);
 		else return(FormBacking.getBacking(this).page);
 	}
 

@@ -61,11 +61,6 @@ export class Internals
 		overflow-wrap: break-word;
 	`;
 
-	public static PopupStyleDiv:string =
-	`
-		margin-top:10px;
-	`;
-
 	public static PopupStyleLabel:string =
 	`
 		margin-top: 10px;
@@ -92,7 +87,7 @@ export class Internals
 		height:30px;
 	`;
 
-	public static PopupStyleIndexing:string = 
+	public static PopupStyleIndexing:string =
 	`
 		display:grid;
 		margin-top:0px;
@@ -142,10 +137,8 @@ export class Internals
 		let footer:HTMLElement = view.querySelector('div[name="popup-footer"]');
 		let lowerright:HTMLElement = view.querySelector('div[name="lowerright"]');
 		let buttonarea:HTMLElement = lowerright?.querySelector('div[name="buttonarea"]');
-		let divs:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] div');
 		let labels:NodeListOf<HTMLElement> = view.querySelectorAll('div[name="popup-body"] label');
 
-		if (Internals.PopupStyleDiv) divs.forEach((div) => div.style.cssText = Internals.PopupStyleDiv);
 		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
 		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
@@ -162,13 +155,13 @@ export class Internals
 			if (scope.hasAttribute("true")) scope.style.display = "grid";
 			else scope.style.display = "none";
 		}
-			
+
 		if (database != null)
 		{
 			if (database.hasAttribute("true")) database.style.display = "grid";
 			else database.style.display = "none";
 		}
-	
+
 		if (login && Internals.PopupStyleLogin) login.style.cssText = Internals.PopupStyleLogin;
 		if (lowerright && Internals.PopupStyleLowerRight) lowerright.style.cssText = Internals.PopupStyleLowerRight;
 		if (buttonarea && Internals.PopupStyleButtonArea) buttonarea.style.cssText = Internals.PopupStyleButtonArea;

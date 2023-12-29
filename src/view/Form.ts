@@ -28,6 +28,7 @@ import { Classes } from '../internal/Classes.js';
 import { MSGGRP } from '../messages/Internal.js';
 import { Messages } from '../messages/Messages.js';
 import { Form as ModelForm } from '../model/Form.js';
+import { Form as Internal } from '../internal/Form.js';
 import { Logger, Type } from '../application/Logger.js';
 import { Block as ModelBlock } from '../model/Block.js';
 import { ListOfValues } from '../public/ListOfValues.js';
@@ -97,7 +98,9 @@ export class Form implements EventListenerObject
 	public set canvas(canvas:Canvas)
 	{
 		this.canvas$ = canvas;
-		this.canvas.getContent()?.addEventListener("focus",this);
+		this.canvas$.getView().setAttribute("form",this.name);
+		this.canvas$.getContent()?.addEventListener("focus",this);
+		if (this.parent instanceof Internal) this.canvas$.getView().setAttribute("internal","true");
 	}
 
 	public get model() : ModelForm

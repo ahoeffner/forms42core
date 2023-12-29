@@ -26,9 +26,9 @@ import { Group } from "./interfaces/Group.js";
 import { Bundle } from "./interfaces/Bundle.js";
 import { Classes } from "../internal/Classes.js";
 import { Message } from "./interfaces/Message.js";
+import { MessageHandler } from "./MessageHandler.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { FormsModule } from "../application/FormsModule.js";
-import { MessageHandler } from "./MessageHandler.js";
 
 export class Messages
 {
@@ -226,8 +226,15 @@ export class Messages
 		return(message);
 	}
 
-	private static display(group:Group, msg:Message, level:Level) : void
+	private static async display(group:Group, msg:Message, level:Level) : Promise<void>
 	{
+		if (Messages.MessageHandler)
+		{
+			let handled:boolean|Promise<boolean> = Messages.MessageHandler.handle(group,msg,level);
+			if (handled instanceof Promise) handled = await handled;
+			if (handled) return;
+		}
+
 		let cons:boolean = false;
 		if (level >= Messages.consoleLevel) cons = true;
 		if (group.console != null) cons = group.console;

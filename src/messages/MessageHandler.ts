@@ -20,9 +20,10 @@
 */
 
 import { Level } from "./Messages";
+import { Group } from "./interfaces/Group";
 import { Message } from "./interfaces/Message";
 
 export interface MessageHandler
 {
-	handle(error:Message, level:Level) : boolean|Promise<boolean>;
+	handle(group:Group, msg:Message, level:Level) : boolean|Promise<boolean>;
 }

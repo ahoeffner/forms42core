@@ -930,7 +930,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 				}
 				else
 				{
-					Messages.handle(MSGGRP.TRX,response.message+" ["+response.assert+"]",Level.severe);
+					let assert:string = response.assert ? response.assert : "";
+					Messages.handle(MSGGRP.TRX,response.message+" ["+assert+"]",Level.severe);
 				}
 			}
 

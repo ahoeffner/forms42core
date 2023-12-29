@@ -149,11 +149,12 @@ export class Row
 		if (!flag && !this.indicator$) return;
 
 		this.indicator$ = flag;
+		let ok:boolean = this.status != Status.na;
 
 		this.indicators.forEach((ind) =>
 		{
-			if (flag) ind.element.classList.add(Properties.Classes.RowIndicator);
-			else      ind.element.classList.remove(Properties.Classes.RowIndicator);
+			if (flag && ok) ind.element.classList.add(Properties.Classes.RowIndicator);
+			else            ind.element.classList.remove(Properties.Classes.RowIndicator);
 		})
 	}
 

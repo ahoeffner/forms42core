@@ -631,7 +631,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (!this.conn$.connected())
 		{
 			// Not connected
-			Messages.severe(MSGGRP.ORDB,4,this.constructor.name);
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return(false);
 		}
 

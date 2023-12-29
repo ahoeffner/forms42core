@@ -67,8 +67,8 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.SQL, errno: 3, message: "Unable to describe query '%'"},
 
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
-		{grpno: MSGGRP.ORDB, errno: 2, message: "Failed to create %s, connection is null"},
-		{grpno: MSGGRP.ORDB, errno: 3, message: "%s Not connected"},
+		{grpno: MSGGRP.ORDB, errno: 2, message: "Failed to create %, connection is null"},
+		{grpno: MSGGRP.ORDB, errno: 3, message: "% Not connected"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},
@@ -85,7 +85,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.FRAMEWORK, errno: 13, message: "Relation '%' -> '%' is self referencing"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 14, message: "Invalid key definition, block: 'null'"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 15, message: "Invalid key definition, fields: 'null'"},
-		{grpno: MSGGRP.FRAMEWORK, errno: 16, message: "During transaction %s only current record can be accessed"},
+		{grpno: MSGGRP.FRAMEWORK, errno: 16, message: "During transaction % only current record can be accessed"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 17, message: "Sendkey unable to locate field or block %"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 18, message: "Class % is not an instance of DataMapper"},
 		{grpno: MSGGRP.FRAMEWORK, errno: 19, message: "% is mapped to a class"},

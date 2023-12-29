@@ -306,7 +306,7 @@ export class ListOfValues extends Form
 	`
 	<div name="popup-body">
 		<div name="lov" class="CSS">
-			<div name="search"><input name="criteria" from="filter"></div>
+			<div name="search"><input name="criteria" from="filter" autocomplete="off"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">
 					<input name="display" from="results" row="$row" readonly derived>

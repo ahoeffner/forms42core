@@ -1501,6 +1501,7 @@ export class Block
 		});
 
 		this.finalized$ = true;
+		this.getRow(0)?.setIndicatorState("na",false);
 		this.model$ = FormBacking.getModelForm(this.form.parent).getBlock(this.name);
 	}
 

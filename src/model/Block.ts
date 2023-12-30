@@ -609,7 +609,7 @@ export class Block
 		if (this.querymode)
 			return(false);
 
-		if (this.getRecord().state != RecordState.New)
+		if (this.getRecord().state != RecordState.New && this.getRecord().state != RecordState.Insert)
 		{
 			if (!this.source$.deleteallowed)
 				return(false);

@@ -408,7 +408,10 @@ export class DataSourceWrapper
 		}
 
 		if (success && this.block?.interface.flushStrategy == FlushStrategy.Row)
+		{
 			success = await this.flush();
+			if (success) success = !record.failed;
+		}
 
 		return(success);
 	}

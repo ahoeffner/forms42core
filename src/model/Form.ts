@@ -248,7 +248,7 @@ export class Form
 		{
 			// cannot start transaction
 			if (!block) Messages.severe(MSGGRP.FRAMEWORK,9,this.name,EventType[event],EventType[running]);
-			else Messages.severe(MSGGRP.FRAMEWORK,10,this.name,EventType[event],block,EventType[running]);
+			else Messages.severe(MSGGRP.FRAMEWORK,10,this.name,EventType[event],block.name,EventType[running]);
 			return(false);
 		}
 
@@ -263,7 +263,7 @@ export class Form
 		{
 			// cannot start transaction
 			if (!block) Messages.severe(MSGGRP.FRAMEWORK,9,this.name,EventType[event],EventType[running]);
-			else Messages.severe(MSGGRP.FRAMEWORK,10,this.name,EventType[event],block,EventType[running]);
+			else Messages.severe(MSGGRP.FRAMEWORK,10,this.name,EventType[event],block.name,EventType[running]);
 			return(false);
 		}
 

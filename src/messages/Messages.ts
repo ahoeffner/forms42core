@@ -181,6 +181,9 @@ export class Messages
 
 	private static async show(grpno:number,errno:number,level:Level,...args:any) : Promise<void>
 	{
+		if (Array.isArray(args) && args.length == 1)
+			args = args[0];
+
 		let group:Group = Messages.getGroup(grpno);
 		let msg:Message = Messages.get(grpno,errno);
 

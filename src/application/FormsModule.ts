@@ -46,7 +46,7 @@ export class FormsModule
 {
 	private static root$:HTMLElement;
 	private static flush$:FlushStrategy;
-	private static showurl$:boolean = true;
+	private static showurl$:boolean = false;
 	private static instance$:FormsModule = null;
 
 	/** Static method to return the singleton */

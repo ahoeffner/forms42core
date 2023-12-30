@@ -397,9 +397,6 @@ export class Row
 		this.activateIndicators(false);
 		this.setIndicatorState("na",false);
 		this.getFields().forEach((fld) => {fld.clear()});
-
-		if (this.rownum == 0 && this.block.empty())
-			this.activateIndicators(true);
 	}
 
 	public setState(state:Status) : void

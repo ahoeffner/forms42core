@@ -656,18 +656,14 @@ export class Block
 			return;
 		}
 
-
 		this.rows$.forEach((row) =>
 		{
 			row.status = Status.na;
 			if (fields) row.clear();
-
-			if (fields && row.rownum == 0)
-				this.getRow(0).activateIndicators(true);
 		});
 
-		if (fields)
-			this.lockUnused();
+		if (fields) this.lockUnused();
+		this.getRow(0).activateIndicators(true);
 	}
 
 	public addInstance(inst:FieldInstance) : void

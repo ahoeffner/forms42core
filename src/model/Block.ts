@@ -596,6 +596,7 @@ export class Block
 			inst.focus(true);
 			this.dirty = true;
 			this.view.refresh(record);
+			this.view.getRow(inst.row).activateIndicators(true);
 
 			return(true);
 		}
@@ -644,7 +645,9 @@ export class Block
 			else inst = this.view.getPreviousInstance(inst);
 
 			this.view.getRow(this.view.row).validated = true;
+
 			inst?.focus(true);
+			this.view.getRow(inst.row).activateIndicators(true);
 
 			if (this.getRecord() != null)
 			{

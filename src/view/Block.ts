@@ -1159,8 +1159,11 @@ export class Block
 				}
 				else
 				{
+					let row:Row = this.getRow(available-1);
 					let idx:number = this.getCurrentRow().getFieldIndex(inst);
-					next = this.getRow(available-1).getFieldByIndex(idx);
+
+					next = row.getFieldByIndex(idx);
+					if (!next.focusable(row.status)) next = row.getFirstInstance(row.status);
 				}
 
 				next.ignore = "focus";
@@ -1230,7 +1233,7 @@ export class Block
 		{
 			let row:Row = this.getRow(this.row+scroll);
 			if (row.status != Status.na) next = row.getFieldByIndex(idx);
-			if (!next) FlightRecorder.add("@view.block.scroll : no available fields. block: "+this.name+" inst: "+inst+" idx: "+idx);
+			if (!next.focusable(row.status)) next = row.getFirstInstance(row.status);
 		}
 
 		return(next);

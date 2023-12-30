@@ -496,7 +496,7 @@ export class Connection extends BaseConnection
 		{
 			if (response.assert == null)
 			{
-				console.log(response);
+				Messages.handle(MSGGRP.ORDB,response,Level.warn);
 				return(response);
 			}
 		}

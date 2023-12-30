@@ -200,6 +200,16 @@ export class Messages
 		args?.forEach((arg) =>
 		{msg.message = Messages.replace(msg.message,arg)})
 
+		let pos:number = 0;
+
+		while(pos >= 0)
+		{
+			pos = msg.message.indexOf('%');
+
+			if (pos >= 0 && msg.message.charAt(pos-1) != '\\')
+				msg.message = msg.message.substring(0,pos) + msg.message.substring(pos+1);
+		}
+
 		Messages.display(group,msg,level);
 	}
 

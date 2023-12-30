@@ -175,6 +175,18 @@ export class Record
 		}
 	}
 
+  /**
+	* Change the tag input, span, div ... for the given field
+	* @param field
+	* @param tag
+	*/
+	public setTag(field:string, tag:string) : void
+	{
+		let props:FieldProperties = this.getProperties(field);
+		if (props) this.setProperties(props.setTag(tag),field);
+		else console.error("field '"+field+"' was not found in record");
+	}
+
 	/** Set readonly state for a given field */
 	public setReadOnly(field:string, flag:boolean) : void
 	{

@@ -469,7 +469,7 @@ export class QueryEditor extends Form
 		Internals.header +
 		`
 		<div name="popup-body">
-			<div name="query">
+			<div name="query-editor">
 				<div name="type">
 					<table name="type" style="width:100%">
 						<tr>
@@ -479,7 +479,6 @@ export class QueryEditor extends Form
 						</tr>
 					</table>
 				</div>
-				<span style="display: block; height: 8px"></span>
 				<div name="single-value">
 					<table>
 						<tr>

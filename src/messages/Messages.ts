@@ -26,6 +26,7 @@ import { Group } from "./interfaces/Group.js";
 import { Bundle } from "./interfaces/Bundle.js";
 import { Classes } from "../internal/Classes.js";
 import { Message } from "./interfaces/Message.js";
+import { Class, isClass } from "../public/Class.js";
 import { MessageHandler } from "./MessageHandler.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { FormsModule } from "../application/FormsModule.js";
@@ -109,8 +110,11 @@ export class Messages
 	}
 
 	/** Add message bundle */
-	public static addBundle(bundle:Bundle) : void
+	public static addBundle(bundle:Bundle|Class<Bundle>) : void
 	{
+		if (isClass(bundle))
+			bundle = new bundle();
+
 		if (!Messages.files$.includes(bundle))
 			Messages.files$.push(bundle);
 

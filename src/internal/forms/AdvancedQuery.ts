@@ -536,8 +536,8 @@ export class AdvancedQuery extends Form
 
 			<div name="lower-right">
 				<div name="button-area">
-					<button onClick="this.done()">{OK}</button>
-					<button onClick="this.close()">{CANCEL}</button>
+				<button onClick="this.close()">{CANCEL}</button>
+				<button onClick="this.done()">{OK}</button>
 				</div>
 			</div>
 		</div>

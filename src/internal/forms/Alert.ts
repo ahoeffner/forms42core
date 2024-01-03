@@ -167,12 +167,13 @@ export class Alert extends Form
 	private static prepare() : string
 	{
 		let page:string = Alert.page;
-		page = page.replace("{CANCEL}",Internals.CancelButtonText);
+		page = page.replace("{OK}",Internals.OKButtonText);
 		return(page);
 	}
 
 	public static page:string =
-		Internals.header +
+		`<div id="block"></div>` +
+			Internals.header +
 		`
 		<div name="popup-body">
 			<div name="alert">

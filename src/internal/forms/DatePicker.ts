@@ -75,18 +75,21 @@ export class DatePicker extends Form
 			{type: EventType.Key, key:KeyMap.enter},
 			{type: EventType.Key, key:KeyMap.escape},
 			{type: EventType.Mouse, mouse:MouseMap.click},
+			{type: EventType.Mouse, mouse:MouseMap.dblclick}
 		]);
 
 		this.addEventListener(this.goToPrevMonth,
 		[
 			{type: EventType.Key, 	field: "prev", key: KeyMap.space},
-			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click}
+			{type: EventType.Mouse, field: "prev", mouse: MouseMap.click},
+			{type: EventType.Mouse, field: "prev", mouse: MouseMap.dblclick},
 		]);
 
 		this.addEventListener(this.goToNextMonth,
 		[
 			{type: EventType.Key, 	field: "next", key: KeyMap.space},
-			{type: EventType.Mouse, field: "next", mouse: MouseMap.click}
+			{type: EventType.Mouse, field: "next", mouse: MouseMap.click},
+			{type: EventType.Mouse, field: "next", mouse: MouseMap.dblclick}
 		]);
 
 		this.addEventListener(this.navigate,

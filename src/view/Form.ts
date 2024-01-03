@@ -814,7 +814,7 @@ export class Form implements EventListenerObject
 				params.set("type",DataType[block.fieldinfo.get(inst.name).type]);
 				params.set("properties",new FieldProperties(inst.defaultProperties));
 
-				await this.parent.callform(Classes.QueryEditorClass,params);
+				await this.parent.callform(Classes.AdvancedQueryClass,params);
 				return(true);
 			}
 

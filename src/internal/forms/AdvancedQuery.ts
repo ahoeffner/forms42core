@@ -32,12 +32,11 @@ import { FormEvent } from "../../control/events/FormEvent.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { FieldProperties } from "../../public/FieldProperties.js";
 import { Internals } from "../../application/properties/Internals.js";
-import { Between } from "../../../index.js";
 
 /**
  * Form used for creating more advanced query-filters
  */
-export class QueryEditor extends Form
+export class AdvancedQuery extends Form
 {
 	private type:string = null;
 
@@ -49,7 +48,7 @@ export class QueryEditor extends Form
 
 	constructor()
 	{
-		super(QueryEditor.page);
+		super(AdvancedQuery.page);
 
 		this.moveable = true;
 		this.resizable = true;
@@ -469,11 +468,11 @@ export class QueryEditor extends Form
 		Internals.header +
 		`
 		<div name="popup-body">
-			<div name="query-editor">
+			<div name="advanced-query">
 				<div name="type">
-					<table name="type" style="width:100%">
+					<table name="type">
 						<tr>
-							<td style="text-align: center">
+							<td>
 								<select name="options" from="options" size="1"></select>
 							</td>
 						</tr>
@@ -507,7 +506,7 @@ export class QueryEditor extends Form
 					</table>
 				</div>
 				<div name="multi-value">
-					<table style="margin-left: auto; margin-right: auto;">
+					<table>
 						<tr>
 							<td>
 								<input name="value" from="values" row="0" class="multi-value">
@@ -526,11 +525,12 @@ export class QueryEditor extends Form
 					</table>
 				</div>
 			</div>
-		</div>
-		<div name="lowerright">
-			<div name="buttonarea">
-				<button onClick="this.done()">Ok</button>
-				<button onClick="this.close()">Close</button>
+
+			<div name="lower-right">
+				<div name="button-area">
+					<button onClick="this.done()"></button>
+					<button onClick="this.close()"></button>
+				</div>
 			</div>
 		</div>
 		`

@@ -228,7 +228,7 @@ export class ListOfValues extends Form
 		let page:string = ListOfValues.page;
 		let css:string = this.lov.cssclass;
 
-		page = page.replace("CSS",css ? css : "lov");
+		page = page.replace("CSS",css ? "class='"+css+"'" : "");
 		page = page.replace("ROWS",this.lov.rows+"");
 
 		await this.setView(page);
@@ -305,7 +305,7 @@ export class ListOfValues extends Form
 	Internals.header +
 	`
 	<div name="popup-body">
-		<div name="lov" class="CSS">
+		<div name="list-of-values" CSS>
 			<div name="search"><input name="criteria" from="filter" autocomplete="off"></div>
 			<div name="results">
 				<div name="row" foreach="row in 1..ROWS">

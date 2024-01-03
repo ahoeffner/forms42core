@@ -119,7 +119,7 @@ export class DatePicker extends Form
 				await this.close();
 				return(false);
 			}
-			
+
 			Messages.handle(MSGGRP.VALIDATION,this.constraint.message,Level.warn);
 		}
 
@@ -443,7 +443,7 @@ export class DatePicker extends Form
 				</div>
 				<div name="week" foreach="week in 1..6">
 					<div name="day" foreach="day in 1..7">
-						<span tabindex="-1" name="day-$week$day" style="width:100%; text-align:center;" from="calendar"></span>
+						<span tabindex="-1" name="day-$week$day" from="calendar"></span>
 					</div>
 				</div>
 			</div>

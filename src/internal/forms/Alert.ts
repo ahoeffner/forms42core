@@ -165,20 +165,17 @@ export class Alert extends Form
 	}
 
 	public static page:string =
-		`<div id="block"></div>` +
-
 		Internals.header +
 		`
 		<div name="popup-body">
-			<div name="popup-alert">
-				<div name="alertlogo"></div>
-				<div name="msg" from="alert" style="margin:10px;"></div>
+			<div name="alert">
+				<div name="msg" from="alert"></div>
 			</div>
-		</div>
 
-		<div name="lowerright">
-			<div name="buttonarea">
-				<button name="close" onClick="this.close()">Ok</button>
+			<div name="lower-right">
+				<div name="button-area">
+					<button name="close" onClick="this.close()"></button>
+				</div>
 			</div>
 		</div>
 		`

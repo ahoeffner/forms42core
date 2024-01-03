@@ -27,7 +27,7 @@ export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 
 export { KeyMapPage} from './src/internal/forms/KeyMapPage.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';
-export { QueryEditor } from './src/internal/forms/QueryEditor.js';
+export { AdvancedQuery as QueryEditor } from './src/internal/forms/AdvancedQuery.js';
 export { Alert as AlertForm } from './src/internal/forms/Alert.js';
 export { Classes as InternalClasses } from './src/internal/Classes.js';
 export { UsernamePassword } from './src/internal/forms/UsernamePassword.js';

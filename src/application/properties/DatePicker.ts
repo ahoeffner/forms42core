@@ -25,8 +25,6 @@
  */
 export class DatePicker
 {
-
-
 	public static datePickerDateStyle:string =
 	`
 		margin-top: 10px;
@@ -102,7 +100,7 @@ export class DatePicker
 			let day:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='day']");
 			let week:NodeListOf<HTMLElement> = body.querySelectorAll("div[name='week']");
 			let arrow:NodeListOf<HTMLElement>= body.querySelectorAll("div[name='prev'],div[name='next']");
-			
+
 			if(mth && DatePicker.datePickerMthTextStyle) mth.style.cssText = DatePicker.datePickerMthTextStyle;
 			if(month && DatePicker.datePickerMonthStyle) month.style.cssText = DatePicker.datePickerMonthStyle;
 
@@ -110,6 +108,5 @@ export class DatePicker
 			if (DatePicker.datePickerWeekStyle) week.forEach((week) => week.style.cssText = DatePicker.datePickerWeekStyle);
 			if (DatePicker.datePickerArrowStyle) arrow.forEach((arrow) => arrow.style.cssText = DatePicker.datePickerArrowStyle);
 		}
-
 	}
 }

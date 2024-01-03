@@ -42,7 +42,7 @@ export class Alert extends Form
 
 	constructor()
 	{
-		super(Alert.page);
+		super(Alert.prepare());
 
 		this.moveable = true;
 		this.resizable = true;
@@ -164,6 +164,13 @@ export class Alert extends Form
 		return(split);
 	}
 
+	private static prepare() : string
+	{
+		let page:string = Alert.page;
+		page = page.replace("{CANCEL}",Internals.CancelButtonText);
+		return(page);
+	}
+
 	public static page:string =
 		Internals.header +
 		`
@@ -174,7 +181,7 @@ export class Alert extends Form
 
 			<div name="lower-right">
 				<div name="button-area">
-					<button name="close" onClick="this.close()"></button>
+					<button name="close" onClick="this.close()">{OK}</button>
 				</div>
 			</div>
 		</div>

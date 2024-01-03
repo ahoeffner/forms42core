@@ -228,8 +228,8 @@ export class ListOfValues extends Form
 		let page:string = ListOfValues.page;
 		let css:string = this.lov.cssclass;
 
-		page = page.replace("CSS",css ? "class='"+css+"'" : "");
 		page = page.replace("ROWS",this.lov.rows+"");
+		page = page.replace("CSS",css ? "class='"+css+"'" : "");
 
 		await this.setView(page);
 		let view:HTMLElement = this.getView();

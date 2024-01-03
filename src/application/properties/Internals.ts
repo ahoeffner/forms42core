@@ -27,6 +27,9 @@ export class Internals
 {
 	public static CloseButtonText:string = null;
 
+	public static OKButtonText:string = "Ok";
+	public static CancelButtonText:string = "Cancel";
+
 	public static header:string =
 	`
 		<div name="popup" class="canvas-handle">

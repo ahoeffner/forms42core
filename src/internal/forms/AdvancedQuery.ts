@@ -48,7 +48,7 @@ export class AdvancedQuery extends Form
 
 	constructor()
 	{
-		super(AdvancedQuery.page);
+		super(AdvancedQuery.prepare());
 
 		this.moveable = true;
 		this.resizable = true;
@@ -464,6 +464,14 @@ export class AdvancedQuery extends Form
 		return(date);
 	}
 
+	private static prepare() : string
+	{
+		let page:string = AdvancedQuery.page;
+		page = page.replace("{OK}",Internals.OKButtonText);
+		page = page.replace("{CANCEL}",Internals.CancelButtonText);
+		return(page);
+	}
+
 	public static page:string =
 		Internals.header +
 		`
@@ -528,8 +536,8 @@ export class AdvancedQuery extends Form
 
 			<div name="lower-right">
 				<div name="button-area">
-					<button onClick="this.done()"></button>
-					<button onClick="this.close()"></button>
+					<button onClick="this.done()">{OK}</button>
+					<button onClick="this.close()">{CANCEL}</button>
 				</div>
 			</div>
 		</div>

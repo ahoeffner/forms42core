@@ -47,6 +47,7 @@ export class Messages
 	private static messages$:Map<number,Map<number,Message>> =
 		new Map<number,Map<number,Message>>();
 
+
 	/** Level at which messages are alerted */
 	public static get alertLevel() : Level
 	{
@@ -247,7 +248,7 @@ export class Messages
 	{
 		if (Messages.MessageHandler)
 		{
-			let handled:boolean|Promise<boolean> = Messages.MessageHandler.handle(group,msg,level);
+			let handled:boolean|Promise<boolean> = Messages.MessageHandler.handle(msg,level);
 			if (handled instanceof Promise) handled = await handled;
 			if (handled) return;
 		}

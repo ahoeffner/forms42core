@@ -41,19 +41,19 @@ export class ListOfValues
 {
 	title:string; 											/** Window title */
 
-	rows:number; 											/** The number of rows to display */
-	width:string; 											/** Width of the display fields */
-	cssclass:string; 										/** CSS class to apply */
+	rows?:number; 											/** The number of rows to display */
+	width?:string; 										/** Width of the display fields */
+	cssclass?:string; 									/** CSS class to apply */
 
-	inQueryMode:boolean;									/** Use in Query By Example mode */
-	inReadOnlyMode:boolean; 							/** Use even if field is readonly */
+	inQueryMode?:boolean;								/** Use in Query By Example mode */
+	inReadOnlyMode?:boolean; 							/** Use even if field is readonly */
 
 	datasource:DataSource; 								/** The datasource providing the data */
-	filter:Filter|Filter[]; 							/** Filters to apply when user restricts query */
-	bindvalue:BindValue|BindValue[]; 				/** BindValues to apply when user restricts query */
+	filter?:Filter|Filter[]; 							/** Filters to apply when user restricts query */
+	bindvalue?:BindValue|BindValue[]; 				/** BindValues to apply when user restricts query */
 
-	filterCase:Case; 										/** Control the casing of the user input */
-	filterPrefix:string; 								/** Prefix to query-string e.g % */
+	filterCase?:Case; 									/** Control the casing of the user input */
+	filterPrefix?:string; 								/** Prefix to query-string e.g % */
 	filterPostfix:string; 								/** Postfix to query-string e.g % */
 	filterMinLength:number; 							/** Minimum length of query-string before query the datasource */
 	filterInitialValueFrom:string; 					/** Use value of a given field as initial filter */

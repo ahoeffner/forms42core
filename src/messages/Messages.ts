@@ -267,6 +267,12 @@ export class Messages
 		let mno:string = msg.errno+"";
 		while(mno.length < 3) mno = "0"+mno;
 
+		if (typeof msg.message === "object")
+		{
+			try {msg.message = JSON.stringify(msg.message)}
+			catch {}
+		}
+
 		let message:string = msg.message;
 		message = gno+"-"+mno+": "+message;
 

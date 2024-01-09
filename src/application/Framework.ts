@@ -462,6 +462,7 @@ export class DynamicCall
 		}
 		catch (error)
 		{
+			console.log(error);
 			Messages.severe(MSGGRP.FRAMEWORK,3,this.method,this.component.constructor.name); // Failed to invoke method
 		}
 	}

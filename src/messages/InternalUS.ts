@@ -72,7 +72,7 @@ export class InternalUS implements Bundle
 
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},
-		{grpno: MSGGRP.FRAMEWORK, errno:  3, message: "Failed to invoke method '%'  on component '%'"},
+		{grpno: MSGGRP.FRAMEWORK, errno:  3, message: "Invoking method '%' on component '%' failed with %s"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  4, message: "Cannot find '%' on this or parent elements"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  5, message: "Use of @formevent on non compatable class '%'"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  6, message: "% returned %"},

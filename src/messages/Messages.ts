@@ -239,8 +239,15 @@ export class Messages
 
 	private static replace(message:string,arg:any) : string
 	{
+		if (typeof arg === "object")
+		{
+			try {arg = JSON.stringify(arg)}
+			catch (error) {}
+		}
+
 		let pos:number = message.indexOf("%");
 		if (pos >= 0) message = message.substring(0,pos) + arg + message.substring(pos+1);
+		
 		return(message);
 	}
 

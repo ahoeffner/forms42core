@@ -429,8 +429,10 @@ export class QueryTable extends SQLSource implements DataSource
 
 		for (let i = 0; i < columns.length; i++)
 		{
+			columns[i] = columns[i].toLowerCase();
+
+			let cname:string = columns[i];
 			let type:string = response.types[i];
-			let cname:string = columns[i].toLowerCase();
 			let datatype:DataType = DataType[type.toLowerCase()];
 
 			let exist:DataType = this.datatypes$.get(cname);
@@ -439,6 +441,7 @@ export class QueryTable extends SQLSource implements DataSource
 
 		this.columns$ = columns;
 		this.described$ = response.success;
+		
 		return(this.described$);
 	}
 
@@ -489,7 +492,7 @@ export class QueryTable extends SQLSource implements DataSource
 			}
 
 			let response:any = {succes: true, rows: [rows[r]]};
-			record.response = new DatabaseResponse(response, this.columns);
+			record.response = new DatabaseResponse(response,this.columns);
 
 			record.cleanup();
 			fetched.push(record);

@@ -343,6 +343,7 @@ export class AdvancedQuery extends Form
 		this.type = "..";
 		this.options.setValue("options","..");
 
+		this.focus();
 		return(true);
 	}
 

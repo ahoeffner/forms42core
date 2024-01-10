@@ -141,9 +141,7 @@ export class FormBacking
 			if (backing) backing.hasModalChild = true;
 		}
 
-		if (await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance)))
-			instance.focus();
-
+		await FormEvents.raise(FormEvent.FormEvent(EventType.PostViewInit,instance));
 		return(instance);
 	}
 

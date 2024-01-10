@@ -431,17 +431,16 @@ export class QueryTable extends SQLSource implements DataSource
 		{
 			columns[i] = columns[i].toLowerCase();
 
-			let cname:string = columns[i];
 			let type:string = response.types[i];
 			let datatype:DataType = DataType[type.toLowerCase()];
 
-			let exist:DataType = this.datatypes$.get(cname);
-			if (!exist) this.datatypes$.set(cname,datatype);
+			let exist:DataType = this.datatypes$.get(columns[i]);
+			if (!exist) this.datatypes$.set(columns[i],datatype);
 		}
 
 		this.columns$ = columns;
 		this.described$ = response.success;
-		
+
 		return(this.described$);
 	}
 

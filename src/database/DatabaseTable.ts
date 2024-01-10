@@ -780,12 +780,13 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		for (let i = 0; i < columns.length; i++)
 		{
+			columns[i] = columns[i].toLowerCase();
+
 			let type:string = response.types[i];
-			let cname:string = columns[i].toLowerCase();
 			let datatype:DataType = DataType[type.toLowerCase()];
 
-			let exist:DataType = this.datatypes$.get(cname);
-			if (!exist) this.datatypes$.set(cname,datatype);
+			let exist:DataType = this.datatypes$.get(columns[i]);
+			if (!exist) this.datatypes$.set(columns[i],datatype);
 		}
 
 		this.described$ = response.success;

@@ -239,6 +239,9 @@ export class Messages
 
 	private static replace(message:string,arg:any) : string
 	{
+		if (arg instanceof Error)
+			arg = arg.message;
+
 		if (typeof arg === "object")
 		{
 			try {arg = JSON.stringify(arg)}
@@ -247,7 +250,7 @@ export class Messages
 
 		let pos:number = message.indexOf("%");
 		if (pos >= 0) message = message.substring(0,pos) + arg + message.substring(pos+1);
-		
+
 		return(message);
 	}
 

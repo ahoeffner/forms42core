@@ -451,6 +451,7 @@ export class Form implements CanvasComponent
 
 		if (parent != null)
 		{
+			await FormEvents.raise(FormEvent.FormEvent(EventType.OnFormEnabled,parent));
 			parent.canvas?.unblock(); parent.focus();
 			if (backing) backing.hasModalChild = false;
 		}

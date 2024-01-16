@@ -126,6 +126,18 @@ export class DatabaseConnection
 		return(this.conn$.transactional);
 	}
 
+	/** Add attribute to be passed on to backend */
+	public addAttribute(name:string, value:any) : void
+	{
+		this.conn$.addAttribute(name,value);
+	}
+
+	/** Delete attribute to be passed on to backend */
+	public deleteAttribute(name:string) : void
+	{
+		this.conn$.deleteAttribute(name);
+	}
+
 	/** Connect to database */
 	public async connect(username?:string, password?:string, custom?:Map<string,any>) : Promise<boolean>
 	{

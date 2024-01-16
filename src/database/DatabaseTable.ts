@@ -947,21 +947,25 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]
 	{
-		let cname:string = null;
 		let cnames:string[] = [];
 		let columns:string[] = [];
 
-		if (list1) columns.push(...list1);
-		columns.forEach((col) => cnames.push(col.toLowerCase()));
+		list1?.forEach((col) =>
+		{
+			col = col.toLowerCase();
+			
+			columns.push(col);
+			cnames.push(col);
+		})
 
 		list2?.forEach((col) =>
 		{
-			if (!cnames.includes(col.toLowerCase()))
-			{
-				cname = col.toLowerCase();
+			col = col.toLowerCase();
 
+			if (!cnames.includes(col))
+			{
 				columns.push(col);
-				cnames.push(cname);
+				cnames.push(col);
 			}
 		})
 

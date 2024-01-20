@@ -46,6 +46,7 @@ export class Connection extends BaseConnection
 	private authmethod$:string = null;
 	private autocommit$:boolean = false;
 	private attributes$:Map<string,any> = new Map<string,any>();
+	private clientinfo$:Map<string,any> = new Map<string,any>();
 	private scope$:ConnectionScope = ConnectionScope.transactional;
 
 	public static MAXLOCKS:number = 32;
@@ -131,6 +132,16 @@ export class Connection extends BaseConnection
 		this.attributes$.delete(name);
 	}
 
+	public addClientInfo(name:string, value:any) : void
+	{
+		this.clientinfo$.set(name,value);
+	}
+
+	public deleteClientInfo(name:string) : void
+	{
+		this.clientinfo$.delete(name);
+	}
+
 	public connected() : boolean
 	{
 		return(this.conn$ != null);
@@ -179,6 +190,13 @@ export class Connection extends BaseConnection
 		{
 			custom.forEach((value,name) =>
 			  {payload[name] = value})
+		}
+
+		if (this.clientinfo$.size > 0)
+		{
+			let info:{name:string, value:any}[] = [];
+			this.clientinfo$.forEach((value,name) => info.push({name: name, value: value}));
+			payload["clientinfo"] = info;
 		}
 
 		this.attributes$.forEach((value,name) =>

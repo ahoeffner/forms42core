@@ -138,6 +138,18 @@ export class DatabaseConnection
 		this.conn$.deleteAttribute(name);
 	}
 
+	/** Add clientinfo to be passed on to database */
+	public addClientInfo(name:string, value:any) : void
+	{
+		this.conn$.addClientInfo(name,value);
+	}
+
+	/** Delete clientinfo to be passed on to database */
+	public deleteClientInfo(name:string) : void
+	{
+		this.conn$.deleteClientInfo(name);
+	}
+
 	/** Connect to database */
 	public async connect(username?:string, password?:string, custom?:Map<string,any>) : Promise<boolean>
 	{

@@ -72,8 +72,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 	private updreturncolumns$:string[] = null;
 	private delreturncolumns$:string[] = null;
 
-	private datatypes$:Map<string,DataType> =
-		new Map<string,DataType>();
+	private datatypes$:Map<string,string> =
+		new Map<string,string>();
 
 	/**
 	 *  @param connection : OpenRestDB connection to a database
@@ -143,6 +143,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
 
+		clone.insertReturnColumns = this.insertReturnColumns;
+		clone.updateReturnColumns = this.updateReturnColumns;
+		clone.deleteReturnColumns = this.deleteReturnColumns;
+
 		return(clone);
 	}
 
@@ -196,9 +200,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 	}
 
 	/** Force a datatype */
-	public setDataType(column:string,type:DataType) : DatabaseTable
+	public setDataType(column:string,type:DataType|string) : DatabaseTable
 	{
-		this.datatypes$.set(column?.toLowerCase(),type);
+		if (typeof type != "string") type = DataType[type];
+		this.datatypes$.set(column?.toLowerCase(),type.toLowerCase());
 		return(this);
 	}
 
@@ -393,8 +398,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 				retcols = this.insertReturnColumns;
 				if (retcols == null) retcols = [];
 
-				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insreturncolumns$);
+				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insertReturnColumns);
 				this.setTypes(sql.bindvalues);
+
+				retcols.forEach((col) =>
+				{
+					let type:string = this.datatypes$.get(col);
+					if (type != null) sql.bindvalues.push(new BindValue(col,null,type));
+				})
 
 				records.push({record:rec,
 				step:
@@ -419,8 +430,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 				if (retcols == null) retcols = [];
 
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
-
 				this.setTypes(sql.bindvalues);
+
+				retcols.forEach((col) =>
+				{
+					let type:string = this.datatypes$.get(col);
+					if (type != null) sql.bindvalues.push(new BindValue(col,null,type));
+				})
+
 				let locking:boolean = !rec.locked;
 
 				if (this.rowlocking == LockMode.None)
@@ -455,8 +472,14 @@ export class DatabaseTable extends SQLSource implements DataSource
 				if (retcols == null) retcols = [];
 
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
-
 				this.setTypes(sql.bindvalues);
+
+				retcols.forEach((col) =>
+				{
+					let type:string = this.datatypes$.get(col);
+					if (type != null) sql.bindvalues.push(new BindValue(col,null,type));
+				})
+
 				let locking:boolean = !rec.locked;
 
 				if (this.rowlocking == LockMode.None)
@@ -792,9 +815,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			columns[i] = columns[i].toLowerCase();
 
 			let type:string = response.types[i];
-			let datatype:DataType = DataType[type.toLowerCase()];
+			let datatype:string = type.toLowerCase();
 
-			let exist:DataType = this.datatypes$.get(columns[i]);
+			let exist:string = this.datatypes$.get(columns[i]);
 			if (!exist) this.datatypes$.set(columns[i],datatype);
 		}
 
@@ -807,8 +830,8 @@ export class DatabaseTable extends SQLSource implements DataSource
 		bindvalues?.forEach((b) =>
 		{
 			let col:string = b.column?.toLowerCase();
-			let t:DataType = this.datatypes$.get(col);
-			if (!b.forceDataType && t != null) b.type = DataType[t];
+			let t:string = this.datatypes$.get(col);
+			if (!b.forceDataType && t != null) b.type = t;
 		})
 	}
 
@@ -827,11 +850,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 			this.primary$ = this.columns$;
 
 		let dates:boolean[] = [];
-		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+		let datetypes:string[] = ["date", "datetime", "timestamp"];
 
 		for (let c = 0; c < this.columns.length; c++)
 		{
-			let dt:DataType = this.datatypes$.get(this.columns[c].toLowerCase());
+			let dt:string = this.datatypes$.get(this.columns[c].toLowerCase());
 			if (datetypes.includes(dt)) dates.push(true);
 			else dates.push(false);
 		}
@@ -868,7 +891,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (rows == null)
 			return;
 
-		let datetypes:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+		let datetypes:string[] = ["date", "datetime", "timestamp"];
 
 		for (let r = 0; r < rows.length; r++)
 		{
@@ -876,7 +899,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				col = col.toLowerCase();
 				let value:any = rows[r][col];
-				let dt:DataType = this.datatypes$.get(col);
+				let dt:string = this.datatypes$.get(col);
 
 				if (datetypes.includes(dt) && typeof value === "number")
 					rows[r][col] = new Date(value);

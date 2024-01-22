@@ -35,6 +35,7 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { SQLCache } from "./SQLCache.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB
@@ -767,7 +768,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (this.described$) return(true);
 
 		sql.stmt = "select * from "+this.table$+" where 1 = 2";
-		let response:any = await this.conn$.select(sql,null,1,true);
+
+		let response:any = SQLCache.get(sql.stmt);
+
+		let cached:boolean = false;
+		if (response) cached = true;
+		else response = await this.conn$.select(sql,null,1,true);
 
 		if (!response.success)
 		{
@@ -775,6 +781,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 			Messages.severe(MSGGRP.SQL,3,this.table$,response.message);
 			return(false);
 		}
+
+		if (!cached)
+			SQLCache.put(sql.stmt,response);
 
 		let columns:string[] = response.columns;
 
@@ -953,7 +962,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		list1?.forEach((col) =>
 		{
 			col = col.toLowerCase();
-			
+
 			columns.push(col);
 			cnames.push(col);
 		})

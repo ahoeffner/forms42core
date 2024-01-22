@@ -35,6 +35,7 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { SQLCache } from "./SQLCache.js";
 
 /**
  * Datasource based on a query using OpenRestDB
@@ -416,7 +417,11 @@ export class QueryTable extends SQLSource implements DataSource
 		let stmt:string = this.sql$ + " and 1 = 2";
 		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.where$,null,this.bindings$,null);
 
-		let response:any = await this.conn$.select(sql,null,1,true);
+		let response:any = SQLCache.get(sql.stmt);
+
+		let cached:boolean = false;
+		if (response) cached = true;
+		else response = await this.conn$.select(sql,null,1,true);
 
 		if (!response.success)
 		{
@@ -424,6 +429,9 @@ export class QueryTable extends SQLSource implements DataSource
 			Messages.warn(MSGGRP.SQL,3);
 			return(false);
 		}
+
+		if (!cached)
+			SQLCache.put(sql.stmt,response);
 
 		let columns:string[] = response.columns;
 

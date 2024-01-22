@@ -22,6 +22,7 @@
 import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { DataType } from "./DataType.js";
+import { SQLCache } from "./SQLCache.js";
 import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { MSGGRP } from "../messages/Internal.js";
@@ -35,7 +36,6 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { SQLCache } from "./SQLCache.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB

@@ -1139,7 +1139,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			this.conn$ = null;
-			Messages.handle(MSGGRP.ORDB,response.message,Level.fine);
+			Messages.handle(MSGGRP.ORDB,response.message,Level.warn);
 			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			this.running$ = false;
 			return(response);

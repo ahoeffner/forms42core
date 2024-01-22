@@ -169,9 +169,18 @@ export class Messages
 	}
 
 	/** Handle unknown message (typically from backend systems) */
-	public static async handle(grpno:number,message:string,level:Level) : Promise<void>
+	public static async handle(grpno:number,message:any,level:Level) : Promise<void>
 	{
 		let group:Group = Messages.getGroup(grpno);
+
+		if (message instanceof Error)
+			message = message.message;
+
+		if (typeof message === "object")
+		{
+			try {message = JSON.stringify(message)}
+			catch {}
+		}
 
 		let msg:Message =
 		{
@@ -276,12 +285,6 @@ export class Messages
 
 		let mno:string = msg.errno+"";
 		while(mno.length < 3) mno = "0"+mno;
-
-		if (typeof msg.message === "object")
-		{
-			try {msg.message = JSON.stringify(msg.message)}
-			catch {}
-		}
 
 		let message:string = msg.message;
 		message = gno+"-"+mno+": "+message;

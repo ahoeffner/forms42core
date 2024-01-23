@@ -112,6 +112,7 @@ export class QueryTable extends SQLSource implements DataSource
 	{
 		let clone:QueryTable = new QueryTable(this.pubconn$,this.sql$);
 
+		clone.where$ = this.where$;
 		clone.sorting = this.sorting;
 		clone.columns$ = this.columns$;
 		clone.described$ = this.described$;

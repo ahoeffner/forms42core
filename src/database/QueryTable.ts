@@ -416,7 +416,10 @@ export class QueryTable extends SQLSource implements DataSource
 		if (this.described$) return(true);
 		let first:string = this.where$ ? " where " : " and ";
 
+		console.log(first)
+
 		let stmt:string = this.sql$ + first + " 1 = 2";
+		console.log(stmt)
 		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.where$,null,this.bindings$,null);
 
 		let response:any = SQLCache.get(sql.stmt);

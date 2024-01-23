@@ -414,8 +414,9 @@ export class QueryTable extends SQLSource implements DataSource
 	private async describe() : Promise<boolean>
 	{
 		if (this.described$) return(true);
+		let first:string = this.where$ ? " where " : " and ";
 
-		let stmt:string = this.sql$ + " and 1 = 2";
+		let stmt:string = this.sql$ + first + " 1 = 2";
 		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.where$,null,this.bindings$,null);
 
 		let response:any = SQLCache.get(sql.stmt);

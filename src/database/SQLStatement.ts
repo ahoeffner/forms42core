@@ -35,6 +35,8 @@ import { DatabaseConnection } from "../public/DatabaseConnection.js";
  */
 export class SQLStatement
 {
+	public static AutoDetectReurning:RegExp = /[.]* returning .*$/i;
+
 	private pos:number = 0;
 	private sql$:string = null;
 	private response$:any = null;
@@ -73,6 +75,13 @@ export class SQLStatement
 	public set sql(sql:string)
 	{
 		this.sql$ = sql;
+
+		if (SQLStatement.AutoDetectReurning)
+		{
+			let clean:string = sql.replace("\r\n"," ");
+			clean = sql.replace("\n"," ").replace("\r"," ");
+			this.returning$ = SQLStatement.AutoDetectReurning.test(clean);
+		}
 	}
 
 	/** If the statement changes any values the backend */
@@ -162,7 +171,7 @@ export class SQLStatement
 			this.message$ = this.response$.message;
 		}
 
-		if (success && type == "select")
+		if (success && type == "select" || this.returning$)
 		{
 			this.types = this.response$.types;
 			this.columns$ = this.response$.columns;
@@ -171,7 +180,6 @@ export class SQLStatement
 
 		if (this.returning$)
 			this.retvals = new DatabaseResponse(this.response$,null);
-
 
 		return(success);
 	}
@@ -182,7 +190,7 @@ export class SQLStatement
 		if (!this.cursor$)
 			return(null);
 
-		if (this.records$.length > this.pos)
+		if (this.records$?.length > this.pos)
 			return(this.records$[this.pos++]);
 
 		if (this.cursor$.eof)
@@ -241,8 +249,11 @@ export class SQLStatement
 			return([]);
 		}
 
-		if (response.rows.length == 0)
+		if (!response.rows)
 			return([]);
+
+		if (!response.columns)
+			return(response.rows);
 
 		let rows:any[][] = response.rows;
 		let columns:string[] = response.columns;

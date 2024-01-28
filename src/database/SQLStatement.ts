@@ -39,6 +39,7 @@ export class SQLStatement
 
 	private pos:number = 0;
 	private sql$:string = null;
+	private type$:string = null;
 	private response$:any = null;
 	private types:string[] = null;
 	private cursor$:Cursor = null;
@@ -126,6 +127,12 @@ export class SQLStatement
 		return(this.message$);
 	}
 
+	/** Bind datatype */
+	public setDataType(name:string, type?:DataType|string) : void
+	{
+		this.addBindValue(new BindValue(name,null,type));
+	}
+
 	/** Bind values defined with colon i.e. salary = :salary */
 	public bind(name:string, value:any, type?:DataType|string) : void
 	{
@@ -142,7 +149,7 @@ export class SQLStatement
 	public async execute() : Promise<boolean>
 	{
 		if (this.sql$ == null) return(false);
-		let type:string = this.sql$.trim().substring(0,6);
+		this.type$ = this.sql$.trim().substring(0,6).toLowerCase();
 
 		let sql:SQLRest = new SQLRest();
 		if (this.returning$) sql.returnclause = true;
@@ -150,10 +157,10 @@ export class SQLStatement
 		sql.stmt = this.sql$;
 		sql.bindvalues = [...this.bindvalues$.values()];
 
-		if (type == "select" || this.returning$)
+		if (this.type$ == "select" || this.returning$)
 			this.cursor$ = new Cursor();
 
-		switch(type?.toLowerCase())
+		switch(this.type$)
 		{
 			case "insert" : this.response$ = await this.conn$.insert(sql); break;
 			case "update" : this.response$ = await this.conn$.update(sql); break;
@@ -171,7 +178,7 @@ export class SQLStatement
 			this.message$ = this.response$.message;
 		}
 
-		if (success && type == "select" || this.returning$)
+		if (success && this.type$ == "select" || this.returning$)
 		{
 			this.types = this.response$.types;
 			this.columns$ = this.response$.columns;
@@ -190,10 +197,13 @@ export class SQLStatement
 		if (!this.cursor$)
 			return(null);
 
+		if (this.cursor$.eof)
+			return(null);
+
 		if (this.records$?.length > this.pos)
 			return(this.records$[this.pos++]);
 
-		if (this.cursor$.eof)
+		if (this.pos > 0 && this.type$ != "select")
 			return(null);
 
 		this.pos = 0;
@@ -252,6 +262,9 @@ export class SQLStatement
 		if (!response.rows)
 			return([]);
 
+		if (response.rows.length == 0)
+			return([]);
+
 		if (!response.columns)
 			return(response.rows);
 
@@ -262,10 +275,23 @@ export class SQLStatement
 
 		for (let r = 0; r < rows.length; r++)
 		{
-			for (let c = 0; c < columns.length; c++)
+			if (Array.isArray(rows[r])) // select
 			{
-				if (datetypes.includes(this.types[c].toLowerCase()))
-					rows[r][c] = new Date(rows[r][c]);
+				for (let c = 0; c < columns.length; c++)
+				{
+					if (datetypes.includes(this.types[c].toLowerCase()))
+						rows[r][c] = new Date(rows[r][c]);
+				}
+			}
+			else // returning
+			{
+				Object.keys(rows[r]).forEach((column) =>
+				{
+					let bv:BindValue = this.bindvalues$.get(column.toLowerCase());
+
+					if (bv && datetypes.includes(bv.type))
+						rows[r][column] = new Date(rows[r][column])
+				})
 			}
 		}
 

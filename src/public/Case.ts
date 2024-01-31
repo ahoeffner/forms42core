@@ -20,12 +20,28 @@
 */
 
 /**
- * Types of upper/lower casing of strings
+ * Types of upper/lower casing of strings.
+ *
+ * @enum {number}
  */
-export enum Case
-{
-	mixed,
-	lower,
-	upper,
-	initcap
+export enum Case {
+  /**
+   * Represents mixed casing of strings.
+   */
+  mixed,
+
+  /**
+   * Represents lower casing of strings.
+   */
+  lower,
+
+  /**
+   * Represents upper casing of strings.
+   */
+  upper,
+
+  /**
+   * Represents initial capitalization (initcap) of strings.
+   */
+  initcap,
 }

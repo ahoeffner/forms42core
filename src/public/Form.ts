@@ -64,72 +64,112 @@ export class Form implements CanvasComponent
 	public initiated:Date = new Date();
 	public parameters:Map<any,any> = new Map<any,any>();
 
+	/**
+   * Constructs a new Form instance.
+   *
+   * @param page - The HTML page or element associated with the form.
+   */
 	constructor(page?:string|HTMLElement)
 	{
 		page = Framework.prepare(page);
 		FormBacking.setBacking(this).page = page;
 	}
 
+	/**
+   * Gets the lowercase name of the form's constructor.
+   *
+   * @returns The name of the form.
+   */
 	public get name() : string
 	{
 		return(this.constructor.name.toLowerCase());
 	}
 
-	/** The canvas points to the html associated with the form */
+	/** The canvas points to the html associated with the form
+	*
+   * @returns The canvas element.
+   */
 	public get canvas() : Canvas
 	{
 		return(FormBacking.getViewForm(this)?.canvas);
 	}
 
-	/** Get all blocks on the form */
+	/** Get all blocks on the form
+	*
+   * @returns An array of Block instances.
+   */
 	public get blocks() : Block[]
 	{
 		return(Array.from(FormBacking.getBacking(this).blocks.values()))
 	}
 
-	/** Remove the form from it's parent element */
+	/** Remove the form from it's parent element
+	*
+	*/
 	public hide() : void
 	{
 		this.canvas.remove();
 	}
 
-	/** Attach the form to it's previous parent */
+	/** Attach the form to it's previous parent
+	*
+	*/
 	public show() : void
 	{
 		this.canvas.restore();
 		this.focus();
 	}
 
-	/** Remove the form from it's parent element (same as hide) */
+	/** Remove the form from it's parent element (same as hide)
+	*
+	*/
 	public dettach() : void
 	{
 		this.canvas.remove();
 	}
 
-	/** Attach the form to this element */
+	/** Attach the form to this element
+	*
+	* @param parent - The parent element to attach the form to.
+   */
 	public attach(parent:HTMLElement) : void
 	{
 		parent.appendChild(this.canvas.getView());
 	}
 
-	/** Clears the form. If force, no validation will take place and changes will be ignored */
+	/** Clears the form. If force, no validation will take place and changes will be ignored
+	*
+	* @param force - If true, no validation will occur.
+   * @returns A promise indicating whether the clearing was successful.
+   */
 	public async clear(force?:boolean) : Promise<boolean>
 	{
 		if (force) FormBacking.getModelForm(this)?.clear();
 		return(FormBacking.getViewForm(this)?.clear(!force));
 	}
 
+	/** Focuses on the form.
+   *
+   */
 	public focus() : void
 	{
 		FormBacking.getViewForm(this)?.focus();
 	}
 
+	/** Gets the current block.
+   *
+   * @returns The current block.
+   */
 	public getCurrentBlock() : Block
 	{
 		return(this.getBlock(FormBacking.getViewForm(this)?.block?.name));
 	}
 
-	/** Requires the block using the current filter. Often used with sorting */
+	/** Requires the block using the current filter. Often used with sorting
+	*
+	* @param block - The block to requery.
+   * @returns A promise indicating whether the requery was successful.
+   */
 	public async reQuery(block:string) : Promise<boolean>
 	{
 		block = block?.toLowerCase();
@@ -145,7 +185,11 @@ export class Form implements CanvasComponent
 		return(blk.reQuery());
 	}
 
-	/** Enter the Query By Example mode for the specified block (and children)*/
+	/** Enter the Query By Example mode for the specified block (and children)
+	*
+	* @param block - The block for which to enter Query By Example mode.
+   * @returns A promise indicating whether entering Query By Example mode was successful.
+   */
 	public async enterQueryMode(block:string) : Promise<boolean>
 	{
 		block = block?.toLowerCase();
@@ -161,7 +205,11 @@ export class Form implements CanvasComponent
 		return(blk.enterQueryMode());
 	}
 
-	/** Execute query for the specified block (and children) */
+	/** Execute query for the specified block (and children)
+	*
+	* @param block - The block for which to execute the query.
+   * @returns A promise indicating whether the query execution was successful.
+   */
 	public async executeQuery(block:string) : Promise<boolean>
 	{
 		block = block?.toLowerCase();
@@ -177,7 +225,12 @@ export class Form implements CanvasComponent
 		return(blk.executeQuery());
 	}
 
-	/** Show the datepicker popup */
+	/** Show the datepicker popup
+	*
+	* @param block - The block associated with the datepicker.
+   * @param field - The field associated with the datepicker.
+   * @param row - The row number (optional).
+   */
 	public showDatePicker(block:string, field:string, row?:number) : void
 	{
 		block = block?.toLowerCase();
@@ -185,7 +238,12 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this).showDatePicker(block,field,row);
 	}
 
-	/** Show the LOV associated with the block, field. Normally only 1 LOV can be active, force overrules this rule */
+	/** Show the LOV associated with the block, field. Normally only 1 LOV can be active, force overrules this rule
+	*
+	* @param block - The block associated with the List of Values.
+   * @param field - The field associated with the List of Values.
+   * @param row - The row number (optional).
+   */
 	public showListOfValues(block:string, field:string, row?:number) : void
 	{
 		block = block?.toLowerCase();
@@ -193,54 +251,103 @@ export class Form implements CanvasComponent
 		FormBacking.getViewForm(this).showListOfValues(block,field,row);
 	}
 
-	/** Simulate keystroke from a field. The field is located from the block, field an optionally css-class*/
+	/** Simulate keystroke from a field. The field is located from the block, field an optionally css-class
+	*
+	* @param key - The keystroke to simulate.
+   * @param block - The block containing the field (optional).
+   * @param field - The field to simulate the keystroke on (optional).
+   * @param clazz - The CSS class (optional).
+   * @returns A promise indicating whether the keystroke simulation was successful.
+   */
 	public async sendkey(key:KeyMap, block?:string, field?:string, clazz?:string) : Promise<boolean>
 	{
 		return(FormBacking.getViewForm(this).sendkey(key,block,field,clazz));
 	}
 
-	/** Link 2 blocks (master detail) on specified keys. If not orphan, the child block will not be part of QBE */
+	/** Link 2 blocks (master detail) on specified keys. If not orphan, the child block will not be part of QBE
+	*
+	* @param master - The key for the master block.
+   * @param detail - The key for the detail block.
+   * @param orphanQueries - If true, orphan queries will be set (optional).
+   */
 	public link(master:Key, detail:Key, orphanQueries?:boolean) : void
 	{
 		if (orphanQueries == null) orphanQueries = true;
 		FormBacking.getBacking(this).setLink(master,detail,orphanQueries);
 	}
 
+	/**  Navigates to the specified block.
+   *
+   * @param block - The block to navigate to.
+   * @returns A promise indicating whether the navigation was successful.
+   */
 	public async goBlock(block:string) : Promise<boolean>
 	{
 		return(this.getBlock(block)?.focus());
 	}
 
+	/** Navigates to the specified field in the specified block.
+   *
+   * @param block - The block containing the field.
+   * @param field - The field to navigate to.
+   * @param clazz - The CSS class (optional).
+   * @returns A promise indicating whether the navigation was successful.
+   */
 	public async goField(block:string, field:string, clazz?:string) : Promise<boolean>
 	{
 		return(this.getBlock(block)?.goField(field,clazz));
 	}
 
-	/** Handle fine message */
+	/** Handle fine message
+	*
+	* @param grpno - The group number.
+   * @param errno - The error number.
+   * @param args - Additional arguments.
+   */
 	public fine(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.fine(grpno,errno,args);
 	}
 
-	/** Handle info message */
+	/** Handle info message
+	*
+	* @param grpno - The group number.
+   * @param errno - The error number.
+   * @param args - Additional arguments.
+   */
 	public info(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.info(grpno,errno,args);
 	}
 
-	/** Handle warning message */
+	/** Handle warning message
+	*
+	* @param grpno - The group number.
+   * @param errno - The error number.
+   * @param args - Additional arguments.
+   */
 	public warn(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.warn(grpno,errno,args);
 	}
 
-	/** Handle severe message */
+	/** Handle severe message
+	*
+	* @param grpno - The group number.
+   * @param errno - The error number.
+   * @param args - Additional arguments.
+   */
 	public severe(grpno:number,errno:number,...args:any) : void
 	{
 		Messages.severe(grpno,errno,args);
 	}
 
-	/** Popup a message */
+	/** Popup a message
+	*
+	* @param msg - The message to display.
+   * @param title - The title of the popup.
+   * @param level - The level of the message (optional).
+   */
 	public alert(msg:string, title:string, level?:Level) : void
 	{
 		if (!level)
@@ -254,7 +361,10 @@ export class Form implements CanvasComponent
 		}
 	}
 
-	/** Has the form been validated, and is everthing consistent */
+	/** Has the form been validated, and is everthing consistent
+	*
+	* @returns True if the form is valid, otherwise false.
+   */
 	public get valid() : boolean
 	{
 		if (FormBacking.getModelForm(this).eventTransaction.running() > 0)
@@ -263,13 +373,19 @@ export class Form implements CanvasComponent
 		return(FormBacking.getViewForm(this).validated());
 	}
 
-	/** Validates all user input */
+	/** Validates all user input
+	*
+	* @returns A promise indicating whether the validation was successful.
+   */
 	public async validate() : Promise<boolean>
 	{
 		return(FormBacking.getViewForm(this).validate());
 	}
 
-	/** Returns the canvas html-element */
+	/** Returns the canvas html-element
+	*
+	* @returns The HTML element representing the view.
+   */
 	public getView() : HTMLElement
 	{
 		let view:HTMLElement = this.canvas?.getView();
@@ -278,42 +394,69 @@ export class Form implements CanvasComponent
 		else return(FormBacking.getBacking(this).page);
 	}
 
-	/** Returns the canvas view (x,y,h,w) */
+	/** Returns the canvas view (x,y,h,w)
+	*
+	* @returns The canvas view as a View object.
+   */
 	public getViewPort() : View
 	{
 		return(this.canvas.getViewPort());
 	}
 
-	/** Sets the canvas view (x,y,h,w) */
+	/** Sets the canvas view (x,y,h,w)
+	*
+	* @param view - The View object representing the new canvas view.
+   */
 	public setViewPort(view:View) : void
 	{
 		this.canvas.setViewPort(view);
 	}
 
-	/** Returns the canvas parent view (x,y,h,w) */
+	/** Returns the canvas parent view (x,y,h,w)
+	*
+	* @returns The parent view as a View object.
+   */
 	public getParentViewPort() : View
 	{
 		return(this.canvas.getParentViewPort());
 	}
 
+	/**  Gets the block associated with the specified name.
+   *
+   * @param block - The name of the block.
+   * @returns The Block object associated with the specified name.
+   */
 	public getBlock(block:string) : Block
 	{
 		return(FormBacking.getBacking(this).blocks.get(block?.toLowerCase()));
 	}
 
-	/** Set the datasource for the given block */
+	/** Set the datasource for the given block
+	*
+	* @param block - The block for which to set the data source.
+   * @param source - The data source to set.
+   */
 	public setDataSource(block:string,source:DataSource) : void
 	{
 		FormBacking.getModelForm(this,true).setDataSource(block?.toLowerCase(),source);
 	}
 
-	/** Get the LOV for the given block and field */
+	/** Get the LOV for the given block and field
+	*
+	* @param block - The block associated with the LOV.
+   * @param field - The field associated with the LOV.
+   * @returns The List of Values (LOV) for the given block and field.
+   */
 	public getListOfValues(block:string, field:string) : ListOfValues
 	{
 		return(FormBacking.getBacking(this).getListOfValues(block,field));
 	}
 
-	/** Remove the LOV for the given block and field */
+	/** Remove the LOV for the given block and field
+	*
+	* @param block - The block associated with the LOV.
+   * @param field - The field associated with the LOV, or an array of fields.
+   */
 	public removeListOfValues(block:string, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))
@@ -323,7 +466,12 @@ export class Form implements CanvasComponent
 			FormBacking.getBacking(this).removeListOfValues(block,field[i]);
 	}
 
-	/** Set the LOV for the given block, field or fields */
+	/** Set the LOV for the given block, field or fields
+	*
+	* @param lov - The List of Values (LOV) or its class.
+   * @param block - The block associated with the LOV.
+   * @param field - The field associated with the LOV, or an array of fields.
+   */
 	public setListOfValues(lov:ListOfValues|Class<ListOfValues>, block:string, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))
@@ -339,7 +487,12 @@ export class Form implements CanvasComponent
 			FormBacking.getBacking(this).setListOfValues(block,field[i],lov);
 	}
 
-	/** Set the date constraint ie exclude weekends and holidays from the datepicker */
+	/** Set the date constraint ie exclude weekends and holidays from the datepicker
+	*
+	* @param datecstr - The date constraint to set.
+   * @param block - The block associated with the date constraint.
+   * @param field - The field associated with the date constraint, or an array of fields.
+   */
 	public setDateConstraint(datecstr:DateConstraint, block:string, field:string|string[]) : void
 	{
 		if (!Array.isArray(field))
@@ -355,25 +508,44 @@ export class Form implements CanvasComponent
 		this.getBlock(block)?.setValidValues(field,values);
 	}
 
-	/** Get the value of a given block, field */
+	/** Get the value of a given block, field
+	*
+	* @param block - The block containing the field.
+   * @param field - The field for which to get the value.
+   * @returns The value of the specified field in the specified block.
+   */
 	public getValue(block:string, field:string) : any
 	{
 		return(this.getBlock(block)?.getValue(field));
 	}
 
-	/** Set the value of a given block, field */
+	/** Set the value of a given block, field
+	*
+	* @param block - The block containing the field.
+   * @param field - The field for which to set the value.
+   * @param value - The value to set.
+   */
 	public setValue(block:string, field:string, value:any) : void
 	{
 		this.getBlock(block)?.setValue(field,value);
 	}
 
-	/** Flush all changes to the backend */
+	/** Flush all changes to the backend
+	*
+	* @returns A promise indicating whether the flushing was successful.
+   */
 	public async flush() : Promise<boolean>
 	{
 		return(FormBacking.getModelForm(this).flush());
 	}
 
-	/** Call another form in non modal mode */
+	/** Call another form in non modal mode
+	*
+	* @param form - The form class or name to call.
+   * @param parameters - The parameters to pass to the form (optional).
+   * @param container - The container to append the form to (optional).
+   * @returns A promise containing the Form instance of the called form.
+   */
 	public async showform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		if (!await this.validate()) return(null);

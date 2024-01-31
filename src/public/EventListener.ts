@@ -28,13 +28,23 @@ import { EventFilter } from '../control/events/EventFilter.js';
  */
 export class EventListener
 {
-	/** Remove an eventlistener. This should also be done before setView is called */
+	/** Remove an eventlistener. This should also be done before setView is called 
+  * 
+  * @param handle - The handle of the event listener to be removed.
+  * @public
+  */
 	public removeEventListener(handle:object) : void
 	{
 		FormEvents.removeListener(handle);
 	}
 
-	/** Add an eventlistener */
+	/** Add an eventlistener 
+  * 
+  * @param method - The callback function to be executed when the event occurs.
+  * @param filter - An optional event filter or an array of event filters to control which events trigger the callback.
+  * @returns A handle representing the added event listener.
+  * @public
+  */
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
 		return(FormEvents.addListener(null,this,method,filter));

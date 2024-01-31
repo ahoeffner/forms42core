@@ -386,6 +386,12 @@ export class Block
 		let success:boolean = await this.fire(EventType.WhenValidateField,field);
 		this.endEventTransaction(EventType.WhenValidateField,success);
 
+		if (success && !this.view.fieldinfo.get(field)?.derived)
+		{
+			if (!await this.lock())
+				return(false);
+		}
+
 		if (success)
 		{
 			if (this.querymode) this.setFilter(field);

@@ -558,6 +558,12 @@ export class Block
 		let success:boolean = await this.fireFieldEvent(EventType.WhenValidateField,inst);
 		this.endEventTransaction(EventType.WhenValidateField,success);
 
+		if (success && !this.fieldinfo.get(inst.name)?.derived)
+		{
+			if (!await this.lock())
+				return(false);
+		}
+
 		if (success)
 		{
 			// refresh

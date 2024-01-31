@@ -408,7 +408,7 @@ export class FieldFeatureFactory
 		}
 	}
 
-	private static getSelectOptions(tag:HTMLSelectElement) : Map<string,string>
+	public static getSelectOptions(tag:HTMLSelectElement) : Map<string,string>
 	{
 		let options:Map<string,string> = new Map<string,string>();
 
@@ -424,14 +424,14 @@ export class FieldFeatureFactory
 				if (label.length == 0 && value.length != null)
 					label = value;
 
-				options.set(label,value);
+				options.set(value,label);
 			}
 		}
 
 		return(options);
 	}
 
-	private static setSelectOptions(tag:HTMLSelectElement, props:FieldProperties) : void
+	public static setSelectOptions(tag:HTMLSelectElement, props:FieldProperties) : void
 	{
 		while(tag.options.length > 0)
 			tag.options.remove(0);

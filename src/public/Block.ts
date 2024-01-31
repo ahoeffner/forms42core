@@ -296,6 +296,42 @@ export class Block
 			FormBacking.getBacking(this.form).setDateConstraint(this.name,field[i],constraint);
 	}
 
+	/** Set valid values for a given field */
+	public setValidValues(field: string | string[], values: string[] | Set<any> | Map<any,any>) : void
+	{
+		if (!Array.isArray(field))
+			field = [field];
+
+		let map:Map<any,any> = new Map<any,any>();
+
+		if (Array.isArray(values) || values instanceof Set)
+		{
+			values.forEach((value:string) => {map.set(value,value)});
+		}
+		else
+		{
+			map = values;
+		}
+
+		field.forEach((fld) =>
+		{
+			FormBacking.getViewBlock(this).getInstancesByClass(fld).forEach((inst) =>
+			{
+				inst.properties.setValidValues(map);
+				inst.qbeProperties.setValidValues(map);
+				inst.insertProperties.setValidValues(map);
+				inst.updateProperties.setValidValues(map);
+				inst.defaultProperties.setValidValues(map);
+
+				if (inst.element instanceof HTMLSelectElement)
+					FieldFeatureFactory.setSelectOptions(inst.element,inst.properties);
+
+				if (inst.element instanceof HTMLInputElement)
+					FieldFeatureFactory.createDataList(inst,inst.properties);
+			})
+		})
+	}
+
 	/** Get data from datasource @param header: include column names @param all: fetch all data from datasource */
 	public async getSourceData(header?:boolean, all?:boolean) : Promise<any[][]>
 	{

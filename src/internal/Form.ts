@@ -350,6 +350,12 @@ export class Form implements CanvasComponent
 			FormBacking.getBacking(this).setDateConstraint(block,field[i],datecstr);
 	}
 
+	/** Set valid values for a given field */
+	public setValidValues(block:string, field: string | string[], values: string[] | Set<any> | Map<any,any>) : void
+	{
+		this.getBlock(block)?.setValidValues(field,values);
+	}
+
 	/** Get the value of a given block, field */
 	public getValue(block:string, field:string) : any
 	{

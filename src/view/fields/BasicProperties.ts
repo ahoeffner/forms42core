@@ -484,12 +484,12 @@ export class BasicProperties
 	}
 
 
-	 public get validValues() : Map<any,any>
+	public get validValues() : Map<any,any>
 	{
 		return(this.values$);
-	 }
+	}
 
-	 public set validValues(values: string[] | Set<any> | Map<any,any>)
+	public set validValues(values: string[] | Set<any> | Map<any,any>)
 	{
 		if (Array.isArray(values) || values instanceof Set)
 		{
@@ -499,16 +499,16 @@ export class BasicProperties
 		else this.values$ = values;
 	 }
 
-	 public setValidValues(values: string[] | Set<any> | Map<any,any>) : BasicProperties
+	public setValidValues(values: string[] | Set<any> | Map<any,any>) : BasicProperties
 	{
 		this.validValues = values;
 		return(this);
 	}
 
-	 public getValidValues() : Map<any,any>
+	public getValidValues() : Map<any,any>
 	{
 		return(this.values$);
-	 }
+	}
 
 	public get mapper() : DataMapper
 	{

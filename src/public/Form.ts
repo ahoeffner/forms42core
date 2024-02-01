@@ -552,26 +552,47 @@ export class Form implements CanvasComponent
 		return(FormBacking.showform(form,null,parameters,container));
 	}
 
-	/** Call another form in modal mode */
+/** Call another form in modal mode 
+ * 
+ * @param form - The form class or name to call.
+ * @param parameters - Optional. A map of parameters to pass to the called form.
+ * @param container - Optional. The HTML element to which the called form will be appended.
+ *
+ * @returns A promise that resolves to the Form instance of the called form.
+ *          If the validation before calling the form fails, the promise will be rejected.
+ */
 	public async callform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		return(FormBacking.showform(form,this,parameters,container));
 	}
 
-	/** After changes to the HTML, reindexing is necessary */
+	/** After changes to the HTML, reindexing is necessary 
+	* 
+	* After changes to the HTML, reindexing is necessary.
+ 	* This method rehashes the field order after HTML changes.
+ 	*/
 	public reIndexFieldOrder() : void
 	{
 		FormBacking.getViewForm(this).rehash();
 	}
 
-	/** 'Labels' that points to fields can be repositioned by the user */
+	/** 'Labels' that points to fields can be repositioned by the user
+	*  
+	* Labels that point to fields can be repositioned by the user.
+ 	* This method initiates the dragging of fields when a label is moved by the user.
+ 	*/
 	public startFieldDragging() : void
 	{
 		let label:HTMLElement = Framework.getEvent().target;
 		FormBacking.getViewForm(this).dragfields(label);
 	}
 
-	/** Replace the HTML. Change everything, delete all blocks and create new etc */
+	/** Replace the HTML. Change everything, delete all blocks and create new etc 
+	* 
+	* @param page - The new HTML page or element to set.
+ 	* @returns A promise that resolves once the view has been set successfully.
+ 	*          The promise is rejected if validation fails before setting the view.
+ 	*/
 	public async setView(page:string|HTMLElement) : Promise<void>
 	{
 		let canvas:Canvas = this.canvas;
@@ -613,7 +634,11 @@ export class Form implements CanvasComponent
 		await FormBacking.getModelForm(this,true).finalize();
 	}
 
-	/** Close the form. If force no validation will take place */
+	/** Close the form. If force no validation will take place 
+	* 
+	* @param force - If true, no validation will occur before closing.
+ 	* @returns A promise indicating whether closing the form was successful.
+ 	*/
 	public async close(force?:boolean) : Promise<boolean>
 	{
 		let vform:ViewForm = FormBacking.getViewForm(this);

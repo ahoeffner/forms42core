@@ -54,7 +54,6 @@ export declare class DatabaseConnection {
     static get CONNTIMEOUT(): number;
     /** Connection timeout in seconds, only with scope=transactional
     *
-    *
    * @public
    * @param timeout - The timeout value to set.
    */

@@ -86,7 +86,6 @@ export class DatabaseConnection {
     }
     /** Connection timeout in seconds, only with scope=transactional
     *
-    *
    * @public
    * @param timeout - The timeout value to set.
    */

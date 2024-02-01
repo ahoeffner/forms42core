@@ -31,7 +31,7 @@ export class Alert extends Form
 	private grap:number = 10;
 	private msg:string = null;
 	private created:number = 0;
-	public static WIDTH:number = 300;
+	public static WIDTH:number = null;
 	public static HEIGHT:number = null;
 	public static MAXWORDLEN:number = 32;
 	private closeButton:HTMLElement = null;
@@ -104,16 +104,11 @@ export class Alert extends Form
 		let severe:boolean = this.parameters.get("severe");
 		let warning:boolean = this.parameters.get("warning");
 
+		Internals.stylePopupWindow(view);
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
 		// Block everything else
 		let block:HTMLElement = view.querySelector('div[id="block"]');
-
-		block.style.top = "0";
-		block.style.left = "0";
-		block.style.position = "fixed";
-		block.style.width = document.body.offsetWidth+"px";
-		block.style.height = document.body.offsetHeight+"px";
 
 		if (severe) block.classList.add("type","severe");
 		if (warning) block.classList.add("type","warning");

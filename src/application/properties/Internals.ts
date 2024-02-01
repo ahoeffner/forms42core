@@ -58,9 +58,10 @@ export class Internals
 		gap:2px;
 		display:grid;
 		hyphens:auto;
+		height: 100%;
 		align-items: center;
+		align-content: start;
 		overflow-wrap: normal;
-		align-content: center;
 		justify-content: center;
 	`;
 
@@ -125,10 +126,21 @@ export class Internals
 		border-top: 4px solid #3498db;
 	`;
 
+	public static BlockPopup:string =
+	`
+		top:0;
+		left:0;
+		z-index:-1;
+		width:100%;
+		height:100%;
+		position:fixed;
+	`;
+
 
 
 	public static stylePopupWindow(view:HTMLElement, title?:string, height?:number, width?:number) : void
 	{
+		let block:HTMLElement = view.querySelector('div[id="block"]');
 		let scope:HTMLElement = view.querySelector('div[name="scope"]');
 		let login:HTMLElement = view.querySelector('div[name="login"]');
 		let loading:HTMLElement = view.querySelector('div[name="loading"]');
@@ -145,6 +157,7 @@ export class Internals
 		if (Internals.PopupStyleLabel) labels.forEach((label) => label.style.cssText = Internals.PopupStyleLabel);
 
 		if (body && Internals.PopupStyle) body.style.cssText = Internals.PopupStyle;
+		if (block && Internals.BlockPopup) block.style.cssText = Internals.BlockPopup;
 		if (close && Internals.PopupCloseButton) close.style.cssText = Internals.PopupCloseButton;
 		if (header && Internals.PopupHeaderStyle) header.style.cssText = Internals.PopupHeaderStyle;
 		if (footer && Internals.PopupFooterStyle) footer.style.cssText = Internals.PopupFooterStyle;

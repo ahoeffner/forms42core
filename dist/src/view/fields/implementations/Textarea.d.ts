@@ -1,0 +1,31 @@
+import { DataType } from "../DataType.js";
+import { FieldProperties } from "../FieldProperties.js";
+import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
+import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+export declare class Textarea implements FieldImplementation, EventListenerObject {
+    private trim$;
+    private state;
+    private datamapper;
+    private properties;
+    private eventhandler;
+    private element;
+    private event;
+    get trim(): boolean;
+    set trim(flag: boolean);
+    setValidated(): void;
+    get datatype(): DataType;
+    set datatype(_type: DataType);
+    create(eventhandler: FieldEventHandler, _tag: string): HTMLElement;
+    apply(properties: FieldProperties, init: boolean): void;
+    setAttributes(attributes: Map<string, any>): void;
+    clear(): void;
+    getValue(): any;
+    setValue(value: any): boolean;
+    getIntermediateValue(): string;
+    setIntermediateValue(value: string): void;
+    getElement(): HTMLElement;
+    getFieldState(): FieldState;
+    setFieldState(state: FieldState): void;
+    handleEvent(event: Event): Promise<void>;
+    private addEvents;
+}

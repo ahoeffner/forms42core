@@ -1,0 +1,33 @@
+import { DataType } from "../DataType.js";
+import { FieldProperties } from "../FieldProperties.js";
+import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
+import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+export declare class Display implements FieldImplementation, EventListenerObject {
+    private trim$;
+    private state;
+    private datamapper;
+    private properties;
+    private eventhandler;
+    private value$;
+    private element;
+    private datatype$;
+    private event;
+    setValidated(): void;
+    get trim(): boolean;
+    set trim(flag: boolean);
+    get datatype(): DataType;
+    set datatype(type: DataType);
+    create(eventhandler: FieldEventHandler, tag: string): HTMLElement;
+    apply(properties: FieldProperties, init: boolean): void;
+    clear(): void;
+    getValue(): any;
+    setValue(value: any): boolean;
+    getIntermediateValue(): string;
+    setIntermediateValue(value: string): void;
+    getElement(): HTMLElement;
+    getFieldState(): FieldState;
+    setFieldState(state: FieldState): void;
+    setAttributes(attributes: Map<string, string>): void;
+    handleEvent(event: Event): Promise<void>;
+    private addEvents;
+}

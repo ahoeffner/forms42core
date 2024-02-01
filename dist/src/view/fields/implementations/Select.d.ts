@@ -1,0 +1,33 @@
+import { DataType } from "../DataType.js";
+import { FieldProperties } from "../FieldProperties.js";
+import { FieldEventHandler } from "../interfaces/FieldEventHandler.js";
+import { FieldImplementation, FieldState } from "../interfaces/FieldImplementation.js";
+export declare class Select implements FieldImplementation, EventListenerObject {
+    private state;
+    private datamapper;
+    private properties;
+    private eventhandler;
+    private value$;
+    private multiple;
+    private element;
+    private datatype$;
+    private event;
+    setValidated(): void;
+    get datatype(): DataType;
+    set datatype(type: DataType);
+    create(eventhandler: FieldEventHandler, _tag: string): HTMLSelectElement;
+    apply(properties: FieldProperties, init: boolean): void;
+    clear(): void;
+    getValue(): any;
+    setValue(value: any): boolean;
+    getIntermediateValue(): string;
+    setIntermediateValue(value: string): void;
+    getElement(): HTMLElement;
+    getDataType(): DataType;
+    getFieldState(): FieldState;
+    setFieldState(state: FieldState): void;
+    setAttributes(attributes: Map<string, string>): void;
+    handleEvent(event: Event): Promise<void>;
+    private getSelected;
+    private addEvents;
+}

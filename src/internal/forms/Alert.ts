@@ -180,7 +180,7 @@ export class Alert extends Form
 				<div name="msg" from="alert"></div>
 			</div>
 
-			<div name="lower-right">
+			<div name="lower-right" style="z-index: 1">
 				<div name="button-area">
 					<button name="close" onClick="this.close()">{OK}</button>
 				</div>

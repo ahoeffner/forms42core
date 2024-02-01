@@ -30,9 +30,9 @@ export class DatabaseConnection
 {
 	private conn$:RestConnection = null;
 
-	/** Lock limit, scope != stateless 
-	* 
-	* 
+	/** Lock limit, scope != stateless
+	*
+	*
 	* @public
    * @returns The maximum number of locks.
 	*/
@@ -41,8 +41,8 @@ export class DatabaseConnection
 		return(RestConnection.MAXLOCKS);
 	}
 
-	/** Lock limit, scope != stateless 
-	* 
+	/** Lock limit, scope != stateless
+	*
 	*
    * @public
    * @param timeout - The timeout value to set.
@@ -52,8 +52,8 @@ export class DatabaseConnection
 		RestConnection.MAXLOCKS = timeout;
 	}
 
-	/** Transaction timeout in seconds, only with scope=transactional 
-	* 
+	/** Transaction timeout in seconds, only with scope=transactional
+	*
 	*
    * @public
    * @returns The transaction timeout in seconds.
@@ -63,8 +63,8 @@ export class DatabaseConnection
 		return(RestConnection.TRXTIMEOUT);
 	}
 
-	/** Transaction timeout in seconds, only with scope=transactional 
-	* 
+	/** Transaction timeout in seconds, only with scope=transactional
+	*
 	* @public
    * @param timeout - The timeout value to set.
 	*/
@@ -73,7 +73,7 @@ export class DatabaseConnection
 		RestConnection.TRXTIMEOUT = timeout;
 	}
 
-	/** Lock inspection interval in seconds, only with scope!=stateless 
+	/** Lock inspection interval in seconds, only with scope!=stateless
 	*
    * @public
    * @returns The lock inspection interval in seconds.
@@ -83,8 +83,8 @@ export class DatabaseConnection
 		return(RestConnection.LOCKINSPECT);
 	}
 
-	/** Lock inspection interval in seconds, only with scope!=stateless 
-	* 
+	/** Lock inspection interval in seconds, only with scope!=stateless
+	*
 	*
    * @public
    * @param timeout - The timeout value to set.
@@ -94,7 +94,7 @@ export class DatabaseConnection
 		RestConnection.LOCKINSPECT = timeout;
 	}
 
-	/** Connection timeout in seconds, only with scope=transactional 
+	/** Connection timeout in seconds, only with scope=transactional
 	*
    * @public
    * @returns The connection timeout in seconds.
@@ -104,8 +104,7 @@ export class DatabaseConnection
 		return(RestConnection.CONNTIMEOUT);
 	}
 
-	/** Connection timeout in seconds, only with scope=transactional 
-	* 
+	/** Connection timeout in seconds, only with scope=transactional
 	*
    * @public
    * @param timeout - The timeout value to set.
@@ -126,7 +125,7 @@ export class DatabaseConnection
 		this.conn$ = new RestConnection(url);
 	}
 
-	/** Number of row locks 
+	/** Number of row locks
 	*
    * @public
    * @returns The number of row locks.
@@ -136,7 +135,7 @@ export class DatabaseConnection
 		return(this.conn$.locks);
 	}
 
-	/** Number of row locks 
+	/** Number of row locks
 	*
    * @public
    * @param locks - The number of row locks to set.
@@ -146,8 +145,8 @@ export class DatabaseConnection
 		this.conn$.locks = locks;
 	}
 
-	/** The connection scope 
-	* 
+	/** The connection scope
+	*
    * @public
    * @returns The connection scope.
    */
@@ -156,7 +155,7 @@ export class DatabaseConnection
 		return(this.conn$.scope);
 	}
 
-	/** The connection scope 
+	/** The connection scope
 	*
 	* @public
 	* @param scope - The connection scope to set.
@@ -166,7 +165,7 @@ export class DatabaseConnection
 		this.conn$.scope = scope;
 	}
 
-	/** The authorization method 
+	/** The authorization method
 	*
    * @public
    * @returns The authorization method.
@@ -177,7 +176,7 @@ export class DatabaseConnection
 	}
 
 	/** The authorization method  *
-	* 
+	*
    * @public
    * @param method - The authorization method to set.
    */
@@ -186,7 +185,7 @@ export class DatabaseConnection
 		this.conn$.authmethod = method;
 	}
 
-	/** Is connection scope transactional 
+	/** Is connection scope transactional
 	*
    * @public
    * @returns A boolean indicating whether the connection scope is transactional.
@@ -196,7 +195,7 @@ export class DatabaseConnection
 		return(this.conn$.transactional);
 	}
 
-	/** Add attribute to be passed on to backend 
+	/** Add attribute to be passed on to backend
  	*
    * @public
    * @param name - The name of the attribute.
@@ -207,8 +206,8 @@ export class DatabaseConnection
 		this.conn$.addAttribute(name,value);
 	}
 
-	/** Delete attribute to be passed on to backend 
-	* 
+	/** Delete attribute to be passed on to backend
+	*
 	*
    * @public
    * @param name - The name of the attribute to delete.
@@ -218,7 +217,7 @@ export class DatabaseConnection
 		this.conn$.deleteAttribute(name);
 	}
 
-	/** Add clientinfo to be passed on to database 
+	/** Add clientinfo to be passed on to database
   	*
    * @public
    * @param name - The name of the client info.
@@ -229,7 +228,7 @@ export class DatabaseConnection
 		this.conn$.addClientInfo(name,value);
 	}
 
-	/** Delete clientinfo to be passed on to database 
+	/** Delete clientinfo to be passed on to database
 	*
    * @public
    * @param name - The name of the client info to delete.
@@ -263,7 +262,7 @@ export class DatabaseConnection
 		return(this.conn$.disconnect());
 	}
 
-	/** Is connected to database 
+	/** Is connected to database
 	*
    * @public
    * @returns A boolean indicating whether the connection is established.
@@ -273,7 +272,7 @@ export class DatabaseConnection
 		return(this.conn$.connected());
 	}
 
-	/** Commit all transactions 
+	/** Commit all transactions
 	*
    * @public
    * @returns A promise that resolves to a boolean indicating the success of the commit.
@@ -284,7 +283,7 @@ export class DatabaseConnection
 	}
 
 	/** Rollback all transactions  *
-	* 
+	*
    * @public
    * @returns A promise that resolves to a boolean indicating the success of the rollback.
    */
@@ -304,7 +303,7 @@ export class DatabaseConnection
 	}
 
 	/** Execute update   *
-	* 
+	*
    * @public
    * @param payload - The SQLRest payload for the update operation.
    * @returns A promise that resolves to the result of the update operation.
@@ -314,7 +313,7 @@ export class DatabaseConnection
 		return(this.conn$.update(payload));
 	}
 
-	/** Execute delete 
+	/** Execute delete
 	*
    * @public
    * @param payload - The SQLRest payload for the delete operation.
@@ -325,7 +324,7 @@ export class DatabaseConnection
 		return(this.conn$.delete(payload));
 	}
 
-	/** Execute script 
+	/** Execute script
 	* Executes a script.
    *
    * @public

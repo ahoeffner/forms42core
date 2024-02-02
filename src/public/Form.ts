@@ -502,7 +502,12 @@ export class Form implements CanvasComponent
 			FormBacking.getBacking(this).setDateConstraint(block,field[i],datecstr);
 	}
 
-	/** Set valid values for a given field */
+	/** Set valid values for a given field 
+	* 
+	* @param block - The block to set valid values for.
+ 	* @param field - The field or fields for which valid values are set.
+ 	* @param values - An array, set, or map containing the valid values.
+ 	*/
 	public setValidValues(block:string, field: string | string[], values: string[] | Set<any> | Map<any,any>) : void
 	{
 		this.getBlock(block)?.setValidValues(field,values);
@@ -552,15 +557,15 @@ export class Form implements CanvasComponent
 		return(FormBacking.showform(form,null,parameters,container));
 	}
 
-/** Call another form in modal mode 
- * 
- * @param form - The form class or name to call.
- * @param parameters - Optional. A map of parameters to pass to the called form.
- * @param container - Optional. The HTML element to which the called form will be appended.
- *
- * @returns A promise that resolves to the Form instance of the called form.
- *          If the validation before calling the form fails, the promise will be rejected.
- */
+	/** Call another form in modal mode 
+	* 
+	* @param form - The form class or name to call.
+	* @param parameters - Optional. A map of parameters to pass to the called form.
+	* @param container - Optional. The HTML element to which the called form will be appended.
+	*
+	* @returns A promise that resolves to the Form instance of the called form.
+	*          If the validation before calling the form fails, the promise will be rejected.
+	*/
 	public async callform(form:Class<Form>|string, parameters?:Map<any,any>, container?:HTMLElement) : Promise<Form>
 	{
 		return(FormBacking.showform(form,this,parameters,container));
@@ -680,13 +685,22 @@ export class Form implements CanvasComponent
 		return(success);
 	}
 
-	/** Remove an eventlistener. This should also be done before setView is called */
+	/** Remove an eventlistener. This should also be done before setView is called 
+	* 
+	* @param handle - The event listener handle to be removed.
+ 	*/
 	public removeEventListener(handle:object) : void
 	{
 		FormBacking.getBacking(this).removeEventListener(handle);
 	}
 
-	/** Add an eventlistener */
+	/** Add an eventlistener 
+	* 
+	* @param method - The trigger function to be called when the event occurs.
+	* @param filter - Optional. An event filter or an array of event filters.
+	*
+	* @returns An object representing the event listener handle.
+	*/
 	public addEventListener(method:TriggerFunction, filter?:EventFilter|EventFilter[]) : object
 	{
 		let handle:object = FormEvents.addListener(this,this,method,filter);

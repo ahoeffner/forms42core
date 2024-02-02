@@ -24,9 +24,11 @@ import { BindValue } from "../database/BindValue.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 
-/**
+ /**
  * Function that preprocesses user input
  * before applying it to the LOV query
+ *
+ * @param filter - The user input to be preprocessed.
  */
 export interface LOVFilterPreProcessor
 {
@@ -39,27 +41,45 @@ export interface LOVFilterPreProcessor
  */
 export class ListOfValues
 {
-	title:string; 											/** Window title */
+	/** Window title */
+	title:string;
 
-	rows?:number; 											/** The number of rows to display */
-	width?:string; 										/** Width of the display fields */
-	cssclass?:string; 									/** CSS class to apply */
+	/** The number of rows to display */
+	rows?:number; 
+	/** Width of the display fields */										
+	width?:string;
+	/** CSS class to apply */ 									
+	cssclass?:string;
 
-	inQueryMode?:boolean;								/** Use in Query By Example mode */
-	inReadOnlyMode?:boolean; 							/** Use even if field is readonly */
+	/** Use in Query By Example mode */									
+	inQueryMode?:boolean;
+	/** Use even if field is readonly */							
+	inReadOnlyMode?:boolean;
 
-	datasource:DataSource; 								/** The datasource providing the data */
-	filter?:Filter|Filter[]; 							/** Filters to apply when user restricts query */
-	bindvalue?:BindValue|BindValue[]; 				/** BindValues to apply when user restricts query */
+	/** The datasource providing the data */
+	datasource:DataSource;
+	/** Filters to apply when user restricts query */
+	filter?:Filter|Filter[];
+	/** BindValues to apply when user restricts query */
+	bindvalue?:BindValue|BindValue[];
 
-	filterCase?:Case; 									/** Control the casing of the user input */
-	filterPrefix?:string; 								/** Prefix to query-string e.g % */
-	filterPostfix:string; 								/** Postfix to query-string e.g % */
-	filterMinLength:number; 							/** Minimum length of query-string before query the datasource */
-	filterInitialValueFrom:string; 					/** Use value of a given field as initial filter */
-	filterPreProcesser:LOVFilterPreProcessor; 	/** Function to format the query-string if advanced */
+	/** Control the casing of the user input */
+	filterCase?:Case;
+	/** Prefix to query-string e.g % */
+	filterPrefix?:string;
+		/** Postfix to query-string e.g % */
+	filterPostfix:string;
+	/** Minimum length of query-string before query the datasource */ 							
+	filterMinLength:number;
+	/** Use value of a given field as initial filter */ 							
+	filterInitialValueFrom:string;
+	/** Function to format the query-string if advanced */ 					
+	filterPreProcesser:LOVFilterPreProcessor; 	
 
-	sourcefields:string|string[]; 					/** The fields from the datasource */
-	targetfields:string|string[]; 					/** The fields in the target form */
-	displayfields:string|string[]; 					/** The fields to display in the form */
+	/** The fields from the datasource */
+	sourcefields:string|string[];
+	/** The fields in the target form */ 					
+	targetfields:string|string[];
+	/** The fields to display in the form */ 					
+	displayfields:string|string[]; 					
 }

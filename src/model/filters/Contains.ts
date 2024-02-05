@@ -31,7 +31,7 @@ import { BindValue } from "../../database/BindValue.js";
  * part of standard SQL and should be extended when used on a database
  * datasource
  */
-export class Contains implements Filter
+export class Contains extends Filter
 {
 	private columns$:string[] = [];
 	private bindval$:string = null;
@@ -41,6 +41,7 @@ export class Contains implements Filter
 
 	public constructor(columns:string|string[])
 	{
+		super();
 		this.columns$ = [];
 
 		if (typeof columns === "string")

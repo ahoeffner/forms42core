@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The AnyOf filter resembles the in operator in SQL.
  */
-export class AnyOf implements Filter
+export class AnyOf extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -39,6 +39,7 @@ export class AnyOf implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 		this.bindval$ = column;
 	}

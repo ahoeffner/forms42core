@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The IsNull filter resembles the 'is null' operator in SQL.
  */
-export class IsNull implements Filter
+export class IsNull extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -38,6 +38,7 @@ export class IsNull implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 	}
 

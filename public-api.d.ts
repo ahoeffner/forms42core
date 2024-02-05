@@ -52,7 +52,6 @@ export { Tag as CustomTag } from './src/application/tags/Tag.js';
 export { Filters } from './src/model/filters/Filters.js';
 export { Filter } from './src/model/interfaces/Filter.js';
 export { FilterStructure } from './src/model/FilterStructure.js';
-export { CustomFilter } from './src/model/filters/CustomFilter.js';
 
 export { Like } from './src/model/filters/Like.js';
 export { ILike } from './src/model/filters/ILike.js';

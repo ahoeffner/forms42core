@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The LessThan filter resembles the < and <= operator in SQL.
  */
-export class LessThan implements Filter
+export class LessThan extends Filter
 {
 	private constraint$:any;
 	private incl:boolean = false;
@@ -40,6 +40,7 @@ export class LessThan implements Filter
 
 	public constructor(column:string, incl?:boolean)
 	{
+		super();
 		this.incl = incl;
 		this.column$ = column;
 		this.bindval$ = column;

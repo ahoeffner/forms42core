@@ -32,6 +32,7 @@ import { BindValue } from "../database/BindValue.js";
 export class FilterStructure
 {
 	public name:string = null;
+	public type:string = "and";
 
 	private entries$:Constraint[] = [];
 
@@ -117,6 +118,7 @@ export class FilterStructure
 		if (!(filter instanceof FilterStructure) && name == null)
 			name = filter.getBindValueName();
 
+		this.type = "or";
 		this.delete(name);
 
 		if (!this.filteridx$.has(filter))
@@ -138,7 +140,8 @@ export class FilterStructure
 		if (!(filter instanceof FilterStructure) && name == null)
 			name = filter.getBindValueName();
 
-		this.delete(name);
+			this.type = "and";
+			this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{
@@ -224,6 +227,7 @@ export class FilterStructure
 
 	public asSQL() : string
 	{
+		console.log(JSON.stringify(this.buildJSON(new JSONFilterGroup())));
 		return(this.build(0));
 	}
 
@@ -288,6 +292,31 @@ export class FilterStructure
 		}
 
 		return(stmt);
+	}
+
+	private buildJSON(group:JSONFilterGroup) : JSONFilterGroup
+	{
+		for (let i = 0; i < this.entries$.length; i++)
+		{
+			let constr:Constraint = this.entries$[i];
+
+			if (constr.filter instanceof FilterStructure)
+			{
+				let jfs:JSONFilterGroup = new JSONFilterGroup();
+				if (this.type == "or") jfs.or = true;
+				constr.filter.buildJSON(jfs);
+				group.filters.push(jfs);
+			}
+			else
+			{
+				let jf:JSONFilter = new JSONFilter();
+				jf.filter = constr.filter.asJSON();
+				if (group.filters.length > 0 && constr.opr == "or") jf.or = true;
+				group.filters.push(jf)
+			}
+		}
+
+		return(group);
 	}
 
 	public getFilters(start?:FilterStructure) : Filter[]
@@ -384,4 +413,16 @@ class Constraint
 export class Printable
 {
 	entries:any[] = [];
+}
+
+export class JSONFilter
+{
+	or:boolean;
+	filter:any;
+}
+
+export class JSONFilterGroup
+{
+	or?:boolean;
+	filters:(JSONFilter|JSONFilterGroup)[] = [];
 }

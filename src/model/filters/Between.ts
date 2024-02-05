@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The Between filter resembles the between operator in SQL.
  */
-export class Between implements Filter
+export class Between extends Filter
 {
 	private incl:boolean = false;
 
@@ -41,6 +41,7 @@ export class Between implements Filter
 
 	public constructor(column:string, incl?:boolean)
 	{
+		super();
 		this.incl = incl;
 		this.column$ = column;
 		this.bindval$ = column;

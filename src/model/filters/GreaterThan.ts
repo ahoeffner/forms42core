@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The GreaterThan filter resembles the > and >= operator in SQL.
  */
-export class GreaterThan implements Filter
+export class GreaterThan extends Filter
 {
 	private incl:boolean = false;
 	private column$:string = null;
@@ -40,6 +40,7 @@ export class GreaterThan implements Filter
 
 	public constructor(column:string, incl?:boolean)
 	{
+		super();
 		this.incl = incl;
 		this.column$ = column;
 		this.bindval$ = column;

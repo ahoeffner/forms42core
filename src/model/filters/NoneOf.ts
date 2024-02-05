@@ -25,7 +25,7 @@ import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class NoneOf implements Filter
+export class NoneOf extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -35,6 +35,7 @@ export class NoneOf implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 		this.bindval$ = column;
 	}

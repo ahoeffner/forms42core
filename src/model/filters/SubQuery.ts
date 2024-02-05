@@ -25,7 +25,7 @@ import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 
 
-export class SubQuery implements Filter
+export class SubQuery extends Filter
 {
 	private bindval$:string = null;
 	private subquery$:string = null;
@@ -36,6 +36,7 @@ export class SubQuery implements Filter
 
 	public constructor(columns:string|string[])
 	{
+		super();
 		this.columns$ = [];
 
 		if (typeof columns === "string")

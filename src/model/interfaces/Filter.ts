@@ -29,25 +29,58 @@ import { BindValue } from "../../database/BindValue.js";
  * To write a filter just implement this interface.
  * In most cases extending an existing filter is easier.
  */
-export interface Filter
+export abstract class Filter
 {
-	clear() : void;
-	asSQL() : string;
-	clone() : Filter;
+	abstract clear() : void;
+	abstract asSQL() : string;
+	abstract clone() : Filter;
 
-	column:string;
-	constraint:any|any[];
+	abstract column:string;
+	abstract constraint:any|any[];
 
-	getBindValue() : BindValue;
-	getBindValues() : BindValue[];
+	abstract getBindValue() : BindValue;
+	abstract getBindValues() : BindValue[];
 
-	getBindValueName() : string;
-	setBindValueName(name:string) : Filter;
+	abstract getBindValueName() : string;
+	abstract setBindValueName(name:string) : Filter;
 
-	getDataType() : string;
-	setDataType(type:DataType) : Filter;
+	abstract getDataType() : string;
+	abstract setDataType(type:DataType) : Filter;
 
-	setConstraint(value:any|any[]) : Filter;
+	abstract setConstraint(value:any|any[]) : Filter;
 
-	evaluate(record:Record) : Promise<boolean>;
+	abstract evaluate(record:Record) : Promise<boolean>;
+
+	public asJSON() : any
+	{
+		let json:any = {name: this.constructor.name};
+
+		let bv:any[] = this.convert(this.getBindValues());
+		if (bv.length > 0) json.bindvalues = bv;
+
+		return(json);
+	}
+
+	public convert(bindv:BindValue[]) : any[]
+	{
+		let binds:any[] = [];
+		if (bindv == null) return([]);
+
+		bindv.forEach((b) =>
+		{
+			let value:any = b.value;
+
+			if (value instanceof Date)
+				value = value.getTime();
+
+			if (b.outtype) binds.push({name: b.name, type: b.type});
+			else
+			{
+				if (value == null) binds.push({name: b.name, type: b.type});
+				else binds.push({name: b.name, value: value, type: b.type});
+			}
+		})
+
+		return(binds);
+	}
 }

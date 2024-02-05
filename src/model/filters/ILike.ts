@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The ILike filter resembles the case-insensitive ilike operator in SQL.
  */
-export class ILike implements Filter
+export class ILike extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -42,6 +42,7 @@ export class ILike implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 		this.bindval$ = column;
 	}

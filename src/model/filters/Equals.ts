@@ -29,7 +29,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The Equals filter resembles the = operator in SQL.
  */
-export class Equals implements Filter
+export class Equals extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -39,6 +39,7 @@ export class Equals implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 		this.bindval$ = column;
 	}

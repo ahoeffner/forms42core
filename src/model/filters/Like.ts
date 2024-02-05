@@ -28,7 +28,7 @@ import { BindValue } from "../../database/BindValue.js";
  * Filters is a key component when communicating with a backend.
  * The Like filter resembles the like operator in SQL.
  */
-export class Like implements Filter
+export class Like extends Filter
 {
 	private column$:string = null;
 	private bindval$:string = null;
@@ -41,6 +41,7 @@ export class Like implements Filter
 
 	public constructor(column:string)
 	{
+		super();
 		this.column$ = column;
 		this.bindval$ = column;
 	}

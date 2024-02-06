@@ -92,6 +92,7 @@ export class SubQuery extends Filter
 	public set subquery(sql:string)
 	{
 		this.subquery$ = sql;
+		console.log("sub: "+sql)
 	}
 
 	public clone() : SubQuery

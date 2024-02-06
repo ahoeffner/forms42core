@@ -303,15 +303,22 @@ export class FilterStructure
 			if (constr.filter instanceof FilterStructure)
 			{
 				let jfs:JSONFilterGroup = new JSONFilterGroup();
-				if (this.type == "or") jfs.or = true;
 				constr.filter.buildJSON(jfs);
-				group.filters.push(jfs);
+
+				if (this.type == "or")
+					jfs.or = true;
+
+				if (constr.filter.entries$.length > 0)
+					group.filters.push(jfs);
 			}
 			else
 			{
 				let jf:JSONFilter = new JSONFilter();
 				jf.filter = constr.filter.asJSON();
-				if (group.filters.length > 0 && constr.opr == "or") jf.or = true;
+
+				if (group.filters.length > 0 && constr.opr == "or")
+					jf.or = true;
+
 				group.filters.push(jf)
 			}
 		}

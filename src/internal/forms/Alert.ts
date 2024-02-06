@@ -104,7 +104,6 @@ export class Alert extends Form
 		let severe:boolean = this.parameters.get("severe");
 		let warning:boolean = this.parameters.get("warning");
 
-		Internals.stylePopupWindow(view);
 		Internals.stylePopupWindow(view,title,Alert.HEIGHT,Alert.WIDTH);
 
 		// Block everything else

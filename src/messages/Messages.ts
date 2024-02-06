@@ -274,7 +274,7 @@ export class Messages
 
 		let cons:boolean = false;
 		if (level >= Messages.consoleLevel) cons = true;
-		if (group.console != null) cons = group.console;
+		if (group?.console != null) cons = group.console;
 
 		let alert:boolean = false;
 		if (msg.important) alert = true;

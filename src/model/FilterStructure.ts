@@ -227,7 +227,6 @@ export class FilterStructure
 
 	public asSQL() : string
 	{
-		console.log(JSON.stringify(this.buildJSON(new JSONFilterGroup())));
 		return(this.build(0));
 	}
 

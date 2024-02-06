@@ -203,6 +203,7 @@ export class Internals
 		{
 			let titlearea:HTMLElement = header.querySelector('span[name="title"]');
 			if (titlearea) titlearea.textContent = title;
+			titlearea?.classList.add("canvas-handle");
 		}
 
 		if (width)

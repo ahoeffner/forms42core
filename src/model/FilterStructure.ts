@@ -230,6 +230,11 @@ export class FilterStructure
 		return(this.build(0));
 	}
 
+	public asJSON() : any
+	{
+		return(this.buildJSON(new JSONFilterGroup()));
+	}
+
 	public getBindValues() : BindValue[]
 	{
 		let bindvalues:BindValue[] = [];

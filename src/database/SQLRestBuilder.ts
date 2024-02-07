@@ -75,6 +75,15 @@ export class SQLRestBuilder
 
 	public static select(table:string, columns:string[], filter:FilterStructure, order:string) : SQLRest
 	{
+		let request:any = {};
+
+		request.datasource = table;
+		request.columns = columns;
+		request.filters = filter.asJSON();
+		request.order = order;
+
+		//console.log(JSON.stringify(request));
+
 		let parsed:SQLRest =
 			new SQLRest();
 

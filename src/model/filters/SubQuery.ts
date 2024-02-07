@@ -23,9 +23,9 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
+import { MultiColumnFilter } from "../interfaces/MultiColumnFilter.js";
 
-
-export class SubQuery extends Filter
+export class SubQuery extends Filter implements MultiColumnFilter
 {
 	private bindval$:string = null;
 	private subquery$:string = null;

@@ -23,6 +23,7 @@ import { Record } from "../Record.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
+import { MultiColumnFilter } from "../interfaces/MultiColumnFilter.js";
 
 
 /**
@@ -31,7 +32,7 @@ import { BindValue } from "../../database/BindValue.js";
  * part of standard SQL and should be extended when used on a database
  * datasource
  */
-export class Contains extends Filter
+export class Contains extends Filter implements MultiColumnFilter
 {
 	private columns$:string[] = [];
 	private bindval$:string = null;

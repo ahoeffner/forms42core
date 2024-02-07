@@ -45,6 +45,7 @@ import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { JSONRequestBuilder } from "../database/JSONRequestBuilder.js";
 
 
 export class Block
@@ -1208,6 +1209,9 @@ export class Block
 
 			filter.subquery = sql.stmt;
 			filter.setBindValues(sql.bindvalues);
+
+			console.log(sql.stmt)
+			JSONRequestBuilder.select(detail.datasource,rel.detail.fields,detail.QueryFilter);
 
 			return(true);
 		}

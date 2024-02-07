@@ -22,6 +22,7 @@
 import { Record } from "../Record.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
+import { isMultiColumnFilter } from "./MultiColumnFilter.js";
 
 /**
  * Filters is a key component when communicating with a backend.
@@ -53,7 +54,10 @@ export abstract class Filter
 
 	public asJSON() : any
 	{
-		let json:any = {name: this.constructor.name};
+		let json:any = {type: this.constructor.name};
+
+		if (!isMultiColumnFilter(this)) json.column = this.column;
+		else									  json.columns = this.columns;
 
 		let bv:any[] = this.convert(this.getBindValues());
 		if (bv.length > 0) json.bindvalues = bv;

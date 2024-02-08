@@ -248,27 +248,9 @@ export class FilterStructure
 			return(filter);
 		}
 
-		let flatten:boolean = true;
-
 		for (let i = 0; i < filter.filters.length; i++)
-		{
-			if (filter.filters[i] instanceof JSONFilter)
-				flatten = false;
-		}
-
-		if (flatten)
-		{
-			let fg:JSONFilterGroup = new JSONFilterGroup(filter.or);
-
-			for (let i = 0; i < filter.filters.length; i++)
-			{
-				filter.filters[i] = this.cleanout(filter.filters[i]);
-				fg.filters.push(filter.filters[i]);
-			}
-
-			filter = fg;
-		}
-
+			filter.filters[i] = this.cleanout(filter.filters[i]);
+		
 		return(filter);
 	}
 

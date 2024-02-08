@@ -21,6 +21,7 @@
 
 import { Form } from "./Form.js";
 import { Row } from "../view/Row.js";
+import { Query } from "./statements/Query.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { SQLRest } from "../database/SQLRest.js";
@@ -46,7 +47,6 @@ import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
 import { JSONRequestBuilder } from "../database/JSONRequestBuilder.js";
-import { Query } from "./statements/Query.js";
 
 
 export class Block
@@ -1206,16 +1206,17 @@ export class Block
 		if (sql != null)
 		{
 			let filter:SubQuery = new SubQuery(rel.master.fields);
+			let subq:SubQuery = JSONRequestBuilder.subquery(detail.datasource,rel.master.fields,rel.detail.fields,detail.filter);
+
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
 
-			filter.subquery = sql.stmt;
+			filter.sqlstmt = sql.stmt;
 			filter.setBindValues(sql.bindvalues);
 
-			let subquery:Query = new Query(rel.detail.fields,detail.datasource,detail.QueryFilter);
+			console.log(sql.stmt);
+			console.log(JSON.stringify(subq.asJSON()))
 
-			console.log(sql.stmt)
-			console.log(JSON.stringify(subquery.asJSON()));
-
+			filter.query = new Query(rel.detail.fields,detail.datasource,detail.QueryFilter);
 			return(true);
 		}
 

@@ -1,6 +1,7 @@
-import { Query } from "../model/statements/Query";
-import { FilterStructure } from "../model/FilterStructure";
-import { DataSource } from "../model/interfaces/DataSource";
+import { Query } from "../model/statements/Query.js";
+import { SubQuery } from "../model/filters/SubQuery.js";
+import { FilterStructure } from "../model/FilterStructure.js";
+import { DataSource } from "../model/interfaces/DataSource.js";
 
 export class JSONRequestBuilder
 {
@@ -14,5 +15,12 @@ export class JSONRequestBuilder
 
 		console.log(JSON.stringify(json));
 		return(null);
+	}
+
+	public static subquery(source:DataSource, mstcols:string[], detcols:string[], filter:FilterStructure) : SubQuery
+	{
+		let subq:SubQuery = new SubQuery(mstcols);
+		subq.query = new Query(detcols,source,filter);
+		return(subq);
 	}
 }

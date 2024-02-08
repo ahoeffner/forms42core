@@ -20,6 +20,7 @@
 */
 
 import { Record } from "../Record.js";
+import { Query } from "../statements/Query.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
@@ -27,9 +28,8 @@ import { MultiColumnFilter } from "../interfaces/MultiColumnFilter.js";
 
 export class SubQuery extends Filter implements MultiColumnFilter
 {
-	private bindval$:string = null;
-	private subquery$:string = null;
-	private datatype$:string = null;
+	private query$:Query = null;
+	private sqlstmt$:string = null;
 	private columns$:string[] = null;
 	private constraint$:any[][] = null;
 	private bindvalues$:BindValue[] = [];
@@ -58,10 +58,6 @@ export class SubQuery extends Filter implements MultiColumnFilter
 			columns = [columns];
 
 		this.columns$ = columns;
-		this.bindval$ = columns[0];
-
-		for (let i = 1; i < columns.length; i++)
-			this.bindval$ += "."+columns[i];
 	}
 
 	public get column() : string
@@ -84,22 +80,26 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		this.columns$ = columns;
 	}
 
-	public get subquery() : string
+	public get sqlstmt() : string
 	{
-		return(this.subquery$);
+		return(this.sqlstmt$);
 	}
 
-	public set subquery(sql:string)
+	public set sqlstmt(sql:string)
 	{
-		this.subquery$ = sql;
+		this.sqlstmt$ = sql;
+	}
+
+	public set query(query:Query)
+	{
+		this.query$ = query;
 	}
 
 	public clone() : SubQuery
 	{
 		let clone:SubQuery = new SubQuery(this.columns$);
 
-		clone.subquery$ = this.subquery$;
-		clone.datatype$ = this.datatype$;
+		clone.sqlstmt$ = this.sqlstmt$;
 		clone.bindvalues$ = this.bindvalues$;
 
 		return(clone.setConstraint(this.constraint$));
@@ -107,13 +107,11 @@ export class SubQuery extends Filter implements MultiColumnFilter
 
 	public getDataType() : string
 	{
-		return(this.datatype$);
+		return("na");
 	}
 
 	public setDataType(type:DataType|string) : SubQuery
 	{
-		if (typeof type === "string") this.datatype$ = type;
-		else this.datatype$ = DataType[type];
 		return(this);
 	}
 
@@ -124,12 +122,11 @@ export class SubQuery extends Filter implements MultiColumnFilter
 
 	public getBindValueName() : string
 	{
-		return(this.bindval$);
+		return(null);
 	}
 
 	public setBindValueName(name:string) : SubQuery
 	{
-		this.bindval$ = name;
 		return(this);
 	}
 
@@ -206,8 +203,17 @@ export class SubQuery extends Filter implements MultiColumnFilter
 
 	public asSQL() : string
 	{
-		if (this.subquery$ == null) return("subquery "+this.constraint$);
-		return(this.subquery$)
+		if (this.sqlstmt$ == null) return("subquery "+this.constraint$);
+		return(this.sqlstmt$)
+	}
+
+	public asJSON() : any
+	{
+		let json:any = {};
+		json.type = "subquery";
+		json.columns = this.columns;
+		json.query = this.query$?.asJSON();
+		return(json);
 	}
 
 	public toString() : string

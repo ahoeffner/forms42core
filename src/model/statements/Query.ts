@@ -1,13 +1,33 @@
-import { Filter } from "../interfaces/Filter";
-import { DataSource } from "../interfaces/DataSource";
-import { FilterStructure } from "../FilterStructure";
+import { Filter } from "../interfaces/Filter.js";
+import { FilterStructure } from "../FilterStructure.js";
+import { DataSource } from "../interfaces/DataSource.js";
 
 export class Query
 {
-	constructor(public columns:string|string[], public source:DataSource, public filter?:Filter|FilterStructure, public order?:any)
+	private order:any = null;
+	private columns:string[] = null;
+	private source:DataSource = null;
+	private filter:FilterStructure = null;
+
+	constructor(columns:string|string[], source:DataSource, filter?:Filter|Filter[]|FilterStructure, order?:any)
 	{
 		if (!Array.isArray(columns))
 			columns = [columns];
+
+		this.order = order;
+		this.source = source;
+		this.columns = columns;
+
+		if (!(filter instanceof FilterStructure))
+		{
+			if (!Array.isArray(filter)) filter = [filter];
+			this.filter = new FilterStructure();
+			filter.forEach((flt) => this.filter.and(flt));
+		}
+		else
+		{
+			this.filter = filter;
+		}
 	}
 
 	public asJSON() : any
@@ -22,7 +42,7 @@ export class Query
 
 		if (this.order)
 			json.order = this.order;
-		
+
 		return(json);
 	}
 }

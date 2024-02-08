@@ -628,7 +628,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				let df:Filter = filters[i];
 
-				if (df instanceof SubQuery && df.subquery == null)
+				if (df instanceof SubQuery && df.sqlstmt == null)
 					return(null);
 			}
 		}
@@ -682,7 +682,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 			{
 				let df:Filter = filters[i];
 
-				if (df instanceof SubQuery && df.subquery == null)
+				if (df instanceof SubQuery && df.sqlstmt == null)
 				{
 					if (this.nosql$ == null)
 						this.nosql$ = new FilterStructure(this.name+".nosql");
@@ -696,6 +696,12 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
+		/*
+		console.log(this.name)
+		console.log(filter.asSQL())
+		console.log(JSON.stringify(filter.asJSON()))
+		console.log(this.name)
+		*/
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 

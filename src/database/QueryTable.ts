@@ -310,7 +310,7 @@ export class QueryTable extends SQLSource implements DataSource
 			{
 				let df:Filter = filters[i];
 
-				if (df instanceof SubQuery && df.subquery == null)
+				if (df instanceof SubQuery && df.sqlstmt == null)
 				{
 					if (this.nosql$ == null)
 						this.nosql$ = new FilterStructure(this.name+".nosql");

@@ -242,8 +242,11 @@ export class FilterStructure
 		if (filter instanceof JSONFilter)
 			return(filter);
 
-		if (filter.filters.length == 1 && filter.filters[0] instanceof JSONFilterGroup)
-			filter = this.cleanout(filter.filters[0]) as JSONFilterGroup;
+		if (filter.filters.length == 1)
+			filter = this.cleanout(filter.filters[0]);
+
+		if (filter instanceof JSONFilter)
+			return(filter);
 
 		let flatten:boolean = true;
 		let subs:(JSONFilterGroup|JSONFilter)[] = [];
@@ -256,10 +259,6 @@ export class FilterStructure
 		}
 
 		if (flatten) filter.filters = subs;
-
-		for (let i = 0; i < filter.filters.length; i++)
-			filter.filters[i] = this.cleanout(filter.filters[i]);
-
 		return(filter);
 	}
 

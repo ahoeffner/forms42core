@@ -9,7 +9,7 @@ export class Query
 	private source:DataSource = null;
 	private filter:FilterStructure = null;
 
-	constructor(columns:string|string[], source:DataSource, filter?:Filter|Filter[]|FilterStructure, order?:any)
+	constructor(source:DataSource, columns:string|string[], filter?:Filter|Filter[]|FilterStructure, order?:any)
 	{
 		if (!Array.isArray(columns))
 			columns = [columns];

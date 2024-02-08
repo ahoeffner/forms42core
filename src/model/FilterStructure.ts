@@ -243,14 +243,23 @@ export class FilterStructure
 			return(filter);
 
 		if (filter.filters.length == 1 && filter.filters[0] instanceof JSONFilterGroup)
+			filter = this.cleanout(filter.filters[0]) as JSONFilterGroup;
+
+		let flatten:boolean = true;
+		let subs:(JSONFilterGroup|JSONFilter)[] = [];
+
+		for (let i = 0; i < filter.filters.length; i++)
 		{
-			filter = this.cleanout(filter.filters[0]);
-			return(filter);
+			if (filter.filters[i].or) flatten = false;
+			if (filter.filters[i] instanceof JSONFilter) flatten = false;
+			else subs.push(...(filter.filters[i] as JSONFilterGroup).filters);
 		}
+
+		if (flatten) filter.filters = subs;
 
 		for (let i = 0; i < filter.filters.length; i++)
 			filter.filters[i] = this.cleanout(filter.filters[i]);
-		
+
 		return(filter);
 	}
 

@@ -36,6 +36,7 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { Query } from "../model/statements/Query.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB
@@ -696,12 +697,18 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		console.log(this.name)
-		console.log(filter.asSQL())
-		console.log(JSON.stringify(filter.asJSON()))
-		console.log(this.name)
+		let query:Query = new Query(this,this.columns,filter,this.sorting);
 
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
+
+
+		if (this.name == "countries")
+		{
+			console.log(this.name)
+			console.log(sql.stmt)
+			console.log(JSON.stringify(query.asJSON()))
+		}
+
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response,this.cursor$);

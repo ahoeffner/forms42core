@@ -5,22 +5,15 @@ import { DataSource } from "../model/interfaces/DataSource.js";
 
 export class JSONRequestBuilder
 {
-	public static select(source:DataSource, columns:string[], filter:FilterStructure) : Query
+	public static select(source:DataSource, columns:string[], filter:FilterStructure, order?:any) : Query
 	{
-		let json:any = {};
-
-		json.columns = columns;
-		json.source = source.name;
-		json.filters = filter.asJSON().filters;
-
-		console.log(JSON.stringify(json));
-		return(null);
+		return(new Query(source,columns,filter,order));
 	}
 
 	public static subquery(source:DataSource, mstcols:string[], detcols:string[], filter:FilterStructure) : SubQuery
 	{
 		let subq:SubQuery = new SubQuery(mstcols);
-		subq.query = new Query(detcols,source,filter);
+		subq.query = new Query(source,detcols,filter);
 		return(subq);
 	}
 }

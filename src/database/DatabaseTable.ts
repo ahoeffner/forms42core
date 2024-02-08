@@ -706,7 +706,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		{
 			console.log(this.name)
 			console.log(sql.stmt)
-			console.log(JSON.stringify(query.asJSON()))
+			console.log(JSON.stringify(query.serialize()))
 		}
 
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);

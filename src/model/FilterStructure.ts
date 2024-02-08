@@ -230,7 +230,7 @@ export class FilterStructure
 		return(this.build(0));
 	}
 
-	public asJSON() : any
+	public serialize() : any
 	{
 		let group:JSONFilterGroup = this.buildJSON(new JSONFilterGroup());
 		group = this.cleanout(group) as JSONFilterGroup;
@@ -243,23 +243,26 @@ export class FilterStructure
 			return(filter);
 
 		if (filter.filters.length == 1)
-			filter = this.cleanout(filter.filters[0]);
+			filter = filter.filters[0];
 
 		if (filter instanceof JSONFilter)
 			return(filter);
 
-		let flatten:boolean = true;
-		let subs:(JSONFilterGroup|JSONFilter)[] = [];
-
-		for (let i = 0; i < filter.filters.length; i++)
+		if (filter.filters.length > 1)
 		{
-			if (filter.filters[i].or) flatten = false;
-			if (filter.filters[i] instanceof JSONFilter) flatten = false;
-			else subs.push(...(filter.filters[i] as JSONFilterGroup).filters);
-		}
+			let flatten:boolean = true;
+			let subs:(JSONFilterGroup|JSONFilter)[] = [];
 
-		if (flatten)
-			filter.filters = subs;
+			for (let i = 0; i < filter.filters.length; i++)
+			{
+				if (filter.filters[i].or) flatten = false;
+				if (filter.filters[i] instanceof JSONFilter) flatten = false;
+				else subs.push(...(filter.filters[i] as JSONFilterGroup).filters);
+			}
+
+			if (flatten)
+				filter.filters = subs;
+		}
 
 		for (let i = 0; i < filter.filters.length; i++)
 			filter.filters[i] = this.cleanout(filter.filters[i]);
@@ -350,7 +353,7 @@ export class FilterStructure
 			else
 			{
 				let jf:JSONFilter = new JSONFilter();
-				jf.filter = constr.filter.asJSON();
+				jf.filter = constr.filter.serialize();
 
 				if (group.filters.length > 0 && constr.opr == "or")
 					jf.or = true;

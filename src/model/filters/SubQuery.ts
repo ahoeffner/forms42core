@@ -214,12 +214,12 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		return(this.sqlstmt$)
 	}
 
-	public asJSON() : any
+	public serialize() : any
 	{
 		let json:any = {};
 		json.type = "subquery";
 		json.columns = this.columns;
-		json.query = this.query$?.asJSON();
+		json.query = this.query$?.serialize();
 		return(json);
 	}
 

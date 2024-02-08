@@ -30,7 +30,7 @@ export class Query
 		}
 	}
 
-	public asJSON() : any
+	public serialize() : any
 	{
 		let json:any = {};
 
@@ -38,7 +38,7 @@ export class Query
 		json.source = this.source.name;
 
 		if (this.filter)
-			json.filters = this.filter.asJSON().filters;
+			json.filters = this.filter.serialize().filters;
 
 		if (this.order)
 			json.order = this.order;

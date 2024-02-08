@@ -52,7 +52,7 @@ export abstract class Filter
 
 	abstract evaluate(record:Record) : Promise<boolean>;
 
-	public asJSON() : any
+	public serialize() : any
 	{
 		let json:any = {type: this.constructor.name};
 

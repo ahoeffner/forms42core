@@ -79,7 +79,7 @@ export class SQLRestBuilder
 
 		request.datasource = table;
 		request.columns = columns;
-		request.filters = filter.asJSON();
+		request.filters = filter.serialize();
 		request.order = order;
 
 		//console.log(JSON.stringify(request));

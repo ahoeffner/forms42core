@@ -104,6 +104,8 @@ export class SubQuery extends Filter implements MultiColumnFilter
 	{
 		let clone:SubQuery = new SubQuery(this.columns$);
 
+		clone.query$ = this.query$;
+		clone.columns$ = this.columns$;
 		clone.sqlstmt$ = this.sqlstmt$;
 		clone.bindvalues$ = this.bindvalues$;
 

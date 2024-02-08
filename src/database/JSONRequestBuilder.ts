@@ -1,9 +1,10 @@
+import { Query } from "../model/statements/Query";
 import { FilterStructure } from "../model/FilterStructure";
 import { DataSource } from "../model/interfaces/DataSource";
 
 export class JSONRequestBuilder
 {
-	public static select(source:DataSource, columns:string[], filter:FilterStructure) : any
+	public static select(source:DataSource, columns:string[], filter:FilterStructure) : Query
 	{
 		let json:any = {};
 

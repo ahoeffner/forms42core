@@ -233,7 +233,7 @@ export class FilterStructure
 	public asJSON() : any
 	{
 		let group:JSONFilterGroup = this.buildJSON(new JSONFilterGroup());
-		group = this.cleanout(group);
+		group = this.cleanout(group) as JSONFilterGroup;
 		return(group);
 	}
 
@@ -258,7 +258,7 @@ export class FilterStructure
 
 		if (flatten)
 		{
-			let fg:JSONFilterGroup = new JSONFilterGroup();
+			let fg:JSONFilterGroup = new JSONFilterGroup(filter.or);
 
 			for (let i = 0; i < filter.filters.length; i++)
 			{
@@ -444,4 +444,10 @@ export class JSONFilterGroup
 {
 	or?:boolean;
 	filters:(JSONFilter|JSONFilterGroup)[] = [];
+
+	constructor(or?:boolean)
+	{
+		if (or)
+			this.or = or;
+	}
 }

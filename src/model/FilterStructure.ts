@@ -232,7 +232,17 @@ export class FilterStructure
 
 	public asJSON() : any
 	{
-		return(this.buildJSON(new JSONFilterGroup()));
+		let group:JSONFilterGroup = this.buildJSON(new JSONFilterGroup());
+		group = this.cleanout(group);
+		return(group);
+	}
+
+	public cleanout(filter:JSONFilterGroup) : JSONFilterGroup
+	{
+		if (filter.filters.length == 1 && filter.filters[0] instanceof JSONFilterGroup)
+			filter = this.cleanout(filter.filters[0]);
+
+		return(filter);
 	}
 
 	public getBindValues() : BindValue[]

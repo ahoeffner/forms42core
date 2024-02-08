@@ -1205,18 +1205,13 @@ export class Block
 
 		if (sql != null)
 		{
-			let filter:SubQuery = new SubQuery(rel.master.fields);
-			let subq:SubQuery = JSONRequestBuilder.subquery(detail.datasource,rel.master.fields,rel.detail.fields,detail.filter);
-
+			//let filter:SubQuery = new SubQuery(rel.master.fields);
+			let filter:SubQuery = JSONRequestBuilder.subquery(detail.datasource,rel.master.fields,rel.detail.fields,detail.filter);
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
 
 			filter.sqlstmt = sql.stmt;
 			filter.setBindValues(sql.bindvalues);
 
-			console.log(sql.stmt);
-			console.log(JSON.stringify(subq.asJSON()))
-
-			filter.query = new Query(rel.detail.fields,detail.datasource,detail.QueryFilter);
 			return(true);
 		}
 

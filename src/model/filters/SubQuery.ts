@@ -90,6 +90,11 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		this.sqlstmt$ = sql;
 	}
 
+	public get query() : Query
+	{
+		return(this.query$);
+	}
+
 	public set query(query:Query)
 	{
 		this.query$ = query;

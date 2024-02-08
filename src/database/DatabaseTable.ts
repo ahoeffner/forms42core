@@ -696,12 +696,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		/*
 		console.log(this.name)
 		console.log(filter.asSQL())
 		console.log(JSON.stringify(filter.asJSON()))
 		console.log(this.name)
-		*/
+
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 

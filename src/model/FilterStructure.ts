@@ -237,10 +237,37 @@ export class FilterStructure
 		return(group);
 	}
 
-	public cleanout(filter:JSONFilterGroup) : JSONFilterGroup
+	public cleanout(filter:JSONFilterGroup|JSONFilter) : JSONFilterGroup|JSONFilter
 	{
+		if (filter instanceof JSONFilter)
+			return(filter);
+
 		if (filter.filters.length == 1 && filter.filters[0] instanceof JSONFilterGroup)
+		{
 			filter = this.cleanout(filter.filters[0]);
+			return(filter);
+		}
+
+		let flatten:boolean = true;
+
+		for (let i = 0; i < filter.filters.length; i++)
+		{
+			if (filter.filters[i] instanceof JSONFilter)
+				flatten = false;
+		}
+
+		if (flatten)
+		{
+			let fg:JSONFilterGroup = new JSONFilterGroup();
+
+			for (let i = 0; i < filter.filters.length; i++)
+			{
+				filter.filters[i] = this.cleanout(filter.filters[i]);
+				fg.filters.push(filter.filters[i]);
+			}
+
+			filter = fg;
+		}
 
 		return(filter);
 	}
@@ -360,30 +387,6 @@ export class FilterStructure
 		return(filters);
 	}
 
-	public printable() : Printable
-	{
-		let name:string = null;
-		let p:Printable = new Printable();
-
-		for (let i = 0; i < this.entries$.length; i++)
-		{
-			name = this.entries$[i].name;
-			if (name == null) name = this.name;
-
-			if (this.entries$[i].isFilter())
-			{
-				p.entries.push({name: name, filter: this.entries$[i].filter.toString()})
-			}
-			else
-			{
-				let sub:FilterStructure = this.entries$[i].getFilterStructure();
-				p.entries.push({name: name, sub: sub.printable()})
-			}
-		}
-
-		return(p);
-	}
-
 	public toString() : string
 	{
 		return(this.asSQL());
@@ -429,11 +432,6 @@ class Constraint
 	{
 		return(this.filter.evaluate(record));
 	}
-}
-
-export class Printable
-{
-	entries:any[] = [];
 }
 
 export class JSONFilter

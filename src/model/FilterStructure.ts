@@ -258,7 +258,12 @@ export class FilterStructure
 			else subs.push(...(filter.filters[i] as JSONFilterGroup).filters);
 		}
 
-		if (flatten) filter.filters = subs;
+		if (flatten)
+			filter.filters = subs;
+
+		for (let i = 0; i < filter.filters.length; i++)
+			filter.filters[i] = this.cleanout(filter.filters[i]);
+
 		return(filter);
 	}
 

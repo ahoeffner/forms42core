@@ -27,6 +27,7 @@ import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Update } from "./serializable/Update.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
@@ -407,7 +408,10 @@ export class DatabaseTable extends SQLSource implements DataSource
 				let rettypes:BindValue[] = [];
 
 				for (let i = 0; i < columns.length; i++)
-					values.push(new BindValue(columns[i],rec.getValue(columns[i])));
+				{
+					let type:string = this.datatypes$.get(columns[i]);
+					values.push(new BindValue(columns[i],rec.getValue(columns[i]),type));
+				}
 
 				retcols.forEach((col) =>
 				{
@@ -415,7 +419,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 					if (type != null) rettypes.push(new BindValue(col,null,type));
 				})
 
-				let ins:Insert = new Insert(this,columns,values,retcols,rettypes);
+				let ins:Insert = new Insert(this,values,retcols,rettypes);
 				console.log(JSON.stringify(ins.serialize()));
 
 				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insertReturnColumns);
@@ -449,8 +453,18 @@ export class DatabaseTable extends SQLSource implements DataSource
 				retcols = this.delreturncolumns$;
 				if (retcols == null) retcols = [];
 
-				let rettypes:BindValue[] = [];
 				let pkey:string[] = this.primaryKey;
+				let pkeyflt:FilterStructure = new FilterStructure();
+
+				for (let i = 0; i < this.primaryKey.length; i++)
+				{
+					let filter:Filter = Filters.Equals(pkey[i]);
+					let value:any = rec.getInitialValue(pkey[i]);
+					pkeyflt.and(filter.setConstraint(value),pkey[i]);
+					this.setTypes(filter.getBindValues());
+				}
+
+				let rettypes:BindValue[] = [];
 
 				retcols.forEach((col) =>
 				{
@@ -461,17 +475,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 					}
 				})
 
-				let filters:FilterStructure = new FilterStructure();
-
-				for (let i = 0; i < this.primaryKey.length; i++)
-				{
-					let filter:Filter = Filters.Equals(pkey[i]);
-					let value:any = rec.getInitialValue(pkey[i]);
-					filters.and(filter.setConstraint(value),pkey[i]);
-					this.setTypes(filter.getBindValues());
-				}
-
-				let del:Delete = new Delete(this,filters,this.delreturncolumns$,rettypes);
+				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
 				console.log(JSON.stringify(del.serialize()));
 
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
@@ -515,6 +519,40 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				retcols = this.delreturncolumns$;
 				if (retcols == null) retcols = [];
+
+				let rettypes:BindValue[] = [];
+				let pkey:string[] = this.primaryKey;
+
+				let pkeyflt:FilterStructure = new FilterStructure();
+
+				for (let i = 0; i < this.primaryKey.length; i++)
+				{
+					let filter:Filter = Filters.Equals(pkey[i]);
+					let value:any = rec.getInitialValue(pkey[i]);
+					pkeyflt.and(filter.setConstraint(value),pkey[i]);
+					this.setTypes(filter.getBindValues());
+				}
+
+				let changes:BindValue[] = [];
+				let dirty:string[] = rec.getDirty();
+
+				for (let i = 0; i < dirty.length; i++)
+				{
+					let type:string = this.datatypes$.get(dirty[i]);
+					changes.push(new BindValue(dirty[i],rec.getValue(dirty[i]),type));
+				}
+
+				retcols.forEach((col) =>
+				{
+					if (!pkey.includes(col))
+					{
+						let type:string = this.datatypes$.get(col);
+						if (type != null) rettypes.push(new BindValue(col,null,type));
+					}
+				})
+
+				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
+				console.log(JSON.stringify(upd.serialize()));
 
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 				this.setTypes(sql.bindvalues);

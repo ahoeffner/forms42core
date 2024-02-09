@@ -22,6 +22,7 @@
 import { Record } from "./Record.js";
 import { Filter } from "./interfaces/Filter.js";
 import { BindValue } from "../database/BindValue.js";
+import { Serializable } from "../database/serializable/Serializable.js";
 
 /**
  * Filters is a key component when communicating with a backend.
@@ -29,7 +30,7 @@ import { BindValue } from "../database/BindValue.js";
  * A FilterStructure is a tree like collection of filters. It embraces
  * the where-clause in sql.
  */
-export class FilterStructure
+export class FilterStructure implements Serializable
 {
 	public name:string = null;
 	public type:string = "and";
@@ -237,7 +238,7 @@ export class FilterStructure
 
 		if (filter instanceof JSONFilterGroup) group = filter;
 		else {group = new JSONFilterGroup(); group.filters.push(filter);}
-		
+
 		return(group);
 	}
 

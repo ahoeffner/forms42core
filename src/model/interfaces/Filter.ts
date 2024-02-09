@@ -23,6 +23,7 @@ import { Record } from "../Record.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
 import { isMultiColumnFilter } from "./MultiColumnFilter.js";
+import { Serializable } from "../../database/serializable/Serializable.js";
 
 /**
  * Filters is a key component when communicating with a backend.
@@ -30,7 +31,7 @@ import { isMultiColumnFilter } from "./MultiColumnFilter.js";
  * To write a filter just implement this interface.
  * In most cases extending an existing filter is easier.
  */
-export abstract class Filter
+export abstract class Filter implements Serializable
 {
 	abstract clear() : void;
 	abstract asSQL() : string;

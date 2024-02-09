@@ -25,6 +25,7 @@ import { DataType } from "./DataType.js";
 import { SQLCache } from "./SQLCache.js";
 import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
+import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
 import { Filter } from "../model/interfaces/Filter.js";
@@ -36,7 +37,6 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Query } from "../model/statements/Query.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB
@@ -137,6 +137,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 	{
 		let clone:DatabaseTable = new DatabaseTable(this.pubconn$,this.table$);
 
+		clone.name = this.name;
 		clone.sorting = this.sorting;
 		clone.primary$ = this.primary$;
 		clone.columns$ = this.columns$;
@@ -698,17 +699,9 @@ export class DatabaseTable extends SQLSource implements DataSource
 		this.createCursor();
 
 		let query:Query = new Query(this,this.columns,filter,this.sorting);
-
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 
-
-		if (this.name == "countries")
-		{
-			console.log(this.name)
-			console.log(sql.stmt)
-			console.log(JSON.stringify(query.serialize()))
-		}
-
+		console.log(JSON.stringify(query.serialize()))
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
 
 		this.fetched$ = this.parse(response,this.cursor$);
@@ -769,6 +762,16 @@ export class DatabaseTable extends SQLSource implements DataSource
 			return(response.success);
 
 		return(true);
+	}
+
+	public setTypes(bindvalues:BindValue[]) : void
+	{
+		bindvalues?.forEach((b) =>
+		{
+			let col:string = b.column?.toLowerCase();
+			let t:string = this.datatypes$.get(col);
+			if (!b.forceDataType && t != null) b.type = t;
+		})
 	}
 
 	private createCursor() : void
@@ -835,16 +838,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		this.described$ = response.success;
 		return(this.described$);
-	}
-
-	private setTypes(bindvalues:BindValue[]) : void
-	{
-		bindvalues?.forEach((b) =>
-		{
-			let col:string = b.column?.toLowerCase();
-			let t:string = this.datatypes$.get(col);
-			if (!b.forceDataType && t != null) b.type = t;
-		})
 	}
 
 	private parse(response:any, cursor:Cursor) : Record[]

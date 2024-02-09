@@ -20,6 +20,7 @@
 */
 
 import { SQLRest } from "./SQLRest.js";
+import { BindValue } from "./BindValue.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 
 /**
@@ -27,5 +28,6 @@ import { FilterStructure } from "../model/FilterStructure.js";
  */
 export abstract class SQLSource
 {
+	abstract setTypes(bindvalues:BindValue[]);
 	abstract getSubQuery(filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>;
 }

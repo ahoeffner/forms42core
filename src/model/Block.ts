@@ -21,7 +21,6 @@
 
 import { Form } from "./Form.js";
 import { Row } from "../view/Row.js";
-import { Query } from "./statements/Query.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
 import { SQLRest } from "../database/SQLRest.js";
@@ -36,6 +35,7 @@ import { Block as ViewBlock } from '../view/Block.js';
 import { FilterStructure } from "./FilterStructure.js";
 import { DataSource } from "./interfaces/DataSource.js";
 import { Form as InterfaceForm } from '../public/Form.js';
+import { Query } from "../database/serializable/Query.js";
 import { MemoryTable } from "./datasources/MemoryTable.js";
 import { DataSourceWrapper } from "./DataSourceWrapper.js";
 import { EventType } from "../control/events/EventType.js";
@@ -46,7 +46,6 @@ import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { JSONRequestBuilder } from "../database/JSONRequestBuilder.js";
 
 
 export class Block
@@ -232,7 +231,6 @@ export class Block
 
 		this.source$ = source;
 		this.ctrlblk = (source == null);
-		if (this.source$) this.source$.name = this.name;
 
 		this.addColumns();
 	}
@@ -1205,8 +1203,10 @@ export class Block
 
 		if (sql != null)
 		{
-			//let filter:SubQuery = new SubQuery(rel.master.fields);
-			let filter:SubQuery = JSONRequestBuilder.subquery(detail.datasource,rel.master.fields,rel.detail.fields,detail.filter);
+			let filter:SubQuery = new SubQuery(rel.master.fields);
+			filter.query = new Query(detail.datasource,rel.detail.fields,detail.filter);
+
+			source.setTypes(detail.filter.getBindValues());
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
 
 			filter.sqlstmt = sql.stmt;

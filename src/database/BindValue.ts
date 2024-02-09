@@ -146,6 +146,18 @@ export class BindValue
 			this.type$ = "string";
 	}
 
+	public serialize() : any
+	{
+		let json:any = {};
+
+		json.name = this.name;
+		json.type = this.type;
+		json.value = this.value;
+		if (this.out$) json.out = true;
+
+		return(json);
+	}
+
 	public toString() : string
 	{
 		return("{"+this.name+" "+this.type+" "+this.value+"}")

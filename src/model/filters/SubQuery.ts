@@ -20,10 +20,10 @@
 */
 
 import { Record } from "../Record.js";
-import { Query } from "../statements/Query.js";
 import { Filter } from "../interfaces/Filter.js";
 import { DataType } from "../../database/DataType.js";
 import { BindValue } from "../../database/BindValue.js";
+import { Query } from "../../database/serializable/Query.js";
 import { MultiColumnFilter } from "../interfaces/MultiColumnFilter.js";
 
 export class SubQuery extends Filter implements MultiColumnFilter

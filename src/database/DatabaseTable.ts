@@ -476,7 +476,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 				})
 
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
-				console.log(JSON.stringify(del.serialize()));
 
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 				this.setTypes(sql.bindvalues);
@@ -494,6 +493,22 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				if (locking)
 					SQLRestBuilder.assert(sql,columns,rec);
+
+				if (locking)
+				{
+					let asserts:BindValue[] = [];
+
+					this.columns.forEach((col) =>
+					{
+						let type:string = this.datatypes$.get(col);
+						let value:any = rec.getInitialValue(col);
+						asserts.push(new BindValue(col,value,type));
+					})
+
+					del.assertions = asserts;
+				}
+
+				console.log(JSON.stringify(del.serialize()));
 
 				records.push({record:rec,
 				step:
@@ -552,7 +567,6 @@ export class DatabaseTable extends SQLSource implements DataSource
 				})
 
 				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
-				console.log(JSON.stringify(upd.serialize()));
 
 				sql = SQLRestBuilder.update(this.table$,this.primaryKey,columns,rec,this.updreturncolumns$);
 				this.setTypes(sql.bindvalues);
@@ -570,6 +584,22 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				if (locking)
 					SQLRestBuilder.assert(sql,columns,rec);
+
+				if (locking)
+				{
+					let asserts:BindValue[] = [];
+
+					this.columns.forEach((col) =>
+					{
+						let type:string = this.datatypes$.get(col);
+						let value:any = rec.getInitialValue(col);
+						asserts.push(new BindValue(col,value,type));
+					})
+
+					upd.assertions = asserts;
+				}
+
+				console.log(JSON.stringify(upd.serialize()));
 
 				records.push({record:rec,
 				step:

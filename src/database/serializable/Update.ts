@@ -29,6 +29,7 @@ export class Update implements Serializable
 {
 	private retcols:string[] = null;
 	private source:DataSource = null;
+	private assert:BindValue[] = null;
 	private changes:BindValue[] = null;
 	private filter:FilterStructure = null;
 
@@ -76,6 +77,14 @@ export class Update implements Serializable
 			this.rettypes.set(type.name,type));
 	}
 
+	public set assertions(assert:BindValue|BindValue[])
+	{
+		if (!Array.isArray(assert))
+			assert = [assert];
+
+		this.assert = assert;
+	}
+
 	public serialize() : any
 	{
 		let json:any = {};
@@ -117,6 +126,22 @@ export class Update implements Serializable
 
 			json.returning = retcols;
 		}
+
+		let assert:any[] = [];
+
+		for (let i = 0; i < this.assert?.length; i++)
+		{
+			assert.push(
+				{
+					column: this.assert[i].column,
+					value: this.assert[i].value,
+					type: this.assert[i].type
+				}
+			)
+		}
+
+		if (this.assert?.length > 0)
+			json.assertions = assert;
 
 		return(json);
 	}

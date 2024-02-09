@@ -29,6 +29,7 @@ export class Delete implements Serializable
 {
 	private retcols:string[] = null;
 	private source:DataSource = null;
+	private assert:BindValue[] = null;
 	private filter:FilterStructure = null;
 
 	private rettypes:Map<string,BindValue> =
@@ -71,6 +72,14 @@ export class Delete implements Serializable
 			this.rettypes.set(type.name,type));
 	}
 
+	public set assertions(assert:BindValue|BindValue[])
+	{
+		if (!Array.isArray(assert))
+			assert = [assert];
+
+		this.assert = assert;
+	}
+
 	public serialize() : any
 	{
 		let json:any = {};
@@ -79,6 +88,22 @@ export class Delete implements Serializable
 
 		if (this.filter)
 			json.filters = this.filter.serialize().filters;
+
+		let assert:any[] = [];
+
+		for (let i = 0; i < this.assert?.length; i++)
+		{
+			assert.push(
+				{
+					column: this.assert[i].column,
+					value: this.assert[i].value,
+					type: this.assert[i].type
+				}
+			)
+		}
+
+		if (this.assert?.length > 0)
+			json.assertions = assert;
 
 		let retcols:any[] = [];
 

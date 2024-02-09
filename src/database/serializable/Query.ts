@@ -43,15 +43,19 @@ export class Query implements Serializable
 		this.columns = columns;
 		this.bindings = bindings;
 
-		if (!(filter instanceof FilterStructure))
+		if (filter)
 		{
-			if (!Array.isArray(filter)) filter = [filter];
-			this.filter = new FilterStructure();
-			filter.forEach((flt) => this.filter.and(flt));
-		}
-		else
-		{
-			this.filter = filter;
+			if (!(filter instanceof FilterStructure))
+			{
+				if (!Array.isArray(filter)) filter = [filter];
+
+				this.filter = new FilterStructure();
+				filter.forEach((flt) => this.filter.and(flt));
+			}
+			else
+			{
+				this.filter = filter;
+			}
 		}
 	}
 

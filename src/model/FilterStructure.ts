@@ -233,7 +233,11 @@ export class FilterStructure
 	public serialize() : any
 	{
 		let group:JSONFilterGroup = this.buildJSON(new JSONFilterGroup());
-		group = this.cleanout(group) as JSONFilterGroup;
+		let filter:JSONFilterGroup|JSONFilter = this.cleanout(group);
+
+		if (filter instanceof JSONFilterGroup) group = filter;
+		else {group = new JSONFilterGroup(); group.filters.push(filter);}
+		
 		return(group);
 	}
 

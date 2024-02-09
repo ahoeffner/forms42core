@@ -27,7 +27,10 @@ import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Insert } from "./serializable/Insert.js";
+import { Delete } from "./serializable/Delete.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
+import { Filters } from "../model/filters/Filters.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
@@ -37,7 +40,6 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Insert } from "./serializable/Insert.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB
@@ -402,6 +404,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 				if (retcols == null) retcols = [];
 
 				let values:BindValue[] = [];
+				let rettypes:BindValue[] = [];
 
 				for (let i = 0; i < columns.length; i++)
 					values.push(new BindValue(columns[i],rec.getValue(columns[i])));
@@ -409,11 +412,11 @@ export class DatabaseTable extends SQLSource implements DataSource
 				retcols.forEach((col) =>
 				{
 					let type:string = this.datatypes$.get(col);
-					if (type != null) values.push(new BindValue(col,null,type));
+					if (type != null) rettypes.push(new BindValue(col,null,type));
 				})
 
-				let insert:Insert = new Insert(this,columns,values,retcols);
-				console.log(JSON.stringify(insert.serialize()));
+				let ins:Insert = new Insert(this,columns,values,retcols,rettypes);
+				console.log(JSON.stringify(ins.serialize()));
 
 				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insertReturnColumns);
 				this.setTypes(sql.bindvalues);
@@ -445,6 +448,31 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				retcols = this.delreturncolumns$;
 				if (retcols == null) retcols = [];
+
+				let rettypes:BindValue[] = [];
+				let pkey:string[] = this.primaryKey;
+
+				retcols.forEach((col) =>
+				{
+					if (!pkey.includes(col))
+					{
+						let type:string = this.datatypes$.get(col);
+						if (type != null) rettypes.push(new BindValue(col,null,type));
+					}
+				})
+
+				let filters:FilterStructure = new FilterStructure();
+
+				for (let i = 0; i < this.primaryKey.length; i++)
+				{
+					let filter:Filter = Filters.Equals(pkey[i]);
+					let value:any = rec.getInitialValue(pkey[i]);
+					filters.and(filter.setConstraint(value),pkey[i]);
+					this.setTypes(filter.getBindValues());
+				}
+
+				let del:Delete = new Delete(this,filters,this.delreturncolumns$,rettypes);
+				console.log(JSON.stringify(del.serialize()));
 
 				sql = SQLRestBuilder.delete(this.table$,this.primaryKey,rec,this.delreturncolumns$);
 				this.setTypes(sql.bindvalues);

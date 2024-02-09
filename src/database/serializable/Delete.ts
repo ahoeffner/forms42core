@@ -19,73 +19,66 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Serializable } from "./Serializable.js";
+import { Filter } from "../../model/interfaces/Filter.js";
+import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
 
-export class Insert implements Serializable
+export class Delete implements Serializable
 {
-	private columns:string[] = null;
 	private retcols:string[] = null;
 	private source:DataSource = null;
-
-	private values:Map<string,BindValue> =
-		new Map<string,BindValue>();
+	private filter:FilterStructure = null;
 
 	private rettypes:Map<string,BindValue> =
 		new Map<string,BindValue>();
 
-	constructor(source:DataSource, columns:string|string[], values:BindValue|BindValue[], retcols?:string|string[], rettypes?:BindValue|BindValue[])
+
+	constructor(source:DataSource, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
 	{
+		if (!types)
+			types = [];
+
 		if (!retcols)
 			retcols = [];
 
-		if (!Array.isArray(values))
-			values = [values];
-
-		if (!Array.isArray(columns))
-			columns = [columns];
+		if (!Array.isArray(types))
+			types = [types];
 
 		if (!Array.isArray(retcols))
 			retcols = [retcols];
 
-		if (!Array.isArray(rettypes))
-			rettypes = [rettypes];
+		if (filter)
+		{
+			if (!(filter instanceof FilterStructure))
+			{
+				if (!Array.isArray(filter)) filter = [filter];
+
+				this.filter = new FilterStructure();
+				filter.forEach((flt) => this.filter.and(flt));
+			}
+			else
+			{
+				this.filter = filter;
+			}
+		}
 
 		this.source = source;
-		this.columns = columns;
 		this.retcols = retcols;
 
-		values.forEach((value) =>
-			this.values.set(value.name,value));
-
-		rettypes.forEach((type) =>
+		types.forEach((type) =>
 			this.rettypes.set(type.name,type));
 	}
 
 	public serialize() : any
 	{
 		let json:any = {};
-		json.object = "Create";
+		json.object = "Delete";
 		json.source = this.source.name;
 
-		let cols:any[] = [];
-
-		this.columns.forEach((col) =>
-		{
-			let val:BindValue = this.values.get(col);
-			if (!val) val = new BindValue(col,null,null);
-
-			cols.push(
-				{
-					column: col,
-					value: val.serialize()
-				}
-			)
-		})
-
-		json.values = cols;
+		if (this.filter)
+			json.filters = this.filter.serialize().filters;
 
 		let retcols:any[] = [];
 

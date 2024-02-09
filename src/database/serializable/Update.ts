@@ -105,7 +105,7 @@ export class Update implements Serializable
 		})
 
 		if (cols.length > 0)
-			json.set = cols;
+			json.update = cols;
 
 		if (this.filter)
 			json.filters = this.filter.serialize().filters;

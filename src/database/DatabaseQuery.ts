@@ -26,34 +26,34 @@ import { SQLCache } from "./SQLCache.js";
 import { BindValue } from "./BindValue.js";
 import { SQLSource } from "./SQLSource.js";
 import { Record } from "../model/Record.js";
+import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { Messages } from "../messages/Messages.js";
 import { SQLRestBuilder } from "./SQLRestBuilder.js";
-import { Connection } from "../database/Connection.js";
+import { Connection } from "./Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Query } from "./serializable/Query.js";
 
 /**
  * Datasource based on a query using OpenRestDB
  */
-export class QueryTable extends SQLSource implements DataSource
+export class DatabaseQuery extends SQLSource implements DataSource
 {
 	public name:string;
 	public arrayfecth:number = 32;
 	public queryallowed:boolean = true;
-	rowlocking:LockMode = LockMode.None;
+	public rowlocking:LockMode = LockMode.None;
 
 	private described$:boolean = false;
 
 	private sql$:string = null;
 	private order$:string = null;
 	private cursor$:Cursor = null;
-	private where$:boolean = false;
+	private whclause$:boolean = true;
 
 	private columns$:string[] = [];
 	private fetched$:Record[] = [];
@@ -109,14 +109,14 @@ export class QueryTable extends SQLSource implements DataSource
 	}
 
 	/** Clones the datasource */
-	public clone() : QueryTable
+	public clone() : DatabaseQuery
 	{
-		let clone:QueryTable = new QueryTable(this.pubconn$,this.sql$);
+		let clone:DatabaseQuery = new DatabaseQuery(this.pubconn$,this.sql$);
 
 		clone.name = this.name;
-		clone.where$ = this.where$;
 		clone.sorting = this.sorting;
 		clone.columns$ = this.columns$;
+		clone.whclause$ = this.whclause$;
 		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
@@ -160,27 +160,27 @@ export class QueryTable extends SQLSource implements DataSource
 		return(false);
 	}
 
-	/** When adding filters, start with where or and */
-	public startWithWhere(flag:boolean) : void
+	/** When adding filters, start with 'where' or 'and' */
+	public hasWhereClause(flag:boolean) : void
 	{
-		this.where$ = flag;
+		this.whclause$ = flag;
 	}
 
 	/** Force a datatype */
-	public setDataType(column:string,type:DataType) : QueryTable
+	public setDataType(column:string,type:DataType) : DatabaseQuery
 	{
 		this.datatypes$.set(column?.toLowerCase(),type);
 		return(this);
 	}
 
 	/** Not possible on this datasource */
-	public addColumns(_columns:string|string[]) : QueryTable
+	public addColumns(_columns:string|string[]) : DatabaseQuery
 	{
 		return(this);
 	}
 
 	/** Not possible on this datasource */
-	public removeColumns(_columns:string|string[]) : QueryTable
+	public removeColumns(_columns:string|string[]) : DatabaseQuery
 	{
 		return(this);
 	}
@@ -192,7 +192,7 @@ export class QueryTable extends SQLSource implements DataSource
 	}
 
 	/** Add a default filter */
-	public addFilter(filter:Filter | FilterStructure) : QueryTable
+	public addFilter(filter:Filter | FilterStructure) : DatabaseQuery
 	{
 		if (this.limit$ == null)
 		{
@@ -326,7 +326,7 @@ export class QueryTable extends SQLSource implements DataSource
 		this.createCursor();
 
 		let query:Query = new Query(this,this.columns,filter,this.sorting,this.bindings$);
-		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,this.where$,filter,this.bindings$,this.sorting);
+		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,this.whclause$,filter,this.bindings$,this.sorting);
 
 		console.log(JSON.stringify(query.serialize()))
 		let response:any = await this.conn$.select(sql,this.cursor$,this.arrayfecth);
@@ -429,10 +429,10 @@ export class QueryTable extends SQLSource implements DataSource
 	private async describe() : Promise<boolean>
 	{
 		if (this.described$) return(true);
-		let first:string = this.where$ ? " where " : " and ";
+		let first:string = this.whclause$ ? " and " : " where ";
 
 		let stmt:string = this.sql$ + first + " 1 = 2";
-		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.where$,null,this.bindings$,null);
+		let sql:SQLRest = SQLRestBuilder.finish(stmt,this.whclause$,null,this.bindings$,null);
 
 		let response:any = SQLCache.get(sql.stmt);
 

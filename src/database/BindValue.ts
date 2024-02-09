@@ -20,6 +20,7 @@
 */
 
 import { DataType } from "./DataType.js";
+import { Serializable } from "./serializable/Serializable.js";
 
 /**
  * Bind values is meant for use with datasources, espicially databases
@@ -33,7 +34,7 @@ import { DataType } from "./DataType.js";
  * In rare cases it is necessary to force or cast the data type to a different
  * type than the datasource's default data type.
  */
-export class BindValue
+export class BindValue implements Serializable
 {
 	private value$:any = null;
 	private name$:string = null;

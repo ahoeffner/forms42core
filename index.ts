@@ -7,7 +7,7 @@ export { Alert } from './src/application/Alert.js';
 export { SQLRest } from './src/database/SQLRest.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
-export { QueryTable } from './src/database/QueryTable.js';
+export { DatabaseQuery as QueryTable } from './src/database/DatabaseQuery.js';
 export { Step as SQLStep } from './src/database/Connection.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
 export { Sorter as TableSorter } from './src/database/Sorter.js';

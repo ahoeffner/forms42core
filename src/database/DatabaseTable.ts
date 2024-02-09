@@ -37,6 +37,7 @@ import { Connection, Step } from "../database/Connection.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { Insert } from "./serializable/Insert.js";
 
 /**
  * Datasource based on a table/view using OpenRestDB
@@ -399,6 +400,20 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 				retcols = this.insertReturnColumns;
 				if (retcols == null) retcols = [];
+
+				let values:BindValue[] = [];
+
+				for (let i = 0; i < columns.length; i++)
+					values.push(new BindValue(columns[i],rec.getValue(columns[i])));
+
+				retcols.forEach((col) =>
+				{
+					let type:string = this.datatypes$.get(col);
+					if (type != null) values.push(new BindValue(col,null,type));
+				})
+
+				let insert:Insert = new Insert(this,columns,values,retcols);
+				console.log(JSON.stringify(insert.serialize()));
 
 				sql = SQLRestBuilder.insert(this.table$,columns,rec,this.insertReturnColumns);
 				this.setTypes(sql.bindvalues);

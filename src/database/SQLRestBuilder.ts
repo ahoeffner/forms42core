@@ -112,7 +112,7 @@ export class SQLRestBuilder
 	public static finish(sql:string, where:boolean, filter:FilterStructure, bindings:BindValue[], order:string) : SQLRest
 	{
 		let parsed:SQLRest = new SQLRest();
-		let first:string = where ? " where " : " and ";
+		let first:string = where ? " and " : " where ";
 
 		parsed.stmt = sql;
 

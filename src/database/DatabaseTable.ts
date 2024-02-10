@@ -337,6 +337,31 @@ export class DatabaseTable extends SQLSource implements DataSource
 		let columns:string[] =
 			this.mergeColumns(this.columns,this.dmlcols$);
 
+		let pkey:string[] = this.primaryKey;
+		let pkeyflt:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < this.primaryKey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			pkeyflt.and(filter.setConstraint(value),pkey[i]);
+			this.setTypes(filter.getBindValues());
+		}
+
+		let asserts:BindValue[] = [];
+
+		this.columns.forEach((col) =>
+		{
+			let type:string = this.datatypes$.get(col);
+			let value:any = record.getInitialValue(col);
+			asserts.push(new BindValue(col,value,type));
+		})
+
+		let lock:Query = new Query(this,columns,pkeyflt);
+
+		lock.lock = true;
+		lock.assertions = asserts;
+
 		let sql:SQLRest = SQLRestBuilder.lock(this.table$,this.primary$,columns,record);
 		this.setTypes(sql.bindvalues);
 
@@ -345,6 +370,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 		if (sql.assert != null)
 			this.setTypes(sql.assert);
 
+		console.log(JSON.stringify(lock.serialize()))
 		let response:any = await this.conn$.lock(sql);
 
 		return(this.process(record,response));
@@ -809,7 +835,7 @@ export class DatabaseTable extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		let query:Query = new Query(this,this.columns,filter,this.sorting);
+		let query:Query = new Query(this,this.columns,filter); query.orderBy = this.sorting;
 		let sql:SQLRest = SQLRestBuilder.select(this.table$,this.columns,filter,this.sorting);
 
 		console.log(JSON.stringify(query.serialize()))

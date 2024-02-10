@@ -27,21 +27,21 @@ import { DataSource } from "../../model/interfaces/DataSource.js";
 
 export class Query implements Serializable
 {
-	private order:any = null;
+	private order$:string = null;
+	private lock$: boolean = false;
 	private columns:string[] = null;
 	private source:DataSource = null;
+	private assert:BindValue[] = null;
 	private bindings$:BindValue[] = null;
 	private filter:FilterStructure = null;
 
-	constructor(source:DataSource, columns:string|string[], filter?:Filter|Filter[]|FilterStructure, order?:any, bindings?:BindValue[])
+	constructor(source:DataSource, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
 		if (!Array.isArray(columns))
 			columns = [columns];
 
-		this.order = order;
 		this.source = source;
 		this.columns = columns;
-		this.bindings = bindings;
 
 		if (filter)
 		{
@@ -59,6 +59,26 @@ export class Query implements Serializable
 		}
 	}
 
+	public get orderBy() : string
+	{
+		return this.order$;
+	}
+
+	public set orderBy(value:string)
+	{
+		this.order$ = value;
+	}
+
+	public get lock() : boolean
+	{
+		return this.lock$;
+	}
+
+	public set lock(value:boolean)
+	{
+		this.lock$ = value;
+	}
+
 	public get bindings() : BindValue[]
 	{
 		return this.bindings$;
@@ -67,6 +87,14 @@ export class Query implements Serializable
 	public set bindings(value:BindValue[])
 	{
 		this.bindings$ = value;
+	}
+
+	public set assertions(assert:BindValue|BindValue[])
+	{
+		if (!Array.isArray(assert))
+			assert = [assert];
+
+		this.assert = assert;
 	}
 
 	public serialize() : any
@@ -87,8 +115,27 @@ export class Query implements Serializable
 		if (this.filter)
 			json.filters = this.filter.serialize().filters;
 
-		if (this.order)
-			json.order = this.order;
+		let assert:any[] = [];
+
+		for (let i = 0; i < this.assert?.length; i++)
+		{
+			assert.push(
+				{
+					column: this.assert[i].column,
+					value: this.assert[i].value,
+					type: this.assert[i].type
+				}
+			)
+		}
+
+		if (this.assert?.length > 0)
+			json.assertions = assert;
+
+		if (this.order$)
+			json.order = this.order$;
+
+		if (this.lock)
+			json.lock = this.lock;
 
 		return(json);
 	}

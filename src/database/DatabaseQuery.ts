@@ -325,7 +325,11 @@ export class DatabaseQuery extends SQLSource implements DataSource
 
 		this.createCursor();
 
-		let query:Query = new Query(this,this.columns,filter,this.sorting,this.bindings$);
+		let query:Query = new Query(this,this.columns,filter);
+		
+		query.orderBy = this.sorting;
+		query.bindings = this.bindings$;
+
 		let sql:SQLRest = SQLRestBuilder.finish(this.sql$,this.whclause$,filter,this.bindings$,this.sorting);
 
 		console.log(JSON.stringify(query.serialize()))

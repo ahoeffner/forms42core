@@ -28,6 +28,7 @@ import { FilterStructure } from "../model/FilterStructure.js";
  */
 export abstract class SQLSource
 {
+	abstract name:string;
 	abstract setTypes(bindvalues:BindValue[]);
 	abstract getSubQuery(filter:FilterStructure, mstcols:string|string[], detcols:string|string[]) : Promise<SQLRest>;
 }

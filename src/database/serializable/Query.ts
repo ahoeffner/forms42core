@@ -101,7 +101,7 @@ export class Query implements Serializable
 	{
 		let json:any = {};
 
-		json.object = "Retrieve";
+		json.function = "retrieve";
 		json.columns = this.columns;
 		json.source = this.source.name;
 

@@ -46,6 +46,7 @@ import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
+import { BindValue } from "../database/BindValue.js";
 
 
 export class Block
@@ -1203,8 +1204,11 @@ export class Block
 
 		if (sql != null)
 		{
+			let filters:FilterStructure = detail.filter.clone();
+			filters.getBindValues().forEach((b) => {b.name = source.name+"_"+b.name});
+
 			let filter:SubQuery = new SubQuery(rel.master.fields);
-			filter.query = new Query(detail.datasource,rel.detail.fields,detail.filter);
+			filter.query = new Query(detail.datasource,rel.detail.fields,filters);
 
 			source.setTypes(detail.filter.getBindValues());
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);

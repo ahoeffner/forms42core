@@ -119,7 +119,6 @@ export class FilterStructure implements Serializable
 		if (!(filter instanceof FilterStructure) && name == null)
 			name = filter.getBindValueName();
 
-		this.type = "or";
 		this.delete(name);
 
 		if (!this.filteridx$.has(filter))
@@ -244,10 +243,11 @@ export class FilterStructure implements Serializable
 
 	public cleanout(filter:JSONFilterGroup|JSONFilter) : JSONFilterGroup|JSONFilter
 	{
+		let x:number = 2;
 		if (filter instanceof JSONFilter)
 			return(filter);
 
-		if (filter.filters.length == 1)
+		if (filter.filters.length == 1 && x == 3)
 			filter = filter.filters[0];
 
 		if (filter instanceof JSONFilter)
@@ -260,7 +260,7 @@ export class FilterStructure implements Serializable
 
 			for (let i = 0; i < filter.filters.length; i++)
 			{
-				if (filter.filters[i].or) flatten = false;
+				if (filter.filters[i].operator == "or") flatten = false;
 				if (filter.filters[i] instanceof JSONFilter) flatten = false;
 				else subs.push(...(filter.filters[i] as JSONFilterGroup).filters);
 			}
@@ -343,14 +343,15 @@ export class FilterStructure implements Serializable
 		for (let i = 0; i < this.entries$.length; i++)
 		{
 			let constr:Constraint = this.entries$[i];
+			if (i == 0) constr.and$ = true;
 
 			if (constr.filter instanceof FilterStructure)
 			{
 				let jfs:JSONFilterGroup = new JSONFilterGroup();
 				constr.filter.buildJSON(jfs);
 
-				if (this.type == "or")
-					jfs.or = true;
+				if (constr.opr != "and")
+					jfs.operator = constr.opr;
 
 				if (constr.filter.entries$.length > 0)
 					group.filters.push(jfs);
@@ -360,8 +361,8 @@ export class FilterStructure implements Serializable
 				let jf:JSONFilter = new JSONFilter();
 				jf.filter = constr.filter.serialize();
 
-				if (group.filters.length > 0 && constr.opr == "or")
-					jf.or = true;
+				if (group.filters.length > 0 && constr.opr != "and")
+					jf.operator = constr.opr;
 
 				group.filters.push(jf)
 			}
@@ -439,18 +440,16 @@ class Constraint
 
 export class JSONFilter
 {
-	or:boolean;
+	operator?:string;
 	filter:any;
 }
 
 export class JSONFilterGroup
 {
-	or?:boolean;
+	operator?:string;
 	filters:(JSONFilter|JSONFilterGroup)[] = [];
 
-	constructor(or?:boolean)
+	constructor()
 	{
-		if (or)
-			this.or = or;
 	}
 }

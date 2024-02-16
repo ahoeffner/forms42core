@@ -71,8 +71,8 @@ export class Block
 	public deleteallowed:boolean = true;
 
 	/**
-	 * @param form : The form to attach to
-	 * @param name : The name of the block, used for binding elements
+	 * @param form - The form to attach to
+	 * @param name - The name of the block, used for binding elements
 	 */
 	constructor(form:Form, name:string)
 	{

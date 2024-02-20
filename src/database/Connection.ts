@@ -211,8 +211,6 @@ export class Connection extends BaseConnection
 			payload["clientinfo"] = info;
 		}
 
-		console.log(JSON.stringify(payload));
-
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.showLoading("Connecting");
 		let response:any = await this.post("connect",payload);

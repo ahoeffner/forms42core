@@ -177,20 +177,32 @@ export class Connection extends BaseConnection
 		let payload:any =
 		{
 			"scope": scope,
-			"auth.method": method
+			"method": method,
+			"function": "authenticate"
 		};
 
 		if (username)
 			payload.username = username;
 
 		if (password)
-			payload["auth.secret"] = password;
+			payload["password"] = password;
+
+		let cust:any = null;
+
+		if (custom || this.attributes$.size > 0)
+			cust = {};
 
 		if (custom)
 		{
 			custom.forEach((value,name) =>
-			  {payload[name] = value})
+			  {cust[name] = value})
 		}
+
+		this.attributes$.forEach((value,name) =>
+			{cust[name] = value})
+
+		if (cust)
+			payload.custom = cust;
 
 		if (this.clientinfo$.size > 0)
 		{
@@ -199,8 +211,7 @@ export class Connection extends BaseConnection
 			payload["clientinfo"] = info;
 		}
 
-		this.attributes$.forEach((value,name) =>
-			{payload[name] = value})
+		console.log(JSON.stringify(payload));
 
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.showLoading("Connecting");

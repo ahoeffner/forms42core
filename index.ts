@@ -10,6 +10,7 @@ export { Connection } from './src/public/Connection.js';
 export { DatabaseQuery as QueryTable } from './src/database/DatabaseQuery.js';
 export { Step as SQLStep } from './src/database/Connection.js';
 export { DatabaseTable } from './src/database/DatabaseTable.js';
+export { DatabaseSource } from './src/database/DatabaseSource.js';
 export { Sorter as TableSorter } from './src/database/Sorter.js';
 export { FlushStrategy } from './src/application/FormsModule.js';
 export { FieldProperties } from './src/public/FieldProperties.js';

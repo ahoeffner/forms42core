@@ -19,9 +19,23 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/**
- * Indicates that a datasource is database based
- */
-export abstract class SQLSource
+import { Serializable } from "./Serializable";
+import { DataSource } from "../../model/interfaces/DataSource";
+
+
+export class Head implements Serializable
 {
+	public constructor(private source:DataSource)
+	{
+	}
+
+	public serialize() : any
+	{
+		let json:any = {};
+
+		json.function = "describe";
+		json.source = this.source.name;
+
+		return(json);
+	}
 }

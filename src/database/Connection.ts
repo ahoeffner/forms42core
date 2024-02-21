@@ -31,6 +31,7 @@ import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { Serializable } from "./serializable/Serializable.js";
 
 export class Connection extends BaseConnection
 {
@@ -213,7 +214,7 @@ export class Connection extends BaseConnection
 
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.showLoading("Connecting");
-		let response:any = await this.post("connect",payload);
+		let response:any = await this.post("/",payload);
 		FormsModule.hideLoading(thread);
 
 		if (!response.success)
@@ -382,6 +383,33 @@ export class Connection extends BaseConnection
 		}
 
 		return(true);
+	}
+
+	public async send(request:Serializable) : Promise<Response>
+	{
+		let payload:any = request.serialize();
+		payload.session = this.conn$;
+
+		let thread:number = FormsModule.showLoading("Execute");
+		let response:any = await this.post("/",payload);
+		FormsModule.hideLoading(thread);
+
+		if (!response.success)
+		{
+			Messages.handle(MSGGRP.SQL,response.message,Level.fine);
+			return(response);
+		}
+
+		/*
+		if (cursor)
+			cursor.eof = !response.more;
+		*/
+
+		if (response["session"])
+			this.conn$ = response.session;
+
+		return(response);
+
 	}
 
 	public async select(sql:SQLRest, cursor:Cursor, rows:number, describe?:boolean) : Promise<Response>

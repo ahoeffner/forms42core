@@ -1199,6 +1199,7 @@ export class Block
 		if (!(master.datasource instanceof SQLSource)) return(false);
 		if (!(detail.datasource instanceof SQLSource)) return(false);
 
+		/*
 		let source:SQLSource = detail.datasource;
 		let sql:SQLRest = await source.getSubQuery(detail.filter,rel.master.fields,rel.detail.fields);
 
@@ -1219,6 +1220,7 @@ export class Block
 			return(true);
 		}
 
+		*/
 		return(false);
 	}
 

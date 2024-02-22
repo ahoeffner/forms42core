@@ -21,7 +21,9 @@
 
 import { Cursor } from "./Cursor.js";
 import { SQLSource } from "./SQLSource.js";
+import { BindValue } from "./BindValue.js";
 import { Record } from "../model/Record.js";
+import { Head } from "./serializable/Head.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { Messages } from "../messages/Messages.js";
 import { Connection } from "../database/Connection.js";
@@ -29,7 +31,8 @@ import { Filter } from "../model/interfaces/Filter.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Head } from "./serializable/Head.js";
+import { SubQuery } from "../model/filters/SubQuery.js";
+import { Query } from "./serializable/Query.js";
 
 
 /**
@@ -61,6 +64,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 	public rowlocking:LockMode = LockMode.Pessimistic;
+
+	private datatypes$:Map<string,string> =
+		new Map<string,string>();
 
 
 	/**
@@ -217,8 +223,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 	}
 
 
-	public async query(filters?: FilterStructure): Promise<boolean>
+	public async query(filter?: FilterStructure): Promise<boolean>
 	{
+		this.fetched$ = [];
+		this.nosql$ = null;
+		filter = filter?.clone();
+
 		if (!this.jdbconn$.connected())
 		{
 			// Not connected
@@ -228,6 +238,47 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!await this.describe())
 			return(false);
+
+		if (this.limit$ != null)
+		{
+			if (!filter) filter = this.limit$;
+			else filter.and(this.limit$,"limit");
+		}
+
+		this.setTypes(filter?.get("qbe")?.getBindValues());
+		this.setTypes(filter?.get("limit")?.getBindValues());
+		this.setTypes(filter?.get("masters")?.getBindValues());
+
+		let details:FilterStructure = filter?.getFilterStructure("details");
+
+		if (details != null)
+		{
+			let filters:Filter[] = details.getFilters();
+
+			for (let i = 0; i < filters.length; i++)
+			{
+				let df:Filter = filters[i];
+
+				if (df instanceof SubQuery && df.sqlstmt == null)
+				{
+					if (this.nosql$ == null)
+						this.nosql$ = new FilterStructure(this.name+".nosql");
+
+					details.delete(df);
+					this.nosql$.and(df);
+					this.addColumns(df.columns);
+				}
+			}
+		}
+
+		this.createCursor();
+		let query:Query = new Query(this,this.columns,filter);
+
+		query.orderBy = this.sorting;
+		query.cursor = this.cursor$.name;
+
+		let response:any = await this.jdbconn$.send(query);
+		console.log(response);
 	}
 
 
@@ -271,7 +322,37 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Add a default filter */
 	public addFilter(filter:FilterStructure | Filter) : DataSource
 	{
-		throw new Error("Method not implemented.");
+		if (this.limit$ == null)
+		{
+			if (filter instanceof FilterStructure)
+			{
+				this.limit$ = filter;
+				return(this);
+			}
+
+			this.limit$ = new FilterStructure();
+		}
+
+		this.limit$.and(filter);
+		return(this);
+	}
+
+	private createCursor() : void
+	{
+		if (this.cursor$ && !this.cursor$.eof)
+			this.jdbconn$.close(this.cursor$);
+
+		this.cursor$ = new Cursor();
+	}
+
+	private setTypes(bindvalues:BindValue[]) : void
+	{
+		bindvalues?.forEach((b) =>
+		{
+			let col:string = b.column?.toLowerCase();
+			let t:string = this.datatypes$.get(col);
+			if (!b.forceDataType && t != null) b.type = t;
+		})
 	}
 
 	private async describe() : Promise<boolean>
@@ -280,15 +361,24 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(true);
 
 		let head:Head = new Head(this);
-
 		let response:any = await this.jdbconn$.send(head);
-		console.log(JSON.stringify(response));
 
 		if (!response.success)
 		{
 			// Unable to get column definitions
 			Messages.severe(MSGGRP.SQL,3,this.source$,response.message);
 			return(false);
+		}
+
+		let columns:string[] = response.columns;
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			columns[i] = columns[i].toLowerCase();
+
+			let type:string = response.types[i];
+			let datatype:string = type.toLowerCase();
+			this.datatypes$.set(columns[i],datatype);
 		}
 
 		this.described$ = true;

@@ -28,6 +28,7 @@ import { DataSource } from "../../model/interfaces/DataSource.js";
 export class Query implements Serializable
 {
 	private order$:string = null;
+	private cursor$:string = null;
 	private lock$: boolean = false;
 	private columns:string[] = null;
 	private source:DataSource = null;
@@ -59,9 +60,19 @@ export class Query implements Serializable
 		}
 	}
 
+	public get cursor() : string
+	{
+		return(this.cursor$);
+	}
+
+	public set cursor(cursor:string)
+	{
+		this.cursor$ = cursor;
+	}
+
 	public get orderBy() : string
 	{
-		return this.order$;
+		return(this.order$);
 	}
 
 	public set orderBy(value:string)
@@ -71,7 +82,7 @@ export class Query implements Serializable
 
 	public get lock() : boolean
 	{
-		return this.lock$;
+		return(this.lock$);
 	}
 
 	public set lock(value:boolean)
@@ -81,7 +92,7 @@ export class Query implements Serializable
 
 	public get bindings() : BindValue[]
 	{
-		return this.bindings$;
+		return(this.bindings$);
 	}
 
 	public set bindings(value:BindValue[])
@@ -104,6 +115,9 @@ export class Query implements Serializable
 		json.function = "retrieve";
 		json.columns = this.columns;
 		json.source = this.source.name;
+
+		if (this.cursor)
+			json.cursor = this.cursor;
 
 		if (this.bindings$?.length > 0)
 		{

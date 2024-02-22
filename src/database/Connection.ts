@@ -390,7 +390,7 @@ export class Connection extends BaseConnection
 		let payload:any = request.serialize();
 		payload.session = this.conn$;
 
-		let thread:number = FormsModule.showLoading("Execute");
+		let thread:number = FormsModule.showLoading("Execute "+payload.function);
 		let response:any = await this.post("/",payload);
 		FormsModule.hideLoading(thread);
 

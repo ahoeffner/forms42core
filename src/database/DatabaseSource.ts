@@ -271,11 +271,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		this.createCursor();
+		let cursor:string = this.createCursor();
 		let query:Query = new Query(this,this.columns,filter);
 
+		query.cursor = cursor;
 		query.orderBy = this.sorting;
-		query.cursor = this.cursor$.name;
 
 		let response:any = await this.jdbconn$.send(query);
 		console.log(response);
@@ -337,12 +337,13 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this);
 	}
 
-	private createCursor() : void
+	private createCursor() : string
 	{
 		if (this.cursor$ && !this.cursor$.eof)
 			this.jdbconn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor();
+		return(this.cursor$.name);
 	}
 
 	private setTypes(bindvalues:BindValue[]) : void

@@ -29,9 +29,11 @@ import { Messages, Level } from "../messages/Messages.js";
 import { EventType } from "../control/events/EventType.js";
 import { FormsModule } from "../application/FormsModule.js";
 import { FormBacking } from "../application/FormBacking.js";
+import { Serializable } from "./serializable/Serializable.js";
+import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { Serializable } from "./serializable/Serializable.js";
+
 
 export class Connection extends BaseConnection
 {
@@ -57,18 +59,25 @@ export class Connection extends BaseConnection
 
 
 	// Be able to get the real connection from the public
-	private static conns$:Connection[] = [];
+	private static conns$:Map<DatabaseConnection,Connection> =
+		new Map<DatabaseConnection,Connection>();
+
+
+	public static getConnection(pubconn:DatabaseConnection) : Connection
+	{
+		return(Connection.conns$.get(pubconn));
+	}
 
 
 	public static getAllConnections() : Connection[]
 	{
-		return(this.conns$);
+		return([...Connection.conns$.values()]);
 	}
 
-	public constructor(url?:string|URL)
+	public constructor(url:string|URL, pubconn:DatabaseConnection)
 	{
 		super(url);
-		Connection.conns$.push(this);
+		Connection.conns$.set(pubconn,this);
 	}
 
 	public get locks() : number

@@ -103,8 +103,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.name = source;
 		this.source$ = source;
 		this.pubconn$ = connection;
-		this.jdbconn$ = connection["conn$"];
-		console.log("DatabaseSource find better solution")
+		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 	/** Set the table/view */
@@ -277,6 +276,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 			if (record.state != RecordState.Deleted)
 			{
+				// Might have been marked clean
+				if (!record.dirty) continue;
+
 				console.log("Update");
 				processed.push(record);
 				record.response = null;

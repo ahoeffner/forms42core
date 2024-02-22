@@ -21,14 +21,14 @@
 
 import { SQLRest } from "../database/SQLRest.js";
 import { ConnectionScope } from "../database/ConnectionScope.js";
-import { Connection as RestConnection, Step } from "../database/Connection.js";
+import { Connection as JSONConnection, Step } from "../database/Connection.js";
 
 /**
  * Connection to DatabaseJS.
  */
 export class DatabaseConnection
 {
-	private conn$:RestConnection = null;
+	private conn$:JSONConnection = null;
 
 	/** Lock limit, scope != stateless
 	*
@@ -38,7 +38,7 @@ export class DatabaseConnection
 	*/
 	public static get MAXLOCKS() : number
 	{
-		return(RestConnection.MAXLOCKS);
+		return(JSONConnection.MAXLOCKS);
 	}
 
 	/** Lock limit, scope != stateless
@@ -49,7 +49,7 @@ export class DatabaseConnection
 	*/
 	public static set MAXLOCKS(timeout:number)
 	{
-		RestConnection.MAXLOCKS = timeout;
+		JSONConnection.MAXLOCKS = timeout;
 	}
 
 	/** Transaction timeout in seconds, only with scope=transactional
@@ -60,7 +60,7 @@ export class DatabaseConnection
 	*/
 	public static get TRXTIMEOUT() : number
 	{
-		return(RestConnection.TRXTIMEOUT);
+		return(JSONConnection.TRXTIMEOUT);
 	}
 
 	/** Transaction timeout in seconds, only with scope=transactional
@@ -70,7 +70,7 @@ export class DatabaseConnection
 	*/
 	public static set TRXTIMEOUT(timeout:number)
 	{
-		RestConnection.TRXTIMEOUT = timeout;
+		JSONConnection.TRXTIMEOUT = timeout;
 	}
 
 	/** Lock inspection interval in seconds, only with scope!=stateless
@@ -80,7 +80,7 @@ export class DatabaseConnection
    */
 	public static get LOCKINSPECT() : number
 	{
-		return(RestConnection.LOCKINSPECT);
+		return(JSONConnection.LOCKINSPECT);
 	}
 
 	/** Lock inspection interval in seconds, only with scope!=stateless
@@ -91,7 +91,7 @@ export class DatabaseConnection
    */
 	public static set LOCKINSPECT(timeout:number)
 	{
-		RestConnection.LOCKINSPECT = timeout;
+		JSONConnection.LOCKINSPECT = timeout;
 	}
 
 	/** Connection timeout in seconds, only with scope=transactional
@@ -101,7 +101,7 @@ export class DatabaseConnection
    */
 	public static get CONNTIMEOUT() : number
 	{
-		return(RestConnection.CONNTIMEOUT);
+		return(JSONConnection.CONNTIMEOUT);
 	}
 
 	/** Connection timeout in seconds, only with scope=transactional
@@ -111,7 +111,7 @@ export class DatabaseConnection
    */
 	public static set CONNTIMEOUT(timeout:number)
 	{
-		RestConnection.CONNTIMEOUT = timeout;
+		JSONConnection.CONNTIMEOUT = timeout;
 	}
 
 	/** See connection
@@ -122,7 +122,7 @@ export class DatabaseConnection
    */
 	public constructor(url?:string|URL)
 	{
-		this.conn$ = new RestConnection(url);
+		this.conn$ = new JSONConnection(url,this);
 	}
 
 	/** Number of row locks

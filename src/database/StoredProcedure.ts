@@ -38,8 +38,8 @@ export class StoredProcedure
 	private response$:any = null;
 	private patch$:boolean = false;
 	private message$:string = null;
-	private conn$:Connection = null;
 	private params$:Parameter[] = [];
+	private jdbconn$:Connection = null;
 	private values$:Map<string,any> = new Map<string,any>();
 	private datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
@@ -56,7 +56,7 @@ export class StoredProcedure
 			return;
 		}
 
-		this.conn$ = connection["conn$"];
+		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 	/** If the procedure changes any values the backend */
@@ -128,7 +128,7 @@ export class StoredProcedure
 		}
 
 		let sql:SQLRest = SQLRestBuilder.proc(this.name$,this.params$,retparam);
-		this.response$ = await this.conn$.call(this.patch$,sql);
+		this.response$ = await this.jdbconn$.call(this.patch$,sql);
 
 		if (!this.response$.success)
 		{

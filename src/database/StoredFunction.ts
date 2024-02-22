@@ -33,7 +33,7 @@ export class StoredFunction extends StoredProcedure
 	public constructor(connection:DatabaseConnection)
 	{
 		super(connection);
-		super.returntype$ = "string";
+		this.returntype$ = "string";
 	}
 
 	/** Get the name of returned parameter from the function call */
@@ -45,6 +45,6 @@ export class StoredFunction extends StoredProcedure
 	/** Set the return data type */
 	public setReturnType(datatype?:DataType|string) : void
 	{
-		super.returntype$ = datatype;
+		this.returntype$ = datatype;
 	}
 }

@@ -47,9 +47,9 @@ export class SQLStatement
 	private message$:string = null;
 	private arrayfecth$:number = 1;
 	private records$:any[][] = null;
-	private conn$:Connection = null;
 	private columns$:string[] = null;
 	private returning$:boolean = false;
+	private jdbconn$:Connection = null;
 	private retvals:DatabaseResponse = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
@@ -63,7 +63,7 @@ export class SQLStatement
 			return;
 		}
 
-		this.conn$ = connection["conn$"];
+		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 	/** The sql-statement */
@@ -162,12 +162,12 @@ export class SQLStatement
 
 		switch(this.type$)
 		{
-			case "insert" : this.response$ = await this.conn$.insert(sql); break;
-			case "update" : this.response$ = await this.conn$.update(sql); break;
-			case "delete" : this.response$ = await this.conn$.delete(sql); break;
-			case "select" : this.response$ = await this.conn$.select(sql,this.cursor$,this.arrayfecth$,true); break;
+			case "insert" : this.response$ = await this.jdbconn$.insert(sql); break;
+			case "update" : this.response$ = await this.jdbconn$.update(sql); break;
+			case "delete" : this.response$ = await this.jdbconn$.delete(sql); break;
+			case "select" : this.response$ = await this.jdbconn$.select(sql,this.cursor$,this.arrayfecth$,true); break;
 
-			default: this.response$ = await this.conn$.execute(this.patch$,sql);
+			default: this.response$ = await this.jdbconn$.execute(this.patch$,sql);
 		}
 
 		let success:boolean = this.response$.success;
@@ -207,7 +207,7 @@ export class SQLStatement
 			return(null);
 
 		this.pos = 0;
-		this.response$ = await this.conn$.fetch(this.cursor$);
+		this.response$ = await this.jdbconn$.fetch(this.cursor$);
 
 		if (!this.response$.success)
 		{
@@ -239,7 +239,7 @@ export class SQLStatement
 		let response:any = null;
 
 		if (this.cursor$ != null && !this.cursor$.eof)
-			response = await this.conn$.close(this.cursor$);
+			response = await this.jdbconn$.close(this.cursor$);
 
 		this.cursor$ = null;
 		this.records$ = null;

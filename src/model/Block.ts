@@ -1199,29 +1199,43 @@ export class Block
 		if (!(master.datasource instanceof SQLSource)) return(false);
 		if (!(detail.datasource instanceof SQLSource)) return(false);
 
-		/*
-		let source:SQLSource = detail.datasource;
-		let sql:SQLRest = await source.getSubQuery(detail.filter,rel.master.fields,rel.detail.fields);
-
-		if (sql != null)
+		if (this.asServerSide(detail))
 		{
 			let filters:FilterStructure = detail.filter.clone();
-			filters.getBindValues().forEach((b) => {b.name = source.name+"_"+b.name});
+
+			// Add limits on subquery to detail query
+			filters.and(detail.datasource.getFilters());
+
+			// Make bindvalue names unique
+			filters.getBindValues().forEach((b) => {b.name = detail.name+"_"+b.name});
 
 			let filter:SubQuery = new SubQuery(rel.master.fields);
-			filter.query = new Query(detail.datasource,rel.detail.fields,filters);
+			filter.constraint = new Query(detail.datasource,rel.detail.fields,filters);
 
-			source.setTypes(detail.filter.getBindValues());
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
-
-			filter.sqlstmt = sql.stmt;
-			filter.setBindValues(sql.bindvalues);
-
 			return(true);
 		}
 
-		*/
 		return(false);
+	}
+
+
+	private asServerSide(block:Block) : boolean
+	{
+		if (!block.filter) return(true);
+
+		let filters:Filter[] = block.filter.getFilters();
+		filters.push(...block.datasource.getFilters().getFilters());
+
+		for (let i = 0; i < filters.length; i++)
+		{
+			let df:Filter = filters[i];
+
+			if (df instanceof SubQuery && df.isClientSide())
+				return(false);
+		}
+
+		return(true);
 	}
 
 	public async fire(type:EventType, field?:string) : Promise<boolean>

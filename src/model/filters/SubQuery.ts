@@ -28,11 +28,10 @@ import { MultiColumnFilter } from "../interfaces/MultiColumnFilter.js";
 
 export class SubQuery extends Filter implements MultiColumnFilter
 {
-	private query$:Query = null;
 	private sqlstmt$:string = null;
 	private columns$:string[] = null;
-	private constraint$:any[][] = null;
 	private bindvalues$:BindValue[] = [];
+	private constraint$:Query|any[][] = null;
 
 	public constructor(columns:string|string[])
 	{
@@ -90,21 +89,15 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		this.sqlstmt$ = sql;
 	}
 
-	public get query() : Query
+	public isClientSide() : boolean
 	{
-		return(this.query$);
-	}
-
-	public set query(query:Query)
-	{
-		this.query$ = query;
+		return(!(this.constraint$ instanceof Query));
 	}
 
 	public clone() : SubQuery
 	{
 		let clone:SubQuery = new SubQuery(this.columns$);
 
-		clone.query$ = this.query$;
 		clone.columns$ = this.columns$;
 		clone.sqlstmt$ = this.sqlstmt$;
 		clone.bindvalues$ = this.bindvalues$;
@@ -137,18 +130,18 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		return(this);
 	}
 
-	public setConstraint(values:any[][]) : SubQuery
+	public setConstraint(values:Query|any[][]) : SubQuery
 	{
-		this.constraint = values;
+		this.constraint$ = values;
 		return(this);
 	}
 
-	public get constraint() : any[][]
+	public get constraint() : Query|any[][]
 	{
 		return(this.constraint$);
 	}
 
-	public set constraint(table:any[][])
+	public set constraint(table:Query|any[][])
 	{
 		this.constraint$ = table;
 	}
@@ -176,6 +169,9 @@ export class SubQuery extends Filter implements MultiColumnFilter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
+		if (this.constraint$ instanceof Query)
+			return(false);
+
 		let values:any[] = [];
 		if (this.columns$ == null) return(false);
 		if (this.constraint$ == null) return(false);
@@ -217,9 +213,14 @@ export class SubQuery extends Filter implements MultiColumnFilter
 	public serialize() : any
 	{
 		let json:any = {};
+
+		if (!(this.constraint$ instanceof Query))
+			return(json);
+
 		json.type = "subquery";
 		json.columns = this.columns;
-		json.query = this.query$?.serialize();
+		json.query = this.constraint$?.serialize();
+
 		return(json);
 	}
 

@@ -62,11 +62,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	public name:string;
 	public arrayfecth:number = 32;
-	public queryallowed:boolean = true;
-	public insertallowed:boolean = true;
-	public updateallowed:boolean = true;
-	public deleteallowed:boolean = true;
 	public rowlocking:LockMode = LockMode.Pessimistic;
+
+	private queryallowed$: boolean = true;
+	private insertallowed$: boolean = true;
+	private updateallowed$: boolean = true;
+	private deleteallowed$: boolean = true;
 
 	private insreturncolumns$:string[] = null;
 	private updreturncolumns$:string[] = null;
@@ -138,6 +139,50 @@ export class DatabaseSource extends SQLSource implements DataSource
 			columns = [columns];
 
 		this.columns$ = columns;
+	}
+
+	public get queryallowed() : boolean
+	{
+		if (!this.jdbconn$.connected()) return(false);
+		return(this.queryallowed$);
+	}
+
+	public set queryallowed(value:boolean)
+	{
+		this.queryallowed$ = value;
+	}
+
+	public get insertallowed() : boolean
+	{
+		if (!this.jdbconn$.connected()) return(false);
+		return(this.insertallowed$);
+	}
+
+	public set insertallowed(value:boolean)
+	{
+		this.insertallowed$ = value;
+	}
+
+	public get updateallowed() : boolean
+	{
+		if (!this.jdbconn$.connected()) return(false);
+		return(this.updateallowed$);
+	}
+
+	public set updateallowed(value:boolean)
+	{
+		this.updateallowed$ = value;
+	}
+
+	public get deleteallowed() : boolean
+	{
+		if (!this.jdbconn$.connected()) return(false);
+		return(this.deleteallowed$);
+	}
+
+	public set deleteallowed(value:boolean)
+	{
+		this.deleteallowed$ = value;
 	}
 
 	/** Get columns defined for 'returning' after insert */
@@ -228,6 +273,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public async flush() : Promise<Record[]>
 	{
 		let processed:Record[] = [];
+
+		if (!this.jdbconn$.connected())
+		{
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			return([]);
+		}
 
 		if (this.dirty$.length == 0)
 			return([]);
@@ -348,7 +399,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!this.jdbconn$.connected())
 		{
-			// Not connected
 			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return(false);
 		}
@@ -376,7 +426,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			{
 				let df:Filter = filters[i];
 
-				if (df instanceof SubQuery && df.sqlstmt == null)
+				if (df instanceof SubQuery && df.isClientSide())
 				{
 					if (this.nosql$ == null)
 						this.nosql$ = new FilterStructure(this.name+".nosql");

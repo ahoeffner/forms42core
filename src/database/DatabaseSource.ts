@@ -22,17 +22,18 @@
 import { Cursor } from "./Cursor.js";
 import { SQLSource } from "./SQLSource.js";
 import { BindValue } from "./BindValue.js";
-import { Record } from "../model/Record.js";
 import { Head } from "./serializable/Head.js";
+import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { Messages } from "../messages/Messages.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { SubQuery } from "../model/filters/SubQuery.js";
+import { Record, RecordState } from "../model/Record.js";
+import { DatabaseResponse } from "./DatabaseResponse.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { SubQuery } from "../model/filters/SubQuery.js";
-import { Query } from "./serializable/Query.js";
 
 
 /**
@@ -44,6 +45,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 	private source$:string = null;
 	private cursor$:Cursor = null;
 
+	private described$:boolean = false;
+
 	private jdbconn$:Connection = null;
 	private pubconn$:DatabaseConnection = null;
 
@@ -52,7 +55,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	private columns$:string[] = [];
 	private primary$:string[] = [];
-	private described$:boolean = false;
+	private dmlcols$:string[] = [];
 
 	private limit$:FilterStructure = null;
 	private nosql$:FilterStructure = null;
@@ -64,6 +67,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public updateallowed:boolean = true;
 	public deleteallowed:boolean = true;
 	public rowlocking:LockMode = LockMode.Pessimistic;
+
+	private insreturncolumns$:string[] = null;
+	private updreturncolumns$:string[] = null;
+	private delreturncolumns$:string[] = null;
 
 	private datatypes$:Map<string,string> =
 		new Map<string,string>();
@@ -77,7 +84,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public constructor(connection:DatabaseConnection, source:string, columns?:string|string[])
 	{
 		super();
-		console.log("DatabaseSource "+source)
 
 		if (connection == null)
 		{
@@ -98,6 +104,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.source$ = source;
 		this.pubconn$ = connection;
 		this.jdbconn$ = connection["conn$"];
+		console.log("DatabaseSource find better solution")
 	}
 
 	/** Set the table/view */
@@ -134,6 +141,60 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.columns$ = columns;
 	}
 
+	/** Get columns defined for 'returning' after insert */
+	public get insertReturnColumns() : string[]
+	{
+		return(this.insreturncolumns$);
+	}
+
+	/** Set columns defined for 'returning' after insert */
+	public set insertReturnColumns(columns:string|string[])
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.insreturncolumns$ = columns;
+	}
+
+	/** Get columns defined for 'returning' after update */
+	public get updateReturnColumns() : string[]
+	{
+		return(this.updreturncolumns$);
+	}
+
+	/** Set columns defined for 'returning' after update */
+	public set updateReturnColumns(columns:string|string[])
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.updreturncolumns$ = columns;
+	}
+
+	/** Get columns defined for 'returning' after delete */
+	public get deleteReturnColumns() : string[]
+	{
+		return(this.delreturncolumns$);
+	}
+
+	/** Set columns defined for 'returning' after delete */
+	public set deleteReturnColumns(columns:string|string[])
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.delreturncolumns$ = columns;
+	}
+
+	/** Add additional columns participating in insert, update and delete */
+	public addDMLColumns(columns:string|string[]) : void
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.dmlcols$ = this.mergeColumns(this.dmlcols$,columns);
+	}
+
 	/** Whether the datasource is transactional */
 	public get transactional() : boolean
 	{
@@ -154,25 +215,79 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	clone(): DataSource
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("clone not implemented.");
 	}
 
 
 	undo(): Promise<Record[]>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("undo not implemented.");
 	}
 
 
-	fetch(): Promise<Record[]>
+	/** Flush changes to backend */
+	public async flush() : Promise<Record[]>
 	{
-		throw new Error("Method not implemented.");
-	}
+		let processed:Record[] = [];
 
+		if (this.dirty$.length == 0)
+			return([]);
 
-	flush(): Promise<Record[]>
-	{
-		throw new Error("Method not implemented.");
+		if (!this.jdbconn$.connected())
+		{
+			// Not connected
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			return([]);
+		}
+
+		if (!await this.describe())
+			return([]);
+
+		for (let i = 0; i < this.dirty$.length; i++)
+		{
+			let retcols:string[] = [];
+			let record:Record = this.dirty$[i];
+
+			if (record.failed)
+				continue;
+
+			if (record.state == RecordState.Insert)
+			{
+				console.log("Insert");
+				processed.push(record);
+				record.response = null;
+
+				retcols = this.insreturncolumns$;
+				if (retcols == null) retcols = [];
+			}
+
+			else
+
+			if (record.state == RecordState.Delete)
+			{
+				console.log("Delete");
+				processed.push(record);
+				record.response = null;
+
+				retcols = this.delreturncolumns$;
+				if (retcols == null) retcols = [];
+			}
+
+			else
+
+			if (record.state != RecordState.Deleted)
+			{
+				console.log("Update");
+				processed.push(record);
+				record.response = null;
+
+				retcols = this.updreturncolumns$;
+				if (retcols == null) retcols = [];
+			}
+		}
+
+		this.dirty$ = [];
+		return(processed);
 	}
 
 	/** Close the database cursor */
@@ -195,31 +310,31 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	lock(record: Record): Promise<boolean>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("lock not implemented.");
 	}
 
 
 	insert(record: Record): Promise<boolean>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("insert not implemented.");
 	}
 
 
 	update(record: Record): Promise<boolean>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("update not implemented.");
 	}
 
 
 	delete(record: Record): Promise<boolean>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("delete not implemented.");
 	}
 
 
 	refresh(record: Record): Promise<boolean>
 	{
-		throw new Error("Method not implemented.");
+		throw new Error("refresh not implemented.");
 	}
 
 
@@ -278,9 +393,45 @@ export class DatabaseSource extends SQLSource implements DataSource
 		query.orderBy = this.sorting;
 
 		let response:any = await this.jdbconn$.send(query);
-		console.log(response);
+		this.fetched$ = this.parse(response,this.cursor$);
+
+		return(true);
 	}
 
+	/** Fetch a set of records */
+	public async fetch() : Promise<Record[]>
+	{
+		if (this.cursor$ == null)
+			return([]);
+
+		if (this.fetched$.length > 0)
+		{
+			let fetched:Record[] = [];
+			fetched.push(...this.fetched$);
+
+			this.fetched$ = [];
+			return(fetched);
+		}
+
+		if (this.cursor$.eof)
+			return([]);
+
+		let response:any = await this.jdbconn$.fetch(this.cursor$);
+
+		if (!response.success)
+		{
+			this.cursor$ = null;
+			console.error(this.name+" failed to fetch: "+JSON.stringify(response));
+			return([]);
+		}
+
+		let fetched:Record[] = this.parse(response,this.cursor$);
+
+		fetched = await this.filter(fetched);
+		if (fetched.length == 0) return(this.fetch());
+
+		return(fetched);
+	}
 
 	/** Return the default filters */
 	public getFilters() : FilterStructure
@@ -384,6 +535,73 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.described$ = true;
 		return(this.described$);
+	}
+
+	private parse(response:any, cursor:Cursor) : Record[]
+	{
+		let fetched:Record[] = [];
+		let rows:any[][] = response.rows;
+
+		if (!response.success)
+		{
+			if (cursor) cursor.eof = true;
+			return(fetched);
+		}
+
+		if (this.primary$ == null)
+			this.primary$ = this.columns$;
+
+		let dates:boolean[] = [];
+		let datetypes:string[] = ["date", "datetime", "timestamp"];
+
+		for (let c = 0; c < this.columns.length; c++)
+		{
+			let dt:string = this.datatypes$.get(this.columns[c].toLowerCase());
+			if (datetypes.includes(dt)) dates.push(true);
+			else dates.push(false);
+		}
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			let record:Record = new Record(this);
+
+			for (let c = 0; c < rows[r].length; c++)
+			{
+				if (rows[r][c] && dates[c])
+				{
+					if (typeof rows[r][c] === "number")
+						rows[r][c] = new Date(+rows[r][c]);
+				}
+
+				record.setValue(this.columns[c],rows[r][c]);
+			}
+
+			let response:any = {succes: true, rows: [rows[r]]};
+			record.response = new DatabaseResponse(response,this.columns);
+
+			record.cleanup();
+			fetched.push(record);
+		}
+
+		return(fetched);
+	}
+
+	private async filter(records:Record[]) : Promise<Record[]>
+	{
+		if (this.nosql$)
+		{
+			let passed:Record[] = [];
+
+			for (let i = 0; i < records.length; i++)
+			{
+				if (await this.nosql$.evaluate(records[i]))
+					passed.push(records[i]);
+			}
+
+			records = passed;
+		}
+
+		return(records);
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

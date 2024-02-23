@@ -425,7 +425,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		query.orderBy = this.sorting;
 
 		let response:any = await this.jdbconn$.send(query);
+
 		this.fetched$ = this.parse(response,this.cursor$);
+		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
 	}
@@ -433,6 +435,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Fetch a set of records */
 	public async fetch() : Promise<Record[]>
 	{
+		console.log("fetch "+this.name)
 		if (this.cursor$ == null)
 			return([]);
 
@@ -525,7 +528,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.cursor$ && !this.cursor$.eof)
 			this.jdbconn$.close(this.cursor$);
 
-		this.cursor$ = new Cursor();
+		this.cursor$ = new Cursor(this.name);
 		return(this.cursor$.name);
 	}
 
@@ -571,7 +574,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.primary$.length == 0 && response.primarykey)
 		{
 			let cols:string[] = response.primarykey;
-			
+
 			cols.forEach((col) =>
 			{
 				col = col.trim();

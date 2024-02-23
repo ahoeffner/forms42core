@@ -32,9 +32,9 @@ export class Cursor
 	bindvalues:BindValue[] = null;
 
 	private static id:number = 0;
-	
+
 	constructor(name?:string)
 	{
-		this.name = (name ? name : "") + (Cursor.id++); 
+		this.name = (name ? name+"_" : "") + (Cursor.id++);
 	}
 }

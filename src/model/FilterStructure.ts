@@ -134,7 +134,7 @@ export class FilterStructure implements Serializable
 
 	public and(filter:Filter|FilterStructure, name?:string) : FilterStructure
 	{
-		if (filter == this)
+		if (!filter || filter == this)
 			return;
 
 		if (!(filter instanceof FilterStructure) && name == null)

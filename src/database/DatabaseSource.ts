@@ -25,12 +25,12 @@ import { BindValue } from "./BindValue.js";
 import { Head } from "./serializable/Head.js";
 import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
-import { Messages } from "../messages/Messages.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
+import { Level, Messages } from "../messages/Messages.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
@@ -62,12 +62,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	public name:string;
 	public arrayfecth:number = 32;
+	public queryallowed: boolean = true;
+	public insertallowed: boolean = true;
+	public updateallowed: boolean = true;
+	public deleteallowed: boolean = true;
 	public rowlocking:LockMode = LockMode.Pessimistic;
-
-	private queryallowed$: boolean = true;
-	private insertallowed$: boolean = true;
-	private updateallowed$: boolean = true;
-	private deleteallowed$: boolean = true;
 
 	private insreturncolumns$:string[] = null;
 	private updreturncolumns$:string[] = null;
@@ -139,50 +138,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 			columns = [columns];
 
 		this.columns$ = columns;
-	}
-
-	public get queryallowed() : boolean
-	{
-		if (!this.jdbconn$.connected()) return(false);
-		return(this.queryallowed$);
-	}
-
-	public set queryallowed(flag:boolean)
-	{
-		this.queryallowed$ = flag;
-	}
-
-	public get insertallowed() : boolean
-	{
-		if (!this.jdbconn$.connected()) return(false);
-		return(this.insertallowed$);
-	}
-
-	public set insertallowed(flag:boolean)
-	{
-		this.insertallowed$ = flag;
-	}
-
-	public get updateallowed() : boolean
-	{
-		if (!this.jdbconn$.connected()) return(false);
-		return(this.updateallowed$);
-	}
-
-	public set updateallowed(flag:boolean)
-	{
-		this.updateallowed$ = flag;
-	}
-
-	public get deleteallowed() : boolean
-	{
-		if (!this.jdbconn$.connected()) return(false);
-		return(this.deleteallowed$);
-	}
-
-	public set deleteallowed(flag:boolean)
-	{
-		this.deleteallowed$ = flag;
 	}
 
 	/** Get the primary key defined for this datasource */
@@ -589,8 +544,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let head:Head = new Head(this);
 		let response:any = await this.jdbconn$.send(head);
 
-		console.log(response)
-
 		if (!response.success)
 		{
 			// Unable to get column definitions
@@ -660,6 +613,99 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		return(fetched);
+	}
+
+	private castResponse(response:any) : void
+	{
+		let rows:any[][] = response.rows;
+
+		if (rows == null)
+			return;
+
+		let datetypes:string[] = ["date", "datetime", "timestamp"];
+
+		for (let r = 0; r < rows.length; r++)
+		{
+			Object.keys(rows[r]).forEach((col) =>
+			{
+				col = col.toLowerCase();
+				let value:any = rows[r][col];
+				let dt:string = this.datatypes$.get(col);
+
+				if (datetypes.includes(dt) && typeof value === "number")
+					rows[r][col] = new Date(value);
+			})
+		}
+	}
+
+	private async process(record:Record, response:any) : Promise<boolean>
+	{
+		if (!response.success)
+		{
+			if (response.violations)
+			{
+				record.locked = true;
+
+				let columns:string = "";
+				let violations:any[] = response.violations;
+
+				for (let i = 0; i < violations.length && i < 5; i++)
+				{
+					if (i > 0) columns += ", ";
+					columns += violations[i].column;
+				}
+
+				if (violations.length > 5)
+					columns += ", ...";
+
+				await record.block.wrapper.refresh(record);
+				let row:number = record.block.view.displayed(record)?.rownum;
+
+				if (row != null)
+					await record.block.view.refresh(record);
+
+				if (row == null) Messages.warn(MSGGRP.TRX,9,columns); // Record has been changed by another user
+				else Messages.warn(MSGGRP.TRX,10,row,columns); // Same but with rownum
+			}
+			else
+			{
+				if (response.lock)
+				{
+					if (response.rows?.length == 0)
+					{
+						record.state = RecordState.Deleted;
+						Messages.warn(MSGGRP.TRX,11); // Record has been deleted by another user
+					}
+					else
+					{
+						await record.block.wrapper.refresh(record);
+						let row:number = record.block.view.displayed(record)?.rownum;
+
+						if (row != null)
+						{
+							await record.block.view.refresh(record);
+							record.setClean(true);
+						}
+
+						// Record is locked by another user
+						if (row == null) Messages.warn(MSGGRP.TRX,12);
+						else Messages.warn(MSGGRP.TRX,13,row); // with rownum
+					}
+				}
+				else
+				{
+					let assert:string = response.assert ? " "+response.assert : "";
+					Messages.handle(MSGGRP.TRX,response.message+assert,Level.severe);
+				}
+			}
+
+			record.failed = true;
+			record.locked = false;
+
+			return(false);
+		}
+
+		return(true);
 	}
 
 	private async filter(records:Record[]) : Promise<Record[]>

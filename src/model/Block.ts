@@ -1225,7 +1225,10 @@ export class Block
 		if (!block.filter) return(true);
 
 		let filters:Filter[] = block.filter.getFilters();
-		filters.push(...block.datasource.getFilters().getFilters());
+		let limit:FilterStructure = block.datasource.getFilters();
+
+		let lfs:Filter[] = limit?.getFilters();
+		if (lfs) filters.push(...lfs);
 
 		for (let i = 0; i < filters.length; i++)
 		{

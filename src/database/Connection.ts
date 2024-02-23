@@ -403,8 +403,6 @@ export class Connection extends BaseConnection
 		let response:any = await this.post("/",payload);
 		FormsModule.hideLoading(thread);
 
-		console.log(JSON.stringify(response))
-
 		if (!response.success)
 		{
 			let level:Level = Level.info;

@@ -243,11 +243,10 @@ export class FilterStructure implements Serializable
 
 	public cleanout(filter:JSONFilterGroup|JSONFilter) : JSONFilterGroup|JSONFilter
 	{
-		let x:number = 2;
 		if (filter instanceof JSONFilter)
 			return(filter);
 
-		if (filter.filters.length == 1 && x == 3)
+		if (filter.filters.length == 1)
 			filter = filter.filters[0];
 
 		if (filter instanceof JSONFilter)

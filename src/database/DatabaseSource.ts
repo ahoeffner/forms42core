@@ -155,6 +155,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Set the primary key for this datasource */
 	public set primaryKey(columns:string|string[])
 	{
+		if (!columns)
+			columns = [];
+
 		if (!Array.isArray(columns))
 			columns = [columns];
 
@@ -560,6 +563,22 @@ export class DatabaseSource extends SQLSource implements DataSource
 			let type:string = response.types[i];
 			let datatype:string = type.toLowerCase();
 			this.datatypes$.set(columns[i],datatype);
+		}
+
+		if (!this.order$ && response.order)
+			this.order$ = response.order;
+
+		if (this.primary$.length == 0 && response.primarykey)
+		{
+			let cols:string[] = response.primarykey;
+			
+			cols.forEach((col) =>
+			{
+				col = col.trim();
+
+				if (col.length > 0)
+					this.primary$.push(col);
+			})
 		}
 
 		this.described$ = true;

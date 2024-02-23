@@ -435,7 +435,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Fetch a set of records */
 	public async fetch() : Promise<Record[]>
 	{
-		console.log("fetch "+this.name)
 		if (this.cursor$ == null)
 			return([]);
 

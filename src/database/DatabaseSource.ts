@@ -34,6 +34,7 @@ import { Level, Messages } from "../messages/Messages.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
+import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
 
 
 /**
@@ -450,7 +451,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.cursor$.eof)
 			return([]);
 
-		let response:any = await this.jdbconn$.fetch(this.cursor$);
+		console.log("fetch "+this.name)
+		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
+		let response:any = await this.jdbconn$.send(fetch);
 
 		if (!response.success)
 		{

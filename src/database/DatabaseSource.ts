@@ -147,9 +147,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.queryallowed$);
 	}
 
-	public set queryallowed(value:boolean)
+	public set queryallowed(flag:boolean)
 	{
-		this.queryallowed$ = value;
+		this.queryallowed$ = flag;
 	}
 
 	public get insertallowed() : boolean
@@ -158,9 +158,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.insertallowed$);
 	}
 
-	public set insertallowed(value:boolean)
+	public set insertallowed(flag:boolean)
 	{
-		this.insertallowed$ = value;
+		this.insertallowed$ = flag;
 	}
 
 	public get updateallowed() : boolean
@@ -169,9 +169,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.updateallowed$);
 	}
 
-	public set updateallowed(value:boolean)
+	public set updateallowed(flag:boolean)
 	{
-		this.updateallowed$ = value;
+		this.updateallowed$ = flag;
 	}
 
 	public get deleteallowed() : boolean
@@ -180,9 +180,31 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.deleteallowed$);
 	}
 
-	public set deleteallowed(value:boolean)
+	public set deleteallowed(flag:boolean)
 	{
-		this.deleteallowed$ = value;
+		this.deleteallowed$ = flag;
+	}
+
+	/** Get the primary key defined for this datasource */
+	public get primaryKey() : string[]
+	{
+		if (this.primary$ == null || this.primary$.length == 0)
+		{
+			this.primary$ = [];
+			this.primary$.push(...this.columns$);
+		}
+
+		return(this.primary$);
+	}
+
+	/** Set the primary key for this datasource */
+	public set primaryKey(columns:string|string[])
+	{
+		if (!Array.isArray(columns))
+			columns = [columns];
+
+		this.addColumns(columns);
+		this.primary$ = columns;
 	}
 
 	/** Get columns defined for 'returning' after insert */
@@ -566,6 +588,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		let head:Head = new Head(this);
 		let response:any = await this.jdbconn$.send(head);
+
+		console.log(response)
 
 		if (!response.success)
 		{

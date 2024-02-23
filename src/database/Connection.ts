@@ -399,15 +399,15 @@ export class Connection extends BaseConnection
 		let payload:any = request.serialize();
 		payload.session = this.conn$;
 
-		console.log(JSON.stringify(payload))
-
 		let thread:number = FormsModule.showLoading("Execute "+payload.function);
 		let response:any = await this.post("/",payload);
 		FormsModule.hideLoading(thread);
 
+		console.log(JSON.stringify(response))
+
 		if (!response.success)
 		{
-			let level:Level = Level.fine;
+			let level:Level = Level.info;
 			if (response.fatal) level = Level.warn;
 			Messages.handle(MSGGRP.SQL,response.message,level);
 			return(response);

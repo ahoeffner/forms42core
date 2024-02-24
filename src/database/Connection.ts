@@ -411,11 +411,6 @@ export class Connection extends BaseConnection
 			return(response);
 		}
 
-		/*
-		if (cursor)
-			cursor.eof = !response.more;
-		*/
-
 		if (response["session"])
 			this.conn$ = response.session;
 

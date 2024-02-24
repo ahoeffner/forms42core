@@ -427,7 +427,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		let response:any = await this.jdbconn$.send(query);
 
-		this.fetched$ = this.parse(response,this.cursor$);
+		this.fetched$ = this.parse(response);
 		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
@@ -451,7 +451,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.cursor$.eof)
 			return([]);
 
-		console.log("fetch "+this.name)
 		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
 		let response:any = await this.jdbconn$.send(fetch);
 
@@ -462,7 +461,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return([]);
 		}
 
-		let fetched:Record[] = this.parse(response,this.cursor$);
+		let fetched:Record[] = this.parse(response);
 
 		fetched = await this.filter(fetched);
 		if (fetched.length == 0) return(this.fetch());
@@ -590,14 +589,22 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.described$);
 	}
 
-	private parse(response:any, cursor:Cursor) : Record[]
+	private parse(response:any) : Record[]
 	{
 		let fetched:Record[] = [];
 		let rows:any[][] = response.rows;
 
+		if (!response.more)
+		{
+			if (this.cursor$)
+				this.cursor$.eof = true;
+		}
+
 		if (!response.success)
 		{
-			if (cursor) cursor.eof = true;
+			if (this.cursor$)
+				this.cursor$.eof = true;
+
 			return(fetched);
 		}
 

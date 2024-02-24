@@ -31,9 +31,9 @@ export class Cursor implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-
 		json.function = "cursor";
-		json.cursor = this.cursor;
+
+		json.name = this.cursor;
 		json.request = CursorRequest[this.request];
 
 		return(json);

@@ -422,8 +422,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let cursor:string = this.createCursor();
 		let query:Query = new Query(this,this.columns,filter);
 
-		query.cursor = cursor;
+		this.cursor$.trx = this.jdbconn$.trx;
 
+		query.cursor = cursor;
 		query.rows = this.arrayfecth;
 		query.orderBy = this.sorting;
 
@@ -452,6 +453,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (this.cursor$.eof)
 			return([]);
+
+		if (this.jdbconn$.restore(this.cursor$))
+		{
+			throw "Restore cursor";
+		}
 
 		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
 		let response:any = await this.jdbconn$.send(fetch);
@@ -533,7 +539,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.cursor$ = new Cursor(this.name);
 		this.cursor$.rows = this.arrayfecth;
-		
+
 		return(this.cursor$.name);
 	}
 

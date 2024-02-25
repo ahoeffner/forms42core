@@ -487,6 +487,17 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
+	public restore(cursor:Cursor) : boolean
+	{
+		if (cursor.trx != this.trx$)
+			return(true);
+
+		if (this.scope == ConnectionScope.stateless)
+			return(true);
+
+		return(false);
+	}
+
 	public async fetch(cursor:Cursor) : Promise<Response>
 	{
 		this.tmowarn = false;
@@ -1107,7 +1118,7 @@ export class Connection extends BaseConnection
 		return(response);
 	}
 
-	private get trx() : object
+	public get trx() : object
 	{
 		return(this.trx$);
 	}

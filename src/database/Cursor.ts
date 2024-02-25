@@ -20,12 +20,14 @@
 */
 
 import { BindValue } from "./BindValue";
+import { Query } from "./serializable/Query";
 
 export class Cursor
 {
 	pos:number = 0;
 	rows:number = 0;
 	trx:object = null;
+	query:Query = null;
 	name:string = null;
 	stmt:string = null;
 	eof:boolean = false;

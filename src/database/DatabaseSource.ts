@@ -423,6 +423,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let query:Query = new Query(this,this.columns,filter);
 
 		query.cursor = cursor;
+
+		query.rows = this.arrayfecth;
 		query.orderBy = this.sorting;
 
 		let response:any = await this.jdbconn$.send(query);
@@ -530,6 +532,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 			this.jdbconn$.close(this.cursor$);
 
 		this.cursor$ = new Cursor(this.name);
+		this.cursor$.rows = this.arrayfecth;
+		
 		return(this.cursor$.name);
 	}
 
@@ -607,6 +611,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 			return(fetched);
 		}
+
+		this.cursor$.pos += rows.length;
 
 		if (this.primary$ == null)
 			this.primary$ = this.columns$;

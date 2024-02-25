@@ -27,6 +27,8 @@ import { DataSource } from "../../model/interfaces/DataSource.js";
 
 export class Query implements Serializable
 {
+	private skip$: number = 0;
+	private rows$: number = 1;
 	private order$:string = null;
 	private cursor$:string = null;
 	private lock$: boolean = false;
@@ -58,6 +60,26 @@ export class Query implements Serializable
 				this.filter = filter;
 			}
 		}
+	}
+
+	public get rows() : number
+	{
+		return(this.rows$);
+	}
+
+	public set rows(rows:number)
+	{
+		this.rows$ = rows;
+	}
+
+	public set skip(rows:number)
+	{
+		this.skip$ = rows;
+	}
+
+	public get skip() : number
+	{
+		return(this.skip$);
 	}
 
 	public get cursor() : string
@@ -115,6 +137,12 @@ export class Query implements Serializable
 		json.function = "retrieve";
 		json.columns = this.columns;
 		json.source = this.source.name;
+
+		if (this.skip > 0)
+			json.skip = this.skip;
+
+		if (this.rows > 0)
+			json.rows = this.rows;
 
 		if (this.cursor)
 			json.cursor = this.cursor;

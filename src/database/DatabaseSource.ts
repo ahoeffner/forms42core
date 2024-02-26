@@ -231,25 +231,42 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public clear() : void
 	{
 		this.dirty$ = [];
-
-		if (this.cursor$ && !this.cursor$.eof)
-			this.jdbconn$.close(this.cursor$);
-
-		this.cursor$ = null;
+		this.closeCursor();
 	}
 
-
-	clone(): DataSource
+	/** Clones this datasource */
+	public clone() : DatabaseSource
 	{
-		throw new Error("clone not implemented.");
+		let clone:DatabaseSource = new DatabaseSource(this.pubconn$,this.source$);
+
+		clone.name = this.name;
+		clone.sorting = this.sorting;
+		clone.primary$ = this.primary$;
+		clone.columns$ = this.columns$;
+		clone.described$ = this.described$;
+		clone.arrayfecth = this.arrayfecth;
+		clone.datatypes$ = this.datatypes$;
+
+		clone.insertReturnColumns = this.insertReturnColumns;
+		clone.updateReturnColumns = this.updateReturnColumns;
+		clone.deleteReturnColumns = this.deleteReturnColumns;
+
+		return(clone);
 	}
 
-
-	undo(): Promise<Record[]>
+	/** Undo not flushed changes */
+	public async undo() : Promise<Record[]>
 	{
-		throw new Error("undo not implemented.");
-	}
+		let undo:Record[] = [];
 
+		for (let i = 0; i < this.dirty$.length; i++)
+		{
+			this.dirty$[i].refresh();
+			undo.push(this.dirty$[i]);
+		}
+
+		return(undo);
+	}
 
 	/** Flush changes to backend */
 	public async flush() : Promise<Record[]>
@@ -325,7 +342,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(processed);
 	}
 
-
+	/** Lock the given record in the database */
 	public async lock(record: Record): Promise<boolean>
 	{
 		if (record.locked)
@@ -370,26 +387,32 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.process(record,response));
 	}
 
-
-	insert(record: Record): Promise<boolean>
+	/** Create a record for inserting a row in the table/view */
+	public async insert(record:Record) : Promise<boolean>
 	{
-		throw new Error("insert not implemented.");
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
+		return(true);
 	}
 
-
-	update(record: Record): Promise<boolean>
+	/** Mark a record for updating a row in the table/view */
+	public async update(record:Record) : Promise<boolean>
 	{
-		throw new Error("update not implemented.");
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
+		return(true);
 	}
 
-
-	delete(record: Record): Promise<boolean>
+	/** Mark a record for deleting a row in the table/view */
+	public async delete(record:Record) : Promise<boolean>
 	{
-		throw new Error("delete not implemented.");
+		if (!this.dirty$.includes(record))
+			this.dirty$.push(record);
+		return(true);
 	}
 
-
-	refresh(record: Record): Promise<boolean>
+	/** Re-fetch the given record from the backend */
+	public async refresh(record:Record) : Promise<boolean>
 	{
 		throw new Error("refresh not implemented.");
 	}
@@ -646,10 +669,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 			})
 		}
 
-		console.log(response)
-		console.log(this.primaryKey)
-
 		this.described$ = true;
+		console.log("cache describe");
 		return(this.described$);
 	}
 

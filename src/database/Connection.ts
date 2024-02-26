@@ -378,7 +378,6 @@ export class Connection extends BaseConnection
 		this.attributes$.forEach((value,name) =>
 			{payload[name] = value})
 
-		console.log("release");
 		let session:Session = new Session(SessionRequest.release);
 
 		Logger.log(Type.database,"release");

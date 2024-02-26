@@ -25,6 +25,7 @@ import { BindValue } from "./BindValue.js";
 import { Head } from "./serializable/Head.js";
 import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
@@ -325,9 +326,48 @@ export class DatabaseSource extends SQLSource implements DataSource
 	}
 
 
-	lock(record: Record): Promise<boolean>
+	public async lock(record: Record): Promise<boolean>
 	{
-		throw new Error("lock not implemented.");
+		if (record.locked)
+			return(true);
+
+		if (!this.rowlocking)
+			return(true);
+
+		if (!await this.describe())
+			return(false);
+
+		let columns:string[] =
+			this.mergeColumns(this.columns,this.dmlcols$);
+
+		let pkey:string[] = this.primaryKey;
+		let pkeyflt:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < this.primaryKey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			pkeyflt.and(filter.setConstraint(value),pkey[i]);
+			this.setTypes(filter.getBindValues());
+		}
+
+		let asserts:BindValue[] = [];
+
+		this.columns.forEach((col) =>
+		{
+			let type:string = this.datatypes$.get(col);
+			let value:any = record.getInitialValue(col);
+			asserts.push(new BindValue(col,value,type));
+		})
+
+		let lock:Query = new Query(this,columns,pkeyflt);
+
+		lock.lock = true;
+		lock.assertions = asserts;
+
+		let response:any = await this.jdbconn$.send(lock);
+		console.log(JSON.stringify(response));
+		return(this.process(record,response));
 	}
 
 
@@ -529,7 +569,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (this.cursor$ && !this.cursor$.eof)
 		{
-			console.log("close "+this.cursor$.name);
 			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
 			response = await this.jdbconn$.send(cursor);
 		}
@@ -547,8 +586,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 	{
 		if (this.cursor$ && !this.cursor$.eof)
 		{
-			if (!await this.closeCursor())
-				return;
+			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
+			this.jdbconn$.send(cursor); // No reason to wait
 		}
 
 		this.cursor$ = new Cursor(this.name);
@@ -606,6 +645,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 					this.primary$.push(col);
 			})
 		}
+
+		console.log(response)
+		console.log(this.primaryKey)
 
 		this.described$ = true;
 		return(this.described$);

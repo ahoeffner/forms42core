@@ -22,7 +22,11 @@
 import { Cursor } from "./Cursor.js";
 import { SQLRest } from "./SQLRest.js";
 import { BindValue } from "./BindValue.js";
+import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Update } from "./serializable/Update.js";
+import { Insert } from "./serializable/Insert.js";
+import { Delete } from "./serializable/Delete.js";
 import { ConnectionScope } from "./ConnectionScope.js";
 import { Logger, Type } from "../application/Logger.js";
 import { Messages, Level } from "../messages/Messages.js";
@@ -34,10 +38,6 @@ import { Session, SessionRequest } from "./serializable/Session.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { Update } from "./serializable/Update.js";
-import { Insert } from "./serializable/Insert.js";
-import { Delete } from "./serializable/Delete.js";
-import { Query } from "./serializable/Query.js";
 
 
 export class Connection extends BaseConnection
@@ -391,6 +391,7 @@ export class Connection extends BaseConnection
 			this.locks$ = 0;
 			this.touched = null;
 			this.modified = null;
+			this.trx = new Object();
 		}
 
 		if (!response.success)
@@ -1287,7 +1288,6 @@ export class Connection extends BaseConnection
 			if (this.touched)
 			{
 				idle = ((new Date()).getTime() - this.touched.getTime())/1000;
-				console.log("idle: "+idle+" "+Connection.CONNTIMEOUT)
 				if (idle > Connection.CONNTIMEOUT) await this.release();
 			}
 		}

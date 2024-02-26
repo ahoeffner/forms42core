@@ -405,6 +405,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let cursor:string = this.createCursor();
 		let query:Query = new Query(this,this.columns,filter);
 
+		this.cursor$.query = query;
 		this.cursor$.trx = this.jdbconn$.trx;
 
 		query.cursor = cursor;
@@ -443,7 +444,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.jdbconn$.restore(this.cursor$))
 		{
 			query.skip = query.rows;
-			console.log("restore")
 			response = await this.jdbconn$.send(query);
 		}
 		else

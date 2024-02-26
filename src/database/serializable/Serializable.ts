@@ -1,4 +1,4 @@
 export interface Serializable
 {
-	serialize() : any;
+	serialize() : any; /** Serialized object */
 }

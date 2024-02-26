@@ -27,6 +27,11 @@ export class Session implements Serializable
 	{
 	}
 
+	public isModifier(): boolean
+	{
+		return(false);
+	}
+
 	public serialize() : any
 	{
 		let json:any = {};

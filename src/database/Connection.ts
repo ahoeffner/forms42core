@@ -34,6 +34,10 @@ import { Session, SessionRequest } from "./serializable/Session.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { Update } from "./serializable/Update.js";
+import { Insert } from "./serializable/Insert.js";
+import { Delete } from "./serializable/Delete.js";
+import { Query } from "./serializable/Query.js";
 
 
 export class Connection extends BaseConnection
@@ -400,8 +404,37 @@ export class Connection extends BaseConnection
 
 	public async send(request:Serializable) : Promise<Response>
 	{
+		if (request instanceof Query)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+		}
+
+		if (request instanceof Insert)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
+		if (request instanceof Update)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
+		if (request instanceof Delete)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
 		let payload:any = request.serialize();
 		payload.session = this.conn$;
+
+		if (this.modified) this.modified = new Date();
 
 		let thread:number = FormsModule.showLoading("Execute "+payload.function);
 		let response:any = await this.post("/",payload);
@@ -1254,6 +1287,7 @@ export class Connection extends BaseConnection
 			if (this.touched)
 			{
 				idle = ((new Date()).getTime() - this.touched.getTime())/1000;
+				console.log("idle: "+idle+" "+Connection.CONNTIMEOUT)
 				if (idle > Connection.CONNTIMEOUT) await this.release();
 			}
 		}

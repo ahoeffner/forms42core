@@ -402,15 +402,15 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		let cursor:string = this.createCursor();
+		await this.createCursor();
 		let query:Query = new Query(this,this.columns,filter);
 
 		this.cursor$.query = query;
 		this.cursor$.trx = this.jdbconn$.trx;
 
-		query.cursor = cursor;
 		query.rows = this.arrayfecth;
 		query.orderBy = this.sorting;
+		query.cursor = this.cursor$.name;
 
 		let response:any = await this.jdbconn$.send(query);
 
@@ -528,7 +528,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let response:any = null;
 
 		if (this.cursor$ && !this.cursor$.eof)
-			response = await this.jdbconn$.close(this.cursor$);
+		{
+			console.log("close "+this.cursor$.name);
+			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
+			response = await this.jdbconn$.send(cursor);
+		}
 
 		this.fetched$ = [];
 		this.cursor$ = null;
@@ -539,15 +543,16 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(true);
 	}
 
-	private createCursor() : string
+	private async createCursor() : Promise<void>
 	{
 		if (this.cursor$ && !this.cursor$.eof)
-			this.jdbconn$.close(this.cursor$);
+		{
+			if (!await this.closeCursor())
+				return;
+		}
 
 		this.cursor$ = new Cursor(this.name);
 		this.cursor$.rows = this.arrayfecth;
-
-		return(this.cursor$.name);
 	}
 
 	private setTypes(bindvalues:BindValue[]) : void
@@ -625,6 +630,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(fetched);
 		}
 
+		if (!this.cursor$) console.log(new Error().stack)
 		this.cursor$.pos += rows.length;
 
 		if (this.primary$ == null)

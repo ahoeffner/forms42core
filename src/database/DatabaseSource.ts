@@ -414,10 +414,41 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Re-fetch the given record from the backend */
 	public async refresh(record:Record) : Promise<boolean>
 	{
-		throw new Error("refresh not implemented.");
+		record.refresh();
+
+		let pkey:string[] = this.primaryKey;
+		let pkeyflt:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < this.primaryKey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			pkeyflt.and(filter.setConstraint(value),pkey[i]);
+			this.setTypes(filter.getBindValues());
+		}
+
+		let lock:Query = new Query(this,this.columns,pkeyflt);
+		let response:any = await this.jdbconn$.send(lock);
+		let fetched:Record[] = this.parse(response);
+
+		if (fetched.length == 0)
+		{
+			record.state = RecordState.Delete;
+			Messages.warn(MSGGRP.SQL,1); // Record has been deleted
+			return(false);
+		}
+
+		for (let i = 0; i < this.columns.length; i++)
+		{
+			let nv:any = fetched[0].getValue(this.columns[i]);
+			record.setValue(this.columns[i],nv)
+		}
+
+		record.state = RecordState.Consistent;
+		return(true);
 	}
 
-
+	/** Execute the query */
 	public async query(filter?: FilterStructure): Promise<boolean>
 	{
 		this.fetched$ = [];

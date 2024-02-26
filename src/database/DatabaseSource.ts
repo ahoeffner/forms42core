@@ -324,23 +324,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(processed);
 	}
 
-	/** Close the database cursor */
-	public async closeCursor() : Promise<boolean>
-	{
-		let response:any = null;
-
-		if (this.cursor$ && !this.cursor$.eof)
-			response = await this.jdbconn$.close(this.cursor$);
-
-		this.fetched$ = [];
-		this.cursor$ = null;
-
-		if (response)
-			return(response.success);
-
-		return(true);
-	}
-
 
 	lock(record: Record): Promise<boolean>
 	{
@@ -454,13 +437,20 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.cursor$.eof)
 			return([]);
 
+		let response:any = null;
+		let query:Query = this.cursor$.query;
+
 		if (this.jdbconn$.restore(this.cursor$))
 		{
-			throw "Restore cursor";
+			query.skip = query.rows;
+			console.log("restore")
+			response = await this.jdbconn$.send(query);
 		}
-
-		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
-		let response:any = await this.jdbconn$.send(fetch);
+		else
+		{
+			let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
+			response = await this.jdbconn$.send(fetch);
+		}
 
 		if (!response.success)
 		{
@@ -530,6 +520,23 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.limit$.and(filter);
 		return(this);
+	}
+
+	/** Close the database cursor */
+	public async closeCursor() : Promise<boolean>
+	{
+		let response:any = null;
+
+		if (this.cursor$ && !this.cursor$.eof)
+			response = await this.jdbconn$.close(this.cursor$);
+
+		this.fetched$ = [];
+		this.cursor$ = null;
+
+		if (response)
+			return(response.success);
+
+		return(true);
 	}
 
 	private createCursor() : string

@@ -274,6 +274,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Flush changes to backend */
 	public async flush() : Promise<Record[]>
 	{
+		let batch:any[] = [];
 		let processed:Record[] = [];
 
 		if (!this.jdbconn$.connected())
@@ -324,6 +325,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let ins:Insert = new Insert(this,values,retcols,rettypes);
 				console.log(JSON.stringify(ins.serialize()));
+				batch.push(ins.serialize());
 			}
 
 			else
@@ -360,6 +362,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
 				console.log(JSON.stringify(del.serialize()));
+				batch.push(del.serialize());
 			}
 
 			else
@@ -408,8 +411,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
 				console.log(JSON.stringify(upd.serialize()));
+				batch.push(upd.serialize());
 			}
 		}
+
+		console.log(JSON.stringify(batch));
 
 		this.dirty$ = [];
 		return(processed);

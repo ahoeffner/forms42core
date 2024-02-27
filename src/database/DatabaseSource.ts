@@ -295,6 +295,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
+			let assert:boolean = true;
+
+			if (this.rowlocking == LockMode.None)
+				assert = false;
+
 			let retcols:string[] = [];
 			let record:Record = this.dirty$[i];
 
@@ -335,6 +340,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 				processed.push(record);
 				record.response = null;
 
+				if (record.locked)
+					assert = false;
+
 				retcols = this.delreturncolumns$;
 				if (retcols == null) retcols = [];
 
@@ -361,7 +369,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 				})
 
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
-				del.assertions = this.assert(record);
+				if (assert) del.assertions = this.assert(record);
 
 				batch.add(del);
 			}
@@ -375,6 +383,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				processed.push(record);
 				record.response = null;
+
+				if (record.locked)
+					assert = false;
 
 				retcols = this.updreturncolumns$;
 				if (retcols == null) retcols = [];
@@ -411,8 +422,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 				})
 
 				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
-				upd.assertions = this.assert(record);
-				
+				if (assert) upd.assertions = this.assert(record);
+
 				batch.add(upd);
 			}
 		}
@@ -429,7 +440,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (record.locked)
 			return(true);
 
-		if (!this.rowlocking)
+		if (this.rowlocking == LockMode.None)
 			return(true);
 
 		if (!await this.describe())

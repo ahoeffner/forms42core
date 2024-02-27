@@ -404,19 +404,17 @@ export class Connection extends BaseConnection
 
 	public async send(request:Serializable) : Promise<Response>
 	{
-		let trx:boolean = false;
 		let mod:Date = this.modified;
 
 		if (request instanceof Query)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();
-			if (request.lock) trx = true;
+			if (request.lock)	this.modified = new Date();
 		}
 
 		if (request instanceof Insert)
 		{
-			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
@@ -424,7 +422,6 @@ export class Connection extends BaseConnection
 
 		if (request instanceof Update)
 		{
-			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
@@ -432,7 +429,6 @@ export class Connection extends BaseConnection
 
 		if (request instanceof Delete)
 		{
-			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
@@ -450,6 +446,9 @@ export class Connection extends BaseConnection
 		let response:any = await this.post("/",payload);
 		FormsModule.hideLoading(thread);
 
+		if (this.modified && !mod)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
+
 		if (!response.success)
 		{
 			let level:Level = Level.info;
@@ -460,9 +459,6 @@ export class Connection extends BaseConnection
 
 		if (response["session"])
 			this.conn$ = response.session;
-
-		if (trx && mod == null)
-			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
 		return(response);
 

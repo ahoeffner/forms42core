@@ -324,7 +324,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 					if (type != null) rettypes.push(new BindValue(col,null,type));
 				})
 
-				batch.add(new Insert(this,values,retcols,rettypes));
+				let ins:Insert = new Insert(this,values,retcols,rettypes);
+				batch.add(ins);
 			}
 
 			else
@@ -359,7 +360,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 					}
 				})
 
-				batch.add(new Delete(this,pkeyflt,this.delreturncolumns$,rettypes));
+				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
+				del.assertions = this.assert(record);
+
+				batch.add(del);
 			}
 
 			else
@@ -406,7 +410,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 					}
 				})
 
-				batch.add(new Update(this,changes,pkeyflt,retcols,rettypes));
+				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
+				upd.assertions = this.assert(record);
+				
+				batch.add(upd);
 			}
 		}
 
@@ -442,22 +449,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 			this.setTypes(filter.getBindValues());
 		}
 
-		let asserts:BindValue[] = [];
+		let query:Query = new Query(this,columns,pkeyflt);
 
-		this.columns.forEach((col) =>
-		{
-			let type:string = this.datatypes$.get(col);
-			let value:any = record.getInitialValue(col);
-			asserts.push(new BindValue(col,value,type));
-		})
+		query.lock = true;
+		query.assertions = this.assert(record);
 
-		let lock:Query = new Query(this,columns,pkeyflt);
-
-		lock.lock = true;
-		lock.assertions = asserts;
-
-		let response:any = await this.jdbconn$.send(lock);
-		console.log(JSON.stringify(response));
+		let response:any = await this.jdbconn$.send(query);
 		return(this.process(record,response));
 	}
 
@@ -860,6 +857,20 @@ export class DatabaseSource extends SQLSource implements DataSource
 					rows[r][col] = new Date(value);
 			})
 		}
+	}
+
+	private assert(record:Record) : BindValue[]
+	{
+		let asserts:BindValue[] = [];
+
+		this.columns.forEach((col) =>
+		{
+			let type:string = this.datatypes$.get(col);
+			let value:any = record.getInitialValue(col);
+			asserts.push(new BindValue(col,value,type));
+		})
+
+		return(asserts);
 	}
 
 	private async process(record:Record, response:any) : Promise<boolean>

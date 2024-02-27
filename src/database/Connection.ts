@@ -404,14 +404,19 @@ export class Connection extends BaseConnection
 
 	public async send(request:Serializable) : Promise<Response>
 	{
+		let trx:boolean = false;
+		let mod:Date = this.modified;
+
 		if (request instanceof Query)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();
+			if (request.lock) trx = true;
 		}
 
 		if (request instanceof Insert)
 		{
+			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
@@ -419,6 +424,7 @@ export class Connection extends BaseConnection
 
 		if (request instanceof Update)
 		{
+			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
@@ -426,15 +432,19 @@ export class Connection extends BaseConnection
 
 		if (request instanceof Delete)
 		{
+			trx = true;
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
 		}
 
-		let payload:any = request.serialize();
-		payload.session = this.conn$;
+		if (this.modified)
+			this.modified = new Date();
 
-		if (this.modified) this.modified = new Date();
+		let payload:any = request.serialize();
+
+		// Add any custom
+		payload.session = this.conn$;
 
 		let thread:number = FormsModule.showLoading("Execute "+payload.function);
 		let response:any = await this.post("/",payload);
@@ -450,6 +460,9 @@ export class Connection extends BaseConnection
 
 		if (response["session"])
 			this.conn$ = response.session;
+
+		if (trx && mod == null)
+			await FormEvents.raise(FormEvent.AppEvent(EventType.OnTransaction));
 
 		return(response);
 

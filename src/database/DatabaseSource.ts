@@ -24,7 +24,11 @@ import { SQLSource } from "./SQLSource.js";
 import { BindValue } from "./BindValue.js";
 import { Head } from "./serializable/Head.js";
 import { Query } from "./serializable/Query.js";
+import { Batch } from "./serializable/Batch.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Insert } from "./serializable/Insert.js";
+import { Delete } from "./serializable/Delete.js";
+import { Update } from "./serializable/Update.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
@@ -36,9 +40,6 @@ import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
-import { Insert } from "./serializable/Insert.js";
-import { Delete } from "./serializable/Delete.js";
-import { Update } from "./serializable/Update.js";
 
 
 /**
@@ -274,8 +275,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Flush changes to backend */
 	public async flush() : Promise<Record[]>
 	{
-		let batch:any[] = [];
 		let processed:Record[] = [];
+		let batch:Batch = new Batch();
 
 		if (!this.jdbconn$.connected())
 		{
@@ -323,9 +324,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 					if (type != null) rettypes.push(new BindValue(col,null,type));
 				})
 
-				let ins:Insert = new Insert(this,values,retcols,rettypes);
-				console.log(JSON.stringify(ins.serialize()));
-				batch.push(ins.serialize());
+				batch.add(new Insert(this,values,retcols,rettypes));
 			}
 
 			else
@@ -360,9 +359,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 					}
 				})
 
-				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
-				console.log(JSON.stringify(del.serialize()));
-				batch.push(del.serialize());
+				batch.add(new Delete(this,pkeyflt,this.delreturncolumns$,rettypes));
 			}
 
 			else
@@ -409,13 +406,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 					}
 				})
 
-				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
-				console.log(JSON.stringify(upd.serialize()));
-				batch.push(upd.serialize());
+				batch.add(new Update(this,changes,pkeyflt,retcols,rettypes));
 			}
 		}
 
-		console.log(JSON.stringify(batch));
+		this.jdbconn$.send(batch);
 
 		this.dirty$ = [];
 		return(processed);

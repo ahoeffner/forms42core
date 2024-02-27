@@ -197,13 +197,14 @@ export class SQLStatement
 		if (!this.cursor$)
 			return(null);
 
-		if (this.cursor$.eof)
-			return(null);
-
-		if (this.records$?.length > this.pos)
+		if (
+			this.records$?.length > this.pos)
 			return(this.records$[this.pos++]);
 
 		if (this.pos > 0 && this.type$ != "select")
+			return(null);
+
+		if (this.cursor$.eof)
 			return(null);
 
 		this.pos = 0;

@@ -36,6 +36,9 @@ import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
+import { Insert } from "./serializable/Insert.js";
+import { Delete } from "./serializable/Delete.js";
+import { Update } from "./serializable/Update.js";
 
 
 /**
@@ -282,15 +285,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.dirty$.length == 0)
 			return([]);
 
-		if (!this.jdbconn$.connected())
-		{
-			// Not connected
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
-			return([]);
-		}
-
 		if (!await this.describe())
 			return([]);
+
+		let columns:string[] =
+			this.mergeColumns(this.columns,this.dmlcols$);
 
 		for (let i = 0; i < this.dirty$.length; i++)
 		{
@@ -302,24 +301,65 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 			if (record.state == RecordState.Insert)
 			{
-				console.log("Insert");
 				processed.push(record);
 				record.response = null;
 
+				let values:BindValue[] = [];
+				let rettypes:BindValue[] = [];
+
 				retcols = this.insreturncolumns$;
 				if (retcols == null) retcols = [];
+
+				for (let i = 0; i < columns.length; i++)
+				{
+					let type:string = this.datatypes$.get(columns[i]);
+					values.push(new BindValue(columns[i],record.getValue(columns[i]),type));
+				}
+
+				retcols.forEach((col) =>
+				{
+					let type:string = this.datatypes$.get(col);
+					if (type != null) rettypes.push(new BindValue(col,null,type));
+				})
+
+				let ins:Insert = new Insert(this,values,retcols,rettypes);
+				console.log(JSON.stringify(ins.serialize()));
 			}
 
 			else
 
 			if (record.state == RecordState.Delete)
 			{
-				console.log("Delete");
 				processed.push(record);
 				record.response = null;
 
 				retcols = this.delreturncolumns$;
 				if (retcols == null) retcols = [];
+
+				let pkey:string[] = this.primaryKey;
+				let pkeyflt:FilterStructure = new FilterStructure();
+
+				for (let i = 0; i < this.primaryKey.length; i++)
+				{
+					let filter:Filter = Filters.Equals(pkey[i]);
+					let value:any = record.getInitialValue(pkey[i]);
+					pkeyflt.and(filter.setConstraint(value),pkey[i]);
+					this.setTypes(filter.getBindValues());
+				}
+
+				let rettypes:BindValue[] = [];
+
+				retcols.forEach((col) =>
+				{
+					if (!pkey.includes(col))
+					{
+						let type:string = this.datatypes$.get(col);
+						if (type != null) rettypes.push(new BindValue(col,null,type));
+					}
+				})
+
+				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
+				console.log(JSON.stringify(del.serialize()));
 			}
 
 			else
@@ -329,12 +369,45 @@ export class DatabaseSource extends SQLSource implements DataSource
 				// Might have been marked clean
 				if (!record.dirty) continue;
 
-				console.log("Update");
 				processed.push(record);
 				record.response = null;
 
 				retcols = this.updreturncolumns$;
 				if (retcols == null) retcols = [];
+
+				let rettypes:BindValue[] = [];
+				let pkey:string[] = this.primaryKey;
+
+				let pkeyflt:FilterStructure = new FilterStructure();
+
+				for (let i = 0; i < this.primaryKey.length; i++)
+				{
+					let filter:Filter = Filters.Equals(pkey[i]);
+					let value:any = record.getInitialValue(pkey[i]);
+					pkeyflt.and(filter.setConstraint(value),pkey[i]);
+					this.setTypes(filter.getBindValues());
+				}
+
+				let changes:BindValue[] = [];
+				let dirty:string[] = record.getDirty();
+
+				for (let i = 0; i < dirty.length; i++)
+				{
+					let type:string = this.datatypes$.get(dirty[i]);
+					changes.push(new BindValue(dirty[i],record.getValue(dirty[i]),type));
+				}
+
+				retcols.forEach((col) =>
+				{
+					if (!pkey.includes(col))
+					{
+						let type:string = this.datatypes$.get(col);
+						if (type != null) rettypes.push(new BindValue(col,null,type));
+					}
+				})
+
+				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
+				console.log(JSON.stringify(upd.serialize()));
 			}
 		}
 

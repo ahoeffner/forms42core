@@ -315,8 +315,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let values:BindValue[] = this.bind(record,columns);
 				let rettypes:BindValue[] = this.bind(null,this.insreturncolumns$);
-
 				let ins:Insert = new Insert(this,values,this.insreturncolumns$,rettypes);
+
 				batch.add(ins);
 			}
 
@@ -329,10 +329,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 				let rettypes:BindValue[] = this.bind(null,this.delreturncolumns$);
-
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
-				if (assert) del.assertions = this.assert(record);
 
+				if (assert) del.assertions = this.assert(record);
 				batch.add(del);
 			}
 
@@ -349,10 +348,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 				let changes:BindValue[] = this.bind(record,record.getDirty());
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 				let rettypes:BindValue[] = this.bind(null,this.updreturncolumns$);
-
 				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,rettypes);
-				if (assert) upd.assertions = this.assert(record);
 
+				if (assert) upd.assertions = this.assert(record);
 				batch.add(upd);
 			}
 		}

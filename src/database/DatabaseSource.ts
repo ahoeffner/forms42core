@@ -355,7 +355,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		this.jdbconn$.send(batch);
+		await this.jdbconn$.send(batch);
 
 		this.dirty$ = [];
 		return(processed);

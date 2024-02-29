@@ -42,6 +42,7 @@ export class BindValue implements Serializable
 	private out$:boolean = false;
 	private column$:string = null;
 	private force$:boolean = false;
+	private unique$:number = (new Date()).getTime();
 
 	/**
 	 *
@@ -70,6 +71,13 @@ export class BindValue implements Serializable
 	public set name(name:string)
 	{
 		this.name$ = name;
+	}
+
+	/** Generate unique name */
+	public setUnique() : BindValue
+	{
+		this.name = "b"+(this.unique$++)+"_"+this.name;
+		return(this);
 	}
 
 	/** Column to bind to */

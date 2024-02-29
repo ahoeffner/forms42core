@@ -1207,7 +1207,7 @@ export class Block
 			filters.and(detail.datasource.getFilters());
 
 			// Make bindvalue names unique
-			filters.getBindValues().forEach((b) => {b.name = detail.name+"_"+b.name});
+			filters.getBindValues().forEach((b) => {b.setUnique()});
 
 			let filter:SubQuery = new SubQuery(rel.master.fields);
 			filter.constraint = new Query(detail.datasource,rel.detail.fields,filters);

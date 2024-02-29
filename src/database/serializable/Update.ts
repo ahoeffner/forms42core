@@ -54,6 +54,8 @@ export class Update implements Serializable
 		if (!Array.isArray(changes))
 			changes = [changes];
 
+		changes.forEach((b) => b.setUnique());
+
 		if (filter)
 		{
 			if (!(filter instanceof FilterStructure))
@@ -98,8 +100,10 @@ export class Update implements Serializable
 			cols.push(
 				{
 					column: change.column,
-					value: change.value,
+
+					name: change.name,
 					type: change.type,
+					value: change.value
 				}
 			)
 		})

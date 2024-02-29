@@ -300,8 +300,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 			if (this.rowlocking == LockMode.None)
 				assert = false;
 
-			let retcols:string[] = [];
 			let record:Record = this.dirty$[i];
+
+			if (record.locked)
+				assert = false;
 
 			if (record.failed)
 				continue;
@@ -311,25 +313,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 				processed.push(record);
 				record.response = null;
 
-				let values:BindValue[] = [];
-				let rettypes:BindValue[] = [];
+				let values:BindValue[] = this.bind(record,columns);
+				let rettypes:BindValue[] = this.bind(null,this.insreturncolumns$);
 
-				retcols = this.insreturncolumns$;
-				if (retcols == null) retcols = [];
-
-				for (let i = 0; i < columns.length; i++)
-				{
-					let type:string = this.datatypes$.get(columns[i]);
-					values.push(new BindValue(columns[i],record.getValue(columns[i]),type));
-				}
-
-				retcols.forEach((col) =>
-				{
-					let type:string = this.datatypes$.get(col);
-					if (type != null) rettypes.push(new BindValue(col,null,type));
-				})
-
-				let ins:Insert = new Insert(this,values,retcols,rettypes);
+				let ins:Insert = new Insert(this,values,this.insreturncolumns$,rettypes);
 				batch.add(ins);
 			}
 
@@ -340,33 +327,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 				processed.push(record);
 				record.response = null;
 
-				if (record.locked)
-					assert = false;
-
-				retcols = this.delreturncolumns$;
-				if (retcols == null) retcols = [];
-
-				let pkey:string[] = this.primaryKey;
-				let pkeyflt:FilterStructure = new FilterStructure();
-
-				for (let i = 0; i < this.primaryKey.length; i++)
-				{
-					let filter:Filter = Filters.Equals(pkey[i]);
-					let value:any = record.getInitialValue(pkey[i]);
-					pkeyflt.and(filter.setConstraint(value),pkey[i]);
-					this.setTypes(filter.getBindValues());
-				}
-
-				let rettypes:BindValue[] = [];
-
-				retcols.forEach((col) =>
-				{
-					if (!pkey.includes(col))
-					{
-						let type:string = this.datatypes$.get(col);
-						if (type != null) rettypes.push(new BindValue(col,null,type));
-					}
-				})
+				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
+				let rettypes:BindValue[] = this.bind(null,this.delreturncolumns$);
 
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
 				if (assert) del.assertions = this.assert(record);
@@ -384,44 +346,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 				processed.push(record);
 				record.response = null;
 
-				if (record.locked)
-					assert = false;
+				let changes:BindValue[] = this.bind(record,record.getDirty());
+				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
+				let rettypes:BindValue[] = this.bind(null,this.updreturncolumns$);
 
-				retcols = this.updreturncolumns$;
-				if (retcols == null) retcols = [];
-
-				let rettypes:BindValue[] = [];
-				let pkey:string[] = this.primaryKey;
-
-				let pkeyflt:FilterStructure = new FilterStructure();
-
-				for (let i = 0; i < this.primaryKey.length; i++)
-				{
-					let filter:Filter = Filters.Equals(pkey[i]);
-					let value:any = record.getInitialValue(pkey[i]);
-					pkeyflt.and(filter.setConstraint(value),pkey[i]);
-					this.setTypes(filter.getBindValues());
-				}
-
-				let changes:BindValue[] = [];
-				let dirty:string[] = record.getDirty();
-
-				for (let i = 0; i < dirty.length; i++)
-				{
-					let type:string = this.datatypes$.get(dirty[i]);
-					changes.push(new BindValue(dirty[i],record.getValue(dirty[i]),type));
-				}
-
-				retcols.forEach((col) =>
-				{
-					if (!pkey.includes(col))
-					{
-						let type:string = this.datatypes$.get(col);
-						if (type != null) rettypes.push(new BindValue(col,null,type));
-					}
-				})
-
-				let upd:Update = new Update(this,changes,pkeyflt,retcols,rettypes);
+				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,rettypes);
 				if (assert) upd.assertions = this.assert(record);
 
 				batch.add(upd);
@@ -882,6 +811,39 @@ export class DatabaseSource extends SQLSource implements DataSource
 		})
 
 		return(asserts);
+	}
+
+
+	private bind(record:Record, columns:string[]) : BindValue[]
+	{
+		let bindvals:BindValue[] = [];
+
+		if (columns == null)
+			return(bindvals);
+
+		for (let i = 0; i < columns.length; i++)
+		{
+			let type:string = this.datatypes$.get(columns[i]);
+			bindvals.push(new BindValue(columns[i],record?.getValue(columns[i]),type));
+		}
+
+		return(bindvals);
+	}
+
+	private getPrimarykeyFilter(record:Record) : FilterStructure
+	{
+		let pkey:string[] = this.primaryKey;
+		let pkeyflt:FilterStructure = new FilterStructure();
+
+		for (let i = 0; i < this.primaryKey.length; i++)
+		{
+			let filter:Filter = Filters.Equals(pkey[i]);
+			let value:any = record.getInitialValue(pkey[i]);
+			pkeyflt.and(filter.setConstraint(value),pkey[i]);
+			this.setTypes(filter.getBindValues());
+		}
+
+		return(pkeyflt);
 	}
 
 	private async process(record:Record, response:any) : Promise<boolean>

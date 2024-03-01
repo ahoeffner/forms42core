@@ -61,7 +61,7 @@ export class Insert implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "create";
+		json.function = "insert";
 		json.source = this.source.name;
 
 		let cols:any[] = [];

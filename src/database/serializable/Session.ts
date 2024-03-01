@@ -23,6 +23,14 @@ import { Serializable } from "./Serializable.js";
 
 export class Session implements Serializable
 {
+	public custom:any = null;
+	public scope:string = null;
+	public token:string = null;
+	public method:string = null;
+	public clientinfo:any = null;
+	public username:string = null;
+	public password:string = null;
+
 	constructor(private request:SessionRequest)
 	{
 	}
@@ -35,15 +43,22 @@ export class Session implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
+
 		json.function = "session";
+		json.request = SessionRequest[this.request];
 
 		if (this.request == SessionRequest.keepalive)
 			json.keepalive = true;
 
-		else
+		if (this.scope) json.scope = this.scope;
+		if (this.token) json.token = this.token;
+		if (this.method) json.method = this.method;
 
-		if (this.request == SessionRequest.release)
-			json.release = true;
+		if (this.username) json.username = this.username;
+		if (this.password) json.password = this.password;
+
+		if (this.custom) json.custom = this.custom;
+		if (this.clientinfo) json.clientinfo = this.clientinfo;
 
 		return(json);
 	}
@@ -51,6 +66,10 @@ export class Session implements Serializable
 
 export enum SessionRequest
 {
+	commit,
+	connect,
 	release,
-	keepalive
+	rollback,
+	keepalive,
+	disconnect
 }

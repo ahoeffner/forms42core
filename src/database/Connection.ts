@@ -189,18 +189,16 @@ export class Connection extends BaseConnection
 		let method:string = this.authmethod$;
 		if (!method) method = "database";
 
-		let payload:any =
-		{
-			"scope": scope,
-			"method": method,
-			"function": "authenticate"
-		};
+		let session:Session = new Session(SessionRequest.connect);
+
+		session.scope = scope;
+		session.method = method;
 
 		if (username)
-			payload.username = username;
+			session.username = username;
 
 		if (password)
-			payload["password"] = password;
+			session.password = password;
 
 		let cust:any = null;
 
@@ -217,18 +215,18 @@ export class Connection extends BaseConnection
 			{cust[name] = value})
 
 		if (cust)
-			payload.custom = cust;
+			session.custom = cust;
 
 		if (this.clientinfo$.size > 0)
 		{
 			let info:{name:string, value:any}[] = [];
 			this.clientinfo$.forEach((value,name) => info.push({name: name, value: value}));
-			payload["clientinfo"] = info;
+			session.clientinfo = info;
 		}
 
 		Logger.log(Type.database,"connect");
 		let thread:number = FormsModule.showLoading("Connecting");
-		let response:any = await this.post("/",payload);
+		let response:any = await this.send(session);
 		FormsModule.hideLoading(thread);
 
 		if (!response.success)
@@ -236,9 +234,6 @@ export class Connection extends BaseConnection
 			Messages.handle(MSGGRP.ORDB,response.message,Level.fine);
 			return(false);
 		}
-
-		if (response["version"])
-			console.log("OpenRestDB Version: "+response.version);
 
 		this.trx$ = new Object();
 		this.conn$ = response.session;
@@ -263,16 +258,17 @@ export class Connection extends BaseConnection
 		this.trx = new Object();
 		this.touched = new Date();
 
-		let payload:any =
-		{
-			session: this.conn$
-		};
+		let cust:any = (this.attributes$.size > 0) ? {} : null;
+		let session:Session = new Session(SessionRequest.disconnect);
 
 		this.attributes$.forEach((value,name) =>
-			{payload[name] = value})
+			{cust[name] = value})
+
+		if (cust)
+			session.custom = cust;
 
 		Logger.log(Type.database,"disconnect");
-		let response:any = await this.post("disconnect",payload);
+		let response:any = await this.send(session);
 
 		if (response.success)
 		{
@@ -294,17 +290,18 @@ export class Connection extends BaseConnection
 		this.trx = new Object();
 		this.touched = new Date();
 
-		let payload:any =
-		{
-			session: this.conn$
-		};
+		let cust:any = (this.attributes$.size > 0) ? {} : null;
+		let session:Session = new Session(SessionRequest.commit);
 
 		this.attributes$.forEach((value,name) =>
-			{payload[name] = value})
+			{cust[name] = value})
+
+		if (cust)
+			session.custom = cust;
 
 		Logger.log(Type.database,"commit");
 		let thread:number = FormsModule.showLoading("Comitting");
-		let response:any = await this.post("commit",payload);
+		let response:any = await this.send(session);
 		FormsModule.hideLoading(thread);
 
 		if (response.success)
@@ -333,17 +330,18 @@ export class Connection extends BaseConnection
 
 		this.tmowarn = false;
 
-		let payload:any =
-		{
-			session: this.conn$
-		};
+		let cust:any = (this.attributes$.size > 0) ? {} : null;
+		let session:Session = new Session(SessionRequest.rollback);
 
 		this.attributes$.forEach((value,name) =>
-			{payload[name] = value})
+			{cust[name] = value})
+
+		if (cust)
+			session.custom = cust;
 
 		Logger.log(Type.database,"rollback");
 		let thread:number = FormsModule.showLoading("Rolling back");
-		let response:any = await this.post("rollback",payload);
+		let response:any = await this.send(session);
 		FormsModule.hideLoading(thread);
 
 		if (response.success)
@@ -370,15 +368,14 @@ export class Connection extends BaseConnection
 	{
 		this.tmowarn = false;
 
-		let payload:any =
-		{
-			session: this.conn$
-		};
+		let cust:any = (this.attributes$.size > 0) ? {} : null;
+		let session:Session = new Session(SessionRequest.release);
 
 		this.attributes$.forEach((value,name) =>
-			{payload[name] = value})
+			{cust[name] = value})
 
-		let session:Session = new Session(SessionRequest.release);
+		if (cust)
+			session.custom = cust;
 
 		Logger.log(Type.database,"release");
 		let thread:number = FormsModule.showLoading("Releasing connection");
@@ -439,8 +436,8 @@ export class Connection extends BaseConnection
 
 		let payload:any = request.serialize();
 
-		// Add any custom
-		payload.session = this.conn$;
+		if (this.conn$)
+			payload.session = this.conn$;
 
 		let thread:number = FormsModule.showLoading("Execute "+payload.function);
 		let response:any = await this.post("/",payload);

@@ -19,11 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { DataType } from "../DataType";
-import { Connection } from "../Connection";
-import { Serializable } from "./Serializable";
-import { Parameter, ParameterType } from "../Parameter";
-import { DatabaseConnection } from "../../public/DatabaseConnection";
+import { DataType } from "../DataType.js";
+import { Connection } from "../Connection.js";
+import { Serializable } from "./Serializable.js";
+import { Parameter, ParameterType } from "../Parameter.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 
 /** Defines a procedure or function call */
@@ -35,7 +35,7 @@ export class Function implements Serializable
 	private retarg$:Parameter = null;
 	private jdbconn$:Connection = null;
 
-	public constructor(connection:DatabaseConnection, private name:string)
+	public constructor(connection:DatabaseConnection, private name?:string)
 	{
 		this.jdbconn$ = Connection.getConnection(connection);
 	}
@@ -69,6 +69,7 @@ export class Function implements Serializable
 	public async execute() : Promise<boolean>
 	{
 		this.response$ = await this.jdbconn$.send(this);
+		console.log(this.response$)
 		return(this.response$.success);
 	}
 

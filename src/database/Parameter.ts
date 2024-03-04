@@ -89,7 +89,7 @@ export class Parameter implements Serializable
 		json.type = this.dtype;
 
 		if (this.value) json.value = this.value;
-		if (this.ptype != ParameterType.in) json.ptype = ParameterType[this.ptype];
+		if (this.ptype != ParameterType.in) json.inout = ParameterType[this.ptype];
 
 		return(json);
 	}

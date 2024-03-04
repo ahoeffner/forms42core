@@ -20,18 +20,28 @@
 */
 
 import { DataType } from "../DataType";
+import { Connection } from "../Connection";
 import { Serializable } from "./Serializable";
 import { Parameter, ParameterType } from "../Parameter";
-import { DataSource } from "../../model/interfaces/DataSource";
+import { DatabaseConnection } from "../../public/DatabaseConnection";
 
 
 /** Define a procedure or function call */
 export class Function implements Serializable
 {
+	private args:Parameter[] = [];
 	private retarg:Parameter = null;
+	private jdbconn$:Connection = null;
 
-	public constructor(private source:DataSource, private args:Parameter[])
+	public constructor(connection:DatabaseConnection, private name:string, args?:Parameter|Parameter[])
 	{
+		if (!args) args = [];
+
+		if (!Array.isArray(args))
+			args = [args];
+
+		this.args = args;
+		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 
@@ -44,12 +54,27 @@ export class Function implements Serializable
 
 	public async execute() : Promise<boolean>
 	{
+		await this.jdbconn$.send(this);
 		return(true);
 	}
 
 
 	public serialize() : any
 	{
-		throw new Error("Method not implemented.");
+		let json:any = {};
+		json.function = "function";
+
+		json.source = this.name;
+
+		let args:any[] = [];
+		this.args.forEach((arg) => args.push(arg.serialize()));
+
+		if (args.length > 0)
+			json.parameters = args;
+
+		if (this.retarg)
+			json.returning = this.retarg.serialize();
+
+		return(json);
 	}
 }

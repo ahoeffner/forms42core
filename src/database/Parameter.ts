@@ -20,6 +20,7 @@
 */
 
 import { DataType } from "./DataType.js";
+import { Serializable } from "./serializable/Serializable.js";
 
 /**
  * Parameter types, mostly used with database
@@ -36,7 +37,7 @@ export enum ParameterType
  * Parameter, mostly used with database
  * stored proedures/functions
  */
-export class Parameter
+export class Parameter implements Serializable
 {
 	value:any;
 	name:string;
@@ -44,7 +45,7 @@ export class Parameter
 	ptype:ParameterType;
 
 	/**
-	 * 
+	 *
 	 * @param name  : name
 	 * @param value : value
 	 * @param dtype : data type
@@ -77,5 +78,19 @@ export class Parameter
 
 		this.dtype = dtype;
 		this.ptype = ptype;
+	}
+
+
+	public serialize() : any
+	{
+		let json:any = {};
+
+		json.name = this.name;
+		json.type = this.dtype;
+
+		if (this.value) json.value = this.value;
+		if (this.ptype != ParameterType.in) json.ptype = ParameterType[this.ptype];
+
+		return(json);
 	}
 }

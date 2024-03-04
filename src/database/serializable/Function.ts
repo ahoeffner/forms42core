@@ -26,54 +26,74 @@ import { Parameter, ParameterType } from "../Parameter";
 import { DatabaseConnection } from "../../public/DatabaseConnection";
 
 
-/** Define a procedure or function call */
+/** Defines a procedure or function call */
 export class Function implements Serializable
 {
-	private args:Parameter[] = [];
-	private retarg:Parameter = null;
+	private response$:any = null;
+	private args$:Parameter[] = [];
+	private update$:boolean = false;
+	private retarg$:Parameter = null;
 	private jdbconn$:Connection = null;
 
-	public constructor(connection:DatabaseConnection, private name:string, args?:Parameter|Parameter[])
+	public constructor(connection:DatabaseConnection, private name:string)
 	{
-		if (!args) args = [];
-
-		if (!Array.isArray(args))
-			args = [args];
-
-		this.args = args;
 		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
+	/** The name of the stored procedure/function */
+	public setName(name:string) : void
+	{
+		this.name = name;
+	}
+
+	/** Add call parameter */
+	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType) : void
+	{
+		let param:Parameter = new Parameter(name,value,datatype,paramtype);
+		this.args$.push(param);
+	}
+
+	/** If the procedure changes any values the backend */
+	public set update(flag:boolean)
+	{
+		this.update$ = flag;
+	}
 
 	/** Define return value for functions */
-	public returns(arg:string, type?:DataType|string) : void
+	public returns(name:string, type?:DataType|string) : void
 	{
-		this.retarg = new Parameter(arg,null,type,ParameterType.out);
+		this.retarg$ = new Parameter(name,null,type,ParameterType.out);
 	}
 
-
+	/** Execute the procedure */
 	public async execute() : Promise<boolean>
 	{
-		await this.jdbconn$.send(this);
-		return(true);
+		this.response$ = await this.jdbconn$.send(this);
+		return(this.response$.success);
 	}
 
+	/** The error message from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
 
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "function";
+		json.function = "invoke";
 
 		json.source = this.name;
+		json.update = this.update$;
 
 		let args:any[] = [];
-		this.args.forEach((arg) => args.push(arg.serialize()));
+		this.args$.forEach((arg) => args.push(arg.serialize()));
 
 		if (args.length > 0)
 			json.parameters = args;
 
-		if (this.retarg)
-			json.returning = this.retarg.serialize();
+		if (this.retarg$)
+			json.returning = this.retarg$.serialize();
 
 		return(json);
 	}

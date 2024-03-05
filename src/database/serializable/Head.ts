@@ -33,7 +33,7 @@ export class Head implements Serializable
 	{
 		let json:any = {};
 
-		json.function = "describe";
+		json.request = "describe";
 		json.source = this.source.name;
 
 		return(json);

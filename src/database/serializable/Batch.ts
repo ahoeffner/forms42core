@@ -35,7 +35,7 @@ export class Batch implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "batch";
+		json.request = "batch";
 
 		let steps:any[] = [];
 

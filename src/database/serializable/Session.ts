@@ -44,8 +44,8 @@ export class Session implements Serializable
 	{
 		let json:any = {};
 
-		json.function = "session";
-		json.request = SessionRequest[this.request];
+		json.request = "session";
+		json.type = SessionRequest[this.request];
 
 		if (this.request == SessionRequest.keepalive)
 			json.keepalive = true;

@@ -90,7 +90,7 @@ export class Update implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "update";
+		json.request = "update";
 		json.source = this.source.name;
 
 		let cols:any[] = [];

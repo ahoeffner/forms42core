@@ -31,10 +31,10 @@ export class Cursor implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "cursor";
+		json.request = "cursor";
 
 		json.name = this.cursor;
-		json.request = CursorRequest[this.request];
+		json.type = CursorRequest[this.request];
 
 		return(json);
 	}

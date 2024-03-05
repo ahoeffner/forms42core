@@ -83,7 +83,7 @@ export class Delete implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "delete";
+		json.request = "delete";
 		json.source = this.source.name;
 
 		if (this.filter)

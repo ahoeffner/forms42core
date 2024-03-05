@@ -82,7 +82,7 @@ export class Function implements Serializable
 	public serialize() : any
 	{
 		let json:any = {};
-		json.function = "invoke";
+		json.request = "invoke";
 
 		json.source = this.name;
 		json.update = this.update$;

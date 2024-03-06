@@ -19,37 +19,40 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { DataType } from "../DataType.js";
-import { Procedure } from "./Procedure.js";
-import { Parameter, ParameterType } from "../Parameter.js";
+import { Serializable } from "./Serializable";
 
 
-/** Defines a procedure or function call */
-export class Function extends Procedure
+export class Map implements Serializable
 {
-	private retarg$:Parameter = null;
+	private mapping$:Entry[] = [];
 
 
-	/** Define return value for functions */
-	public returns(name:string, type?:DataType|string) : void
+	public add(name:string, bind:string) : void
 	{
-		this.retarg$ = new Parameter(name,null,type,ParameterType.out);
-	}
-
-	public getReturnValue() : any
-	{
-		let value:any = this.response$[this.retarg$.name];
-
-		if (this.retarg$.isDate() && typeof value === "number")
-			value = new Date(value);
-
-		return(value);
+		this.mapping$.push(new Entry(name,bind));
 	}
 
 	public serialize() : any
 	{
-		let json:any = super.serialize();
-		if (this.retarg$) json.returning = this.retarg$.serialize();
+		let json:any = {};
+		json.request = "map";
+
+		this.mapping$.forEach((entry) =>
+		{json[entry.name] = entry.bind;})
+
 		return(json);
 	}
+}
+
+
+export enum CursorRequest
+{
+	fetch,
+	close
+}
+
+
+class Entry
+{
+	constructor(public name:string, public bind:string){}
 }

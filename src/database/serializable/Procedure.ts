@@ -1,0 +1,143 @@
+/*
+  MIT License
+
+  Copyright © 2023 Alex Høffner
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software
+  and associated documentation files (the “Software”), to deal in the Software without
+  restriction, including without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the
+  Software is furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in all copies or
+  substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING
+  BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+  DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+
+import { DataType } from "../DataType.js";
+import { Connection } from "../Connection.js";
+import { Serializable } from "./Serializable.js";
+import { Parameter, ParameterType } from "../Parameter.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
+
+
+/** Defines a procedure or function call */
+export class Procedure implements Serializable
+{
+	protected response$:any = null;
+	protected args$:Parameter[] = [];
+	protected update$:boolean = false;
+	protected jdbconn$:Connection = null;
+
+	protected types$:Map<string,any> = new Map<string,any>();
+	protected values$:Map<string,any> = new Map<string,any>();
+
+	protected ignore$:string[] = ["success","request","instance"];
+	protected datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
+
+
+	public constructor(connection:DatabaseConnection, private name?:string)
+	{
+		this.jdbconn$ = Connection.getConnection(connection);
+	}
+
+	/** The name of the stored procedure/function */
+	public setName(name:string) : void
+	{
+		this.name = name;
+	}
+
+	/** Add call parameter */
+	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType) : void
+	{
+		let param:Parameter = new Parameter(name,value,datatype,paramtype);
+		this.args$.push(param);
+	}
+
+	/** Add call parameter */
+	public addOutParameter(name:string, datatype?:DataType|string) : void
+	{
+		let param:Parameter = new Parameter(name,null,datatype,ParameterType.out);
+		this.args$.push(param);
+	}
+
+	/** Add call parameter */
+	public addInOutParameter(name:string, datatype?:DataType|string) : void
+	{
+		let param:Parameter = new Parameter(name,null,datatype,ParameterType.inout);
+		this.args$.push(param);
+	}
+
+	/** If the procedure changes any values the backend */
+	public set update(flag:boolean)
+	{
+		this.update$ = flag;
+	}
+
+	/** Get returned value */
+	public getValue(name:string) : any
+	{
+		return(this.values$.get(name.toLowerCase()));
+	}
+
+	/** Execute the procedure */
+	public async execute() : Promise<boolean>
+	{
+		this.response$ = await this.jdbconn$.send(this);
+
+		if (!this.response$.success)
+			return(false);
+
+		let map:Map<string,Parameter> =
+			new Map<string,Parameter>();
+
+		this.args$.forEach((par) =>
+		{map.set(par.name.toLowerCase(),par)});
+
+		Object.keys(this.response$).forEach((name) =>
+		{
+			let pname = name.toLowerCase();
+			let parm:Parameter = map.get(pname);
+
+			if (parm)
+			{
+				let value:any = this.response$[name];
+
+				if (parm.isDate() && typeof value === "number")
+					value = new Date(value);
+
+				this.values$.set(pname,value);
+			}
+		})
+
+		return(true);
+	}
+
+	/** The error message from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	public serialize() : any
+	{
+		let json:any = {};
+		json.request = "invoke";
+
+		json.source = this.name;
+		json.update = this.update$;
+
+		let args:any[] = [];
+		this.args$.forEach((arg) => args.push(arg.serialize()));
+
+		if (args.length > 0)
+			json.parameters = args;
+
+		return(json);
+	}
+}

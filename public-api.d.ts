@@ -72,12 +72,15 @@ export { StoredFunction } from './src/database/StoredFunction.js';
 export { StoredProcedure } from './src/database/StoredProcedure.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
 
+export { Map } from './src/database/serializable/Map.js';
+export { ParameterType } from './src/database/Parameter.js';
 export { Query } from './src/database/serializable/Query.js';
 export { Batch } from './src/database/serializable/Batch.js';
+export { Script } from './src/database/serializable/Script.js';
 export { Delete } from './src/database/serializable/Delete.js';
 export { Insert } from './src/database/serializable/Insert.js';
 export { Function } from './src/database/serializable/Function.js';
-export { Parameter, ParameterType } from './src/database/Parameter.js';
+export { Procedure } from './src/database/serializable/Procedure.js';
 
 export { dates, WeekDays } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";

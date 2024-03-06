@@ -42,6 +42,7 @@ export class Parameter implements Serializable
 	value:any;
 	name:string;
 	dtype:string;
+	date:boolean;
 	ptype:ParameterType;
 
 	/**
@@ -74,10 +75,23 @@ export class Parameter implements Serializable
 			ptype = ParameterType.in;
 
 		this.name = name;
+		this.date = false;
 		this.value = value;
 
 		this.dtype = dtype;
 		this.ptype = ptype;
+
+		dtype = dtype.toLowerCase();
+
+		if (dtype == "date") this.date = true;
+		if (dtype == "datetime") this.date = true;
+		if (dtype == "timestamp") this.date = true;
+	}
+
+
+	public isDate() : boolean
+	{
+		return(this.date);
 	}
 
 

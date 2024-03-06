@@ -19,37 +19,37 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { DataType } from "../DataType.js";
-import { Procedure } from "./Procedure.js";
-import { Parameter, ParameterType } from "../Parameter.js";
+import { Serializable } from "./Serializable";
 
 
-/** Defines a procedure or function call */
-export class Function extends Procedure
+export class Script implements Serializable
 {
-	private retarg$:Parameter = null;
+	private steps$:Serializable[] = [];
 
 
-	/** Define return value for functions */
-	public returns(name:string, type?:DataType|string) : void
+	public add(step:Serializable) : void
 	{
-		this.retarg$ = new Parameter(name,null,type,ParameterType.out);
-	}
-
-	public getReturnValue() : any
-	{
-		let value:any = this.response$[this.retarg$.name];
-
-		if (this.retarg$.isDate() && typeof value === "number")
-			value = new Date(value);
-
-		return(value);
+		this.steps$.push(step);
 	}
 
 	public serialize() : any
 	{
-		let json:any = super.serialize();
-		if (this.retarg$) json.returning = this.retarg$.serialize();
+		let json:any = {};
+		json.request = "script";
+
+		let steps:any[] = [];
+
+		this.steps$.forEach((step) =>
+		{steps.push(step.serialize())});
+
+		json.steps = steps;
 		return(json);
 	}
+}
+
+
+export enum CursorRequest
+{
+	fetch,
+	close
 }

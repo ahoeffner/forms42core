@@ -25,11 +25,10 @@ import { Class } from '../public/Class.js';
 import { Framework } from './Framework.js';
 import { Components } from './Components.js';
 import { FormBacking } from './FormBacking.js';
-import { Canvas } from './properties/Canvas.js';
 import { dates } from '../model/dates/dates.js';
-import { Level, Messages } from '../messages/Messages.js';
 import { Form as ViewForm } from '../view/Form.js';
 import { Loading } from '../internal/forms/Loading.js';
+import { Level, Messages } from '../messages/Messages.js';
 import { Form as InternalForm } from '../internal/Form.js';
 import { EventType } from '../control/events/EventType.js';
 import { TriggerFunction } from '../public/TriggerFunction.js';
@@ -44,6 +43,8 @@ import { ApplicationHandler } from '../control/events/ApplicationHandler.js';
  */
 export class FormsModule
 {
+	public static production:boolean = false;
+	
 	private static root$:HTMLElement;
 	private static flush$:FlushStrategy;
 	private static showurl$:boolean = false;

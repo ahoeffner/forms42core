@@ -79,8 +79,8 @@ export class EventTransaction
 			// Dangerous
 			if (!FormsModule.production)
 			{
-				if (!block)	console.log("Multiple transactions running ("+events+")");
-				else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+				if (!block)	console.log("Warning, multiple transactions running ("+events+")");
+				else console.log("Warning, multiple transactions running on block "+block+" ["+events+"]");
 			}
 		}
 
@@ -109,8 +109,8 @@ export class EventTransaction
 			// Dangerous
 			if (!FormsModule.production)
 			{
-				if (!block)	console.log("Multiple transactions running ("+events+")");
-				else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+				if (!block)	console.log("Warning, multiple transactions running ("+events+")");
+				else console.log("Warning, multiple transactions running on block "+block+" ["+events+"]");
 			}
 		}
 	}

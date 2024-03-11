@@ -226,8 +226,8 @@ export class ListOfValues extends Form
 		this.lov.datasource.addColumns(this.lov.displayfields);
 
 		let page:string = ListOfValues.page;
-		let css:string = this.lov.cssclass;
 
+		let css:string = this.lov.cssclass;
 		page = page.replace("ROWS",this.lov.rows+"");
 		page = page.replace("CSS",css ? "class='"+css+"'" : "");
 

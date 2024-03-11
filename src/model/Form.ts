@@ -592,8 +592,17 @@ export class Form
 
 		if (init && inst && inst.field.row.exist)
 		{
-			inst.focus(true);
-			this.view.current = inst;
+			if (inst.row > 0)
+			{
+				let idx:number = inst.field.row.getFieldIndex(inst);
+				inst = inst.field.block.getRow(0).getFieldByIndex(idx);
+			}
+
+			if (inst)
+			{
+				inst.focus(true);
+				this.view.current = inst;
+			}
 		}
 
 		return(success);

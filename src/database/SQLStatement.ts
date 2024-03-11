@@ -45,7 +45,7 @@ export class SQLStatement
 	private cursor$:Cursor = null;
 	private patch$:boolean = false;
 	private message$:string = null;
-	private arrayfecth$:number = 1;
+	private arrayfetch$:number = 1;
 	private records$:any[][] = null;
 	private columns$:string[] = null;
 	private returning$:boolean = false;
@@ -112,13 +112,13 @@ export class SQLStatement
 	/** The number of rows to fetch from a select-statement per call to fetch */
 	public get arrayfetch() : number
 	{
-		return(this.arrayfecth$);
+		return(this.arrayfetch$);
 	}
 
 	/** The number of rows to fetch from a select-statement per call to fetch */
 	public set arrayfetch(size:number)
 	{
-		this.arrayfecth$ = size;
+		this.arrayfetch$ = size;
 	}
 
 	/** The error message from the backend */
@@ -165,7 +165,7 @@ export class SQLStatement
 			case "insert" : this.response$ = await this.jdbconn$.insert(sql); break;
 			case "update" : this.response$ = await this.jdbconn$.update(sql); break;
 			case "delete" : this.response$ = await this.jdbconn$.delete(sql); break;
-			case "select" : this.response$ = await this.jdbconn$.select(sql,this.cursor$,this.arrayfecth$,true); break;
+			case "select" : this.response$ = await this.jdbconn$.select(sql,this.cursor$,this.arrayfetch$,true); break;
 
 			default: this.response$ = await this.jdbconn$.execute(this.patch$,sql);
 		}

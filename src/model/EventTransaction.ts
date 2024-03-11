@@ -22,6 +22,7 @@
 import { Block } from "./Block.js";
 import { Record } from "./Record.js";
 import { EventType } from "../control/events/EventType.js";
+import { FormsModule } from "../application/FormsModule.js";
 
 export class EventTransaction
 {
@@ -76,8 +77,11 @@ export class EventTransaction
 			for (let i = 1; i < keys.length; i++)  events += "," + EventType[keys[i]];
 
 			// Dangerous
-			if (!block)	console.log("Multiple transactions running ("+events+")");
-			else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+			if (!FormsModule.production)
+			{
+				if (!block)	console.log("Multiple transactions running ("+events+")");
+				else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+			}
 		}
 
 		return(null);
@@ -103,8 +107,11 @@ export class EventTransaction
 			events += "," + EventType[newtrx.event];
 
 			// Dangerous
-			if (!block)	console.log("Multiple transactions running ("+events+")");
-			else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+			if (!FormsModule.production)
+			{
+				if (!block)	console.log("Multiple transactions running ("+events+")");
+				else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+			}
 		}
 	}
 }

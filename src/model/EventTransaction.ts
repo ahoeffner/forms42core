@@ -25,18 +25,15 @@ import { EventType } from "../control/events/EventType.js";
 
 export class EventTransaction
 {
-	private transactions:Map<string,Transaction> =
-		new Map<string,Transaction>();
+	private transactions:Map<string,Map<EventType,Transaction>> =
+		new Map<string,Map<EventType,Transaction>>();
 
 	public start(event:EventType, block:Block, record:Record) : EventType
 	{
 		// Ensure only 1 event is running, but
 		// too complicated for the common developer
 
-		//let running:EventType = this.getTrxSlot(block);
-		//if (running) return(running);
-
-		this.transactions.set(block?.name,new Transaction(event,block,record));
+		this.setTrxSlot(block,new Transaction(event,block,record));
 		return(null);
 	}
 
@@ -57,18 +54,58 @@ export class EventTransaction
 
 	public getEvent(block:Block) : EventType
 	{
-		return(this.transactions.get(block?.name)?.event);
+		let trxmap:Map<EventType,Transaction> = this.transactions.get(block?.name);
+		return(trxmap?.get(trxmap.keys().next().value).event);
 	}
 
 	public getRecord(block:Block) : Record
 	{
-		return(this.transactions.get(block?.name)?.record);
+		let trxmap:Map<EventType,Transaction> = this.transactions.get(block?.name);
+		return(trxmap?.get(trxmap.keys().next().value).record);
 	}
 
 	public getTrxSlot(block:Block) : EventType
 	{
-		let trx:Transaction = this.transactions.get(block?.name);
-		return(trx?.event);
+		let trxmap:Map<EventType,Transaction> = this.transactions.get(block?.name);
+
+		if (trxmap && trxmap.size > 0)
+		{
+			let keys:EventType[] = Array.from(trxmap.keys());
+
+			let events:string = EventType[keys[0]];
+			for (let i = 1; i < keys.length; i++)  events += "," + EventType[keys[i]];
+
+			// Dangerous
+			if (!block)	console.log("Multiple transactions running ("+events+")");
+			else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+		}
+
+		return(null);
+	}
+
+	private setTrxSlot(block:Block, newtrx:Transaction) : void
+	{
+		let trxmap:Map<EventType,Transaction> = this.transactions.get(block?.name);
+
+		if (!trxmap)
+		{
+			trxmap = new Map<EventType,Transaction>();
+
+			trxmap.set(newtrx.event,newtrx);
+			this.transactions.set(block?.name,trxmap);
+		}
+		else
+		{
+			let keys:EventType[] = Array.from(trxmap.keys());
+
+			let events:string = "";
+			for (let i = 0; i < keys.length; i++)  events += EventType[keys[i]] + ",";
+			events += "," + EventType[newtrx.event];
+
+			// Dangerous
+			if (!block)	console.log("Multiple transactions running ("+events+")");
+			else console.log("Multiple transactions running on block "+block+" ["+events+"]");
+		}
 	}
 }
 

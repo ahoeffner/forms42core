@@ -30,8 +30,11 @@ export class EventTransaction
 
 	public start(event:EventType, block:Block, record:Record) : EventType
 	{
-		let running:EventType = this.getTrxSlot(block);
-		if (running) return(running);
+		// Ensure only 1 event is running, but
+		// too complicated for the common developer
+
+		//let running:EventType = this.getTrxSlot(block);
+		//if (running) return(running);
 
 		this.transactions.set(block?.name,new Transaction(event,block,record));
 		return(null);

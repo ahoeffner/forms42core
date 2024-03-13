@@ -592,7 +592,6 @@ export class Form
 
 		if (init && inst && inst.field.row.exist)
 		{
-			console.log("Focus")
 			if (inst.row > 0)
 			{
 				let idx:number = inst.field.row.getFieldIndex(inst);
@@ -604,10 +603,6 @@ export class Form
 				inst.focus(true);
 				this.view.current = inst;
 			}
-		}
-		else
-		{
-			console.log("No Focus")
 		}
 
 		return(success);

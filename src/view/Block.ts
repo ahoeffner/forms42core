@@ -1107,6 +1107,7 @@ export class Block
 
 	private displaycurrent() : void
 	{
+		console.log("displaycurrent")
 		let current:Row = this.rows$.get(-1);
 
 		if (current != null && this.getCurrentRow().exist)

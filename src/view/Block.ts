@@ -37,7 +37,6 @@ import { FormBacking } from "../application/FormBacking.js";
 import { DateConstraint } from "../public/DateConstraint.js";
 import { BasicProperties } from "./fields/BasicProperties.js";
 import { FieldFeatureFactory } from "./FieldFeatureFactory.js";
-import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FieldState } from "./fields/interfaces/FieldImplementation.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
 import { FilterIndicator } from "../application/tags/FilterIndicator.js";
@@ -903,13 +902,13 @@ export class Block
 
 		if (this.row$ < 0)
 		{
-			this.row$ = 0;
-
-			if (rownum > 0)
-				this.row$ = rownum;
-
 			if (this.getRow(this.row).status != Status.na)
 			{
+				this.row$ = 0;
+
+				if (rownum > 0)
+					this.row$ = rownum;
+
 				this.openrow();
 				this.displaycurrent();
 

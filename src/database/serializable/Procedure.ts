@@ -31,7 +31,7 @@ export class Procedure implements Serializable
 {
 	protected response$:any = null;
 	protected args$:Parameter[] = [];
-	protected writes$:boolean = false;
+	protected modyfies$:boolean = false;
 
 	protected types$:Map<string,any> = new Map<string,any>();
 	protected values$:Map<string,any> = new Map<string,any>();
@@ -67,9 +67,9 @@ export class Procedure implements Serializable
 	}
 
 	/** If the statement modyfied the backend */
-	public get modyfied() : boolean
+	public get modyfies() : boolean
 	{
-		return(this.writes$);
+		return(this.modyfies$);
 	}
 
 	/** Get returned value */
@@ -86,6 +86,9 @@ export class Procedure implements Serializable
 
 		if (!this.response$.success)
 			return(false);
+
+		if (this.response$.writes)
+			this.modyfies$ = true;
 
 		let map:Map<string,Parameter> =
 			new Map<string,Parameter>();

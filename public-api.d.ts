@@ -55,6 +55,7 @@ export { ILike } from './src/model/filters/ILike.js';
 export { AnyOf } from './src/model/filters/AnyOf.js';
 export { Equals } from './src/model/filters/Equals.js';
 export { IsNull } from './src/model/filters/IsNull.js';
+export { Custom } from './src/model/filters/Custom.js';
 export { Between } from './src/model/filters/Between.js';
 export { Contains } from './src/model/filters/Contains.js';
 export { LessThan } from './src/model/filters/LessThan.js';

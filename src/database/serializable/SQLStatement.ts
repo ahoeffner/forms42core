@@ -44,8 +44,8 @@ export class SQLStatement implements Serializable
 	private message$:string = null;
 	private arrayfetch$:number = 1;
 	private records$:any[][] = null;
-	private writes$:boolean = false;
 	private columns$:string[] = null;
+	private modyfies$:boolean = false;
 	private jdbconn$:Connection = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
@@ -56,9 +56,9 @@ export class SQLStatement implements Serializable
 	}
 
 	/** If the statement modyfied the backend */
-	public get modyfied() : boolean
+	public get modyfies() : boolean
 	{
-		return(this.writes$);
+		return(this.modyfies$);
 	}
 
 	/** The columns involved in a select statement */
@@ -123,6 +123,9 @@ export class SQLStatement implements Serializable
 			this.cursor$ = null;
 			this.message$ = this.response$.message;
 		}
+
+		if (this.response$.writes)
+			this.modyfies$ = true;
 
 		if (success)
 		{

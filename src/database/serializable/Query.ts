@@ -131,7 +131,7 @@ export class Query implements Serializable
 
 		this.assert = assert;
 	}
-	
+
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<any>
 	{

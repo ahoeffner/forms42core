@@ -53,7 +53,12 @@ export class SQLStatement implements Serializable
 	public constructor(stmt:string, cursor?:boolean)
 	{
 		this.stmt$ = stmt;
-		if (cursor) this.cursor = true;
+
+		if (cursor)
+		{
+			this.cursor = true;
+			this.arrayfetch$ = 32;
+		}
 	}
 
 	/** If the statement modyfied the backend */

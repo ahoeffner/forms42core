@@ -117,7 +117,7 @@ export class FilterStructure implements Serializable
 			return;
 
 		if (!(filter instanceof FilterStructure) && name == null)
-			name = filter.getBindValueName();
+			name = filter.name();
 
 		this.delete(name);
 
@@ -138,7 +138,7 @@ export class FilterStructure implements Serializable
 			return;
 
 		if (!(filter instanceof FilterStructure) && name == null)
-			name = filter.getBindValueName();
+			name = filter.name();
 
 			this.type = "and";
 			this.delete(name);

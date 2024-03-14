@@ -50,9 +50,10 @@ export class SQLStatement implements Serializable
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
 	/** @param connection : A connection to OpenRestDB */
-	public constructor(stmt:string)
+	public constructor(stmt:string, cursor?:boolean)
 	{
 		this.stmt$ = stmt;
+		if (cursor) this.cursor = true;
 	}
 
 	/** If the statement modyfied the backend */
@@ -114,8 +115,8 @@ export class SQLStatement implements Serializable
 	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
 		this.jdbconn$ = Connection.getConnection(conn);
+		this.response$ = await this.jdbconn$.send(this);
 
-		this.response$ = this.jdbconn$.send(this);
 		let success:boolean = this.response$.success;
 
 		if (!success)
@@ -140,7 +141,10 @@ export class SQLStatement implements Serializable
 	public async fetch() : Promise<any[]>
 	{
 		if (!this.cursor$)
+		{
+			Messages.warn(MSGGRP.ORDB,4,this.stmt$);
 			return(null);
+		}
 
 		if (this.cursor$.eof)
 			return(null);
@@ -224,10 +228,13 @@ export class SQLStatement implements Serializable
 		{
 			if (Array.isArray(rows[r])) // select
 			{
-				for (let c = 0; c < columns.length; c++)
+				if (this.types)
 				{
-					if (datetypes.includes(this.types[c].toLowerCase()))
-						rows[r][c] = new Date(rows[r][c]);
+					for (let c = 0; c < columns.length; c++)
+					{
+						if (datetypes.includes(this.types[c].toLowerCase()))
+							rows[r][c] = new Date(rows[r][c]);
+					}
 				}
 			}
 			else // returning
@@ -253,20 +260,15 @@ export class SQLStatement implements Serializable
 		json.source = this.stmt$;
 
 		if (this.cursor$)
+		{
 			json.cursor = this.cursor$.name;
+			json.arrayfetch = this.arrayfetch$;
+		}
 
 		let bv:any[] = [];
 
 		this.bindvalues$.forEach((value) =>
-		{
-			bv.push
-			(
-				{
-					name: value.name,
-					value: value.serialize()
-				}
-			)
-		})
+		  {bv.push(value.serialize());})
 
 		if (bv.length > 0)
 			json.bindvalues = bv;

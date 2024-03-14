@@ -90,7 +90,7 @@ export class Custom extends Filter
 
 	public setBindValues(bindvalues:BindValue[]) : Custom
 	{
-		this.bindvalues$ = this.bindvalues$;
+		this.bindvalues$ = bindvalues;
 		if (!this.bindvalues$) this.bindvalues$ = [];
 		return(this);
 	}

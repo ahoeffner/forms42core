@@ -52,6 +52,11 @@ export abstract class Filter implements Serializable
 
 	abstract evaluate(record:Record) : Promise<boolean>;
 
+	public name() : string
+	{
+		return(this.constructor.name);
+	}
+
 	public serialize() : any
 	{
 		let json:any = {type: this.constructor.name};

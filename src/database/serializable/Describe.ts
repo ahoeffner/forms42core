@@ -19,10 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Connection } from "../Connection";
-import { Serializable } from "./Serializable";
-import { DataSource } from "../../model/interfaces/DataSource";
-import { DatabaseConnection } from "../../public/DatabaseConnection";
+import { Connection } from "../Connection.js";
+import { Serializable } from "./Serializable.js";
+import { DataSource } from "../../model/interfaces/DataSource.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 
 export class Describe implements Serializable

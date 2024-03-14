@@ -87,16 +87,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 	 *  @param source 		: OpenJsonDB datasource i.e. table/view/query
 	 *  @param columns 		: Columns in play from the table/view/query
 	 */
-	public constructor(connection:DatabaseConnection, source:string, columns?:string|string[])
+	public constructor(source:string, columns?:string|string[])
 	{
 		super();
-
-		if (connection == null)
-		{
-			// Cannot create object when onnection is null
-			Messages.severe(MSGGRP.ORDB,2,this.constructor.name);
-			return;
-		}
 
 		if (columns != null)
 		{
@@ -108,8 +101,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.name = source;
 		this.source$ = source;
-		this.pubconn$ = connection;
-		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 	/** Set the table/view */
@@ -144,6 +135,19 @@ export class DatabaseSource extends SQLSource implements DataSource
 			columns = [columns];
 
 		this.columns$ = columns;
+	}
+
+	/** Gets the connection */
+	public get connection() : DatabaseConnection
+	{
+		return(this.pubconn$);
+	}
+
+	/** Sets the connection */
+	public set connection(connection:DatabaseConnection)
+	{
+		this.pubconn$ = connection;
+		this.jdbconn$ = Connection.getConnection(connection);
 	}
 
 	/** Get the primary key defined for this datasource */
@@ -241,12 +245,13 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Clones this datasource */
 	public clone() : DatabaseSource
 	{
-		let clone:DatabaseSource = new DatabaseSource(this.pubconn$,this.source$);
+		let clone:DatabaseSource = new DatabaseSource(this.source$);
 
 		clone.name = this.name;
 		clone.sorting = this.sorting;
 		clone.primary$ = this.primary$;
 		clone.columns$ = this.columns$;
+		clone.connection = this.pubconn$,
 		clone.described$ = this.described$;
 		clone.arrayfecth = this.arrayfecth;
 		clone.datatypes$ = this.datatypes$;
@@ -278,7 +283,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let processed:Record[] = [];
 		let batch:Batch = new Batch();
 
-		if (!this.jdbconn$.connected())
+		if (!this.jdbconn$?.connected())
 		{
 			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return([]);
@@ -464,7 +469,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.nosql$ = null;
 		filter = filter?.clone();
 
-		if (!this.jdbconn$.connected())
+		if (!this.jdbconn$?.connected())
 		{
 			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
 			return(false);
@@ -671,6 +676,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 	{
 		if (this.described$)
 			return(true);
+
+		if (!this.jdbconn$?.connected())
+		{
+			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			return(false);
+		}
 
 		let desc:Describe = new Describe(this);
 		let response:any = await this.jdbconn$.send(desc);

@@ -19,13 +19,13 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Connection } from "../Connection";
 import { BindValue } from "../BindValue.js";
+import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
-import { DatabaseConnection } from "../../public/DatabaseConnection";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Delete implements Serializable
 {

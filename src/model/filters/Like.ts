@@ -182,20 +182,4 @@ export class Like extends Filter
 
 		return(value == this.constraint$);
 	}
-
-	public asSQL() : string
-	{
-		if (!this.constraint$ && !this.bindvalues$)
-			return("1 = 2");
-
-		if (this.bindval$ == null)
-			this.bindval$ = this.column$;
-
-		return(this.column$ + " like :"+this.bindval$)
-	}
-
-	public toString() : string
-	{
-		return(this.column$+" like "+this.constraint);
-	}
 }

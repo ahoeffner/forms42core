@@ -34,7 +34,6 @@ import { Serializable } from "../../database/serializable/Serializable.js";
 export abstract class Filter implements Serializable
 {
 	abstract clear() : void;
-	abstract asSQL() : string;
 	abstract clone() : Filter;
 
 	abstract column:string;
@@ -87,5 +86,10 @@ export abstract class Filter implements Serializable
 		})
 
 		return(binds);
+	}
+
+	public toString(lenght?:number) : string
+	{
+		return(JSON.stringify(this.serialize()))
 	}
 }

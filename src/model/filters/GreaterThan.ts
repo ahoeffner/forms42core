@@ -150,23 +150,4 @@ export class GreaterThan extends Filter
 		if (this.incl) return(value >= this.constraint$);
 		return(value > this.constraint$);
 	}
-
-	public asSQL() : string
-	{
-		if (!this.constraint$ && !this.bindvalues$)
-			return("1 = 2");
-
-		if (this.bindval$ == null)
-			this.bindval$ = this.column$;
-
-		let gt:string = this.incl ? ">=" : ">";
-		let whcl:string = this.column$ + " "+gt+" :"+this.bindval$;
-
-		return(whcl)
-	}
-
-	public toString() : string
-	{
-		return(this.asSQL());
-	}
 }

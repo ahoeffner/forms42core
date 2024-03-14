@@ -79,16 +79,6 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		this.columns$ = columns;
 	}
 
-	public get sqlstmt() : string
-	{
-		return(this.sqlstmt$);
-	}
-
-	public set sqlstmt(sql:string)
-	{
-		this.sqlstmt$ = sql;
-	}
-
 	public isClientSide() : boolean
 	{
 		return(!(this.constraint$ instanceof Query));
@@ -204,12 +194,6 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		return(match);
 	}
 
-	public asSQL() : string
-	{
-		if (this.sqlstmt$ == null) return("subquery "+this.constraint$);
-		return(this.sqlstmt$)
-	}
-
 	public serialize() : any
 	{
 		let json:any = {};
@@ -222,10 +206,5 @@ export class SubQuery extends Filter implements MultiColumnFilter
 		json.query = this.constraint$?.serialize();
 
 		return(json);
-	}
-
-	public toString() : string
-	{
-		return(this.asSQL());
 	}
 }

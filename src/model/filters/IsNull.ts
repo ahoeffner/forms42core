@@ -118,10 +118,4 @@ export class IsNull extends Filter
 		if (this.column$ == null) return(false);
 		return(record.getValue(this.column$.toLowerCase()) == null);
 	}
-
-	public asSQL() : string
-	{
-		let whcl:string = this.column$ + " is null";
-		return(whcl)
-	}
 }

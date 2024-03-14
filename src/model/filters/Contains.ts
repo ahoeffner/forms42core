@@ -203,9 +203,4 @@ export class Contains extends Filter implements MultiColumnFilter
 
 		return(true);
 	}
-
-	public asSQL() : string
-	{
-		return(this.columns$+" contains "+this.constraint$);
-	}
 }

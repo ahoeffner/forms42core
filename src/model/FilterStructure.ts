@@ -225,11 +225,6 @@ export class FilterStructure implements Serializable
 		return(match);
 	}
 
-	public asSQL() : string
-	{
-		return(this.build(0));
-	}
-
 	public serialize() : any
 	{
 		let group:JSONFilterGroup = this.buildJSON(new JSONFilterGroup());
@@ -282,59 +277,6 @@ export class FilterStructure implements Serializable
 		filters.forEach((filter) => bindvalues.push(...filter.getBindValues()));
 
 		return(bindvalues);
-	}
-
-	private build(clauses:number) : string
-	{
-		let stmt:string = "";
-		let first:boolean = true;
-
-		for (let i = 0; i < this.entries$.length; i++)
-		{
-			let constr:Constraint = this.entries$[i];
-
-			if (constr.filter instanceof FilterStructure)
-			{
-				if (constr.filter.hasChildFilters())
-				{
-					let clause:string = constr.filter.build(clauses);
-
-					if (clause != null && clause.length > 0)
-					{
-						if (clauses > 0) stmt += " " + constr.opr + " ";
-						stmt += "(" + clause + ")";
-						first = false;
-						clauses++;
-					}
-				}
-				else
-				{
-					let clause:string = constr.filter.build(clauses);
-
-					if (clause != null && clause.length > 0)
-					{
-						clauses++;
-						stmt += clause;
-					}
-				}
-			}
-			else
-			{
-				let clause:string = constr.filter.asSQL();
-
-				if (clause != null && clause.length > 0)
-				{
-					if (!first)
-						stmt += " " + constr.opr + " ";
-
-					stmt += clause;
-					first = false;
-					clauses++;
-				}
-			}
-		}
-
-		return(stmt);
 	}
 
 	private buildJSON(group:JSONFilterGroup) : JSONFilterGroup
@@ -392,7 +334,7 @@ export class FilterStructure implements Serializable
 
 	public toString() : string
 	{
-		return(this.asSQL());
+		return(JSON.stringify(this.serialize()));
 	}
 }
 

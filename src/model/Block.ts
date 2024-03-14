@@ -23,7 +23,6 @@ import { Form } from "./Form.js";
 import { Row } from "../view/Row.js";
 import { Filters } from "./filters/Filters.js";
 import { Filter } from "./interfaces/Filter.js";
-import { SQLRest } from "../database/SQLRest.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { SubQuery } from "./filters/SubQuery.js";
 import { Record, RecordState } from "./Record.js";
@@ -42,11 +41,9 @@ import { EventType } from "../control/events/EventType.js";
 import { QueryManager } from "./relations/QueryManager.js";
 import { FormBacking } from "../application/FormBacking.js";
 import { Block as InterfaceBlock } from '../public/Block.js';
-import { DatabaseTable } from "../database/DatabaseTable.js";
 import { FieldInstance } from "../view/fields/FieldInstance.js";
 import { FlightRecorder } from "../application/FlightRecorder.js";
 import { FormEvents, FormEvent } from "../control/events/FormEvents.js";
-import { BindValue } from "../database/BindValue.js";
 
 
 export class Block
@@ -1059,8 +1056,9 @@ export class Block
 			if (await this.asSubQuery(this,blocks[i],rel))
 				continue;
 
+			console.log("**** setDetailDependencies ****")
 			let src:DataSource = blocks[i].datasource.clone();
-			if (src instanceof DatabaseTable) src.columns = rel.detail.fields;
+			src.columns = rel.detail.fields;
 
 			src.name = blocks[i].name+".subquery";
 			let details:FilterStructure = new FilterStructure();

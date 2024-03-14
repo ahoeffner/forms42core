@@ -185,20 +185,4 @@ export class ILike extends Filter
 
 		return(value == this.constraint$);
 	}
-
-	public asSQL() : string
-	{
-		if (!this.constraint$ && !this.bindvalues$)
-			return("1 = 2");
-
-		if (this.bindval$ == null)
-			this.bindval$ = this.column$;
-
-		return(this.column$ + " ilike :"+this.bindval$)
-	}
-
-	public toString() : string
-	{
-		return(this.column$+" ilike "+this.constraint);
-	}
 }

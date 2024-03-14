@@ -169,36 +169,4 @@ export class Between extends Filter
 		return(value > this.constraint$[0] && value < this.constraint$[1]);
 		return(value >= this.constraint$[0] && value <= this.constraint$[1]);
 	}
-
-	public asSQL() : string
-	{
-		if (!this.constraint$ && !this.bindvalues$)
-			return("1 = 2");
-
-		let lt:string = "<";
-		let gt:string = ">";
-
-		if (this.bindval$ == null)
-			this.bindval$ = this.column$;
-
-		if (this.incl)
-		{
-			lt = "<=";
-			gt = ">=";
-		}
-
-		let whcl:string =
-			"(" +
-				this.column$ + " " + gt + " :"+this.bindval$ + "0" +
-				" and " +
-				this.column$ + " " + lt + " :"+this.bindval$ + "1"+
-			")";
-
-		return(whcl)
-	}
-
-	public toString() : string
-	{
-		return(this.asSQL());
-	}
 }

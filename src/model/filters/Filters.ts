@@ -25,6 +25,7 @@ import { AnyOf } from "./AnyOf.js";
 import { Equals } from "./Equals.js";
 import { IsNull } from "./IsNull.js";
 import { NoneOf } from "./NoneOf.js";
+import { Custom } from "./Custom.js";
 import { Between } from "./Between.js";
 import { LessThan } from "./LessThan.js";
 import { Contains } from "./Contains.js";
@@ -39,6 +40,7 @@ import { DateInterval } from "./DateInterval.js";
 export class Filters
 {
 	public static Like(column:string) : Like {return(new Like(column))};
+	public static Custom(name:string) : Custom {return(new Custom(name))};
 	public static AnyOf(column:string) : AnyOf {return(new AnyOf(column))};
 	public static ILike(column:string) : ILike {return(new ILike(column))};
 	public static Equals(column:string) : Equals {return(new Equals(column))};

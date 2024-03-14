@@ -402,6 +402,15 @@ export class Connection extends BaseConnection
 	{
 		let mod:Date = this.modified;
 
+		if (!(request instanceof Session))
+		{
+			if (!this.conn$)
+			{
+				Messages.warn(MSGGRP.ORDB,3);
+				return(null);
+			}
+		}
+
 		if (request instanceof Query)
 		{
 			this.tmowarn = false;

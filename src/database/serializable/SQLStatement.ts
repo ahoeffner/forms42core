@@ -140,6 +140,9 @@ export class SQLStatement implements Serializable
 	/** Fetch rows, if select statement */
 	public async fetch() : Promise<any[]>
 	{
+		if (this.records$?.length > this.pos)
+			return(this.records$[this.pos++]);
+
 		if (!this.cursor$)
 		{
 			Messages.warn(MSGGRP.ORDB,4,this.stmt$);
@@ -148,9 +151,6 @@ export class SQLStatement implements Serializable
 
 		if (this.cursor$.eof)
 			return(null);
-
-		if (this.records$?.length > this.pos)
-			return(this.records$[this.pos++]);
 
 		this.pos = 0;
 		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);

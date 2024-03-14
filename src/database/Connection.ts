@@ -224,6 +224,7 @@ export class Connection extends BaseConnection
 		}
 
 		Logger.log(Type.database,"connect");
+
 		let thread:number = FormsModule.showLoading("Connecting");
 		let response:any = await this.send(session);
 		FormsModule.hideLoading(thread);
@@ -400,12 +401,6 @@ export class Connection extends BaseConnection
 	public async send(request:Serializable, patch?:boolean) : Promise<Response>
 	{
 		let mod:Date = this.modified;
-
-		if (!this.conn$)
-		{
-			Messages.warn(MSGGRP.ORDB,3);
-			return(null);
-		}
 
 		if (request instanceof Query)
 		{

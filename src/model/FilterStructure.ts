@@ -116,10 +116,8 @@ export class FilterStructure implements Serializable
 		if (filter == this)
 			return;
 
-		if (!(filter instanceof FilterStructure) && name == null)
-			name = filter.name();
-
-		this.delete(name);
+		this.type = "or";
+		if (name) this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{
@@ -137,11 +135,8 @@ export class FilterStructure implements Serializable
 		if (!filter || filter == this)
 			return;
 
-		if (!(filter instanceof FilterStructure) && name == null)
-			name = filter.name();
-
-			this.type = "and";
-			this.delete(name);
+		this.type = "and";
+		if (name) this.delete(name);
 
 		if (!this.filteridx$.has(filter))
 		{

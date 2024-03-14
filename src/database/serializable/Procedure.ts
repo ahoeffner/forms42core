@@ -31,8 +31,7 @@ export class Procedure implements Serializable
 {
 	protected response$:any = null;
 	protected args$:Parameter[] = [];
-	protected update$:boolean = false;
-	protected jdbconn$:Connection = null;
+	protected writes$:boolean = false;
 
 	protected types$:Map<string,any> = new Map<string,any>();
 	protected values$:Map<string,any> = new Map<string,any>();
@@ -41,13 +40,7 @@ export class Procedure implements Serializable
 	protected datetypes$:DataType[] = [DataType.date, DataType.datetime, DataType.timestamp];
 
 
-	public constructor(connection:DatabaseConnection, private name?:string)
-	{
-		this.jdbconn$ = Connection.getConnection(connection);
-	}
-
-	/** The name of the stored procedure/function */
-	public setName(name:string) : void
+	public constructor(private name:string)
 	{
 		this.name = name;
 	}
@@ -73,10 +66,10 @@ export class Procedure implements Serializable
 		this.args$.push(param);
 	}
 
-	/** If the procedure changes any values the backend */
-	public set update(flag:boolean)
+	/** If the statement modyfied the backend */
+	public get modyfied() : boolean
 	{
-		this.update$ = flag;
+		return(this.writes$);
 	}
 
 	/** Get returned value */
@@ -86,9 +79,10 @@ export class Procedure implements Serializable
 	}
 
 	/** Execute the procedure */
-	public async execute() : Promise<boolean>
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		this.response$ = await this.jdbconn$.send(this);
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		this.response$ = await jsdbconn.send(this);
 
 		if (!this.response$.success)
 			return(false);
@@ -130,7 +124,6 @@ export class Procedure implements Serializable
 		json.request = "invoke";
 
 		json.source = this.name;
-		json.update = this.update$;
 
 		let args:any[] = [];
 		this.args$.forEach((arg) => args.push(arg.serialize()));

@@ -22,13 +22,13 @@
 import { Cursor } from "./Cursor.js";
 import { SQLSource } from "./SQLSource.js";
 import { BindValue } from "./BindValue.js";
-import { Head } from "./serializable/Head.js";
 import { Query } from "./serializable/Query.js";
 import { Batch } from "./serializable/Batch.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
+import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
@@ -672,8 +672,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.described$)
 			return(true);
 
-		let head:Head = new Head(this);
-		let response:any = await this.jdbconn$.send(head);
+		let desc:Describe = new Describe(this);
+		let response:any = await this.jdbconn$.send(desc);
 
 		if (!response.success)
 		{

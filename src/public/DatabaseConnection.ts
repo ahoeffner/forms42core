@@ -19,9 +19,12 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { SQLRest } from "../database/SQLRest.js";
+import { Insert } from "../database/serializable/Insert.js";
+import { Update } from "../database/serializable/Update.js";
+import { Delete } from "../database/serializable/Delete.js";
 import { ConnectionScope } from "../database/ConnectionScope.js";
-import { Connection as JSONConnection, Step } from "../database/Connection.js";
+import { Connection as JSONConnection } from "../database/Connection.js";
+import { Batch, Script } from "../../index.js";
 
 /**
  * Connection to DatabaseJS.
@@ -297,9 +300,9 @@ export class DatabaseConnection
    * @param payload - The SQLRest payload for the insert operation.
    * @returns A promise that resolves to the result of the insert operation.
    */
-	public async insert(payload:SQLRest) : Promise<any>
+	public async insert(payload:Insert) : Promise<any>
 	{
-		return(this.conn$.insert(payload));
+		return(this.conn$.send(payload));
 	}
 
 	/** Execute update   *
@@ -308,9 +311,9 @@ export class DatabaseConnection
    * @param payload - The SQLRest payload for the update operation.
    * @returns A promise that resolves to the result of the update operation.
    */
-	public async update(payload:SQLRest) : Promise<any>
+	public async update(payload:Update) : Promise<any>
 	{
-		return(this.conn$.update(payload));
+		return(this.conn$.send(payload));
 	}
 
 	/** Execute delete
@@ -319,9 +322,9 @@ export class DatabaseConnection
    * @param payload - The SQLRest payload for the delete operation.
    * @returns A promise that resolves to the result of the delete operation.
    */
-	public async delete(payload:SQLRest) : Promise<any>
+	public async delete(payload:Delete) : Promise<any>
 	{
-		return(this.conn$.delete(payload));
+		return(this.conn$.send(payload));
 	}
 
 	/** Execute script
@@ -332,19 +335,19 @@ export class DatabaseConnection
    * @param attributes - Additional attributes for the script.
    * @returns A promise that resolves to the result of the script.
    */
-	public async script(steps:Step[], attributes?:{name:string, value:object}[]) : Promise<any>
+	public async script(payload:Script) : Promise<any>
 	{
-		return(this.conn$.script(steps,attributes));
+		return(this.conn$.send(payload));
 	}
 
 	/** Execute batch   *
    * @public
    * @param stmts - The statements to execute in a batch.
    * @param attributes - Additional attributes for the batch.
-   * @returns A promise that resolves to an array of results for each statement in the batch.
+   * @returns A promise that resolves to an object containing responses for each statement in the batch.
    */
-	public async batch(stmts:Step[], attributes?:{name:string, value:object}[]) : Promise<any[]>
+	public async batch(payload:Batch) : Promise<any>
 	{
-		return(this.conn$.batch(stmts,attributes));
+		return(this.conn$.send(payload));
 	}
 }

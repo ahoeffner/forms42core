@@ -19,76 +19,46 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Cursor } from "./Cursor.js";
-import { SQLRest } from "./SQLRest.js";
-import { DataType } from "./DataType.js";
-import { BindValue } from "./BindValue.js";
-import { Connection } from "./Connection.js";
-import { MSGGRP } from "../messages/Internal.js";
-import { Messages } from "../messages/Messages.js";
-import { DatabaseResponse } from "./DatabaseResponse.js";
-import { DatabaseConnection } from "../public/DatabaseConnection.js";
+import { Cursor } from "../Cursor.js";
+import { DataType } from "../DataType.js";
+import { BindValue } from "../BindValue.js";
+import { Connection } from "../Connection.js";
+import { Serializable } from "./Serializable.js";
+import { MSGGRP } from "../../messages/Internal.js";
+import { Messages } from "../../messages/Messages.js";
+import { DatabaseResponse } from "../DatabaseResponse.js";
+import { Cursor as CFunc, CursorRequest as COPR } from "./Cursor.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 /**
  * SQLStatement is used with OpenRestDB to execute any
  * sql-statement
  */
-export class SQLStatement
+export class SQLStatement implements Serializable
 {
-	public static AutoDetectReurning:RegExp = /[.]* returning .*$/i;
-
 	private pos:number = 0;
-	private sql$:string = null;
-	private type$:string = null;
+	private stmt$:string = null;
 	private response$:any = null;
 	private types:string[] = null;
 	private cursor$:Cursor = null;
-	private patch$:boolean = false;
 	private message$:string = null;
 	private arrayfetch$:number = 1;
 	private records$:any[][] = null;
+	private writes$:boolean = false;
 	private columns$:string[] = null;
-	private returning$:boolean = false;
 	private jdbconn$:Connection = null;
-	private retvals:DatabaseResponse = null;
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
 	/** @param connection : A connection to OpenRestDB */
-	public constructor(connection:DatabaseConnection)
+	public constructor(stmt:string)
 	{
-		if (connection == null)
-		{
-			// Cannot create object when onnection is null
-			Messages.severe(MSGGRP.ORDB,2,this.constructor.name);
-			return;
-		}
-
-		this.jdbconn$ = Connection.getConnection(connection);
+		this.stmt$ = stmt;
 	}
 
-	/** The sql-statement */
-	public get sql() : string
+	/** If the statement modyfied the backend */
+	public get modyfied() : boolean
 	{
-		return(this.sql);
-	}
-
-	/** The sql-statement */
-	public set sql(sql:string)
-	{
-		this.sql$ = sql;
-
-		if (SQLStatement.AutoDetectReurning)
-		{
-			let clean:string = sql.replace("\r\n"," ");
-			clean = sql.replace("\n"," ").replace("\r"," ");
-			this.returning$ = SQLStatement.AutoDetectReurning.test(clean);
-		}
-	}
-
-	/** If the statement changes any values the backend */
-	public set patch(flag:boolean)
-	{
-		this.patch$ = flag;
+		return(this.writes$);
 	}
 
 	/** The columns involved in a select statement */
@@ -97,16 +67,11 @@ export class SQLStatement
 		return(this.columns$);
 	}
 
-	/** If used with sql-extension 'returning' */
-	public get returnvalues() : boolean
+	/** Use a cursor (select type only) */
+	public set cursor(flag:boolean)
 	{
-		return(this.returning$);
-	}
-
-	/** If used with sql-extension 'returning' */
-	public set returnvalues(flag:boolean)
-	{
-		this.returning$ = flag;
+		if (!flag) this.cursor$ = null;
+		else this.cursor$ = new Cursor(this.stmt$);
 	}
 
 	/** The number of rows to fetch from a select-statement per call to fetch */
@@ -146,30 +111,11 @@ export class SQLStatement
 	}
 
 	/** Execute the statement */
-	public async execute() : Promise<boolean>
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		if (this.sql$ == null) return(false);
-		this.type$ = this.sql$.trim().substring(0,6).toLowerCase();
+		this.jdbconn$ = Connection.getConnection(conn);
 
-		let sql:SQLRest = new SQLRest();
-		if (this.returning$) sql.returnclause = true;
-
-		sql.stmt = this.sql$;
-		sql.bindvalues = [...this.bindvalues$.values()];
-
-		if (this.type$ == "select" || this.returning$)
-			this.cursor$ = new Cursor();
-
-		switch(this.type$)
-		{
-			case "insert" : this.response$ = await this.jdbconn$.insert(sql); break;
-			case "update" : this.response$ = await this.jdbconn$.update(sql); break;
-			case "delete" : this.response$ = await this.jdbconn$.delete(sql); break;
-			case "select" : this.response$ = await this.jdbconn$.select(sql,this.cursor$,this.arrayfetch$,true); break;
-
-			default: this.response$ = await this.jdbconn$.execute(this.patch$,sql);
-		}
-
+		this.response$ = this.jdbconn$.send(this);
 		let success:boolean = this.response$.success;
 
 		if (!success)
@@ -178,15 +124,11 @@ export class SQLStatement
 			this.message$ = this.response$.message;
 		}
 
-		if (success && this.type$ == "select" || this.returning$)
+		if (success)
 		{
 			this.types = this.response$.types;
-			this.columns$ = this.response$.columns;
 			this.records$ = this.parse(this.response$);
 		}
-
-		if (this.returning$)
-			this.retvals = new DatabaseResponse(this.response$,null);
 
 		return(success);
 	}
@@ -203,11 +145,10 @@ export class SQLStatement
 		if (this.records$?.length > this.pos)
 			return(this.records$[this.pos++]);
 
-		if (this.pos > 0 && this.type$ != "select")
-			return(null);
-
 		this.pos = 0;
-		this.response$ = await this.jdbconn$.fetch(this.cursor$);
+		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
+
+		this.response$ = await this.jdbconn$.send(fetch);
 
 		if (!this.response$.success)
 		{
@@ -222,7 +163,10 @@ export class SQLStatement
 	/** Get return value if 'returning' */
 	public getReturnValue(column:string, type?:DataType|string) : any
 	{
-		let value:any = this.retvals.getValue(column);
+		//this.retvals$ = new DatabaseResponse(this.response$,null);
+		//let value:any = this.retvals$.getValue(column);
+
+		let value:any = null;
 
 		if (type)
 		{
@@ -296,5 +240,34 @@ export class SQLStatement
 		}
 
 		return(rows);
+	}
+
+
+	public serialize() : any
+	{
+		let json:any = {};
+		json.request = "execute";
+		json.source = this.stmt$;
+
+		if (this.cursor$)
+			json.cursor = this.cursor$.name;
+
+		let bv:any[] = [];
+
+		this.bindvalues$.forEach((value) =>
+		{
+			bv.push
+			(
+				{
+					name: value.name,
+					value: value.serialize()
+				}
+			)
+		})
+
+		if (bv.length > 0)
+			json.bindvalues = bv;
+
+		return(json);
 	}
 }

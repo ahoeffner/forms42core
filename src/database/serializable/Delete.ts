@@ -19,11 +19,13 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Connection } from "../Connection";
 import { BindValue } from "../BindValue.js";
 import { Serializable } from "./Serializable.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection";
 
 export class Delete implements Serializable
 {
@@ -80,6 +82,13 @@ export class Delete implements Serializable
 		this.assert = assert;
 	}
 
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<any>
+	{
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		return(jsdbconn.send(this));
+	}
+
 	public serialize() : any
 	{
 		let json:any = {};
@@ -93,7 +102,8 @@ export class Delete implements Serializable
 
 		for (let i = 0; i < this.assert?.length; i++)
 		{
-			assert.push(
+			assert.push
+			(
 				{
 					column: this.assert[i].column,
 					value: this.assert[i].value,

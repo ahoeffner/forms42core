@@ -19,9 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Connection } from "../Connection";
 import { BindValue } from "../BindValue.js";
 import { Serializable } from "./Serializable.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
+import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Insert implements Serializable
 {
@@ -58,6 +60,13 @@ export class Insert implements Serializable
 			this.rettypes.set(type.name,type));
 	}
 
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<any>
+	{
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		return(jsdbconn.send(this));
+	}
+
 	public serialize() : any
 	{
 		let json:any = {};
@@ -68,7 +77,8 @@ export class Insert implements Serializable
 
 		this.values.forEach((value) =>
 		{
-			cols.push(
+			cols.push
+			(
 				{
 					column: value.column,
 					value: value.serialize()

@@ -19,32 +19,32 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { DataType } from "./DataType.js";
-import { StoredProcedure } from "./StoredProcedure.js";
-import { DatabaseConnection } from "../public/DatabaseConnection.js";
+import { Connection } from "../Connection";
+import { Serializable } from "./Serializable";
+import { DataSource } from "../../model/interfaces/DataSource";
+import { DatabaseConnection } from "../../public/DatabaseConnection";
 
-/**
- * StoredFunction is used with OpenRestDB to call
- * a stored function
- */
-export class StoredFunction extends StoredProcedure
+
+export class Describe implements Serializable
 {
-	/** @param connection : A connection to OpenRestDB */
-	public constructor(connection:DatabaseConnection)
+	public constructor(private source:DataSource)
 	{
-		super(connection);
-		this.returntype$ = "string";
 	}
 
-	/** Get the name of returned parameter from the function call */
-	public getReturnValue() : string
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<any>
 	{
-		return(super.getOutParameter(this.retparm$));
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		return(jsdbconn.send(this));
 	}
 
-	/** Set the return data type */
-	public setReturnType(datatype?:DataType|string) : void
+	public serialize() : any
 	{
-		this.returntype$ = datatype;
+		let json:any = {};
+
+		json.request = "describe";
+		json.source = this.source.name;
+
+		return(json);
 	}
 }

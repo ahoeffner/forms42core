@@ -3,10 +3,8 @@ export { Block } from './src/public/Block.js';
 export { Record } from './src/public/Record.js';
 export { Key } from './src/model/relations/Key.js';
 export { Alert } from './src/application/Alert.js';
-export { SQLRest } from './src/database/SQLRest.js';
 export { RecordState } from './src/model/Record.js';
 export { Connection } from './src/public/Connection.js';
-export { Step as SQLStep } from './src/database/Connection.js';
 export { DatabaseSource } from './src/database/DatabaseSource.js';
 export { Sorter as TableSorter } from './src/database/Sorter.js';
 export { FlushStrategy } from './src/application/FormsModule.js';
@@ -65,9 +63,6 @@ export { DateInterval } from './src/model/filters/DateInterval.js';
 
 export { DataType } from './src/database/DataType.js';
 export { BindValue } from "./src/database/BindValue.js";
-export { SQLStatement } from './src/database/SQLStatement.js';
-export { StoredFunction } from './src/database/StoredFunction.js';
-export { StoredProcedure } from './src/database/StoredProcedure.js';
 export { DatabaseResponse } from './src/database/DatabaseResponse.js';
 
 export { Map } from './src/database/serializable/Map.js';
@@ -79,6 +74,7 @@ export { Delete } from './src/database/serializable/Delete.js';
 export { Insert } from './src/database/serializable/Insert.js';
 export { Function } from './src/database/serializable/Function.js';
 export { Procedure } from './src/database/serializable/Procedure.js';
+export { SQLStatement } from './src/database/serializable/SQLStatement.js';
 
 export { dates, WeekDays } from './src/model/dates/dates.js';
 export { DataMapper, Tier } from "./src/view/fields/DataMapper.js";

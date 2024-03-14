@@ -19,7 +19,9 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Serializable } from "./Serializable.js";
+import { Connection } from "../Connection";
+import { Serializable } from "./Serializable";
+import { DatabaseConnection } from "../../public/DatabaseConnection";
 
 export class Session implements Serializable
 {
@@ -35,9 +37,11 @@ export class Session implements Serializable
 	{
 	}
 
-	public isModifier(): boolean
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<any>
 	{
-		return(false);
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		return(jsdbconn.send(this));
 	}
 
 	public serialize() : any

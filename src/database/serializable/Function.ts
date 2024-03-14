@@ -29,7 +29,6 @@ export class Function extends Procedure
 {
 	private retarg$:Parameter = null;
 
-
 	/** Define return value for functions */
 	public returns(name:string, type?:DataType|string) : void
 	{

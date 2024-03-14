@@ -19,7 +19,9 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Connection } from "../Connection";
 import { Serializable } from "./Serializable";
+import { DatabaseConnection } from "../../public/DatabaseConnection";
 
 
 export class Batch implements Serializable
@@ -30,6 +32,13 @@ export class Batch implements Serializable
 	public add(step:Serializable) : void
 	{
 		this.steps$.push(step);
+	}
+
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<any>
+	{
+		let jsdbconn:Connection = Connection.getConnection(conn);
+		return(jsdbconn.send(this));
 	}
 
 	public serialize() : any

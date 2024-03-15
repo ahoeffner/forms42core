@@ -19,10 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
-import { Serializable } from "./Serializable.js";
 import { Filter } from "../../model/interfaces/Filter.js";
+import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
@@ -37,8 +38,10 @@ export class Query implements Serializable
 	private columns:string[] = null;
 	private source:DataSource = null;
 	private assert:BindValue[] = null;
-	private bindings$:BindValue[] = null;
 	private filter:FilterStructure = null;
+
+	private datatypes$:Map<string,DataType|string> =
+		new Map<string,string>();
 
 	constructor(source:DataSource, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
@@ -114,22 +117,20 @@ export class Query implements Serializable
 		this.lock$ = value;
 	}
 
-	public get bindings() : BindValue[]
+	public set assertions(assertions:BindValue|BindValue[])
 	{
-		return(this.bindings$);
+		if (!Array.isArray(assertions))
+			assertions = [assertions];
+
+		this.assert = assertions;
 	}
 
-	public set bindings(value:BindValue[])
+	/** Set datatypes */
+	public setDataTypes(types:Map<string,DataType|string>) : Query
 	{
-		this.bindings$ = value;
-	}
-
-	public set assertions(assert:BindValue|BindValue[])
-	{
-		if (!Array.isArray(assert))
-			assert = [assert];
-
-		this.assert = assert;
+		if (types) this.datatypes$ = types;
+		else this.datatypes$.clear();
+		return(this);
 	}
 
 	/** Execute the statement */
@@ -156,12 +157,8 @@ export class Query implements Serializable
 		if (this.cursor)
 			json.cursor = this.cursor;
 
-		if (this.bindings$?.length > 0)
-		{
-			let binding:any[] = [];
-			this.bindings$.forEach((b) => binding.push(b.serialize()));
-			json.bindings = binding;
-		}
+		applyTypes(this.datatypes$,this.assert);
+		applyTypes(this.datatypes$,this.filter.getBindValues());
 
 		if (this.filter)
 			json.filters = this.filter.serialize().filters;

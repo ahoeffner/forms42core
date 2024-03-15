@@ -321,8 +321,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 				let values:BindValue[] = this.bind(record,columns);
 				let rettypes:BindValue[] = this.bind(null,this.insreturncolumns$);
 				let ins:Insert = new Insert(this,values,this.insreturncolumns$,rettypes);
-
-				batch.add(ins);
+				batch.add(ins.setDataTypes(this.datatypes$));
 			}
 
 			else
@@ -337,7 +336,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
 
 				if (assert) del.assertions = this.assert(record);
-				batch.add(del);
+				batch.add(del.setDataTypes(this.datatypes$));
 			}
 
 			else

@@ -19,9 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
-import { Serializable } from "./Serializable.js";
+import { Serializable, applyTypes } from "./Serializable.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
@@ -35,6 +36,10 @@ export class Insert implements Serializable
 
 	private rettypes:Map<string,BindValue> =
 		new Map<string,BindValue>();
+
+	private datatypes$:Map<string,DataType|string> =
+		new Map<string,string>();
+
 
 	constructor(source:DataSource, values:BindValue|BindValue[], retcols?:string|string[], rettypes?:BindValue|BindValue[])
 	{
@@ -60,6 +65,14 @@ export class Insert implements Serializable
 			this.rettypes.set(type.name,type));
 	}
 
+	/** Set datatypes */
+	public setDataTypes(types:Map<string,DataType|string>) : Insert
+	{
+		if (types) this.datatypes$ = types;
+		else this.datatypes$.clear();
+		return(this);
+	}
+
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<any>
 	{
@@ -74,6 +87,9 @@ export class Insert implements Serializable
 		json.source = this.source.name;
 
 		let cols:any[] = [];
+
+		applyTypes(this.datatypes$,this.values);
+		applyTypes(this.datatypes$,this.rettypes);
 
 		this.values.forEach((value) =>
 		{

@@ -19,10 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
-import { Serializable } from "./Serializable.js";
 import { Filter } from "../../model/interfaces/Filter.js";
+import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
@@ -36,6 +37,9 @@ export class Delete implements Serializable
 
 	private rettypes:Map<string,BindValue> =
 		new Map<string,BindValue>();
+
+	private datatypes$:Map<string,DataType|string> =
+		new Map<string,string>();
 
 
 	constructor(source:DataSource, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
@@ -82,6 +86,14 @@ export class Delete implements Serializable
 		this.assert = assert;
 	}
 
+	/** Set datatypes */
+	public setDataTypes(types:Map<string,DataType|string>) : Delete
+	{
+		if (types) this.datatypes$ = types;
+		else this.datatypes$.clear();
+		return(this);
+	}
+
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<any>
 	{
@@ -99,6 +111,10 @@ export class Delete implements Serializable
 			json.filters = this.filter.serialize().filters;
 
 		let assert:any[] = [];
+
+		applyTypes(this.datatypes$,this.assert);
+		applyTypes(this.datatypes$,this.rettypes);
+		applyTypes(this.datatypes$,this.filter.getBindValues());
 
 		for (let i = 0; i < this.assert?.length; i++)
 		{

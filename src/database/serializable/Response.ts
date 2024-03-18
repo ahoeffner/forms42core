@@ -138,10 +138,10 @@ export class Response
 
 		if (rows.length > 0 && this.columns$.length > 0)
 		{
-			let record:any[] = [];
-
 			for (let r = 0; r < rows.length; r++)
 			{
+				let record:any[] = [];
+
 				if (!Array.isArray(rows[r]))
 				{
 					this.parseValue(rows[r]);

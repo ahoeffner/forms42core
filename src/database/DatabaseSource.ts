@@ -775,8 +775,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		{
 			let record:Record = new Record(this);
 
-			for (let c = 0; c < record[r].length; c++)
-				record.setValue(this.columns[c],record[r][c]);
+			for (let c = 0; c < records[r].length; c++)
+				record.setValue(this.columns[c],records[r][c]);
 
 			record.cleanup();
 			fetched.push(record);

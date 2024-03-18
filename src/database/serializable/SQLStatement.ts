@@ -37,8 +37,8 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 export class SQLStatement implements Serializable
 {
 	private pos:number = 0;
-	private stmt$:string = null;
 	private response$:any = null;
+	private source$:string = null;
 	private types:string[] = null;
 	private cursor$:Cursor = null;
 	private message$:string = null;
@@ -50,9 +50,9 @@ export class SQLStatement implements Serializable
 	private bindvalues$:Map<string,BindValue> = new Map<string,BindValue>();
 
 	/** @param connection : A connection to OpenRestDB */
-	public constructor(stmt:string, cursor?:boolean)
+	public constructor(source:string, cursor?:boolean)
 	{
-		this.stmt$ = stmt;
+		this.source$ = source;
 
 		if (cursor)
 		{
@@ -77,7 +77,7 @@ export class SQLStatement implements Serializable
 	public set cursor(flag:boolean)
 	{
 		if (!flag) this.cursor$ = null;
-		else this.cursor$ = new Cursor(this.stmt$);
+		else this.cursor$ = new Cursor(this.source$);
 	}
 
 	/** The number of rows to fetch from a select-statement per call to fetch */
@@ -150,7 +150,7 @@ export class SQLStatement implements Serializable
 
 		if (!this.cursor$)
 		{
-			Messages.warn(MSGGRP.ORDB,4,this.stmt$);
+			Messages.warn(MSGGRP.ORDB,4,this.source$);
 			return(null);
 		}
 
@@ -262,7 +262,7 @@ export class SQLStatement implements Serializable
 	{
 		let json:any = {};
 		json.request = "execute";
-		json.source = this.stmt$;
+		json.source = this.source$;
 
 		if (this.cursor$)
 		{

@@ -26,7 +26,7 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Cursor implements Serializable
 {
-	public constructor(private cursor:string, private request:CursorRequest)
+	public constructor(public name:string, public request:CursorRequest)
 	{
 	}
 
@@ -42,7 +42,7 @@ export class Cursor implements Serializable
 		let json:any = {};
 		json.request = "cursor";
 
-		json.name = this.cursor;
+		json.name = this.name;
 		json.type = CursorRequest[this.request];
 
 		return(json);

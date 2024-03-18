@@ -19,18 +19,23 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Cursor } from "../Cursor.js";
 import { DataType } from "../DataType.js";
 import { datetypes } from "./Serializable.js";
+import { MSGGRP } from "../../messages/Internal.js";
+import { Messages } from "../../messages/Messages.js";
+import { Cursor as CREQ, CursorRequest } from "./Cursor.js";
 
 
 export class Response
 {
-	public rows:any[][] = [];
-	public values:NameValuePair[] = [];
-	public records:NameValuePair[][] = [];
-
+	private pos$:number = 0;
+	private rows$:any[][] = [];
+	private cursor$:Cursor = null;
 	private columns$:string[] = null;
-	private datatypes$:Map<string,string> = null;
+	private records$:NameValuePair[][] = [];
+	private values$:Map<string,any> = new Map<string,any>();
+	private datatypes$:Map<string,string> = new Map<string,string>();
 
 
 	public constructor(columns?:string[], datatypes?:Map<string,DataType|string>)
@@ -39,18 +44,25 @@ export class Response
 		this.datatypes = datatypes;
 	}
 
+	public get cursor() : string
+	{
+		return(this.cursor$?.name);
+	}
 
 	public get columns() : string[]
 	{
 		return(this.columns$);
 	}
 
-
 	public get datatypes() : Map<string,string>
 	{
 		return(this.datatypes$);
 	}
 
+	public set cursor(cursor:Cursor)
+	{
+		this.cursor$ = cursor;
+	}
 
 	public set columns(columns:string[])
 	{
@@ -62,7 +74,7 @@ export class Response
 
 	public set datatypes(types:Map<string,DataType|string>)
 	{
-		this.datatypes$ = new Map<string,string>();
+		this.datatypes$.clear();
 
 		types?.forEach((type,name) =>
 		{
@@ -75,11 +87,21 @@ export class Response
 		})
 	}
 
+	public get rows() : any[][]
+	{
+		return(this.rows$);
+	}
+
+	public getValue(name:string) : any
+	{
+		return(this.values$.get(name?.toLowerCase()))
+	}
+
 	public parse(response:any) : boolean
 	{
-		this.rows = [];
-		this.values = [];
-		this.records = [];
+		this.rows$ = [];
+		this.records$ = [];
+		this.values$.clear();
 
 		if (!response.success)
 			return(false);
@@ -87,27 +109,43 @@ export class Response
 		return(this.parseRows(response));
 	}
 
+	public fetch() : NameValuePair[]
+	{
+		if (this.records$?.length > this.pos$)
+			return(this.records$[this.pos$++]);
+
+		if (!this.cursor$)
+		{
+			Messages.warn(MSGGRP.ORDB,4);
+			return(null);
+		}
+
+		if (this.cursor$.eof)
+			return(null);
+
+
+	}
 
 	private parseRows(response:any) : boolean
 	{
 		if (response.rows && Array.isArray(response.rows))
-			this.rows = response.rows;
+			this.rows$ = response.rows;
 
-		if (this.rows.length > 0 && this.columns$.length > 0)
+		if (this.rows$.length > 0 && this.columns$.length > 0)
 		{
 			let record:NameValuePair[] = [];
 
-			for (let r = 0; r < this.rows.length; r++)
+			for (let r = 0; r < this.rows$.length; r++)
 			{
-				if (!Array.isArray(this.rows[r]))
+				if (!Array.isArray(this.rows$[r]))
 				{
-					this.parseValue(this.rows[r]);
+					this.parseValue(this.rows$[r]);
 					continue;
 				}
 
-				for (let c = 0; c < this.rows[r].length; c++)
+				for (let c = 0; c < this.rows$[r].length; c++)
 				{
-					let value:any = this.rows[r][c];
+					let value:any = this.rows$[r][c];
 
 					if (this.datatypes$)
 					{
@@ -122,13 +160,12 @@ export class Response
 					record.push(new NameValuePair(this.columns$[r],value));
 				}
 
-				this.records.push(record);
+				this.records$.push(record);
 			}
 		}
 
 		return(true);
 	}
-
 
 	private parseValue(object:any) : void
 	{
@@ -145,7 +182,7 @@ export class Response
 					value = new Date(+value);
 			}
 
-			this.values.push(new NameValuePair(column,value));
+			this.values$.set(column,value);
 		})
 	}
 }

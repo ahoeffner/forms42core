@@ -69,7 +69,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.ORDB, errno: 1, message: "Connection scope cannot be changed after connect"},
 		{grpno: MSGGRP.ORDB, errno: 2, message: "Failed to create %, connection is null"},
 		{grpno: MSGGRP.ORDB, errno: 3, message: "% Not connected"},
-		{grpno: MSGGRP.ORDB, errno: 4, message: "Cannot fetch from % since cursor = false"},
+		{grpno: MSGGRP.ORDB, errno: 4, message: "Cannot fetch since cursor is null"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},

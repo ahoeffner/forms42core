@@ -29,7 +29,6 @@ export class Cursor
 	trx:object = null;
 	query:Query = null;
 	name:string = null;
-	stmt:string = null;
 	eof:boolean = false;
 	bindvalues:BindValue[] = null;
 

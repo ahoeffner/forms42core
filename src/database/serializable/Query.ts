@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Cursor } from "../Cursor.js";
 import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
@@ -26,20 +27,24 @@ import { Connection } from "../Connection.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
+import { Cursor as CFunc, CursorRequest as COPR } from "./Cursor.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Query implements Serializable
 {
+	private pos$:number = 0;
 	private skip$: number = 0;
-	private rows$: number = 1;
-	private source:string = null;
 	private order$:string = null;
-	private cursor$:string = null;
-	private lock$: boolean = false;
-	private columns:string[] = null;
-	private response:Response = null;
-	private assert:BindValue[] = null;
-	private filter:FilterStructure = null;
+	private source$:string = null;
+	private lock$:boolean = false;
+	private cursor$:Cursor = null;
+	private records$:any[][] = null;
+	private arrayfetch$: number = 32;
+	private columns$:string[] = null;
+	private response$:Response = null;
+	private assert$:BindValue[] = null;
+	private jdbconn$:Connection = null;
+	private filter$:FilterStructure = null;
 
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,string>();
@@ -49,8 +54,8 @@ export class Query implements Serializable
 		if (!Array.isArray(columns))
 			columns = [columns];
 
-		this.source = source;
-		this.columns = columns;
+		this.source$ = source;
+		this.columns$ = columns;
 
 		if (filter)
 		{
@@ -58,72 +63,77 @@ export class Query implements Serializable
 			{
 				if (!Array.isArray(filter)) filter = [filter];
 
-				this.filter = new FilterStructure();
-				filter.forEach((flt) => this.filter.and(flt));
+				this.filter$ = new FilterStructure();
+				filter.forEach((flt) => this.filter$.and(flt));
 			}
 			else
 			{
-				this.filter = filter;
+				this.filter$ = filter;
 			}
 		}
 	}
 
-	public get rows() : number
+	/** The number of rows to fetch from a select-statement per call to fetch */
+	public get arrayfetch() : number
 	{
-		return(this.rows$);
+		return(this.arrayfetch$);
 	}
 
-	public set rows(rows:number)
+	/** The number of rows to fetch from a select-statement per call to fetch */
+	public set arrayfetch(rows:number)
 	{
-		this.rows$ = rows;
+		this.arrayfetch$ = rows;
 	}
 
-	public set skip(rows:number)
+	/** Skip rows */
+	public set skiprows(rows:number)
 	{
 		this.skip$ = rows;
 	}
 
-	public get skip() : number
+	/** Skip rows */
+	public get skiprows() : number
 	{
 		return(this.skip$);
 	}
 
-	public get cursor() : string
-	{
-		return(this.cursor$);
-	}
-
-	public set cursor(cursor:string)
-	{
-		this.cursor$ = cursor;
-	}
-
+	/** Order by clause */
 	public get orderBy() : string
 	{
 		return(this.order$);
 	}
 
+	/** Order by clause */
 	public set orderBy(value:string)
 	{
 		this.order$ = value;
 	}
 
+	/** Lock record */
 	public get lock() : boolean
 	{
 		return(this.lock$);
 	}
 
+	/** Lock record */
 	public set lock(value:boolean)
 	{
 		this.lock$ = value;
 	}
 
+	/** Set assertions */
 	public set assertions(assertions:BindValue|BindValue[])
 	{
 		if (!Array.isArray(assertions))
 			assertions = [assertions];
 
-		this.assert = assertions;
+		this.assert$ = assertions;
+	}
+
+	/** Bind datatype */
+	public setDataType(name:string, type?:DataType|string) : void
+	{
+		this.datatypes$.set(name,type);
 	}
 
 	/** Set datatypes */
@@ -137,12 +147,51 @@ export class Query implements Serializable
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		let jsdbconn:Connection = Connection.getConnection(conn);
+		this.cursor$ = new Cursor(this.source$);
+		this.jdbconn$ = Connection.getConnection(conn);
 
-		let response:any = await jsdbconn.send(this);
-		this.response = new Response(this.columns,this.datatypes$);
+		let response:any = await this.jdbconn$.send(this);
+		this.response$ = new Response(this.columns$,this.datatypes$);
 
-		return(this.response.parse(response));
+		let success:boolean = this.response$.parse(response);
+		this.records$ = this.response$.records;
+
+		return(success);
+	}
+
+	/** Fetch next record */
+	public async fetch() : Promise<any[]>
+	{
+		if (this.records$?.length > this.pos$)
+			return(this.records$[this.pos$++]);
+
+		if (this.cursor$.eof)
+			return(null);
+
+		this.pos$ = 0;
+		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
+
+		let response:any = await this.jdbconn$.send(fetch);
+		let success:boolean = this.response$.parse(response);
+
+		if (!success)
+			return(null);
+
+		this.records$ = this.response$.records;
+		return(this.fetch());
+	}
+
+	/** Close cursor */
+	public async close() : Promise<boolean>
+	{
+		if (this.cursor$ != null && !this.cursor$.eof)
+		{
+			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
+			this.jdbconn$.send(cursor); // No reason to wait
+		}
+
+		this.cursor$ = null;
+		return(true);
 	}
 
 	public serialize() : any
@@ -150,39 +199,41 @@ export class Query implements Serializable
 		let json:any = {};
 
 		json.request = "query";
-		json.source = this.source;
-		json.columns = this.columns;
+		json.source = this.source$;
+		json.columns = this.columns$;
 
-		if (this.skip > 0)
-			json.skip = this.skip;
+		if (this.skiprows > 0)
+			json.skip = this.skiprows;
 
-		if (this.rows > 0)
-			json.rows = this.rows;
+		if (this.arrayfetch > 0)
+			json.rows = this.arrayfetch;
 
-		if (this.cursor)
-			json.cursor = this.cursor;
+		if (!this.cursor$)
+			this.cursor$ = new Cursor(this.source$);
 
-		applyTypes(this.datatypes$,this.assert);
-		applyTypes(this.datatypes$,this.filter.getBindValues());
+		json.cursor = this.cursor$.name;
 
-		if (this.filter)
-			json.filters = this.filter.serialize().filters;
+		applyTypes(this.datatypes$,this.assert$);
+		applyTypes(this.datatypes$,this.filter$.getBindValues());
+
+		if (this.filter$)
+			json.filters = this.filter$.serialize().filters;
 
 		let assert:any[] = [];
 
-		for (let i = 0; i < this.assert?.length; i++)
+		for (let i = 0; i < this.assert$?.length; i++)
 		{
 			assert.push
 			(
 				{
-					column: this.assert[i].column,
-					value: this.assert[i].value,
-					type: this.assert[i].type
+					column: this.assert$[i].column,
+					value: this.assert$[i].value,
+					type: this.assert$[i].type
 				}
 			)
 		}
 
-		if (this.assert?.length > 0)
+		if (this.assert$?.length > 0)
 			json.assertions = assert;
 
 		if (this.order$)

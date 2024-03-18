@@ -481,42 +481,6 @@ export class Connection extends BaseConnection
 		return(false);
 	}
 
-	public async close(cursor:Cursor) : Promise<Response>
-	{
-		this.tmowarn = false;
-		let response:any = null;
-		if (this.modified) this.modified = new Date();
-
-		if (this.scope == ConnectionScope.stateless)
-			return({success: true, message: null, rows: []});
-
-		if (cursor.trx == this.trx)
-		{
-			let payload:any =
-			{
-				close: true,
-				session: this.conn$,
-				cursor: cursor.name
-			};
-
-			this.attributes$.forEach((value,name) =>
-				{payload[name] = value})
-
-			response = await this.post("fetch",payload);
-
-			if (!response.success)
-			{
-				Messages.handle(MSGGRP.SQL,response.message,Level.fine);
-				return(response);
-			}
-
-			if (response["session"])
-				this.conn$ = response.session;
-		}
-
-		return(response);
-	}
-
 	public get trx() : object
 	{
 		return(this.trx$);

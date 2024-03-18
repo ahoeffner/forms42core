@@ -19,61 +19,33 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./serializable/Response";
+
 /**
  * When doing DML on a database table using OpenRestDB the response
  * from the database is parsed into a DatabaseResponse
  */
 export class DatabaseResponse
 {
-	private response$:any;
-	private columns$:string[] = [];
-	private converted$:boolean = false;
-
-	constructor(response:any, columns?:string[])
+	constructor(private values$:Map<string,any>, private message$?:string)
 	{
-		this.response$ = response;
-
-		if (columns != null)
-		{
-			for (let i = 0; i < columns.length; i++)
-				this.columns$.push(columns[i].toLowerCase());
-		}
 	}
 
 	/** Whether the statement failed */
 	public get failed() : boolean
 	{
-		return(!this.response$.success);
+		return(this.message$ != null);
+	}
+
+	/** Whether the statement failed */
+	public get message() : string
+	{
+		return(this.message$);
 	}
 
 	/** Get the value of a responed column when using 'returning' */
 	public getValue(column:string) : any
 	{
-		if (!this.response$.rows)
-			return(null);
-
-		if (typeof this.response$.rows != "object")
-			return(null);
-
-		column = column?.toLowerCase();
-		let row:any = this.response$.rows[0];
-
-		if (!this.converted$ && this.columns$.length == 0)
-		{
-			Object.keys(row).forEach((col) =>
-			this.columns$.push(col.toLowerCase()));
-		}
-
-		if (!Array.isArray(row) && !this.converted$)
-		{
-			let flat:any[] = [];
-			Object.values(row).forEach((val) => flat.push(val));
-
-			row = flat;
-			this.response$.rows[0] = flat;
-		}
-
-		this.converted$ = true;
-		return(row[this.columns$.indexOf(column)]);
+		return(this.values$.get(column.toLowerCase()));
 	}
 }

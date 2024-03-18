@@ -40,6 +40,7 @@ import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
+import { Response } from "./serializable/Response.js";
 
 
 /**
@@ -443,7 +444,30 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		let lock:Query = new Query(this.source,this.columns,pkeyflt);
 		let response:any = await this.jdbconn$.send(lock);
-		let fetched:Record[] = this.parse(response);
+
+		let parser:Response = new Response(this.columns$,this.datatypes$);
+
+		if (!parser.parse(response))
+		{
+			let level:Level = Level.warn;
+			if (response.fatal) level = Level.severe;
+			Messages.handle(MSGGRP.SQL,response.message,level);
+			return(false);
+		}
+
+		let fetched:Record[] = [];
+		let records:any[][] = parser.records;
+
+		for (let r = 0; r < records.length; r++)
+		{
+			let record:Record = new Record(this);
+
+			for (let c = 0; c < record[r].length; c++)
+				record.setValue(this.columns[c],record[r][c]);
+
+			record.cleanup();
+			fetched.push(record);
+		}
 
 		if (fetched.length == 0)
 		{
@@ -516,13 +540,12 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.cursor$.query = query;
 		this.cursor$.trx = this.jdbconn$.trx;
 
-		query.rows = this.arrayfecth;
 		query.orderBy = this.sorting;
-		query.cursor = this.cursor$.name;
+		query.arrayfetch = this.arrayfecth;
 
 		let response:any = await this.jdbconn$.send(query);
 
-		this.fetched$ = this.parse(response);
+		this.fetched$ = this.getRecords(response);
 		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
@@ -551,7 +574,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (this.jdbconn$.restore(this.cursor$))
 		{
-			query.skip = query.rows;
+			query.skiprows = this.cursor$.pos;
 			response = await this.jdbconn$.send(query);
 		}
 		else
@@ -567,7 +590,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return([]);
 		}
 
-		let fetched:Record[] = this.parse(response);
+		let fetched:Record[] = this.getRecords(response);
 
 		fetched = await this.filter(fetched);
 		if (fetched.length == 0) return(this.fetch());
@@ -725,87 +748,42 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.described$);
 	}
 
-	private parse(response:any) : Record[]
+	private getRecords(response:any) : Record[]
 	{
 		let fetched:Record[] = [];
-		let rows:any[][] = response.rows;
 
-		if (!response.more)
+		if (!this.cursor$)
 		{
-			if (this.cursor$)
-				this.cursor$.eof = true;
-		}
-
-		if (!response.success)
-		{
-			if (this.cursor$)
-				this.cursor$.eof = true;
-
+			console.log(new Error().stack);
 			return(fetched);
 		}
 
-		if (!this.cursor$) console.log(new Error().stack)
-		this.cursor$.pos += rows.length;
+		let parser:Response = new Response(this.columns$,this.datatypes$);
 
-		if (this.primary$ == null)
-			this.primary$ = this.columns$;
-
-		let dates:boolean[] = [];
-		let datetypes:string[] = ["date", "datetime", "timestamp"];
-
-		for (let c = 0; c < this.columns.length; c++)
+		if (!parser.parse(response))
 		{
-			let dt:string = this.datatypes$.get(this.columns[c].toLowerCase());
-			if (datetypes.includes(dt)) dates.push(true);
-			else dates.push(false);
+			this.cursor$.eof = true;
+			return(fetched);
 		}
 
-		for (let r = 0; r < rows.length; r++)
+		if (!parser.more)
+			this.cursor$.eof = true;
+
+		let records:any[][] = parser.records;
+
+		for (let r = 0; r < records.length; r++)
 		{
 			let record:Record = new Record(this);
 
-			for (let c = 0; c < rows[r].length; c++)
-			{
-				if (rows[r][c] && dates[c])
-				{
-					if (typeof rows[r][c] === "number")
-						rows[r][c] = new Date(+rows[r][c]);
-				}
-
-				record.setValue(this.columns[c],rows[r][c]);
-			}
-
-			let response:any = {succes: true, rows: [rows[r]]};
-			record.response = new DatabaseResponse(response,this.columns);
+			for (let c = 0; c < record[r].length; c++)
+				record.setValue(this.columns[c],record[r][c]);
 
 			record.cleanup();
 			fetched.push(record);
 		}
 
+		this.cursor$.pos += records.length;
 		return(fetched);
-	}
-
-	private castResponse(response:any) : void
-	{
-		let rows:any[][] = response.rows;
-
-		if (rows == null)
-			return;
-
-		let datetypes:string[] = ["date", "datetime", "timestamp"];
-
-		for (let r = 0; r < rows.length; r++)
-		{
-			Object.keys(rows[r]).forEach((col) =>
-			{
-				col = col.toLowerCase();
-				let value:any = rows[r][col];
-				let dt:string = this.datatypes$.get(col);
-
-				if (datetypes.includes(dt) && typeof value === "number")
-					rows[r][col] = new Date(value);
-			})
-		}
 	}
 
 	private assert(record:Record) : BindValue[]
@@ -821,7 +799,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		return(asserts);
 	}
-
 
 	private bind(record:Record, columns:string[]) : BindValue[]
 	{

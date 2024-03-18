@@ -23,13 +23,12 @@ import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
 import { Serializable, applyTypes } from "./Serializable.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Insert implements Serializable
 {
+	private source:string = null;
 	private retcols:string[] = null;
-	private source:DataSource = null;
 
 	private values:Map<string,BindValue> =
 		new Map<string,BindValue>();
@@ -41,7 +40,7 @@ export class Insert implements Serializable
 		new Map<string,string>();
 
 
-	constructor(source:DataSource, values:BindValue|BindValue[], retcols?:string|string[], rettypes?:BindValue|BindValue[])
+	constructor(source:string, values:BindValue|BindValue[], retcols?:string|string[], rettypes?:BindValue|BindValue[])
 	{
 		if (!retcols)
 			retcols = [];
@@ -84,7 +83,7 @@ export class Insert implements Serializable
 	{
 		let json:any = {};
 		json.request = "insert";
-		json.source = this.source.name;
+		json.source = this.source;
 
 		let cols:any[] = [];
 

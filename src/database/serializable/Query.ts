@@ -19,31 +19,32 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Query implements Serializable
 {
 	private skip$: number = 0;
 	private rows$: number = 1;
+	private source:string = null;
 	private order$:string = null;
 	private cursor$:string = null;
 	private lock$: boolean = false;
 	private columns:string[] = null;
-	private source:DataSource = null;
+	private response:Response = null;
 	private assert:BindValue[] = null;
 	private filter:FilterStructure = null;
 
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,string>();
 
-	constructor(source:DataSource, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
+	constructor(source:string, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
 		if (!Array.isArray(columns))
 			columns = [columns];
@@ -134,10 +135,14 @@ export class Query implements Serializable
 	}
 
 	/** Execute the statement */
-	public async execute(conn:DatabaseConnection) : Promise<any>
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
 		let jsdbconn:Connection = Connection.getConnection(conn);
-		return(jsdbconn.send(this));
+
+		let response:any = await jsdbconn.send(this);
+		this.response = new Response(this.columns,this.datatypes$);
+
+		return(this.response.parse(response));
 	}
 
 	public serialize() : any
@@ -145,8 +150,8 @@ export class Query implements Serializable
 		let json:any = {};
 
 		json.request = "query";
+		json.source = this.source;
 		json.columns = this.columns;
-		json.source = this.source.name;
 
 		if (this.skip > 0)
 			json.skip = this.skip;

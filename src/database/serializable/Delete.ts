@@ -25,13 +25,12 @@ import { Connection } from "../Connection.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Delete implements Serializable
 {
+	private source:string = null;
 	private retcols:string[] = null;
-	private source:DataSource = null;
 	private assert:BindValue[] = null;
 	private filter:FilterStructure = null;
 
@@ -42,7 +41,7 @@ export class Delete implements Serializable
 		new Map<string,string>();
 
 
-	constructor(source:DataSource, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
+	constructor(source:string, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
 	{
 		if (!types)
 			types = [];
@@ -105,7 +104,7 @@ export class Delete implements Serializable
 	{
 		let json:any = {};
 		json.request = "delete";
-		json.source = this.source.name;
+		json.source = this.source;
 
 		if (this.filter)
 			json.filters = this.filter.serialize().filters;

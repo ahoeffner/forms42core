@@ -103,7 +103,13 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.source$ = source;
 	}
 
-	/** Set the table/view */
+	/** Get the source */
+	public get source() : string
+	{
+		return(this.source$);
+	}
+
+	/** Set the source */
 	public set source(source:string)
 	{
 		this.source$ = source;
@@ -153,12 +159,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Get the primary key defined for this datasource */
 	public get primaryKey() : string[]
 	{
-		if (this.primary$ == null || this.primary$.length == 0)
-		{
-			this.primary$ = [];
-			this.primary$.push(...this.columns$);
-		}
-
+		if (this.primary$ == null) return(this.columns)
 		return(this.primary$);
 	}
 
@@ -320,7 +321,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let values:BindValue[] = this.bind(record,columns);
 				let rettypes:BindValue[] = this.bind(null,this.insreturncolumns$);
-				let ins:Insert = new Insert(this,values,this.insreturncolumns$,rettypes);
+				let ins:Insert = new Insert(this.source,values,this.insreturncolumns$,rettypes);
 				batch.add(ins.setDataTypes(this.datatypes$));
 			}
 
@@ -333,7 +334,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 				let rettypes:BindValue[] = this.bind(null,this.delreturncolumns$);
-				let del:Delete = new Delete(this,pkeyflt,this.delreturncolumns$,rettypes);
+				let del:Delete = new Delete(this.source,pkeyflt,this.delreturncolumns$,rettypes);
 
 				if (assert) del.assertions = this.assert(record);
 				batch.add(del.setDataTypes(this.datatypes$));
@@ -391,7 +392,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			this.setTypes(filter.getBindValues());
 		}
 
-		let query:Query = new Query(this,columns,pkeyflt);
+		let query:Query = new Query(this.source,columns,pkeyflt);
 
 		query.lock = true;
 		query.assertions = this.assert(record);
@@ -440,7 +441,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			this.setTypes(filter.getBindValues());
 		}
 
-		let lock:Query = new Query(this,this.columns,pkeyflt);
+		let lock:Query = new Query(this.source,this.columns,pkeyflt);
 		let response:any = await this.jdbconn$.send(lock);
 		let fetched:Record[] = this.parse(response);
 
@@ -510,7 +511,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		await this.createCursor();
-		let query:Query = new Query(this,this.columns,filter);
+		let query:Query = new Query(this.source,this.columns,filter);
 
 		this.cursor$.query = query;
 		this.cursor$.trx = this.jdbconn$.trx;
@@ -682,7 +683,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(false);
 		}
 
-		let desc:Describe = new Describe(this);
+		let desc:Describe = new Describe(this.source);
 		let response:any = await this.jdbconn$.send(desc);
 
 		if (!response.success)
@@ -843,7 +844,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let pkey:string[] = this.primaryKey;
 		let pkeyflt:FilterStructure = new FilterStructure();
 
-		for (let i = 0; i < this.primaryKey.length; i++)
+		if (this.primaryKey.length == 0)
+			pkey = this.columns$;
+
+		for (let i = 0; i < pkey.length; i++)
 		{
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);

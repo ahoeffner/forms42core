@@ -24,4 +24,5 @@
  */
 export abstract class SQLSource
 {
+	source:string;
 }

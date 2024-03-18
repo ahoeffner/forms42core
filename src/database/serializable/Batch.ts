@@ -55,10 +55,3 @@ export class Batch implements Serializable
 		return(json);
 	}
 }
-
-
-export enum CursorRequest
-{
-	fetch,
-	close
-}

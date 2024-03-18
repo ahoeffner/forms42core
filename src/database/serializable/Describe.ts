@@ -21,13 +21,12 @@
 
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 
 export class Describe implements Serializable
 {
-	public constructor(private source:DataSource)
+	public constructor(private source:string)
 	{
 	}
 
@@ -43,7 +42,7 @@ export class Describe implements Serializable
 		let json:any = {};
 
 		json.request = "describe";
-		json.source = this.source.name;
+		json.source = this.source;
 
 		return(json);
 	}

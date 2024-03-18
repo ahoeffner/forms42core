@@ -1208,7 +1208,7 @@ export class Block
 			filters.getBindValues().forEach((b) => {b.setUnique()});
 
 			let filter:SubQuery = new SubQuery(rel.master.fields);
-			filter.constraint = new Query(detail.datasource,rel.detail.fields,filters);
+			filter.constraint = new Query(detail.datasource.source,rel.detail.fields,filters);
 
 			this.getDetailBlockFilter(detail,true).and(filter,detail.name);
 			return(true);

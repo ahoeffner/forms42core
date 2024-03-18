@@ -43,7 +43,7 @@ import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js
 
 
 /**
- * Datasource based on a table/view using OpenJsonDB
+ * Datasource based on a table/view/... using OpenJsonDB
  */
 export class DatabaseSource extends SQLSource implements DataSource
 {

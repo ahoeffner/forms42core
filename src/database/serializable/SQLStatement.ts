@@ -129,8 +129,8 @@ export class SQLStatement implements Serializable
 
 		if (success)
 		{
-			this.datatypes$ = this.response$.datatypes;
 			this.records$ = this.response$.records;
+			this.datatypes$ = this.response$.datatypes;
 		}
 
 		return(success);
@@ -139,6 +139,9 @@ export class SQLStatement implements Serializable
 	/** Fetch rows, if select statement */
 	public async fetch() : Promise<any[]>
 	{
+		if (!this.response$.more && this.cursor$)
+			this.cursor$.eof = true;
+
 		if (this.records$?.length > this.pos$)
 			return(this.records$[this.pos$++]);
 

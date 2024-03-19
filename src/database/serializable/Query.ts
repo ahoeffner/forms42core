@@ -162,6 +162,9 @@ export class Query implements Serializable
 	/** Fetch next record */
 	public async fetch() : Promise<any[]>
 	{
+		if (!this.response$.more && this.cursor$)
+			this.cursor$.eof = true;
+
 		if (this.records$?.length > this.pos$)
 			return(this.records$[this.pos$++]);
 

@@ -28,6 +28,7 @@ import { MSGGRP } from "../messages/Internal.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
+import { Response } from "./serializable/Response.js";
 import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
@@ -36,11 +37,11 @@ import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { Level, Messages } from "../messages/Messages.js";
+import { applyTypes } from "./serializable/Serializable.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
 import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
-import { Response } from "./serializable/Response.js";
 
 
 /**
@@ -390,7 +391,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);
 			pkeyflt.and(filter.setConstraint(value),pkey[i]);
-			this.setTypes(filter.getBindValues());
+			applyTypes(this.datatypes$,filter.getBindValues());
 		}
 
 		let query:Query = new Query(this.source,columns,pkeyflt);
@@ -439,7 +440,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);
 			pkeyflt.and(filter.setConstraint(value),pkey[i]);
-			this.setTypes(filter.getBindValues());
+			applyTypes(this.datatypes$,filter.getBindValues());
 		}
 
 		let lock:Query = new Query(this.source,this.columns,pkeyflt);
@@ -508,9 +509,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 			else filter.and(this.limit$,"limit");
 		}
 
-		this.setTypes(filter?.get("qbe")?.getBindValues());
-		this.setTypes(filter?.get("limit")?.getBindValues());
-		this.setTypes(filter?.get("masters")?.getBindValues());
+		applyTypes(this.datatypes$,filter?.get("qbe")?.getBindValues());
+		applyTypes(this.datatypes$,filter?.get("limit")?.getBindValues());
+		applyTypes(this.datatypes$,filter?.get("masters")?.getBindValues());
 
 		let details:FilterStructure = filter?.getFilterStructure("details");
 
@@ -534,6 +535,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
+		console.log("1 name: "+this.cursor$?.name+" eof: "+this.cursor$?.eof)
 		await this.createCursor();
 		let query:Query = new Query(this.source,this.columns,filter);
 
@@ -544,8 +546,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 		query.arrayfetch = this.arrayfecth;
 
 		let response:any = await this.jdbconn$.send(query);
+		console.log("2 more: "+response.more+" name: "+this.cursor$.name)
 
 		this.fetched$ = this.getRecords(response);
+		console.log("3 more: "+response.more+" name: "+this.cursor$.name+" eof: "+this.cursor$.eof)
 		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);
@@ -685,16 +689,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.cursor$.rows = this.arrayfecth;
 	}
 
-	private setTypes(bindvalues:BindValue[]) : void
-	{
-		bindvalues?.forEach((b) =>
-		{
-			let col:string = b.column?.toLowerCase();
-			let t:string = this.datatypes$.get(col);
-			if (!b.forceDataType && t != null) b.type = t;
-		})
-	}
-
 	private async describe() : Promise<boolean>
 	{
 		if (this.described$)
@@ -829,7 +823,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			let filter:Filter = Filters.Equals(pkey[i]);
 			let value:any = record.getInitialValue(pkey[i]);
 			pkeyflt.and(filter.setConstraint(value),pkey[i]);
-			this.setTypes(filter.getBindValues());
+			applyTypes(this.datatypes$,filter.getBindValues());
 		}
 
 		return(pkeyflt);

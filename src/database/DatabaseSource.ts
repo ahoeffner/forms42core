@@ -535,7 +535,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		console.log("1 name: "+this.cursor$?.name+" eof: "+this.cursor$?.eof)
 		await this.createCursor();
 		let query:Query = new Query(this.source,this.columns,filter);
 
@@ -546,10 +545,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		query.arrayfetch = this.arrayfecth;
 
 		let response:any = await this.jdbconn$.send(query);
-		console.log("2 more: "+response.more+" name: "+this.cursor$.name)
 
 		this.fetched$ = this.getRecords(response);
-		console.log("3 more: "+response.more+" name: "+this.cursor$.name+" eof: "+this.cursor$.eof)
 		this.fetched$ = await this.filter(this.fetched$);
 
 		return(true);

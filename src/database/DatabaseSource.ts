@@ -357,7 +357,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		await this.jdbconn$.send(batch);
+		let success:boolean = await batch.execute(this.connection);
 
 		this.dirty$ = [];
 		return(processed);

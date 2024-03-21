@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
@@ -32,6 +33,8 @@ export class Delete implements Serializable
 	private source:string = null;
 	private retcols:string[] = null;
 	private assert:BindValue[] = null;
+	private response$:Response = null;
+	private jdbconn$:Connection = null;
 	private filter:FilterStructure = null;
 
 	private rettypes:Map<string,BindValue> =
@@ -94,10 +97,15 @@ export class Delete implements Serializable
 	}
 
 	/** Execute the statement */
-	public async execute(conn:DatabaseConnection) : Promise<any>
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		let jsdbconn:Connection = Connection.getConnection(conn);
-		return(jsdbconn.send(this));
+		this.jdbconn$ = Connection.getConnection(conn);
+		let response:any = await this.jdbconn$.send(this);
+
+		this.response$ = new Response(null,this.datatypes$);
+		let success:boolean = this.response$.parse(response);
+
+		return(success);
 	}
 
 	public serialize() : any

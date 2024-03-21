@@ -41,33 +41,33 @@ export interface DataSource
 	name:string;
 	sorting:string;
 	columns:string[];
-	arrayfecth:number;
 
 	rowlocking:LockMode;
 	queryallowed:boolean;
 	insertallowed:boolean;
 	updateallowed:boolean;
 	deleteallowed:boolean;
-	transactional:boolean;
 
 	clear() : void;
 	clone() : DataSource;
 	close() : Promise<boolean>;
 
-	fetch() : Promise<Record[]>;
-	flush() : Promise<Record[]>;
+	undo() : Promise<null|Record|Record[]>;
+	fetch() : Promise<null|Record|Record[]>;
+	flush() : Promise<null|Record|Record[]>;
 
-	undo() : Promise<Record[]>;
 	lock(record:Record) : Promise<boolean>;
 	refresh(record:Record) : Promise<boolean>;
 
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
+
 	query(filters?:FilterStructure) : Promise<boolean>;
 
 	getFilters() : FilterStructure;
+	addFilter(filter:Filter|FilterStructure) : DataSource;
+
 	addColumns(columns:string|string[]) : DataSource;
 	removeColumns(columns:string|string[]) : DataSource;
-	addFilter(filter:Filter|FilterStructure) : DataSource;
 }

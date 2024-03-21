@@ -535,6 +535,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.query$ = new Query(this.source,this.columns,filter);
 
 		this.fetched$ = [];
+		this.query$.orderBy = this.order$;
 		this.query$.arrayfetch = this.arrayfecth;
 		await this.query$.execute(this.connection);
 
@@ -542,32 +543,25 @@ export class DatabaseSource extends SQLSource implements DataSource
 	}
 
 	/** Fetch a set of records */
-	public async fetch() : Promise<Record[]>
+	public async fetch() : Promise<Record>
 	{
-		if (this.fetched$.length > 0)
-		{
-			let fetched:Record[] = [];
-			fetched.push(...this.fetched$);
+		if (!this.query$.more())
+			return(null);
 
-			this.fetched$ = [];
-			return(fetched);
-		}
+		let row:any[] = await this.query$.fetch();
+		if (!row) return(null);
 
-		let rows:any[][] = [];
+		let record:Record = new Record(this);
 
-		for (let i = 0; i < this.arrayfecth; i++)
-		{
-			let row:any[] = await this.query$.fetch();
-			if (row) rows.push(row);
-			else break;
-		}
+		for (let c = 0; c < row.length; c++)
+			record.setValue(this.columns[c],row[c]);
 
-		let fetched:Record[] = this.convertRows(rows);
+		record.cleanup();
 
-		fetched = await this.filter(fetched);
-		if (fetched.length == 0) return(this.fetch());
+		if (this.nosql$ && !await this.nosql$.evaluate(record))
+			return(this.fetch());
 
-		return(fetched);
+		return(record);
 	}
 
 	/** Return the default filters */
@@ -684,24 +678,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.described$ = true;
 		console.log("cache describe");
 		return(this.described$);
-	}
-
-	private convertRows(rows:any[]) : Record[]
-	{
-		let fetched:Record[] = [];
-
-		for (let r = 0; r < rows.length; r++)
-		{
-			let record:Record = new Record(this);
-
-			for (let c = 0; c < rows[r].length; c++)
-				record.setValue(this.columns[c],rows[r][c]);
-
-			record.cleanup();
-			fetched.push(record);
-		}
-
-		return(fetched);
 	}
 
 	private assert(record:Record) : BindValue[]
@@ -821,24 +797,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		return(true);
-	}
-
-	private async filter(records:Record[]) : Promise<Record[]>
-	{
-		if (this.nosql$)
-		{
-			let passed:Record[] = [];
-
-			for (let i = 0; i < records.length; i++)
-			{
-				if (await this.nosql$.evaluate(records[i]))
-					passed.push(records[i]);
-			}
-
-			records = passed;
-		}
-
-		return(records);
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

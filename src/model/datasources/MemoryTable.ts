@@ -27,7 +27,6 @@ import { DataSource, LockMode } from "../interfaces/DataSource.js";
 export class MemoryTable implements DataSource
 {
 	public name:string;
-	public arrayfecth:number = 1;
 	public rowlocking = LockMode.None;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
@@ -97,12 +96,6 @@ public constructor(columns?:string|string[], records?:number|any[][])
 		this.records$.forEach((rec) => {rec.refresh()});
 	}
 
-	/** Memory source is not transactional */
-	public get transactional() : boolean
-	{
-		return(false);
-	}
-
 	/** Set table data */
 	public setData(data:any[][]) : void
 	{
@@ -140,9 +133,7 @@ public constructor(columns?:string|string[], records?:number|any[][])
 		}
 
 		let clone:MemoryTable = new MemoryTable(columns,table);
-
 		clone.sorting = this.sorting;
-		clone.arrayfecth = this.arrayfecth;
 
 		return(clone);
 	}

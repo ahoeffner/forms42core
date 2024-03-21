@@ -25,4 +25,5 @@
 export abstract class SQLSource
 {
 	abstract source:string;
+	abstract transactional:boolean;
 }

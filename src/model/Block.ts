@@ -1056,7 +1056,6 @@ export class Block
 			if (await this.asSubQuery(this,blocks[i],rel))
 				continue;
 
-			console.log("**** setDetailDependencies ****")
 			let src:DataSource = blocks[i].datasource.clone();
 			src.columns = rel.detail.fields;
 
@@ -1079,9 +1078,15 @@ export class Block
 
 			while(true)
 			{
-				let recs:Record[] = await src.fetch();
+				let recs:null|Record|Record[] = await src.fetch();
 
-				if (recs == null || recs.length == 0)
+				if (recs == null)
+					break;
+
+				if (!Array.isArray(recs))
+					recs = [recs];
+
+				if (recs.length == 0)
 					break;
 
 				recs.forEach((rec) =>

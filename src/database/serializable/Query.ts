@@ -178,6 +178,12 @@ export class Query implements Serializable
 		return(success);
 	}
 
+	/** More rows */
+	public more() : boolean
+	{
+		return(this.pos$ < this.records$.length || !this.cursor$.eof);
+	}
+
 	/** Fetch next record */
 	public async fetch() : Promise<any[]>
 	{
@@ -190,7 +196,7 @@ export class Query implements Serializable
 		if (!this.response$.more && this.cursor$)
 			this.cursor$.eof = true;
 
-		if (this.records$?.length > this.pos$)
+		if (this.records$.length > this.pos$)
 			return(this.records$[this.pos$++]);
 
 		if (this.cursor$.eof)

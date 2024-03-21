@@ -28,6 +28,7 @@ import { Level, Messages } from "../messages/Messages.js";
 import { EventType } from "../control/events/EventType.js";
 import { FlushStrategy } from "../application/FormsModule.js";
 import { DataSource, LockMode } from "./interfaces/DataSource.js";
+import { SQLSource } from "../database/SQLSource.js";
 
 export class DataSourceWrapper
 {
@@ -90,7 +91,11 @@ export class DataSourceWrapper
 
 	public get transactional() : boolean
 	{
-		if (this.source?.transactional) return(true);
+		if (!this.source$) return(false);
+
+		if (this.source$ instanceof SQLSource && this.source$.transactional)
+			return(true);
+
 		return(false);
 	}
 
@@ -149,7 +154,14 @@ export class DataSourceWrapper
 
 	public async undo() : Promise<Record[]>
 	{
-		return(this.source.undo());
+		let recs:null|Record|Record[] = await this.source.undo();
+
+		if (!recs) recs = [];
+
+		if (!Array.isArray(recs))
+			recs = [recs];
+
+		return(recs);
 	}
 
 	public async flush() : Promise<boolean>
@@ -166,7 +178,13 @@ export class DataSourceWrapper
 			});
 
 			let succces:boolean = true;
-			let records:Record[] = await this.source.flush();
+			let records:null|Record|Record[] = await this.source.flush();
+
+			if (!records)
+				records = [];
+
+			if (!Array.isArray(records))
+				records = [records];
 
 			for (let i = 0; i < records.length; i++)
 			{
@@ -279,7 +297,7 @@ export class DataSourceWrapper
 		if (this.locked(record))
 			return(true);
 
-		if (!this.source.transactional)
+		if (!this.transactional)
 			return(true);
 
 		if (record.state == RecordState.Deleted)
@@ -504,21 +522,28 @@ export class DataSourceWrapper
 		if (this.hwm$ >= this.cache$.length)
 		{
 			if (this.eof$) return(null);
-			let recs:Record[] = await this.source.fetch();
+			let recs:null|Record|Record[] = await this.source.fetch();
 
-			if (recs == null || recs.length == 0)
+			if (recs == null)
 			{
 				this.eof$ = true;
 				return(null);
 			}
 
-			if (recs.length < this.source.arrayfecth)
+			if (!Array.isArray(recs))
+				recs = [recs];
+
+			if (recs.length == 0)
+			{
 				this.eof$ = true;
+				return(null);
+			}
 
 			this.cache$.push(...recs);
 		}
 
 		let record:Record = this.cache$[this.hwm$];
+		console.log()
 
 		if (!record.prepared)
 		{

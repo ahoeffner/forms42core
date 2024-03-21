@@ -240,7 +240,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	public clear() : void
 	{
 		this.dirty$ = [];
-		this.closeCursor();
+		this.close();
 	}
 
 	/** Clones this datasource */
@@ -617,22 +617,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 	}
 
 	/** Close the database cursor */
-	public async closeCursor() : Promise<boolean>
+	public async close() : Promise<boolean>
 	{
-		let response:any = null;
-
-		if (this.cursor$ && !this.cursor$.eof)
-		{
-			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
-			response = await this.jdbconn$.send(cursor);
-		}
-
 		this.fetched$ = [];
-		this.cursor$ = null;
-
-		if (response)
-			return(response.success);
-
+		this.query$?.close();
 		return(true);
 	}
 

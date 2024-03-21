@@ -52,15 +52,18 @@ export interface DataSource
 
 	clear() : void;
 	clone() : DataSource;
-	undo() : Promise<Record[]>;
+	close() : Promise<boolean>;
+
 	fetch() : Promise<Record[]>;
 	flush() : Promise<Record[]>;
-	closeCursor() : Promise<boolean>;
+
+	undo() : Promise<Record[]>;
 	lock(record:Record) : Promise<boolean>;
+	refresh(record:Record) : Promise<boolean>;
+
 	insert(record:Record) : Promise<boolean>;
 	update(record:Record) : Promise<boolean>;
 	delete(record:Record) : Promise<boolean>;
-	refresh(record:Record) : Promise<boolean>;
 	query(filters?:FilterStructure) : Promise<boolean>;
 
 	getFilters() : FilterStructure;

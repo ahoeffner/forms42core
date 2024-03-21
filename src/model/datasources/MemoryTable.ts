@@ -402,7 +402,7 @@ public constructor(columns?:string|string[], records?:number|any[][])
 	}
 
 	/** Cursers is not used with this datasource */
-	public async closeCursor() : Promise<boolean>
+	public async close() : Promise<boolean>
 	{
 		return(true);
 	}

@@ -107,7 +107,7 @@ export class DataSourceWrapper
 			return(true);
 		}
 
-		await this.source.closeCursor();
+		await this.source.close();
 		return(this.flush());
 	}
 

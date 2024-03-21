@@ -115,7 +115,7 @@ export class Connection extends BaseConnection
 		if (this.connected())
 		{
 			// Connection scope cannot be changed after connect
-			Messages.warn(MSGGRP.ORDB,1)
+			Messages.warn(MSGGRP.JWDB,1)
 			return;
 		}
 		this.scope$ = scope;
@@ -231,7 +231,7 @@ export class Connection extends BaseConnection
 
 		if (!response.success)
 		{
-			Messages.handle(MSGGRP.ORDB,response.message,Level.fine);
+			Messages.handle(MSGGRP.JWDB,response.message,Level.fine);
 			return(false);
 		}
 
@@ -406,7 +406,7 @@ export class Connection extends BaseConnection
 		{
 			if (!this.conn$)
 			{
-				Messages.warn(MSGGRP.ORDB,3);
+				Messages.warn(MSGGRP.JWDB,3);
 				return(null);
 			}
 		}
@@ -558,7 +558,7 @@ export class Connection extends BaseConnection
 		if (!response.success)
 		{
 			this.conn$ = null;
-			Messages.handle(MSGGRP.ORDB,response.message,Level.warn);
+			Messages.handle(MSGGRP.JWDB,response.message,Level.warn);
 			await FormEvents.raise(FormEvent.AppEvent(EventType.Disconnect));
 			this.running$ = false;
 			return(response);

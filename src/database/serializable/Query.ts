@@ -24,6 +24,8 @@ import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
+import { MSGGRP } from "../../messages/Internal.js";
+import { Messages } from "../../messages/Messages.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { Serializable, applyTypes } from "./Serializable.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
@@ -71,6 +73,18 @@ export class Query implements Serializable
 				this.filter$ = filter;
 			}
 		}
+	}
+
+	/** Something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.message != null);
+	}
+
+	/** The error message from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
 	}
 
 	/** The number of rows to fetch from a select-statement per call to fetch */
@@ -150,18 +164,29 @@ export class Query implements Serializable
 		this.cursor$ = new Cursor(this.source$);
 		this.jdbconn$ = Connection.getConnection(conn);
 
+		this.pos$ = 0;
+		this.cursor$.trx = this.jdbconn$.trx;
+
 		let response:any = await this.jdbconn$.send(this);
 		this.response$ = new Response(this.columns$,this.datatypes$);
 
 		let success:boolean = this.response$.parse(response);
-		this.records$ = this.response$.records;
+
+		if (success)
+			this.records$ = this.response$.records;
 
 		return(success);
 	}
 
 	/** Fetch next record */
-	public async fetch() : Promise<any[]>
+	public async fetch() : Promise<any[][]>
 	{
+		if (!this.cursor$)
+		{
+			Messages.severe(MSGGRP.JWDB,4,this.source$);
+			return(null);
+		}
+
 		if (!this.response$.more && this.cursor$)
 			this.cursor$.eof = true;
 
@@ -171,7 +196,27 @@ export class Query implements Serializable
 		if (this.cursor$.eof)
 			return(null);
 
-		this.pos$ = 0;
+		if (this.jdbconn$.restore(this.cursor$))
+		{
+			this.skiprows += this.cursor$.pos;
+
+			let response:any = await this.jdbconn$.send(this);
+			this.response$ = new Response(this.columns$,this.datatypes$);
+
+			this.cursor$.trx = this.jdbconn$.trx;
+			let success:boolean = this.response$.parse(response);
+
+			if (success)
+			{
+				this.records$ = this.response$.records;
+				return(this.fetch());
+			}
+			else
+			{
+				return(null);
+			}
+		}
+
 		let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
 
 		let response:any = await this.jdbconn$.send(fetch);
@@ -189,8 +234,11 @@ export class Query implements Serializable
 	{
 		if (this.cursor$ != null && !this.cursor$.eof)
 		{
-			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
-			this.jdbconn$.send(cursor); // No reason to wait
+			if (this.cursor$.trx == this.jdbconn$.trx)
+			{
+				let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
+				this.jdbconn$.send(cursor); // No reason to wait
+			}
 		}
 
 		this.cursor$ = null;

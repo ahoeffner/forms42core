@@ -90,6 +90,12 @@ export class SQLStatement implements Serializable
 		this.arrayfetch$ = size;
 	}
 
+	/** Something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.message != null);
+	}
+
 	/** The error message from the backend */
 	public error() : string
 	{
@@ -147,7 +153,7 @@ export class SQLStatement implements Serializable
 
 		if (!this.cursor$)
 		{
-			Messages.warn(MSGGRP.ORDB,4);
+			Messages.warn(MSGGRP.JWDB,4);
 			return(null);
 		}
 

@@ -19,7 +19,6 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Cursor } from "./Cursor.js";
 import { SQLSource } from "./SQLSource.js";
 import { BindValue } from "./BindValue.js";
 import { Query } from "./serializable/Query.js";
@@ -28,7 +27,6 @@ import { MSGGRP } from "../messages/Internal.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
-import { Response } from "./serializable/Response.js";
 import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
@@ -49,9 +47,9 @@ import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js
  */
 export class DatabaseSource extends SQLSource implements DataSource
 {
+	private query$:Query = null;
 	private order$:string = null;
 	private source$:string = null;
-	private cursor$:Cursor = null;
 
 	private described$:boolean = false;
 
@@ -288,7 +286,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!this.jdbconn$?.connected())
 		{
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			Messages.severe(MSGGRP.JWDB,3,this.constructor.name);
 			return([]);
 		}
 
@@ -443,21 +441,17 @@ export class DatabaseSource extends SQLSource implements DataSource
 			applyTypes(this.datatypes$,filter.getBindValues());
 		}
 
-		let lock:Query = new Query(this.source,this.columns,pkeyflt);
-		let response:any = await this.jdbconn$.send(lock);
+		let refr:Query = new Query(this.source,this.columns,pkeyflt);
+		let success:boolean = await refr.execute(this.connection);
 
-		let parser:Response = new Response(this.columns$,this.datatypes$);
-
-		if (!parser.parse(response))
+		if (!success)
 		{
-			let level:Level = Level.warn;
-			if (response.fatal) level = Level.severe;
-			Messages.handle(MSGGRP.SQL,response.message,level);
+			Messages.handle(MSGGRP.SQL,refr.error,Level.warn);
 			return(false);
 		}
 
 		let fetched:Record[] = [];
-		let records:any[][] = parser.records;
+		let records:any[][] = await refr.fetch();
 
 		for (let r = 0; r < records.length; r++)
 		{
@@ -496,7 +490,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!this.jdbconn$?.connected())
 		{
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			Messages.severe(MSGGRP.JWDB,3,this.constructor.name);
 			return(false);
 		}
 
@@ -535,19 +529,13 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 		}
 
-		await this.createCursor();
-		let query:Query = new Query(this.source,this.columns,filter);
+		if (this.query$)
+			this.query$.close();
 
-		this.cursor$.query = query;
-		this.cursor$.trx = this.jdbconn$.trx;
+		this.query$ = new Query(this.source,this.columns,filter);
 
-		query.orderBy = this.sorting;
-		query.arrayfetch = this.arrayfecth;
-
-		let response:any = await this.jdbconn$.send(query);
-
-		this.fetched$ = this.getRecords(response);
-		this.fetched$ = await this.filter(this.fetched$);
+		this.fetched$ = [];
+		this.query$.execute(this.connection);
 
 		return(true);
 	}
@@ -555,9 +543,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Fetch a set of records */
 	public async fetch() : Promise<Record[]>
 	{
-		if (this.cursor$ == null)
-			return([]);
-
 		if (this.fetched$.length > 0)
 		{
 			let fetched:Record[] = [];
@@ -567,31 +552,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		if (this.cursor$.eof)
-			return([]);
-
-		let response:any = null;
-		let query:Query = this.cursor$.query;
-
-		if (this.jdbconn$.restore(this.cursor$))
-		{
-			query.skiprows = this.cursor$.pos;
-			response = await this.jdbconn$.send(query);
-		}
-		else
-		{
-			let fetch:CFunc = new CFunc(this.cursor$.name,COPR.fetch);
-			response = await this.jdbconn$.send(fetch);
-		}
-
-		if (!response.success)
-		{
-			this.cursor$ = null;
-			console.error(this.name+" failed to fetch: "+JSON.stringify(response));
-			return([]);
-		}
-
-		let fetched:Record[] = this.getRecords(response);
+		let rows:any[][] = await this.query$.fetch();
+		let fetched:Record[] = this.getRecords(rows);
 
 		fetched = await this.filter(fetched);
 		if (fetched.length == 0) return(this.fetch());
@@ -674,18 +636,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(true);
 	}
 
-	private async createCursor() : Promise<void>
-	{
-		if (this.cursor$ && !this.cursor$.eof)
-		{
-			let cursor:CFunc = new CFunc(this.cursor$.name,COPR.close);
-			this.jdbconn$.send(cursor); // No reason to wait
-		}
-
-		this.cursor$ = new Cursor(this.name);
-		this.cursor$.rows = this.arrayfecth;
-	}
-
 	private async describe() : Promise<boolean>
 	{
 		if (this.described$)
@@ -693,7 +643,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!this.jdbconn$?.connected())
 		{
-			Messages.severe(MSGGRP.ORDB,3,this.constructor.name);
+			Messages.severe(MSGGRP.JWDB,3,this.constructor.name);
 			return(false);
 		}
 
@@ -739,41 +689,21 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.described$);
 	}
 
-	private getRecords(response:any) : Record[]
+	private getRecords(rows:any[][]) : Record[]
 	{
 		let fetched:Record[] = [];
 
-		if (!this.cursor$)
-		{
-			console.log(new Error().stack);
-			return(fetched);
-		}
-
-		let parser:Response = new Response(this.columns$,this.datatypes$);
-
-		if (!parser.parse(response))
-		{
-			this.cursor$.eof = true;
-			return(fetched);
-		}
-
-		if (!parser.more)
-			this.cursor$.eof = true;
-
-		let records:any[][] = parser.records;
-
-		for (let r = 0; r < records.length; r++)
+		for (let r = 0; r < rows.length; r++)
 		{
 			let record:Record = new Record(this);
 
-			for (let c = 0; c < records[r].length; c++)
-				record.setValue(this.columns[c],records[r][c]);
+			for (let c = 0; c < rows[r].length; c++)
+				record.setValue(this.columns[c],rows[r][c]);
 
 			record.cleanup();
 			fetched.push(record);
 		}
 
-		this.cursor$.pos += records.length;
 		return(fetched);
 	}
 

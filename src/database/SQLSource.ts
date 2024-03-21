@@ -25,5 +25,14 @@
 export abstract class SQLSource
 {
 	abstract source:string;
+	abstract rowlocking:LockMode;
 	abstract transactional:boolean;
+}
+
+/** Lock strategy */
+export enum LockMode
+{
+	None,
+	Optimistic,
+	Pessimistic
 }

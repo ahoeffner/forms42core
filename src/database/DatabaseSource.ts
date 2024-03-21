@@ -19,27 +19,25 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { SQLSource } from "./SQLSource.js";
-import { BindValue } from "./BindValue.js";
 import { Query } from "./serializable/Query.js";
 import { Batch } from "./serializable/Batch.js";
 import { MSGGRP } from "../messages/Internal.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
+import { LockMode, SQLSource } from "./SQLSource.js";
 import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
 import { Filter } from "../model/interfaces/Filter.js";
+import { BindValue, applyTypes } from "./BindValue.js";
 import { SubQuery } from "../model/filters/SubQuery.js";
 import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { Level, Messages } from "../messages/Messages.js";
-import { applyTypes } from "./serializable/Serializable.js";
 import { FilterStructure } from "../model/FilterStructure.js";
+import { DataSource } from "../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
-import { DataSource, LockMode } from "../model/interfaces/DataSource.js";
-import { Cursor as CFunc, CursorRequest as COPR } from "./serializable/Cursor.js";
 
 
 /**
@@ -57,7 +55,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	private pubconn$:DatabaseConnection = null;
 
 	private dirty$:Record[] = [];
-	private fetched$:Record[] = [];
 
 	private columns$:string[] = [];
 	private primary$:string[] = [];
@@ -484,7 +481,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Execute the query */
 	public async query(filter?: FilterStructure): Promise<boolean>
 	{
-		this.fetched$ = [];
 		this.nosql$ = null;
 		filter = filter?.clone();
 
@@ -534,7 +530,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.query$ = new Query(this.source,this.columns,filter);
 
-		this.fetched$ = [];
 		this.query$.orderBy = this.order$;
 		this.query$.arrayfetch = this.arrayfecth;
 		await this.query$.execute(this.connection);
@@ -622,7 +617,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 	/** Close the database cursor */
 	public async close() : Promise<boolean>
 	{
-		this.fetched$ = [];
 		this.query$?.close();
 		return(true);
 	}

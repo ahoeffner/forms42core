@@ -23,14 +23,6 @@ import { Filter } from './Filter.js';
 import { Record } from '../Record.js';
 import { FilterStructure } from '../FilterStructure.js';
 
-/** Lock strategy */
-export enum LockMode
-{
-	None,
-	Optimistic,
-	Pessimistic
-}
-
 /**
  * Definition of a datasource.
  * Any class implementing this interface
@@ -42,7 +34,6 @@ export interface DataSource
 	sorting:string;
 	columns:string[];
 
-	rowlocking:LockMode;
 	queryallowed:boolean;
 	insertallowed:boolean;
 	updateallowed:boolean;

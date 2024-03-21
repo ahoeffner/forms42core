@@ -22,12 +22,11 @@
 import { Filter } from "../interfaces/Filter.js";
 import { Record, RecordState } from "../Record.js";
 import { FilterStructure } from "../FilterStructure.js";
-import { DataSource, LockMode } from "../interfaces/DataSource.js";
+import { DataSource } from "../interfaces/DataSource.js";
 
 export class MemoryTable implements DataSource
 {
 	public name:string;
-	public rowlocking = LockMode.None;
 	public queryallowed:boolean = true;
 	public insertallowed:boolean = true;
 	public updateallowed:boolean = true;

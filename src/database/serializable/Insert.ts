@@ -20,9 +20,9 @@
 */
 
 import { DataType } from "../DataType.js";
-import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
-import { Serializable, applyTypes } from "./Serializable.js";
+import { Serializable } from "./Serializable.js";
+import { BindValue, applyTypes } from "../BindValue.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Insert implements Serializable

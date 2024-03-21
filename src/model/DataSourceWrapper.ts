@@ -24,11 +24,11 @@ import { Record, RecordState } from "./Record.js";
 import { Relation } from "./relations/Relation.js";
 import { FilterStructure } from "./FilterStructure.js";
 import { Block as ModelBlock } from "../model/Block.js";
+import { DataSource } from "./interfaces/DataSource.js";
 import { Level, Messages } from "../messages/Messages.js";
 import { EventType } from "../control/events/EventType.js";
 import { FlushStrategy } from "../application/FormsModule.js";
-import { DataSource, LockMode } from "./interfaces/DataSource.js";
-import { SQLSource } from "../database/SQLSource.js";
+import { SQLSource, LockMode } from "../database/SQLSource.js";
 
 export class DataSourceWrapper
 {
@@ -89,12 +89,32 @@ export class DataSourceWrapper
 		}
 	}
 
+	public get lockmode() : LockMode
+	{
+		if (!this.source$) return(LockMode.None);
+
+		if (this.source$ instanceof SQLSource)
+			return(this.source$.rowlocking);
+
+		return(LockMode.None);
+	}
+
+	public get rowlocking() : boolean
+	{
+		if (!this.source$) return(false);
+
+		if (this.source$ instanceof SQLSource)
+			return(this.source$.rowlocking != LockMode.None);
+
+		return(false);
+	}
+
 	public get transactional() : boolean
 	{
 		if (!this.source$) return(false);
 
-		if (this.source$ instanceof SQLSource && this.source$.transactional)
-			return(true);
+		if (this.source$ instanceof SQLSource)
+			return(this.source$.transactional);
 
 		return(false);
 	}
@@ -278,7 +298,7 @@ export class DataSourceWrapper
 
 	public locked(record:Record) : boolean
 	{
-		if (!this.source.rowlocking)
+		if (!this.rowlocking)
 			return(true);
 
 		if (record.state == RecordState.New || record.state == RecordState.Insert)
@@ -303,10 +323,10 @@ export class DataSourceWrapper
 		if (record.state == RecordState.Deleted)
 			return(false);
 
-		if (this.source.rowlocking == LockMode.None)
+		if (this.lockmode == LockMode.None)
 			return(true);
 
-		if (!force && this.source.rowlocking == LockMode.Optimistic)
+		if (!force && this.lockmode == LockMode.Optimistic)
 			return(true);
 
 		await this.block.setEventTransaction(EventType.OnLockRecord,record);

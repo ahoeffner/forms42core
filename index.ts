@@ -19,8 +19,9 @@ export { MessageHandler } from './src/messages/MessageHandler.js';
 export { Group as MessageGroup } from './src/messages/interfaces/Group.js';
 export { Bundle as MessageBundle } from './src/messages/interfaces/Bundle.js';
 
+export { LockMode } from './src/database/SQLSource.js';
+export { DataSource } from './src/model/interfaces/DataSource.js';
 export { MemoryTable } from './src/model/datasources/MemoryTable.js';
-export { DataSource, LockMode } from './src/model/interfaces/DataSource.js';
 
 export { KeyMapPage} from './src/internal/forms/KeyMapPage.js';
 export { DatePicker } from './src/internal/forms/DatePicker.js';

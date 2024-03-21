@@ -535,7 +535,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.query$ = new Query(this.source,this.columns,filter);
 
 		this.fetched$ = [];
-		this.query$.execute(this.connection);
+		this.query$.arrayfetch = this.arrayfecth;
+		await this.query$.execute(this.connection);
 
 		return(true);
 	}
@@ -552,8 +553,16 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(fetched);
 		}
 
-		let rows:any[][] = await this.query$.fetch();
-		let fetched:Record[] = this.getRecords(rows);
+		let rows:any[][] = [];
+
+		for (let i = 0; i < this.arrayfecth; i++)
+		{
+			let row:any[] = await this.query$.fetch();
+			if (row) rows.push(row);
+			else break;
+		}
+
+		let fetched:Record[] = this.convertRows(rows);
 
 		fetched = await this.filter(fetched);
 		if (fetched.length == 0) return(this.fetch());
@@ -677,7 +686,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(this.described$);
 	}
 
-	private getRecords(rows:any[][]) : Record[]
+	private convertRows(rows:any[]) : Record[]
 	{
 		let fetched:Record[] = [];
 

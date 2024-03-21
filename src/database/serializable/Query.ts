@@ -179,7 +179,7 @@ export class Query implements Serializable
 	}
 
 	/** Fetch next record */
-	public async fetch() : Promise<any[][]>
+	public async fetch() : Promise<any[]>
 	{
 		if (!this.cursor$)
 		{

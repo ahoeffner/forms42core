@@ -174,7 +174,7 @@ export class BindValue implements Serializable
 }
 
 
-const datetypes:Set<string> = new Set<string>(["date","datetime","timestamp"]);
+export const datetypes:Set<string> = new Set<string>(["date","datetime","timestamp"]);
 
 export function applyTypes(datatypes:Map<string,DataType|string>, bindvalues:BindValue[]|Map<string,BindValue>) : void
 {

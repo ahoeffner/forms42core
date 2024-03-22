@@ -378,24 +378,22 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let columns:string[] =
 			this.mergeColumns(this.columns,this.dmlcols$);
 
-		let pkey:string[] = this.primaryKey;
-		let pkeyflt:FilterStructure = new FilterStructure();
+		let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
+		let lock:Query = new Query(this.source,columns,pkeyflt);
 
-		for (let i = 0; i < this.primaryKey.length; i++)
+		lock.lock = true;
+		lock.assertions = this.assert(record);
+
+		let success:boolean = await lock.execute(this.pubconn$);
+
+		if (!success)
 		{
-			let filter:Filter = Filters.Equals(pkey[i]);
-			let value:any = record.getInitialValue(pkey[i]);
-			pkeyflt.and(filter.setConstraint(value),pkey[i]);
-			applyTypes(this.datatypes$,filter.getBindValues());
+			// Unable to lock row
+			Messages.severe(MSGGRP.SQL,3,this.source$,lock.message);
+			return(false);
 		}
 
-		let query:Query = new Query(this.source,columns,pkeyflt);
-
-		query.lock = true;
-		query.assertions = this.assert(record);
-
-		let response:any = await this.jdbconn$.send(query);
-		return(this.process(record,response));
+		return(success);
 	}
 
 	/** Create a record for inserting a row in the table/view */
@@ -427,17 +425,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	{
 		record.refresh();
 
-		let pkey:string[] = this.primaryKey;
-		let pkeyflt:FilterStructure = new FilterStructure();
-
-		for (let i = 0; i < this.primaryKey.length; i++)
-		{
-			let filter:Filter = Filters.Equals(pkey[i]);
-			let value:any = record.getInitialValue(pkey[i]);
-			pkeyflt.and(filter.setConstraint(value),pkey[i]);
-			applyTypes(this.datatypes$,filter.getBindValues());
-		}
-
+		let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 		let refr:Query = new Query(this.source,this.columns,pkeyflt);
 		let success:boolean = await refr.execute(this.connection);
 
@@ -633,32 +621,32 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		let desc:Describe = new Describe(this.source);
-		let response:any = await this.jdbconn$.send(desc);
+		let success:boolean = await desc.execute(this.pubconn$);
 
-		if (!response.success)
+		if (!success)
 		{
 			// Unable to get column definitions
-			Messages.severe(MSGGRP.SQL,3,this.source$,response.message);
+			Messages.severe(MSGGRP.SQL,3,this.source$,desc.message);
 			return(false);
 		}
 
-		let columns:string[] = response.columns;
+		let columns:string[] = desc.columns;
 
 		for (let i = 0; i < columns.length; i++)
 		{
 			columns[i] = columns[i].toLowerCase();
 
-			let type:string = response.types[i];
+			let type:string = desc.types[i];
 			let datatype:string = type.toLowerCase();
 			this.datatypes$.set(columns[i],datatype);
 		}
 
-		if (!this.order$ && response.order)
-			this.order$ = response.order;
+		if (!this.order$ && desc.order)
+			this.order$ = desc.order;
 
-		if (this.primary$.length == 0 && response.primarykey)
+		if (this.primary$.length == 0 && desc.primarykey)
 		{
-			let cols:string[] = response.primarykey;
+			let cols:string[] = desc.primarykey;
 
 			cols.forEach((col) =>
 			{
@@ -721,76 +709,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		return(pkeyflt);
-	}
-
-	private async process(record:Record, response:any) : Promise<boolean>
-	{
-		if (!response.success)
-		{
-			if (response.violations)
-			{
-				record.locked = true;
-
-				let columns:string = "";
-				let violations:any[] = response.violations;
-
-				for (let i = 0; i < violations.length && i < 5; i++)
-				{
-					if (i > 0) columns += ", ";
-					columns += violations[i].column;
-				}
-
-				if (violations.length > 5)
-					columns += ", ...";
-
-				await record.block.wrapper.refresh(record);
-				let row:number = record.block.view.displayed(record)?.rownum;
-
-				if (row != null)
-					await record.block.view.refresh(record);
-
-				if (row == null) Messages.warn(MSGGRP.TRX,9,columns); // Record has been changed by another user
-				else Messages.warn(MSGGRP.TRX,10,row,columns); // Same but with rownum
-			}
-			else
-			{
-				if (response.lock)
-				{
-					if (response.rows?.length == 0)
-					{
-						record.state = RecordState.Deleted;
-						Messages.warn(MSGGRP.TRX,11); // Record has been deleted by another user
-					}
-					else
-					{
-						await record.block.wrapper.refresh(record);
-						let row:number = record.block.view.displayed(record)?.rownum;
-
-						if (row != null)
-						{
-							await record.block.view.refresh(record);
-							record.setClean(true);
-						}
-
-						// Record is locked by another user
-						if (row == null) Messages.warn(MSGGRP.TRX,12);
-						else Messages.warn(MSGGRP.TRX,13,row); // with rownum
-					}
-				}
-				else
-				{
-					let assert:string = response.assert ? " "+response.assert : "";
-					Messages.handle(MSGGRP.TRX,response.message+assert,Level.severe);
-				}
-			}
-
-			record.failed = true;
-			record.locked = false;
-
-			return(false);
-		}
-
-		return(true);
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

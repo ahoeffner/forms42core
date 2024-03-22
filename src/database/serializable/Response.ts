@@ -20,16 +20,20 @@
 */
 
 import { DataType } from "../DataType.js";
-import { datetypes } from "./Serializable.js";
+import { datetypes } from "../BindValue.js";
 
 
 export class Response
 {
+	private affected$:number = 0;
+	private order$:string = null;
 	private more$:boolean = false;
 	private records$:any[][] = [];
 	private message$:string = null;
+	private success$:boolean = false;
 	private columns$:string[] = null;
 	private modifies$:boolean = false;
+	private primarykey$:string[] = null;
 	private values$:Map<string,any> = new Map<string,any>();
 	private datatypes$:Map<string,string> = new Map<string,string>();
 
@@ -45,9 +49,24 @@ export class Response
 		return(this.more$);
 	}
 
+	public get failed() : boolean
+	{
+		return(!this.success$);
+	}
+
+	public get order() : string
+	{
+		return(this.order$);
+	}
+
 	public get columns() : string[]
 	{
 		return(this.columns$);
+	}
+
+	public get primarykey() : string[]
+	{
+		return(this.primarykey$);
 	}
 
 	public get records() : any[][]
@@ -58,6 +77,11 @@ export class Response
 	public get message() : string
 	{
 		return(this.message$);
+	}
+
+	public get affected() : number
+	{
+		return(this.affected$);
 	}
 
 	public get modifies() : boolean
@@ -104,10 +128,14 @@ export class Response
 		this.values$.clear();
 
 		this.more$ = response.more;
+		this.order$ = response.order;
+		this.success$ = response.success;
 		this.message$ = response.message;
 		this.modifies$ = response.writes;
+		this.affected$ = response.affected;
+		this.primarykey$ = response.primarykey
 
-		if (!response.success)
+		if (!this.success$)
 			return(false);
 
 		return(this.parseRows(response));

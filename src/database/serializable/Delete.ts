@@ -34,7 +34,6 @@ export class Delete implements Serializable
 	private retcols:string[] = null;
 	private assert:BindValue[] = null;
 	private response$:Response = null;
-	private jdbconn$:Connection = null;
 	private filter:FilterStructure = null;
 
 	private rettypes:Map<string,BindValue> =
@@ -80,6 +79,25 @@ export class Delete implements Serializable
 			this.rettypes.set(type.name,type));
 	}
 
+	/** If something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Assert that columns hasn't been changed */
 	public set assertions(assert:BindValue|BindValue[])
 	{
 		if (!Array.isArray(assert))
@@ -99,9 +117,9 @@ export class Delete implements Serializable
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		this.jdbconn$ = Connection.getConnection(conn);
-		let response:any = await this.jdbconn$.send(this);
+		let jdbconn:Connection = Connection.getConnection(conn);
 
+		let response:any = await jdbconn.send(this);
 		this.response$ = new Response(null,this.datatypes$);
 		let success:boolean = this.response$.parse(response);
 

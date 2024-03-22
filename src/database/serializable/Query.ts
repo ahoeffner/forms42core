@@ -75,14 +75,20 @@ export class Query implements Serializable
 		}
 	}
 
-	/** Something went wrong */
+	/** If something went wrong */
 	public failed() : boolean
 	{
-		return(this.response$.message != null);
+		return(this.response$.failed);
 	}
 
-	/** The error message from the backend */
+	/** The error (message) from the backend */
 	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
 	{
 		return(this.response$.message);
 	}

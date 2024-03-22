@@ -19,6 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./Response.js";
+import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
@@ -29,26 +31,21 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Update implements Serializable
 {
-	private retcols:string[] = null;
-	private source:DataSource = null;
-	private assert:BindValue[] = null;
-	private changes:BindValue[] = null;
-	private filter:FilterStructure = null;
+	private retcols$:string[] = null;
+	private source$:DataSource = null;
+	private response$:Response = null;
+	private assert$:BindValue[] = null;
+	private changes$:BindValue[] = null;
+	private filter$:FilterStructure = null;
 
-	private rettypes:Map<string,BindValue> =
-		new Map<string,BindValue>();
+	private datatypes$:Map<string,DataType|string> =
+		new Map<string,string>();
 
 
-	constructor(source:DataSource, changes:BindValue|BindValue[], filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
+	constructor(source:DataSource, changes:BindValue|BindValue[], filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:Map<string,DataType|string>)
 	{
-		if (!types)
-			types = [];
-
 		if (!retcols)
 			retcols = [];
-
-		if (!Array.isArray(types))
-			types = [types];
 
 		if (!Array.isArray(retcols))
 			retcols = [retcols];
@@ -64,21 +61,19 @@ export class Update implements Serializable
 			{
 				if (!Array.isArray(filter)) filter = [filter];
 
-				this.filter = new FilterStructure();
-				filter.forEach((flt) => this.filter.and(flt));
+				this.filter$ = new FilterStructure();
+				filter.forEach((flt) => this.filter$.and(flt));
 			}
 			else
 			{
-				this.filter = filter;
+				this.filter$ = filter;
 			}
 		}
 
-		this.source = source;
-		this.changes = changes;
-		this.retcols = retcols;
-
-		types.forEach((type) =>
-			this.rettypes.set(type.name,type));
+		this.source$ = source;
+		this.changes$ = changes;
+		this.retcols$ = retcols;
+		this.datatypes$ = types;
 	}
 
 	public set assertions(assert:BindValue|BindValue[])
@@ -86,25 +81,30 @@ export class Update implements Serializable
 		if (!Array.isArray(assert))
 			assert = [assert];
 
-		this.assert = assert;
+		this.assert$ = assert;
 	}
 
 	/** Execute the statement */
-	public async execute(conn:DatabaseConnection) : Promise<any>
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{
-		let jsdbconn:Connection = Connection.getConnection(conn);
-		return(jsdbconn.send(this));
+		let jdbconn:Connection = Connection.getConnection(conn);
+
+		let response:any = await jdbconn.send(this);
+		this.response$ = new Response(null,this.datatypes$);
+		let success:boolean = this.response$.parse(response);
+
+		return(success);
 	}
 
 	public serialize() : any
 	{
 		let json:any = {};
 		json.request = "update";
-		json.source = this.source.name;
+		json.source = this.source$.name;
 
 		let cols:any[] = [];
 
-		this.changes?.forEach((change) =>
+		this.changes$?.forEach((change) =>
 		{
 			cols.push
 			(
@@ -121,19 +121,20 @@ export class Update implements Serializable
 		if (cols.length > 0)
 			json.update = cols;
 
-		if (this.filter)
-			json.filters = this.filter.serialize().filters;
+		if (this.filter$)
+			json.filters = this.filter$.serialize().filters;
 
 		let retcols:any[] = [];
 
-		if (this.retcols.length > 0)
+		if (this.retcols$.length > 0)
 		{
-			this.retcols.forEach((col) =>
+			this.retcols$.forEach((col) =>
 			{
-				let val:BindValue = this.rettypes.get(col);
+				let type:DataType|string = this.datatypes$.get(col);
+				if (!(typeof type === "string")) type = DataType[type];
 
 				let rcol:any = {column: col};
-				if (val) rcol.type = val.type;
+				if (type) rcol.type = type;
 
 				retcols.push(rcol);
 			})
@@ -143,19 +144,19 @@ export class Update implements Serializable
 
 		let assert:any[] = [];
 
-		for (let i = 0; i < this.assert?.length; i++)
+		for (let i = 0; i < this.assert$?.length; i++)
 		{
 			assert.push
 			(
 				{
-					column: this.assert[i].column,
-					value: this.assert[i].value,
-					type: this.assert[i].type
+					column: this.assert$[i].column,
+					value: this.assert$[i].value,
+					type: this.assert$[i].type
 				}
 			)
 		}
 
-		if (this.assert?.length > 0)
+		if (this.assert$?.length > 0)
 			json.assertions = assert;
 
 		return(json);

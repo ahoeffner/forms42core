@@ -30,29 +30,20 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Delete implements Serializable
 {
-	private source:string = null;
-	private retcols:string[] = null;
-	private assert:BindValue[] = null;
+	private source$:string = null;
+	private retcols$:string[] = null;
+	private assert$:BindValue[] = null;
 	private response$:Response = null;
-	private filter:FilterStructure = null;
-
-	private rettypes:Map<string,BindValue> =
-		new Map<string,BindValue>();
+	private filter$:FilterStructure = null;
 
 	private datatypes$:Map<string,DataType|string> =
-		new Map<string,string>();
+		new Map<string,DataType|string>();
 
 
-	constructor(source:string, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:BindValue|BindValue[])
+	constructor(source:string, filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:Map<string,DataType|string>)
 	{
-		if (!types)
-			types = [];
-
 		if (!retcols)
 			retcols = [];
-
-		if (!Array.isArray(types))
-			types = [types];
 
 		if (!Array.isArray(retcols))
 			retcols = [retcols];
@@ -63,20 +54,18 @@ export class Delete implements Serializable
 			{
 				if (!Array.isArray(filter)) filter = [filter];
 
-				this.filter = new FilterStructure();
-				filter.forEach((flt) => this.filter.and(flt));
+				this.filter$ = new FilterStructure();
+				filter.forEach((flt) => this.filter$.and(flt));
 			}
 			else
 			{
-				this.filter = filter;
+				this.filter$ = filter;
 			}
 		}
 
-		this.source = source;
-		this.retcols = retcols;
-
-		types.forEach((type) =>
-			this.rettypes.set(type.name,type));
+		this.source$ = source;
+		this.retcols$ = retcols;
+		this.datatypes$ = types;
 	}
 
 	/** If something went wrong */
@@ -103,7 +92,7 @@ export class Delete implements Serializable
 		if (!Array.isArray(assert))
 			assert = [assert];
 
-		this.assert = assert;
+		this.assert$ = assert;
 	}
 
 	/** Set datatypes */
@@ -130,42 +119,42 @@ export class Delete implements Serializable
 	{
 		let json:any = {};
 		json.request = "delete";
-		json.source = this.source;
+		json.source = this.source$;
 
-		if (this.filter)
-			json.filters = this.filter.serialize().filters;
+		if (this.filter$)
+			json.filters = this.filter$.serialize().filters;
 
 		let assert:any[] = [];
 
-		applyTypes(this.datatypes$,this.assert);
-		applyTypes(this.datatypes$,this.rettypes);
-		applyTypes(this.datatypes$,this.filter.getBindValues());
+		applyTypes(this.datatypes$,this.assert$);
+		applyTypes(this.datatypes$,this.filter$.getBindValues());
 
-		for (let i = 0; i < this.assert?.length; i++)
+		for (let i = 0; i < this.assert$?.length; i++)
 		{
 			assert.push
 			(
 				{
-					column: this.assert[i].column,
-					value: this.assert[i].value,
-					type: this.assert[i].type
+					column: this.assert$[i].column,
+					value: this.assert$[i].value,
+					type: this.assert$[i].type
 				}
 			)
 		}
 
-		if (this.assert?.length > 0)
+		if (this.assert$?.length > 0)
 			json.assertions = assert;
 
 		let retcols:any[] = [];
 
-		if (this.retcols.length > 0)
+		if (this.retcols$.length > 0)
 		{
-			this.retcols.forEach((col) =>
+			this.retcols$.forEach((col) =>
 			{
-				let val:BindValue = this.rettypes.get(col);
+				let type:DataType|string = this.datatypes$.get(col);
+				if (!(typeof type === "string")) type = DataType[type];
 
 				let rcol:any = {column: col};
-				if (val) rcol.type = val.type;
+				if (type) rcol.type = type;
 
 				retcols.push(rcol);
 			})

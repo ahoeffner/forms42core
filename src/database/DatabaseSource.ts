@@ -317,9 +317,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 				record.response = null;
 
 				let values:BindValue[] = this.bind(record,columns);
-				let rettypes:BindValue[] = this.bind(null,this.insreturncolumns$);
-				let ins:Insert = new Insert(this.source,values,this.insreturncolumns$,rettypes);
-				batch.add(ins.setDataTypes(this.datatypes$));
+				let ins:Insert = new Insert(this.source,values,this.insreturncolumns$,this.datatypes$);
+
+				batch.add(ins);
 			}
 
 			else
@@ -330,11 +330,10 @@ export class DatabaseSource extends SQLSource implements DataSource
 				record.response = null;
 
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
-				let rettypes:BindValue[] = this.bind(null,this.delreturncolumns$);
-				let del:Delete = new Delete(this.source,pkeyflt,this.delreturncolumns$,rettypes);
+				let del:Delete = new Delete(this.source,pkeyflt,this.delreturncolumns$,this.datatypes$);
 
 				if (assert) del.assertions = this.assert(record);
-				batch.add(del.setDataTypes(this.datatypes$));
+				batch.add(del);
 			}
 
 			else
@@ -349,8 +348,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let changes:BindValue[] = this.bind(record,record.getDirty());
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
-				let rettypes:BindValue[] = this.bind(null,this.updreturncolumns$);
-				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,rettypes);
+				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,this.datatypes$);
 
 				if (assert) upd.assertions = this.assert(record);
 				batch.add(upd);

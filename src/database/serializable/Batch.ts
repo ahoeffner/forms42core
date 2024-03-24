@@ -55,6 +55,12 @@ export class Batch implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Add step */
 	public add(step:Serializable) : void
 	{

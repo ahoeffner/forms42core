@@ -51,6 +51,12 @@ export class Describe implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Order by clause */
 	public get order() : string
 	{

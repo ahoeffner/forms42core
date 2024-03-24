@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./Response.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
@@ -27,18 +28,47 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 export class Script implements Serializable
 {
 	private steps$:Serializable[] = [];
-
+	private response$:Response = null;
 
 	public add(step:Serializable) : void
 	{
 		this.steps$.push(step);
 	}
 
-	/** Execute the statement */
-	public async execute(conn:DatabaseConnection) : Promise<any>
+	/** If something went wrong */
+	public failed() : boolean
 	{
-		let jsdbconn:Connection = Connection.getConnection(conn);
-		return(jsdbconn.send(this));
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
+	{
+		let jdbconn:Connection = Connection.getConnection(conn);
+
+		this.response$ = new Response();
+		let response:any = await jdbconn.send(this);
+		let success:boolean = this.response$.parse(response);
+
+		return(success);
 	}
 
 	public serialize() : any

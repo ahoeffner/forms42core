@@ -59,6 +59,30 @@ export class SQLStatement implements Serializable
 		}
 	}
 
+	/** If something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** If the statement modyfied the backend */
 	public get modyfies() : boolean
 	{
@@ -88,18 +112,6 @@ export class SQLStatement implements Serializable
 	public set arrayfetch(size:number)
 	{
 		this.arrayfetch$ = size;
-	}
-
-	/** Something went wrong */
-	public failed() : boolean
-	{
-		return(this.response$.message != null);
-	}
-
-	/** The error message from the backend */
-	public error() : string
-	{
-		return(this.response$.message);
 	}
 
 	/** Bind datatype */

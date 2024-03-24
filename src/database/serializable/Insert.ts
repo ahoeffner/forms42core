@@ -76,6 +76,12 @@ export class Insert implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Set datatypes */
 	public setDataTypes(types:Map<string,DataType|string>) : Insert
 	{

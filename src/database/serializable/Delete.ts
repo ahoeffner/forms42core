@@ -86,6 +86,12 @@ export class Delete implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Assert that columns hasn't been changed */
 	public set assertions(assert:BindValue|BindValue[])
 	{

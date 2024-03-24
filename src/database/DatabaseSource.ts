@@ -26,6 +26,7 @@ import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
 import { LockMode, SQLSource } from "./SQLSource.js";
+import { Response } from "./serializable/Response.js";
 import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
@@ -405,7 +406,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		{
 			// Unable to lock row
 			Messages.severe(MSGGRP.SQL,4,this.source$,lock.message);
-			lock.violations?.forEach((vio) => console.log(vio.toString()));
+			this.processViolations(record,lock.response());
+			//lock.violations?.forEach((vio) => console.log(vio.toString()));
 			return(false);
 		}
 
@@ -725,6 +727,11 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		return(pkeyflt);
+	}
+
+	private async processViolations(record:Record, response:Response) : Promise<boolean>
+	{
+		return(true);
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

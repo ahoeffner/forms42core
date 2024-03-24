@@ -45,6 +45,30 @@ export class Procedure implements Serializable
 		this.name = name;
 	}
 
+	/** If something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Add call parameter */
 	public addParameter(name:string, value:any, datatype?:DataType|string, paramtype?:ParameterType) : void
 	{
@@ -113,12 +137,6 @@ export class Procedure implements Serializable
 		})
 
 		return(true);
-	}
-
-	/** The error message from the backend */
-	public error() : string
-	{
-		return(this.response$.message);
 	}
 
 	public serialize() : any

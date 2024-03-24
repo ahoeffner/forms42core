@@ -93,6 +93,12 @@ export class Query implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** The number of rows to fetch from a select-statement per call to fetch */
 	public get arrayfetch() : number
 	{

@@ -76,6 +76,30 @@ export class Update implements Serializable
 		this.datatypes$ = types;
 	}
 
+	/** If something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Assert that columns hasn't been changed */
 	public set assertions(assert:BindValue|BindValue[])
 	{

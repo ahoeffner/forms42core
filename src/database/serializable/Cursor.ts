@@ -51,6 +51,12 @@ export class Cursor implements Serializable
 		return(this.response$.message);
 	}
 
+	/** Get parsed response */
+	public response() : Response
+	{
+		return(this.response$);
+	}
+
 	/** Execute the statement */
 	public async execute(conn:DatabaseConnection) : Promise<boolean>
 	{

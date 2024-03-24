@@ -21,6 +21,8 @@
 
 import { DataType } from "../DataType.js";
 import { datetypes } from "../BindValue.js";
+import { MSGGRP } from "../../messages/Internal.js";
+import { Messages } from "../../messages/Messages.js";
 
 
 export class Response
@@ -35,6 +37,7 @@ export class Response
 	private columns$:string[] = null;
 	private modifies$:boolean = false;
 	private primarykey$:string[] = null;
+	private violations$:Violation[] = [];
 	private values$:Map<string,any> = new Map<string,any>();
 	private datatypes$:Map<string,string> = new Map<string,string>();
 
@@ -45,89 +48,91 @@ export class Response
 		this.datatypes = datatypes;
 	}
 
+	/** Get the raw response */
 	public get response() : any
 	{
 		return(this.raw$);
 	}
 
+	/** Has more records */
 	public get more() : boolean
 	{
 		return(this.more$);
 	}
 
+	/** If something went wrong */
 	public get failed() : boolean
 	{
 		return(!this.success$);
 	}
 
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.message);
+	}
+
+	/** Get order by */
 	public get order() : string
 	{
 		return(this.order$);
 	}
 
+	/** Get columns */
 	public get columns() : string[]
 	{
 		return(this.columns$);
 	}
 
+	/** Get primary key */
 	public get primarykey() : string[]
 	{
 		return(this.primarykey$);
 	}
 
+	/** Get records */
 	public get records() : any[][]
 	{
 		return(this.records$);
 	}
 
+	/** Get backend message */
 	public get message() : string
 	{
 		return(this.message$);
 	}
 
+	/** Get rows affected */
 	public get affected() : number
 	{
 		return(this.affected$);
 	}
 
+	/** Did request modify backend */
 	public get modifies() : boolean
 	{
 		return(this.modifies$);
 	}
 
+	/** Get assertion violations */
+	public get violations() : Violation[]
+	{
+		return(this.violations$);
+	}
+
+	/** Get datatypes */
 	public get datatypes() : Map<string,string>
 	{
 		return(this.datatypes$);
 	}
 
-	public set columns(columns:string[])
-	{
-		this.columns$ = [];
-
-		columns?.forEach((column) =>
-		{this.columns$.push(column?.toLowerCase())});
-	}
-
-	public set datatypes(types:Map<string,DataType|string>)
-	{
-		this.datatypes$.clear();
-
-		types?.forEach((type,name) =>
-		{
-			name = name?.toLowerCase();
-
-			if (!(typeof type === "string"))
-				type = DataType[type];
-
-			this.datatypes$.set(name,type?.toLowerCase());
-		})
-	}
-
+	/** Get response value */
 	public getValue(name:string) : any
 	{
 		return(this.values$.get(name?.toLowerCase()))
 	}
 
+	/** Parse a raw response from jwb */
 	public parse(response:any) : boolean
 	{
 		this.records$ = [];
@@ -140,12 +145,43 @@ export class Response
 		this.message$ = response.message;
 		this.modifies$ = response.writes;
 		this.affected$ = response.affected;
-		this.primarykey$ = response.primarykey
+		this.primarykey$ = response.primarykey;
+
+		response.violations?.forEach((violation:any) =>
+		{
+			let found:any = violation.found;
+			let column:string = violation.column;
+			let expected:any = violation.expected;
+			this.violations$.push(new Violation(column,expected,found));
+		})
 
 		if (!this.success$)
 			return(false);
 
 		return(this.parseRows(response));
+	}
+
+	private set columns(columns:string[])
+	{
+		this.columns$ = [];
+
+		columns?.forEach((column) =>
+		{this.columns$.push(column?.toLowerCase())});
+	}
+
+	private set datatypes(types:Map<string,DataType|string>)
+	{
+		this.datatypes$.clear();
+
+		types?.forEach((type,name) =>
+		{
+			name = name?.toLowerCase();
+
+			if (!(typeof type === "string"))
+				type = DataType[type];
+
+			this.datatypes$.set(name,type?.toLowerCase());
+		})
 	}
 
 	private parseRows(response:any) : boolean
@@ -224,5 +260,15 @@ export class Response
 
 			this.values$.set(column,value);
 		})
+	}
+}
+
+export class Violation
+{
+	constructor(public column:string, public expected:any, public found:any) {};
+
+	public toString() : string
+	{
+		return(Messages.parse(MSGGRP.JWDB,6,[this.column, this.expected, this.found]));
 	}
 }

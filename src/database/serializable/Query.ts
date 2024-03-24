@@ -20,10 +20,10 @@
 */
 
 import { Cursor } from "../Cursor.js";
-import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
+import { Response, Violation } from "./Response.js";
 import { MSGGRP } from "../../messages/Internal.js";
 import { Messages } from "../../messages/Messages.js";
 import { BindValue, applyTypes } from "../BindValue.js";
@@ -148,6 +148,12 @@ export class Query implements Serializable
 			assertions = [assertions];
 
 		this.assert$ = assertions;
+	}
+
+	/** Get assertion violations */
+	public get violations() : Violation[]
+	{
+		return(this.response$.violations);
 	}
 
 	/** Bind datatype */

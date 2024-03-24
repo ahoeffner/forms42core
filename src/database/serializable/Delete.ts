@@ -19,10 +19,10 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
+import { Response, Violation } from "./Response.js";
 import { BindValue, applyTypes } from "../BindValue.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
@@ -101,6 +101,12 @@ export class Delete implements Serializable
 		if (types) this.datatypes$ = types;
 		else this.datatypes$.clear();
 		return(this);
+	}
+
+	/** Get assertion violations */
+	public get violations() : Violation[]
+	{
+		return(this.response$.violations);
 	}
 
 	/** Execute the statement */

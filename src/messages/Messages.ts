@@ -144,6 +144,16 @@ export class Messages
 		return(Messages.files$);
 	}
 
+	public static parse(grpno:number,errno:number,args?:any|any[]) : string
+	{
+		let message:string = Messages.get(grpno,errno)?.message;
+
+		if (!Array.isArray(args)) args = [args];
+		args?.forEach((arg:any) => {message = Messages.replace(message,arg)})
+
+		return(message);
+	}
+
 	/** Handle message using Level.fine. Any '%' will be substituded by args */
 	public static async fine(grpno:number,errno:number,...args:any) : Promise<void>
 	{

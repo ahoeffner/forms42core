@@ -19,11 +19,11 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Response } from "./Response.js";
 import { DataType } from "../DataType.js";
 import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
+import { Response, Violation } from "./Response.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
 import { DataSource } from "../../model/interfaces/DataSource.js";
@@ -76,12 +76,19 @@ export class Update implements Serializable
 		this.datatypes$ = types;
 	}
 
+	/** Assert that columns hasn't been changed */
 	public set assertions(assert:BindValue|BindValue[])
 	{
 		if (!Array.isArray(assert))
 			assert = [assert];
 
 		this.assert$ = assert;
+	}
+
+	/** Get assertion violations */
+	public get violations() : Violation[]
+	{
+		return(this.response$.violations);
 	}
 
 	/** Execute the statement */

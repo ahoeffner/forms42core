@@ -61,6 +61,18 @@ export class Batch implements Serializable
 		this.steps$.push(step);
 	}
 
+	/** Get all steps */
+	public steps() : Serializable[]
+	{
+		return(this.steps$);
+	}
+
+	/** Get given step */
+	public step(step:number) : Serializable
+	{
+		return(this.steps$[step]);
+	}
+
 	/** Get the response for given step */
 	public getResponse(step:number) : Response
 	{

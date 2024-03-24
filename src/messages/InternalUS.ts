@@ -65,12 +65,14 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.SQL, errno: 1, message: "Record has been deleted by another user"},
 		{grpno: MSGGRP.SQL, errno: 2, message: "Unable to describe table '%' [%]"},
 		{grpno: MSGGRP.SQL, errno: 3, message: "Unable to describe query '%'"},
+		{grpno: MSGGRP.SQL, errno: 4, message: "Assertion failed '%'"},
 
 		{grpno: MSGGRP.JWDB, errno: 1, message: "Connection scope cannot be changed after connect"},
 		{grpno: MSGGRP.JWDB, errno: 2, message: "Failed to create %, connection is null"},
 		{grpno: MSGGRP.JWDB, errno: 3, message: "% Not connected"},
 		{grpno: MSGGRP.JWDB, errno: 4, message: "Cannot fetch since cursor is null"},
 		{grpno: MSGGRP.JWDB, errno: 5, message: "Failed to invoke batch '%'"},
+		{grpno: MSGGRP.JWDB, errno: 6, message: "Column %s expected value %s actual value %s"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},

@@ -27,25 +27,31 @@ import { Response } from "./serializable/Response";
  */
 export class DatabaseResponse
 {
-	constructor(private values$:Map<string,any>, private message$?:string)
+	constructor(private response$:Response)
 	{
 	}
 
 	/** Whether the statement failed */
 	public get failed() : boolean
 	{
-		return(this.message$ != null);
+		return(this.response$.failed);
 	}
 
-	/** Whether the statement failed */
-	public get message() : string
+	/** The error (message) from the backend */
+	public error() : string
 	{
-		return(this.message$);
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
 	}
 
 	/** Get the value of a responed column when using 'returning' */
 	public getValue(column:string) : any
 	{
-		return(this.values$.get(column.toLowerCase()));
+		return(this.response$.getValue(column));
 	}
 }

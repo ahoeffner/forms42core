@@ -363,10 +363,16 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return([]);
 		}
 
-		batch.getResponses().forEach((resp) =>
+		for (let i = 0; i < batch.size(); i++)
 		{
-			console.log(resp.response)
-		})
+			//lock.violations?.forEach((vio) => console.log(vio.toString()));
+
+
+			if (batch.step(i) instanceof Insert)
+			{
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+			}
+		}
 
 		this.dirty$ = [];
 		return(processed);
@@ -398,7 +404,8 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (!success)
 		{
 			// Unable to lock row
-			Messages.severe(MSGGRP.SQL,3,this.source$,lock.message);
+			Messages.severe(MSGGRP.SQL,4,this.source$,lock.message);
+			lock.violations?.forEach((vio) => console.log(vio.toString()));
 			return(false);
 		}
 

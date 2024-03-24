@@ -357,6 +357,17 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		let success:boolean = await batch.execute(this.connection);
 
+		if (!success)
+		{
+			Messages.severe(MSGGRP.JWDB,5,batch.error());
+			return([]);
+		}
+
+		batch.getResponses().forEach((resp) =>
+		{
+			console.log(resp.response)
+		})
+
 		this.dirty$ = [];
 		return(processed);
 	}
@@ -429,7 +440,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!success)
 		{
-			Messages.handle(MSGGRP.SQL,refr.error,Level.warn);
+			Messages.handle(MSGGRP.SQL,refr.error(),Level.warn);
 			return(false);
 		}
 
@@ -624,7 +635,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (!success)
 		{
 			// Unable to get column definitions
-			Messages.severe(MSGGRP.SQL,3,this.source$,desc.message);
+			Messages.warn(MSGGRP.SQL,3,this.source$,desc.message);
 			return(false);
 		}
 

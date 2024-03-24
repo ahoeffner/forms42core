@@ -32,8 +32,8 @@ export class Delete implements Serializable
 {
 	private source$:string = null;
 	private retcols$:string[] = null;
-	private assert$:BindValue[] = null;
 	private response$:Response = null;
+	private assert$:BindValue[] = null;
 	private filter$:FilterStructure = null;
 
 	private datatypes$:Map<string,DataType|string> =

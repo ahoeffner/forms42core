@@ -25,6 +25,7 @@ import { datetypes } from "../BindValue.js";
 
 export class Response
 {
+	private raw$:any = null;
 	private affected$:number = 0;
 	private order$:string = null;
 	private more$:boolean = false;
@@ -42,6 +43,11 @@ export class Response
 	{
 		this.columns = columns;
 		this.datatypes = datatypes;
+	}
+
+	public get response() : any
+	{
+		return(this.raw$);
 	}
 
 	public get more() : boolean
@@ -127,6 +133,7 @@ export class Response
 		this.records$ = [];
 		this.values$.clear();
 
+		this.raw$ = response;
 		this.more$ = response.more;
 		this.order$ = response.order;
 		this.success$ = response.success;

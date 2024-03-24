@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Response } from "./Response.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
@@ -26,19 +27,69 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Batch implements Serializable
 {
+	private response$:Response = null;
+	private responses$:Response[] = [];
 	private steps$:Serializable[] = [];
 
+	/** Number of steps */
+	public size() : number
+	{
+		return(this.steps$.length);
+	}
 
+	/** If something went wrong */
+	public failed() : boolean
+	{
+		return(this.response$.failed);
+	}
+
+	/** The error (message) from the backend */
+	public error() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** The message from the backend */
+	public message() : string
+	{
+		return(this.response$.message);
+	}
+
+	/** Add step */
 	public add(step:Serializable) : void
 	{
 		this.steps$.push(step);
 	}
 
-	/** Execute the statement */
-	public async execute(conn:DatabaseConnection) : Promise<any>
+	/** Get the response for given step */
+	public getResponse(step:number) : Response
 	{
-		let jsdbconn:Connection = Connection.getConnection(conn);
-		return(jsdbconn.send(this));
+		return(this.responses$[step]);
+	}
+
+	/** Get all responses */
+	public getResponses() : Response[]
+	{
+		return(this.responses$);
+	}
+
+	/** Execute the statement */
+	public async execute(conn:DatabaseConnection) : Promise<boolean>
+	{
+		let jdbconn:Connection = Connection.getConnection(conn);
+
+		this.response$ = new Response();
+		let response:any = await jdbconn.send(this);
+		let success:boolean = this.response$.parse(response);
+
+		response.steps?.forEach((step:any) =>
+		{
+			let resp:Response = new Response();
+			this.responses$.push(resp);
+			resp.parse(step);
+		})
+
+		return(success);
 	}
 
 	public serialize() : any

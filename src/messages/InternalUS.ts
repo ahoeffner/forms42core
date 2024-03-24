@@ -72,7 +72,7 @@ export class InternalUS implements Bundle
 		{grpno: MSGGRP.JWDB, errno: 3, message: "% Not connected"},
 		{grpno: MSGGRP.JWDB, errno: 4, message: "Cannot fetch since cursor is null"},
 		{grpno: MSGGRP.JWDB, errno: 5, message: "Failed to invoke batch '%'"},
-		{grpno: MSGGRP.JWDB, errno: 6, message: "Column %s expected value %s actual value %s"},
+		{grpno: MSGGRP.JWDB, errno: 6, message: "Column % expected value % actual value %"},
 
 		{grpno: MSGGRP.FRAMEWORK, errno:  1, message: "Attribute '%' on component '%' is null"},
 		{grpno: MSGGRP.FRAMEWORK, errno:  2, message: "Attribute '%' on component '%' does not exist"},

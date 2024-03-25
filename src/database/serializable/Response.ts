@@ -31,6 +31,7 @@ export class Response
 	private affected$:number = 0;
 	private order$:string = null;
 	private more$:boolean = false;
+	private lock$:boolean = false;
 	private records$:any[][] = [];
 	private message$:string = null;
 	private success$:boolean = false;
@@ -70,6 +71,12 @@ export class Response
 	public error() : string
 	{
 		return(this.message);
+	}
+
+	/** Has more records */
+	public get locked() : boolean
+	{
+		return(this.lock$);
 	}
 
 	/** Get order by */
@@ -140,6 +147,7 @@ export class Response
 
 		this.raw$ = response;
 		this.more$ = response.more;
+		this.lock$ = response.lock;
 		this.order$ = response.order;
 		this.success$ = response.success;
 		this.message$ = response.message;

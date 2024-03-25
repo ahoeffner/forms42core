@@ -26,7 +26,6 @@ import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
 import { Update } from "./serializable/Update.js";
 import { LockMode, SQLSource } from "./SQLSource.js";
-import { Response } from "./serializable/Response.js";
 import { Describe } from "./serializable/Describe.js";
 import { Filters } from "../model/filters/Filters.js";
 import { Connection } from "../database/Connection.js";
@@ -38,6 +37,7 @@ import { DatabaseResponse } from "./DatabaseResponse.js";
 import { Level, Messages } from "../messages/Messages.js";
 import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
+import { Response, Violation } from "./serializable/Response.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 
 
@@ -405,9 +405,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (!success)
 		{
 			// Unable to lock row
-			Messages.severe(MSGGRP.SQL,4,this.source$,lock.message);
-			this.processViolations(record,lock.response());
-			//lock.violations?.forEach((vio) => console.log(vio.toString()));
+			this.processErrors(record,lock.response());
 			return(false);
 		}
 
@@ -729,9 +727,69 @@ export class DatabaseSource extends SQLSource implements DataSource
 		return(pkeyflt);
 	}
 
-	private async processViolations(record:Record, response:Response) : Promise<boolean>
+	private async processErrors(record:Record, response:Response) : Promise<void>
 	{
-		return(true);
+		let row:number = 0;
+
+		if (response.violations)
+		{
+			record.locked = true;
+			await record.block.wrapper.refresh(record);
+
+			let columns:string = "";
+
+			let violations:Violation[] = response.violations;
+			violations?.forEach((vio) => console.log(vio.toString()));
+
+			for (let i = 0; i < violations.length && i < 5; i++)
+			{
+				if (i > 0) columns += ", ";
+				columns += violations[i].column;
+			}
+
+			if (violations.length > 5)
+					columns += ", ...";
+
+			row = record.block.view.displayed(record)?.rownum;
+			if (row != null) await record.block.view.refresh(record);
+
+			if (row == null) Messages.warn(MSGGRP.TRX,9,columns); // Record has been changed by another user
+			else Messages.warn(MSGGRP.TRX,10,row,columns); // Same but with rownum
+		}
+		else
+		{
+			if (response.locked)
+			{
+				if (response.records?.length == 0)
+				{
+					record.state = RecordState.Deleted;
+					Messages.warn(MSGGRP.TRX,11); // Record has been deleted by another user
+				}
+				else
+				{
+					await record.block.wrapper.refresh(record);
+					row = record.block.view.displayed(record)?.rownum;
+
+					if (row != null)
+					{
+						await record.block.view.refresh(record);
+						record.setClean(true);
+					}
+
+					// Record is locked by another user
+					if (row == null) Messages.warn(MSGGRP.TRX,12);
+					else Messages.warn(MSGGRP.TRX,13,row); // with rownum
+				}
+			}
+			else
+			{
+				// Something went really wrong
+				Messages.handle(MSGGRP.TRX,response.message,Level.severe);
+			}
+
+			record.failed = true;
+			record.locked = false;
+		}
 	}
 
 	private mergeColumns(list1:string[], list2:string[]) : string[]

@@ -495,13 +495,6 @@ export class Block
 	public async lock() : Promise<boolean>
 	{
 		let success:boolean = await this.model.lock();
-
-		if (!success)
-		{
-			await this.model.refresh(0,false);
-			return(false);
-		}
-
 		return(success);
 	}
 

@@ -451,32 +451,19 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(false);
 		}
 
-		let fetched:Record[] = [];
-		let records:any[][] = await refr.fetch();
+		let refreshed:any[] = await refr.fetch();
 
-		for (let r = 0; r < records.length; r++)
-		{
-			let record:Record = new Record(this);
-
-			for (let c = 0; c < record[r].length; c++)
-				record.setValue(this.columns[c],record[r][c]);
-
-			record.cleanup();
-			fetched.push(record);
-		}
-
-		if (fetched.length == 0)
+		if (!refreshed)
 		{
 			record.state = RecordState.Delete;
 			Messages.warn(MSGGRP.SQL,1); // Record has been deleted
 			return(false);
 		}
 
-		for (let i = 0; i < this.columns.length; i++)
-		{
-			let nv:any = fetched[0].getValue(this.columns[i]);
-			record.setValue(this.columns[i],nv)
-		}
+		record.cleanup();
+
+		for (let c = 0; c < record.columns.length; c++)
+			record.setValue(this.columns[c],refreshed[c]);
 
 		record.state = RecordState.Consistent;
 		return(true);
@@ -731,7 +718,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	{
 		let row:number = 0;
 
-		if (response.violations)
+		if (response.violations.length > 0)
 		{
 			record.locked = true;
 			await record.block.wrapper.refresh(record);

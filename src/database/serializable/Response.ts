@@ -30,6 +30,7 @@ export class Response
 	private raw$:any = null;
 	private affected$:number = 0;
 	private order$:string = null;
+	private assert$:string = null;
 	private more$:boolean = false;
 	private lock$:boolean = false;
 	private records$:any[][] = [];
@@ -71,6 +72,24 @@ export class Response
 	public error() : string
 	{
 		return(this.message);
+	}
+
+	/** Get assert failure */
+	public get assert() : string
+	{
+		return(this.assert$);
+	}
+
+	/** Was changed by another user */
+	public get changed() : boolean
+	{
+		return(this.assert$?.includes("changed"));
+	}
+
+	/** Was changed by another user */
+	public get deleted() : boolean
+	{
+		return(this.assert$?.includes("deleted"));
 	}
 
 	/** Has more records */
@@ -149,6 +168,7 @@ export class Response
 		this.more$ = response.more;
 		this.lock$ = response.lock;
 		this.order$ = response.order;
+		this.assert$ = response.assert;
 		this.success$ = response.success;
 		this.message$ = response.message;
 		this.modifies$ = response.writes;

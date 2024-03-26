@@ -65,7 +65,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 	private nosql$:FilterStructure = null;
 
 	public name:string;
-	public arrayfecth:number = 32;
+	public arrayfetch:number = 32;
 	public queryallowed: boolean = true;
 	public insertallowed: boolean = true;
 	public updateallowed: boolean = true;
@@ -252,7 +252,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		clone.columns$ = this.columns$;
 		clone.connection = this.pubconn$,
 		clone.described$ = this.described$;
-		clone.arrayfecth = this.arrayfecth;
+		clone.arrayfetch = this.arrayfetch;
 		clone.datatypes$ = this.datatypes$;
 
 		clone.insertReturnColumns = this.insertReturnColumns;
@@ -522,7 +522,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.query$ = new Query(this.source,this.columns,filter);
 
 		this.query$.orderBy = this.order$;
-		this.query$.arrayfetch = this.arrayfecth;
+		this.query$.arrayfetch = this.arrayfetch;
 		await this.query$.execute(this.connection);
 
 		return(true);
@@ -745,14 +745,15 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 		else
 		{
-			if (response.locked)
+			if (response.assert)
 			{
-				if (response.records?.length == 0)
+				if (response.deleted)
 				{
 					record.state = RecordState.Deleted;
+					record.block.view.setAttributes(record);
 					Messages.warn(MSGGRP.TRX,11); // Record has been deleted by another user
 				}
-				else
+				else if (response.changed)
 				{
 					await record.block.wrapper.refresh(record);
 					row = record.block.view.displayed(record)?.rownum;

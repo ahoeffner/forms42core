@@ -400,6 +400,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		lock.lock = true;
 		lock.assertions = this.assert(record);
 
+		console.log("lock")
 		let success:boolean = await lock.execute(this.pubconn$);
 
 		if (!success)
@@ -771,8 +772,15 @@ export class DatabaseSource extends SQLSource implements DataSource
 			}
 			else
 			{
-				// Something went really wrong
-				Messages.handle(MSGGRP.TRX,response.message,Level.severe);
+				// Something else went bad
+				await record.block.wrapper.refresh(record);
+				row = record.block.view.displayed(record)?.rownum;
+
+				if (row != null)
+				{
+					await record.block.view.refresh(record);
+					record.setClean(true);
+				}
 			}
 
 			record.failed = true;

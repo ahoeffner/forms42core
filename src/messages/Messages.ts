@@ -33,6 +33,8 @@ import { FormsModule } from "../application/FormsModule.js";
 
 export class Messages
 {
+	public static trace:boolean = false;
+
 	private static alert$:Level = null;
 	private static console$:Level = null;
 
@@ -304,7 +306,7 @@ export class Messages
 			console.log(message);
 		}
 
-		if (group.stacktrace)
+		if (group.stacktrace || Messages.trace)
 		{
 			console.log(new Error().stack)
 		}

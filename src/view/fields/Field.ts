@@ -276,7 +276,6 @@ export class Field
 	public async performEvent(inst:FieldInstance, brwevent:BrowserEvent) : Promise<void>
 	{
 		let key:KeyMap = null;
-		let success:boolean = null;
 		FlightRecorder.add(brwevent.type+" "+inst);
 
 		if (brwevent.type == "focus")
@@ -284,7 +283,7 @@ export class Field
 			this.instance$ = inst;
 			this.value$ = inst.getValue();
 
-			success = await this.block.form.enter(inst);
+			await this.block.form.enter(inst);
 			return;
 		}
 
@@ -296,7 +295,7 @@ export class Field
 				return;
 			}
 
-			success = await this.validate(inst);
+			await this.validate(inst);
 
 			this.distribute(inst,this.value$,this.dirty);
 			this.block.distribute(this,this.value$,this.dirty);
@@ -306,7 +305,7 @@ export class Field
 
 		if (brwevent.type == "blur" || brwevent.type == "change+blur")
 		{
-			success = await this.block.form.leave(inst);
+			await this.block.form.leave(inst);
 
 			if (!this.valid$)
 			{
@@ -360,14 +359,14 @@ export class Field
 			if (key == null)
 				key = KeyMapping.parseBrowserEvent(brwevent);
 
-			success = await this.block.form.keyhandler(key,inst);
+			await this.block.form.keyhandler(key,inst);
 			return;
 		}
 
 		if (brwevent.isMouseEvent)
 		{
 			let mevent:MouseMap = MouseMapParser.parseBrowserEvent(brwevent);
-			success = await this.block.form.mousehandler(mevent,brwevent.event,inst);
+			await this.block.form.mousehandler(mevent,brwevent.event,inst);
 			return;
 		}
 	}

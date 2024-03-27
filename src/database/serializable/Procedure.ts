@@ -45,6 +45,12 @@ export class Procedure implements Serializable
 		this.name = name;
 	}
 
+	/** If everything okay */
+	public get success() : boolean
+	{
+		return(this.response$.success);
+	}
+
 	/** If something went wrong */
 	public failed() : boolean
 	{

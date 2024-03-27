@@ -366,11 +366,18 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		for (let i = 0; i < batch.size(); i++)
 		{
-			//lock.violations?.forEach((vio) => console.log(vio.toString()));
-
-
 			if (batch.step(i) instanceof Insert)
 			{
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+			}
+			else if (batch.step(i) instanceof Update)
+			{
+				this.processErrors(this.dirty$[i],batch.getResponse(i));
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+			}
+			else if (batch.step(i) instanceof Delete)
+			{
+				this.processErrors(this.dirty$[i],batch.getResponse(i));
 				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
 			}
 		}
@@ -400,7 +407,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 		lock.lock = true;
 		lock.assertions = this.assert(record);
 
-		console.log("lock")
 		let success:boolean = await lock.execute(this.pubconn$);
 
 		if (!success)
@@ -718,6 +724,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 	private async processErrors(record:Record, response:Response) : Promise<void>
 	{
 		let row:number = 0;
+
+		if (response.success)
+			return;
 
 		if (response.violations.length > 0)
 		{

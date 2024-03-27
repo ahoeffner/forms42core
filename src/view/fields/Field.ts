@@ -19,7 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Row } from "../Row.js";
+import { Row, Status } from "../Row.js";
 import { Form } from "../Form.js";
 import { Block } from "../Block.js";
 import { FieldInstance } from "./FieldInstance.js";
@@ -290,6 +290,12 @@ export class Field
 
 		if (brwevent.type == "change" || brwevent.type == "change+blur")
 		{
+			if (this.row.status == Status.delete)
+			{
+				inst.setValue(this.value$);
+				return;
+			}
+
 			success = await this.validate(inst);
 
 			this.distribute(inst,this.value$,this.dirty);
@@ -314,6 +320,13 @@ export class Field
 		if (brwevent.modified)
 		{
 			let before = this.value$;
+
+			if (this.row.status == Status.delete)
+			{
+				inst.setValue(this.value$);
+				return;
+			}
+
 			let value:string = inst.getIntermediateValue();
 
 			this.dirty = true;
@@ -377,6 +390,15 @@ export class Field
 	public async validate(inst:FieldInstance) : Promise<boolean>
 	{
 		let value:any = inst.getValue();
+
+		if (this.row.status == Status.na)
+			return(true);
+
+		if (this.row.status == Status.qbe)
+			return(true);
+
+		if (this.row.status == Status.delete)
+			return(true);
 
 		if (value instanceof Date && this.value$ instanceof Date)
 		{

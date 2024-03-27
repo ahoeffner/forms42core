@@ -21,8 +21,10 @@
 
 import { Cursor } from "./Cursor.js";
 import { BindValue } from "./BindValue.js";
+import { Batch } from "./serializable/Batch.js";
 import { Query } from "./serializable/Query.js";
 import { MSGGRP } from "../messages/Internal.js";
+import { Script } from "./serializable/Script.js";
 import { Update } from "./serializable/Update.js";
 import { Insert } from "./serializable/Insert.js";
 import { Delete } from "./serializable/Delete.js";
@@ -433,6 +435,20 @@ export class Connection extends BaseConnection
 		}
 
 		if (request instanceof Delete)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
+		if (request instanceof Batch)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
+		if (request instanceof Script)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();

@@ -32,6 +32,12 @@ export class Cursor implements Serializable
 	public constructor(public name:string, public request:CursorRequest)
 	{
 	}
+	
+	/** If everything okay */
+	public get success() : boolean
+	{
+		return(this.response$.success);
+	}
 
 	/** If something went wrong */
 	public failed() : boolean

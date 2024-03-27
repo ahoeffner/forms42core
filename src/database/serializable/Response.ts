@@ -62,6 +62,12 @@ export class Response
 		return(this.more$);
 	}
 
+	/** If everything okay */
+	public get success() : boolean
+	{
+		return(this.success$);
+	}
+
 	/** If something went wrong */
 	public get failed() : boolean
 	{

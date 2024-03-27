@@ -68,6 +68,12 @@ export class Delete implements Serializable
 		this.datatypes$ = types;
 	}
 
+	/** If everything okay */
+	public get success() : boolean
+	{
+		return(this.response$.success);
+	}
+
 	/** If something went wrong */
 	public failed() : boolean
 	{

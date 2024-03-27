@@ -39,6 +39,12 @@ export class Session implements Serializable
 	{
 	}
 
+	/** If everything okay */
+	public get success() : boolean
+	{
+		return(this.response$.success);
+	}
+
 	/** If something went wrong */
 	public failed() : boolean
 	{

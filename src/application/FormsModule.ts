@@ -202,6 +202,20 @@ export class FormsModule
 		return(FormBacking.hasTransactions(connection["conn$"]));
 	}
 
+	public static async flush() : Promise<boolean>
+	{
+		let forms:Form[] = this.getRunningForms();
+
+		for (let i = 0; i < forms.length; i++)
+		{
+			if (!await forms[i].validate())
+				return(false);
+
+			if (!await forms[i].flush())
+				return(false);
+		}
+	}
+
 	/** Issue commit on all DatabaseConnection's */
 	public static async commit() : Promise<boolean>
 	{

@@ -393,9 +393,6 @@ export class Field
 		if (this.row.status == Status.na)
 			return(true);
 
-		if (this.row.status == Status.qbe)
-			return(true);
-
 		if (this.row.status == Status.delete)
 			return(true);
 

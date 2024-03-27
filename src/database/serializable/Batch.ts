@@ -27,6 +27,7 @@ import { DatabaseConnection } from "../../public/DatabaseConnection.js";
 
 export class Batch implements Serializable
 {
+	private mod$:boolean = true;
 	private response$:Response = null;
 	private responses$:Response[] = [];
 	private steps$:Serializable[] = [];
@@ -65,6 +66,18 @@ export class Batch implements Serializable
 	public response() : Response
 	{
 		return(this.response$);
+	}
+
+	/** Does the batch modify the backend */
+	public get modyfies() : boolean
+	{
+		return(this.mod$);
+	}
+
+	/** Does the batch modify the backend */
+	public set modyfies(flag:boolean)
+	{
+		this.mod$ = flag;
 	}
 
 	/** Add step */

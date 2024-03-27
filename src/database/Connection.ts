@@ -441,14 +441,14 @@ export class Connection extends BaseConnection
 			this.modified = new Date();
 		}
 
-		if (request instanceof Batch)
+		if (request instanceof Batch && request.modyfies)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();
 			this.modified = new Date();
 		}
 
-		if (request instanceof Script)
+		if (request instanceof Script && request.modyfies)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();

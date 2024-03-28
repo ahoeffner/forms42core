@@ -39,6 +39,7 @@ import { Internals } from "../../application/properties/Internals.js";
 export class AdvancedQuery extends Form
 {
 	private type:string = null;
+	private datatype:string = null;
 
 	private values:Block = null;
 	private options:Block = null;
@@ -127,6 +128,7 @@ export class AdvancedQuery extends Form
 				}
 				break;
 
+			case "-" :
 			case ".." :
 				let values:any[] = [];
 
@@ -139,17 +141,13 @@ export class AdvancedQuery extends Form
 
 					if (values[0] instanceof Date)
 					{
-						filter = new FilterStructure(field);
-
-						for (let i = 0; i < values.length; i++)
-						{
-							let date:Date = values[i];
-							filter.or(Filters.DateInterval(field).Day(date).setBindValueName("field"+i),field+i);
-						}
+						filter = null;
+						console.log("Doesn't work with dates");
 					}
 					else
 					{
-						filter = Filters.AnyOf(field);
+						if (this.type == "-") filter = Filters.NoneOf(field);
+						else filter = Filters.AnyOf(field);
 						filter.constraint = values;
 					}
 				}
@@ -189,7 +187,13 @@ export class AdvancedQuery extends Form
 		let types:Map<string,string> = new Map<string,string>();
 
 		types.set("x","Is null");
-		types.set("..","Any off");
+
+		if (!this.datatype.startsWith("date"))
+		{
+			types.set("..","Any off");
+			types.set("-","None off");
+		}
+
 		types.set(":","Between");
 		types.set("<","Less than");
 		types.set(">","Greater than");
@@ -214,7 +218,7 @@ export class AdvancedQuery extends Form
 			this.options.goField("value1");
 		}
 
-		if (this.type == "..")
+		if (this.type == ".." || this.type == "-")
 		{
 			this.hideAll();
 			this.showMulti();
@@ -233,7 +237,7 @@ export class AdvancedQuery extends Form
 
 	private async navigate(event:FormEvent) : Promise<boolean>
 	{
-		if (this.type == "..")
+		if (this.type == ".." || this.type == "-")
 		{
 			if (event.block == this.options.name)
 			{
@@ -304,11 +308,12 @@ export class AdvancedQuery extends Form
 		this.values = this.getBlock("values");
 		this.options = this.getBlock("options");
 
-		this.setOptions();
-		Internals.stylePopupWindow(view);
-
+		this.datatype = this.parameters.get("type");
 		let value:any = this.parameters.get("value");
 		let fprops:FieldProperties = this.parameters.get("properties");
+
+		this.setOptions();
+		Internals.stylePopupWindow(view);
 
 		this.fltprops = this.options.getDefaultPropertiesByClass("value","single-value")
 		this.inclprops = this.options.getDefaultPropertiesByClass("include","single-value")
@@ -337,11 +342,17 @@ export class AdvancedQuery extends Form
 			this.options.setValue("value1",value);
 		}
 
+		this.type = (this.datatype.startsWith("date")) ? ":" : "..";
+
 		this.hideAll();
 
-		this.showMulti();
-		this.type = "..";
-		this.options.setValue("options","..");
+		switch(this.type)
+		{
+			case ":" : this.showRange(); break;
+			case ".." : this.showMulti(); break;
+		}
+
+		this.options.setValue("options",this.type);
 
 		this.focus();
 		return(true);

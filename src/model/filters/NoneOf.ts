@@ -150,7 +150,7 @@ export class NoneOf extends Filter
 
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
-		if (this.constraint$.length == 0) return(false);
+		if (this.constraint$.length == 0) return(true);
 
 		let table:any[] = this.constraint$;
 		value = record.getValue(this.column$);

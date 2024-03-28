@@ -39,6 +39,7 @@ import { Session, SessionRequest } from "./serializable/Session.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
+import { Procedure } from "./serializable/Procedure.js";
 
 
 export class Connection extends BaseConnection
@@ -400,7 +401,7 @@ export class Connection extends BaseConnection
 		return(true);
 	}
 
-	public async send(request:Serializable, patch?:boolean) : Promise<Response>
+	public async send(request:Serializable) : Promise<Response>
 	{
 		let mod:Date = this.modified;
 
@@ -449,6 +450,13 @@ export class Connection extends BaseConnection
 		}
 
 		if (request instanceof Script && request.modyfies)
+		{
+			this.tmowarn = false;
+			this.touched = new Date();
+			this.modified = new Date();
+		}
+
+		if (request instanceof Procedure && request.modyfies)
 		{
 			this.tmowarn = false;
 			this.touched = new Date();

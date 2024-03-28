@@ -19,7 +19,8 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { Response } from "./serializable/Response";
+import { DataType } from "./DataType.js";
+import { Response } from "./serializable/Response.js";
 
 /**
  * When doing DML on a database table using OpenRestDB the response
@@ -27,8 +28,10 @@ import { Response } from "./serializable/Response";
  */
 export class DatabaseResponse
 {
-	constructor(private response$:Response)
+	constructor(private response$:Response, types?:Map<string,DataType|string>)
 	{
+		if (types)
+			response$.datatypes = types;
 	}
 
 	/** Whether the statement failed */

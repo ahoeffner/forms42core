@@ -158,6 +158,41 @@ export class Response
 		return(this.datatypes$);
 	}
 
+	/** Set datatypes */
+	public set datatypes(types:Map<string,DataType|string>)
+	{
+		this.datatypes$.clear();
+
+		types?.forEach((type,name) =>
+		{
+			name = name?.toLowerCase();
+
+			if (!(typeof type === "string"))
+				type = DataType[type];
+
+			this.datatypes$.set(name,type?.toLowerCase());
+		})
+
+		if (this.values$) // Parse date columns
+		{
+			let keys:string[] = [...this.values$.keys()];
+
+			for (let i = 0; i < keys.length; i++)
+			{
+				let column:string = keys[i].toLowerCase();
+
+				let value:any = this.values$.get(column);
+				let type:string = this.datatypes$.get(column);
+
+				if (datetypes.has(type) && typeof value === "number")
+				{
+					value = new Date(+value);
+					this.values$.set(column,value);
+				}
+			}
+		}
+	}
+
 	/** Get response value */
 	public getValue(name:string) : any
 	{
@@ -201,21 +236,6 @@ export class Response
 
 		columns?.forEach((column) =>
 		{this.columns$.push(column?.toLowerCase())});
-	}
-
-	private set datatypes(types:Map<string,DataType|string>)
-	{
-		this.datatypes$.clear();
-
-		types?.forEach((type,name) =>
-		{
-			name = name?.toLowerCase();
-
-			if (!(typeof type === "string"))
-				type = DataType[type];
-
-			this.datatypes$.set(name,type?.toLowerCase());
-		})
 	}
 
 	private parseRows(response:any) : boolean
@@ -283,14 +303,10 @@ export class Response
 		{
 			let value:any = object[key];
 			let column:string = key.toLowerCase();
+			let type:string = this.datatypes$.get(column);
 
-			if (this.datatypes$)
-			{
-				let type:string = this.datatypes$.get(column);
-
-				if (datetypes.has(type) && typeof value === "number")
-					value = new Date(+value);
-			}
+			if (datetypes.has(type) && typeof value === "number")
+				value = new Date(+value);
 
 			this.values$.set(column,value);
 		})

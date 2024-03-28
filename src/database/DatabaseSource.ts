@@ -39,6 +39,7 @@ import { FilterStructure } from "../model/FilterStructure.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Response, Violation } from "./serializable/Response.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
+import { DatabaseSourceCache } from "./DatabaseSourceCache.js";
 
 
 /**
@@ -368,17 +369,17 @@ export class DatabaseSource extends SQLSource implements DataSource
 		{
 			if (batch.step(i) instanceof Insert)
 			{
-				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i),this.datatypes$);
 			}
 			else if (batch.step(i) instanceof Update)
 			{
 				this.processErrors(this.dirty$[i],batch.getResponse(i));
-				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i),this.datatypes$);
 			}
 			else if (batch.step(i) instanceof Delete)
 			{
 				this.processErrors(this.dirty$[i],batch.getResponse(i));
-				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i));
+				this.dirty$[i].response = new DatabaseResponse(batch.getResponse(i),this.datatypes$);
 			}
 		}
 
@@ -624,6 +625,17 @@ export class DatabaseSource extends SQLSource implements DataSource
 		if (this.described$)
 			return(true);
 
+		let cache:any = DatabaseSourceCache.get(this.source);
+
+		if (cache)
+		{
+			this.described$ = true;
+			this.datatypes$ = cache.types;
+			if (!this.order$) this.order$ = cache.order;
+			if (this.primary$.length == 0) this.primary$ = cache.key;
+			return(true);
+		}
+
 		if (!this.jdbconn$?.connected())
 		{
 			Messages.severe(MSGGRP.JWDB,3,this.constructor.name);
@@ -668,7 +680,17 @@ export class DatabaseSource extends SQLSource implements DataSource
 		}
 
 		this.described$ = true;
-		console.log("cache describe");
+
+		DatabaseSourceCache.put
+		(
+			this.source,
+			{
+				key: this.primary$,
+				order: this.order$,
+				types: this.datatypes$
+			}
+		);
+
 		return(this.described$);
 	}
 

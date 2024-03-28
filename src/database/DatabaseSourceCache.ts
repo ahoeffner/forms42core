@@ -19,7 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-export class SQLCache
+export class DatabaseSourceCache
 {
 	private static cache$:Map<string,Entry> =
 		new Map<string,Entry>();
@@ -27,14 +27,14 @@ export class SQLCache
 
 	public static get(sql:string,maxage?:number) : any
 	{
-		let entry:Entry = SQLCache.cache$.get(sql);
+		let entry:Entry = DatabaseSourceCache.cache$.get(sql);
 
 		if (maxage && maxage > 0)
 		{
 			let now:number = new Date().getTime();
 			if (now > entry.timestamp + maxage)
 			{
-				SQLCache.cache$.delete(sql);
+				DatabaseSourceCache.cache$.delete(sql);
 				return(null);
 			}
 		}
@@ -44,12 +44,12 @@ export class SQLCache
 
 	public static put(sql:string,response:any) : void
 	{
-		SQLCache.cache$.set(sql,new Entry(response));
+		DatabaseSourceCache.cache$.set(sql,new Entry(response));
 	}
 
 	public clear() : void
 	{
-		SQLCache.cache$.clear();
+		DatabaseSourceCache.cache$.clear();
 	}
 }
 

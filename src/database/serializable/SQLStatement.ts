@@ -147,6 +147,9 @@ export class SQLStatement implements Serializable
 
 		if (success)
 		{
+			if (this.response$.modifies)
+				this.jdbconn$.setModified();
+
 			this.records$ = this.response$.records;
 			this.datatypes$ = this.response$.datatypes;
 		}

@@ -31,7 +31,6 @@ export class Procedure implements Serializable
 {
 	protected response$:any = null;
 	protected args$:Parameter[] = [];
-	protected modyfies$:boolean = false;
 
 	protected types$:Map<string,any> = new Map<string,any>();
 	protected values$:Map<string,any> = new Map<string,any>();
@@ -99,7 +98,7 @@ export class Procedure implements Serializable
 	/** If the statement modyfied the backend */
 	public get modyfies() : boolean
 	{
-		return(this.modyfies$);
+		return(this.response$.writes);
 	}
 
 	/** Get returned value */
@@ -118,7 +117,7 @@ export class Procedure implements Serializable
 			return(false);
 
 		if (this.response$.writes)
-			this.modyfies$ = true;
+			jsdbconn.setModified();
 
 		let map:Map<string,Parameter> =
 			new Map<string,Parameter>();

@@ -39,7 +39,6 @@ import { Session, SessionRequest } from "./serializable/Session.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
 import { Connection as BaseConnection } from "../public/Connection.js";
 import { FormEvent, FormEvents } from "../control/events/FormEvents.js";
-import { Procedure } from "./serializable/Procedure.js";
 
 
 export class Connection extends BaseConnection
@@ -456,13 +455,6 @@ export class Connection extends BaseConnection
 			this.modified = new Date();
 		}
 
-		if (request instanceof Procedure && request.modyfies)
-		{
-			this.tmowarn = false;
-			this.touched = new Date();
-			this.modified = new Date();
-		}
-
 		if (this.modified)
 			this.modified = new Date();
 
@@ -492,6 +484,13 @@ export class Connection extends BaseConnection
 
 		return(response);
 
+	}
+
+	public setModified() : void
+	{
+		this.tmowarn = false;
+		this.touched = new Date();
+		this.modified = new Date();
 	}
 
 	public restore(cursor:Cursor) : boolean

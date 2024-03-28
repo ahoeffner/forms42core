@@ -283,14 +283,14 @@ export class DatabaseSource extends SQLSource implements DataSource
 		let processed:Record[] = [];
 		let batch:Batch = new Batch();
 
+		if (this.dirty$.length == 0)
+			return([]);
+
 		if (!this.jdbconn$?.connected())
 		{
 			Messages.severe(MSGGRP.JWDB,3,this.constructor.name);
 			return([]);
 		}
-
-		if (this.dirty$.length == 0)
-			return([]);
 
 		if (!await this.describe())
 			return([]);

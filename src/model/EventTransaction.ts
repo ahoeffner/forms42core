@@ -80,7 +80,7 @@ export class EventTransaction
 			if (!FormsModule.production)
 			{
 				if (!block)	console.log("Warning, multiple transactions running ("+events+")");
-				else console.log("Warning, multiple transactions running on block "+block+" ["+events+"]");
+				else console.log("Warning, multiple transactions running on block "+block.name+" ["+events+"]");
 			}
 		}
 
@@ -104,13 +104,13 @@ export class EventTransaction
 
 			let events:string = "";
 			for (let i = 0; i < keys.length; i++)  events += EventType[keys[i]] + ",";
-			events += "," + EventType[newtrx.event];
+			events += EventType[newtrx.event];
 
 			// Dangerous
 			if (!FormsModule.production)
 			{
 				if (!block)	console.log("Warning, multiple transactions running ("+events+")");
-				else console.log("Warning, multiple transactions running on block "+block+" ["+events+"]");
+				else console.log("Warning, multiple transactions running on block "+block.name+" ["+events+"]");
 			}
 		}
 	}

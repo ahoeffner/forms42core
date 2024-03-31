@@ -172,23 +172,26 @@ export class Query implements Serializable
 	}
 
 	/** Add extra bindvalues */
-	public setBindValue(name:string, value:any, type:DataType|string) : void
+	public setBindValue(name:string, value:any, type:DataType|string) : Query
 	{
 		this.bindvalues$.set(name.toLowerCase(),new BindValue(name,value,type));
+		return(this);
 	}
 
 	/** Add extra bindvalues */
-	public setBindValues(bindvalues:Map<string,BindValue>) : void
+	public setBindValues(bindvalues:Map<string,BindValue>) : Query
 	{
 		this.bindvalues$.clear();
 		bindvalues.forEach((bind,name) =>
 		{this.bindvalues$.set(name.toLowerCase(),bind);})
+		return(this);
 	}
 
 	/** Bind datatype */
-	public setDataType(name:string, type?:DataType|string) : void
+	public setDataType(name:string, type?:DataType|string) : Query
 	{
 		this.datatypes$.set(name,type);
+		return(this);
 	}
 
 	/** Set datatypes */

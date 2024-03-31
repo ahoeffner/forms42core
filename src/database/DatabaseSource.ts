@@ -19,6 +19,7 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { DataType } from "./DataType.js";
 import { Query } from "./serializable/Query.js";
 import { Batch } from "./serializable/Batch.js";
 import { MSGGRP } from "../messages/Internal.js";
@@ -36,10 +37,10 @@ import { Record, RecordState } from "../model/Record.js";
 import { DatabaseResponse } from "./DatabaseResponse.js";
 import { Level, Messages } from "../messages/Messages.js";
 import { FilterStructure } from "../model/FilterStructure.js";
+import { DatabaseSourceCache } from "./DatabaseSourceCache.js";
 import { DataSource } from "../model/interfaces/DataSource.js";
 import { Response, Violation } from "./serializable/Response.js";
 import { DatabaseConnection } from "../public/DatabaseConnection.js";
-import { DatabaseSourceCache } from "./DatabaseSourceCache.js";
 
 
 /**
@@ -79,6 +80,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 	private datatypes$:Map<string,string> =
 		new Map<string,string>();
+
+	private bindvalues$:Map<string,BindValue> =
+		new Map<string,BindValue>();
 
 
 	/**
@@ -403,7 +407,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			this.mergeColumns(this.columns,this.dmlcols$);
 
 		let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
-		let lock:Query = new Query(this.source,columns,pkeyflt);
+		let lock:Query = new Query(this.source,columns,pkeyflt).setBindValues(this.bindvalues$);
 
 		lock.lock = true;
 		lock.assertions = this.assert(record);
@@ -450,7 +454,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		record.refresh();
 
 		let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
-		let refr:Query = new Query(this.source,this.columns,pkeyflt);
+		let refr:Query = new Query(this.source,this.columns,pkeyflt).setBindValues(this.bindvalues$);
 		let success:boolean = await refr.execute(this.connection);
 
 		if (!success)
@@ -531,8 +535,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.query$.orderBy = this.order$;
 		this.query$.arrayfetch = this.arrayfetch;
-		await this.query$.execute(this.connection);
+		this.query$.setBindValues(this.bindvalues$);
 
+		await this.query$.execute(this.connection);
 		return(true);
 	}
 
@@ -556,12 +561,6 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(this.fetch());
 
 		return(record);
-	}
-
-	/** Return the default filters */
-	public getFilters() : FilterStructure
-	{
-		return(this.limit$);
 	}
 
 	/** Add columns participating in all operations on the table/view */
@@ -593,6 +592,26 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		this.columns$ = cols;
 		return(this);
+	}
+
+	/** Add extra bindvalues */
+	public setBindValue(name:string, value:any, type:DataType|string) : void
+	{
+		this.bindvalues$.set(name.toLowerCase(),new BindValue(name,value,type));
+	}
+
+	/** Add extra bindvalues */
+	public setBindValues(bindvalues:Map<string,BindValue>) : void
+	{
+		this.bindvalues$.clear();
+		bindvalues.forEach((bind,name) =>
+		{this.bindvalues$.set(name.toLowerCase(),bind);})
+	}
+
+	/** Return the default filters */
+	public getFilters() : FilterStructure
+	{
+		return(this.limit$);
 	}
 
 	/** Add a default filter */

@@ -51,6 +51,9 @@ export class Query implements Serializable
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,string>();
 
+	private bindvalues$:Map<string,BindValue> =
+		new Map<string,BindValue>();
+
 	constructor(source:string, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
 		if (!Array.isArray(columns))
@@ -166,6 +169,20 @@ export class Query implements Serializable
 	public get violations() : Violation[]
 	{
 		return(this.response$.violations);
+	}
+
+	/** Add extra bindvalues */
+	public setBindValue(name:string, value:any, type:DataType|string) : void
+	{
+		this.bindvalues$.set(name.toLowerCase(),new BindValue(name,value,type));
+	}
+
+	/** Add extra bindvalues */
+	public setBindValues(bindvalues:Map<string,BindValue>) : void
+	{
+		this.bindvalues$.clear();
+		bindvalues.forEach((bind,name) =>
+		{this.bindvalues$.set(name.toLowerCase(),bind);})
 	}
 
 	/** Bind datatype */
@@ -295,10 +312,14 @@ export class Query implements Serializable
 		json.cursor = this.cursor$.name;
 
 		applyTypes(this.datatypes$,this.assert$);
+		applyTypes(this.datatypes$,this.bindvalues$);
 		applyTypes(this.datatypes$,this.filter$.getBindValues());
 
 		if (this.filter$)
 			json.filters = this.filter$.serialize().filters;
+
+		json.bindvalues = [];
+		this.bindvalues$.forEach((bind) => json.bindvalues.push(bind.serialize()));
 
 		let assert:any[] = [];
 

@@ -367,7 +367,9 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 		if (!success)
 		{
-			Messages.severe(MSGGRP.JWDB,5,batch.error());
+			let msg:any = batch.error();
+			if (!batch.error()) msg = batch.response;
+			Messages.severe(MSGGRP.JWDB,5,msg);
 			return([]);
 		}
 

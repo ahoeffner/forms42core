@@ -38,6 +38,9 @@ export class Update implements Serializable
 	private changes$:BindValue[] = null;
 	private filter$:FilterStructure = null;
 
+	private bindvalues$:Map<string,BindValue> =
+		new Map<string,BindValue>();
+
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,string>();
 
@@ -98,6 +101,30 @@ export class Update implements Serializable
 	public response() : Response
 	{
 		return(this.response$);
+	}
+
+	/** Add extra bindvalues */
+	public setBindValue(name:string, value:any, type:DataType|string) : Update
+	{
+		this.bindvalues$.set(name.toLowerCase(),new BindValue(name,value,type));
+		return(this);
+	}
+
+	/** Add extra bindvalues */
+	public setBindValues(bindvalues:Map<string,BindValue>) : Update
+	{
+		this.bindvalues$.clear();
+		bindvalues.forEach((bind,name) =>
+		{this.bindvalues$.set(name.toLowerCase(),bind);})
+		return(this);
+	}
+
+	/** Set datatypes */
+	public setDataTypes(types:Map<string,DataType|string>) : Update
+	{
+		if (types) this.datatypes$ = types;
+		else this.datatypes$.clear();
+		return(this);
 	}
 
 	/** Assert that columns hasn't been changed */
@@ -189,6 +216,12 @@ export class Update implements Serializable
 
 		if (this.assert$?.length > 0)
 			json.assertions = assert;
+
+		if (this.bindvalues$.size > 0)
+		{
+			json.bindvalues = [];
+			this.bindvalues$.forEach((bind) => json.bindvalues.push(bind.serialize()));
+		}
 
 		return(json);
 	}

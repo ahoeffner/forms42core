@@ -36,6 +36,9 @@ export class Delete implements Serializable
 	private assert$:BindValue[] = null;
 	private filter$:FilterStructure = null;
 
+	private bindvalues$:Map<string,BindValue> =
+		new Map<string,BindValue>();
+
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,DataType|string>();
 
@@ -98,13 +101,20 @@ export class Delete implements Serializable
 		return(this.response$);
 	}
 
-	/** Assert that columns hasn't been changed */
-	public set assertions(assert:BindValue|BindValue[])
+	/** Add extra bindvalues */
+	public setBindValue(name:string, value:any, type:DataType|string) : Delete
 	{
-		if (!Array.isArray(assert))
-			assert = [assert];
+		this.bindvalues$.set(name.toLowerCase(),new BindValue(name,value,type));
+		return(this);
+	}
 
-		this.assert$ = assert;
+	/** Add extra bindvalues */
+	public setBindValues(bindvalues:Map<string,BindValue>) : Delete
+	{
+		this.bindvalues$.clear();
+		bindvalues.forEach((bind,name) =>
+		{this.bindvalues$.set(name.toLowerCase(),bind);})
+		return(this);
 	}
 
 	/** Set datatypes */
@@ -113,6 +123,15 @@ export class Delete implements Serializable
 		if (types) this.datatypes$ = types;
 		else this.datatypes$.clear();
 		return(this);
+	}
+
+	/** Assert that columns hasn't been changed */
+	public set assertions(assert:BindValue|BindValue[])
+	{
+		if (!Array.isArray(assert))
+			assert = [assert];
+
+		this.assert$ = assert;
 	}
 
 	/** Get assertion violations */
@@ -178,6 +197,12 @@ export class Delete implements Serializable
 			})
 
 			json.returning = retcols;
+		}
+
+		if (this.bindvalues$.size > 0)
+		{
+			json.bindvalues = [];
+			this.bindvalues$.forEach((bind) => json.bindvalues.push(bind.serialize()));
 		}
 
 		return(json);

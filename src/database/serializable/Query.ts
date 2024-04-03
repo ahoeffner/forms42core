@@ -48,11 +48,11 @@ export class Query implements Serializable
 	private jdbconn$:Connection = null;
 	private filter$:FilterStructure = null;
 
-	private datatypes$:Map<string,DataType|string> =
-		new Map<string,string>();
-
 	private bindvalues$:Map<string,BindValue> =
 		new Map<string,BindValue>();
+
+	private datatypes$:Map<string,DataType|string> =
+		new Map<string,string>();
 
 	constructor(source:string, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
@@ -156,21 +156,6 @@ export class Query implements Serializable
 		this.lock$ = value;
 	}
 
-	/** Set assertions */
-	public set assertions(assertions:BindValue|BindValue[])
-	{
-		if (!Array.isArray(assertions))
-			assertions = [assertions];
-
-		this.assert$ = assertions;
-	}
-
-	/** Get assertion violations */
-	public get violations() : Violation[]
-	{
-		return(this.response$.violations);
-	}
-
 	/** Add extra bindvalues */
 	public setBindValue(name:string, value:any, type:DataType|string) : Query
 	{
@@ -200,6 +185,21 @@ export class Query implements Serializable
 		if (types) this.datatypes$ = types;
 		else this.datatypes$.clear();
 		return(this);
+	}
+
+	/** Set assertions */
+	public set assertions(assertions:BindValue|BindValue[])
+	{
+		if (!Array.isArray(assertions))
+			assertions = [assertions];
+
+		this.assert$ = assertions;
+	}
+
+	/** Get assertion violations */
+	public get violations() : Violation[]
+	{
+		return(this.response$.violations);
 	}
 
 	/** Execute the statement */
@@ -321,8 +321,11 @@ export class Query implements Serializable
 		if (this.filter$)
 			json.filters = this.filter$.serialize().filters;
 
-		json.bindvalues = [];
-		this.bindvalues$.forEach((bind) => json.bindvalues.push(bind.serialize()));
+		if (this.bindvalues$.size > 0)
+		{
+			json.bindvalues = [];
+			this.bindvalues$.forEach((bind) => json.bindvalues.push(bind.serialize()));
+		}
 
 		let assert:any[] = [];
 

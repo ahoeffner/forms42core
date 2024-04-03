@@ -338,6 +338,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 				let del:Delete = new Delete(this.source,pkeyflt,this.delreturncolumns$,this.datatypes$);
 
+				del.setBindValues(this.bindvalues$);
 				if (assert) del.assertions = this.assert(record);
 				batch.add(del);
 			}
@@ -356,6 +357,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
 				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,this.datatypes$);
 
+				upd.setBindValues(this.bindvalues$);
 				if (assert) upd.assertions = this.assert(record);
 				batch.add(upd);
 			}

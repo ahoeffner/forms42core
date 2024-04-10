@@ -129,7 +129,7 @@ export class ILike extends Filter
 	{
 		if (this.bindvalues$ == null)
 		{
-			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint$,this.datatype$)];
+			this.bindvalues$ = [new BindValue(this.bindval$,this.constraint,this.datatype$)];
 			if (this.datatype$) this.bindvalues$[0].forceDataType = true;
 			this.bindvalues$[0].column = this.column$;
 		}
@@ -139,9 +139,6 @@ export class ILike extends Filter
 
 	public async evaluate(record:Record) : Promise<boolean>
 	{
-		if (this.bindvalues$)
-			this.constraint$ = this.bindvalues$[0].value;
-
 		if (this.column$ == null) return(false);
 		if (this.constraint$ == null) return(false);
 

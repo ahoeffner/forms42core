@@ -19,12 +19,13 @@
   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
+import { Batch } from "../database/serializable/Batch.js";
+import { Script } from "../database/serializable/Script.js";
 import { Insert } from "../database/serializable/Insert.js";
 import { Update } from "../database/serializable/Update.js";
 import { Delete } from "../database/serializable/Delete.js";
 import { ConnectionScope } from "../database/ConnectionScope.js";
 import { Connection as JSONConnection } from "../database/Connection.js";
-import { Batch, Script } from "../../index.js";
 
 /**
  * Connection to DatabaseJS.

@@ -26,13 +26,13 @@ import { Serializable } from "./Serializable.js";
 import { Response, Violation } from "./Response.js";
 import { Filter } from "../../model/interfaces/Filter.js";
 import { FilterStructure } from "../../model/FilterStructure.js";
-import { DataSource } from "../../model/interfaces/DataSource.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
+
 
 export class Update implements Serializable
 {
+	private source$:string = null;
 	private retcols$:string[] = null;
-	private source$:DataSource = null;
 	private response$:Response = null;
 	private assert$:BindValue[] = null;
 	private changes$:BindValue[] = null;
@@ -45,7 +45,7 @@ export class Update implements Serializable
 		new Map<string,string>();
 
 
-	constructor(source:DataSource, changes:BindValue|BindValue[], filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:Map<string,DataType|string>)
+	constructor(source:string, changes:BindValue|BindValue[], filter?:Filter|Filter[]|FilterStructure, retcols?:string|string[], types?:Map<string,DataType|string>)
 	{
 		if (!retcols)
 			retcols = [];
@@ -158,7 +158,7 @@ export class Update implements Serializable
 	{
 		let json:any = {};
 		json.request = "update";
-		json.source = this.source$.name;
+		json.source = this.source$;
 
 		let cols:any[] = [];
 

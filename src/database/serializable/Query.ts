@@ -54,6 +54,7 @@ export class Query implements Serializable
 	private datatypes$:Map<string,DataType|string> =
 		new Map<string,string>();
 
+		
 	constructor(source:string, columns:string|string[], filter?:Filter|Filter[]|FilterStructure)
 	{
 		if (!Array.isArray(columns))

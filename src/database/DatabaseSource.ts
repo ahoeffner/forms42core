@@ -355,7 +355,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 
 				let changes:BindValue[] = this.bind(record,record.getDirty());
 				let pkeyflt:FilterStructure = this.getPrimarykeyFilter(record);
-				let upd:Update = new Update(this,changes,pkeyflt,this.updreturncolumns$,this.datatypes$);
+				let upd:Update = new Update(this.source,changes,pkeyflt,this.updreturncolumns$,this.datatypes$);
 
 				upd.setBindValues(this.bindvalues$);
 				if (assert) upd.assertions = this.assert(record);

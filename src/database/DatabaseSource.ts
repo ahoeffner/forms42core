@@ -541,8 +541,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 		this.query$.arrayfetch = this.arrayfetch;
 		this.query$.setBindValues(this.bindvalues$);
 
-		await this.query$.execute(this.connection);
-		return(true);
+		return(await this.query$.execute(this.connection));
 	}
 
 	/** Fetch a set of records */

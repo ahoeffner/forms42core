@@ -20,6 +20,7 @@
 */
 
 import { Response } from "./Response.js";
+import { BindValue } from "../BindValue.js";
 import { Connection } from "../Connection.js";
 import { Serializable } from "./Serializable.js";
 import { DatabaseConnection } from "../../public/DatabaseConnection.js";
@@ -29,7 +30,7 @@ export class Describe implements Serializable
 {
 	private response$:Response = null;
 
-	public constructor(private source:string)
+	public constructor(private source:string, private bindvalues?:Map<string,BindValue>)
 	{
 	}
 
@@ -113,6 +114,12 @@ export class Describe implements Serializable
 
 		json.request = "describe";
 		json.source = this.source;
+
+		if (this.bindvalues.size > 0)
+		{
+			json.bindvalues = [];
+			this.bindvalues.forEach((bind) => json.bindvalues.push(bind.serialize()));
+		}
 
 		return(json);
 	}

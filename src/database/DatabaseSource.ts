@@ -665,7 +665,7 @@ export class DatabaseSource extends SQLSource implements DataSource
 			return(false);
 		}
 
-		let desc:Describe = new Describe(this.source);
+		let desc:Describe = new Describe(this.source,this.bindvalues$);
 		let success:boolean = await desc.execute(this.pubconn$);
 
 		if (!success)
